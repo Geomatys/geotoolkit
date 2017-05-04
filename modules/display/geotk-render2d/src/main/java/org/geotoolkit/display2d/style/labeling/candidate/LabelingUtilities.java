@@ -172,7 +172,7 @@ public class LabelingUtilities {
         trs.rotate(Math.toRadians(label2.getDescriptor().getRotation()));
         trs.translate(0, -label2.upper);
         //at this step the label2 is in the label1 normalize area
-        
+
         final int label1Height = label1.upper+label1.lower;
         final int label2Height = label2.upper+label2.lower;
 

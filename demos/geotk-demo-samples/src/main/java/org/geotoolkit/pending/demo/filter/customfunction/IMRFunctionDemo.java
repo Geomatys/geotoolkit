@@ -25,7 +25,7 @@ public class IMRFunctionDemo {
 
     public static void main(String[] args) {
         Demos.init();
-        
+
         final Pojo pojo = aPOJO();
         final Feature feature = aFeature();
 

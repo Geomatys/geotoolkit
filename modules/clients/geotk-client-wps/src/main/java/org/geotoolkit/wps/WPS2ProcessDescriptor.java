@@ -61,7 +61,7 @@ import org.opengis.util.InternationalString;
 
 /**
  * WPS2 process descriptor.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -94,7 +94,7 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
         } else {
             abs = new DefaultInternationalString("");
         }
-        
+
         final InternationalString displayName;
         if (summary.getFirstTitle()!= null) {
             displayName = new DefaultInternationalString(summary.getFirstTitle());
@@ -123,7 +123,7 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
 
         return new WPS2ProcessDescriptor(processIdentifier, registry, abs, displayName, inputs, outputs);
     }
-    
+
     public static ProcessDescriptor create(WPSProcessingRegistry registry, ProcessOffering offering) throws IOException, JAXBException, UnsupportedParameterException {
         final String processIdentifier = offering.getIdentifier().getValue();
 
@@ -133,7 +133,7 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
         } else {
             abs = new DefaultInternationalString("");
         }
-        
+
         final InternationalString displayName;
         if (offering.getFirstTitle()!= null) {
             displayName = new DefaultInternationalString(offering.getFirstTitle());
@@ -184,7 +184,7 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
 
     /**
      * Convert DescriptionType to GeneralParameterDescriptor.
-     * 
+     *
      * @param input
      * @return
      * @throws UnsupportedOperationException if data type could not be mapped
@@ -212,7 +212,7 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
 
         final String inputName = input.getIdentifier().getValue();
         final String inputAbstract = input.getAbstract().isEmpty() ? null : input.getAbstract().get(0).getValue();
-        
+
         final Map<String, String> properties = new HashMap<>();
         properties.put("name", inputName);
         if(!input.getAbstract().isEmpty() && !input.getAbstract().get(0).getValue().isEmpty())

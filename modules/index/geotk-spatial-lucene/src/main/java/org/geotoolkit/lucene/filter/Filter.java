@@ -23,6 +23,6 @@ import org.geotoolkit.index.tree.Tree;
  * @author Guilhem Legal (Geomatys)
  */
 public interface Filter {
-    
+
     void applyRtreeOnFilter(final Tree rTree, final boolean envelopeOnly);
 }

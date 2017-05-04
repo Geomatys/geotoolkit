@@ -35,7 +35,7 @@ import org.opengis.feature.Feature;
 
 /**
  * Edition tool to create multi line parts.
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -58,16 +58,16 @@ public class MultiLinePartCreationDelegate extends AbstractFeatureEditionDelegat
         subGeometries.clear();
         decoration.setGeometries(null);
     }
-    
+
     private void resetCurrentCreation(){
         coords.clear();
     }
-    
+
     private void setCurrentFeature(final Feature feature){
         this.feature = feature;
         this.geometry = null;
         this.subGeometries.clear();
-        
+
         if(feature != null){
             this.geometry = (MultiLineString) helper.toObjectiveCRS(feature);
             if(geometry != null){
@@ -133,6 +133,6 @@ public class MultiLinePartCreationDelegate extends AbstractFeatureEditionDelegat
         }
         super.mouseMoved(e);
     }
-    
+
 
 }

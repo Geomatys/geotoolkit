@@ -32,10 +32,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class MapfileToSLDDescriptor extends AbstractProcessDescriptor{
-        
+
     /**Process name : mapfileToSLD */
     public static final String NAME = "mapfileToSLD";
-    
+
     /**
      * Input parameters
      */
@@ -49,10 +49,10 @@ public class MapfileToSLDDescriptor extends AbstractProcessDescriptor{
             .setRemarks("output sld")
             .setRequired(true)
             .create(File.class, null);
-  
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(IN_FILE,IN_OUTPUT);
-    
+
     /**
      * OutputParameters
      */
@@ -72,5 +72,5 @@ public class MapfileToSLDDescriptor extends AbstractProcessDescriptor{
     public Process createProcess(final ParameterValueGroup input) {
         return new MapfileToSLDProcess(input);
     }
-    
+
 }

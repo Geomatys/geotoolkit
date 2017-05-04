@@ -29,11 +29,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * The base type for coverages is gml:AbstractCoverageType. The basic elements of a coverage can be seen in this content model: the coverage contains gml:domainSet and gml:rangeSet properties. The gml:domainSet property describes the domain of the coverage and the gml:rangeSet property describes the range of the coverage.
- * 
+ *
  * <p>Java class for AbstractCoverageType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractCoverageType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractCoverageType", propOrder = {
@@ -66,18 +66,18 @@ public abstract class AbstractCoverageType extends AbstractFeatureType {
     private RangeSetType rangeSet;
 
     public AbstractCoverageType() {
-        
+
     }
-    
+
     public AbstractCoverageType(AbstractFeatureType feature, RangeSetType rangeSet, JAXBElement<DomainSetType> domainSet) {
         super(feature);
         this.rangeSet = rangeSet;
         this.domainSet = domainSet;
     }
-    
+
     /**
      * Gets the value of the domainSet property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link DomainSetType }{@code >}
@@ -87,7 +87,7 @@ public abstract class AbstractCoverageType extends AbstractFeatureType {
      *     {@link JAXBElement }{@code <}{@link DomainSetType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DomainSetType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DomainSetType }{@code >}
-     *     
+     *
      */
     public JAXBElement<DomainSetType> getDomainSet() {
         return domainSet;
@@ -95,7 +95,7 @@ public abstract class AbstractCoverageType extends AbstractFeatureType {
 
     /**
      * Sets the value of the domainSet property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link DomainSetType }{@code >}
@@ -105,7 +105,7 @@ public abstract class AbstractCoverageType extends AbstractFeatureType {
      *     {@link JAXBElement }{@code <}{@link DomainSetType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DomainSetType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DomainSetType }{@code >}
-     *     
+     *
      */
     public void setDomainSet(JAXBElement<DomainSetType> value) {
         this.domainSet = ((JAXBElement<DomainSetType> ) value);
@@ -113,11 +113,11 @@ public abstract class AbstractCoverageType extends AbstractFeatureType {
 
     /**
      * Gets the value of the rangeSet property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RangeSetType }
-     *     
+     *
      */
     public RangeSetType getRangeSet() {
         return rangeSet;
@@ -125,11 +125,11 @@ public abstract class AbstractCoverageType extends AbstractFeatureType {
 
     /**
      * Sets the value of the rangeSet property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RangeSetType }
-     *     
+     *
      */
     public void setRangeSet(RangeSetType value) {
         this.rangeSet = value;

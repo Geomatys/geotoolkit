@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for FillType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FillType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,11 +59,11 @@ public class FillType {
 
     /**
      * Gets the value of the graphicFill property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GraphicFillType }
-     *     
+     *
      */
     public GraphicFillType getGraphicFill() {
         return graphicFill;
@@ -71,11 +71,11 @@ public class FillType {
 
     /**
      * Sets the value of the graphicFill property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GraphicFillType }
-     *     
+     *
      */
     public void setGraphicFill(final GraphicFillType value) {
         this.graphicFill = value;
@@ -83,25 +83,25 @@ public class FillType {
 
     /**
      * Gets the value of the svgParameter property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the svgParameter property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSvgParameter().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link SvgParameterType }
-     * 
-     * 
+     *
+     *
      */
     public List<SvgParameterType> getSvgParameter() {
         if (svgParameter == null) {

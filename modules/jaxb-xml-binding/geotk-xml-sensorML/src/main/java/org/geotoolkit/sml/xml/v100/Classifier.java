@@ -65,7 +65,7 @@ public class Classifier implements AbstractClassifier {
     public Classifier(final Term term) {
         this.term = term;
     }
-    
+
     public Classifier(final String name, final Term term) {
         this.name = name;
         this.term = term;
@@ -147,4 +147,4 @@ public class Classifier implements AbstractClassifier {
     }
 }
 
-    
+

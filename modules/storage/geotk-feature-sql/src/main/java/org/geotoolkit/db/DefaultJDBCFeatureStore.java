@@ -361,7 +361,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             final FilterAttributeExtractor extractor = new FilterAttributeExtractor(tableType);
             postFilter.accept(extractor, null);
             final GenericName[] extraAttributes = extractor.getAttributeNames();
-            
+
             final List<GenericName> allAttributes = new ArrayList<>();
             for(String str : query.getPropertyNames()){
                 allAttributes.add(type.getProperty(str).getName());
@@ -1137,7 +1137,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * @throws DataStoreException
      */
     protected void handleRemoveWithFeatureWriter(final String groupName, final Filter filter, Connection cnx) throws DataStoreException {
-        
+
         try(FeatureWriter writer = getFeatureWriterInternal(groupName,filter,EditMode.UPDATE,cnx,null)) {
 
             while(writer.hasNext()){

@@ -29,16 +29,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
+ *
  *         The "ParameterValueType" uses WFS-Filter expressions to give
  *         values for SLD graphic parameters.  A "mixed" element-content
  *         model is used with textual substitution for values.
- *       
- * 
+ *
+ *
  * <p>Java class for ParameterValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ParameterValueType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,25 +68,25 @@ public class ParameterValueType {
     protected List<Serializable> content;
 
     /**
-     * 
+     *
      *         The "ParameterValueType" uses WFS-Filter expressions to give
      *         values for SLD graphic parameters.  A "mixed" element-content
      *         model is used with textual substitution for values.
      *       Gets the value of the content property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the content property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getContent().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
@@ -98,8 +98,8 @@ public class ParameterValueType {
      * {@link JAXBElement }{@code <}{@link BinaryOperatorType }{@code >}
      * {@link JAXBElement }{@code <}{@link PropertyNameType }{@code >}
      * {@link JAXBElement }{@code <}{@link BinaryOperatorType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<Serializable> getContent() {
         if (content == null) {

@@ -45,7 +45,7 @@ public interface Wait extends AbstractTourPrimitive {
     double getDuration();
 
     /**
-     * 
+     *
      * @param duration
      */
     void setDuration(double duration);

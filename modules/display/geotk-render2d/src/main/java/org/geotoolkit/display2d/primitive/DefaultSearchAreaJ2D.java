@@ -29,7 +29,7 @@ import org.opengis.geometry.Geometry;
  * @module
  */
 public class DefaultSearchAreaJ2D extends DefaultSearchArea implements SearchAreaJ2D{
-    
+
     private final com.vividsolutions.jts.geom.Geometry objectiveGeometryJTS;
     private final com.vividsolutions.jts.geom.Geometry displayGeometryJTS;
     private final Shape objectiveShape;

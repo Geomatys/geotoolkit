@@ -30,9 +30,9 @@ import org.geotoolkit.wcs.xml.CoverageInfo;
 
 /**
  * <p>Java class for ContentsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ContentsType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.wcs.xml.CoverageInfo;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ContentsType", propOrder = {
@@ -61,20 +61,20 @@ public class ContentsType extends ContentsBaseType implements Content {
     private ExtensionType extension;
 
     public ContentsType() {
-        
+
     }
-    
+
     public ContentsType(final List<CoverageSummaryType> coverageSummary) {
         this.coverageSummary = coverageSummary;
     }
-    
+
     /**
      * Gets the value of the coverageSummary property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link CoverageSummaryType }
-     * 
-     * 
+     *
+     *
      */
     public List<CoverageSummaryType> getCoverageSummary() {
         if (coverageSummary == null) {
@@ -85,11 +85,11 @@ public class ContentsType extends ContentsBaseType implements Content {
 
     /**
      * Gets the value of the extension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExtensionType }
-     *     
+     *
      */
     public ExtensionType getExtension() {
         return extension;
@@ -97,11 +97,11 @@ public class ContentsType extends ContentsBaseType implements Content {
 
     /**
      * Sets the value of the extension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExtensionType }
-     *     
+     *
      */
     public void setExtension(ExtensionType value) {
         this.extension = value;

@@ -76,11 +76,11 @@ public final class GeoTiffMetaDataReader {
     public static class ValueMap extends HashMap<Integer, Object> {
 
         /**
-	 * @param key
-	 * @return A string representing the value, or null if the key was not
-	 *         found or failed to parse.
-	 */
-	public String getAsString(final int key) {
+     * @param key
+     * @return A string representing the value, or null if the key was not
+     *         found or failed to parse.
+     */
+    public String getAsString(final int key) {
 
             final Object value = get(key);
 

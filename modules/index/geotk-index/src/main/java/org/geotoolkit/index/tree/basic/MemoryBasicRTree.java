@@ -30,7 +30,7 @@ public final class MemoryBasicRTree<E> extends BasicRTree<E> {
 
     /**
      * Create a new {@link BasicRTree} implementation which store Tree architecture in memory.
-     * 
+     *
      * @param maxElements maximum children value permit per Node.
      * @param crs Tree {@link CoordinateReferenceSystem}.
      * @param choice split made choice.

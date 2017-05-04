@@ -167,16 +167,16 @@ public interface Premise {
      * @param premiseNumberSuffixes
      */
     void setPremiseNumberSuffixes(List<PremiseNumberSuffix> premiseNumberSuffixes);
-    
+
     /**
      * <p>Specification of the name of a building.</p>
-     * 
+     *
      * @return
      */
     List<BuildingName> getBuildingNames();
 
     /**
-     * 
+     *
      * @param buildingNames
      */
     void setBuildingNames(List<BuildingName> buildingNames);
@@ -310,7 +310,7 @@ public interface Premise {
     String getPremiseThoroughfareConnector();
 
     /**
-     * 
+     *
      * @param premiseThoroughfarConnctor
      */
     void setPremiseThoroughfareConnector(String premiseThoroughfareConnector);

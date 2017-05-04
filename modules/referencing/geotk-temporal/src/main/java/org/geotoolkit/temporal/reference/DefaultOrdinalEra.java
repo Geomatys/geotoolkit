@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2014, Geomatys
  *
@@ -44,42 +44,42 @@ import org.opengis.util.InternationalString;
  *
  * @author Mehdi Sidhoum (Geomatys)
  * @module
- * 
+ *
  * @version 4.0
  * @since   4.0
  */
 @XmlType(name = "TimeOrdinalEra_Type", propOrder = {
     "start",
     "endd",
-    "member", 
+    "member",
     "groupp"
 })
 @XmlRootElement(name = "TimeOrdinalEra")
 public class DefaultOrdinalEra extends AbstractIdentifiedObject implements OrdinalEra {
-    
+
     /**
      * This is the temporal position at which the ordinal era began, if it is known.
      */
     private Date begin;
-    
+
     /**
      * This is the temporal position at which the ordinal era ended.
      */
     private Date end;
-    
+
     /**
      * {@linkplain OrdinalEra ordinal eras} that subdivide this ordinal era.
      */
     private Collection<OrdinalEra> member;
-    
+
     /**
-     * Define an alone {@link OrdinalEra} implementation witch regroup other {@link OrdinalEra}. 
+     * Define an alone {@link OrdinalEra} implementation witch regroup other {@link OrdinalEra}.
      */
     private DefaultOrdinalEra group;
 
     /**
      * Create a default implementation of {@link OrdinalEra} initialize by given parameters.
-     * 
+     *
      * <table class="ISO 19108">
      *   <caption>Recognized properties (non exhaustive list)</caption>
      *   <tr>
@@ -108,7 +108,7 @@ public class DefaultOrdinalEra extends AbstractIdentifiedObject implements Ordin
      *     <td>{@link #getReferenceEvent()}</td>
      *   </tr>
      * </table>
-     * 
+     *
      * @param name The string that identifies the ordinal era within the {@linkplain OrdinalReferenceSystem TM_OrdinalReferenceSystem}.
      * @param beginning The temporal position at which the ordinal era began, if it is known.
      * @param end The temporal position at which the ordinal era ended.
@@ -123,7 +123,7 @@ public class DefaultOrdinalEra extends AbstractIdentifiedObject implements Ordin
 
     /**
      * Create a default implementation of {@link OrdinalEra} initialize by given parameters.
-     * 
+     *
      * <table class="ISO 19108">
      *   <caption>Recognized properties (non exhaustive list)</caption>
      *   <tr>
@@ -152,13 +152,13 @@ public class DefaultOrdinalEra extends AbstractIdentifiedObject implements Ordin
      *     <td>{@link #getReferenceEvent()}</td>
      *   </tr>
      * </table>
-     * 
+     *
      * @param name The string that identifies the ordinal era within the {@linkplain OrdinalReferenceSystem TM_OrdinalReferenceSystem}.
      * @param beginning The temporal position at which the ordinal era began, if it is known.
      * @param end The temporal position at which the ordinal era ended.
      * @param member The {@linkplain OrdinalEra ordinal eras} that subdivide this ordinal era.
      */
-    public DefaultOrdinalEra(final Map<String, ?> properties, final Date beginning, 
+    public DefaultOrdinalEra(final Map<String, ?> properties, final Date beginning,
             final Date end, final Collection<OrdinalEra> member) {
         super(properties);
         this.begin  = beginning;
@@ -169,14 +169,14 @@ public class DefaultOrdinalEra extends AbstractIdentifiedObject implements Ordin
                 ((DefaultOrdinalEra) ordinalEra).setGroup(this);
             }
     }
-    
+
     /**
      * Private constructor adapted for XML binding.
      */
     private DefaultOrdinalEra() {
         super(NilReferencingObject.INSTANCE);
     }
-    
+
     /**
      * Constructs a new instance initialized with the values from the specified metadata object.
      * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
@@ -223,10 +223,10 @@ public class DefaultOrdinalEra extends AbstractIdentifiedObject implements Ordin
         }
         return new DefaultOrdinalEra(object);
     }
-    
+
     /**
      * Returns the temporal position at which the ordinal era began, if it is known.
-     * 
+     *
      * @return the temporal position at which the ordinal era began, if it is known.
      */
     @Override
@@ -236,7 +236,7 @@ public class DefaultOrdinalEra extends AbstractIdentifiedObject implements Ordin
 
     /**
      * Returns the temporal position at which the ordinal era ended.
-     * 
+     *
      * @return the temporal position at which the ordinal era ended.
      */
     @Override
@@ -247,7 +247,7 @@ public class DefaultOrdinalEra extends AbstractIdentifiedObject implements Ordin
 
     /**
      * Returns the {@linkplain OrdinalEra ordinal eras} that subdivide this ordinal era.
-     * 
+     *
      * @return the {@linkplain OrdinalEra ordinal eras} that subdivide this ordinal era.
      */
     @Override
@@ -255,19 +255,19 @@ public class DefaultOrdinalEra extends AbstractIdentifiedObject implements Ordin
     public Collection<OrdinalEra> getMember() {
         return member;
     }
-    
+
     /**
-     * Returns an alone {@link OrdinalEra} implementation witch regroup other {@link OrdinalEra}. 
-     * 
-     * @return an alone {@link OrdinalEra} implementation witch regroup other {@link OrdinalEra}. 
+     * Returns an alone {@link OrdinalEra} implementation witch regroup other {@link OrdinalEra}.
+     *
+     * @return an alone {@link OrdinalEra} implementation witch regroup other {@link OrdinalEra}.
      */
     public DefaultOrdinalEra getGroup() {
         return group;
     }
-    
+
     /**
      * Returns a {@link TemporalNode} create from {@link #begin} object, use for XML binding.
-     * 
+     *
      * @return a {@link TemporalNode} create from {@link #begin} object, use for XML binding.
      */
     @XmlElement(name = "start")
@@ -280,10 +280,10 @@ public class DefaultOrdinalEra extends AbstractIdentifiedObject implements Ordin
         final DefaultTemporalNode start = new DefaultTemporalNode(nodeProp, new DefaultInstant(instantProp, begin), null, null);
         return start;
     }
-    
+
     /**
      * Returns a {@link TemporalNode} create from {@link #end} object, use for XML binding.
-     * 
+     *
      * @return a {@link TemporalNode} create from {@link #end} object, use for XML binding.
      */
     @XmlElement(name = "end")
@@ -296,11 +296,11 @@ public class DefaultOrdinalEra extends AbstractIdentifiedObject implements Ordin
         final DefaultTemporalNode start = new DefaultTemporalNode(nodeProp, new DefaultInstant(instantProp, begin), null, null);
         return start;
     }
-    
+
     /**
      * Private method adapted for XML binding.
      * Return {@code null} because GML specification do not specify any things about "group".
-     * 
+     *
      * @return {@code null}.
      */
     @XmlElement(name = "group")
@@ -334,7 +334,7 @@ public class DefaultOrdinalEra extends AbstractIdentifiedObject implements Ordin
         public void setGroup(final DefaultOrdinalEra group) {
             this.group = group;
         }
-    
+
     /**
      * {@inheritDoc }
      */

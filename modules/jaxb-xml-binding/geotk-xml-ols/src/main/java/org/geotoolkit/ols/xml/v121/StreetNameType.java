@@ -27,17 +27,17 @@ import org.geotoolkit.gml.xml.v311.CompassPointEnumeration;
 
 /**
  * The data elements that make up the name of a street. There are two valid methods for encoding this information: 1). Use the structured elements and attributes. 2). The element value may contain a simplified string (e.g. West 83rd. Street).
- * An example:     
+ * An example:
  * <pre>
  * &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;Street xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml" xmlns:xls="http://www.opengis.net/xls" directionalPrefix="W" officialName="83RD" typeSuffix="ST"/&gt;
  * </pre>
- * 
- * 			
- * 
+ *
+ *
+ *
  * <p>Java class for StreetNameType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="StreetNameType">
  *   &lt;simpleContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.gml.xml.v311.CompassPointEnumeration;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "StreetNameType", propOrder = {
@@ -78,11 +78,11 @@ public class StreetNameType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValue() {
         return value;
@@ -90,11 +90,11 @@ public class StreetNameType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(String value) {
         this.value = value;
@@ -102,11 +102,11 @@ public class StreetNameType {
 
     /**
      * Gets the value of the directionalPrefix property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDirectionalPrefix() {
         return directionalPrefix;
@@ -114,11 +114,11 @@ public class StreetNameType {
 
     /**
      * Sets the value of the directionalPrefix property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDirectionalPrefix(String value) {
         this.directionalPrefix = value;
@@ -126,11 +126,11 @@ public class StreetNameType {
 
     /**
      * Gets the value of the typePrefix property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTypePrefix() {
         return typePrefix;
@@ -138,11 +138,11 @@ public class StreetNameType {
 
     /**
      * Sets the value of the typePrefix property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTypePrefix(String value) {
         this.typePrefix = value;
@@ -150,11 +150,11 @@ public class StreetNameType {
 
     /**
      * Gets the value of the officialName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOfficialName() {
         return officialName;
@@ -162,11 +162,11 @@ public class StreetNameType {
 
     /**
      * Sets the value of the officialName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOfficialName(String value) {
         this.officialName = value;
@@ -174,11 +174,11 @@ public class StreetNameType {
 
     /**
      * Gets the value of the typeSuffix property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTypeSuffix() {
         return typeSuffix;
@@ -186,11 +186,11 @@ public class StreetNameType {
 
     /**
      * Sets the value of the typeSuffix property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTypeSuffix(String value) {
         this.typeSuffix = value;
@@ -198,11 +198,11 @@ public class StreetNameType {
 
     /**
      * Gets the value of the directionalSuffix property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDirectionalSuffix() {
         return directionalSuffix;
@@ -210,11 +210,11 @@ public class StreetNameType {
 
     /**
      * Sets the value of the directionalSuffix property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDirectionalSuffix(String value) {
         this.directionalSuffix = value;
@@ -222,11 +222,11 @@ public class StreetNameType {
 
     /**
      * Gets the value of the muniOctant property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CompassPointEnumeration }
-     *     
+     *
      */
     public CompassPointEnumeration getMuniOctant() {
         return muniOctant;
@@ -234,11 +234,11 @@ public class StreetNameType {
 
     /**
      * Sets the value of the muniOctant property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CompassPointEnumeration }
-     *     
+     *
      */
     public void setMuniOctant(CompassPointEnumeration value) {
         this.muniOctant = value;

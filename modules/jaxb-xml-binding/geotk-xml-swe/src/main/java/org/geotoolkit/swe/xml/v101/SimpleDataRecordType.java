@@ -30,7 +30,7 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * Liste de valeur scalaire ou textuelle utilisé dans le resultat d'une observation.
- * 
+ *
  * @version $Id:
  * @author Guilhem Legal
  * @module
@@ -38,18 +38,18 @@ import org.apache.sis.util.ComparisonMode;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SimpleDataRecord")
 public class SimpleDataRecordType extends AbstractDataRecordType implements SimpleDataRecord {
-    
+
     /**
      * The datablock identifier containing this data record.
      */
     @XmlTransient
     private String blockId;
-    
+
     /**
      * Textual or scalar value List.
      */
     private List<AnyScalarPropertyType> field;
-   
+
     /**
      *  Constructor used by jaxB.
      */
@@ -65,8 +65,8 @@ public class SimpleDataRecordType extends AbstractDataRecordType implements Simp
         }
 
     }
-    
-    /** 
+
+    /**
      * Build a new Textual or scalar value List.
      */
     public SimpleDataRecordType(final String blockId, final String id, final String definition, final Boolean fixed,
@@ -197,7 +197,7 @@ public class SimpleDataRecordType extends AbstractDataRecordType implements Simp
         }
         return idHash + 37 * idBlockHash;
     }
-    
+
     /**
      * Return a String representation of the objet (debug).
      */
@@ -209,7 +209,7 @@ public class SimpleDataRecordType extends AbstractDataRecordType implements Simp
         appendTo(buffer, "", lineSeparator);
         return buffer.toString();
     }
-    
+
     /**
      * Ajoute la description des composants du dataBlock definition.
      */
@@ -225,6 +225,6 @@ public class SimpleDataRecordType extends AbstractDataRecordType implements Simp
             }
         }
     }
-    
-    
+
+
 }

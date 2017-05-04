@@ -38,14 +38,14 @@ import org.opengis.parameter.ParameterValueGroup;
  * <ul>
  *     <li>FILE_OUT "folder" resulting temp folder</li>
  * </ul>
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public final class CreateTempFolderDescriptor extends AbstractProcessDescriptor {
 
     /**
-     * Process name : createTempFolder 
+     * Process name : createTempFolder
      */
     public static final String NAME = "io:createTempFolder";
 
@@ -57,9 +57,9 @@ public final class CreateTempFolderDescriptor extends AbstractProcessDescriptor 
             .setRemarks("The folder prefix")
             .setRequired(false)
             .create(String.class, "temp");
-            
-    /** 
-     * Input Parameters 
+
+    /**
+     * Input Parameters
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(PREFIX_IN);
@@ -72,13 +72,13 @@ public final class CreateTempFolderDescriptor extends AbstractProcessDescriptor 
             .setRemarks("Created temp folder")
             .setRequired(true)
             .create(URL.class, null);
-    
-    /** 
-     * Output Parameters 
+
+    /**
+     * Output Parameters
      */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(FILE_OUT);
-    
+
     public static final ProcessDescriptor INSTANCE = new CreateTempFolderDescriptor();
 
     private CreateTempFolderDescriptor() {

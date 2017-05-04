@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
- * 
+ *
+ *
  *  @author Guilhem Legal
  * @module
  */
@@ -56,7 +56,7 @@ public class FeatureListURL {
         this.format         = format;
         this.onlineResource = onlineResource;
     }
-    
+
     /**
      * Gets the value of the format property.
      */
@@ -66,7 +66,7 @@ public class FeatureListURL {
 
     /**
      * Gets the value of the onlineResource property.
-     * 
+     *
      */
     public OnlineResource getOnlineResource() {
         return onlineResource;

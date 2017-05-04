@@ -81,7 +81,7 @@ public final class EditionHandler implements CanvasHandler, MouseInputListener,K
 
     ////////////////////////////////////////////////////////////////////////////
     //forward events to the delegate ///////////////////////////////////////////
-    
+
     @Override
     public void mouseClicked(final MouseEvent e) {
         //handle grid and geometry snapping
@@ -130,7 +130,7 @@ public final class EditionHandler implements CanvasHandler, MouseInputListener,K
         //handle grid and geometry snapping
         delegate.mouseWheelMoved(e);
     }
-        
+
     @Override
     public void keyTyped(final KeyEvent e) {
         delegate.keyTyped(e);

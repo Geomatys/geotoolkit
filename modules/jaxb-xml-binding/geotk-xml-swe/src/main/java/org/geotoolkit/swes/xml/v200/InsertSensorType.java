@@ -35,9 +35,9 @@ import org.opengis.observation.Observation;
 
 /**
  * <p>Java class for InsertSensorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InsertSensorType">
  *   &lt;complexContent>
@@ -83,8 +83,8 @@ import org.opengis.observation.Observation;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InsertSensorType", propOrder = {
@@ -108,9 +108,9 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
     private List<InsertSensorType.Metadata> metadata;
 
     public InsertSensorType() {
-        
+
     }
-    
+
     public InsertSensorType(final String version, final Object sensorDescription, final String procedureDescriptionFormat) {
         super(version, "SOS");
         if (sensorDescription != null) {
@@ -118,14 +118,14 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
         }
         this.procedureDescriptionFormat = procedureDescriptionFormat;
     }
-    
+
     /**
      * Gets the value of the procedureDescriptionFormat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getProcedureDescriptionFormat() {
@@ -134,11 +134,11 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
 
     /**
      * Sets the value of the procedureDescriptionFormat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setProcedureDescriptionFormat(String value) {
         this.procedureDescriptionFormat = value;
@@ -146,11 +146,11 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
 
     /**
      * Gets the value of the procedureDescription property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link InsertSensorType.ProcedureDescription }
-     *     
+     *
      */
     public ProcedureDescription getProcedureDescription() {
         return procedureDescription;
@@ -163,14 +163,14 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
         }
         return null;
     }
-    
+
     /**
      * Sets the value of the procedureDescription property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link InsertSensorType.ProcedureDescription }
-     *     
+     *
      */
     public void setProcedureDescription(ProcedureDescription value) {
         this.procedureDescription = value;
@@ -178,10 +178,10 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
 
     /**
      * Gets the value of the observableProperty property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getObservableProperty() {
         if (observableProperty == null) {
@@ -192,10 +192,10 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
 
     /**
      * Gets the value of the relatedFeature property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link InsertSensorType.RelatedFeature }
-     * 
+     *
      */
     public List<InsertSensorType.RelatedFeature> getRelatedFeature() {
         if (relatedFeature == null) {
@@ -206,7 +206,7 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
 
     /**
      * Gets the value of the metadata property.
-     * 
+     *
      */
     public List<InsertSensorType.Metadata> getMetadata() {
         if (metadata == null) {
@@ -214,7 +214,7 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
         }
         return this.metadata;
     }
-    
+
     @Override
     public InsertionMetadataType getInsertionMetadata() {
         if (metadata != null && !metadata.isEmpty()) {
@@ -234,15 +234,15 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
     public static class ObservationTemplateType implements ObservationTemplate {
 
         private String name;
-        
+
         private String procedure;
-        
+
         private List<String> observableProperty;
-        
+
         public ObservationTemplateType(final List<String> properties) {
             this.observableProperty = properties;
         }
-        
+
         @Override
         public String getProcedure() {
             return procedure;
@@ -306,14 +306,14 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
             }
             return results;
         }
-        
+
     }
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -325,8 +325,8 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -343,15 +343,15 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
             }
             return null;
         }
-        
+
         /**
          * Gets the value of the insertionMetadata property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link JAXBElement }{@code <}{@link SosInsertionMetadataType }{@code >}
          *     {@link JAXBElement }{@code <}{@link InsertionMetadataType }{@code >}
-         *     
+         *
          */
         public JAXBElement<? extends InsertionMetadataType> getJbInsertionMetadata() {
             return insertionMetadata;
@@ -359,12 +359,12 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
 
         /**
          * Sets the value of the insertionMetadata property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link JAXBElement }{@code <}{@link SosInsertionMetadataType }{@code >}
          *     {@link JAXBElement }{@code <}{@link InsertionMetadataType }{@code >}
-         *     
+         *
          */
         public void setInsertionMetadata(JAXBElement<? extends InsertionMetadataType> value) {
             this.insertionMetadata = ((JAXBElement<? extends InsertionMetadataType> ) value);
@@ -374,9 +374,9 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -388,8 +388,8 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -402,11 +402,11 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
 
         /**
          * Gets the value of the featureRelationship property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link FeatureRelationshipType }
-         *     
+         *
          */
         public FeatureRelationshipType getFeatureRelationship() {
             return featureRelationship;
@@ -414,11 +414,11 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
 
         /**
          * Sets the value of the featureRelationship property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link FeatureRelationshipType }
-         *     
+         *
          */
         public void setFeatureRelationship(FeatureRelationshipType value) {
             this.featureRelationship = value;

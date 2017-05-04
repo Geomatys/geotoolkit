@@ -24,13 +24,13 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Represents a coordinate tuple in one, two, or three dimensions. Deprecated with GML 3.0 and replaced by 
- * 			DirectPositionType.
- * 
+ * Represents a coordinate tuple in one, two, or three dimensions. Deprecated with GML 3.0 and replaced by
+ *          DirectPositionType.
+ *
  * <p>Java class for CoordType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoordType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,11 +65,11 @@ public class CoordType {
 
     /**
      * Gets the value of the x property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getX() {
         return x;
@@ -77,11 +77,11 @@ public class CoordType {
 
     /**
      * Sets the value of the x property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setX(final BigDecimal value) {
         this.x = value;
@@ -89,11 +89,11 @@ public class CoordType {
 
     /**
      * Gets the value of the y property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getY() {
         return y;
@@ -101,11 +101,11 @@ public class CoordType {
 
     /**
      * Sets the value of the y property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setY(final BigDecimal value) {
         this.y = value;
@@ -113,11 +113,11 @@ public class CoordType {
 
     /**
      * Gets the value of the z property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getZ() {
         return z;
@@ -125,11 +125,11 @@ public class CoordType {
 
     /**
      * Sets the value of the z property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setZ(final BigDecimal value) {
         this.z = value;

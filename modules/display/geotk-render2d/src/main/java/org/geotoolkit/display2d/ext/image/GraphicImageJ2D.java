@@ -52,10 +52,10 @@ public class GraphicImageJ2D extends PositionedGraphic2D{
     public Envelope getEnvelope() {
         return null;
     }
-    
+
     @Override
     protected void paint(final RenderingContext2D context, final int position, final int[] offset) {
-        
+
         final Graphics2D g = context.getGraphics();
         context.switchToDisplayCRS();
 
@@ -73,7 +73,7 @@ public class GraphicImageJ2D extends PositionedGraphic2D{
                 x = (bounds.width - imgWidth) / 2 + offset[0];
                 y = offset[1];
                 break;
-            case NORTH_EAST : 
+            case NORTH_EAST :
                 x = (bounds.width - imgWidth)  - offset[0];
                 y = offset[1];
                 break;

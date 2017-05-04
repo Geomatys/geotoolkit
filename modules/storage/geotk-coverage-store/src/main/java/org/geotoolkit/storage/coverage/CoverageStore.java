@@ -142,5 +142,5 @@ public interface CoverageStore {
     public abstract void removeStorageListener(StorageListener listener);
 
     void close() throws DataStoreException;
-    
+
 }

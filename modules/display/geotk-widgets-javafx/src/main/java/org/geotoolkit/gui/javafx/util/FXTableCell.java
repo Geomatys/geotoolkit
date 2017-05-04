@@ -38,7 +38,7 @@ public class FXTableCell<S,T> extends TableCell<S,T>{
         }
     };
     private final WeakChangeListener weak = new WeakChangeListener(terminateCellListener);
-    
+
     public FXTableCell() {
         tableViewProperty().addListener(new ChangeListener<TableView<S>>() {
             @Override
@@ -53,9 +53,9 @@ public class FXTableCell<S,T> extends TableCell<S,T>{
         }
         );
     }
-    
+
     public void terminateEdit(){
-        
+
     }
-    
+
 }

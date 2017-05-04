@@ -29,19 +29,19 @@ import org.opengis.feature.FeatureType;
 public class JDBCFeatureWriterUpdateInsert extends JDBCFeatureWriterUpdate {
 
     JDBCFeatureWriterInsert inserter;
-    
-    public JDBCFeatureWriterUpdateInsert(final DefaultJDBCFeatureStore store, final String sql, 
+
+    public JDBCFeatureWriterUpdateInsert(final DefaultJDBCFeatureStore store, final String sql,
             final FeatureType type, Connection cnx, boolean release, final Hints hints)
-            throws SQLException, IOException,DataStoreException {        
+            throws SQLException, IOException,DataStoreException {
         super(store, sql, type, cnx, release, hints);
     }
-    
+
     @Override
     public boolean hasNext() throws FeatureStoreRuntimeException {
         if ( inserter != null ) {
             return inserter.hasNext();
         }
-        
+
         //check parent
         boolean hasNext = super.hasNext();
         if ( !hasNext ) {
@@ -53,7 +53,7 @@ public class JDBCFeatureWriterUpdateInsert extends JDBCFeatureWriterUpdate {
             }
             return inserter.hasNext();
         }
-    
+
         return hasNext;
     }
 
@@ -62,30 +62,30 @@ public class JDBCFeatureWriterUpdateInsert extends JDBCFeatureWriterUpdate {
         if ( inserter != null ) {
             return inserter.next();
         }
-        
+
         return super.next();
     }
-    
+
     @Override
     public void remove() throws FeatureStoreRuntimeException {
         if ( inserter != null ) {
             inserter.remove();
             return;
         }
-        
+
         super.remove();
     }
-    
+
     @Override
     public void write() throws FeatureStoreRuntimeException {
         if ( inserter != null ) {
             inserter.write();
             return;
         }
-        
+
         super.write();
     }
-    
+
     @Override
     public void close() throws FeatureStoreRuntimeException {
         if(inserter!= null) {
@@ -94,5 +94,5 @@ public class JDBCFeatureWriterUpdateInsert extends JDBCFeatureWriterUpdate {
         }
         super.close();
     }
-    
+
 }

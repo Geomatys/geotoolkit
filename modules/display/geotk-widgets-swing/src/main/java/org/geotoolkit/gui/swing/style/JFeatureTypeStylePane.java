@@ -41,16 +41,16 @@ import org.opengis.style.SemanticType;
  * @module
  */
 public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureTypeStyle>{
-    
+
     private MapLayer layer = null;
     private MutableFeatureTypeStyle fts = null;
-    
+
     /** Creates new form JRulePanel */
     public JFeatureTypeStylePane() {
         super(MutableFeatureTypeStyle.class);
         initComponents();
     }
-        
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -226,8 +226,8 @@ public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureType
     private void jtf_titleActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_jtf_titleActionPerformed
 //        fts.setTitle(guiTitle.getText());
 }//GEN-LAST:event_jtf_titleActionPerformed
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JTextField guiftn;
     private JLabel jLabel1;
@@ -264,16 +264,16 @@ public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureType
             jtf_name.setText(fts.getName());
             jtf_title.setText(fts.getDescription().getTitle().toString());
             jtf_abstract.setText(fts.getDescription().getAbstract().toString());
-                        
+
             jck_any.setSelected( fts.semanticTypeIdentifiers().contains(SemanticType.ANY) );
             jck_point.setSelected( fts.semanticTypeIdentifiers().contains(SemanticType.POINT) );
             jck_line.setSelected( fts.semanticTypeIdentifiers().contains(SemanticType.LINE) );
             jck_polygon.setSelected( fts.semanticTypeIdentifiers().contains(SemanticType.POLYGON) );
             jck_text.setSelected( fts.semanticTypeIdentifiers().contains(SemanticType.TEXT) );
             jck_raster.setSelected( fts.semanticTypeIdentifiers().contains(SemanticType.RASTER) );
-            
+
         }
-        
+
     }
 
     @Override
@@ -281,12 +281,12 @@ public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureType
         if(fts == null){
             fts = getStyleFactory().featureTypeStyle();
         }
-        
+
         fts.setName(jtf_name.getText());
         fts.setDescription(getStyleFactory().description(
-                jtf_title.getText(), 
+                jtf_title.getText(),
                 jtf_abstract.getText()));
-        
+
         fts.semanticTypeIdentifiers().clear();
         if(jck_any.isSelected()) fts.semanticTypeIdentifiers().add(SemanticType.ANY);
         if(jck_point.isSelected()) fts.semanticTypeIdentifiers().add(SemanticType.POINT);
@@ -294,18 +294,18 @@ public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureType
         if(jck_polygon.isSelected()) fts.semanticTypeIdentifiers().add(SemanticType.POLYGON);
         if(jck_text.isSelected()) fts.semanticTypeIdentifiers().add(SemanticType.TEXT);
         if(jck_raster.isSelected()) fts.semanticTypeIdentifiers().add(SemanticType.RASTER);
-        
+
         return fts;
     }
-    
+
     @Override
     public void apply() {
         create();
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
 }

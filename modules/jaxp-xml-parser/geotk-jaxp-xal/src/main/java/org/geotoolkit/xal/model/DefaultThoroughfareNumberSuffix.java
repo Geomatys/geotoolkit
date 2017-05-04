@@ -28,7 +28,7 @@ public class DefaultThoroughfareNumberSuffix extends DefaultGenericTypedGrPostal
     public DefaultThoroughfareNumberSuffix(){}
 
     /**
-     * 
+     *
      * @param numberSuffixSeparator
      * @param type
      * @param grPostal

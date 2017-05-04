@@ -31,7 +31,7 @@ public class FXNumberCell<S> extends FXTableCell<S, Number> {
 
     private final DecimalFormat df = new DecimalFormat("#.###");
     protected final FXNumberSpinner field = new FXNumberSpinner();
-    
+
     public FXNumberCell(Class clazz) {
         if(clazz==Integer.class){
             field.getSpinner().setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 1));
@@ -116,7 +116,7 @@ public class FXNumberCell<S> extends FXTableCell<S, Number> {
             setText(null);
         }
     }
-    
+
     public static class Float<T> extends FXNumberCell<T> {
 
         public Float() {

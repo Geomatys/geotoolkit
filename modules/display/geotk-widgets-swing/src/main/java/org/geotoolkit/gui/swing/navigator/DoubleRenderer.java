@@ -137,5 +137,5 @@ public class DoubleRenderer implements NavigatorRenderer{
     private int toVal(){
         return 0;
     }
-    
+
 }

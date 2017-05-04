@@ -28,9 +28,9 @@ import org.geotoolkit.se.xml.v110.OnlineResourceType;
 
 /**
  * <p>Java class for LayerDescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LayerDescriptionType">
  *   &lt;complexContent>
@@ -44,7 +44,7 @@ import org.geotoolkit.se.xml.v110.OnlineResourceType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -67,10 +67,10 @@ public class LayerDescriptionType {
      * An empty Constructor used by jaxB
      */
     LayerDescriptionType() {}
-    
+
     /**
      * Build a new LayerDescriptionType
-     * 
+     *
      */
     public LayerDescriptionType(final OnlineResourceType onlineResource, final TypeNameType... typeNames) {
         this.onlineResource = onlineResource;
@@ -78,7 +78,7 @@ public class LayerDescriptionType {
             this.typeName.add(element);
         }
     }
-    
+
     /**
      * Gets the value of the owsType property.
      */

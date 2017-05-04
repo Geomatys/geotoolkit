@@ -45,10 +45,10 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  */
 public class GenericQueryFeatureIterator {
-    
-    
+
+
     public static FeatureReader wrap(FeatureReader reader, final Query remainingParameters) throws DataStoreException{
-        
+
         final Integer start = remainingParameters.getStartIndex();
         final Integer max = remainingParameters.getMaxFeatures();
         final Filter filter = remainingParameters.getFilter();
@@ -89,7 +89,7 @@ public class GenericQueryFeatureIterator {
         if(start != null && start > 0){
             reader = GenericStartIndexFeatureIterator.wrap(reader, start);
         }
-        
+
         //wrap max -------------------------------------------------------------
         if(max != null){
             if(max == 0){
@@ -112,7 +112,7 @@ public class GenericQueryFeatureIterator {
                 throw new DataStoreException(ex);
             }
         }
-        
+
         //wrap resampling ------------------------------------------------------
         if(resampling != null){
             final GeometryScaleTransformer trs = new GeometryScaleTransformer(resampling[0], resampling[1]);
@@ -131,12 +131,12 @@ public class GenericQueryFeatureIterator {
 
         return reader;
     }
-    
+
     public static FeatureCollection wrap(final FeatureCollection col, final Query query){
         return new AbstractFeatureCollection("wrap", col.getSource()) {
-            
+
             private FeatureType type = null;
-            
+
             @Override
             public FeatureType getFeatureType() {
                 if(type==null){
@@ -146,7 +146,7 @@ public class GenericQueryFeatureIterator {
                 }
                 return type;
             }
-            
+
             @Override
             public FeatureReader iterator(Hints hints) throws FeatureStoreRuntimeException {
                 final FeatureReader ite = (FeatureReader) col.iterator();
@@ -156,17 +156,17 @@ public class GenericQueryFeatureIterator {
                     throw new FeatureStoreRuntimeException(ex);
                 }
             }
-            
+
             @Override
             public void update(Filter filter, Map values) throws DataStoreException {
                 throw new DataStoreException("Not supported.");
             }
-            
+
             @Override
             public void remove(Filter filter) throws DataStoreException {
                 throw new DataStoreException("Not supported.");
             }
         };
     }
-    
+
 }

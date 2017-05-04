@@ -32,9 +32,9 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
 
 /**
  * <p>Java class for GetObservationByIdType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetObservationByIdType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetObservationByIdType", propOrder = {
@@ -61,30 +61,30 @@ public class GetObservationByIdType extends ExtensibleRequestType implements Get
     private List<String> observation;
 
     public GetObservationByIdType() {
-        
+
     }
-    
+
     public GetObservationByIdType(final String version, final List<String> observation) {
         super(version, "SOS");
         this.observation = observation;
     }
-    
+
     public GetObservationByIdType(final String version, final String service, final List<String> observation) {
         super(version, service);
         this.observation = observation;
     }
-    
+
     public GetObservationByIdType(final String version, final String service, final List<String> observation, final List<Object> extension) {
         super(version, service, extension);
         this.observation = observation;
     }
-    
+
     /**
      * Gets the value of the observation property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     @Override
     public List<String> getObservation() {

@@ -22,12 +22,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Position error estimate (or accuracy) data. 
- * 
+ * Position error estimate (or accuracy) data.
+ *
  * <p>Java class for AbstractPositionalAccuracyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractPositionalAccuracyType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,7 +58,7 @@ public abstract class AbstractPositionalAccuracyType {
 
     /**
      * Gets the value of the measureDescription property.
-     * 
+     *
      */
     public CodeType getMeasureDescription() {
         return measureDescription;
@@ -66,7 +66,7 @@ public abstract class AbstractPositionalAccuracyType {
 
     /**
      * Sets the value of the measureDescription property.
-     * 
+     *
     */
     public void setMeasureDescription(final CodeType value) {
         this.measureDescription = value;

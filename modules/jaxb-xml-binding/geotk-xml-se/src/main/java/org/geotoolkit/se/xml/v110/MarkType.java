@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for MarkType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MarkType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,11 +84,11 @@ public class MarkType {
 
     /**
      * Gets the value of the wellKnownName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getWellKnownName() {
         return wellKnownName;
@@ -96,11 +96,11 @@ public class MarkType {
 
     /**
      * Sets the value of the wellKnownName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setWellKnownName(final String value) {
         this.wellKnownName = value;
@@ -108,11 +108,11 @@ public class MarkType {
 
     /**
      * Gets the value of the onlineResource property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OnlineResourceType }
-     *     
+     *
      */
     public OnlineResourceType getOnlineResource() {
         return onlineResource;
@@ -120,11 +120,11 @@ public class MarkType {
 
     /**
      * Sets the value of the onlineResource property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OnlineResourceType }
-     *     
+     *
      */
     public void setOnlineResource(final OnlineResourceType value) {
         this.onlineResource = value;
@@ -132,11 +132,11 @@ public class MarkType {
 
     /**
      * Gets the value of the inlineContent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link InlineContentType }
-     *     
+     *
      */
     public InlineContentType getInlineContent() {
         return inlineContent;
@@ -144,11 +144,11 @@ public class MarkType {
 
     /**
      * Sets the value of the inlineContent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link InlineContentType }
-     *     
+     *
      */
     public void setInlineContent(final InlineContentType value) {
         this.inlineContent = value;
@@ -156,11 +156,11 @@ public class MarkType {
 
     /**
      * Gets the value of the format property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFormat() {
         return format;
@@ -168,11 +168,11 @@ public class MarkType {
 
     /**
      * Sets the value of the format property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFormat(final String value) {
         this.format = value;
@@ -180,11 +180,11 @@ public class MarkType {
 
     /**
      * Gets the value of the markIndex property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getMarkIndex() {
         return markIndex;
@@ -192,11 +192,11 @@ public class MarkType {
 
     /**
      * Sets the value of the markIndex property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setMarkIndex(final BigInteger value) {
         this.markIndex = value;
@@ -204,11 +204,11 @@ public class MarkType {
 
     /**
      * Gets the value of the fill property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FillType }
-     *     
+     *
      */
     public FillType getFill() {
         return fill;
@@ -216,11 +216,11 @@ public class MarkType {
 
     /**
      * Sets the value of the fill property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FillType }
-     *     
+     *
      */
     public void setFill(final FillType value) {
         this.fill = value;
@@ -228,11 +228,11 @@ public class MarkType {
 
     /**
      * Gets the value of the stroke property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StrokeType }
-     *     
+     *
      */
     public StrokeType getStroke() {
         return stroke;
@@ -240,11 +240,11 @@ public class MarkType {
 
     /**
      * Sets the value of the stroke property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StrokeType }
-     *     
+     *
      */
     public void setStroke(final StrokeType value) {
         this.stroke = value;

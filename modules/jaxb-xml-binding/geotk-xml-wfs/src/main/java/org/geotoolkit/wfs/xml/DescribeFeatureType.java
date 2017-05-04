@@ -24,11 +24,11 @@ import javax.xml.namespace.QName;
  * @author Guilhem Legal (Geomatys)
  */
 public interface DescribeFeatureType extends BaseRequest {
- 
+
     List<QName> getTypeName();
-    
+
     String getOutputFormat();
-    
+
     void setOutputFormat(final String value);
-    
+
 }

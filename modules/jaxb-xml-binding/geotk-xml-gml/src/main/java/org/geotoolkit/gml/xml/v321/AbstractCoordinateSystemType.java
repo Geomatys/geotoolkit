@@ -31,9 +31,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AbstractCoordinateSystemType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractCoordinateSystemType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
@@ -76,12 +76,12 @@ public abstract class AbstractCoordinateSystemType extends IdentifiedObjectType 
 
     /**
      * Gets the value of the axis property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link CoordinateSystemAxisPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link CoordinateSystemAxisPropertyType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<CoordinateSystemAxisPropertyType>> getAxis() {
         if (axis == null) {
@@ -92,11 +92,11 @@ public abstract class AbstractCoordinateSystemType extends IdentifiedObjectType 
 
     /**
      * Gets the value of the aggregationType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public AggregationType getAggregationType() {
         return aggregationType;
@@ -104,11 +104,11 @@ public abstract class AbstractCoordinateSystemType extends IdentifiedObjectType 
 
     /**
      * Sets the value of the aggregationType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public void setAggregationType(AggregationType value) {
         this.aggregationType = value;

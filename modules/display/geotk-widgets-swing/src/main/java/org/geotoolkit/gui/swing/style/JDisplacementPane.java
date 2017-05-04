@@ -40,8 +40,8 @@ public class JDisplacementPane extends StyleElementEditor<Displacement>{
 
     private MapLayer layer = null;
 
-    /** 
-     * Creates new form JDisplacementPanel 
+    /**
+     * Creates new form JDisplacementPanel
      */
     public JDisplacementPane() {
         super(Displacement.class);
@@ -89,7 +89,7 @@ public class JDisplacementPane extends StyleElementEditor<Displacement>{
     @Override
     public Displacement create(){
         return getStyleFactory().displacement(
-                guiX.create(), 
+                guiX.create(),
                 guiY.create());
     }
 
@@ -163,7 +163,7 @@ public class JDisplacementPane extends StyleElementEditor<Displacement>{
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
         // TODO add your handling code here:
-        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());
             parse(create());
         }

@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -38,35 +38,35 @@ import org.opengis.feature.catalog.Binding;
 public class BindingImpl extends AbstractMetadata implements Binding {
 
     private String description;
-    
+
     /**
      * An empty constructor used by JAXB
      */
     public BindingImpl() {
-        
+
     }
-    
+
     /**
      * Clone a Binding
      */
     public BindingImpl(final Binding feature) {
         if (feature != null)
             this.description = feature.getDescription();
-        
+
     }
     public String getDescription() {
         return description;
     }
-    
+
     public void setDescription(final String description) {
         this.description = description;
     }
-    
+
     @Override
     public String toString() {
-        return "[Binding]: description: " + description;  
+        return "[Binding]: description: " + description;
     }
-    
+
      /**
      * Verify if this entry is identical to the specified object.
      */
@@ -77,7 +77,7 @@ public class BindingImpl extends AbstractMetadata implements Binding {
         }
         if (object instanceof BindingImpl) {
             final BindingImpl that = (BindingImpl) object;
-            
+
             return Objects.equals(this.description, that.description);
         }
         return false;

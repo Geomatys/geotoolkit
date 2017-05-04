@@ -34,7 +34,7 @@ package org.geotoolkit.xal.model;
 public interface MailStopNumber {
 
     /**
-     * 
+     *
      * @return
      */
     String getContent();
@@ -65,7 +65,7 @@ public interface MailStopNumber {
     void setNameNumberSeparator(String nameNumberSeparator);
 
     /**
-     * 
+     *
      * @param grPostal
      */
     void setGrPostal(GrPostal grPostal);

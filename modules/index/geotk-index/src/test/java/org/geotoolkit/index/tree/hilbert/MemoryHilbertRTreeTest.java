@@ -30,7 +30,7 @@ abstract class MemoryHilbertRTreeTest extends HilbertTest {
 
     /**
      * Create a generic HilbertRTree Test suite, stored in memory,  with {@link CoordinateReferenceSystem} define by user.
-     * 
+     *
      * @param crs
      * @throws StoreIndexException should never thrown.
      * @throws IOException should never thrown.

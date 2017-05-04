@@ -31,7 +31,7 @@ import java.util.TimeZone;
 public abstract class AbstractVersionHistory implements VersionHistory {
 
     private static final TimeZone GMT0 = TimeZone.getTimeZone("GMT+0");
-    
+
     @Override
     public Version getVersion(String label) throws VersioningException {
         for(Version v : list()){
@@ -46,12 +46,12 @@ public abstract class AbstractVersionHistory implements VersionHistory {
     public Version getVersion(Date date) throws VersioningException {
         final List<Version> lst = list();
         Collections.sort(lst, new VersionComparator());
-        
+
         //ensure date in GMT0
         final Calendar vCal = new GregorianCalendar(GMT0);
         final Calendar rCal = new GregorianCalendar(GMT0);
         rCal.setTime(date);
-        
+
         for(Version v : lst){
             vCal.setTime(v.getDate());
             //if requested date is after version date
@@ -63,7 +63,7 @@ public abstract class AbstractVersionHistory implements VersionHistory {
         //this is not exact, yet versioning might have started a very long time afeter initial data creation.
         return lst.isEmpty() ? null : lst.get(0);
     }
-  
+
     /**
      * Comparator to sort Version list in reverted chronological order.
      */

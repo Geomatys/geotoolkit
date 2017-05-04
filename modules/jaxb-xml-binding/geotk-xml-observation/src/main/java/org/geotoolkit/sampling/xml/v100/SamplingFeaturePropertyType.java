@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for SamplingFeaturePropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SamplingFeaturePropertyType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -78,7 +78,7 @@ public class SamplingFeaturePropertyType {
 
     /**
      * Gets the value of the samplingFeature property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link SamplingSolidType }{@code >}
@@ -90,7 +90,7 @@ public class SamplingFeaturePropertyType {
      *     {@link JAXBElement }{@code <}{@link SamplingFeatureType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SamplingFeatureCollectionType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SamplingPointType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends SamplingFeatureType> getSamplingFeature() {
         return samplingFeature;
@@ -98,7 +98,7 @@ public class SamplingFeaturePropertyType {
 
     /**
      * Sets the value of the samplingFeature property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link SamplingSolidType }{@code >}
@@ -110,7 +110,7 @@ public class SamplingFeaturePropertyType {
      *     {@link JAXBElement }{@code <}{@link SamplingFeatureType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SamplingFeatureCollectionType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SamplingPointType }{@code >}
-     *     
+     *
      */
     public void setSamplingFeature(final JAXBElement<? extends SamplingFeatureType> value) {
         this.samplingFeature = ((JAXBElement<? extends SamplingFeatureType> ) value);
@@ -118,11 +118,11 @@ public class SamplingFeaturePropertyType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -130,11 +130,11 @@ public class SamplingFeaturePropertyType {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -142,11 +142,11 @@ public class SamplingFeaturePropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -158,11 +158,11 @@ public class SamplingFeaturePropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -170,11 +170,11 @@ public class SamplingFeaturePropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -182,11 +182,11 @@ public class SamplingFeaturePropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -194,11 +194,11 @@ public class SamplingFeaturePropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -206,11 +206,11 @@ public class SamplingFeaturePropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -218,11 +218,11 @@ public class SamplingFeaturePropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -230,11 +230,11 @@ public class SamplingFeaturePropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -242,11 +242,11 @@ public class SamplingFeaturePropertyType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -254,11 +254,11 @@ public class SamplingFeaturePropertyType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -266,11 +266,11 @@ public class SamplingFeaturePropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -278,11 +278,11 @@ public class SamplingFeaturePropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -290,11 +290,11 @@ public class SamplingFeaturePropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -302,11 +302,11 @@ public class SamplingFeaturePropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;

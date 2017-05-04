@@ -33,7 +33,7 @@ public class FeatureStoreWritingDemo {
 
     public static void main(String[] args) throws  DataStoreException {
         Demos.init();
-        
+
         final GeometryFactory gf = new GeometryFactory();
 
 
@@ -113,11 +113,11 @@ public class FeatureStoreWritingDemo {
         feature.setPropertyValue("name","marcel");
         feature.setPropertyValue("length",125);
         feature.setPropertyValue("position",gf.createPoint(new Coordinate(-79, 2)));
-        
+
         col.add(feature);
 
         session.commit();
-        
+
         System.out.println(col);
 
 
@@ -137,5 +137,5 @@ public class FeatureStoreWritingDemo {
         System.out.println("Number of features = " + col.size());
 
     }
-    
+
 }

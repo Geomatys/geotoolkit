@@ -48,19 +48,19 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  */
 public class FXUserStyle extends FXStyleElementController<MutableStyle>{
-    
+
     private static final MenuItem DUMMY = new CustomMenuItem();
     static {
         DUMMY.setVisible(false);
     }
-    
+
     @FXML
     protected TreeTableView tree;
     @FXML
     protected BorderPane contentPane;
 
     private ObservableList<Object> menuItems;
-    
+
     //current style element editor
     private TreeItem editorPath;
     private FXStyleElementController editor = null;
@@ -71,7 +71,7 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
     @Override
     public void initialize() {
         super.initialize();
-        
+
         menuItems = FXCollections.observableArrayList();
         menuItems.add(new FXStyleTree.NewFTSAction());
         menuItems.add(new FXStyleTree.NewRuleAction());
@@ -85,7 +85,7 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
 
         FXUtilities.hideTableHeader(tree);
     }
-    
+
     @Override
     public Class<MutableStyle> getEditedClass() {
         return MutableStyle.class;
@@ -95,34 +95,34 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
     public MutableStyle newValue() {
         return getStyleFactory().style();
     }
-    
+
     @Override
     protected void updateEditor(MutableStyle styleElement) {
-        
+
         tree.setRoot(new FXStyleTree.StyleTreeItem(styleElement));
         //this will cause the column width to fit the view area
         tree.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
         tree.setPlaceholder(new Label(""));
 
         final TreeTableColumn col = new FXStyleTree.NameColumn();
-                
+
         final ContextMenu menu = new ContextMenu();
         tree.setContextMenu(menu);
-        tree.getColumns().add(col);                
+        tree.getColumns().add(col);
         tree.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         //dummy item to ensure showing will be called
         menu.getItems().add(DUMMY);
-                
+
         menu.setOnShowing(new EventHandler<WindowEvent>() {
             @Override
-            public void handle(WindowEvent event) {                
+            public void handle(WindowEvent event) {
                 //update menu items
                 final ObservableList items = menu.getItems();
                 items.clear();
                 items.add(DUMMY);
                 final List<TreeItem> selection = new ArrayList<>();
                 for(Object i : tree.getSelectionModel().getSelectedCells()){
-                    final TreeTablePosition ttp = (TreeTablePosition) i;                    
+                    final TreeTablePosition ttp = (TreeTablePosition) i;
                     final TreeItem ti = tree.getTreeItem(ttp.getRow());
                     if(ti!=null && !selection.contains(ti)) selection.add(ti);
                 }
@@ -135,12 +135,12 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
                         //special case, we don't want any separator at the start or end
                         //or 2 succesive separators
                         if(i==0 || i==n-1 || items.isEmpty()) continue;
-                        
+
                         if(items.get(items.size()-1) instanceof SeparatorMenuItem){
                             continue;
                         }
                         items.add((SeparatorMenuItem)candidate);
-                        
+
                     }else if(candidate instanceof MenuItem){
                         items.add((MenuItem)candidate);
                     }
@@ -159,12 +159,12 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
                 }
             }
         });
-                
+
         tree.getSelectionModel().getSelectedItems().addListener(new ListChangeListener() {
             @Override
-            public void onChanged(ListChangeListener.Change c) {                
+            public void onChanged(ListChangeListener.Change c) {
                 final TreeItem treeItem = (TreeItem) tree.getSelectionModel().getSelectedItem();
-                
+
 //                //we validate the previous edition pane
 //                if(!applying){
 //                    //we keep the same editor if we are currently applying changes
@@ -179,7 +179,7 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
                         if(editor != null){
                             editor.setLayer(getLayer());
                             editor.valueProperty().setValue(val);
-                            
+
                             //listen to editor change
                             editor.valueProperty().addListener(new ChangeListener() {
                                 @Override
@@ -193,8 +193,8 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
 //                }
             }
         });
-        
+
         FXUtilities.expandAll(tree.getRoot());
     }
-    
+
 }

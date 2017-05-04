@@ -20,7 +20,7 @@ import javax.vecmath.Vector3d;
 import java.util.List;
 
 /**
- * 
+ *
  * @author Thomas Rouby (Geomatys)
  */
 public final class BezierCurve {

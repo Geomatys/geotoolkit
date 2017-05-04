@@ -30,7 +30,7 @@ public enum Mode {
     LINEAR,
     COSINE,
     CUBIC;
-    
+
     public static Mode parse(String val){
         if("linear".equalsIgnoreCase(val)){
             return LINEAR;
@@ -41,5 +41,5 @@ public enum Mode {
         }
         return null;
     }
-    
+
 }

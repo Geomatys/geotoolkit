@@ -95,7 +95,7 @@ public class StyleEditor extends PropertyValueEditor implements ActionListener{
         if(value == null){
             value = new DefaultMutableStyle();
         }
-        
+
         final MapLayer layer = MapBuilder.createEmptyMapLayer();
         layer.setStyle((MutableStyle)value);
 
@@ -108,10 +108,10 @@ public class StyleEditor extends PropertyValueEditor implements ActionListener{
         editors.addPropertyPanel(MessageBundle.format("sld"),new JAdvancedStylePanel());
         editors.addPropertyPanel(MessageBundle.format("sld"),new JSLDImportExportPanel());
         editors.setTarget(layer);
-        
+
 
         final int res = JOptionDialog.show((Component)(e.getSource()),editors, JOptionPane.OK_CANCEL_OPTION);
-        
+
         if(JOptionPane.OK_OPTION == res){
             editors.apply();
             value = layer.getStyle();

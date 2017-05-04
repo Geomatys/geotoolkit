@@ -387,7 +387,7 @@ public class LandsatReader extends GridCoverageReader {
             gridCoverageBuilder.setRenderedImage(outImage);
             List<GridSampleDimension> sampleDimensions = getSampleDimensions(index);
             gridCoverageBuilder.setSampleDimensions(sampleDimensions.toArray(new GridSampleDimension[sampleDimensions.size()]));
-            
+
             return gridCoverageBuilder.build();
 
         } catch (Exception ex) {

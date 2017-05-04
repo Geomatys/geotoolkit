@@ -50,7 +50,7 @@ public class MoveGeometryTool extends AbstractEditionTool{
                 GeotkFX.getI18NString(MoveGeometryTool.class, "abstract"),
                 GeotkFX.ICON_MOVE);
         }
-    
+
         @Override
         public boolean canHandle(Object candidate) {
             if(candidate instanceof FeatureMapLayer){

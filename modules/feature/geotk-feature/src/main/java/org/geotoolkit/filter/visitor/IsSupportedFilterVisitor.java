@@ -252,7 +252,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
         return operators.getOperator( PropertyIsNil.NAME ) != null;
     }
-    
+
     @Override
     public Object visit( final BBOX filter, final Object extraData ) {
         final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
@@ -374,7 +374,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
         return operators.getOperator( Within.NAME ) != null;
     }
 
-    
+
     @Override
     public Object visit(After filter, Object extraData) {
         final TemporalCapabilities temporal = capabilities.getTemporalCapabilities();
@@ -528,7 +528,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
         return operators.getOperator( TOverlaps.NAME ) != null;
     }
-    
+
     @Override
     public Object visitNullFilter( final Object extraData ) {
         return false;

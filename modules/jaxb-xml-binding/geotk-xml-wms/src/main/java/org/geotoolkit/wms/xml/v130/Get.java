@@ -26,9 +26,9 @@ import org.geotoolkit.wms.xml.AbstractProtocol;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -40,7 +40,7 @@ import org.geotoolkit.wms.xml.AbstractProtocol;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -71,7 +71,7 @@ public class Get  implements AbstractProtocol {
     public Get(final OnlineResource onlineResource) {
         this.onlineResource = onlineResource;
     }
-    
+
     /**
      * Gets the value of the onlineResource property.
      */

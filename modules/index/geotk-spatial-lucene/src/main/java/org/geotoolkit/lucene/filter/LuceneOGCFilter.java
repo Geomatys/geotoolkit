@@ -235,7 +235,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
     public String toString(String s) {
         return "[LuceneOGCFilter] " + filter.toString();
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {

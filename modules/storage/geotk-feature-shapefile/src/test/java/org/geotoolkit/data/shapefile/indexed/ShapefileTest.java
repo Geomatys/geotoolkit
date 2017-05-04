@@ -44,7 +44,7 @@ public class ShapefileTest extends org.geotoolkit.data.shapefile.ShapefileTest {
         final File file = copyShapefiles(STATEPOP);
         final ShpFiles shpFiles = new ShpFiles(file.toURI().toURL());
         final AccessManager locker = shpFiles.createLocker();
-        
+
         ShapefileReader reader = locker.getSHPReader(false, false, true, null);
         ArrayList offsets = new ArrayList();
 

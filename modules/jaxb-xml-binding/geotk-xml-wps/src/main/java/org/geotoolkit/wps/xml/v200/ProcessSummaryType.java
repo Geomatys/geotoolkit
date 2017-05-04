@@ -31,16 +31,16 @@ import org.geotoolkit.wps.xml.ProcessSummary;
 
 
 /**
- * 
+ *
  * The process summary consists of descriptive elements at the process level,
  * the process profiles and the service-specific properties.
  * The process summary is not specific about process inputs and outputs.
- * 			
- * 
+ *
+ *
  * <p>Java class for ProcessSummaryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ProcessSummaryType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.wps.xml.ProcessSummary;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ProcessSummaryType")
@@ -67,9 +67,9 @@ public class ProcessSummaryType extends DescriptionType implements ProcessSummar
     protected String processModel;
 
     public ProcessSummaryType() {
-        
+
     }
-    
+
     public ProcessSummaryType(CodeType identifier, final List<LanguageStringType> title,  final List<LanguageStringType> _abstract,
             final List<KeywordsType> keywords, String processVersion) {
         super(identifier, title, _abstract, keywords);
@@ -78,11 +78,11 @@ public class ProcessSummaryType extends DescriptionType implements ProcessSummar
 
     /**
      * Gets the value of the jobControlOptions property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getJobControlOptions() {
         if (jobControlOptions == null) {
@@ -93,11 +93,11 @@ public class ProcessSummaryType extends DescriptionType implements ProcessSummar
 
     /**
      * Gets the value of the outputTransmission property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link DataTransmissionModeType }
-     * 
-     * 
+     *
+     *
      */
     public List<DataTransmissionModeType> getOutputTransmission() {
         if (outputTransmission == null) {
@@ -108,11 +108,11 @@ public class ProcessSummaryType extends DescriptionType implements ProcessSummar
 
     /**
      * Gets the value of the processVersion property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getProcessVersion() {
         return processVersion;
@@ -120,11 +120,11 @@ public class ProcessSummaryType extends DescriptionType implements ProcessSummar
 
     /**
      * Sets the value of the processVersion property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setProcessVersion(String value) {
         this.processVersion = value;
@@ -132,11 +132,11 @@ public class ProcessSummaryType extends DescriptionType implements ProcessSummar
 
     /**
      * Gets the value of the processModel property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getProcessModel() {
         if (processModel == null) {
@@ -148,11 +148,11 @@ public class ProcessSummaryType extends DescriptionType implements ProcessSummar
 
     /**
      * Sets the value of the processModel property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setProcessModel(String value) {
         this.processModel = value;

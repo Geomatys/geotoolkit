@@ -30,9 +30,9 @@ import org.opengis.filter.Filter;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -55,8 +55,8 @@ import org.opengis.filter.Filter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -76,7 +76,7 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.sos.xml
      * An empty constructor used by jaxB
      */
      GetResult(){}
-     
+
     /**
      * Build a new request GetResult.
      */
@@ -85,30 +85,30 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.sos.xml
        this.eventTime             = eventTime;
        this.observationTemplateId = observationTemplateId;
     }
-     
+
     @Override
     public String getOffering() {
         return null; // not in v1.0.0
     }
-    
+
     @Override
     public String getObservedProperty() {
         return null;  // not in v1.0.0
     }
-    
+
     @Override
     public List<String> getFeatureOfInterest() {
         return new ArrayList<>();  // not in v1.0.0
     }
-    
+
     @Override
     public Filter getSpatialFilter() {
         return null;  // not in v1.0.0
     }
-    
+
     /**
      * Gets the value of the observationTemplateId property.
-     * 
+     *
     */
     @Override
     public String getObservationTemplateId() {
@@ -117,7 +117,7 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.sos.xml
 
     /**
      * Gets the value of the eventTime property.
-     * (unmodifable) 
+     * (unmodifable)
      */
     public List<EventTime> getEventTime() {
         if (eventTime == null){
@@ -125,7 +125,7 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.sos.xml
         }
         return eventTime;
     }
-    
+
     @Override
     public List<Filter> getTemporalFilter() {
         if (eventTime != null) {
@@ -137,7 +137,7 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.sos.xml
         }
         return new ArrayList<>();
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -150,7 +150,7 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.sos.xml
             final GetResult that = (GetResult) object;
             return Objects.equals(this.eventTime, that.eventTime) &&
                    Objects.equals(this.observationTemplateId,   that.observationTemplateId);
-        } 
+        }
         return false;
     }
 
@@ -161,7 +161,7 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.sos.xml
         hash = 37 * hash + (this.eventTime != null ? this.eventTime.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[GetResult]").append('\n');
@@ -173,7 +173,7 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.sos.xml
         }
         return  s.toString();
     }
-    
+
     @Override
     public String getResponseFormat() {
         return "text/xml";

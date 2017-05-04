@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for GeocentricCRSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeocentricCRSType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeocentricCRSType", propOrder = {
@@ -64,11 +64,11 @@ public class GeocentricCRSType
 
     /**
      * Gets the value of the usesCartesianCS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CartesianCSPropertyType }
-     *     
+     *
      */
     public CartesianCSPropertyType getUsesCartesianCS() {
         return usesCartesianCS;
@@ -76,11 +76,11 @@ public class GeocentricCRSType
 
     /**
      * Sets the value of the usesCartesianCS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CartesianCSPropertyType }
-     *     
+     *
      */
     public void setUsesCartesianCS(CartesianCSPropertyType value) {
         this.usesCartesianCS = value;
@@ -88,11 +88,11 @@ public class GeocentricCRSType
 
     /**
      * Gets the value of the usesSphericalCS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SphericalCSPropertyType }
-     *     
+     *
      */
     public SphericalCSPropertyType getUsesSphericalCS() {
         return usesSphericalCS;
@@ -100,11 +100,11 @@ public class GeocentricCRSType
 
     /**
      * Sets the value of the usesSphericalCS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SphericalCSPropertyType }
-     *     
+     *
      */
     public void setUsesSphericalCS(SphericalCSPropertyType value) {
         this.usesSphericalCS = value;
@@ -112,11 +112,11 @@ public class GeocentricCRSType
 
     /**
      * Gets the value of the usesGeodeticDatum property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeodeticDatumPropertyType }
-     *     
+     *
      */
     public GeodeticDatumPropertyType getUsesGeodeticDatum() {
         return usesGeodeticDatum;
@@ -124,11 +124,11 @@ public class GeocentricCRSType
 
     /**
      * Sets the value of the usesGeodeticDatum property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeodeticDatumPropertyType }
-     *     
+     *
      */
     public void setUsesGeodeticDatum(GeodeticDatumPropertyType value) {
         this.usesGeodeticDatum = value;

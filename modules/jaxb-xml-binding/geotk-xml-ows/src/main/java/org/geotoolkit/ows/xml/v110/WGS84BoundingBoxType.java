@@ -24,12 +24,12 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 
 
 /**
- * This type is adapted from the general BoundingBoxType, with modified contents and documentation for use with the 2D WGS 84 coordinate reference system. 
- * 
+ * This type is adapted from the general BoundingBoxType, with modified contents and documentation for use with the 2D WGS 84 coordinate reference system.
+ *
  * <p>Java class for WGS84BoundingBoxType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="WGS84BoundingBoxType">
  *   &lt;complexContent>
@@ -44,29 +44,29 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WGS84BoundingBoxType")
 @XmlRootElement(name ="WGS84BoundingBox")
 public class WGS84BoundingBoxType extends BoundingBoxType {
-    
+
     WGS84BoundingBoxType(){
-        
+
     }
-    
+
     public WGS84BoundingBoxType(final double minx, final double miny, final double maxx, final double maxy){
         super(null, minx, miny, maxx, maxy);
     }
-    
+
     public WGS84BoundingBoxType(final String crsName, final double minx, final double miny, final double maxx, final double maxy){
         super(crsName, minx, miny, maxx, maxy);
     }
-    
+
     public WGS84BoundingBoxType(final GeographicBoundingBox inputGeoBox){
-        super(null, 
+        super(null,
              inputGeoBox.getWestBoundLongitude(),
              inputGeoBox.getSouthBoundLatitude(),
              inputGeoBox.getEastBoundLongitude(),

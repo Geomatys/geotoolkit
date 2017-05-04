@@ -31,9 +31,9 @@ import org.opengis.filter.capability.SpatialOperators;
 
 /**
  * <p>Java class for Spatial_OperatorsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Spatial_OperatorsType">
  *   &lt;complexContent>
@@ -55,8 +55,8 @@ import org.opengis.filter.capability.SpatialOperators;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Spatial_OperatorsType", propOrder = {
@@ -100,20 +100,20 @@ public class SpatialOperatorsType implements SpatialOperators {
 
     /**
      * Gets the value of the bboxOrEqualsOrDisjoint property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the bboxOrEqualsOrDisjoint property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getBBOXOrEqualsOrDisjoint().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Intersect }
@@ -127,8 +127,8 @@ public class SpatialOperatorsType implements SpatialOperators {
      * {@link Equals }
      * {@link Crosses }
      * {@link BBOX }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getBBOXOrEqualsOrDisjoint() {
         if (bboxOrEqualsOrDisjoint == null) {

@@ -21,7 +21,7 @@ package org.geotoolkit.xal.model;
  * @author Samuel Andrés
  * @module
  */
-public class DefaultThoroughfareNumber 
+public class DefaultThoroughfareNumber
         extends DefaultGenericTypedGrPostal
         implements ThoroughfareNumber {
 
@@ -31,7 +31,7 @@ public class DefaultThoroughfareNumber
     private AfterBeforeTypeNameEnum numberOccurrence;
 
     public DefaultThoroughfareNumber(){}
-    
+
     /**
      *
      * @param numberType

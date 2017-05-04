@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for MovingObjectStatusType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MovingObjectStatusType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MovingObjectStatusType", propOrder = {
@@ -89,11 +89,11 @@ public class MovingObjectStatusType
 
     /**
      * Gets the value of the position property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeometryPropertyType }
-     *     
+     *
      */
     public GeometryPropertyType getPosition() {
         return position;
@@ -101,11 +101,11 @@ public class MovingObjectStatusType
 
     /**
      * Sets the value of the position property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeometryPropertyType }
-     *     
+     *
      */
     public void setPosition(GeometryPropertyType value) {
         this.position = value;
@@ -113,11 +113,11 @@ public class MovingObjectStatusType
 
     /**
      * Gets the value of the pos property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     public DirectPositionType getPos() {
         return pos;
@@ -125,11 +125,11 @@ public class MovingObjectStatusType
 
     /**
      * Sets the value of the pos property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     public void setPos(DirectPositionType value) {
         this.pos = value;
@@ -137,11 +137,11 @@ public class MovingObjectStatusType
 
     /**
      * Gets the value of the locationName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getLocationName() {
         return locationName;
@@ -149,11 +149,11 @@ public class MovingObjectStatusType
 
     /**
      * Sets the value of the locationName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setLocationName(CodeType value) {
         this.locationName = value;
@@ -161,11 +161,11 @@ public class MovingObjectStatusType
 
     /**
      * Gets the value of the locationReference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getLocationReference() {
         return locationReference;
@@ -173,11 +173,11 @@ public class MovingObjectStatusType
 
     /**
      * Sets the value of the locationReference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setLocationReference(ReferenceType value) {
         this.locationReference = value;
@@ -185,12 +185,12 @@ public class MovingObjectStatusType
 
     /**
      * Gets the value of the location property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link LocationPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PriorityLocationPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends LocationPropertyType> getLocation() {
         return location;
@@ -198,12 +198,12 @@ public class MovingObjectStatusType
 
     /**
      * Sets the value of the location property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link LocationPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PriorityLocationPropertyType }{@code >}
-     *     
+     *
      */
     public void setLocation(JAXBElement<? extends LocationPropertyType> value) {
         this.location = ((JAXBElement<? extends LocationPropertyType> ) value);
@@ -211,11 +211,11 @@ public class MovingObjectStatusType
 
     /**
      * Gets the value of the speed property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public MeasureType getSpeed() {
         return speed;
@@ -223,11 +223,11 @@ public class MovingObjectStatusType
 
     /**
      * Sets the value of the speed property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public void setSpeed(MeasureType value) {
         this.speed = value;
@@ -235,11 +235,11 @@ public class MovingObjectStatusType
 
     /**
      * Gets the value of the bearing property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectionPropertyType }
-     *     
+     *
      */
     public DirectionPropertyType getBearing() {
         return bearing;
@@ -247,11 +247,11 @@ public class MovingObjectStatusType
 
     /**
      * Sets the value of the bearing property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectionPropertyType }
-     *     
+     *
      */
     public void setBearing(DirectionPropertyType value) {
         this.bearing = value;
@@ -259,11 +259,11 @@ public class MovingObjectStatusType
 
     /**
      * Gets the value of the acceleration property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public MeasureType getAcceleration() {
         return acceleration;
@@ -271,11 +271,11 @@ public class MovingObjectStatusType
 
     /**
      * Sets the value of the acceleration property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public void setAcceleration(MeasureType value) {
         this.acceleration = value;
@@ -283,11 +283,11 @@ public class MovingObjectStatusType
 
     /**
      * Gets the value of the elevation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public MeasureType getElevation() {
         return elevation;
@@ -295,11 +295,11 @@ public class MovingObjectStatusType
 
     /**
      * Sets the value of the elevation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public void setElevation(MeasureType value) {
         this.elevation = value;
@@ -307,11 +307,11 @@ public class MovingObjectStatusType
 
     /**
      * Gets the value of the status property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public StringOrRefType getStatus() {
         return status;
@@ -319,11 +319,11 @@ public class MovingObjectStatusType
 
     /**
      * Sets the value of the status property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public void setStatus(StringOrRefType value) {
         this.status = value;
@@ -331,11 +331,11 @@ public class MovingObjectStatusType
 
     /**
      * Gets the value of the statusReference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getStatusReference() {
         return statusReference;
@@ -343,11 +343,11 @@ public class MovingObjectStatusType
 
     /**
      * Sets the value of the statusReference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setStatusReference(ReferenceType value) {
         this.statusReference = value;

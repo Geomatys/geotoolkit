@@ -24,7 +24,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**
  * ColorChooser with alpha
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -35,14 +35,14 @@ public class JAlphaColorChooser extends javax.swing.JPanel {
         initComponents();
         setColor(c);
     }
-    
+
     public Color getColor(){
         Color c = this.guiColor.getColor();
         int alpha = guiOpacity.getValue();
         c = new Color(c.getRed(), c.getGreen(), c.getBlue(),alpha);
         return c;
     }
-    
+
     public void setColor(Color c){
         if(c == null){
             c = Color.WHITE;
@@ -108,5 +108,5 @@ public class JAlphaColorChooser extends javax.swing.JPanel {
         JOptionPane.showMessageDialog(component,pane,title,JOptionPane.PLAIN_MESSAGE);
         return pane.getColor();
     }
-    
+
 }

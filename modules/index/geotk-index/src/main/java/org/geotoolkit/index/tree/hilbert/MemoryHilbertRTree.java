@@ -29,7 +29,7 @@ public final class MemoryHilbertRTree<E> extends HilbertRTree<E> {
 
     /**
      * Create a new {@link HilbertRTree} implementation which store Tree architecture in memory.
-     * 
+     *
      * @param maxElements maximum children value permit per Node.
      * @param hilbertOrder maximum hilbert order value permit for each tree leaf.
      * @param crs Tree {@link CoordinateReferenceSystem}.

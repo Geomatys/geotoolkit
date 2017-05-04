@@ -26,12 +26,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Definition of a format, encoding,  schema, and unit-of-measure for an output to be returned from a process. 
- * 
+ * Definition of a format, encoding,  schema, and unit-of-measure for an output to be returned from a process.
+ *
  * <p>Java class for OutputDefinitionsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OutputDefinitionsType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,19 +57,19 @@ public class OutputDefinitionsType {
     protected List<DocumentOutputDefinitionType> output;
 
     public OutputDefinitionsType() {
-        
+
     }
-    
+
     public OutputDefinitionsType(List<DocumentOutputDefinitionType> output) {
         this.output = output;
     }
     /**
      * Gets the value of the output property.
-     * 
+     *
      * @return Objects of the following type(s) are allowed in the list
      * {@link DocumentOutputDefinitionType }
-     * 
-     * 
+     *
+     *
      */
     public List<DocumentOutputDefinitionType> getOutput() {
         if (output == null) {

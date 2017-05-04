@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for SLIRType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SLIRType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SLIRType", propOrder = {
@@ -53,11 +53,11 @@ public class SLIRType extends AbstractRequestParametersType {
 
     /**
      * Gets the value of the inputGatewayParameters property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link InputGatewayParametersType }
-     *     
+     *
      */
     public InputGatewayParametersType getInputGatewayParameters() {
         return inputGatewayParameters;
@@ -65,11 +65,11 @@ public class SLIRType extends AbstractRequestParametersType {
 
     /**
      * Sets the value of the inputGatewayParameters property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link InputGatewayParametersType }
-     *     
+     *
      */
     public void setInputGatewayParameters(InputGatewayParametersType value) {
         this.inputGatewayParameters = value;

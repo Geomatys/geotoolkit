@@ -33,9 +33,9 @@ import org.geotoolkit.swes.xml.DescribeSensor;
 
 /**
  * <p>Java class for DescribeSensorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DescribeSensorType">
  *   &lt;complexContent>
@@ -59,8 +59,8 @@ import org.geotoolkit.swes.xml.DescribeSensor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DescribeSensorType", propOrder = {
@@ -80,22 +80,22 @@ public class DescribeSensorType extends ExtensibleRequestType implements Describ
     private DescribeSensorType.ValidTime validTime;
 
     public DescribeSensorType() {
-        
+
     }
-    
+
     public DescribeSensorType(final String version, final String service, final String procedure, final String procedureDescriptionFormat) {
         super(version, service);
         this.procedureDescriptionFormat = procedureDescriptionFormat;
         this.procedure = procedure;
     }
-    
+
     /**
      * Gets the value of the procedure property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getProcedure() {
@@ -104,11 +104,11 @@ public class DescribeSensorType extends ExtensibleRequestType implements Describ
 
     /**
      * Sets the value of the procedure property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setProcedure(String value) {
         this.procedure = value;
@@ -118,14 +118,14 @@ public class DescribeSensorType extends ExtensibleRequestType implements Describ
     public String getOutputFormat() {
         return procedureDescriptionFormat;
     }
-    
+
     /**
      * Gets the value of the procedureDescriptionFormat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getProcedureDescriptionFormat() {
         return procedureDescriptionFormat;
@@ -133,11 +133,11 @@ public class DescribeSensorType extends ExtensibleRequestType implements Describ
 
     /**
      * Sets the value of the procedureDescriptionFormat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setProcedureDescriptionFormat(String value) {
         this.procedureDescriptionFormat = value;
@@ -145,11 +145,11 @@ public class DescribeSensorType extends ExtensibleRequestType implements Describ
 
     /**
      * Gets the value of the validTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DescribeSensorType.ValidTime }
-     *     
+     *
      */
     public DescribeSensorType.ValidTime getValidTime() {
         return validTime;
@@ -157,11 +157,11 @@ public class DescribeSensorType extends ExtensibleRequestType implements Describ
 
     /**
      * Sets the value of the validTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DescribeSensorType.ValidTime }
-     *     
+     *
      */
     public void setValidTime(DescribeSensorType.ValidTime value) {
         this.validTime = value;
@@ -170,9 +170,9 @@ public class DescribeSensorType extends ExtensibleRequestType implements Describ
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -184,8 +184,8 @@ public class DescribeSensorType extends ExtensibleRequestType implements Describ
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -198,13 +198,13 @@ public class DescribeSensorType extends ExtensibleRequestType implements Describ
 
         /**
          * Gets the value of the abstractTimeGeometricPrimitive property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link JAXBElement }{@code <}{@link TimePeriodType }{@code >}
          *     {@link JAXBElement }{@code <}{@link TimeInstantType }{@code >}
          *     {@link JAXBElement }{@code <}{@link AbstractTimeGeometricPrimitiveType }{@code >}
-         *     
+         *
          */
         public JAXBElement<? extends AbstractTimeGeometricPrimitiveType> getAbstractTimeGeometricPrimitive() {
             return abstractTimeGeometricPrimitive;
@@ -212,13 +212,13 @@ public class DescribeSensorType extends ExtensibleRequestType implements Describ
 
         /**
          * Sets the value of the abstractTimeGeometricPrimitive property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link JAXBElement }{@code <}{@link TimePeriodType }{@code >}
          *     {@link JAXBElement }{@code <}{@link TimeInstantType }{@code >}
          *     {@link JAXBElement }{@code <}{@link AbstractTimeGeometricPrimitiveType }{@code >}
-         *     
+         *
          */
         public void setAbstractTimeGeometricPrimitive(JAXBElement<? extends AbstractTimeGeometricPrimitiveType> value) {
             this.abstractTimeGeometricPrimitive = ((JAXBElement<? extends AbstractTimeGeometricPrimitiveType> ) value);

@@ -25,15 +25,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *  A Polygon is defined by an outer boundary and zero or more inner 
+ *
+ *  A Polygon is defined by an outer boundary and zero or more inner
  *  boundaries which are in turn defined by LinearRings.
- *       
- * 
+ *
+ *
  * <p>Java class for PolygonType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PolygonType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,9 +62,9 @@ public class PolygonType extends AbstractGeometryType {
     private List<LinearRingMemberType> innerBoundaryIs;
 
     public PolygonType() {
-        
+
     }
-    
+
     public PolygonType(final PolygonType that) {
         super(that);
         if (that != null) {
@@ -81,11 +81,11 @@ public class PolygonType extends AbstractGeometryType {
     }
     /**
      * Gets the value of the outerBoundaryIs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LinearRingMemberType }
-     *     
+     *
      */
     public LinearRingMemberType getOuterBoundaryIs() {
         return outerBoundaryIs;
@@ -93,11 +93,11 @@ public class PolygonType extends AbstractGeometryType {
 
     /**
      * Sets the value of the outerBoundaryIs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LinearRingMemberType }
-     *     
+     *
      */
     public void setOuterBoundaryIs(final LinearRingMemberType value) {
         this.outerBoundaryIs = value;
@@ -105,11 +105,11 @@ public class PolygonType extends AbstractGeometryType {
 
     /**
      * Gets the value of the innerBoundaryIs property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link LinearRingMemberType }
-     * 
-     * 
+     *
+     *
      */
     public List<LinearRingMemberType> getInnerBoundaryIs() {
         if (innerBoundaryIs == null) {

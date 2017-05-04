@@ -33,29 +33,29 @@ import org.controlsfx.control.action.ActionUtils;
  * @author Johann Sorel (Geomatys)
  */
 public abstract class FXMapAction extends Action implements Consumer<ActionEvent>{
-    
+
     protected FXMap map;
-    
+
     public FXMapAction() {
         this((String)null);
     }
-    
+
     public FXMapAction(String text) {
         this(null,text,null,null);
     }
-    
+
     public FXMapAction(FXMap map) {
         super((String)null);
         setMap(map);
     }
-    
+
     public FXMapAction(FXMap map, String shortText, String longText, Image graphic) {
         super(shortText);
         setLongText(longText);
         if(graphic!=null) graphicProperty().set(new ImageView(graphic));
         setMap(map);
         setEventHandler(this);
-        
+
     }
 
     public FXMap getMap() {
@@ -82,5 +82,5 @@ public abstract class FXMapAction extends Action implements Consumer<ActionEvent
     public ToggleButton createToggleButton(ActionUtils.ActionTextBehavior behavior){
         return ActionUtils.createToggleButton(this,behavior);
     }
-        
+
 }

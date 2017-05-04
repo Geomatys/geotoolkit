@@ -31,9 +31,9 @@ import org.geotoolkit.wfs.xml.DescribeStoredQueries;
 
 /**
  * <p>Java class for DescribeStoredQueriesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DescribeStoredQueriesType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.wfs.xml.DescribeStoredQueries;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DescribeStoredQueriesType", propOrder = {
@@ -60,9 +60,9 @@ public class DescribeStoredQueriesType extends BaseRequestType implements Descri
     private List<String> storedQueryId;
 
     public DescribeStoredQueriesType() {
-        
+
     }
-    
+
     public DescribeStoredQueriesType(final String service, final String version, final String handle, final List<String> storedQueryId) {
         super(service, version, handle);
         this.storedQueryId = storedQueryId;
@@ -70,7 +70,7 @@ public class DescribeStoredQueriesType extends BaseRequestType implements Descri
 
     /**
      * Gets the value of the storedQueryId property.
-     * 
+     *
      */
     @Override
     public List<String> getStoredQueryId() {

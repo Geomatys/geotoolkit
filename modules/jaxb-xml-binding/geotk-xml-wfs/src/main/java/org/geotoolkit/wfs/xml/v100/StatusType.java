@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for StatusType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="StatusType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "StatusType", propOrder = {
@@ -60,11 +60,11 @@ public class StatusType {
 
     /**
      * Gets the value of the success property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EmptyType }
-     *     
+     *
      */
     public EmptyType getSUCCESS() {
         return success;
@@ -72,11 +72,11 @@ public class StatusType {
 
     /**
      * Sets the value of the success property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EmptyType }
-     *     
+     *
      */
     public void setSUCCESS(EmptyType value) {
         this.success = value;
@@ -84,11 +84,11 @@ public class StatusType {
 
     /**
      * Gets the value of the failed property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EmptyType }
-     *     
+     *
      */
     public EmptyType getFAILED() {
         return failed;
@@ -96,11 +96,11 @@ public class StatusType {
 
     /**
      * Sets the value of the failed property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EmptyType }
-     *     
+     *
      */
     public void setFAILED(EmptyType value) {
         this.failed = value;
@@ -108,11 +108,11 @@ public class StatusType {
 
     /**
      * Gets the value of the partial property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EmptyType }
-     *     
+     *
      */
     public EmptyType getPARTIAL() {
         return partial;
@@ -120,11 +120,11 @@ public class StatusType {
 
     /**
      * Sets the value of the partial property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EmptyType }
-     *     
+     *
      */
     public void setPARTIAL(EmptyType value) {
         this.partial = value;

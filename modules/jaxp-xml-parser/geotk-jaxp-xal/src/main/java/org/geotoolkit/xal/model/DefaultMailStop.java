@@ -32,7 +32,7 @@ public class DefaultMailStop implements MailStop {
     private String type;
 
     /**
-     * 
+     *
      */
     public DefaultMailStop(){
         this.addressLines = EMPTY_LIST;

@@ -84,7 +84,7 @@ public interface Locality {
      * @param localityNames
      */
     void setLocalityNames(List<GenericTypedGrPostal> localityNames);
-    
+
     /*
      * === CHOICE: ===
      */
@@ -144,7 +144,7 @@ public interface Locality {
      * @param postalRoute
      */
     void setPostalRoute(PostalRoute postalRoute);
-    
+
     /*
      * === END OF CHOICE ===
      */
@@ -179,7 +179,7 @@ public interface Locality {
      * suburbs, etc. DependentLocality is a recursive element,
      * but no nesting deeper than two exists
      * (Locality-DependentLocality-DependentLocality).</p>
-     * 
+     *
      * @return
      */
     DependentLocality getDependentLocality();
@@ -201,14 +201,14 @@ public interface Locality {
      * @param postalCode
      */
     void setPostalCode(PostalCode postalCode);
-    
+
     /*
      * === ATTRIBUTES: ===
      */
-    
+
     /**
      * <p>Possible values not limited to: City, IndustrialEstate, etc.</p>
-     * 
+     *
      * @return
      */
     String getType();
@@ -218,30 +218,30 @@ public interface Locality {
      * @param type
      */
     void setType(String type);
-    
+
     /**
-     * <p>Postal or Political - Sometimes locations must be distinguished between 
+     * <p>Postal or Political - Sometimes locations must be distinguished between
      * postal system, and physical locations as defined by a political system.</p>
-     * 
+     *
      * @return
      */
     String getUsageType();
-    
+
     /**
-     * 
+     *
      * @param usageType
      */
     void setUsageType(String usageType);
 
     /**
      * <p>Erode (Dist) where (Dist) is the Indicator.</p>
-     * 
+     *
      * @return
      */
     String getIndicator();
 
     /**
-     * 
+     *
      * @param indicator
      */
     void setIndicator(String indicator);

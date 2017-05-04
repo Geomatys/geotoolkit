@@ -31,9 +31,9 @@ import org.geotoolkit.swe.xml.AbstractTimeRange;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.swe.xml.AbstractTimeRange;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -173,11 +173,11 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
 
     /**
      * Sets the value of the referenceTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setReferenceTime(final String value) {
         this.referenceTime = value;
@@ -185,11 +185,11 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
 
     /**
      * Gets the value of the referenceFrame property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getReferenceFrame() {
@@ -198,11 +198,11 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
 
     /**
      * Sets the value of the referenceFrame property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setReferenceFrame(final String value) {
         this.referenceFrame = value;
@@ -210,11 +210,11 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
 
     /**
      * Gets the value of the localFrame property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getLocalFrame() {
@@ -223,11 +223,11 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
 
     /**
      * Sets the value of the localFrame property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLocalFrame(final String value) {
         this.localFrame = value;

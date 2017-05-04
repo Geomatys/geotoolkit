@@ -224,7 +224,7 @@ public class Schema extends OpenAttrs {
         }
         return null;
     }
-    
+
     public SimpleType getSimpleTypeByName(final String name) {
         if (name != null) {
             if (simpleTypeOrComplexTypeOrGroup != null) {

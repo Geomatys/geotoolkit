@@ -42,5 +42,5 @@ public class FXAttributeEqualsOperator extends FXComparableOperator {
         return GO2Utilities.FILTER_FACTORY.equals(
                 toApplyOn, GO2Utilities.FILTER_FACTORY.literal(editorValue));
     }
-    
+
 }

@@ -38,7 +38,7 @@ public class BiCubicInterpolation1 extends BiCubicInterpolation {
     public BiCubicInterpolation1(PixelIterator pixelIterator) {
         super(pixelIterator);
     }
-    
+
     /**
      * {@inheritDoc }
      *

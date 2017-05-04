@@ -23,8 +23,8 @@ import org.geotoolkit.ows.xml.RequestBase;
  * @author Guilhem Legal (Geomatys)
  */
 public interface DescribeSensor extends RequestBase {
-    
+
     String getProcedure();
-    
+
     String getOutputFormat();
 }

@@ -34,17 +34,17 @@ import org.geotoolkit.ogc.xml.SortBy;
 
 /**
  * Specifies a query to execute against instances of one or more object types.
- * The ElementName elements specify the object types to be included in the result set. 
- * The QueryConstraint element contains a query filter expressed in a supported query language. 
+ * The ElementName elements specify the object types to be included in the result set.
+ * The QueryConstraint element contains a query filter expressed in a supported query language.
  * A sorting criterion that specifies a property to sort on may be included.
- * 
+ *
  *  typeNames - a list of object types implicated in the query specification.
- *          
- * 
+ *
+ *
  * <p>Java class for QueryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="QueryType">
  *   &lt;complexContent>
@@ -61,8 +61,8 @@ import org.geotoolkit.ogc.xml.SortBy;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -71,7 +71,7 @@ import org.geotoolkit.ogc.xml.SortBy;
     "elementName",
     "constraint"
 })
-@XmlRootElement(name = "Query")       
+@XmlRootElement(name = "Query")
 public class QueryType extends AbstractQueryType implements Query{
 
     @XmlElement(name = "ElementSetName", defaultValue = "summary")
@@ -88,27 +88,27 @@ public class QueryType extends AbstractQueryType implements Query{
      * Empty constructor used by JAXB
      */
     QueryType() {
-        
+
     }
-    
+
     /**
      * Build a new Query
      */
     public QueryType(final List<QName> typeNames, final ElementSetNameType elementSetName, final QueryConstraintType constraint) {
         this.typeNames      = typeNames;
-        this.elementSetName = elementSetName; 
+        this.elementSetName = elementSetName;
         this.constraint     = constraint;
     }
 
     /**
-     * 
+     *
      * @param typeNames
      * @param elementName
      * @param constraint
      */
     public QueryType(final List<QName> typeNames, final List<QName> elementName, final QueryConstraintType constraint) {
         this.typeNames      = typeNames;
-        this.elementName    = elementName; 
+        this.elementName    = elementName;
         this.constraint     = constraint;
     }
 
@@ -128,10 +128,10 @@ public class QueryType extends AbstractQueryType implements Query{
             }
         }
     }
-    
+
     /**
      * Gets the value of the elementSetName property.
-     * 
+     *
      */
     public ElementSetNameType getElementSetName() {
         return elementSetName;
@@ -139,7 +139,7 @@ public class QueryType extends AbstractQueryType implements Query{
 
     /**
      * Sets the value of the elementSetName property.
-     * 
+     *
      */
     public void setElementSetName(final ElementSetNameType value) {
         this.elementSetName = value;
@@ -147,7 +147,7 @@ public class QueryType extends AbstractQueryType implements Query{
 
     /**
      * Gets the value of the elementName property.
-     * 
+     *
      */
     public List<QName> getElementName() {
         if (elementName == null) {
@@ -158,7 +158,7 @@ public class QueryType extends AbstractQueryType implements Query{
 
     /**
      * Gets the value of the constraint property.
-     * 
+     *
      */
     public QueryConstraintType getConstraint() {
         return constraint;
@@ -183,14 +183,14 @@ public class QueryType extends AbstractQueryType implements Query{
         }
         return this.typeNames;
     }
-    
+
     public void setTypeNames(final List<QName> typeNames) {
         this.typeNames = typeNames;
     }
-    
+
     /**
      * Always null in that version of csw.
-     * 
+     *
      * @return null.
      */
     public SortBy getSortBy() {

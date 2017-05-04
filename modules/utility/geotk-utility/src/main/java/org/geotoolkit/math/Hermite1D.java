@@ -20,20 +20,20 @@ package org.geotoolkit.math;
  * Hermite Spline interpolation.
  *
  * To compute Hermite spline interpolation of a tabulated function. Hermite interpolation computes
- * the cubic polynomial that agrees with the tabulated function and its derivative at the two nearest 
+ * the cubic polynomial that agrees with the tabulated function and its derivative at the two nearest
  * tabulated points. It may be preferable to Lagrangian interpolation when either (1) the first
  * derivatives are known, or (2) one desires continuity of the first derivative of the interpolated
  * values. <code>HermiteSpline</code> will numerically compute the necessary derivatives, if they are
  * not supplied.<p>
  *
- *	NOTES:	The algorithm here is based on the FORTRAN code discussed by 
- *			Hill, G. 1982, Publ Dom. Astrophys. Obs., 16, 67. The original 
- *			FORTRAN source is U.S. Airforce. Surveys in Geophysics No 272.<p>
+ *  NOTES:  The algorithm here is based on the FORTRAN code discussed by
+ *          Hill, G. 1982, Publ Dom. Astrophys. Obs., 16, 67. The original
+ *          FORTRAN source is U.S. Airforce. Surveys in Geophysics No 272.<p>
  *
- *			<code>HermiteSpline</code> will return an error if one tries to
- *			interpolate any values outside of the range of the input table<p>
+ *          <code>HermiteSpline</code> will return an error if one tries to
+ *          interpolate any values outside of the range of the input table<p>
  *
- *	REVISION HISTORY:<br>
+ *  REVISION HISTORY:<br>
  *      Written, B. Dorman (GSFC) Oct 1993, revised April 1996<br>
  *      Added FDERIV keyword,  W. Landsman (HSTX)  April 1996<br>
  *      Test for out of range values  W. Landsman (HSTX) May 1996<p>
@@ -59,7 +59,7 @@ package org.geotoolkit.math;
  *  <blockquote><code>
  *          IDL> print,hermite(x,y,0.45,fderiv = yprime)
  *          </code><blockquote>
- *					== 2.2219 and so can get a more accurate interpolation
+ *                  == 2.2219 and so can get a more accurate interpolation
  *          </blockquote>
  *  </blockquote>
  *
@@ -82,8 +82,8 @@ public class Hermite1D extends Search1D {
      */
     public double dx;
     /**
-     *	Vecteur de dérivée deuxième. Ce vecteur
-     *	n'est pas obligatoire et peut rester nul.
+     *  Vecteur de dérivée deuxième. Ce vecteur
+     *  n'est pas obligatoire et peut rester nul.
      */
     private double y2[];
 
@@ -96,15 +96,15 @@ public class Hermite1D extends Search1D {
     /**
      * Construit un interpolateur utilisant les vecteurs spécifiés.
      *
-     * @param x		Vector giving tabulated <var>X</var> values of function to be interpolated.
-     *				Must be either monotonic increasing or decreasing.
-     * @param y		Tabuluated values of function, same number of elements as <var>x</var>.
-     * @param y2	Function derivative values computed at <var>x</var>. If not supplied,
-     *				then <code>HermiteSpline</code> will compute the derivatives numerically.
-     *				The <var>y2</var> parameter is useful either when (1) the derivative
-     *				values are (somehow) known to better accuracy than can be computed numerically,
-     *				or (2) when <code>HermiteSpline</code> is called repeatedly with the same tabulated
-     *				function, so that the derivatives need be computed only once.
+     * @param x     Vector giving tabulated <var>X</var> values of function to be interpolated.
+     *              Must be either monotonic increasing or decreasing.
+     * @param y     Tabuluated values of function, same number of elements as <var>x</var>.
+     * @param y2    Function derivative values computed at <var>x</var>. If not supplied,
+     *              then <code>HermiteSpline</code> will compute the derivatives numerically.
+     *              The <var>y2</var> parameter is useful either when (1) the derivative
+     *              values are (somehow) known to better accuracy than can be computed numerically,
+     *              or (2) when <code>HermiteSpline</code> is called repeatedly with the same tabulated
+     *              function, so that the derivatives need be computed only once.
      */
     public void setData(final double[] x, final double[] y, final double[] y2) {
         super.setData(x, y);
@@ -121,10 +121,10 @@ public class Hermite1D extends Search1D {
      * Renvoie la donnée <var>y</var> interpolée au <var>xi</var> spécifié. Les index
      * (@link #klo) et (@link #khi) doivent avoir été trouvés avant l'appel de cette méthode.
      *
-     * @param xi			Scalar giving the <var>x</var> values at which to interpolate.
-     * @param reUseIndex	<code>true</code> s'il faut réutiliser les même
-     *						index que ceux de la dernière interpolation.
-     * @return				Interpolated values of function.
+     * @param xi            Scalar giving the <var>x</var> values at which to interpolate.
+     * @param reUseIndex    <code>true</code> s'il faut réutiliser les même
+     *                      index que ceux de la dernière interpolation.
+     * @return              Interpolated values of function.
      */
     @Override
     protected double interpolate(final double xi, final boolean reUseIndex) throws ExtrapolationException {
@@ -140,30 +140,30 @@ public class Hermite1D extends Search1D {
             dy_khi = y2[khi];
         } else {
             /*
-             *	Recherche l'index de la première donnée valide
-             *	précèdant [klo]. Typiquement ce sera [klo-1].
+             *  Recherche l'index de la première donnée valide
+             *  précèdant [klo]. Typiquement ce sera [klo-1].
              */
             int slo = klo;
             if (--slo < 0 || isNaN(slo)) {
                 slo = klo;
             }
             /*
-             *	Recherche l'index de la première donnée valide
-             *	suivant [khi]. Typiquement ce sera [khi+1].
+             *  Recherche l'index de la première donnée valide
+             *  suivant [khi]. Typiquement ce sera [khi+1].
              */
             int shi = khi;
             if (++shi >= x.length || isNaN(shi)) {
                 shi = khi;
             }
             /*
-             *	If derivatives were not supplied, then compute numeric
-             *	derivatives at the two closest knot points.
+             *  If derivatives were not supplied, then compute numeric
+             *  derivatives at the two closest knot points.
              */
             dy_klo = (y[khi] - y[slo]) / (x[khi] - x[slo]); // Dérivé autour de [klo].
             dy_khi = (y[shi] - y[klo]) / (x[shi] - x[klo]); // Dérivé autour de [khi].
         }
         /*
-         *	Now finally the Hermite interpolation formula.
+         *  Now finally the Hermite interpolation formula.
          */
         dx = x[khi] - x[klo];
         final double deltaX_klo = xi - x[klo];

@@ -30,9 +30,9 @@ import org.geotoolkit.sml.xml.AbstractKeywords;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -57,8 +57,8 @@ import org.geotoolkit.sml.xml.AbstractKeywords;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -115,7 +115,7 @@ public class Keywords implements AbstractKeywords {
             this.type         = kw.getType();
         }
     }
-    
+
     /**
      * Gets the value of the keywordList property.
      */

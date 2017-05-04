@@ -28,9 +28,9 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
 
 /**
  * <p>Java class for GetResultResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetResultResponseType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetResultResponseType", propOrder = {
@@ -56,20 +56,20 @@ public class GetResultResponseType extends ExtensibleResponseType implements Get
     private Object resultValues;
 
     public GetResultResponseType() {
-        
+
     }
-    
+
     public GetResultResponseType(final Object resultValues) {
         this.resultValues = resultValues;
     }
-    
+
     /**
      * Gets the value of the resultValues property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Object }
-     *     
+     *
      */
     public Object getResultValues() {
         return resultValues;
@@ -77,11 +77,11 @@ public class GetResultResponseType extends ExtensibleResponseType implements Get
 
     /**
      * Sets the value of the resultValues property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Object }
-     *     
+     *
      */
     public void setResultValues(Object value) {
         this.resultValues = value;

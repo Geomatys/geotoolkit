@@ -24,24 +24,24 @@ import java.util.List;
  * @module
  */
 public interface LocationProperty {
-    
+
     Code getLocationKeyWord();
-    
+
     List<String> getNilReason();
 
     String getRemoteSchema();
 
     /**
-     * The 'actuate' attribute is used to communicate the desired timing 
-     *   of traversal from the starting resource to the ending resource; 
+     * The 'actuate' attribute is used to communicate the desired timing
+     *   of traversal from the starting resource to the ending resource;
      *   it's value should be treated as follows:
-     *   onLoad - traverse to the ending resource immediately on loading 
-     *            the starting resource 
-     *   onRequest - traverse from the starting resource to the ending 
-     *               resource only on a post-loading event triggered for 
-     *               this purpose 
-     *   other - behavior is unconstrained; examine other markup in link 
-     *           for hints 
+     *   onLoad - traverse to the ending resource immediately on loading
+     *            the starting resource
+     *   onRequest - traverse from the starting resource to the ending
+     *               resource only on a post-loading event triggered for
+     *               this purpose
+     *   other - behavior is unconstrained; examine other markup in link
+     *           for hints
      *   none - behavior is unconstrained
      */
     String getActuate();
@@ -53,23 +53,23 @@ public interface LocationProperty {
     String getRole();
 
     /**
-     * The 'show' attribute is used to communicate the desired presentation 
-     *   of the ending resource on traversal from the starting resource; it's 
-     *   value should be treated as follows: 
-     *   new - load ending resource in a new window, frame, pane, or other 
+     * The 'show' attribute is used to communicate the desired presentation
+     *   of the ending resource on traversal from the starting resource; it's
+     *   value should be treated as follows:
+     *   new - load ending resource in a new window, frame, pane, or other
      *         presentation context
-     *   replace - load the resource in the same window, frame, pane, or 
+     *   replace - load the resource in the same window, frame, pane, or
      *             other presentation context
-     *   embed - load ending resource in place of the presentation of the 
+     *   embed - load ending resource in place of the presentation of the
      *           starting resource
-     *   other - behavior is unconstrained; examine other markup in the 
-     *           link for hints 
-     *   none - behavior is unconstrained 
+     *   other - behavior is unconstrained; examine other markup in the
+     *           link for hints
+     *   none - behavior is unconstrained
      */
     String getShow();
 
     String getTitle();
 
     String getType();
-   
+
 }

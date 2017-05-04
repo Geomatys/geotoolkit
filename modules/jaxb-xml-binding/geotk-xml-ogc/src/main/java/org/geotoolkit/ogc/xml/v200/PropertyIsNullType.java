@@ -30,9 +30,9 @@ import org.opengis.filter.FilterVisitor;
 
 /**
  * <p>Java class for PropertyIsNullType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PropertyIsNullType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.opengis.filter.FilterVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsNullType", propOrder = {
@@ -57,9 +57,9 @@ public class PropertyIsNullType extends ComparisonOpsType {
     private JAXBElement<?> expression;
 
     public PropertyIsNullType() {
-        
+
     }
-    
+
     public PropertyIsNullType(final PropertyIsNullType that) {
         if (that != null) {
             if (that.expression != null) {
@@ -79,24 +79,24 @@ public class PropertyIsNullType extends ComparisonOpsType {
             }
         }
     }
-    
+
     public String getPropertyName() {
         if (expression != null && expression.getValue() instanceof String) {
             return (String)expression.getValue();
         }
         return null;
     }
-    
+
     /**
      * Gets the value of the expression property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link LiteralType }{@code >}
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *     
+     *
      */
     public JAXBElement<?> getExpression() {
         return expression;
@@ -104,14 +104,14 @@ public class PropertyIsNullType extends ComparisonOpsType {
 
     /**
      * Sets the value of the expression property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link LiteralType }{@code >}
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *     
+     *
      */
     public void setExpression(JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);
@@ -126,12 +126,12 @@ public class PropertyIsNullType extends ComparisonOpsType {
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     @Override
     public ComparisonOpsType getClone() {
         return new PropertyIsNullType(this);
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder(super.toString());
@@ -147,7 +147,7 @@ public class PropertyIsNullType extends ComparisonOpsType {
         hash = 67 * hash + (this.expression != null ? this.expression.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) {

@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for BinaryEncodingPropertyByValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BinaryEncodingPropertyByValueType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinaryEncodingPropertyByValueType", propOrder = {
@@ -53,11 +53,11 @@ public class BinaryEncodingPropertyByValueType {
 
     /**
      * Gets the value of the binaryEncoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BinaryEncodingType }
-     *     
+     *
      */
     public BinaryEncodingType getBinaryEncoding() {
         return binaryEncoding;
@@ -65,11 +65,11 @@ public class BinaryEncodingPropertyByValueType {
 
     /**
      * Sets the value of the binaryEncoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BinaryEncodingType }
-     *     
+     *
      */
     public void setBinaryEncoding(BinaryEncodingType value) {
         this.binaryEncoding = value;

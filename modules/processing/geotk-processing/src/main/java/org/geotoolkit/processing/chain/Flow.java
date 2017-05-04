@@ -147,5 +147,5 @@ final class Flow {
 
         return ranked;
     }
-    
+
 }

@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for DirectedObservationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DirectedObservationType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DirectedObservationType", propOrder = {
@@ -60,11 +60,11 @@ public class DirectedObservationType
 
     /**
      * Gets the value of the direction property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectionPropertyType }
-     *     
+     *
      */
     public DirectionPropertyType getDirection() {
         return direction;
@@ -72,11 +72,11 @@ public class DirectedObservationType
 
     /**
      * Sets the value of the direction property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectionPropertyType }
-     *     
+     *
      */
     public void setDirection(DirectionPropertyType value) {
         this.direction = value;

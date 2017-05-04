@@ -29,9 +29,9 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * <p>Java class for PropertyIsLikeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PropertyIsLikeType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -76,9 +76,9 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
      * An empty constructor used by JAXB.
      */
     public PropertyIsLikeType() {
-        
+
     }
-    
+
     /**
      *Build a new Property is like operator
      */
@@ -120,7 +120,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
         this.literal      = new LiteralType(pattern);
         this.matchCase    = matchCase;
     }
-    
+
     public PropertyIsLikeType(final PropertyIsLikeType that) {
         if (that != null) {
             this.matchCase  = that.matchCase;
@@ -266,7 +266,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
         hash = 29 * hash + (this.wildCard != null ? this.wildCard.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
@@ -275,16 +275,16 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
         } else {
             s.append("PropertyName null").append('\n');
         }
-        
+
         if (literal != null) {
            s.append("Litteral= ").append(literal.toString()).append('\n');
         } else {
             s.append("Literal null").append('\n');
         }
-        
+
         s.append("matchCase= ").append(matchCase).append(" escape=").append(escapeChar);
         s.append(" single=").append(singleChar).append(" wildCard=").append(wildCard);
-        
+
         return s.toString();
     }
 

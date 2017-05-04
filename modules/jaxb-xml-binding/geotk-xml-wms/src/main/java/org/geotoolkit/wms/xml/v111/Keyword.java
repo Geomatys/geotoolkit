@@ -27,8 +27,8 @@ import org.geotoolkit.wms.xml.AbstractKeyword;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
- * 
+ *
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -44,7 +44,7 @@ public class Keyword implements AbstractKeyword{
     @XmlAttribute
     private String vocabulary;
 
-   
+
      /**
      * An empty constructor used by JAXB.
      */
@@ -57,15 +57,15 @@ public class Keyword implements AbstractKeyword{
     public Keyword(final String value) {
         this.value      = value;
     }
-    
+
     /**
      * Build a new Keyword object.
      */
     public Keyword(final String value, final String vocabulary) {
         this.value      = value;
-        this.vocabulary = vocabulary; 
+        this.vocabulary = vocabulary;
     }
-    
+
     /**
      * Gets the value of the value property.
      */

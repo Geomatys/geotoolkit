@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for DataArrayPropertyByValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataArrayPropertyByValueType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataArrayPropertyByValueType", propOrder = {
@@ -54,12 +54,12 @@ public class DataArrayPropertyByValueType {
 
     /**
      * Gets the value of the dataArray property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link DataArrayType }{@code >}
      *     {@link JAXBElement }{@code <}{@link MatrixType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends DataArrayType> getDataArray() {
         return dataArray;
@@ -67,12 +67,12 @@ public class DataArrayPropertyByValueType {
 
     /**
      * Sets the value of the dataArray property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link DataArrayType }{@code >}
      *     {@link JAXBElement }{@code <}{@link MatrixType }{@code >}
-     *     
+     *
      */
     public void setDataArray(JAXBElement<? extends DataArrayType> value) {
         this.dataArray = ((JAXBElement<? extends DataArrayType> ) value);

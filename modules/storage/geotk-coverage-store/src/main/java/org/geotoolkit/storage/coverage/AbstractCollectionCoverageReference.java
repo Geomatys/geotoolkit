@@ -64,16 +64,16 @@ import org.opengis.util.GenericName;
  * <br>
  * All coverages are expected to have identical sample models and sample dimensions.<br>
  * But coverage extant and grid to crs transformes may by different.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public abstract class AbstractCollectionCoverageReference extends AbstractCoverageReference implements CollectionCoverageReference {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
-    
+
     private GeneralGridGeometry gridGeom;
     private List<GridSampleDimension> sampleDimensions;
-    
+
     public AbstractCollectionCoverageReference(CoverageStore store, GenericName name) {
         super(store,name);
     }
@@ -102,17 +102,17 @@ public abstract class AbstractCollectionCoverageReference extends AbstractCovera
     public Image getLegend() throws DataStoreException {
         return null;
     }
-    
+
     /**
      * Calculate a global grid geometry for all coverages.
      * This function combines the various envelopes and fine the finest resolution.
-     * 
+     *
      * @return
-     * @throws CoverageStoreException 
+     * @throws CoverageStoreException
      */
     private synchronized GeneralGridGeometry getGridGeometry() throws CoverageStoreException {
         if (gridGeom != null) return gridGeom;
-        
+
         try {
             //find global envelope and finest resolution
             GeneralEnvelope env = null;
@@ -121,7 +121,7 @@ public abstract class AbstractCollectionCoverageReference extends AbstractCovera
                 final GridCoverageReader reader = ref.acquireReader();
                 final GeneralGridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
                 ref.recycle(reader);
-                
+
                 Envelope envelope = gg.getEnvelope();
                 if (env==null) {
                     //we use the first coverage crs as default
@@ -135,7 +135,7 @@ public abstract class AbstractCollectionCoverageReference extends AbstractCovera
                     if(res[1]<resolution[1]) resolution[1] = res[1];
                 }
             }
-            
+
             //compute final grid geometry
             //calculate the output grid geometry and image size
             final int sizeX = (int)(env.getSpan(0) / resolution[0]);
@@ -146,20 +146,20 @@ public abstract class AbstractCollectionCoverageReference extends AbstractCovera
         } catch (TransformException ex) {
             throw new CoverageStoreException(ex.getMessage(), ex);
         }
-        
+
     }
-    
+
     /**
      * Cache and return the sample dimensions.<br>
      * All coverages are expected to have the same model.<br>
      * The sample dimensions are extracted from the first coverage.<br>
-     * 
+     *
      * @return
-     * @throws CoverageStoreException 
+     * @throws CoverageStoreException
      */
     private synchronized List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException {
         if (sampleDimensions != null) return sampleDimensions;
-        
+
         final Collection<CoverageReference> references = getCoverages(null);
         if (!references.isEmpty()) {
             final CoverageReference ref = references.iterator().next();
@@ -167,16 +167,16 @@ public abstract class AbstractCollectionCoverageReference extends AbstractCovera
             sampleDimensions = reader.getSampleDimensions(ref.getImageIndex());
             ref.recycle(reader);
         }
-        
+
         return sampleDimensions;
     }
-    
+
     private class CollectionCoverageReader extends AbstractGridCoverageReader {
 
         private CollectionCoverageReader(){
             super(AbstractCollectionCoverageReference.this);
         }
-        
+
         @Override
         public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
             return AbstractCollectionCoverageReference.this.getGridGeometry();
@@ -189,7 +189,7 @@ public abstract class AbstractCollectionCoverageReference extends AbstractCovera
 
         @Override
         protected GridCoverage read(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
-            
+
             final Collection<CoverageReference> references = getCoverages(param);
             final List<GridCoverage2D> coverages = new ArrayList<>();
             for (CoverageReference ref : references) {
@@ -201,11 +201,11 @@ public abstract class AbstractCollectionCoverageReference extends AbstractCovera
                 }
                 ref.recycle(reader);
             }
-            
+
             if (references.isEmpty()) {
                 throw new DisjointCoverageDomainException("No coverage matched parameters");
             }
-            
+
             try {
                 //concatenate envelopes
                 final GeneralEnvelope env = new GeneralEnvelope(coverages.get(0).getEnvelope());
@@ -229,7 +229,7 @@ public abstract class AbstractCollectionCoverageReference extends AbstractCovera
                 //resample all coverages in target image
                 for (GridCoverage2D coverage : coverages) {
                     final MathTransform targetCrsToSourceCrs = CRS.findOperation(
-                            gridGeom.getCoordinateReferenceSystem(), 
+                            gridGeom.getCoordinateReferenceSystem(),
                             coverage.getCoordinateReferenceSystem(), null).getMathTransform();
                     final MathTransform sourceGridToCrs = coverage.getGridGeometry().getGridToCRS(PixelOrientation.CENTER).inverse();
 
@@ -254,9 +254,9 @@ public abstract class AbstractCollectionCoverageReference extends AbstractCovera
             } catch (TransformException | FactoryException ex) {
                 throw new CoverageStoreException(ex.getMessage(), ex);
             }
-            
+
         }
-        
+
     }
-    
+
 }

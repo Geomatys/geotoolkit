@@ -63,11 +63,11 @@ public abstract class FXStyleElementController<T> extends BorderPane {
             }
         }
     }
-    
+
     /**
      * Called by FXMLLoader after creating controller.
      */
-    public void initialize(){        
+    public void initialize(){
         value.addListener(new ChangeListener<T>() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
@@ -79,7 +79,7 @@ public abstract class FXStyleElementController<T> extends BorderPane {
     }
 
     public abstract Class<T> getEditedClass();
-    
+
     public MapLayer getLayer() {
         return layer;
     }
@@ -87,15 +87,15 @@ public abstract class FXStyleElementController<T> extends BorderPane {
     public void setLayer(MapLayer layer) {
         this.layer = layer;
     }
-    
+
     /**
-     * 
+     *
      * @return Property being edited.
      */
     public ObjectProperty<T> valueProperty(){
         return value;
     }
-    
+
     /**
      * Panels may have 2 modes, simple or advanced.
      * All properties are not important, we divide them between simple and advanced.
@@ -128,17 +128,17 @@ public abstract class FXStyleElementController<T> extends BorderPane {
      * @return a new instance of the edited class of this editor
      */
     public abstract T newValue();
-    
+
     /**
      * Called when to value property changes.
      * @param styleElement  edited object
      */
     protected abstract void updateEditor(T styleElement);
-        
+
     protected synchronized static FilterFactory2 getFilterFactory(){
         return GeotkFX.getFilterFactory();
     }
-    
+
     protected synchronized static MutableStyleFactory getStyleFactory(){
         return GeotkFX.getStyleFactory();
     }

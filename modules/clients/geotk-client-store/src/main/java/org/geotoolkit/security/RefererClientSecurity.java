@@ -21,7 +21,7 @@ import org.apache.sis.util.ArgumentChecks;
 
 /**
  * Client security which fill the referer for url connections.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -33,12 +33,12 @@ public class RefererClientSecurity extends DefaultClientSecurity{
         ArgumentChecks.ensureNonNull("referer", referer);
         this.referer = referer;
     }
-    
+
     @Override
     public URLConnection secure(URLConnection cnx) {
         cnx = super.secure(cnx);
         cnx.setRequestProperty("referer",referer);
         return cnx;
     }
-    
+
 }

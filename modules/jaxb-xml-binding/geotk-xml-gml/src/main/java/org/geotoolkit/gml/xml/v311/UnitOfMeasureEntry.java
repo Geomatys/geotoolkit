@@ -39,27 +39,27 @@ public class UnitOfMeasureEntry implements BaseUnit, Entry {
      */
     @XmlAttribute
     private String id;
-    
+
     /**
      * Le nom de l'unité.
      */
     private String name;
-    
+
     /**
      * le type de l'unité de mesure (longueur, temporelle, ...).
      */
     private String quantityType;
-    
+
     /**
      * Le system qui definit cette unité de mesure.
      */
     private String unitsSystem;
-    
+
     /**
      * constructeur videé utilisé par JAXB
      */
     protected UnitOfMeasureEntry() {}
-    
+
     /**
      * Créé une nouvelle unité de mesure.
      */
@@ -69,7 +69,7 @@ public class UnitOfMeasureEntry implements BaseUnit, Entry {
         this.quantityType = quantityType;
         this.unitsSystem  = unitsSystem;
     }
-    
+
     /**
      * Retourne l'identifiant.
      */
@@ -90,7 +90,7 @@ public class UnitOfMeasureEntry implements BaseUnit, Entry {
     public String getName() {
         return name;
     }
-    
+
     /**
      * retourne le type de l'unité de mesure.
      */
@@ -98,7 +98,7 @@ public class UnitOfMeasureEntry implements BaseUnit, Entry {
     public String getQuantityType() {
         return quantityType;
     }
-    
+
     /**
      * retourne le nom du systeme qui definit cette unité.
      */
@@ -106,7 +106,7 @@ public class UnitOfMeasureEntry implements BaseUnit, Entry {
     public String getUnitsSystem() {
         return unitsSystem;
     }
-    
+
     /**
      * Vérifie si cette entrée est identique à l'objet spécifié.
      */
@@ -134,7 +134,7 @@ public class UnitOfMeasureEntry implements BaseUnit, Entry {
         hash = 61 * hash + (this.unitsSystem != null ? this.unitsSystem.hashCode() : 0);
         return hash;
     }
-    
+
     /**
      * Retourne une representation de l'objet.
      */

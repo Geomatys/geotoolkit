@@ -51,7 +51,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module
  */
 public class JTSLineString extends AbstractJTSGenericCurve
-	implements LineString, Primitive {
+    implements LineString, Primitive {
 
     /**
      * Points comprising this geometry.

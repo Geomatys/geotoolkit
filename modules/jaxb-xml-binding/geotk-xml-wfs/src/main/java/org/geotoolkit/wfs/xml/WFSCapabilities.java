@@ -23,7 +23,7 @@ import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
  * @author Guilhem Legal (Geomatys)
  */
 public interface WFSCapabilities extends AbstractCapabilitiesBase{
-    
+
     FeatureTypeList getFeatureTypeList();
-    
+
 }

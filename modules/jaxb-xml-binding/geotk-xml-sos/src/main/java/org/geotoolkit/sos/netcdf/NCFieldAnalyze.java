@@ -34,7 +34,7 @@ import ucar.nc2.Variable;
  * @author Guilhem Legal (Geomatys)
  */
 public class NCFieldAnalyze {
-    
+
         public String title                     = null;
         public Field mainField                  = null;
         public Field separatorField             = null;
@@ -65,11 +65,11 @@ public class NCFieldAnalyze {
             }
             return null;
         }
-        
+
         public boolean hasSpatial() {
             return latField != null && lonField != null;
         }
-        
+
         public boolean hasTime() {
             return timeField != null;
         }
@@ -89,14 +89,14 @@ public class NCFieldAnalyze {
             if (timeField != null) {
                 results.add(timeField);
             }
-            return results; 
+            return results;
         }
-        
+
         public Array getArrayFromField(final Field field) throws IOException {
             final Variable var = vars.get(field.label);
             return file.readArrays(Arrays.asList(var)).get(0);
         }
-        
+
         public Map<String, Array> getPhenomenonArrayMap() throws IOException {
             final Map<String, Array> phenArrays = new HashMap<>();
             for (Field field : phenfields) {
@@ -105,7 +105,7 @@ public class NCFieldAnalyze {
             }
             return phenArrays;
         }
-        
+
         @Override
         public boolean equals(final Object obj) {
             if (obj == this) {

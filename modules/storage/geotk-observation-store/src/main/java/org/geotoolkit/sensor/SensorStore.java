@@ -127,5 +127,5 @@ public interface SensorStore {
     String getInfos();
 
     void close() throws DataStoreException;
-    
+
 }

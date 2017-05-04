@@ -28,11 +28,11 @@ import org.geotoolkit.swe.xml.DataArrayProperty;
 
 /**
  * DataArray is a data-type so usually appears "by value" rather than by reference.
- * 
+ *
  * <p>Java class for DataArrayPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataArrayPropertyType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.swe.xml.DataArrayProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,12 +59,12 @@ public class DataArrayPropertyType implements DataArrayProperty {
 
     @XmlTransient
     private ObjectFactory factory = new ObjectFactory();
-    
+
     /**
      * An empty constructor used by JAXB
      */
     DataArrayPropertyType() {
-        
+
     }
 
     /**
@@ -80,18 +80,18 @@ public class DataArrayPropertyType implements DataArrayProperty {
     public DataArrayPropertyType(final DataArrayType dataArray) {
         this.dataArray = factory.createDataArray(dataArray);
     }
-    
+
     /**
      * Gets the value of the dataArray property.
      */
     @Override
     public DataArrayType getDataArray() {
         if (dataArray != null) {
-            return dataArray.getValue(); 
+            return dataArray.getValue();
         }
         return null;
     }
-    
+
     /**
      * Verify if this entry is identical to specified object.
      */
@@ -118,7 +118,7 @@ public class DataArrayPropertyType implements DataArrayProperty {
         hash = 29 * hash + (this.dataArray != null ? this.dataArray.hashCode() : 0);
         return hash;
     }
-    
+
     /**
      * Return a string representing the dataArray.
      */

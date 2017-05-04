@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for typeType.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
@@ -39,7 +39,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "typeType")
 @XmlEnum

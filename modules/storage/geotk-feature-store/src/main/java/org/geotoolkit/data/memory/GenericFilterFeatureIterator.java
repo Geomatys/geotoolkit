@@ -121,7 +121,7 @@ public class GenericFilterFeatureIterator<R extends FeatureIterator> implements 
 
     /**
      * Wrap a FeatureReader with a filter.
-     * 
+     *
      * @param <T> extends FeatureType
      * @param <F> extends Feature
      * @param <R> extends FeatureReader<T,F>
@@ -131,7 +131,7 @@ public class GenericFilterFeatureIterator<R extends FeatureIterator> implements 
         private GenericFilterFeatureReader(final FeatureReader reader, final Filter filter){
             super(reader,filter);
         }
-        
+
         @Override
         public FeatureType getFeatureType() {
             return iterator.getFeatureType();

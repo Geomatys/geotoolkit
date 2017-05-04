@@ -29,7 +29,7 @@ import org.geotoolkit.index.Data;
 /**
  * Iterator that search the quad tree depth first. And return each node that match
  * the given bounding box.
- * 
+ *
  * @author Jesse
  * @author Johann Sorel (Geomatys)
  * @module
@@ -63,7 +63,7 @@ public class LazySearchIterator implements SearchIterator<AbstractNode> {
         if(node.intersects(bounds)){
             path.add(new Segment(node, -1));
         }
-        
+
     }
 
     @Override
@@ -78,7 +78,7 @@ public class LazySearchIterator implements SearchIterator<AbstractNode> {
         if (current == null){
             throw new NoSuchElementException("No more elements available");
         }
-        
+
         final AbstractNode temp = current;
         current = null;
         return temp;

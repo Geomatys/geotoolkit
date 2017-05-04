@@ -36,11 +36,11 @@ public interface Execute extends RequestBase {
      * Sets process identifiers to use.
      */
     void setIdentifier(String identifiers);
-    
+
     List<? extends Input> getInput();
-    
+
     List<? extends OutputDefinition> getOutput();
-    
+
     String getLanguage();
 
     /**
@@ -52,13 +52,13 @@ public interface Execute extends RequestBase {
      * Sets OutputLineage state.
      */
     void setLineage(boolean outLineage);
-    
+
     boolean isRawOutput();
-    
+
     boolean isDocumentOutput();
-    
+
     boolean isStatus();
 
     boolean isStoreExecuteResponse();
-    
+
 }

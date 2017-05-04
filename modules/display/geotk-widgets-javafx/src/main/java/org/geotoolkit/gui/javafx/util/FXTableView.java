@@ -25,13 +25,13 @@ import javafx.scene.control.TableView;
 /**
  * Subclass to JavaFX TableView to support the very important missing feature :
  * terminate edition on cell change / focus lost.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class FXTableView<T> extends TableView<T>{
-    
+
     private final SimpleObjectProperty<TablePosition> terminatingCell = new SimpleObjectProperty<>();
-    
+
     public ReadOnlyObjectProperty<TablePosition> terminatingCell(){
         return terminatingCell;
     }
@@ -42,5 +42,5 @@ public class FXTableView<T> extends TableView<T>{
         super.edit(row, column);
         terminatingCell.set(null);
     }
-    
+
 }

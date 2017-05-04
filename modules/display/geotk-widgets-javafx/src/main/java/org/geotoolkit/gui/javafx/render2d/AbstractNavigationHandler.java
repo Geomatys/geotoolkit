@@ -140,13 +140,13 @@ public class AbstractNavigationHandler extends AbstractCanvasHandler{
     public static Cursor cleanCursor(Image icon, Point focusPoint, String cursorname){
         final int width = icon.getWidth(null);
         final int height = icon.getHeight(null);
-        
+
         final BufferedImage bufferARGB = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = bufferARGB.createGraphics();
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, width, height);
         g.drawImage(icon, new AffineTransform(), null);
-        
+
           for (int y = 0 ; y < height ; y++) {
             for (int x = 0 ; x < width ; x++) {
 
@@ -164,10 +164,10 @@ public class AbstractNavigationHandler extends AbstractCanvasHandler{
 
             }
         }
-        
+
         return Toolkit.getDefaultToolkit().createCustomCursor(bufferARGB,focusPoint,cursorname);
     }
-    
+
     protected double getMouseX(MouseEvent event){
         final javafx.geometry.Point2D pt = map.localToScreen(0, 0);
         return event.getScreenX()- pt.getX();
@@ -177,7 +177,7 @@ public class AbstractNavigationHandler extends AbstractCanvasHandler{
         final javafx.geometry.Point2D pt = map.localToScreen(0, 0);
         return event.getScreenY() - pt.getY();
     }
-        
+
     protected double getMouseX(GestureEvent event){
         final javafx.geometry.Point2D pt = map.localToScreen(0, 0);
         return event.getScreenX()- pt.getX();

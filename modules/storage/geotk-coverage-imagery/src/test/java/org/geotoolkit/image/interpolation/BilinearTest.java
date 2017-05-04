@@ -25,7 +25,7 @@ import org.junit.Test;
 
 /**
  * Bilinear Interpolation test.
- * 
+ *
  * @author Remi Marechal (Geomatys).
  */
 public class BilinearTest extends InterpolationTest {
@@ -68,7 +68,7 @@ public class BilinearTest extends InterpolationTest {
                 max = Math.max(Math.max(v00  , v01), Math.max(v10, v11));
                 for (double y = mpy; y < mpy + 1; y += 0.1) {
                     for (double x = mpx; x < mpx + 1; x += 0.1) {
-                        
+
                         jaiInter = jaiInterpol.interpolate(v00, v01, v10, v11, (float)(x - mpx), (float)(y - mpy));
 
                         //-- Interpolation per sample
@@ -110,7 +110,7 @@ public class BilinearTest extends InterpolationTest {
 
         resulTest = interpol.interpolate(-1, -1, 0);
         assertEquals("lowLCornerTest : at coordinate : (-1, -1)", 0, resulTest, TOLERANCE);
-        
+
         // Interpolation per pixel
         resulTest = interpol.interpolate(-1, -1.5)[0];
         assertEquals("lowLCornerTest : at coordinate : (-1, -1.5)", -1.5, resulTest, TOLERANCE);
@@ -147,7 +147,7 @@ public class BilinearTest extends InterpolationTest {
 
         resulTest = interpol.interpolate(0, -1, 0);
         assertEquals("lowRCornerTest : at coordinate : (0, -1)", 1, resulTest, TOLERANCE);
-        
+
         // Interpolation per pixel
         resulTest = interpol.interpolate(0, -1.5)[0];
         assertEquals("lowRCornerTest : at coordinate : (0, -1.5)", -0.5, resulTest, TOLERANCE);
@@ -181,7 +181,7 @@ public class BilinearTest extends InterpolationTest {
 
         resulTest = interpol.interpolate(-1.5, 1, 0);
         assertEquals("uppLCornerTest : at coordinate : (-1.5, 1)", 5.5, resulTest, TOLERANCE);
-        
+
         // Interpolation per pixel
         resulTest = interpol.interpolate(-1, 0.5)[0];
         assertEquals("uppLCornerTest : at coordinate : (-1, 0.5)", 4.5, resulTest, TOLERANCE);
@@ -212,10 +212,10 @@ public class BilinearTest extends InterpolationTest {
 
         resulTest = interpol.interpolate(1, 0.5, 0);
         assertEquals("uppRCornerTest : at coordinate : (1, 0.5)", 6.5, resulTest, TOLERANCE);
-        
+
         resulTest = interpol.interpolate(0.5, 1, 0);
         assertEquals("uppRCornerTest : at coordinate : (0.5, 1)", 7.5, resulTest, TOLERANCE);
-        
+
         // Interpolation per pixel
         resulTest = interpol.interpolate(0, -0.5)[0];
         assertEquals("uppRCornerTest : at coordinate : (0, -0.5)", 2.5, resulTest, TOLERANCE);

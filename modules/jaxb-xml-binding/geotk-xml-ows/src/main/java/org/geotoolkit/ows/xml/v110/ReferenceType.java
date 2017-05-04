@@ -27,12 +27,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Complete reference to a remote or local resource, allowing including metadata about that resource. 
- * 
+ * Complete reference to a remote or local resource, allowing including metadata about that resource.
+ *
  * <p>Java class for ReferenceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ReferenceType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,8 +73,8 @@ public class ReferenceType extends AbstractReferenceBaseType {
     private List<MetadataType> metadata;
 
     /**
-     * Optional unique identifier of the referenced resource. 
-     * 
+     * Optional unique identifier of the referenced resource.
+     *
      */
     public CodeType getIdentifier() {
         return identifier;
@@ -82,7 +82,7 @@ public class ReferenceType extends AbstractReferenceBaseType {
 
     /**
      * Sets the value of the identifier property.
-     * 
+     *
      */
     public void setIdentifier(final CodeType value) {
         this.identifier = value;
@@ -90,7 +90,7 @@ public class ReferenceType extends AbstractReferenceBaseType {
 
     /**
      * Gets the value of the abstract property.
-     * 
+     *
      */
     public List<LanguageStringType> getAbstract() {
         if (_abstract == null) {
@@ -108,16 +108,16 @@ public class ReferenceType extends AbstractReferenceBaseType {
 
     /**
      * Sets the value of the format property.
-     * 
+     *
      */
     public void setFormat(final String value) {
         this.format = value;
     }
 
     /**
-     * Optional unordered list of additional metadata about this resource. 
+     * Optional unordered list of additional metadata about this resource.
      * A list of optional metadata elements for this ReferenceType could be specified in the Implementation Specification for each use of this type in a specific OWS. Gets the value of the metadata property.
-     * 
+     *
      */
     public List<MetadataType> getMetadata() {
         if (metadata == null) {

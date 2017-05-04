@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * WCS capabilities document have a content element which
  * contain all coverage summary informations.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public interface Content {

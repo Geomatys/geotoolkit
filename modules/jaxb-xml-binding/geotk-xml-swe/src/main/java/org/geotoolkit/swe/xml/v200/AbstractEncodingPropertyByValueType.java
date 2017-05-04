@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AbstractEncodingPropertyByValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractEncodingPropertyByValueType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractEncodingPropertyByValueType", propOrder = {
@@ -54,14 +54,14 @@ public abstract class AbstractEncodingPropertyByValueType {
 
     /**
      * Gets the value of the abstractEncoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link TextEncodingType }{@code >}
      *     {@link JAXBElement }{@code <}{@link XMLEncodingType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryEncodingType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractEncodingType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractEncodingType> getAbstractEncoding() {
         return abstractEncoding;
@@ -69,14 +69,14 @@ public abstract class AbstractEncodingPropertyByValueType {
 
     /**
      * Sets the value of the abstractEncoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link TextEncodingType }{@code >}
      *     {@link JAXBElement }{@code <}{@link XMLEncodingType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryEncodingType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractEncodingType }{@code >}
-     *     
+     *
      */
     public void setAbstractEncoding(JAXBElement<? extends AbstractEncodingType> value) {
         this.abstractEncoding = ((JAXBElement<? extends AbstractEncodingType> ) value);

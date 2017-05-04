@@ -25,13 +25,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "GetLinkedCsw", namespace = "http://ws.geotk.org/")
 public class GetLinkedCsw {
-    
+
     private String outputFormat;
-    
+
     public GetLinkedCsw() {
-        
+
     }
-    
+
     public GetLinkedCsw(final String outputFormat) {
         this.outputFormat = outputFormat;
     }

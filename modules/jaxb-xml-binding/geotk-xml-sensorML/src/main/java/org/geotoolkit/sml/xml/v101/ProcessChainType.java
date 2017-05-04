@@ -25,11 +25,11 @@ import org.geotoolkit.sml.xml.AbstractProcessChain;
 
 /**
  * Complex Type for process chains
- * 
+ *
  * <p>Java class for ProcessChainType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ProcessChainType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.sml.xml.AbstractProcessChain;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -76,11 +76,11 @@ public class ProcessChainType extends AbstractPureProcessType implements Abstrac
 
     /**
      * Gets the value of the components property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Components }
-     *     
+     *
      */
     public Components getComponents() {
         return components;
@@ -88,11 +88,11 @@ public class ProcessChainType extends AbstractPureProcessType implements Abstrac
 
     /**
      * Sets the value of the components property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Components }
-     *     
+     *
      */
     public void setComponents(final Components value) {
         this.components = value;
@@ -100,11 +100,11 @@ public class ProcessChainType extends AbstractPureProcessType implements Abstrac
 
     /**
      * Gets the value of the connections property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Connections }
-     *     
+     *
      */
     public Connections getConnections() {
         return connections;
@@ -112,11 +112,11 @@ public class ProcessChainType extends AbstractPureProcessType implements Abstrac
 
     /**
      * Sets the value of the connections property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Connections }
-     *     
+     *
      */
     public void setConnections(final Connections value) {
         this.connections = value;

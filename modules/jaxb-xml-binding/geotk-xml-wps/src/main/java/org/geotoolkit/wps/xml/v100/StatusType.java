@@ -28,12 +28,12 @@ import org.geotoolkit.wps.xml.StatusInfo;
 
 
 /**
- * Description of the status of process execution. 
- * 
+ * Description of the status of process execution.
+ *
  * <p>Java class for StatusType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="StatusType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.wps.xml.StatusInfo;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -78,40 +78,40 @@ public class StatusType implements StatusInfo {
     protected XMLGregorianCalendar creationTime;
 
     public StatusType() {
-        
+
     }
-    
+
     public StatusType(XMLGregorianCalendar creationTime, String processAccepted, String processSucceeded) {
         this.creationTime = creationTime;
         this.processAccepted = processAccepted;
         this.processSucceeded = processSucceeded;
     }
-    
+
     public StatusType(XMLGregorianCalendar creationTime, ProcessStartedType processStarted, ProcessStartedType processPaused) {
         this.creationTime = creationTime;
         this.processStarted = processStarted;
         this.processPaused = processPaused;
     }
-    
+
     public StatusType(XMLGregorianCalendar creationTime, ProcessFailedType processFailed) {
         this.creationTime = creationTime;
         this.processFailed = processFailed;
     }
-    
+
     public StatusType(XMLGregorianCalendar creationTime, ExceptionReport processFailed) {
         this.creationTime = creationTime;
         if (processFailed != null) {
             this.processFailed = new ProcessFailedType(processFailed);
         }
     }
-    
+
     /**
      * Gets the value of the processAccepted property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getProcessAccepted() {
         return processAccepted;
@@ -119,11 +119,11 @@ public class StatusType implements StatusInfo {
 
     /**
      * Sets the value of the processAccepted property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setProcessAccepted(final String value) {
         this.processAccepted = value;
@@ -131,11 +131,11 @@ public class StatusType implements StatusInfo {
 
     /**
      * Gets the value of the processStarted property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ProcessStartedType }
-     *     
+     *
      */
     public ProcessStartedType getProcessStarted() {
         return processStarted;
@@ -143,11 +143,11 @@ public class StatusType implements StatusInfo {
 
     /**
      * Sets the value of the processStarted property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ProcessStartedType }
-     *     
+     *
      */
     public void setProcessStarted(final ProcessStartedType value) {
         this.processStarted = value;
@@ -155,11 +155,11 @@ public class StatusType implements StatusInfo {
 
     /**
      * Gets the value of the processPaused property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ProcessStartedType }
-     *     
+     *
      */
     public ProcessStartedType getProcessPaused() {
         return processPaused;
@@ -167,11 +167,11 @@ public class StatusType implements StatusInfo {
 
     /**
      * Sets the value of the processPaused property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ProcessStartedType }
-     *     
+     *
      */
     public void setProcessPaused(final ProcessStartedType value) {
         this.processPaused = value;
@@ -179,11 +179,11 @@ public class StatusType implements StatusInfo {
 
     /**
      * Gets the value of the processSucceeded property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getProcessSucceeded() {
         return processSucceeded;
@@ -191,11 +191,11 @@ public class StatusType implements StatusInfo {
 
     /**
      * Sets the value of the processSucceeded property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setProcessSucceeded(final String value) {
         this.processSucceeded = value;
@@ -203,11 +203,11 @@ public class StatusType implements StatusInfo {
 
     /**
      * Gets the value of the processFailed property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ProcessFailedType }
-     *     
+     *
      */
     public ProcessFailedType getProcessFailed() {
         return processFailed;
@@ -215,11 +215,11 @@ public class StatusType implements StatusInfo {
 
     /**
      * Sets the value of the processFailed property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ProcessFailedType }
-     *     
+     *
      */
     public void setProcessFailed(final ProcessFailedType value) {
         this.processFailed = value;
@@ -227,11 +227,11 @@ public class StatusType implements StatusInfo {
 
     /**
      * Gets the value of the creationTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getCreationTime() {
         return creationTime;
@@ -239,11 +239,11 @@ public class StatusType implements StatusInfo {
 
     /**
      * Sets the value of the creationTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setCreationTime(final XMLGregorianCalendar value) {
         this.creationTime = value;
@@ -272,7 +272,7 @@ public class StatusType implements StatusInfo {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

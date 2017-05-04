@@ -32,9 +32,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for MultiSurfaceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MultiSurfaceType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiSurfaceType", propOrder = {
@@ -62,21 +62,21 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType implements 
     private SurfaceArrayPropertyType surfaceMembers;
 
     public MultiSurfaceType() {
-        
+
     }
-    
+
     public MultiSurfaceType(final String srsName, final List<SurfacePropertyType> surfaceMember) {
         super(srsName);
         this.surfaceMember = surfaceMember;
     }
-    
+
     /**
      * Gets the value of the surfaceMember property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link SurfacePropertyType }
-     * 
-     * 
+     *
+     *
      */
     @Override
     public List<SurfacePropertyType> getSurfaceMember() {
@@ -85,7 +85,7 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType implements 
         }
         return this.surfaceMember;
     }
-    
+
     public void setSurfaceMember(final List<SurfacePropertyType> surfaceMember) {
         this.surfaceMember = surfaceMember;
     }
@@ -100,11 +100,11 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType implements 
 
     /**
      * Gets the value of the surfaceMembers property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SurfaceArrayPropertyType }
-     *     
+     *
      */
     public SurfaceArrayPropertyType getSurfaceMembers() {
         return surfaceMembers;
@@ -112,11 +112,11 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType implements 
 
     /**
      * Sets the value of the surfaceMembers property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SurfaceArrayPropertyType }
-     *     
+     *
      */
     public void setSurfaceMembers(SurfaceArrayPropertyType value) {
         this.surfaceMembers = value;

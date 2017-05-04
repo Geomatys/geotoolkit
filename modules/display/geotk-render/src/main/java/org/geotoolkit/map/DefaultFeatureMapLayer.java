@@ -151,7 +151,7 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
             //no data
             //never return a null envelope, we better return an infinite envelope
             env = new Envelope2D(sourceCrs,Double.NaN,Double.NaN,Double.NaN,Double.NaN);
-            
+
 //            Envelope crsEnv = CRS.getEnvelope(sourceCrs);
 //            if(crsEnv != null){
 //                //we couldn't estime the features envelope, return the crs envelope if possible

@@ -258,7 +258,7 @@ public class SpatialJoinProcess extends AbstractProcess {
         //each source descriptor
         for (final PropertyType sourceDesc : sourceType.getProperties(true)) {
             if(AttributeConvention.contains(sourceDesc.getName()) || !(sourceDesc instanceof AttributeType)) continue;
-            
+
             //add all descriptors but geometry
             if (!AttributeConvention.isGeometryAttribute(sourceDesc)) {
                 SingleAttributeTypeBuilder typeBuilder = new SingleAttributeTypeBuilder();

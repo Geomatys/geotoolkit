@@ -79,14 +79,14 @@ public class FXStoreChooser extends SplitPane {
     public static final Predicate FEATUREFACTORY_ONLY = (Object t) -> t instanceof FeatureStoreFactory;
     public static final Predicate COVERAGEFACTORY_ONLY = (Object t) -> t instanceof CoverageStoreFactory;
     public static final Predicate CLIENTFACTORY_ONLY = (Object t) -> t instanceof ClientFactory;
-    
+
     static final Comparator<Object> SORTER = new Comparator<Object>() {
         @Override
         public int compare(Object o1, Object o2) {
             //sort by type first
             final int o1p = getPriority(o1);
             final int o2p = getPriority(o2);
-            
+
             if(o1p == o2p){
                 final String o1Name = getText(o1);
                 final String o2Name = getText(o2);
@@ -95,7 +95,7 @@ public class FXStoreChooser extends SplitPane {
                 return Integer.compare(o1p, o2p);
             }
         }
-        
+
         private String getText(Object candidate){
             if(candidate instanceof DataStoreFactory){
                 return ((DataStoreFactory)candidate).getDisplayName().toString();
@@ -105,7 +105,7 @@ public class FXStoreChooser extends SplitPane {
                 return "";
             }
         }
-        
+
         private int getPriority(Object o){
             if(o instanceof FileFeatureStoreFactory){
                 return 1;
@@ -121,9 +121,9 @@ public class FXStoreChooser extends SplitPane {
                 return 5;
             }
         }
-        
+
     };
-    
+
     private final Accordion accordion = new Accordion();
     private final ListView<Object> factoryView = new ListView<>();
     private final FXLayerChooser layerChooser = new FXLayerChooser();
@@ -132,16 +132,16 @@ public class FXStoreChooser extends SplitPane {
     private final Button connectButton = new Button(GeotkFX.getString(FXStoreChooser.class,"apply"));
     private final Label infoLabel = new Label();
     private final BooleanProperty decorateProperty = new SimpleBooleanProperty(false);
-        
+
     public FXStoreChooser() {
         this(null);
     }
-    
+
     public FXStoreChooser(Predicate factoryFilter) {
-        
+
         final Set factoriesLst = new HashSet();
         factoriesLst.addAll(DataStores.getAvailableFactories(null));
-        
+
         ObservableList factories = FXCollections.observableArrayList(factoriesLst);
         Collections.sort(factories, SORTER);
         if(factoryFilter!=null){
@@ -151,35 +151,35 @@ public class FXStoreChooser extends SplitPane {
         factoryView.setItems(factories);
         factoryView.setCellFactory((ListView<Object> param) -> new FactoryCell());
         listScroll.setFitToHeight(true);
-        listScroll.setFitToWidth(true);        
-        
+        listScroll.setFitToWidth(true);
+
         //hide the tree table header
         FXUtilities.hideTableHeader(paramEditor.getTreetable());
-        
-        final BorderPane hpane = new BorderPane(infoLabel, null, connectButton, null, null);        
+
+        final BorderPane hpane = new BorderPane(infoLabel, null, connectButton, null, null);
         hpane.setPadding(new Insets(6, 6, 6, 6));
         final BorderPane vpane = new BorderPane(paramEditor, null, null, hpane, null);
         vpane.setPadding(Insets.EMPTY);
-        
+
         final TitledPane paneFactory = new TitledPane(GeotkFX.getString(FXStoreChooser.class,"factory"), listScroll);
         paneFactory.setFont(Font.font(paneFactory.getFont().getFamily(), FontWeight.BOLD, paneFactory.getFont().getSize()));
         final TitledPane paneConfig = new TitledPane(GeotkFX.getString(FXStoreChooser.class,"config"), vpane);
-        
+
         accordion.getPanes().add(paneFactory);
         accordion.getPanes().add(paneConfig);
         accordion.setPrefSize(500, 500);
         accordion.setExpandedPane(paneFactory);
-        
+
         getItems().add(accordion);
         getItems().add(layerChooser);
-        
+
         factoryView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         factoryView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<Object>() {
 
             @Override
             public void onChanged(ListChangeListener.Change<? extends Object> c) {
                 final Object factory = factoryView.getSelectionModel().getSelectedItem();
-                
+
                 final ParameterValueGroup param;
                 if(factory instanceof FeatureStoreFactory){
                     param = ((FeatureStoreFactory)factory).getParametersDescriptor().createValue();
@@ -190,11 +190,11 @@ public class FXStoreChooser extends SplitPane {
                 }else{
                     return;
                 }
-                paramEditor.setParameter(param);        
+                paramEditor.setParameter(param);
                 accordion.setExpandedPane(paneConfig);
             }
         });
-        
+
         connectButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -214,7 +214,7 @@ public class FXStoreChooser extends SplitPane {
                 }
             }
         });
-        
+
     }
 
     public BooleanProperty decorateProperty(){
@@ -224,9 +224,9 @@ public class FXStoreChooser extends SplitPane {
     private void setLayerSelectionVisible(boolean layerVisible) {
         layerChooser.setVisible(layerVisible);
     }
-    
+
     /**
-     * 
+     *
      * @return FeatureStore, CoverageStore or Client
      * @throws DataStoreException if store creation failed
      */
@@ -244,12 +244,12 @@ public class FXStoreChooser extends SplitPane {
             return null;
         }
     }
-    
+
     private List<MapLayer> getSelectedLayers() throws DataStoreException {
         return layerChooser.getLayers();
     }
-    
-    
+
+
     /**
      * Display a modal dialog.
      *
@@ -293,8 +293,8 @@ public class FXStoreChooser extends SplitPane {
     private static List showDialog(Node parent, Predicate predicate, boolean layerVisible) throws DataStoreException{
         final FXStoreChooser chooser = new FXStoreChooser(predicate);
         chooser.decorateProperty().set(true);
-        chooser.setLayerSelectionVisible(layerVisible);        
-        
+        chooser.setLayerSelectionVisible(layerVisible);
+
         final boolean res = FXOptionDialog.showOkCancel(parent, chooser, "", true);
 
         if (res) {
@@ -313,9 +313,9 @@ public class FXStoreChooser extends SplitPane {
         }
     }
 
-    
+
     public static class FactoryCell extends ListCell{
-        
+
         @Override
         protected void updateItem(Object item, boolean empty) {
             super.updateItem(item, empty);
@@ -360,5 +360,5 @@ public class FXStoreChooser extends SplitPane {
 
         return icon;
     }
-    
+
 }

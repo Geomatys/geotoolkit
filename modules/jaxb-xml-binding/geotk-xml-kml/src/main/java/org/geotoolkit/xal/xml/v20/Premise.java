@@ -37,9 +37,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -158,8 +158,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -227,25 +227,25 @@ public class Premise {
 
     /**
      * Gets the value of the addressLine property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the addressLine property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAddressLine().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AddressLine }
-     * 
-     * 
+     *
+     *
      */
     public List<AddressLine> getAddressLine() {
         if (addressLine == null) {
@@ -256,25 +256,25 @@ public class Premise {
 
     /**
      * Gets the value of the premiseName property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the premiseName property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPremiseName().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Premise.PremiseName }
-     * 
-     * 
+     *
+     *
      */
     public List<Premise.PremiseName> getPremiseName() {
         if (premiseName == null) {
@@ -285,11 +285,11 @@ public class Premise {
 
     /**
      * Gets the value of the premiseLocation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Premise.PremiseLocation }
-     *     
+     *
      */
     public Premise.PremiseLocation getPremiseLocation() {
         return premiseLocation;
@@ -297,11 +297,11 @@ public class Premise {
 
     /**
      * Sets the value of the premiseLocation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Premise.PremiseLocation }
-     *     
+     *
      */
     public void setPremiseLocation(final Premise.PremiseLocation value) {
         this.premiseLocation = value;
@@ -309,25 +309,25 @@ public class Premise {
 
     /**
      * Gets the value of the premiseNumber property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the premiseNumber property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPremiseNumber().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link PremiseNumber }
-     * 
-     * 
+     *
+     *
      */
     public List<PremiseNumber> getPremiseNumber() {
         if (premiseNumber == null) {
@@ -338,11 +338,11 @@ public class Premise {
 
     /**
      * Gets the value of the premiseNumberRange property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Premise.PremiseNumberRange }
-     *     
+     *
      */
     public Premise.PremiseNumberRange getPremiseNumberRange() {
         return premiseNumberRange;
@@ -350,11 +350,11 @@ public class Premise {
 
     /**
      * Sets the value of the premiseNumberRange property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Premise.PremiseNumberRange }
-     *     
+     *
      */
     public void setPremiseNumberRange(final Premise.PremiseNumberRange value) {
         this.premiseNumberRange = value;
@@ -362,25 +362,25 @@ public class Premise {
 
     /**
      * Gets the value of the premiseNumberPrefix property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the premiseNumberPrefix property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPremiseNumberPrefix().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link PremiseNumberPrefix }
-     * 
-     * 
+     *
+     *
      */
     public List<PremiseNumberPrefix> getPremiseNumberPrefix() {
         if (premiseNumberPrefix == null) {
@@ -391,25 +391,25 @@ public class Premise {
 
     /**
      * Gets the value of the premiseNumberSuffix property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the premiseNumberSuffix property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPremiseNumberSuffix().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link PremiseNumberSuffix }
-     * 
-     * 
+     *
+     *
      */
     public List<PremiseNumberSuffix> getPremiseNumberSuffix() {
         if (premiseNumberSuffix == null) {
@@ -420,25 +420,25 @@ public class Premise {
 
     /**
      * Gets the value of the buildingName property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the buildingName property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getBuildingName().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link BuildingNameType }
-     * 
-     * 
+     *
+     *
      */
     public List<BuildingNameType> getBuildingName() {
         if (buildingName == null) {
@@ -449,25 +449,25 @@ public class Premise {
 
     /**
      * Gets the value of the subPremise property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the subPremise property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSubPremise().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link SubPremiseType }
-     * 
-     * 
+     *
+     *
      */
     public List<SubPremiseType> getSubPremise() {
         if (subPremise == null) {
@@ -478,11 +478,11 @@ public class Premise {
 
     /**
      * Gets the value of the firm property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FirmType }
-     *     
+     *
      */
     public FirmType getFirm() {
         return firm;
@@ -490,11 +490,11 @@ public class Premise {
 
     /**
      * Sets the value of the firm property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FirmType }
-     *     
+     *
      */
     public void setFirm(final FirmType value) {
         this.firm = value;
@@ -502,11 +502,11 @@ public class Premise {
 
     /**
      * Gets the value of the mailStop property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MailStopType }
-     *     
+     *
      */
     public MailStopType getMailStop() {
         return mailStop;
@@ -514,11 +514,11 @@ public class Premise {
 
     /**
      * Sets the value of the mailStop property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MailStopType }
-     *     
+     *
      */
     public void setMailStop(final MailStopType value) {
         this.mailStop = value;
@@ -526,11 +526,11 @@ public class Premise {
 
     /**
      * Gets the value of the postalCode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PostalCode }
-     *     
+     *
      */
     public PostalCode getPostalCode() {
         return postalCode;
@@ -538,11 +538,11 @@ public class Premise {
 
     /**
      * Sets the value of the postalCode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PostalCode }
-     *     
+     *
      */
     public void setPostalCode(final PostalCode value) {
         this.postalCode = value;
@@ -550,11 +550,11 @@ public class Premise {
 
     /**
      * Gets the value of the premise property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Premise }
-     *     
+     *
      */
     public Premise getPremise() {
         return premise;
@@ -562,11 +562,11 @@ public class Premise {
 
     /**
      * Sets the value of the premise property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Premise }
-     *     
+     *
      */
     public void setPremise(final Premise value) {
         this.premise = value;
@@ -574,25 +574,25 @@ public class Premise {
 
     /**
      * Gets the value of the any property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the any property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAny().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getAny() {
         if (any == null) {
@@ -603,11 +603,11 @@ public class Premise {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -615,11 +615,11 @@ public class Premise {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -627,11 +627,11 @@ public class Premise {
 
     /**
      * Gets the value of the premiseDependency property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPremiseDependency() {
         return premiseDependency;
@@ -639,11 +639,11 @@ public class Premise {
 
     /**
      * Sets the value of the premiseDependency property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPremiseDependency(final String value) {
         this.premiseDependency = value;
@@ -651,11 +651,11 @@ public class Premise {
 
     /**
      * Gets the value of the premiseDependencyType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPremiseDependencyType() {
         return premiseDependencyType;
@@ -663,11 +663,11 @@ public class Premise {
 
     /**
      * Sets the value of the premiseDependencyType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPremiseDependencyType(final String value) {
         this.premiseDependencyType = value;
@@ -675,11 +675,11 @@ public class Premise {
 
     /**
      * Gets the value of the premiseThoroughfareConnector property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPremiseThoroughfareConnector() {
         return premiseThoroughfareConnector;
@@ -687,11 +687,11 @@ public class Premise {
 
     /**
      * Sets the value of the premiseThoroughfareConnector property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPremiseThoroughfareConnector(final String value) {
         this.premiseThoroughfareConnector = value;
@@ -699,15 +699,15 @@ public class Premise {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * <p>
-     * the map is keyed by the name of the attribute and 
+     * the map is keyed by the name of the attribute and
      * the value is the string value of the attribute.
-     * 
+     *
      * the map returned by this method is live, and you can add new attribute
      * by updating the map directly. Because of this design, there's no setter.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */
@@ -718,9 +718,9 @@ public class Premise {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -730,8 +730,8 @@ public class Premise {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -749,11 +749,11 @@ public class Premise {
 
         /**
          * Gets the value of the content property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getContent() {
             return content;
@@ -761,11 +761,11 @@ public class Premise {
 
         /**
          * Sets the value of the content property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setContent(final String value) {
             this.content = value;
@@ -773,11 +773,11 @@ public class Premise {
 
         /**
          * Gets the value of the code property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getCode() {
             return code;
@@ -785,11 +785,11 @@ public class Premise {
 
         /**
          * Sets the value of the code property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setCode(final String value) {
             this.code = value;
@@ -797,15 +797,15 @@ public class Premise {
 
         /**
          * Gets a map that contains attributes that aren't bound to any typed property on this class.
-         * 
+         *
          * <p>
-         * the map is keyed by the name of the attribute and 
+         * the map is keyed by the name of the attribute and
          * the value is the string value of the attribute.
-         * 
+         *
          * the map returned by this method is live, and you can add new attribute
          * by updating the map directly. Because of this design, there's no setter.
-         * 
-         * 
+         *
+         *
          * @return
          *     always non-null
          */
@@ -818,9 +818,9 @@ public class Premise {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -839,8 +839,8 @@ public class Premise {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -864,11 +864,11 @@ public class Premise {
 
         /**
          * Gets the value of the content property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getContent() {
             return content;
@@ -876,11 +876,11 @@ public class Premise {
 
         /**
          * Sets the value of the content property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setContent(final String value) {
             this.content = value;
@@ -888,11 +888,11 @@ public class Premise {
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
             return type;
@@ -900,11 +900,11 @@ public class Premise {
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -912,11 +912,11 @@ public class Premise {
 
         /**
          * Gets the value of the typeOccurrence property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getTypeOccurrence() {
             return typeOccurrence;
@@ -924,11 +924,11 @@ public class Premise {
 
         /**
          * Sets the value of the typeOccurrence property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setTypeOccurrence(final String value) {
             this.typeOccurrence = value;
@@ -936,11 +936,11 @@ public class Premise {
 
         /**
          * Gets the value of the code property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getCode() {
             return code;
@@ -948,11 +948,11 @@ public class Premise {
 
         /**
          * Sets the value of the code property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setCode(final String value) {
             this.code = value;
@@ -960,15 +960,15 @@ public class Premise {
 
         /**
          * Gets a map that contains attributes that aren't bound to any typed property on this class.
-         * 
+         *
          * <p>
-         * the map is keyed by the name of the attribute and 
+         * the map is keyed by the name of the attribute and
          * the value is the string value of the attribute.
-         * 
+         *
          * the map returned by this method is live, and you can add new attribute
          * by updating the map directly. Because of this design, there's no setter.
-         * 
-         * 
+         *
+         *
          * @return
          *     always non-null
          */
@@ -981,9 +981,9 @@ public class Premise {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -1044,8 +1044,8 @@ public class Premise {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -1079,11 +1079,11 @@ public class Premise {
 
         /**
          * Gets the value of the premiseNumberRangeFrom property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Premise.PremiseNumberRange.PremiseNumberRangeFrom }
-         *     
+         *
          */
         public Premise.PremiseNumberRange.PremiseNumberRangeFrom getPremiseNumberRangeFrom() {
             return premiseNumberRangeFrom;
@@ -1091,11 +1091,11 @@ public class Premise {
 
         /**
          * Sets the value of the premiseNumberRangeFrom property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Premise.PremiseNumberRange.PremiseNumberRangeFrom }
-         *     
+         *
          */
         public void setPremiseNumberRangeFrom(final Premise.PremiseNumberRange.PremiseNumberRangeFrom value) {
             this.premiseNumberRangeFrom = value;
@@ -1103,11 +1103,11 @@ public class Premise {
 
         /**
          * Gets the value of the premiseNumberRangeTo property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Premise.PremiseNumberRange.PremiseNumberRangeTo }
-         *     
+         *
          */
         public Premise.PremiseNumberRange.PremiseNumberRangeTo getPremiseNumberRangeTo() {
             return premiseNumberRangeTo;
@@ -1115,11 +1115,11 @@ public class Premise {
 
         /**
          * Sets the value of the premiseNumberRangeTo property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Premise.PremiseNumberRange.PremiseNumberRangeTo }
-         *     
+         *
          */
         public void setPremiseNumberRangeTo(final Premise.PremiseNumberRange.PremiseNumberRangeTo value) {
             this.premiseNumberRangeTo = value;
@@ -1127,11 +1127,11 @@ public class Premise {
 
         /**
          * Gets the value of the rangeType property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getRangeType() {
             return rangeType;
@@ -1139,11 +1139,11 @@ public class Premise {
 
         /**
          * Sets the value of the rangeType property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setRangeType(final String value) {
             this.rangeType = value;
@@ -1151,11 +1151,11 @@ public class Premise {
 
         /**
          * Gets the value of the indicator property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getIndicator() {
             return indicator;
@@ -1163,11 +1163,11 @@ public class Premise {
 
         /**
          * Sets the value of the indicator property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setIndicator(final String value) {
             this.indicator = value;
@@ -1175,11 +1175,11 @@ public class Premise {
 
         /**
          * Gets the value of the separator property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getSeparator() {
             return separator;
@@ -1187,11 +1187,11 @@ public class Premise {
 
         /**
          * Sets the value of the separator property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setSeparator(final String value) {
             this.separator = value;
@@ -1199,11 +1199,11 @@ public class Premise {
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
             return type;
@@ -1211,11 +1211,11 @@ public class Premise {
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -1223,11 +1223,11 @@ public class Premise {
 
         /**
          * Gets the value of the indicatorOccurence property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getIndicatorOccurence() {
             return indicatorOccurence;
@@ -1235,11 +1235,11 @@ public class Premise {
 
         /**
          * Sets the value of the indicatorOccurence property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setIndicatorOccurence(final String value) {
             this.indicatorOccurence = value;
@@ -1247,11 +1247,11 @@ public class Premise {
 
         /**
          * Gets the value of the numberRangeOccurence property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getNumberRangeOccurence() {
             return numberRangeOccurence;
@@ -1259,11 +1259,11 @@ public class Premise {
 
         /**
          * Sets the value of the numberRangeOccurence property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setNumberRangeOccurence(final String value) {
             this.numberRangeOccurence = value;
@@ -1272,9 +1272,9 @@ public class Premise {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -1289,8 +1289,8 @@ public class Premise {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -1312,25 +1312,25 @@ public class Premise {
 
             /**
              * Gets the value of the addressLine property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the addressLine property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getAddressLine().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link AddressLine }
-             * 
-             * 
+             *
+             *
              */
             public List<AddressLine> getAddressLine() {
                 if (addressLine == null) {
@@ -1341,25 +1341,25 @@ public class Premise {
 
             /**
              * Gets the value of the premiseNumberPrefix property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the premiseNumberPrefix property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getPremiseNumberPrefix().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link PremiseNumberPrefix }
-             * 
-             * 
+             *
+             *
              */
             public List<PremiseNumberPrefix> getPremiseNumberPrefix() {
                 if (premiseNumberPrefix == null) {
@@ -1370,25 +1370,25 @@ public class Premise {
 
             /**
              * Gets the value of the premiseNumber property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the premiseNumber property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getPremiseNumber().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link PremiseNumber }
-             * 
-             * 
+             *
+             *
              */
             public List<PremiseNumber> getPremiseNumber() {
                 if (premiseNumber == null) {
@@ -1399,25 +1399,25 @@ public class Premise {
 
             /**
              * Gets the value of the premiseNumberSuffix property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the premiseNumberSuffix property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getPremiseNumberSuffix().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link PremiseNumberSuffix }
-             * 
-             * 
+             *
+             *
              */
             public List<PremiseNumberSuffix> getPremiseNumberSuffix() {
                 if (premiseNumberSuffix == null) {
@@ -1431,9 +1431,9 @@ public class Premise {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -1448,8 +1448,8 @@ public class Premise {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -1471,25 +1471,25 @@ public class Premise {
 
             /**
              * Gets the value of the addressLine property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the addressLine property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getAddressLine().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link AddressLine }
-             * 
-             * 
+             *
+             *
              */
             public List<AddressLine> getAddressLine() {
                 if (addressLine == null) {
@@ -1500,25 +1500,25 @@ public class Premise {
 
             /**
              * Gets the value of the premiseNumberPrefix property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the premiseNumberPrefix property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getPremiseNumberPrefix().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link PremiseNumberPrefix }
-             * 
-             * 
+             *
+             *
              */
             public List<PremiseNumberPrefix> getPremiseNumberPrefix() {
                 if (premiseNumberPrefix == null) {
@@ -1529,25 +1529,25 @@ public class Premise {
 
             /**
              * Gets the value of the premiseNumber property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the premiseNumber property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getPremiseNumber().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link PremiseNumber }
-             * 
-             * 
+             *
+             *
              */
             public List<PremiseNumber> getPremiseNumber() {
                 if (premiseNumber == null) {
@@ -1558,25 +1558,25 @@ public class Premise {
 
             /**
              * Gets the value of the premiseNumberSuffix property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the premiseNumberSuffix property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getPremiseNumberSuffix().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link PremiseNumberSuffix }
-             * 
-             * 
+             *
+             *
              */
             public List<PremiseNumberSuffix> getPremiseNumberSuffix() {
                 if (premiseNumberSuffix == null) {

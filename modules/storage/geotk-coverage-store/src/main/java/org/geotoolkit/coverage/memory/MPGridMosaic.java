@@ -44,7 +44,7 @@ public class MPGridMosaic extends AbstractGridMosaic {
     @Override
     public MPTileReference getTile(int col, int row, Map hints) throws DataStoreException {
         return mpTileReference[col][row];
-    }    
+    }
 
     public void setTile(int col, int row, MPTileReference tile){
         mpTileReference[col][row] = tile;

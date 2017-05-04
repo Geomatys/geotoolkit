@@ -26,7 +26,7 @@ import org.opengis.style.Symbolizer;
 
 /**
  * Mutable interface of geoAPI Style.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -36,7 +36,7 @@ public interface MutableStyle extends MutableLayerStyle,Style{
     public static final String DESCRIPTION_PROPERTY = "description";
     public static final String DEFAULT_SPECIFICATION_PROPERTY = "defaultSpecification";
     public static final String ISDEFAULT_PROPERTY = "isDefault";
-    
+
     /**
      * @return live list
      */
@@ -50,7 +50,7 @@ public interface MutableStyle extends MutableLayerStyle,Style{
      * This method is thread safe.
      */
     void setName(String name);
-    
+
     /**
      * Set the Description of the style.
      * @param desc : Description can't be null
@@ -58,7 +58,7 @@ public interface MutableStyle extends MutableLayerStyle,Style{
     void setDescription(Description desc);
 
     void setDefault(boolean isDefault);
-    
+
 
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------

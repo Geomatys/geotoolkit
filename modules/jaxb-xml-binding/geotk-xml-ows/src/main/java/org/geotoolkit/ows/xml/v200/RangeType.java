@@ -34,11 +34,11 @@ import org.geotoolkit.ows.xml.Range;
  *       is no value limit in that direction. Inclusion of the specified minimum
  *       and maximum values in the range shall be defined by the
  *       rangeClosure.
- * 
+ *
  * <p>Java class for RangeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RangeType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.geotoolkit.ows.xml.Range;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RangeType", propOrder = {
@@ -75,7 +75,7 @@ public class RangeType implements Range {
 
     public RangeType(){
     }
-    
+
     public RangeType(final Range that){
         if (that != null)  {
             if (that.getMaximumValue() != null) {
@@ -111,14 +111,14 @@ public class RangeType implements Range {
         this.maximumValue = new ValueType(maximumValue);
         this.minimumValue = new ValueType(minimumValue);
     }
-    
+
     /**
      * Gets the value of the minimumValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ValueType }
-     *     
+     *
      */
     @Override
     public ValueType getMinimumValue() {
@@ -127,11 +127,11 @@ public class RangeType implements Range {
 
     /**
      * Sets the value of the minimumValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ValueType }
-     *     
+     *
      */
     public void setMinimumValue(ValueType value) {
         this.minimumValue = value;
@@ -139,11 +139,11 @@ public class RangeType implements Range {
 
     /**
      * Gets the value of the maximumValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ValueType }
-     *     
+     *
      */
     @Override
     public ValueType getMaximumValue() {
@@ -152,11 +152,11 @@ public class RangeType implements Range {
 
     /**
      * Sets the value of the maximumValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ValueType }
-     *     
+     *
      */
     public void setMaximumValue(ValueType value) {
         this.maximumValue = value;
@@ -166,11 +166,11 @@ public class RangeType implements Range {
      * Shall be included when the allowed values are NOT
      *           continuous in this range. Shall not be included when the allowed
      *           values are continuous in this range.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ValueType }
-     *     
+     *
      */
     @Override
     public ValueType getSpacing() {
@@ -179,11 +179,11 @@ public class RangeType implements Range {
 
     /**
      * Sets the value of the spacing property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ValueType }
-     *     
+     *
      */
     public void setSpacing(ValueType value) {
         this.spacing = value;
@@ -192,7 +192,7 @@ public class RangeType implements Range {
     /**
      * Shall be included unless the default value
      *         applies.Gets the value of the rangeClosure property.
-     * 
+     *
      */
     @Override
     public List<String> getRangeClosure() {

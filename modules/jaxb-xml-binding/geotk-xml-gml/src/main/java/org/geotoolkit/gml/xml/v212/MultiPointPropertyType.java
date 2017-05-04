@@ -22,16 +22,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *         Encapsulates a MultiPoint element to represent the following 
- *         discontiguous geometric properties: multiLocation, multiPosition, 
+ *
+ *         Encapsulates a MultiPoint element to represent the following
+ *         discontiguous geometric properties: multiLocation, multiPosition,
  *         multiCenterOf.
- *       
- * 
+ *
+ *
  * <p>Java class for MultiPointPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MultiPointPropertyType">
  *   &lt;complexContent>
@@ -45,22 +45,22 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiPointPropertyType")
 public class MultiPointPropertyType extends GeometryAssociationType {
-    
+
     public MultiPointPropertyType() {
-        
+
     }
-    
+
     public MultiPointPropertyType(MultiPointPropertyType that) {
         super(that);
     }
-    
+
     @Override
     public GeometryAssociationType getClone() {
         return new MultiPointPropertyType(this);

@@ -30,14 +30,14 @@ import org.geotoolkit.csw.xml.SchemaComponent;
 
 /**
  *  A schema component includes a schema fragment (type definition) or an entire schema from some target namespace;
- *  the schema language is identified by URI. 
+ *  the schema language is identified by URI.
  * If the component is a schema fragment its parent MUST be referenced (parentSchema).
- *          
- * 
+ *
+ *
  * <p>Java class for SchemaComponentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SchemaComponentType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.csw.xml.SchemaComponent;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -91,14 +91,14 @@ public class SchemaComponentType implements SchemaComponent {
         this.content         = new ArrayList<Object>();
         content.add(xsd);
     }
-    
+
     /**
      *  A schema component includes a schema fragment (type definition) or an entire schema from some target namespace;
-     *  the schema language is identified by URI. 
+     *  the schema language is identified by URI.
      *  If the component is a schema fragment its parent MUST be referenced (parentSchema).
-     *  
+     *
      *  Gets the value of the content property.
-     * 
+     *
      */
     @Override
     public List<Object> getContent() {
@@ -110,7 +110,7 @@ public class SchemaComponentType implements SchemaComponent {
 
     /**
      * Gets the value of the targetNamespace property.
-     * 
+     *
      */
     @Override
     public String getTargetNamespace() {
@@ -119,7 +119,7 @@ public class SchemaComponentType implements SchemaComponent {
 
     /**
      * Sets the value of the targetNamespace property.
-     * 
+     *
      */
     public void setTargetNamespace(final String value) {
         this.targetNamespace = value;
@@ -127,7 +127,7 @@ public class SchemaComponentType implements SchemaComponent {
 
     /**
      * Gets the value of the parentSchema property.
-     * 
+     *
      */
     @Override
     public String getParentSchema() {
@@ -136,7 +136,7 @@ public class SchemaComponentType implements SchemaComponent {
 
     /**
      * Sets the value of the parentSchema property.
-     * 
+     *
      */
     public void setParentSchema(final String value) {
         this.parentSchema = value;
@@ -144,7 +144,7 @@ public class SchemaComponentType implements SchemaComponent {
 
     /**
      * Gets the value of the schemaLanguage property.
-     * 
+     *
      */
     @Override
     public String getSchemaLanguage() {
@@ -153,7 +153,7 @@ public class SchemaComponentType implements SchemaComponent {
 
     /**
      * Sets the value of the schemaLanguage property.
-     * 
+     *
      */
     public void setSchemaLanguage(final String value) {
         this.schemaLanguage = value;

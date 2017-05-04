@@ -26,13 +26,13 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Logical group of one or more references to remote and/or local resources, allowing including metadata about that group. 
- * A Group can be used instead of a Manifest that can only contain one group. 
- * 
+ * Logical group of one or more references to remote and/or local resources, allowing including metadata about that group.
+ * A Group can be used instead of a Manifest that can only contain one group.
+ *
  * <p>Java class for ReferenceGroupType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ReferenceGroupType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

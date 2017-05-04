@@ -110,7 +110,7 @@ public interface SubAdministrativeArea {
     void setPostOffice(PostOffice postOffice);
 
     /**
-     * 
+     *
      * @return
      */
     PostalCode getPostalCode();
@@ -141,8 +141,8 @@ public interface SubAdministrativeArea {
     void setType(String type);
 
     /**
-     * <p>Postal or Political - 
-     * Sometimes locations must be distinguished between postal system, 
+     * <p>Postal or Political -
+     * Sometimes locations must be distinguished between postal system,
      * and physical locations as defined by a political system.</p>
      *
      * @return
@@ -163,7 +163,7 @@ public interface SubAdministrativeArea {
     String getIndicator();
 
     /**
-     * 
+     *
      * @param indicator
      */
     void setIndicator(String indicator);

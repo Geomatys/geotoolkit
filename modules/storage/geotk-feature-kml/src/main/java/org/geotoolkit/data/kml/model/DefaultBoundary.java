@@ -30,13 +30,13 @@ public class DefaultBoundary implements Boundary {
     private LinearRing linearRing;
 
     /**
-     * 
+     *
      */
     public DefaultBoundary() {
     }
 
     /**
-     * 
+     *
      * @param linearRing
      * @param boundarySimpleExtensions
      * @param boundaryObjectExtensions

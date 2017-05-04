@@ -37,7 +37,7 @@ import org.opengis.feature.FeatureType;
 
 /**
  * Feature type edition panel.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class FXFeatureTypePane extends FXPropertyPane {

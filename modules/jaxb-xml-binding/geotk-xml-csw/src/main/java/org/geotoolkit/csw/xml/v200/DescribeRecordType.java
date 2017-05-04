@@ -29,19 +29,19 @@ import org.geotoolkit.csw.xml.DescribeRecord;
 
 
 /**
- * 
+ *
  * This request allows a user to discover elements of the nformation model supported by the catalogue service.
  * If no TypeName elements are provided, then all of the schemas for the information model are returned
- *       
+ *
  *  schemaLanguage - preferred schema language (W3C XML Schema by default)
  *
  *  outputFormat   - preferred output format (text/xml by default)
- *          
- * 
+ *
+ *
  * <p>Java class for DescribeRecordType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DescribeRecordType">
  *   &lt;complexContent>
@@ -55,8 +55,8 @@ import org.geotoolkit.csw.xml.DescribeRecord;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -102,10 +102,10 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
         }
 
     }
-    
+
     /**
      * Gets the value of the typeName property.
-     * 
+     *
      */
     @Override
     public List<TypeNameType> getTypeName() {
@@ -128,7 +128,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
 
     /**
      * Gets the value of the outputFormat property.
-     * 
+     *
      */
     @Override
     public String getOutputFormat() {
@@ -141,7 +141,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
 
     /**
      * Sets the value of the outputFormat property.
-     * 
+     *
      */
     @Override
     public void setOutputFormat(final String value) {
@@ -150,7 +150,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
 
     /**
      * Gets the value of the schemaLanguage property.
-     * 
+     *
      */
     @Override
     public String getSchemaLanguage() {
@@ -163,7 +163,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
 
     /**
      * Sets the value of the schemaLanguage property.
-     * 
+     *
      */
     @Override
     public void setSchemaLanguage(final String value) {

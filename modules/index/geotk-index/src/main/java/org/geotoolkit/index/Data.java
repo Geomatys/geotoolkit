@@ -19,7 +19,7 @@ package org.geotoolkit.index;
 
 /**
  * Holds values (with associated DataDefinition)
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -32,7 +32,7 @@ public interface Data {
 
     /**
      * DOCUMENT ME!
-     * 
+     *
      * @param val
      * @return - this Data object
      * @throws TreeException

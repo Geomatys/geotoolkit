@@ -27,19 +27,19 @@ import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types contrast enhancement.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class DefaultContrastEnhancement implements ContrastEnhancement{
 
     private final Expression gamma;
-    
+
     private final ContrastMethod type;
-    
+
     /**
      * Create a default immutable contrast enhancement.
-     * 
+     *
      * @param type : if null will be replaced by ContrastMethod.NONE
      * @param gamma : if null or Expression.NIL will be replaced by default value.
      */
@@ -99,7 +99,7 @@ public class DefaultContrastEnhancement implements ContrastEnhancement{
     public int hashCode() {
         int hash = gamma.hashCode();
         if(type != null) hash += type.hashCode();
-        
+
         return hash;
     }
 
@@ -116,5 +116,5 @@ public class DefaultContrastEnhancement implements ContrastEnhancement{
         builder.append(']');
         return builder.toString();
     }
-    
+
 }

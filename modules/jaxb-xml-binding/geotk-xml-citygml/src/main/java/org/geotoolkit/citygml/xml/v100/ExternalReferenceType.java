@@ -24,17 +24,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Type describing the reference to an corresponding object in an other information system, 
+ * Type describing the reference to an corresponding object in an other information system,
  * for example in the german cadastre ALKIS, the german topographic information system or ATKIS, or the OS MasterMap.
  * The reference consists of the name of the external information system, represented by an URI,
  * and the reference of the external object, given either by a string or by an URI.
  * If the informationSystem element is missing in the ExternalReference, the ExternalObjectReference must be an URI,
  * which contains an indication of the informationSystem.
- * 
+ *
  * <p>Java class for ExternalReferenceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ExternalReferenceType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,11 +65,11 @@ public class ExternalReferenceType {
 
     /**
      * Gets the value of the informationSystem property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getInformationSystem() {
         return informationSystem;
@@ -77,11 +77,11 @@ public class ExternalReferenceType {
 
     /**
      * Sets the value of the informationSystem property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setInformationSystem(final String value) {
         this.informationSystem = value;
@@ -89,11 +89,11 @@ public class ExternalReferenceType {
 
     /**
      * Gets the value of the externalObject property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExternalObjectReferenceType }
-     *     
+     *
      */
     public ExternalObjectReferenceType getExternalObject() {
         return externalObject;
@@ -101,11 +101,11 @@ public class ExternalReferenceType {
 
     /**
      * Sets the value of the externalObject property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExternalObjectReferenceType }
-     *     
+     *
      */
     public void setExternalObject(final ExternalObjectReferenceType value) {
         this.externalObject = value;

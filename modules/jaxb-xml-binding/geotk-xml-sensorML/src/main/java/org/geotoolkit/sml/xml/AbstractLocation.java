@@ -24,7 +24,7 @@ import org.geotoolkit.gml.xml.AbstractGeometry;
  * @module
  */
 public interface AbstractLocation {
-    
+
     AbstractGeometry getGeometry();
 
     String getRemoteSchema();
@@ -34,27 +34,27 @@ public interface AbstractLocation {
     String getType();
 
     void setType(String value);
-    
+
     String getHref();
 
     void setHref(String value);
-    
+
     String getRole();
 
     void setRole(String value);
-    
+
     String getArcrole();
 
     void setArcrole(String value);
-    
+
     String getTitle();
 
     void setTitle(String value);
-    
+
     void setShow(String value);
 
     String getActuate();
-    
+
     void setActuate(String value);
 
     String getShow();

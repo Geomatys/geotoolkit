@@ -26,9 +26,9 @@ import org.geotoolkit.wfs.xml.CreateStoredQueryResponse;
 
 /**
  * <p>Java class for CreateStoredQueryResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CreateStoredQueryResponseType">
  *   &lt;complexContent>
@@ -37,8 +37,8 @@ import org.geotoolkit.wfs.xml.CreateStoredQueryResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CreateStoredQueryResponseType")
@@ -46,9 +46,9 @@ import org.geotoolkit.wfs.xml.CreateStoredQueryResponse;
 public class CreateStoredQueryResponseType extends ExecutionStatusType implements CreateStoredQueryResponse {
 
     public CreateStoredQueryResponseType() {
-        
+
     }
-    
+
     public CreateStoredQueryResponseType(final String status) {
         super(status);
     }

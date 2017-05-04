@@ -18,11 +18,11 @@ package org.geotoolkit.coverage.wkb;
 
 /**
  * WKB Raster band, used in postGIS 2 but can be used elsewhere.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 class WKBRasterBand {
-    
+
     private int pixelType;
     private boolean offdatabase;
     private boolean hasnodata;
@@ -89,11 +89,11 @@ class WKBRasterBand {
     public byte[] getDatas() {
         return datas;
     }
-    
+
     public int getNbBytePerPixel() {
         return WKBRasterConstants.getNbBytePerPixel(pixelType);
     }
-    
+
     public int getDataBufferType(){
         return WKBRasterConstants.getDataBufferType(pixelType);
     }
@@ -110,5 +110,5 @@ class WKBRasterBand {
         return sb.toString();
     }
 
-    
+
 }

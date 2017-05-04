@@ -89,7 +89,7 @@ public class AmendedCoverageReference extends AbstractCoverageReference{
 
     /**
      * Check if at least one of the grid geometry properties has been overriden.
-     * 
+     *
      * @return true of grid geometry is override
      */
     public boolean isGridGeometryOverriden(){
@@ -111,7 +111,7 @@ public class AmendedCoverageReference extends AbstractCoverageReference{
 
     /**
      * Get overriden CRS.
-     * 
+     *
      * @return CoordinateReferenceSystem, can be null
      */
     public CoordinateReferenceSystem getOverrideCRS() {

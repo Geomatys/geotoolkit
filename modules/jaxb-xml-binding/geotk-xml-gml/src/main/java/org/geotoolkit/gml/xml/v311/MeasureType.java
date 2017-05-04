@@ -28,13 +28,13 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * Number with a scale.  
- *       The value of uom (Units Of Measure) attribute is a reference to a Reference System for the amount, either a ratio or position scale. 
- * 
+ * Number with a scale.
+ *       The value of uom (Units Of Measure) attribute is a reference to a Reference System for the amount, either a ratio or position scale.
+ *
  * <p>Java class for MeasureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MeasureType">
  *   &lt;simpleContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,7 +81,7 @@ public class MeasureType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      */
     public double getValue() {
         return value;
@@ -89,7 +89,7 @@ public class MeasureType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      */
     public void setValue(final double value) {
         this.value = value;
@@ -97,11 +97,11 @@ public class MeasureType {
 
     /**
      * Gets the value of the uom property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUom() {
         return uom;
@@ -109,11 +109,11 @@ public class MeasureType {
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUom(final String value) {
         this.uom = value;
@@ -144,7 +144,7 @@ public class MeasureType {
         return hash;
     }
 
-    
+
    /**
      * Retourne une chaine de charactere representant la station.
      */

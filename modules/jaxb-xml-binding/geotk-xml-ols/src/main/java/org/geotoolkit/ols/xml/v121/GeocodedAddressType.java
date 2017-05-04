@@ -26,9 +26,9 @@ import org.geotoolkit.gml.xml.v311.PointType;
 
 /**
  * <p>Java class for GeocodedAddressType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeocodedAddressType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.gml.xml.v311.PointType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeocodedAddressType", propOrder = {
@@ -62,11 +62,11 @@ public class GeocodedAddressType {
 
     /**
      * Gets the value of the point property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PointType }
-     *     
+     *
      */
     public PointType getPoint() {
         return point;
@@ -74,11 +74,11 @@ public class GeocodedAddressType {
 
     /**
      * Sets the value of the point property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PointType }
-     *     
+     *
      */
     public void setPoint(PointType value) {
         this.point = value;
@@ -86,11 +86,11 @@ public class GeocodedAddressType {
 
     /**
      * Gets the value of the address property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AddressType }
-     *     
+     *
      */
     public AddressType getAddress() {
         return address;
@@ -98,11 +98,11 @@ public class GeocodedAddressType {
 
     /**
      * Sets the value of the address property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AddressType }
-     *     
+     *
      */
     public void setAddress(AddressType value) {
         this.address = value;
@@ -110,11 +110,11 @@ public class GeocodedAddressType {
 
     /**
      * Gets the value of the geocodeMatchCode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeocodingQOSType }
-     *     
+     *
      */
     public GeocodingQOSType getGeocodeMatchCode() {
         return geocodeMatchCode;
@@ -122,11 +122,11 @@ public class GeocodedAddressType {
 
     /**
      * Sets the value of the geocodeMatchCode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeocodingQOSType }
-     *     
+     *
      */
     public void setGeocodeMatchCode(GeocodingQOSType value) {
         this.geocodeMatchCode = value;

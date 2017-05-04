@@ -26,12 +26,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Association to a temporal coordinate system, either referencing or containing the definition of that coordinate system. 
- * 
+ * Association to a temporal coordinate system, either referencing or containing the definition of that coordinate system.
+ *
  * <p>Java class for TemporalCSRefType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TemporalCSRefType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,7 +84,7 @@ public class TemporalCSRefType {
     public TemporalCSRefType(final String href) {
         this.href = href;
     }
-    
+
     /**
      * Gets the value of the temporalCS property.
      */
@@ -101,7 +101,7 @@ public class TemporalCSRefType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -116,7 +116,7 @@ public class TemporalCSRefType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      */
     public String getType() {
         if (type == null) {
@@ -142,7 +142,7 @@ public class TemporalCSRefType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -150,7 +150,7 @@ public class TemporalCSRefType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      */
     public String getRole() {
         return role;
@@ -158,7 +158,7 @@ public class TemporalCSRefType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -166,7 +166,7 @@ public class TemporalCSRefType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -174,7 +174,7 @@ public class TemporalCSRefType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -182,7 +182,7 @@ public class TemporalCSRefType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
     */
     public String getTitle() {
         return title;
@@ -190,7 +190,7 @@ public class TemporalCSRefType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -205,7 +205,7 @@ public class TemporalCSRefType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      */
     public void setShow(final String value) {
         this.show = value;

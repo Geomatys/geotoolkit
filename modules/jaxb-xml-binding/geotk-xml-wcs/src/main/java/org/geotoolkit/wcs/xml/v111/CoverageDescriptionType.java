@@ -34,12 +34,12 @@ import org.opengis.geometry.Envelope;
 
 /**
  * Full description of one coverage available from a WCS server.
- * This description shall include sufficient information to allow all valid GetCoverage operation requests to be prepared by a WCS client. 
- * 
+ * This description shall include sufficient information to allow all valid GetCoverage operation requests to be prepared by a WCS client.
+ *
  * <p>Java class for CoverageDescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoverageDescriptionType">
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import org.opengis.geometry.Envelope;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -92,12 +92,12 @@ public class CoverageDescriptionType extends DescriptionType implements Coverage
     CoverageDescriptionType() {
         super();
     }
-    
+
     /**
      * build a light coverage description.
      */
     public CoverageDescriptionType(final String title,  final String _abstract,
-            final List<String> keywords, final String identifier, final CoverageDomainType domain, 
+            final List<String> keywords, final String identifier, final CoverageDomainType domain,
             final RangeType range, final List<String> supportedCRS, final List<String> supportedFormat) {
         super(title, _abstract, keywords);
         this.domain          = domain;
@@ -106,12 +106,12 @@ public class CoverageDescriptionType extends DescriptionType implements Coverage
         this.supportedCRS    = supportedCRS;
         this.supportedFormat = supportedFormat;
     }
-    
+
     /**
      * build a light coverage description.
      */
     public CoverageDescriptionType(final List<LanguageStringType> title,  final List<LanguageStringType> _abstract,
-            final List<KeywordsType> keywords, final String identifier, final CoverageDomainType domain, 
+            final List<KeywordsType> keywords, final String identifier, final CoverageDomainType domain,
             final RangeType range, final List<String> supportedCRS, final List<String> supportedFormat) {
         super(title, _abstract, keywords);
         this.domain          = domain;
@@ -120,7 +120,7 @@ public class CoverageDescriptionType extends DescriptionType implements Coverage
         this.supportedCRS    = supportedCRS;
         this.supportedFormat = supportedFormat;
     }
-    
+
     /**
      * build a full coverage description.
      */
@@ -135,10 +135,10 @@ public class CoverageDescriptionType extends DescriptionType implements Coverage
         this.supportedCRS    = supportedCRS;
         this.supportedFormat = supportedFormat;
     }
-    
-    
+
+
     /**
-     * Unambiguous identifier of this coverage, unique for this WCS server. 
+     * Unambiguous identifier of this coverage, unique for this WCS server.
      */
     public String getIdentifier() {
         return identifier;
@@ -158,7 +158,7 @@ public class CoverageDescriptionType extends DescriptionType implements Coverage
             this.metadata.add(new MetadataType(href));
         }
     }
-    
+
     /**
      * Gets the value of the domain property.
      */

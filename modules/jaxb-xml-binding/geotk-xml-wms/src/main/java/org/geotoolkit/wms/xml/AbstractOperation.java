@@ -24,10 +24,10 @@ import java.util.List;
  * @module
  */
 public interface AbstractOperation {
-    
-    
+
+
     List<String> getFormats();
-    
+
     List<? extends AbstractDCP> getDCPType();
 
 }

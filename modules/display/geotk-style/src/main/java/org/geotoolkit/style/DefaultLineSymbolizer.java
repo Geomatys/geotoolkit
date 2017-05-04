@@ -38,12 +38,12 @@ import static org.opengis.filter.expression.Expression.*;
 public class DefaultLineSymbolizer extends AbstractSymbolizer implements LineSymbolizer{
 
     private final Stroke stroke;
-    
+
     private final Expression offset;
-    
+
     /**
      * Create a default immutable Line symbolizer.
-     * 
+     *
      * @param stroke : if null will be replaced by default value.
      * @param offset : if null or Expression.NIL will be replaced by default value.
      * @param uom : if null will be replaced by default value.
@@ -57,7 +57,7 @@ public class DefaultLineSymbolizer extends AbstractSymbolizer implements LineSym
         this.stroke = (stroke == null) ? DEFAULT_STROKE : stroke;
         this.offset = (offset == null || offset == NIL) ? DEFAULT_LINE_OFFSET : offset;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -73,7 +73,7 @@ public class DefaultLineSymbolizer extends AbstractSymbolizer implements LineSym
     public Expression getPerpendicularOffset() {
         return offset;
     }
-    
+
     /**
      * {@inheritDoc }
      */

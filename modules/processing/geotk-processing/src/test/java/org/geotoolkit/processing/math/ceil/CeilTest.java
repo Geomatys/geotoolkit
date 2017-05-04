@@ -55,8 +55,8 @@ public class CeilTest extends AbstractProcessTest {
 
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
-       
+
         assertEquals(new Double(25.0), result);
     }
-    
+
 }

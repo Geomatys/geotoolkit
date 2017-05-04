@@ -32,7 +32,7 @@ package org.geotoolkit.data.gx.model;
  *  &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Samuel Andrés
  * @module
  */

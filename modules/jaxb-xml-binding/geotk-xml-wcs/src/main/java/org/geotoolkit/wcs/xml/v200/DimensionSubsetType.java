@@ -30,9 +30,9 @@ import org.geotoolkit.wcs.xml.DomainSubset;
 
 /**
  * <p>Java class for DimensionSubsetType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DimensionSubsetType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.wcs.xml.DomainSubset;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DimensionSubsetType", propOrder = {
@@ -64,11 +64,11 @@ public abstract class DimensionSubsetType implements DomainSubset {
 
     /**
      * Gets the value of the dimension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDimension() {
         return dimension;
@@ -76,11 +76,11 @@ public abstract class DimensionSubsetType implements DomainSubset {
 
     /**
      * Sets the value of the dimension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDimension(String value) {
         this.dimension = value;

@@ -25,23 +25,23 @@ import org.opengis.observation.Observation;
  * @author Guilhem Legal (Geomatys)
  */
 public interface ObservationTemplate {
- 
+
     String getProcedure();
-    
+
     void setProcedure(final String process);
-    
+
     void setName(final String name);
-    
+
     List<String> getObservedProperties();
-    
+
     List<PhenomenonProperty> getFullObservedProperties();
-    
+
     String getFeatureOfInterest();
-    
+
     boolean isComplete();
-    
+
     boolean isTemplateSpecified();
-    
+
     Observation getObservation();
-    
+
 }

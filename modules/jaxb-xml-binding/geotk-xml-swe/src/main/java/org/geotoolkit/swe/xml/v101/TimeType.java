@@ -52,7 +52,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
      * A empty contructor used by JAXB
      */
     public TimeType() {
-        
+
     }
 
     public TimeType(final AbstractTime time) {
@@ -71,7 +71,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
         }
 
     }
-    
+
     /**
      * Build a new TimeType
      */
@@ -81,7 +81,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
             this.uom = new UomPropertyType(uomCode, uomHref);
         }
     }
-    
+
     public TimeType(final String definition, final UomPropertyType uom) {
         super(null, definition, null);
         this.uom = uom;
@@ -93,7 +93,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
     public TimeType(final String definition) {
         super(null, definition, null);
     }
-    
+
     /**
      * Gets the value of the uom property.
      */
@@ -104,7 +104,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      */
     @Override
     public List<String> getValue() {
@@ -161,7 +161,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
                    Objects.equals(this.referenceTime,  that.referenceTime)  &&
                    Objects.equals(this.uom,            that.uom)            &&
                    valueEqorEmpty;
-        } 
+        }
         return false;
     }
 
@@ -175,7 +175,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
         hash = 61 * hash + (this.referenceTime != null ? this.referenceTime.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString()).append('\n');
@@ -199,5 +199,5 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
         }
         return s.toString();
     }
-    
+
 }

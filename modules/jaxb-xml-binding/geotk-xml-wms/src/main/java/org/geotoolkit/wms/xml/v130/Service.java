@@ -27,9 +27,9 @@ import org.geotoolkit.wms.xml.AbstractService;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -57,7 +57,7 @@ import org.geotoolkit.wms.xml.AbstractService;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -114,10 +114,10 @@ public class Service implements AbstractService {
      * Build a new Service object.
      */
     public Service(final String name, final String title, final String _abstract,
-            final KeywordList keywordList, final OnlineResource onlineResource, 
+            final KeywordList keywordList, final OnlineResource onlineResource,
             final ContactInformation contactInformation, final String fees, final String accessConstraints,
             final Integer layerLimit, final Integer maxWidth, final Integer maxHeight) {
-        
+
         this._abstract          = _abstract;
         this.name               = name;
         this.onlineResource     = onlineResource;
@@ -130,11 +130,11 @@ public class Service implements AbstractService {
         this.maxWidth           = maxWidth;
         this.title              = title;
     }
-    
-    
+
+
     /**
      * Gets the value of the name property.
-     * 
+     *
      */
     @Override
     public String getName() {
@@ -148,7 +148,7 @@ public class Service implements AbstractService {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     /**
      * Gets the value of the title property.
      */
@@ -164,16 +164,16 @@ public class Service implements AbstractService {
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
    /**
      * Gets the value of the abstract property.
-     * 
+     *
      */
     @Override
     public String getAbstract() {
         return _abstract;
     }
-    
+
     /**
      * @param _abstract the _abstract to set
      */
@@ -196,7 +196,7 @@ public class Service implements AbstractService {
     public void setKeywordList(KeywordList keywordList) {
         this.keywordList = keywordList;
     }
-    
+
     /**
      * Gets the value of the onlineResource property.
      */
@@ -211,10 +211,10 @@ public class Service implements AbstractService {
     public void setOnlineResource(OnlineResource onlineResource) {
         this.onlineResource = onlineResource;
     }
-    
+
     /**
      * Gets the value of the contactInformation property.
-     * 
+     *
      */
     @Override
     public ContactInformation getContactInformation() {
@@ -227,7 +227,7 @@ public class Service implements AbstractService {
     public void setContactInformation(ContactInformation contactInformation) {
         this.contactInformation = contactInformation;
     }
-    
+
     /**
      * Gets the value of the fees property.
      */
@@ -235,7 +235,7 @@ public class Service implements AbstractService {
     public String getFees() {
         return fees;
     }
-    
+
     /**
      * @param fees the fees to set
      */
@@ -246,7 +246,7 @@ public class Service implements AbstractService {
 
    /**
     * Gets the value of the accessConstraints property.
-    * 
+    *
     */
     @Override
     public String getAccessConstraints() {
@@ -259,7 +259,7 @@ public class Service implements AbstractService {
     public Integer getLayerLimit() {
         return layerLimit;
     }
-    
+
     /**
      * @param layerLimit the layerLimit to set
      */
@@ -280,15 +280,15 @@ public class Service implements AbstractService {
     public void setMaxWidth(Integer maxWidth) {
         this.maxWidth = maxWidth;
     }
-    
+
    /**
     * Gets the value of the maxHeight property.
-    *     
+    *
     */
     public Integer getMaxHeight() {
         return maxHeight;
     }
-    
+
     /**
      * @param maxHeight the maxHeight to set
      */

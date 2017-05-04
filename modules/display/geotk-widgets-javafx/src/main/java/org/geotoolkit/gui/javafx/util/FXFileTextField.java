@@ -30,16 +30,16 @@ import org.geotoolkit.internal.Loggers;
 /**
  * Allow user to specify a file path using an auto-completed text field.
  * He can also choose a path using a system dialog, which open thanks to a button
- * on the right of the text field. Another button allow to open the chosen file 
+ * on the right of the text field. Another button allow to open the chosen file
  * with a system application.
- * 
+ *
  * User can specify a relative path if the {@link #rootPath} is initialized with
  * the base path to use.
- * 
+ *
  * Note : It's not its purpose, but you can also use distant URL as text field
- * content. No completion will be proposed, but you will be able to use system 
+ * content. No completion will be proposed, but you will be able to use system
  * browser to visit specified URI.
- * 
+ *
  * @author Alexis Manin (Geomatys)
  */
 public class FXFileTextField extends AbstractPathTextField {
@@ -48,16 +48,16 @@ public class FXFileTextField extends AbstractPathTextField {
      * A root path from which auto-completor will base on to display possible values to user.
      */
     public final SimpleStringProperty rootPath = new SimpleStringProperty();
-    
+
     public FXFileTextField() {
-        rootPath.addListener(this::updateRoot);      
+        rootPath.addListener(this::updateRoot);
     }
-    
+
     /**
      * Update completor root path when {@link #rootPath} is updated.
      * @param obs
      * @param oldValue
-     * @param newValue 
+     * @param newValue
      */
     private void updateRoot(final ObservableValue<? extends String> obs, final String oldValue, final String newValue) {
         if (newValue == null || newValue.isEmpty()) {
@@ -66,7 +66,7 @@ public class FXFileTextField extends AbstractPathTextField {
             completor.root = Paths.get(newValue);
         }
     }
-    
+
     /**
      * Open a file chooser from root path (or user home if the root is null), to
      * allow user to specify its path using system tools.
@@ -90,7 +90,7 @@ public class FXFileTextField extends AbstractPathTextField {
         if (returned == null) {
             return null;
         } else {
-            return (completor.root != null)? 
+            return (completor.root != null)?
                     completor.root.relativize(returned.toPath()).toString() : returned.getAbsolutePath();
         }
     }
@@ -103,5 +103,5 @@ public class FXFileTextField extends AbstractPathTextField {
             return Paths.get(rootPath.get(), inputText == null? "" : inputText).toUri();
         }
     }
-    
+
 }

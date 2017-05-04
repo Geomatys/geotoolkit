@@ -21,8 +21,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 
 /**
- * 
- * 
+ *
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -31,9 +31,9 @@ public abstract class AbstractSimpleLiteral {
 
 
     /**
-     * This is the default type for all of the DC elements. 
-     * It defines a complexType SimpleLiteral which permits mixed content but disallows child elements by use of minOcccurs/maxOccurs. 
-     * However, this complexType does permit the derivation of other types which would permit child elements. 
+     * This is the default type for all of the DC elements.
+     * It defines a complexType SimpleLiteral which permits mixed content but disallows child elements by use of minOcccurs/maxOccurs.
+     * However, this complexType does permit the derivation of other types which would permit child elements.
      * The scheme attribute may be used as a qualifier to reference an encoding scheme that describes the value domain for a given property.
      *
      * Gets the value of the content property.
@@ -42,9 +42,9 @@ public abstract class AbstractSimpleLiteral {
 
     /**
      * Gets the value of the scheme property.
-     * 
+     *
     */
     public abstract String getScheme();
-    
+
     public abstract String getFirstValue();
 }

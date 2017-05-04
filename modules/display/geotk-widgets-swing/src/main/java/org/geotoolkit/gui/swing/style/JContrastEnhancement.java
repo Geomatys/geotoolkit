@@ -36,7 +36,7 @@ import org.opengis.style.ContrastMethod;
 
 /**
  * ContrastEnchancement panel
- * 
+ *
  * @author  Johann Sorel
  * @module
  */
@@ -44,17 +44,17 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
 
     private MapLayer layer = null;
 
-    /** 
-     * Creates new form JFillPanel 
+    /**
+     * Creates new form JFillPanel
      */
     public JContrastEnhancement() {
         super(ContrastEnhancement.class);
         initComponents();
     }
-    
+
     public void setExpressionVisible(boolean visible){
         guiGamma.setExpressionVisible(visible);
-    } 
+    }
 
     /**
      * {@inheritDoc }
@@ -72,7 +72,7 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
     public MapLayer getLayer(){
         return layer;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -104,12 +104,12 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
             return getStyleFactory().contrastEnhancement(guiGamma.create(),ContrastMethod.NONE);
         }
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiLabelContrast};
     }
-    
+
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -195,7 +195,7 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
         // TODO add your handling code here:
-         if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+         if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());
             parse(create());
         }

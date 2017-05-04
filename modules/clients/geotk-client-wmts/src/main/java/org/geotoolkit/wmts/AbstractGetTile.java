@@ -206,8 +206,8 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
         if (layer == null) {
             throw new IllegalArgumentException("Layer is not defined");
         }
-        
-        
+
+
         String format = this.format;
         if(resourceUrl!=null) {
             //replace mime type by extension only if we use a Rest resource URL
@@ -235,14 +235,14 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
 
     /**
      * Generate mimetype file extension
-     * 
+     *
      * @param mimeType
-     * @return 
+     * @return
      */
     private static String findExtension(String mimeType) {
         if (mimeType==null) return null;
         mimeType = mimeType.toLowerCase();
-        
+
         //known wmts cases
         switch (mimeType) {
             case "image/png" :
@@ -251,7 +251,7 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
             case "image/gif" : return "gif";
             case "image/bmp" : return "bmp";
         }
-        
+
         //unknown case, try to split it based on usuel patterns
         //common case application/xml
         final int slashIdx = mimeType.indexOf('/');
@@ -268,8 +268,8 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
         if (partIdx>=0) {
             mimeType = mimeType.substring(0,partIdx);
         }
-        
+
         return mimeType.trim();
     }
-    
+
 }

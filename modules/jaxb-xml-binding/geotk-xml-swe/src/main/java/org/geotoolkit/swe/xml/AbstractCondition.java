@@ -20,7 +20,7 @@ package org.geotoolkit.swe.xml;
 
 /**
  *
- * @author Guilhem Legal 
+ * @author Guilhem Legal
  */
 public interface AbstractCondition {
 

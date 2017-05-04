@@ -57,7 +57,7 @@ import org.w3c.dom.Node;
 
 /**
  * Store location and relations in sxd schemas.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class XSDSchemaContext {
@@ -228,7 +228,7 @@ public class XSDSchemaContext {
     }
 
     /**
-     * 
+     *
      * @param candidate
      * @return Map<Schema,Location>
      * @throws JAXBException

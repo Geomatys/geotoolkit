@@ -57,7 +57,7 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     /**
@@ -69,7 +69,7 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
             .setRemarks(Bundle.formatInternational(Bundle.Keys.paramSparseRemarks))
             .setRequired(false)
             .create(Boolean.class, Boolean.FALSE);
-    
+
     /**
      * Open a store where gml files may not exist, in this case the given xsd is used
      * to list the possible types.
@@ -90,14 +90,14 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
             .setRemarks(Bundle.formatInternational(Bundle.Keys.paramXSDTypeNameRemarks))
             .setRequired(false)
             .create(String.class, null);
-    
+
     public static final ParameterDescriptor<Boolean> LONGITUDE_FIRST = new ParameterBuilder()
             .addName("longitudeFirst")
             .addName(Bundle.formatInternational(Bundle.Keys.longitudeFirstAlias))
             .setRemarks(Bundle.formatInternational(Bundle.Keys.longitudeFirstRemarks))
             .setRequired(false)
             .create(Boolean.class, Boolean.TRUE);
-    
+
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("GMLParameters").createGroup(
                 IDENTIFIER, PATH,SPARSE,XSD,XSD_TYPE_NAME,LONGITUDE_FIRST,NAMESPACE);
@@ -142,7 +142,7 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     public String[] getFileExtensions() {
         return new String[] {".gml"};
     }
- 
+
     @Override
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, false, false, false, GEOMS_ALL);

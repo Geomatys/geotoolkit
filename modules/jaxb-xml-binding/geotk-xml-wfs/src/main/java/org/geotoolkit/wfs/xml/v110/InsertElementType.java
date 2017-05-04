@@ -31,14 +31,14 @@ import org.geotoolkit.wfs.xml.IdentifierGenerationOptionType;
 import org.geotoolkit.wfs.xml.InsertElement;
 
 /**
- * An Insert element may contain a feature collection or one or more feature instances to be inserted into the 
+ * An Insert element may contain a feature collection or one or more feature instances to be inserted into the
  * repository.
- *          
- * 
+ *
+ *
  * <p>Java class for InsertElementType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InsertElementType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.wfs.xml.InsertElement;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,7 +84,7 @@ public class InsertElementType implements InsertElement {
          this.feature = new ArrayList<>();
          this.feature.add(feature);
     }
-    
+
     public InsertElementType(final String inputFormat, final String srsName, final Object feature) {
         this.inputFormat = inputFormat;
         this.srsName = srsName;
@@ -110,11 +110,11 @@ public class InsertElementType implements InsertElement {
 
     /**
      * Gets the value of the idgen property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link IdentifierGenerationOptionType }
-     *     
+     *
      */
     public IdentifierGenerationOptionType getIdgen() {
         if (idgen == null) {
@@ -126,11 +126,11 @@ public class InsertElementType implements InsertElement {
 
     /**
      * Sets the value of the idgen property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link IdentifierGenerationOptionType }
-     *     
+     *
      */
     public void setIdgen(final IdentifierGenerationOptionType value) {
         this.idgen = value;
@@ -138,11 +138,11 @@ public class InsertElementType implements InsertElement {
 
     /**
      * Gets the value of the handle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHandle() {
         return handle;
@@ -150,11 +150,11 @@ public class InsertElementType implements InsertElement {
 
     /**
      * Sets the value of the handle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHandle(final String value) {
         this.handle = value;
@@ -162,11 +162,11 @@ public class InsertElementType implements InsertElement {
 
     /**
      * Gets the value of the inputFormat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getInputFormat() {
         if (inputFormat == null) {
@@ -178,11 +178,11 @@ public class InsertElementType implements InsertElement {
 
     /**
      * Sets the value of the inputFormat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setInputFormat(final String value) {
         this.inputFormat = value;
@@ -190,11 +190,11 @@ public class InsertElementType implements InsertElement {
 
     /**
      * Gets the value of the srsName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSrsName() {
         return srsName;
@@ -202,11 +202,11 @@ public class InsertElementType implements InsertElement {
 
     /**
      * Sets the value of the srsName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSrsName(final String value) {
         this.srsName = value;
@@ -241,7 +241,7 @@ public class InsertElementType implements InsertElement {
         if (this == obj) {
             return true;
         }
-        
+
         if (obj instanceof InsertElementType) {
             InsertElementType that = (InsertElementType) obj;
             return Objects.equals(this.feature, that.feature) &&

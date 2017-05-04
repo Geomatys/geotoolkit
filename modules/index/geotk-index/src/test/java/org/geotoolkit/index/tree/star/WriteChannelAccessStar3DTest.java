@@ -31,9 +31,9 @@ public final class WriteChannelAccessStar3DTest extends WriteChannelAccessStarTe
 
     /**
      * Create a StarRTree Test suite in a Cartesian 3D space stored into byte array.
-     * 
+     *
      * @throws StoreIndexException
-     * @throws IOException 
+     * @throws IOException
      */
     public WriteChannelAccessStar3DTest() throws StoreIndexException, IOException {
         super(PredefinedCRS.CARTESIAN_3D);

@@ -25,14 +25,14 @@ import org.opengis.filter.Filter;
  * @author Guilhem Legal (Geomatys)
  */
 public interface UpdateElement {
-    
+
     Filter getFilter();
-    
+
     String getInputFormat();
-    
+
     String getSrsName();
-    
+
     QName getTypeName();
-    
+
     List<? extends Property> getProperty();
 }

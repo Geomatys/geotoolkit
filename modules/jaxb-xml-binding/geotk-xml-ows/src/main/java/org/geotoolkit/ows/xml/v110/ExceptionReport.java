@@ -32,9 +32,9 @@ import org.geotoolkit.ows.xml.ExceptionResponse;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -53,7 +53,7 @@ import org.geotoolkit.ows.xml.ExceptionResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -73,11 +73,11 @@ public class ExceptionReport implements ExceptionResponse, Serializable {
      * Empty constructor used by JAXB.
      */
     ExceptionReport() {}
-    
+
     /**
      * Build a new full exception with the specified text, code and locator.
-     * 
-     * @param exceptionText 
+     *
+     * @param exceptionText
      * @param exceptionCode
      */
     public ExceptionReport(final String exceptionText, final String exceptionCode, final String locator, final String version) {
@@ -85,12 +85,12 @@ public class ExceptionReport implements ExceptionResponse, Serializable {
         this.exception.add(new ExceptionType(exceptionText, exceptionCode, locator));
         this.version = version;
     }
-    
+
     /**
-     * Unordered list of one or more Exception elements that each describes an error. 
-     * These Exception elements shall be interpreted by clients as being independent of one another (not hierarchical). 
+     * Unordered list of one or more Exception elements that each describes an error.
+     * These Exception elements shall be interpreted by clients as being independent of one another (not hierarchical).
      * Gets the value of the exception property.
-     * 
+     *
      */
     public List<ExceptionType> getException() {
         return Collections.unmodifiableList(exception);
@@ -102,9 +102,9 @@ public class ExceptionReport implements ExceptionResponse, Serializable {
     public String getVersion() {
         return version;
     }
-    
+
     /**
-     * Return the first locator 
+     * Return the first locator
      */
     public String getFirstLocator() {
         if (exception != null && exception.size() > 0) {
@@ -140,7 +140,7 @@ public class ExceptionReport implements ExceptionResponse, Serializable {
 
     /**
      * Return a String representation of the exception report.
-     * 
+     *
      * @return A String representation of the exception report.
      */
     @Override

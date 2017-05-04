@@ -122,5 +122,5 @@ public class FlowLink {
         sb.append("targetId:").append(targetId).append('\n');
         return sb.toString();
     }
-    
+
 }

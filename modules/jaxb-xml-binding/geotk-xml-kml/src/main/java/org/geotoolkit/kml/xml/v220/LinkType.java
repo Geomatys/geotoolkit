@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for LinkType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LinkType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -87,11 +87,11 @@ public class LinkType extends BasicLinkType {
 
     /**
      * Gets the value of the refreshMode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RefreshModeEnumType }
-     *     
+     *
      */
     public RefreshModeEnumType getRefreshMode() {
         return refreshMode;
@@ -99,11 +99,11 @@ public class LinkType extends BasicLinkType {
 
     /**
      * Sets the value of the refreshMode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RefreshModeEnumType }
-     *     
+     *
      */
     public void setRefreshMode(final RefreshModeEnumType value) {
         this.refreshMode = value;
@@ -111,11 +111,11 @@ public class LinkType extends BasicLinkType {
 
     /**
      * Gets the value of the refreshInterval property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getRefreshInterval() {
         return refreshInterval;
@@ -123,11 +123,11 @@ public class LinkType extends BasicLinkType {
 
     /**
      * Sets the value of the refreshInterval property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setRefreshInterval(final Double value) {
         this.refreshInterval = value;
@@ -135,11 +135,11 @@ public class LinkType extends BasicLinkType {
 
     /**
      * Gets the value of the viewRefreshMode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ViewRefreshModeEnumType }
-     *     
+     *
      */
     public ViewRefreshModeEnumType getViewRefreshMode() {
         return viewRefreshMode;
@@ -147,11 +147,11 @@ public class LinkType extends BasicLinkType {
 
     /**
      * Sets the value of the viewRefreshMode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ViewRefreshModeEnumType }
-     *     
+     *
      */
     public void setViewRefreshMode(final ViewRefreshModeEnumType value) {
         this.viewRefreshMode = value;
@@ -159,11 +159,11 @@ public class LinkType extends BasicLinkType {
 
     /**
      * Gets the value of the viewRefreshTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getViewRefreshTime() {
         return viewRefreshTime;
@@ -171,11 +171,11 @@ public class LinkType extends BasicLinkType {
 
     /**
      * Sets the value of the viewRefreshTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setViewRefreshTime(final Double value) {
         this.viewRefreshTime = value;
@@ -183,11 +183,11 @@ public class LinkType extends BasicLinkType {
 
     /**
      * Gets the value of the viewBoundScale property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getViewBoundScale() {
         return viewBoundScale;
@@ -195,11 +195,11 @@ public class LinkType extends BasicLinkType {
 
     /**
      * Sets the value of the viewBoundScale property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setViewBoundScale(final Double value) {
         this.viewBoundScale = value;
@@ -207,11 +207,11 @@ public class LinkType extends BasicLinkType {
 
     /**
      * Gets the value of the viewFormat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getViewFormat() {
         return viewFormat;
@@ -219,11 +219,11 @@ public class LinkType extends BasicLinkType {
 
     /**
      * Sets the value of the viewFormat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setViewFormat(final String value) {
         this.viewFormat = value;
@@ -231,11 +231,11 @@ public class LinkType extends BasicLinkType {
 
     /**
      * Gets the value of the httpQuery property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHttpQuery() {
         return httpQuery;
@@ -243,11 +243,11 @@ public class LinkType extends BasicLinkType {
 
     /**
      * Sets the value of the httpQuery property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHttpQuery(final String value) {
         this.httpQuery = value;
@@ -255,25 +255,25 @@ public class LinkType extends BasicLinkType {
 
     /**
      * Gets the value of the linkSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the linkSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLinkSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getLinkSimpleExtensionGroup() {
         if (linkSimpleExtensionGroup == null) {
@@ -284,25 +284,25 @@ public class LinkType extends BasicLinkType {
 
     /**
      * Gets the value of the linkObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the linkObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLinkObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getLinkObjectExtensionGroup() {
         if (linkObjectExtensionGroup == null) {

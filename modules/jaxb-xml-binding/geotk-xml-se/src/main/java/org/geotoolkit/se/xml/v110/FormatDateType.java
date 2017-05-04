@@ -25,9 +25,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for FormatDateType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FormatDateType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,11 +60,11 @@ public class FormatDateType
 
     /**
      * Gets the value of the dateValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getDateValue() {
         return dateValue;
@@ -72,11 +72,11 @@ public class FormatDateType
 
     /**
      * Sets the value of the dateValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setDateValue(final ParameterValueType value) {
         this.dateValue = value;
@@ -84,11 +84,11 @@ public class FormatDateType
 
     /**
      * Gets the value of the pattern property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPattern() {
         return pattern;
@@ -96,11 +96,11 @@ public class FormatDateType
 
     /**
      * Sets the value of the pattern property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPattern(final String value) {
         this.pattern = value;

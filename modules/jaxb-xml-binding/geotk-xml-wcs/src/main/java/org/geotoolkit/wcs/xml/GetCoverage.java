@@ -86,10 +86,10 @@ public interface GetCoverage extends RequestBase {
     List<DomainSubset> getDomainSubset();
 
     String toKvp();
-    
+
     InterpolationMethod getInterpolationMethod();
-    
+
     Object getExtension();
-    
+
     String getMediaType();
 }

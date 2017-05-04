@@ -361,7 +361,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         if(geoClass==null){
             return;
         }
-        
+
 
         if(template==null){
             if(Polygon.class.isAssignableFrom(geoClass) || MultiPolygon.class.isAssignableFrom(geoClass)){
@@ -403,7 +403,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
                     //skip null values in analyze
                     continue;
                 }
-                
+
                 if(normalize == null || normalize.equals(noValue)){
                     value = classifValue.doubleValue();
                 }else{
@@ -458,7 +458,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
             for(int i=0;i<values.length;i++){
                 values[i] = minimum + (float)i / (values.length-1) * (maximum-minimum);
             }
-            
+
         }else if(method == METHOD.QANTILE){
             values = new double[nbClasses+1];
             for(int i=0;i<values.length;i++){

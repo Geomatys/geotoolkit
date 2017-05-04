@@ -22,8 +22,8 @@ package org.geotoolkit.wps;
  * @module
  */
 public class WPSOutput {
-    
-    
+
+
     private String identifier;
     private String encoding;
     private String schema;
@@ -31,10 +31,10 @@ public class WPSOutput {
     private String uom;
     private boolean asReference;
 
-    
+
     /**
      * Constructor set all output attributs to null exept process identifier
-     * @param identifier 
+     * @param identifier
      */
     public WPSOutput(final String identifier){
         this.identifier = identifier;
@@ -44,16 +44,16 @@ public class WPSOutput {
         this.uom = null;
         this.asReference = false;
     }
-  
+
     /**
-     * 
+     *
      * @param identifier
      * @param encoding
      * @param schema
      * @param mime
-     * @param uom 
+     * @param uom
      */
-    public WPSOutput(final String identifier, final String encoding, final String schema, 
+    public WPSOutput(final String identifier, final String encoding, final String schema,
             final String mime, final String uom, final boolean asReference) {
         this.identifier = identifier;
         this.encoding = encoding;
@@ -62,7 +62,7 @@ public class WPSOutput {
         this.uom = uom;
         this.asReference = asReference;
     }
-    
+
     /**
      * Return Output encoding
      */
@@ -97,7 +97,7 @@ public class WPSOutput {
     public String getUom() {
         return uom;
     }
-    
+
      /**
      * Return Output asReference booelan
      */
@@ -123,5 +123,5 @@ public class WPSOutput {
         buff.append("}");
         return buff.toString();
     }
-    
+
 }

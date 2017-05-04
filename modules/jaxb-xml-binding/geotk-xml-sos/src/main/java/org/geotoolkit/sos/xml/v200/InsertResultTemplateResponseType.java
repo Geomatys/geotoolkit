@@ -29,9 +29,9 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
 
 /**
  * <p>Java class for InsertResultTemplateResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InsertResultTemplateResponseType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InsertResultTemplateResponseType", propOrder = {
@@ -58,20 +58,20 @@ public class InsertResultTemplateResponseType extends ExtensibleResponseType imp
     private String acceptedTemplate;
 
     public InsertResultTemplateResponseType() {
-        
+
     }
-    
+
     public InsertResultTemplateResponseType(final String acceptedTemplate) {
         this.acceptedTemplate = acceptedTemplate;
     }
-    
+
     /**
      * Gets the value of the acceptedTemplate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAcceptedTemplate() {
         return acceptedTemplate;
@@ -79,11 +79,11 @@ public class InsertResultTemplateResponseType extends ExtensibleResponseType imp
 
     /**
      * Sets the value of the acceptedTemplate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAcceptedTemplate(String value) {
         this.acceptedTemplate = value;

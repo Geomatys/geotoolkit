@@ -28,7 +28,7 @@ public interface AbstractGML {
     String getId();
 
     void setId(String id);
-    
+
     String getDescription();
 
     void setDescription(String description);

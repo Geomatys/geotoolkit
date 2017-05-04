@@ -36,7 +36,7 @@ public class FXSelectedChannelType extends FXStyleElementController<SelectedChan
     protected FXContrastEnhancement uiContrast;
     @FXML
     protected TextField uiName;
-        
+
     @Override
     public Class<SelectedChannelType> getEditedClass() {
         return SelectedChannelType.class;
@@ -46,29 +46,29 @@ public class FXSelectedChannelType extends FXStyleElementController<SelectedChan
     public SelectedChannelType newValue() {
         return getStyleFactory().selectedChannelType("", (ContrastEnhancement)null);
     }
-    
+
     @Override
     public void initialize() {
-        super.initialize();        
+        super.initialize();
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             value.set(getStyleFactory().selectedChannelType(uiName.getText(), uiContrast.valueProperty().get()));
         };
-        
+
         uiContrast.valueProperty().addListener(changeListener);
         uiName.textProperty().addListener(changeListener);
     }
-    
+
     @Override
     public void setLayer(MapLayer layer) {
         super.setLayer(layer);
         uiContrast.setLayer(layer);
     }
-    
+
     @Override
     protected void updateEditor(SelectedChannelType styleElement) {
         uiContrast.valueProperty().setValue(styleElement.getContrastEnhancement());
         uiName.textProperty().setValue(styleElement.getChannelName());
     }
-    
+
 }

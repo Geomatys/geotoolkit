@@ -23,9 +23,9 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 
 /**
- * TODO : this is an incomplete work. some parameters are not used and evaluator 
+ * TODO : this is an incomplete work. some parameters are not used and evaluator
  * interface is just a draft.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class ProcessedRenderedImage extends AbstractRenderedImage {
@@ -50,9 +50,9 @@ public class ProcessedRenderedImage extends AbstractRenderedImage {
             int width, int height) {
         this(sampleModel,colorModel,evaluator,width,height,0,0,1,1,0,0,width,height,0,0);
     }
-    
+
     public ProcessedRenderedImage(SampleModel sampleModel, ColorModel colorModel, Evaluator evaluator,
-            int width, int height, int minX, int minY, int numTileX, int numTileY, 
+            int width, int height, int minX, int minY, int numTileX, int numTileY,
             int minTileX, int minTileY, int tileWidth, int tileHeight, int tileGridXOffset, int tileGridYOffset) {
         this.sampleModel = sampleModel;
         this.colorModel = colorModel;
@@ -70,7 +70,7 @@ public class ProcessedRenderedImage extends AbstractRenderedImage {
         this.tileGridXOffset = tileGridXOffset;
         this.tileGridYOffset = tileGridYOffset;
     }
-    
+
     @Override
     public ColorModel getColorModel() {
         return colorModel;
@@ -143,12 +143,12 @@ public class ProcessedRenderedImage extends AbstractRenderedImage {
 
     @Override
     public synchronized Raster getTile(int tileX, int tileY) {
-        
+
         final SampleModel sm = getSampleModel().createCompatibleSampleModel(getTileWidth(), getTileHeight());
         final WritableRaster raster = Raster.createWritableRaster(sm, null);
         final int nbBand = sm.getNumBands();
         final double[] sampleBuffer = new double[nbBand];
-        
+
         //TODO take in consideration other values
         final int offsetX = tileX * tileWidth;
         final int offsetY = tileY * tileHeight;
@@ -160,14 +160,14 @@ public class ProcessedRenderedImage extends AbstractRenderedImage {
                 }
             }
         }
-        
+
         return raster;
     }
 
     public static interface Evaluator {
-        
+
         void evaluate(int x, int y, double[] sampleBuffer);
-        
+
     }
-    
+
 }

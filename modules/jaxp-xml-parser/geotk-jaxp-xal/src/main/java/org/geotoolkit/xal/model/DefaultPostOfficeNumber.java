@@ -31,7 +31,7 @@ public class DefaultPostOfficeNumber implements PostOfficeNumber {
     public DefaultPostOfficeNumber(){}
 
     /**
-     * 
+     *
      * @param indicator
      * @param indicatorOccurence
      * @param grPostal

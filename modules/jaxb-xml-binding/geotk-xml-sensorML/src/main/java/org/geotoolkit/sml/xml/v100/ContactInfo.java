@@ -29,9 +29,9 @@ import org.geotoolkit.sml.xml.AbstractOnlineResource;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -73,8 +73,8 @@ import org.geotoolkit.sml.xml.AbstractOnlineResource;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -145,7 +145,7 @@ public class ContactInfo implements AbstractContactInfo {
 
     /**
      * Sets the value of the address property.
-     *     
+     *
      */
     public void setAddress(final AddressType value) {
         this.address = value;
@@ -188,7 +188,7 @@ public class ContactInfo implements AbstractContactInfo {
 
     /**
      * Gets the value of the contactInstructions property.
-     * 
+     *
      */
     public String getContactInstructions() {
         return contactInstructions;
@@ -196,7 +196,7 @@ public class ContactInfo implements AbstractContactInfo {
 
     /**
      * Sets the value of the contactInstructions property.
-     * 
+     *
      */
     public void setContactInstructions(final String value) {
         this.contactInstructions = value;

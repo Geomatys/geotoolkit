@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -58,7 +58,7 @@ public class Exception {
     }
     /**
      * Gets the value of the format property.
-     * 
+     *
      */
     public List<String> getFormat() {
         return Collections.unmodifiableList(format);

@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for UnaryLogicOpType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UnaryLogicOpType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -66,27 +66,27 @@ public class UnaryLogicOpType extends LogicOpsType {
      * An empty constructor used by JAXB
      */
      public UnaryLogicOpType() {
-         
+
      }
-     
+
      /**
-      * Build a new Binary logic operator 
+      * Build a new Binary logic operator
       */
      public UnaryLogicOpType(final Object obj) {
-         
+
          // comparison operator
          if (obj instanceof ComparisonOpsType) {
              this.comparisonOps = FilterType.createComparisonOps((ComparisonOpsType) obj);
 
-         // logical operator    
+         // logical operator
          } else if (obj instanceof LogicOpsType) {
              this.logicOps = FilterType.createLogicOps((LogicOpsType) obj);
 
-         // spatial operator    
+         // spatial operator
          } else if (obj instanceof SpatialOpsType) {
              this.spatialOps = FilterType.createSpatialOps((SpatialOpsType) obj);
-             
-         // clone    
+
+         // clone
          } else if (obj instanceof UnaryLogicOpType) {
             final UnaryLogicOpType that = (UnaryLogicOpType) obj;
             if (that.comparisonOps != null) {
@@ -104,12 +104,12 @@ public class UnaryLogicOpType extends LogicOpsType {
          } else {
              throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
          }
-         
+
      }
-     
+
     /**
      * Gets the value of the comparisonOps property.
-     * 
+     *
     */
     public JAXBElement<? extends ComparisonOpsType> getComparisonOps() {
         return comparisonOps;
@@ -117,7 +117,7 @@ public class UnaryLogicOpType extends LogicOpsType {
 
     /**
      * Sets the value of the comparisonOps property.
-     * 
+     *
      */
     public void setComparisonOps(final JAXBElement<? extends ComparisonOpsType> value) {
         this.comparisonOps = ((JAXBElement<? extends ComparisonOpsType> ) value);
@@ -125,7 +125,7 @@ public class UnaryLogicOpType extends LogicOpsType {
 
     /**
      * Gets the value of the spatialOps property.
-     * 
+     *
      */
     public JAXBElement<? extends SpatialOpsType> getSpatialOps() {
         return spatialOps;
@@ -133,7 +133,7 @@ public class UnaryLogicOpType extends LogicOpsType {
 
     /**
      * Sets the value of the spatialOps property.
-     * 
+     *
      */
     public void setSpatialOps(final JAXBElement<? extends SpatialOpsType> value) {
         this.spatialOps = ((JAXBElement<? extends SpatialOpsType> ) value);
@@ -141,7 +141,7 @@ public class UnaryLogicOpType extends LogicOpsType {
 
     /**
      * Gets the value of the logicOps property.
-     * 
+     *
      */
     public JAXBElement<? extends LogicOpsType> getLogicOps() {
         return logicOps;
@@ -149,7 +149,7 @@ public class UnaryLogicOpType extends LogicOpsType {
 
     /**
      * Sets the value of the logicOps property.
-     * 
+     *
      */
     public void setLogicOps(final JAXBElement<? extends LogicOpsType> value) {
         this.logicOps = ((JAXBElement<? extends LogicOpsType> ) value);

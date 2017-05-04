@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for DiscreteCoverageType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DiscreteCoverageType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DiscreteCoverageType", propOrder = {
@@ -54,11 +54,11 @@ public class DiscreteCoverageType
 
     /**
      * Gets the value of the coverageFunction property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoverageFunctionType }
-     *     
+     *
      */
     public CoverageFunctionType getCoverageFunction() {
         return coverageFunction;
@@ -66,11 +66,11 @@ public class DiscreteCoverageType
 
     /**
      * Sets the value of the coverageFunction property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoverageFunctionType }
-     *     
+     *
      */
     public void setCoverageFunction(CoverageFunctionType value) {
         this.coverageFunction = value;

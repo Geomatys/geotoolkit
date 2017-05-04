@@ -21,16 +21,16 @@ package org.geotoolkit.wps.xml;
  * @author guilhem
  */
 public interface Format {
-    
+
     String getMimeType();
-    
+
     void setMimeType(final String value);
-    
+
     String getEncoding();
-    
+
     void setEncoding(final String value);
-    
+
     String getSchema();
-    
+
     void setSchema(final String value);
 }

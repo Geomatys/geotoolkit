@@ -23,7 +23,7 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * Chain element which has a position.
- * 
+ *
  * @author Guilhem Legal (Geomatys)
  */
 @XmlAccessorType(value = XmlAccessType.FIELD)

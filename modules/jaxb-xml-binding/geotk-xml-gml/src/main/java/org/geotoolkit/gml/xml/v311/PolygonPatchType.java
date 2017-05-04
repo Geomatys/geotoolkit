@@ -31,11 +31,11 @@ import javax.xml.bind.annotation.XmlType;
  * A PolygonPatch is a surface patch that is defined by a set of boundary curves and an underlying surface to which these curves adhere.
  * The curves are coplanar and the polygon uses planar interpolation in its interior.
  * Implements GM_Polygon of ISO 19107.
- * 
+ *
  * <p>Java class for PolygonPatchType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PolygonPatchType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -85,12 +85,12 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
 
     /**
      * Gets the value of the exterior property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<AbstractRingPropertyType> getJbExterior() {
         return exterior;
@@ -98,12 +98,12 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
 
     /**
      * Sets the value of the exterior property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
-     *     
+     *
      */
     public void setJbExterior(final JAXBElement<AbstractRingPropertyType> value) {
         this.exterior = ((JAXBElement<AbstractRingPropertyType> ) value);
@@ -141,12 +141,12 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
 
     /**
      * Gets the value of the interior property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<AbstractRingPropertyType>> getJbInterior() {
         if (interior == null) {
@@ -228,16 +228,16 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
             }
             final ObjectFactory factory = new ObjectFactory();
             this.interior.add(factory.createInterior(interior));
-        } 
+        }
     }
 
     /**
      * Gets the value of the interpolation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SurfaceInterpolationType }
-     *     
+     *
      */
     public SurfaceInterpolationType getInterpolation() {
         /*if (interpolation == null) {
@@ -248,11 +248,11 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
 
     /**
      * Sets the value of the interpolation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SurfaceInterpolationType }
-     *     
+     *
      */
     public void setInterpolation(final SurfaceInterpolationType value) {
         this.interpolation = value;

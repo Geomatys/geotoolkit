@@ -39,11 +39,11 @@ import org.geotoolkit.gml.xml.v311.PointPropertyType;
  *                 bounding box of the projected image data. Since a georeferenced texture has a unique parameterization, "target"
  *                 only provides links to surface geometry without any additional texture parameterization. Only gml:MultiSurface or
  *                 decendants of gml:AbstractSurfaceType are valid targets.
- * 
+ *
  * <p>Java class for GeoreferencedTextureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeoreferencedTextureType">
  *   &lt;complexContent>
@@ -59,8 +59,8 @@ import org.geotoolkit.gml.xml.v311.PointPropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeoreferencedTextureType", propOrder = {
@@ -85,11 +85,11 @@ public class GeoreferencedTextureType extends AbstractTextureType {
 
     /**
      * Gets the value of the preferWorldFile property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isPreferWorldFile() {
         return preferWorldFile;
@@ -97,11 +97,11 @@ public class GeoreferencedTextureType extends AbstractTextureType {
 
     /**
      * Sets the value of the preferWorldFile property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setPreferWorldFile(Boolean value) {
         this.preferWorldFile = value;
@@ -109,11 +109,11 @@ public class GeoreferencedTextureType extends AbstractTextureType {
 
     /**
      * Gets the value of the referencePoint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PointPropertyType }
-     *     
+     *
      */
     public PointPropertyType getReferencePoint() {
         return referencePoint;
@@ -121,11 +121,11 @@ public class GeoreferencedTextureType extends AbstractTextureType {
 
     /**
      * Sets the value of the referencePoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PointPropertyType }
-     *     
+     *
      */
     public void setReferencePoint(PointPropertyType value) {
         this.referencePoint = value;
@@ -133,7 +133,7 @@ public class GeoreferencedTextureType extends AbstractTextureType {
 
     /**
      * Gets the value of the orientation property.
-     * 
+     *
      */
     public List<Double> getOrientation() {
         if (orientation == null) {
@@ -144,7 +144,7 @@ public class GeoreferencedTextureType extends AbstractTextureType {
 
     /**
      * Gets the value of the target property.
-     * 
+     *
      */
     public List<String> getTarget() {
         if (target == null) {
@@ -155,7 +155,7 @@ public class GeoreferencedTextureType extends AbstractTextureType {
 
     /**
      * Gets the value of the genericApplicationPropertyOfGeoreferencedTexture property.
-     * 
+     *
      */
     public List<Object> getGenericApplicationPropertyOfGeoreferencedTexture() {
         if (genericApplicationPropertyOfGeoreferencedTexture == null) {

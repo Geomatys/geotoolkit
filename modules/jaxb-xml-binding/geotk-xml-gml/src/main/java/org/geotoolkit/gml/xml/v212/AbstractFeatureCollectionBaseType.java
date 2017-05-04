@@ -23,15 +23,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *         This abstract base type just makes the boundedBy element mandatory 
+ *
+ *         This abstract base type just makes the boundedBy element mandatory
  *         for a feature collection.
- *       
- * 
+ *
+ *
  * <p>Java class for AbstractFeatureCollectionBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractFeatureCollectionBaseType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

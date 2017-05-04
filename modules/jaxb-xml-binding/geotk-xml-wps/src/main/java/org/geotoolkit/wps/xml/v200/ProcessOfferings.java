@@ -29,9 +29,9 @@ import org.geotoolkit.wps.xml.WPSResponse;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.wps.xml.WPSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -57,24 +57,24 @@ public class ProcessOfferings implements org.geotoolkit.wps.xml.ProcessOfferings
     protected List<ProcessOffering> processOffering;
 
     public ProcessOfferings() {
-        
+
     }
-    
+
     public ProcessOfferings(List<ProcessOffering> processOffering) {
         this.processOffering = processOffering;
     }
-    
+
     /**
-     * 
+     *
      * Ordered list of one or more full Process
      * descriptions, listed in the order in which they were requested
      * in the DescribeProcess operation request.
      * Gets the value of the processOffering property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ProcessOffering }
-     * 
-     * 
+     *
+     *
      */
     public List<ProcessOffering> getProcessOffering() {
         if (processOffering == null) {

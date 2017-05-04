@@ -30,9 +30,9 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for SimpleDataRecordType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SimpleDataRecordType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,7 +59,7 @@ public class SimpleDataRecordType extends AbstractDataRecordType implements Simp
      */
     @XmlTransient
     private String blockId;
-    
+
     private List<AnyScalarPropertyType> field;
 
     public SimpleDataRecordType() {
@@ -68,7 +68,7 @@ public class SimpleDataRecordType extends AbstractDataRecordType implements Simp
 
     public SimpleDataRecordType(final String blockId, final String id, final String definition, final boolean fixed, final List<AnyScalarPropertyType> field) {
         super(id, definition, fixed);
-        this.blockId = blockId;        
+        this.blockId = blockId;
         this.field = field;
     }
 

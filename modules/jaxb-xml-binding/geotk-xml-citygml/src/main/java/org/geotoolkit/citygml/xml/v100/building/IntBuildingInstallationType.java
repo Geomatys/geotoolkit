@@ -32,11 +32,11 @@ import org.geotoolkit.gml.xml.v311.GeometryPropertyType;
  * Examples are interior stairs, railings, radiators or pipes. As subclass of _CityObject,
  * a nIntBuildingInstallation inherits all attributes and relations, in particular an id, names, external references,
  * and generalization relations.
- * 
+ *
  * <p>Java class for IntBuildingInstallationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="IntBuildingInstallationType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.gml.xml.v311.GeometryPropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -76,11 +76,11 @@ public class IntBuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the clazz property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getClazz() {
         return clazz;
@@ -88,11 +88,11 @@ public class IntBuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the clazz property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setClazz(final String value) {
         this.clazz = value;
@@ -120,11 +120,11 @@ public class IntBuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod4Geometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeometryPropertyType }
-     *     
+     *
      */
     public GeometryPropertyType getLod4Geometry() {
         return lod4Geometry;
@@ -132,11 +132,11 @@ public class IntBuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod4Geometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeometryPropertyType }
-     *     
+     *
      */
     public void setLod4Geometry(final GeometryPropertyType value) {
         this.lod4Geometry = value;

@@ -28,9 +28,9 @@ import org.geotoolkit.swe.xml.v200.AbstractSWEIdentifiableType;
 
 /**
  * <p>Java class for AbstractMetadataListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractMetadataListType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import org.geotoolkit.swe.xml.v200.AbstractSWEIdentifiableType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractMetadataListType")
@@ -66,11 +66,11 @@ public class AbstractMetadataListType
 
     /**
      * Gets the value of the definition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDefinition() {
         return definition;
@@ -78,11 +78,11 @@ public class AbstractMetadataListType
 
     /**
      * Sets the value of the definition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDefinition(String value) {
         this.definition = value;

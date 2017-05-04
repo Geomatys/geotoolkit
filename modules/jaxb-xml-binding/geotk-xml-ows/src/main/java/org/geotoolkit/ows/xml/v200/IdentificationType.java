@@ -33,11 +33,11 @@ import javax.xml.bind.annotation.XmlType;
  *       include additional metadata for each type of dataset. If needed, this
  *       type should first be restricted for each specific OWS to change the
  *       multiplicity (or optionality) of some elements.
- * 
+ *
  * <p>Java class for IdentificationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="IdentificationType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "IdentificationType", propOrder = {
@@ -73,12 +73,12 @@ public class IdentificationType extends BasicIdentificationType {
      * Unordered list of zero or more bounding boxes
      *               whose union describes the extent of this
      *               dataset.Gets the value of the boundingBox property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link BoundingBoxType }{@code >}
      * {@link JAXBElement }{@code <}{@link WGS84BoundingBoxType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends BoundingBoxType>> getBoundingBox() {
         if (boundingBox == null) {
@@ -90,7 +90,7 @@ public class IdentificationType extends BasicIdentificationType {
     /**
      * Unordered list of zero or more references to data
      *               formats supported for server outputs.Gets the value of the outputFormat property.
-     * 
+     *
      */
     public List<String> getOutputFormat() {
         if (outputFormat == null) {
@@ -102,12 +102,12 @@ public class IdentificationType extends BasicIdentificationType {
     /**
      * Unordered list of zero or more available
      *               coordinate reference systems.Gets the value of the availableCRS property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link String }{@code >}
      * {@link JAXBElement }{@code <}{@link String }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<String>> getAvailableCRS() {
         if (availableCRS == null) {

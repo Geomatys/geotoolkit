@@ -31,9 +31,9 @@ import org.opengis.filter.FilterVisitor;
 
 /**
  * <p>Java class for BinaryLogicOpType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BinaryLogicOpType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.opengis.filter.FilterVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,18 +73,18 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
      * An empty constructor used by JAXB
      */
      public BinaryLogicOpType() {
-         
+
      }
-     
+
      /**
-      * Build a new Binary logic operator 
+      * Build a new Binary logic operator
       */
      public BinaryLogicOpType(final Object... operators) {
          this.comparisonOps = new ArrayList<JAXBElement<? extends ComparisonOpsType>>();
          this.logicOps      = new ArrayList<JAXBElement<? extends LogicOpsType>>();
          this.spatialOps    = new ArrayList<JAXBElement<? extends SpatialOpsType>>();
          this.temporalOps   = new ArrayList<JAXBElement<? extends TemporalOpsType>>();
-         
+
          for (Object obj: operators) {
 
              if(obj instanceof JAXBElement){
@@ -94,19 +94,19 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
              // comparison operator
              if (obj instanceof ComparisonOpsType)  {
                  this.comparisonOps.add(FilterType.createComparisonOps((ComparisonOpsType)obj));
-                 
-             // logical operator    
+
+             // logical operator
              } else if (obj instanceof LogicOpsType) {
                  this.logicOps.add(FilterType.createLogicOps((LogicOpsType)obj));
-             
-             // spatial operator    
+
+             // spatial operator
              } else if (obj instanceof SpatialOpsType) {
                  this.spatialOps.add(FilterType.createSpatialOps((SpatialOpsType) obj));
 
-             // temporal operator    
+             // temporal operator
              } else if (obj instanceof TemporalOpsType) {
                  this.temporalOps.add(FilterType.createTemporalOps((TemporalOpsType) obj));
-                 
+
              // filter
              } else if (obj instanceof FilterType) {
                  treatFilter((FilterType)obj);
@@ -114,18 +114,18 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
                  throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
              }
          }
-         
+
      }
 
      /**
-      * Build a new Binary logic operator 
+      * Build a new Binary logic operator
       */
      public BinaryLogicOpType(final BinaryLogicOpType that) {
          if (that != null) {
             // comparison operator
             if (that.comparisonOps != null) {
                 this.comparisonOps = new ArrayList<JAXBElement<? extends ComparisonOpsType>>();
-            
+
                 for (JAXBElement<?> jb: that.comparisonOps) {
                     final Object obj = jb.getValue();
                     final ComparisonOpsType co = ((ComparisonOpsType)obj).getClone();
@@ -136,27 +136,27 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
             // logical operator
             if (that.logicOps != null) {
                 this.logicOps = new ArrayList<JAXBElement<? extends LogicOpsType>>();
-            
+
                 for (JAXBElement<?> jb: that.logicOps) {
                     final Object obj = jb.getValue();
                     final LogicOpsType co = ((LogicOpsType)obj).getClone();
                     this.logicOps.add(FilterType.createLogicOps(co));
                 }
             }
-            // spatial operator    
+            // spatial operator
             if (that.spatialOps != null) {
                 this.spatialOps = new ArrayList<JAXBElement<? extends SpatialOpsType>>();
-            
+
                 for (JAXBElement<?> jb: that.spatialOps) {
                     final Object obj = jb.getValue();
                     final SpatialOpsType co = ((SpatialOpsType)obj).getClone();
                     this.spatialOps.add(FilterType.createSpatialOps(co));
                 }
             }
-            // temporal operator    
+            // temporal operator
             if (that.temporalOps != null) {
                 this.temporalOps = new ArrayList<JAXBElement<? extends TemporalOpsType>>();
-            
+
                 for (JAXBElement<?> jb: that.temporalOps) {
                     final Object obj = jb.getValue();
                     final TemporalOpsType co = ((TemporalOpsType)obj).getClone();
@@ -165,7 +165,7 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
             }
          }
      }
-    
+
      private void treatFilter(final FilterType filter) {
          if (filter.getComparisonOps() != null) {
             this.comparisonOps.add(filter.getComparisonOps());
@@ -180,7 +180,7 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
             this.temporalOps.add(filter.getTemporalOps());
          }
     }
-     
+
     @Override
     public List<Filter> getChildren() {
         List<Filter> result = new ArrayList<Filter>();
@@ -219,7 +219,7 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
     public void setComparisonOps(final List<JAXBElement<? extends ComparisonOpsType>> comparisonOps) {
         this.comparisonOps = comparisonOps;
     }
-    
+
     public void setComparisonOps(final ComparisonOpsType comparisonOp) {
         if (this.comparisonOps == null) {
             this.comparisonOps = new ArrayList<JAXBElement<? extends ComparisonOpsType>>();
@@ -237,14 +237,14 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
     public void setSpatialOps(final List<JAXBElement<? extends SpatialOpsType>> spatialOps) {
         this.spatialOps = spatialOps;
     }
-    
+
     public void setSPatialOps(final SpatialOpsType spatialOp) {
         if (this.spatialOps == null) {
             this.spatialOps = new ArrayList<JAXBElement<? extends SpatialOpsType>>();
         }
         this.spatialOps.add(FilterType.createSpatialOps(spatialOp));
     }
-    
+
     public List<JAXBElement<? extends LogicOpsType>> getLogicOps() {
         if (this.logicOps == null) {
             this.logicOps = new ArrayList<JAXBElement<? extends LogicOpsType>>();
@@ -255,14 +255,14 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
     public void setLogicOps(final List<JAXBElement<? extends LogicOpsType>> logicOps) {
         this.logicOps = logicOps;
     }
-    
+
     public void setLogicOps(final LogicOpsType logicOp) {
         if (this.logicOps == null) {
             this.logicOps = new ArrayList<JAXBElement<? extends LogicOpsType>>();
         }
         this.logicOps.add(FilterType.createLogicOps(logicOp));
     }
-    
+
     public List<JAXBElement<? extends TemporalOpsType>> getTemporalOps() {
         if (this.temporalOps == null) {
             this.temporalOps = new ArrayList<JAXBElement<? extends TemporalOpsType>>();
@@ -273,7 +273,7 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
     public void setTemporalOps(final List<JAXBElement<? extends TemporalOpsType>> temporalOps) {
         this.temporalOps = temporalOps;
     }
-    
+
     public void setTemporalOps(final TemporalOpsType temporalOps) {
         if (this.temporalOps == null) {
             this.temporalOps = new ArrayList<JAXBElement<? extends TemporalOpsType>>();
@@ -285,7 +285,7 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
     public LogicOpsType getClone() {
         throw new UnsupportedOperationException("Must be overriden in sub-class.");
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
@@ -294,33 +294,33 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
             s.append("comparisonOps: ").append('\n');
             for (JAXBElement<?> jb: getComparisonOps()) {
                 s.append(i).append(": ").append(jb.getValue().toString()).append('\n');
-                i++;        
+                i++;
             }
         }
         if (getLogicOps() != null) {
             s.append("logicOps: ").append('\n');
             for (JAXBElement<?> jb: getLogicOps()) {
                 s.append(i).append(": ").append(jb.getValue().toString()).append('\n');
-                i++;        
+                i++;
             }
         }
         if (getSpatialOps() != null) {
             s.append("spatialOps: ").append('\n');
             for (JAXBElement<?> jb: getSpatialOps()) {
                 s.append(i).append(": ").append(jb.getValue().toString()).append('\n');
-                i++;        
+                i++;
             }
         }
         if (getTemporalOps()!= null) {
             s.append("temporalOps: ").append('\n');
             for (JAXBElement<?> jb: getTemporalOps()) {
                 s.append(i).append(": ").append(jb.getValue().toString()).append('\n');
-                i++;        
+                i++;
             }
         }
         return s.toString();
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) {

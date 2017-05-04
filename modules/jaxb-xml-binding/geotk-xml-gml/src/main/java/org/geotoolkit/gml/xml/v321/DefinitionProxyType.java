@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for DefinitionProxyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DefinitionProxyType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DefinitionProxyType", propOrder = {
@@ -56,11 +56,11 @@ public class DefinitionProxyType
 
     /**
      * Gets the value of the definitionRef property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getDefinitionRef() {
         return definitionRef;
@@ -68,11 +68,11 @@ public class DefinitionProxyType
 
     /**
      * Sets the value of the definitionRef property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setDefinitionRef(ReferenceType value) {
         this.definitionRef = value;

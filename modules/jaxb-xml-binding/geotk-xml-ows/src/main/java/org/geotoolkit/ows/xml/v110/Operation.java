@@ -29,9 +29,9 @@ import org.geotoolkit.ows.xml.Range;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -47,7 +47,7 @@ import org.geotoolkit.ows.xml.Range;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -77,7 +77,7 @@ public class Operation implements AbstractOperation {
      */
     Operation(){
     }
-    
+
     public Operation(final Operation that){
         if (that != null) {
             if (that.constraint != null) {
@@ -107,7 +107,7 @@ public class Operation implements AbstractOperation {
             }
         }
     }
-    
+
     /**
      * Build a new Operation.
      */
@@ -119,10 +119,10 @@ public class Operation implements AbstractOperation {
         this.name       = name;
         this.parameter  = parameter;
     }
-    
-    
+
+
     /**
-     * Unordered list of Distributed Computing Platforms (DCPs) supported for this operation. 
+     * Unordered list of Distributed Computing Platforms (DCPs) supported for this operation.
      * At present, only the HTTP DCP is defined, so this element will appear only once.
      * Gets the value of the dcp property.
      */
@@ -175,7 +175,7 @@ public class Operation implements AbstractOperation {
             return null;
         }
     }
-    
+
     /**
      * Update the specified parameter with the list of values.
      */
@@ -187,7 +187,7 @@ public class Operation implements AbstractOperation {
             }
         }
     }
-    
+
     /**
      * Update the specified parameter with the specified range.
      */
@@ -195,7 +195,7 @@ public class Operation implements AbstractOperation {
     public void updateParameter(final String parameterName, final Range range) {
         for (DomainType dom: parameter) {
             if (dom.getName().equals(parameterName)) {
-                dom.setAllowedValues(new AllowedValues(new RangeType(range))); 
+                dom.setAllowedValues(new AllowedValues(new RangeType(range)));
             }
         }
     }
@@ -239,7 +239,7 @@ public class Operation implements AbstractOperation {
     /**
      * Optional unordered list of additional metadata about this operation and its' implementation.
      * A list of required and optional metadata elements for this operation should be specified in the Implementation Specification for this service.
-     * (Informative: This metadata might specify the operation request parameters or provide the XML Schemas for the operation request.) 
+     * (Informative: This metadata might specify the operation request parameters or provide the XML Schemas for the operation request.)
      * Gets the value of the metadata property.
      */
     public List<MetadataType> getMetadata() {
@@ -286,7 +286,7 @@ public class Operation implements AbstractOperation {
         hash = 71 * hash + (this.name != null ? this.name.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();

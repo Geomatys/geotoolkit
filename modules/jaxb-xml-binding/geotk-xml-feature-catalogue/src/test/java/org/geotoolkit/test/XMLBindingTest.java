@@ -84,7 +84,7 @@ public class XMLBindingTest {
         // Unmarshalles the given XML file to objects
 
         MarshallerPool pool = FeatureCatalogMarshallerPool.getInstance();
-        
+
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         Marshaller marshaller     = pool.acquireMarshaller();
          try {
@@ -94,7 +94,7 @@ public class XMLBindingTest {
             System.out.println("prefix non trouv");
         }
 
-        
+
 
 
         String name = "Digital Geographic information Exchange Standard (DIGEST) Feature and Attribute Coding Catalogue (FACC)";
@@ -397,7 +397,7 @@ public class XMLBindingTest {
 
         XMLComparator comparator = new XMLComparator(expected, result);
         comparator.compare();
-        
+
         sw = new StringWriter();
         marshaller.marshal(fassoc, sw);
         result = sw.toString();
@@ -407,7 +407,7 @@ public class XMLBindingTest {
 
         comparator = new XMLComparator(expected, result);
         comparator.compare();
-        
+
         sw = new StringWriter();
         marshaller.marshal(inherit, sw);
         result = sw.toString();
@@ -417,7 +417,7 @@ public class XMLBindingTest {
 
         comparator = new XMLComparator(expected, result);
         comparator.compare();
-        
+
         sw = new StringWriter();
         marshaller.marshal(operation, sw);
         result = sw.toString();
@@ -428,19 +428,19 @@ public class XMLBindingTest {
         comparator = new XMLComparator(expected, result);
         comparator.compare();
     }
-    
+
     @Test
     public void MultiplicityXmlBindingtest() throws Exception {
 
 
         Path p = IOUtilities.getResourceAsPath("org/geotoolkit/test/Multiplicity.xml");
         String expected = IOUtilities.toString(p);
-     
+
         MarshallerPool pool = FeatureCatalogMarshallerPool.getInstance();
 
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         Marshaller marshaller     = pool.acquireMarshaller();
-        
+
         MultiplicityRangeImpl range = new MultiplicityRangeImpl(1, Integer.MAX_VALUE);
         MultiplicityImpl mul = new MultiplicityImpl(range);
 
@@ -448,11 +448,11 @@ public class XMLBindingTest {
         StringWriter sw = new StringWriter();
         marshaller.marshal(mul, sw);
         String result = sw.toString();
-        
+
         XMLComparator comparator = new XMLComparator(expected, result);
         comparator.compare();
-        
-        
+
+
         Object obj = unmarshaller.unmarshal(new StringReader(expected));
 
         assertEquals(mul, obj);

@@ -42,9 +42,9 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for AbstractProcessType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractProcessType">
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -74,7 +74,7 @@ import org.apache.sis.util.ComparisonMode;
     "documentation",
     "history"
 })
-@XmlSeeAlso({AbstractDerivableComponentType.class, DataSourceType.class, AbstractRestrictedProcessType.class}) 
+@XmlSeeAlso({AbstractDerivableComponentType.class, DataSourceType.class, AbstractRestrictedProcessType.class})
 public abstract class AbstractProcessType extends AbstractSMLType implements AbstractProcess {
 
     private List<Keywords> keywords;
@@ -164,7 +164,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
         }
 
     }
-    
+
     /**
      * Gets the value of the keywords property.
      */
@@ -211,7 +211,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
 
     /**
      * Gets the value of the identification property.
-     * 
+     *
      */
     public List<Identification> getIdentification() {
         if (identification == null) {
@@ -301,7 +301,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
 
     /**
      * Gets the value of the validTime property.
-     * 
+     *
      */
     public ValidTime getValidTime() {
         return validTime;
@@ -330,7 +330,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
 
     /**
      * Gets the value of the legalConstraint property.
-     * 
+     *
      */
     public List<LegalConstraint> getLegalConstraint() {
         if (legalConstraint == null) {
@@ -375,7 +375,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
 
     /**
      * Gets the value of the characteristics property.
-     * 
+     *
      */
     public List<Characteristics> getCharacteristics() {
         if (characteristics == null) {
@@ -420,7 +420,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
 
     /**
      * Gets the value of the capabilities property.
-     * 
+     *
      */
     public List<Capabilities> getCapabilities() {
         if (capabilities == null) {
@@ -465,7 +465,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
 
     /**
      * Gets the value of the contact property.
-     * 
+     *
      */
     public List<Contact> getContact() {
         if (contact == null) {
@@ -510,7 +510,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
 
     /**
      * Gets the value of the documentation property.
-     * 
+     *
      */
     public List<Documentation> getDocumentation() {
         if (documentation == null) {
@@ -555,7 +555,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
 
     /**
      * Gets the value of the history property.
-     * 
+     *
      */
     public List<History> getHistory() {
         if (history == null) {

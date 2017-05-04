@@ -31,9 +31,9 @@ import org.geotoolkit.wcs.xml.DescribeCoverage;
 
 /**
  * <p>Java class for DescribeCoverageType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DescribeCoverageType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.wcs.xml.DescribeCoverage;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DescribeCoverageType", propOrder = {
@@ -60,22 +60,22 @@ public class DescribeCoverageType extends RequestBaseType implements DescribeCov
     private List<String> coverageId;
 
     public DescribeCoverageType(){
-        
+
     }
-    
+
     public DescribeCoverageType(final List<String> coverageId){
         this.service = "WCS";
         this.version = "2.0.1";
         this.coverageId = coverageId;
     }
-    
+
     /**
      * Unordered list of identifiers of desired coverages. A client can obtain identifiers by a prior GetCapabilities request, or from a third-party source. Gets the value of the coverageId property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getCoverageId() {
         if (coverageId == null) {

@@ -32,9 +32,9 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
 
 /**
  * <p>Java class for InsertResultTemplateType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InsertResultTemplateType">
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InsertResultTemplateType", propOrder = {
@@ -70,22 +70,22 @@ public class InsertResultTemplateType extends ExtensibleRequestType implements I
     private InsertResultTemplateType.ProposedTemplate proposedTemplate;
 
     public InsertResultTemplateType() {
-        
+
     }
-    
+
     public InsertResultTemplateType(final String version, final String offering, final OMObservationType template,  final AbstractDataComponentType resultStructure,
             final AbstractEncodingType encoding) {
         super(version, "SOS");
         this.proposedTemplate = new ProposedTemplate(offering, template, resultStructure, encoding);
     }
-    
+
     /**
      * Gets the value of the proposedTemplate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link InsertResultTemplateType.ProposedTemplate }
-     *     
+     *
      */
     public InsertResultTemplateType.ProposedTemplate getProposedTemplate() {
         return proposedTemplate;
@@ -93,11 +93,11 @@ public class InsertResultTemplateType extends ExtensibleRequestType implements I
 
     /**
      * Sets the value of the proposedTemplate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link InsertResultTemplateType.ProposedTemplate }
-     *     
+     *
      */
     public void setProposedTemplate(InsertResultTemplateType.ProposedTemplate value) {
         this.proposedTemplate = value;
@@ -110,7 +110,7 @@ public class InsertResultTemplateType extends ExtensibleRequestType implements I
         }
         return null;
     }
-    
+
     @Override
     public String getResponseFormat() {
         for (Object ext : getExtension()) {
@@ -127,9 +127,9 @@ public class InsertResultTemplateType extends ExtensibleRequestType implements I
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -141,8 +141,8 @@ public class InsertResultTemplateType extends ExtensibleRequestType implements I
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -154,21 +154,21 @@ public class InsertResultTemplateType extends ExtensibleRequestType implements I
         private ResultTemplateType resultTemplate;
 
         public ProposedTemplate() {
-            
+
         }
-        
+
         public ProposedTemplate(final String offering, final OMObservationType template,  final AbstractDataComponentType resultStructure,
             final AbstractEncodingType encoding) {
             this.resultTemplate = new ResultTemplateType(offering, template, resultStructure, encoding);
         }
-        
+
         /**
          * Gets the value of the resultTemplate property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link ResultTemplateType }
-         *     
+         *
          */
         public ResultTemplateType getResultTemplate() {
             return resultTemplate;
@@ -176,11 +176,11 @@ public class InsertResultTemplateType extends ExtensibleRequestType implements I
 
         /**
          * Sets the value of the resultTemplate property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link ResultTemplateType }
-         *     
+         *
          */
         public void setResultTemplate(ResultTemplateType value) {
             this.resultTemplate = value;

@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for RelatedTimeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RelatedTimeType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,11 +64,11 @@ public class RelatedTimeType extends TimePrimitivePropertyType {
 
     @XmlAttribute
     protected String relativePosition;
-    
+
     public RelatedTimeType() {
-        
+
     }
-    
+
     public RelatedTimeType(final RelatedTimeType that) {
         if (that != null) {
             this.relativePosition = that.relativePosition;
@@ -77,11 +77,11 @@ public class RelatedTimeType extends TimePrimitivePropertyType {
 
     /**
      * Gets the value of the relativePosition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRelativePosition() {
         return relativePosition;
@@ -89,11 +89,11 @@ public class RelatedTimeType extends TimePrimitivePropertyType {
 
     /**
      * Sets the value of the relativePosition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRelativePosition(final String value) {
         this.relativePosition = value;

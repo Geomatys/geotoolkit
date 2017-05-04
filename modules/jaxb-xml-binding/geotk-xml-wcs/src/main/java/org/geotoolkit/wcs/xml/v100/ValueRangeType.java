@@ -28,12 +28,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * The range of an interval. If the "min" or "max" element is not included, there is no value limit in that direction. Inclusion of the specified minimum and maximum values in the range shall be defined by the "closure". (The interval can be bounded or semi-bounded with different closures.) The data type and the semantic of the values are inherited by children and may be superceded by them. This range may be qualitative, i.e., nominal (age range) or qualitative (percentage) meaning that a value between min/max can be queried. 
- * 
+ * The range of an interval. If the "min" or "max" element is not included, there is no value limit in that direction. Inclusion of the specified minimum and maximum values in the range shall be defined by the "closure". (The interval can be bounded or semi-bounded with different closures.) The data type and the semantic of the values are inherited by children and may be superceded by them. This range may be qualitative, i.e., nominal (age range) or qualitative (percentage) meaning that a value between min/max can be queried.
+ *
  * <p>Java class for valueRangeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="valueRangeType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -100,17 +100,17 @@ public class ValueRangeType {
     }
 
     /**
-     * Can be omitted when the datatype of values in this interval is xs:string, 
-     * or the "type" attribute is included in an enclosing element. 
+     * Can be omitted when the datatype of values in this interval is xs:string,
+     * or the "type" attribute is included in an enclosing element.
      */
     public String getType() {
         return type;
     }
 
     /**
-     * Can be omitted when the semantics or meaning of values in this interval 
+     * Can be omitted when the semantics or meaning of values in this interval
      * is clearly specified elsewhere,
-     * or the "semantic" attribute is included in an enclosing element. 
+     * or the "semantic" attribute is included in an enclosing element.
      */
     public String getSemantic() {
         return semantic;
@@ -128,9 +128,9 @@ public class ValueRangeType {
     }
 
     /**
-     * Shall be included unless the default value applies. 
+     * Shall be included unless the default value applies.
      * Gets the value of the closure property.
-     * (unmodifiable) 
+     * (unmodifiable)
      */
     public List<String> getClosure() {
         if (closure == null) {

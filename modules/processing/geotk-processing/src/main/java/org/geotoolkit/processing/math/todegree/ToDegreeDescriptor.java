@@ -32,10 +32,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class ToDegreeDescriptor extends AbstractProcessDescriptor {
-        
+
     /**Process name : toDegree */
     public static final String NAME = "math:toDegree";
-    
+
     /**
      * Input parameters
      */
@@ -44,10 +44,10 @@ public class ToDegreeDescriptor extends AbstractProcessDescriptor {
             .setRemarks("first number")
             .setRequired(true)
             .create(Double.class, null);
-    
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(FIRST_NUMBER);
-    
+
     /**
      * OutputParameters
      */
@@ -73,5 +73,5 @@ public class ToDegreeDescriptor extends AbstractProcessDescriptor {
     public Process createProcess(final ParameterValueGroup input) {
         return new ToDegreeProcess(input);
     }
-    
+
 }

@@ -33,11 +33,11 @@ import org.geotoolkit.gml.xml.GeometryProperty;
 /**
  * A geometric property may either be any geometry element encapsulated in an element of this type or an XLink reference to a remote geometry element (where remote includes geometry elements located elsewhere in the same or another document). Note that either the reference or the contained element shall be given, but not both or none.
  * If a feature has a property that takes a geometry element as its value, this is called a geometry property. A generic type for such a geometry property is GeometryPropertyType.
- * 
+ *
  * <p>Java class for GeometryPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeometryPropertyType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.gml.xml.GeometryProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeometryPropertyType", propOrder = {
@@ -88,17 +88,17 @@ public class GeometryPropertyType implements GeometryProperty {
     private java.lang.Boolean owns;
 
     public GeometryPropertyType() {
-        
+
     }
-    
+
     public GeometryPropertyType(final AbstractGeometryType geom) {
         final ObjectFactory factory = new ObjectFactory();
         this.abstractGeometry = (JAXBElement<? extends AbstractGeometryType>) factory.buildAnyGeometry(geom);
     }
-    
+
     /**
      * Gets the value of the abstractGeometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link MultiSurfaceType }{@code >}
@@ -130,7 +130,7 @@ public class GeometryPropertyType implements GeometryProperty {
      *     {@link JAXBElement }{@code <}{@link SurfaceType }{@code >}
      *     {@link JAXBElement }{@code <}{@link MultiSolidType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PointType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractGeometryType> getJbAbstractGeometry() {
         return abstractGeometry;
@@ -138,7 +138,7 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Sets the value of the abstractGeometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link MultiSurfaceType }{@code >}
@@ -170,7 +170,7 @@ public class GeometryPropertyType implements GeometryProperty {
      *     {@link JAXBElement }{@code <}{@link SurfaceType }{@code >}
      *     {@link JAXBElement }{@code <}{@link MultiSolidType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PointType }{@code >}
-     *     
+     *
      */
     public void setJbAbstractGeometry(JAXBElement<? extends AbstractGeometryType> value) {
         this.abstractGeometry = ((JAXBElement<? extends AbstractGeometryType> ) value);
@@ -283,9 +283,9 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      * {@link String }
-     * 
+     *
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
@@ -296,11 +296,11 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -308,11 +308,11 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(String value) {
         this.remoteSchema = value;
@@ -320,11 +320,11 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -336,11 +336,11 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -348,11 +348,11 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -360,11 +360,11 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -372,11 +372,11 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -384,11 +384,11 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -396,11 +396,11 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -408,11 +408,11 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -420,11 +420,11 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -432,11 +432,11 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -444,11 +444,11 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -456,11 +456,11 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(String value) {
         this.show = value;
@@ -468,11 +468,11 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -480,11 +480,11 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(String value) {
         this.actuate = value;
@@ -492,11 +492,11 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Gets the value of the owns property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public boolean isOwns() {
         if (owns == null) {
@@ -508,11 +508,11 @@ public class GeometryPropertyType implements GeometryProperty {
 
     /**
      * Sets the value of the owns property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public void setOwns(java.lang.Boolean value) {
         this.owns = value;

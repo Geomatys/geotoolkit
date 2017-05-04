@@ -30,9 +30,9 @@ import org.w3c.dom.Element;
 
 /**
  * <p>Java class for AttributedAnyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AttributedAnyType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AttributedAnyType", propOrder = {
@@ -61,12 +61,12 @@ public class AttributedAnyType {
 
     /**
      * Gets the value of the any property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Element }
      *     {@link Object }
-     *     
+     *
      */
     public Object getAny() {
         return any;
@@ -74,12 +74,12 @@ public class AttributedAnyType {
 
     /**
      * Sets the value of the any property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Element }
      *     {@link Object }
-     *     
+     *
      */
     public void setAny(Object value) {
         this.any = value;
@@ -87,8 +87,8 @@ public class AttributedAnyType {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */

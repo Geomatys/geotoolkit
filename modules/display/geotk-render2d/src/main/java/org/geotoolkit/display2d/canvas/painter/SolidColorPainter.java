@@ -39,7 +39,7 @@ public class SolidColorPainter implements BackgroundPainter{
     public Color getColor() {
         return color;
     }
-    
+
     @Override
     public void paint(final RenderingContext2D context) {
         final Graphics2D g = context.getGraphics();

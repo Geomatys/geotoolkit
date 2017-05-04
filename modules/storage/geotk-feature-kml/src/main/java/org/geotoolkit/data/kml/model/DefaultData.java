@@ -40,7 +40,7 @@ public class DefaultData extends DefaultAbstractObject implements Data {
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param name

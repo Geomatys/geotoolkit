@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TemporalCRSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TemporalCRSType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
@@ -64,12 +64,12 @@ public class TemporalCRSType extends AbstractCRSType {
 
     /**
      * Gets the value of the timeCSProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link TimeCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link TimeCSPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<TimeCSPropertyType> getTimeCSProperty() {
         return timeCSProperty;
@@ -77,12 +77,12 @@ public class TemporalCRSType extends AbstractCRSType {
 
     /**
      * Sets the value of the timeCSProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link TimeCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link TimeCSPropertyType }{@code >}
-     *     
+     *
      */
     public void setTimeCSProperty(JAXBElement<TimeCSPropertyType> value) {
         this.timeCSProperty = ((JAXBElement<TimeCSPropertyType> ) value);
@@ -90,11 +90,11 @@ public class TemporalCRSType extends AbstractCRSType {
 
     /**
      * Gets the value of the usesTemporalCS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TemporalCSPropertyType }
-     *     
+     *
      */
     public TemporalCSPropertyType getUsesTemporalCS() {
         return usesTemporalCS;
@@ -102,11 +102,11 @@ public class TemporalCRSType extends AbstractCRSType {
 
     /**
      * Sets the value of the usesTemporalCS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TemporalCSPropertyType }
-     *     
+     *
      */
     public void setUsesTemporalCS(TemporalCSPropertyType value) {
         this.usesTemporalCS = value;
@@ -114,12 +114,12 @@ public class TemporalCRSType extends AbstractCRSType {
 
     /**
      * Gets the value of the temporalDatumProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link TemporalDatumPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link TemporalDatumPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<TemporalDatumPropertyType> getTemporalDatumProperty() {
         return temporalDatumProperty;
@@ -127,12 +127,12 @@ public class TemporalCRSType extends AbstractCRSType {
 
     /**
      * Sets the value of the temporalDatumProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link TemporalDatumPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link TemporalDatumPropertyType }{@code >}
-     *     
+     *
      */
     public void setTemporalDatumProperty(JAXBElement<TemporalDatumPropertyType> value) {
         this.temporalDatumProperty = ((JAXBElement<TemporalDatumPropertyType> ) value);

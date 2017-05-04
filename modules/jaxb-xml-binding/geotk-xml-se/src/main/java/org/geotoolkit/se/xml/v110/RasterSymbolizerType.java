@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for RasterSymbolizerType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RasterSymbolizerType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,11 +84,11 @@ public class RasterSymbolizerType
 
     /**
      * Gets the value of the geometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeometryType }
-     *     
+     *
      */
     public ParameterValueType getGeometry() {
         return geometry;
@@ -96,11 +96,11 @@ public class RasterSymbolizerType
 
     /**
      * Sets the value of the geometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeometryType }
-     *     
+     *
      */
     public void setGeometry(final ParameterValueType value) {
         this.geometry = value;
@@ -108,11 +108,11 @@ public class RasterSymbolizerType
 
     /**
      * Gets the value of the opacity property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getOpacity() {
         return opacity;
@@ -120,11 +120,11 @@ public class RasterSymbolizerType
 
     /**
      * Sets the value of the opacity property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setOpacity(final ParameterValueType value) {
         this.opacity = value;
@@ -132,11 +132,11 @@ public class RasterSymbolizerType
 
     /**
      * Gets the value of the channelSelection property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ChannelSelectionType }
-     *     
+     *
      */
     public ChannelSelectionType getChannelSelection() {
         return channelSelection;
@@ -144,11 +144,11 @@ public class RasterSymbolizerType
 
     /**
      * Sets the value of the channelSelection property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ChannelSelectionType }
-     *     
+     *
      */
     public void setChannelSelection(final ChannelSelectionType value) {
         this.channelSelection = value;
@@ -156,11 +156,11 @@ public class RasterSymbolizerType
 
     /**
      * Gets the value of the overlapBehavior property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOverlapBehavior() {
         return overlapBehavior;
@@ -168,11 +168,11 @@ public class RasterSymbolizerType
 
     /**
      * Sets the value of the overlapBehavior property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOverlapBehavior(final String value) {
         this.overlapBehavior = value;
@@ -180,11 +180,11 @@ public class RasterSymbolizerType
 
     /**
      * Gets the value of the colorMap property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ColorMapType }
-     *     
+     *
      */
     public ColorMapType getColorMap() {
         return colorMap;
@@ -192,11 +192,11 @@ public class RasterSymbolizerType
 
     /**
      * Sets the value of the colorMap property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ColorMapType }
-     *     
+     *
      */
     public void setColorMap(final ColorMapType value) {
         this.colorMap = value;
@@ -204,11 +204,11 @@ public class RasterSymbolizerType
 
     /**
      * Gets the value of the contrastEnhancement property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ContrastEnhancementType }
-     *     
+     *
      */
     public ContrastEnhancementType getContrastEnhancement() {
         return contrastEnhancement;
@@ -216,11 +216,11 @@ public class RasterSymbolizerType
 
     /**
      * Sets the value of the contrastEnhancement property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ContrastEnhancementType }
-     *     
+     *
      */
     public void setContrastEnhancement(final ContrastEnhancementType value) {
         this.contrastEnhancement = value;
@@ -228,11 +228,11 @@ public class RasterSymbolizerType
 
     /**
      * Gets the value of the shadedRelief property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShadedReliefType }
-     *     
+     *
      */
     public ShadedReliefType getShadedRelief() {
         return shadedRelief;
@@ -240,11 +240,11 @@ public class RasterSymbolizerType
 
     /**
      * Sets the value of the shadedRelief property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShadedReliefType }
-     *     
+     *
      */
     public void setShadedRelief(final ShadedReliefType value) {
         this.shadedRelief = value;
@@ -252,11 +252,11 @@ public class RasterSymbolizerType
 
     /**
      * Gets the value of the imageOutline property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ImageOutlineType }
-     *     
+     *
      */
     public ImageOutlineType getImageOutline() {
         return imageOutline;
@@ -264,11 +264,11 @@ public class RasterSymbolizerType
 
     /**
      * Sets the value of the imageOutline property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ImageOutlineType }
-     *     
+     *
      */
     public void setImageOutline(final ImageOutlineType value) {
         this.imageOutline = value;

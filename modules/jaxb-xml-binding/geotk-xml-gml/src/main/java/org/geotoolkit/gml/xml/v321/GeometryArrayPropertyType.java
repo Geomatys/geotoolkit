@@ -29,13 +29,13 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * If a feature has a property which takes an array of geometry elements as its value, this is called a geometry array property. A generic type for such a geometry property is GeometryArrayPropertyType. 
+ * If a feature has a property which takes an array of geometry elements as its value, this is called a geometry array property. A generic type for such a geometry property is GeometryArrayPropertyType.
  * The elements are always contained inline in the array property, referencing geometry elements or arrays of geometry elements via XLinks is not supported.
- * 
+ *
  * <p>Java class for GeometryArrayPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeometryArrayPropertyType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeometryArrayPropertyType", propOrder = {
@@ -64,20 +64,20 @@ public class GeometryArrayPropertyType {
 
     /**
      * Gets the value of the abstractGeometry property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the abstractGeometry property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAbstractGeometry().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link MultiSurfaceType }{@code >}
@@ -109,8 +109,8 @@ public class GeometryArrayPropertyType {
      * {@link JAXBElement }{@code <}{@link SurfaceType }{@code >}
      * {@link JAXBElement }{@code <}{@link MultiSolidType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends AbstractGeometryType>> getAbstractGeometry() {
         if (abstractGeometry == null) {
@@ -121,11 +121,11 @@ public class GeometryArrayPropertyType {
 
     /**
      * Gets the value of the owns property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public boolean isOwns() {
         if (owns == null) {
@@ -137,11 +137,11 @@ public class GeometryArrayPropertyType {
 
     /**
      * Sets the value of the owns property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public void setOwns(java.lang.Boolean value) {
         this.owns = value;

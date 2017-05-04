@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * GeocodeResponse. The addresses returned will be normalized Address ADTs as a result of any parsing by the geocoder, etc.
- * 
+ *
  * <p>Java class for GeocodeResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeocodeResponseType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeocodeResponseType", propOrder = {
@@ -57,7 +57,7 @@ public class GeocodeResponseType extends AbstractResponseParametersType {
 
     /**
      * Gets the value of the geocodeResponseList property.
-     * 
+     *
      */
     public List<GeocodeResponseListType> getGeocodeResponseList() {
         if (geocodeResponseList == null) {

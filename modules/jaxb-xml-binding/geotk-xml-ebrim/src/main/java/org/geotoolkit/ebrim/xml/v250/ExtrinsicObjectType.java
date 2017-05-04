@@ -27,15 +27,15 @@ import org.geotoolkit.wrs.xml.v090.WRSExtrinsicObjectType;
 
 
 /**
- * 
+ *
  * ExtrinsicObject are attributes from the ExtrinsicObject interface in ebRIM.
  * It inherits RegistryEntryAttributes
- * 			
- * 
+ *
+ *
  * <p>Java class for ExtrinsicObjectType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ExtrinsicObjectType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.wrs.xml.v090.WRSExtrinsicObjectType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,7 +55,7 @@ import org.geotoolkit.wrs.xml.v090.WRSExtrinsicObjectType;
 @XmlSeeAlso({
     WRSExtrinsicObjectType.class
 })
-@XmlRootElement( name = "ExtrinsicObject")        
+@XmlRootElement( name = "ExtrinsicObject")
 public class ExtrinsicObjectType extends RegistryEntryType {
 
     @XmlAttribute

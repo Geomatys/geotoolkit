@@ -34,12 +34,12 @@ import org.opengis.style.Stroke;
  */
 public class DefaultPolygonSymbolizerRendererService extends AbstractSymbolizerRendererService<PolygonSymbolizer, CachedPolygonSymbolizer>{
 
-    
+
     @Override
     public boolean isGroupSymbolizer() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc }
      */

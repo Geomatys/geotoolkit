@@ -29,15 +29,15 @@ import org.opengis.filter.PropertyIsEqualTo;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsEqualTo")
 public class PropertyIsEqualToType extends BinaryComparisonOpType implements PropertyIsEqualTo {
-    
+
     public PropertyIsEqualToType() {
-        
+
     }
-    
+
     public PropertyIsEqualToType(final PropertyIsEqualToType that) {
         super(that);
     }
-    
+
     /**
      * Build a new Binary comparison operator
      */

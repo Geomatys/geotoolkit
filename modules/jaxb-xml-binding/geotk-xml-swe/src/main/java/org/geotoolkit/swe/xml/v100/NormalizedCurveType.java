@@ -25,9 +25,9 @@ import org.geotoolkit.swe.xml.AbstractNormalizedCurve;
 
 /**
  * <p>Java class for NormalizedCurveType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="NormalizedCurveType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.swe.xml.AbstractNormalizedCurve;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -104,11 +104,11 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
 
     /**
      * Gets the value of the inputGain property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QuantityPropertyType }
-     *     
+     *
      */
     public QuantityPropertyType getInputGain() {
         return inputGain;
@@ -116,11 +116,11 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
 
     /**
      * Sets the value of the inputGain property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QuantityPropertyType }
-     *     
+     *
      */
     public void setInputGain(final QuantityPropertyType value) {
         this.inputGain = value;
@@ -128,11 +128,11 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
 
     /**
      * Gets the value of the inputBias property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QuantityPropertyType }
-     *     
+     *
      */
     public QuantityPropertyType getInputBias() {
         return inputBias;
@@ -140,11 +140,11 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
 
     /**
      * Sets the value of the inputBias property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QuantityPropertyType }
-     *     
+     *
      */
     public void setInputBias(final QuantityPropertyType value) {
         this.inputBias = value;
@@ -152,11 +152,11 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
 
     /**
      * Gets the value of the outputGain property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QuantityPropertyType }
-     *     
+     *
      */
     public QuantityPropertyType getOutputGain() {
         return outputGain;
@@ -164,11 +164,11 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
 
     /**
      * Sets the value of the outputGain property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QuantityPropertyType }
-     *     
+     *
      */
     public void setOutputGain(final QuantityPropertyType value) {
         this.outputGain = value;
@@ -176,11 +176,11 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
 
     /**
      * Gets the value of the outputBias property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QuantityPropertyType }
-     *     
+     *
      */
     public QuantityPropertyType getOutputBias() {
         return outputBias;
@@ -188,11 +188,11 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
 
     /**
      * Sets the value of the outputBias property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QuantityPropertyType }
-     *     
+     *
      */
     public void setOutputBias(final QuantityPropertyType value) {
         this.outputBias = value;
@@ -200,11 +200,11 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
 
     /**
      * Gets the value of the interpolationMethod property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CategoryPropertyType }
-     *     
+     *
      */
     public CategoryPropertyType getInterpolationMethod() {
         return interpolationMethod;
@@ -212,11 +212,11 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
 
     /**
      * Sets the value of the interpolationMethod property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CategoryPropertyType }
-     *     
+     *
      */
     public void setInterpolationMethod(final CategoryPropertyType value) {
         this.interpolationMethod = value;
@@ -224,11 +224,11 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
 
     /**
      * Gets the value of the extrapolationMethod property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CategoryPropertyType }
-     *     
+     *
      */
     public CategoryPropertyType getExtrapolationMethod() {
         return extrapolationMethod;
@@ -236,11 +236,11 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
 
     /**
      * Sets the value of the extrapolationMethod property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CategoryPropertyType }
-     *     
+     *
      */
     public void setExtrapolationMethod(final CategoryPropertyType value) {
         this.extrapolationMethod = value;
@@ -248,11 +248,11 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
 
     /**
      * Gets the value of the function property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurvePropertyType }
-     *     
+     *
      */
     public CurvePropertyType getFunction() {
         return function;
@@ -260,11 +260,11 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
 
     /**
      * Sets the value of the function property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurvePropertyType }
-     *     
+     *
      */
     public void setFunction(final CurvePropertyType value) {
         this.function = value;

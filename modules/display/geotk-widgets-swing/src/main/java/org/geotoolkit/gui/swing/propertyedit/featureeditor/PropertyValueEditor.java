@@ -40,15 +40,15 @@ public abstract class PropertyValueEditor extends JPanel implements FocusListene
     public abstract boolean canHandle(PropertyType candidate);
 
     public abstract void setValue(final PropertyType type, Object value);
-    
+
     public abstract Object getValue();
-    
+
     @Override
     public abstract void setEnabled(boolean enabled);
-    
+
     @Override
     public abstract boolean isEnabled();
-    
+
     /**
      * Fire property changed event with new property value.
      */
@@ -58,7 +58,7 @@ public abstract class PropertyValueEditor extends JPanel implements FocusListene
 
     /**
      * Forward focus gained event.
-     * @param e 
+     * @param e
      */
     @Override
     public void focusGained(FocusEvent e) {
@@ -69,7 +69,7 @@ public abstract class PropertyValueEditor extends JPanel implements FocusListene
 
     /**
      * Forward focus lost event.
-     * @param e 
+     * @param e
      */
     @Override
     public void focusLost(FocusEvent e) {
@@ -77,7 +77,7 @@ public abstract class PropertyValueEditor extends JPanel implements FocusListene
             listeners.focusLost(e);
         }
     }
-    
+
     /**
      * Create a copy of this editor.
      * @return PropertyValueEditor
@@ -91,5 +91,5 @@ public abstract class PropertyValueEditor extends JPanel implements FocusListene
             throw new RuntimeException(ex.getMessage(), ex);
         }
     }
-    
+
 }

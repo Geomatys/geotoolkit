@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for PhysicalComponentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PhysicalComponentType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PhysicalComponentType", propOrder = {
@@ -53,11 +53,11 @@ public class PhysicalComponentType
 
     /**
      * Gets the value of the method property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ProcessMethodPropertyType }
-     *     
+     *
      */
     public ProcessMethodPropertyType getMethod() {
         return method;
@@ -65,11 +65,11 @@ public class PhysicalComponentType
 
     /**
      * Sets the value of the method property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ProcessMethodPropertyType }
-     *     
+     *
      */
     public void setMethod(ProcessMethodPropertyType value) {
         this.method = value;

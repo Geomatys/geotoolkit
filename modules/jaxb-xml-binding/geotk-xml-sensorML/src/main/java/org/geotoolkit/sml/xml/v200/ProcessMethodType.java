@@ -28,9 +28,9 @@ import org.geotoolkit.swe.xml.v200.AbstractSWEIdentifiableType;
 
 /**
  * <p>Java class for ProcessMethodType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ProcessMethodType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.swe.xml.v200.AbstractSWEIdentifiableType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ProcessMethodType", propOrder = {
@@ -67,25 +67,25 @@ public class ProcessMethodType
 
     /**
      * Gets the value of the algorithm property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the algorithm property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAlgorithm().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ProcessMethodType.Algorithm }
-     * 
-     * 
+     *
+     *
      */
     public List<ProcessMethodType.Algorithm> getAlgorithm() {
         if (algorithm == null) {
@@ -97,9 +97,9 @@ public class ProcessMethodType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -111,8 +111,8 @@ public class ProcessMethodType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -125,11 +125,11 @@ public class ProcessMethodType
 
         /**
          * Gets the value of the abstractAlgorithm property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link AbstractAlgorithmType }
-         *     
+         *
          */
         public AbstractAlgorithmType getAbstractAlgorithm() {
             return abstractAlgorithm;
@@ -137,11 +137,11 @@ public class ProcessMethodType
 
         /**
          * Sets the value of the abstractAlgorithm property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link AbstractAlgorithmType }
-         *     
+         *
          */
         public void setAbstractAlgorithm(AbstractAlgorithmType value) {
             this.abstractAlgorithm = value;

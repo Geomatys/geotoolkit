@@ -24,18 +24,18 @@ import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.v311.EnvelopeType;
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.xls package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.xls package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -140,14 +140,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.xls
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link RouteInstructionsRequestType }
-     * 
+     *
      */
     public RouteInstructionsRequestType createRouteInstructionsRequestType() {
         return new RouteInstructionsRequestType();
@@ -155,7 +155,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link HorAccType }
-     * 
+     *
      */
     public HorAccType createHorAccType() {
         return new HorAccType();
@@ -163,7 +163,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DetermineRouteRequestType }
-     * 
+     *
      */
     public DetermineRouteRequestType createDetermineRouteRequestType() {
         return new DetermineRouteRequestType();
@@ -171,7 +171,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractMSIDsType }
-     * 
+     *
      */
     public AbstractMSIDsType createAbstractMSIDsType() {
         return new AbstractMSIDsType();
@@ -179,7 +179,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SICType }
-     * 
+     *
      */
     public SICType createSICType() {
         return new SICType();
@@ -187,7 +187,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AvailableFormatsType }
-     * 
+     *
      */
     public AvailableFormatsType createAvailableFormatsType() {
         return new AvailableFormatsType();
@@ -195,7 +195,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReferenceSystemType }
-     * 
+     *
      */
     public ReferenceSystemType createReferenceSystemType() {
         return new ReferenceSystemType();
@@ -203,7 +203,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StyleType }
-     * 
+     *
      */
     public StyleType createStyleType() {
         return new StyleType();
@@ -211,7 +211,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BuildingLocatorType }
-     * 
+     *
      */
     public BuildingLocatorType createBuildingLocatorType() {
         return new BuildingLocatorType();
@@ -219,7 +219,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QualityOfPositionType }
-     * 
+     *
      */
     public QualityOfPositionType createQualityOfPositionType() {
         return new QualityOfPositionType();
@@ -227,7 +227,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GeocodeResponseListType }
-     * 
+     *
      */
     public GeocodeResponseListType createGeocodeResponseListType() {
         return new GeocodeResponseListType();
@@ -235,7 +235,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link POIWithDistanceType }
-     * 
+     *
      */
     public POIWithDistanceType createPOIWithDistanceType() {
         return new POIWithDistanceType();
@@ -243,7 +243,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PointOfInterestType }
-     * 
+     *
      */
     public PointOfInterestType createPointOfInterestType() {
         return new PointOfInterestType();
@@ -251,7 +251,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CircularArcType }
-     * 
+     *
      */
     public CircularArcType createCircularArcType() {
         return new CircularArcType();
@@ -259,7 +259,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RequestType }
-     * 
+     *
      */
     public RequestType createRequestType() {
         return new RequestType();
@@ -267,7 +267,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StreetAddressType }
-     * 
+     *
      */
     public StreetAddressType createStreetAddressType() {
         return new StreetAddressType();
@@ -275,7 +275,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link XLSType }
-     * 
+     *
      */
     public XLSType createXLSType() {
         return new XLSType();
@@ -283,7 +283,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NACEType }
-     * 
+     *
      */
     public NACEType createNACEType() {
         return new NACEType();
@@ -291,7 +291,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetPortrayMapCapabilitiesResponseType }
-     * 
+     *
      */
     public GetPortrayMapCapabilitiesResponseType createGetPortrayMapCapabilitiesResponseType() {
         return new GetPortrayMapCapabilitiesResponseType();
@@ -299,7 +299,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LayerType.Layer }
-     * 
+     *
      */
     public LayerType.Layer createLayerTypeLayer() {
         return new LayerType.Layer();
@@ -307,7 +307,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OutputType }
-     * 
+     *
      */
     public OutputType createOutputType() {
         return new OutputType();
@@ -315,7 +315,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OutputMSIDsType }
-     * 
+     *
      */
     public OutputMSIDsType createOutputMSIDsType() {
         return new OutputMSIDsType();
@@ -323,7 +323,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RouteGeometryType }
-     * 
+     *
      */
     public RouteGeometryType createRouteGeometryType() {
         return new RouteGeometryType();
@@ -331,7 +331,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GeocodeResponseType }
-     * 
+     *
      */
     public GeocodeResponseType createGeocodeResponseType() {
         return new GeocodeResponseType();
@@ -339,7 +339,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PositionType }
-     * 
+     *
      */
     public PositionType createPositionType() {
         return new PositionType();
@@ -347,7 +347,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InputMSIDsType }
-     * 
+     *
      */
     public InputMSIDsType createInputMSIDsType() {
         return new InputMSIDsType();
@@ -355,7 +355,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractDataType }
-     * 
+     *
      */
     public AbstractDataType createAbstractDataType() {
         return new AbstractDataType();
@@ -363,7 +363,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link POIInfoListType }
-     * 
+     *
      */
     public POIInfoListType createPOIInfoListType() {
         return new POIInfoListType();
@@ -371,7 +371,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CenterContextType }
-     * 
+     *
      */
     public CenterContextType createCenterContextType() {
         return new CenterContextType();
@@ -379,7 +379,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DetermineRouteResponseType }
-     * 
+     *
      */
     public DetermineRouteResponseType createDetermineRouteResponseType() {
         return new DetermineRouteResponseType();
@@ -387,7 +387,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ClipType }
-     * 
+     *
      */
     public ClipType createClipType() {
         return new ClipType();
@@ -395,7 +395,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RouteMapRequestType }
-     * 
+     *
      */
     public RouteMapRequestType createRouteMapRequestType() {
         return new RouteMapRequestType();
@@ -403,7 +403,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RouteInstructionType }
-     * 
+     *
      */
     public RouteInstructionType createRouteInstructionType() {
         return new RouteInstructionType();
@@ -411,7 +411,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AddressType }
-     * 
+     *
      */
     public AddressType createAddressType() {
         return new AddressType();
@@ -419,7 +419,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SpeedType }
-     * 
+     *
      */
     public SpeedType createSpeedType() {
         return new SpeedType();
@@ -427,7 +427,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContentType }
-     * 
+     *
      */
     public ContentType createContentType() {
         return new ContentType();
@@ -435,7 +435,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RouteMapOutputType }
-     * 
+     *
      */
     public RouteMapOutputType createRouteMapOutputType() {
         return new RouteMapOutputType();
@@ -443,7 +443,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DirectoryResponseType }
-     * 
+     *
      */
     public DirectoryResponseType createDirectoryResponseType() {
         return new DirectoryResponseType();
@@ -451,7 +451,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetPortrayMapCapabilitiesRequestType }
-     * 
+     *
      */
     public GetPortrayMapCapabilitiesRequestType createGetPortrayMapCapabilitiesRequestType() {
         return new GetPortrayMapCapabilitiesRequestType();
@@ -459,7 +459,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RouteSummaryType }
-     * 
+     *
      */
     public RouteSummaryType createRouteSummaryType() {
         return new RouteSummaryType();
@@ -467,7 +467,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EllipseType }
-     * 
+     *
      */
     public EllipseType createEllipseType() {
         return new EllipseType();
@@ -475,7 +475,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractMSInformationType }
-     * 
+     *
      */
     public AbstractMSInformationType createAbstractMSInformationType() {
         return new AbstractMSInformationType();
@@ -483,7 +483,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StreetNameType }
-     * 
+     *
      */
     public StreetNameType createStreetNameType() {
         return new StreetNameType();
@@ -491,7 +491,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReverseGeocodeResponseType }
-     * 
+     *
      */
     public ReverseGeocodeResponseType createReverseGeocodeResponseType() {
         return new ReverseGeocodeResponseType();
@@ -499,7 +499,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AltitudeType }
-     * 
+     *
      */
     public AltitudeType createAltitudeType() {
         return new AltitudeType();
@@ -507,7 +507,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResponseType }
-     * 
+     *
      */
     public ResponseType createResponseType() {
         return new ResponseType();
@@ -515,7 +515,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SLIRType }
-     * 
+     *
      */
     public SLIRType createSLIRType() {
         return new SLIRType();
@@ -523,7 +523,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link POILocationType }
-     * 
+     *
      */
     public POILocationType createPOILocationType() {
         return new POILocationType();
@@ -531,7 +531,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InputGatewayParametersType }
-     * 
+     *
      */
     public InputGatewayParametersType createInputGatewayParametersType() {
         return new InputGatewayParametersType();
@@ -539,7 +539,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RouteHandleType }
-     * 
+     *
      */
     public RouteHandleType createRouteHandleType() {
         return new RouteHandleType();
@@ -547,7 +547,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ErrorListType }
-     * 
+     *
      */
     public ErrorListType createErrorListType() {
         return new ErrorListType();
@@ -555,7 +555,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WayPointListType }
-     * 
+     *
      */
     public WayPointListType createWayPointListType() {
         return new WayPointListType();
@@ -563,7 +563,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AvailableSRSType }
-     * 
+     *
      */
     public AvailableSRSType createAvailableSRSType() {
         return new AvailableSRSType();
@@ -571,7 +571,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WithinDistanceType }
-     * 
+     *
      */
     public WithinDistanceType createWithinDistanceType() {
         return new WithinDistanceType();
@@ -579,7 +579,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WayPointType }
-     * 
+     *
      */
     public WayPointType createWayPointType() {
         return new WayPointType();
@@ -587,7 +587,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link POIAttributeListType }
-     * 
+     *
      */
     public POIAttributeListType createPOIAttributeListType() {
         return new POIAttributeListType();
@@ -595,7 +595,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NAICSType }
-     * 
+     *
      */
     public NAICSType createNAICSType() {
         return new NAICSType();
@@ -603,7 +603,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OverlayType }
-     * 
+     *
      */
     public OverlayType createOverlayType() {
         return new OverlayType();
@@ -611,7 +611,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RouteSegmentType }
-     * 
+     *
      */
     public RouteSegmentType createRouteSegmentType() {
         return new RouteSegmentType();
@@ -619,7 +619,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AngleType }
-     * 
+     *
      */
     public AngleType createAngleType() {
         return new AngleType();
@@ -627,7 +627,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link VerAccType }
-     * 
+     *
      */
     public VerAccType createVerAccType() {
         return new VerAccType();
@@ -635,7 +635,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ErrorType }
-     * 
+     *
      */
     public ErrorType createErrorType() {
         return new ErrorType();
@@ -643,7 +643,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link POIProperties }
-     * 
+     *
      */
     public POIProperties createPOIProperties() {
         return new POIProperties();
@@ -651,7 +651,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PortrayMapResponseType }
-     * 
+     *
      */
     public PortrayMapResponseType createPortrayMapResponseType() {
         return new PortrayMapResponseType();
@@ -659,7 +659,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OutputGatewayParametersType }
-     * 
+     *
      */
     public OutputGatewayParametersType createOutputGatewayParametersType() {
         return new OutputGatewayParametersType();
@@ -667,7 +667,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TimeType }
-     * 
+     *
      */
     public TimeType createTimeType() {
         return new TimeType();
@@ -675,7 +675,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RouteMapType }
-     * 
+     *
      */
     public RouteMapType createRouteMapType() {
         return new RouteMapType();
@@ -683,7 +683,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LineCorridorType }
-     * 
+     *
      */
     public LineCorridorType createLineCorridorType() {
         return new LineCorridorType();
@@ -691,7 +691,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MapType }
-     * 
+     *
      */
     public MapType createMapType() {
         return new MapType();
@@ -699,7 +699,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AreaOfInterestType }
-     * 
+     *
      */
     public AreaOfInterestType createAreaOfInterestType() {
         return new AreaOfInterestType();
@@ -707,7 +707,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WithinBoundaryType }
-     * 
+     *
      */
     public WithinBoundaryType createWithinBoundaryType() {
         return new WithinBoundaryType();
@@ -715,7 +715,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RouteInstructionsListType }
-     * 
+     *
      */
     public RouteInstructionsListType createRouteInstructionsListType() {
         return new RouteInstructionsListType();
@@ -723,7 +723,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AvoidListType }
-     * 
+     *
      */
     public AvoidListType createAvoidListType() {
         return new AvoidListType();
@@ -731,7 +731,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InputMSInformationType }
-     * 
+     *
      */
     public InputMSInformationType createInputMSInformationType() {
         return new InputMSInformationType();
@@ -739,7 +739,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AvailableStylesType }
-     * 
+     *
      */
     public AvailableStylesType createAvailableStylesType() {
         return new AvailableStylesType();
@@ -747,7 +747,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NamedPlaceType }
-     * 
+     *
      */
     public NamedPlaceType createNamedPlaceType() {
         return new NamedPlaceType();
@@ -755,7 +755,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DirectoryRequestType }
-     * 
+     *
      */
     public DirectoryRequestType createDirectoryRequestType() {
         return new DirectoryRequestType();
@@ -763,7 +763,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GeocodeRequestType }
-     * 
+     *
      */
     public GeocodeRequestType createGeocodeRequestType() {
         return new GeocodeRequestType();
@@ -771,7 +771,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TimeStampType }
-     * 
+     *
      */
     public TimeStampType createTimeStampType() {
         return new TimeStampType();
@@ -779,7 +779,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DistanceType }
-     * 
+     *
      */
     public DistanceType createDistanceType() {
         return new DistanceType();
@@ -787,7 +787,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReverseGeocodedLocationType }
-     * 
+     *
      */
     public ReverseGeocodedLocationType createReverseGeocodedLocationType() {
         return new ReverseGeocodedLocationType();
@@ -795,7 +795,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SLIAType }
-     * 
+     *
      */
     public SLIAType createSLIAType() {
         return new SLIAType();
@@ -803,7 +803,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NearestType }
-     * 
+     *
      */
     public NearestType createNearestType() {
         return new NearestType();
@@ -811,7 +811,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RequestHeaderType }
-     * 
+     *
      */
     public RequestHeaderType createRequestHeaderType() {
         return new RequestHeaderType();
@@ -819,7 +819,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResponseHeaderType }
-     * 
+     *
      */
     public ResponseHeaderType createResponseHeaderType() {
         return new ResponseHeaderType();
@@ -827,7 +827,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GeocodingQOSType }
-     * 
+     *
      */
     public GeocodingQOSType createGeocodingQOSType() {
         return new GeocodingQOSType();
@@ -835,7 +835,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link POIInfoType }
-     * 
+     *
      */
     public POIInfoType createPOIInfoType() {
         return new POIInfoType();
@@ -843,7 +843,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OutputMSInformationType }
-     * 
+     *
      */
     public OutputMSInformationType createOutputMSInformationType() {
         return new OutputMSInformationType();
@@ -851,7 +851,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReverseGeocodeRequestType }
-     * 
+     *
      */
     public ReverseGeocodeRequestType createReverseGeocodeRequestType() {
         return new ReverseGeocodeRequestType();
@@ -859,7 +859,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PortrayMapRequestType }
-     * 
+     *
      */
     public PortrayMapRequestType createPortrayMapRequestType() {
         return new PortrayMapRequestType();
@@ -867,7 +867,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GeocodedAddressType }
-     * 
+     *
      */
     public GeocodedAddressType createGeocodedAddressType() {
         return new GeocodedAddressType();
@@ -875,7 +875,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RoutePlanType }
-     * 
+     *
      */
     public RoutePlanType createRoutePlanType() {
         return new RoutePlanType();
@@ -883,7 +883,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AvailableLayersType }
-     * 
+     *
      */
     public AvailableLayersType createAvailableLayersType() {
         return new AvailableLayersType();
@@ -891,7 +891,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LayerType }
-     * 
+     *
      */
     public LayerType createLayerType() {
         return new LayerType();
@@ -899,7 +899,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link POIPropertyType }
-     * 
+     *
      */
     public POIPropertyType createPOIPropertyType() {
         return new POIPropertyType();
@@ -907,7 +907,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RadiusType }
-     * 
+     *
      */
     public RadiusType createRadiusType() {
         return new RadiusType();
@@ -915,7 +915,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link POIPropertiesType }
-     * 
+     *
      */
     public POIPropertiesType createPOIPropertiesType() {
         return new POIPropertiesType();
@@ -923,7 +923,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RouteGeometryRequestType }
-     * 
+     *
      */
     public RouteGeometryRequestType createRouteGeometryRequestType() {
         return new RouteGeometryRequestType();
@@ -931,7 +931,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RouteMapRequestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "RouteMapRequest")
     public JAXBElement<RouteMapRequestType> createRouteMapRequest(RouteMapRequestType value) {
@@ -940,7 +940,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AltitudeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "Altitude")
     public JAXBElement<AltitudeType> createAltitude(AltitudeType value) {
@@ -949,7 +949,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractStreetLocatorType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "_StreetLocation")
     public JAXBElement<AbstractStreetLocatorType> createStreetLocation(AbstractStreetLocatorType value) {
@@ -958,7 +958,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RoutePlanType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "RoutePlan")
     public JAXBElement<RoutePlanType> createRoutePlan(RoutePlanType value) {
@@ -967,7 +967,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InputMSIDsType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "InputMSIDs", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_MSIDs")
     public JAXBElement<InputMSIDsType> createInputMSIDs(InputMSIDsType value) {
@@ -976,7 +976,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ReverseGeocodeResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "ReverseGeocodeResponse", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_ResponseParameters")
     public JAXBElement<ReverseGeocodeResponseType> createReverseGeocodeResponse(ReverseGeocodeResponseType value) {
@@ -985,7 +985,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractNamedReferenceSystem }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "_NamedReferenceSystem")
     public JAXBElement<AbstractNamedReferenceSystem> createNamedReferenceSystem(AbstractNamedReferenceSystem value) {
@@ -994,7 +994,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ReverseGeocodePreferenceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "ReverseGeocodePreference")
     public JAXBElement<ReverseGeocodePreferenceType> createReverseGeocodePreference(ReverseGeocodePreferenceType value) {
@@ -1003,7 +1003,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EnvelopeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "BoundingBox")
     public JAXBElement<EnvelopeType> createBoundingBox(EnvelopeType value) {
@@ -1012,7 +1012,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DetermineRouteRequestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "DetermineRouteRequest", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_RequestParameters")
     public JAXBElement<DetermineRouteRequestType> createDetermineRouteRequest(DetermineRouteRequestType value) {
@@ -1021,7 +1021,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link POIInfoType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "POIInfo")
     public JAXBElement<POIInfoType> createPOIInfo(POIInfoType value) {
@@ -1030,7 +1030,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RouteGeometryRequestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "RouteGeometryRequest")
     public JAXBElement<RouteGeometryRequestType> createRouteGeometryRequest(RouteGeometryRequestType value) {
@@ -1039,7 +1039,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NAICSType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "NAICS", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_NamedReferenceSystem")
     public JAXBElement<NAICSType> createNAICS(NAICSType value) {
@@ -1048,7 +1048,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MapType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "Map", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_ADT")
     public JAXBElement<MapType> createMap(MapType value) {
@@ -1057,7 +1057,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DistanceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "Distance", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_Measure")
     public JAXBElement<DistanceType> createDistance(DistanceType value) {
@@ -1066,7 +1066,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractGatewayParametersType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "_GatewayParameters")
     public JAXBElement<AbstractGatewayParametersType> createGatewayParameters(AbstractGatewayParametersType value) {
@@ -1075,7 +1075,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SLIAType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "SLIA", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_ResponseParameters")
     public JAXBElement<SLIAType> createSLIA(SLIAType value) {
@@ -1084,7 +1084,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AvoidListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "AvoidList")
     public JAXBElement<AvoidListType> createAvoidList(AvoidListType value) {
@@ -1093,7 +1093,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractDataType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "_ADT")
     public JAXBElement<AbstractDataType> createADT(AbstractDataType value) {
@@ -1102,7 +1102,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AngleType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "Angle", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_Measure")
     public JAXBElement<AngleType> createAngle(AngleType value) {
@@ -1111,7 +1111,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SLIRType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "SLIR", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_RequestParameters")
     public JAXBElement<SLIRType> createSLIR(SLIRType value) {
@@ -1120,7 +1120,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DistanceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "SearchCentreDistance")
     public JAXBElement<DistanceType> createSearchCentreDistance(DistanceType value) {
@@ -1129,7 +1129,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PortrayMapRequestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "PortrayMapRequest", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_RequestParameters")
     public JAXBElement<PortrayMapRequestType> createPortrayMapRequest(PortrayMapRequestType value) {
@@ -1138,7 +1138,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NACEType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "NACE", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_NamedReferenceSystem")
     public JAXBElement<NACEType> createNACE(NACEType value) {
@@ -1147,7 +1147,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GeocodingQOSType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "GeocodeMatchCode")
     public JAXBElement<GeocodingQOSType> createGeocodeMatchCode(GeocodingQOSType value) {
@@ -1156,7 +1156,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RequestHeaderType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "RequestHeader", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_Header")
     public JAXBElement<RequestHeaderType> createRequestHeader(RequestHeaderType value) {
@@ -1165,7 +1165,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InputGatewayParametersType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "InputGatewayParameters", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_GatewayParameters")
     public JAXBElement<InputGatewayParametersType> createInputGatewayParameters(InputGatewayParametersType value) {
@@ -1174,7 +1174,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WayPointType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "StartPoint", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_WayPoint")
     public JAXBElement<WayPointType> createStartPoint(WayPointType value) {
@@ -1183,7 +1183,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RouteInstructionsRequestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "RouteInstructionsRequest")
     public JAXBElement<RouteInstructionsRequestType> createRouteInstructionsRequest(RouteInstructionsRequestType value) {
@@ -1192,7 +1192,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "PostalCode")
     public JAXBElement<String> createPostalCode(String value) {
@@ -1201,7 +1201,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AreaOfInterestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "AOI", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_ADT")
     public JAXBElement<AreaOfInterestType> createAOI(AreaOfInterestType value) {
@@ -1210,7 +1210,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractLocationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "_Location", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_ADT")
     public JAXBElement<AbstractLocationType> createLocation(AbstractLocationType value) {
@@ -1219,7 +1219,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GeocodeResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "GeocodeResponse", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_ResponseParameters")
     public JAXBElement<GeocodeResponseType> createGeocodeResponse(GeocodeResponseType value) {
@@ -1228,7 +1228,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PositionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "Position", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "AbstractPosition")
     public JAXBElement<PositionType> createPosition(PositionType value) {
@@ -1237,7 +1237,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RouteGeometryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "RouteGeometry", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_ADT")
     public JAXBElement<RouteGeometryType> createRouteGeometry(RouteGeometryType value) {
@@ -1246,7 +1246,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link POILocationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "POILocation")
     public JAXBElement<POILocationType> createPOILocation(POILocationType value) {
@@ -1255,7 +1255,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RoutePreferenceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "RoutePreference")
     public JAXBElement<RoutePreferenceType> createRoutePreference(RoutePreferenceType value) {
@@ -1264,7 +1264,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetPortrayMapCapabilitiesRequestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "GetPortrayMapCapabilitiesRequest", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_RequestParameters")
     public JAXBElement<GetPortrayMapCapabilitiesRequestType> createGetPortrayMapCapabilitiesRequest(GetPortrayMapCapabilitiesRequestType value) {
@@ -1273,7 +1273,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractMSIDsType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "_MSIDs")
     public JAXBElement<AbstractMSIDsType> createMSIDs(AbstractMSIDsType value) {
@@ -1282,7 +1282,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AvoidFeatureType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "AvoidFeature")
     public JAXBElement<AvoidFeatureType> createAvoidFeature(AvoidFeatureType value) {
@@ -1291,7 +1291,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ErrorType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "Error")
     public JAXBElement<ErrorType> createError(ErrorType value) {
@@ -1300,7 +1300,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link POIProperties }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "POIProperties", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_POISelectionCriteria")
     public JAXBElement<POIProperties> createPOIProperties(POIProperties value) {
@@ -1309,7 +1309,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractPOIType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "AbstractPOI", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_Location")
     public JAXBElement<AbstractPOIType> createAbstractPOI(AbstractPOIType value) {
@@ -1318,7 +1318,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractResponseParametersType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "_ResponseParameters")
     public JAXBElement<AbstractResponseParametersType> createResponseParameters(AbstractResponseParametersType value) {
@@ -1327,7 +1327,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link POIInfoListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "POIInfoList")
     public JAXBElement<POIInfoListType> createPOIInfoList(POIInfoListType value) {
@@ -1336,7 +1336,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractMSInformationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "_MSInformation")
     public JAXBElement<AbstractMSInformationType> createMSInformation(AbstractMSInformationType value) {
@@ -1345,7 +1345,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DirectoryResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "DirectoryResponse", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_ResponseParameters")
     public JAXBElement<DirectoryResponseType> createDirectoryResponse(DirectoryResponseType value) {
@@ -1354,7 +1354,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractPOISelectionCriteriaType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "_POISelectionCriteria")
     public JAXBElement<AbstractPOISelectionCriteriaType> createPOISelectionCriteria(AbstractPOISelectionCriteriaType value) {
@@ -1363,7 +1363,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractPositionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "AbstractPosition", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_Location")
     public JAXBElement<AbstractPositionType> createAbstractPosition(AbstractPositionType value) {
@@ -1372,7 +1372,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WayPointType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "ViaPoint", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_WayPoint")
     public JAXBElement<WayPointType> createViaPoint(WayPointType value) {
@@ -1381,7 +1381,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RouteInstructionsListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "RouteInstructionsList", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_ADT")
     public JAXBElement<RouteInstructionsListType> createRouteInstructionsList(RouteInstructionsListType value) {
@@ -1390,7 +1390,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BuildingLocatorType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "Building", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_StreetLocation")
     public JAXBElement<BuildingLocatorType> createBuilding(BuildingLocatorType value) {
@@ -1399,7 +1399,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetPortrayMapCapabilitiesResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "GetPortrayMapCapabilitiesResponse", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_ResponseParameters")
     public JAXBElement<GetPortrayMapCapabilitiesResponseType> createGetPortrayMapCapabilitiesResponse(GetPortrayMapCapabilitiesResponseType value) {
@@ -1408,7 +1408,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractBodyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "_Body")
     public JAXBElement<AbstractBodyType> createBody(AbstractBodyType value) {
@@ -1417,7 +1417,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RouteInstructionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "RouteInstruction")
     public JAXBElement<RouteInstructionType> createRouteInstruction(RouteInstructionType value) {
@@ -1426,7 +1426,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "AbstractPOIProperty")
     public JAXBElement<Object> createAbstractPOIProperty(Object value) {
@@ -1435,7 +1435,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RouteHandleType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "RouteHandle")
     public JAXBElement<RouteHandleType> createRouteHandle(RouteHandleType value) {
@@ -1444,7 +1444,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractWayPointType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "_WayPoint")
     public JAXBElement<AbstractWayPointType> createWayPoint(AbstractWayPointType value) {
@@ -1453,7 +1453,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ReverseGeocodeRequestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "ReverseGeocodeRequest", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_RequestParameters")
     public JAXBElement<ReverseGeocodeRequestType> createReverseGeocodeRequest(ReverseGeocodeRequestType value) {
@@ -1462,7 +1462,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RouteSegmentType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "NextSegment", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "AbstractNextSegment")
     public JAXBElement<RouteSegmentType> createNextSegment(RouteSegmentType value) {
@@ -1471,7 +1471,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractHeaderType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "_Header")
     public JAXBElement<AbstractHeaderType> createHeader(AbstractHeaderType value) {
@@ -1480,7 +1480,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GeocodeRequestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "GeocodeRequest", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_RequestParameters")
     public JAXBElement<GeocodeRequestType> createGeocodeRequest(GeocodeRequestType value) {
@@ -1489,7 +1489,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InputMSInformationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "InputMSInformation", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_MSInformation")
     public JAXBElement<InputMSInformationType> createInputMSInformation(InputMSInformationType value) {
@@ -1498,7 +1498,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PointOfInterestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "POI", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "AbstractPOI")
     public JAXBElement<PointOfInterestType> createPOI(PointOfInterestType value) {
@@ -1507,7 +1507,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SICType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "SIC", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_NamedReferenceSystem")
     public JAXBElement<SICType> createSIC(SICType value) {
@@ -1516,7 +1516,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link POIAttributeListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "POIAttributeList")
     public JAXBElement<POIAttributeListType> createPOIAttributeList(POIAttributeListType value) {
@@ -1525,7 +1525,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link POIPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "POIProperty", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "AbstractPOIProperty")
     public JAXBElement<POIPropertyType> createPOIProperty(POIPropertyType value) {
@@ -1534,7 +1534,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GeocodeResponseListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "GeocodeResponseList")
     public JAXBElement<GeocodeResponseListType> createGeocodeResponseList(GeocodeResponseListType value) {
@@ -1543,7 +1543,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OutputGatewayParametersType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "OutputGatewayParameters", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_GatewayParameters")
     public JAXBElement<OutputGatewayParametersType> createOutputGatewayParameters(OutputGatewayParametersType value) {
@@ -1552,7 +1552,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractRequestParametersType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "_RequestParameters")
     public JAXBElement<AbstractRequestParametersType> createRequestParameters(AbstractRequestParametersType value) {
@@ -1561,7 +1561,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ResponseHeaderType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "ResponseHeader", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_Header")
     public JAXBElement<ResponseHeaderType> createResponseHeader(ResponseHeaderType value) {
@@ -1570,7 +1570,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RouteMapType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "RouteMap")
     public JAXBElement<RouteMapType> createRouteMap(RouteMapType value) {
@@ -1579,7 +1579,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CircularArcType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "CircularArc")
     public JAXBElement<CircularArcType> createCircularArc(CircularArcType value) {
@@ -1588,7 +1588,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OutputMSInformationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "OutputMSInformation", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_MSInformation")
     public JAXBElement<OutputMSInformationType> createOutputMSInformation(OutputMSInformationType value) {
@@ -1597,7 +1597,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OutputMSIDsType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "OutputMSIDs", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_MSIDs")
     public JAXBElement<OutputMSIDsType> createOutputMSIDs(OutputMSIDsType value) {
@@ -1606,7 +1606,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link XLSType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "XLS")
     public JAXBElement<XLSType> createXLS(XLSType value) {
@@ -1615,7 +1615,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DetermineRouteResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "DetermineRouteResponse", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_ResponseParameters")
     public JAXBElement<DetermineRouteResponseType> createDetermineRouteResponse(DetermineRouteResponseType value) {
@@ -1624,7 +1624,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TimeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "Time")
     public JAXBElement<TimeType> createTime(TimeType value) {
@@ -1633,7 +1633,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EllipseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "Ellipse")
     public JAXBElement<EllipseType> createEllipse(EllipseType value) {
@@ -1642,7 +1642,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ErrorListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "ErrorList")
     public JAXBElement<ErrorListType> createErrorList(ErrorListType value) {
@@ -1651,7 +1651,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WayPointType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "EndPoint", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_WayPoint")
     public JAXBElement<WayPointType> createEndPoint(WayPointType value) {
@@ -1660,7 +1660,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ReferenceSystemType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "ReferenceSystem")
     public JAXBElement<ReferenceSystemType> createReferenceSystem(ReferenceSystemType value) {
@@ -1669,7 +1669,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractMeasureType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "_Measure")
     public JAXBElement<AbstractMeasureType> createMeasure(AbstractMeasureType value) {
@@ -1678,7 +1678,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link StreetNameType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "Street")
     public JAXBElement<StreetNameType> createStreet(StreetNameType value) {
@@ -1687,7 +1687,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractRouteSegmentType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "AbstractNextSegment")
     public JAXBElement<AbstractRouteSegmentType> createAbstractNextSegment(AbstractRouteSegmentType value) {
@@ -1696,7 +1696,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RequestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "Request", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_Body")
     public JAXBElement<RequestType> createRequest(RequestType value) {
@@ -1705,7 +1705,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PortrayMapResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "PortrayMapResponse", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_ResponseParameters")
     public JAXBElement<PortrayMapResponseType> createPortrayMapResponse(PortrayMapResponseType value) {
@@ -1714,7 +1714,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AddressType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "Address", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_Location")
     public JAXBElement<AddressType> createAddress(AddressType value) {
@@ -1723,7 +1723,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TimeStampType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "TimeStamp")
     public JAXBElement<TimeStampType> createTimeStamp(TimeStampType value) {
@@ -1732,7 +1732,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SpeedType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "Speed", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_Measure")
     public JAXBElement<SpeedType> createSpeed(SpeedType value) {
@@ -1741,7 +1741,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link StreetAddressType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "StreetAddress")
     public JAXBElement<StreetAddressType> createStreetAddress(StreetAddressType value) {
@@ -1750,7 +1750,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RouteSummaryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "RouteSummary", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "AbstractRouteSummary")
     public JAXBElement<RouteSummaryType> createRouteSummary(RouteSummaryType value) {
@@ -1759,7 +1759,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NamedPlaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "Place")
     public JAXBElement<NamedPlaceType> createPlace(NamedPlaceType value) {
@@ -1768,7 +1768,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DirectoryRequestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "DirectoryRequest", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_RequestParameters")
     public JAXBElement<DirectoryRequestType> createDirectoryRequest(DirectoryRequestType value) {
@@ -1777,7 +1777,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WayPointListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "WayPointList")
     public JAXBElement<WayPointListType> createWayPointList(WayPointListType value) {
@@ -1786,7 +1786,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "Response", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_Body")
     public JAXBElement<ResponseType> createResponse(ResponseType value) {
@@ -1795,7 +1795,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractRouteSummaryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/xls", name = "AbstractRouteSummary", substitutionHeadNamespace = "http://www.opengis.net/xls", substitutionHeadName = "_ADT")
     public JAXBElement<AbstractRouteSummaryType> createAbstractRouteSummary(AbstractRouteSummaryType value) {

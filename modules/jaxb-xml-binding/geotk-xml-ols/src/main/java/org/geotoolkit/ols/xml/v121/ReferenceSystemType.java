@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ReferenceSystemType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ReferenceSystemType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ReferenceSystemType", propOrder = {
@@ -56,28 +56,28 @@ public class ReferenceSystemType {
 
     /**
      * Gets the value of the namedReferenceSystem property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the namedReferenceSystem property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNamedReferenceSystem().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractNamedReferenceSystem }{@code >}
      * {@link JAXBElement }{@code <}{@link SICType }{@code >}
      * {@link JAXBElement }{@code <}{@link NAICSType }{@code >}
      * {@link JAXBElement }{@code <}{@link NACEType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends AbstractNamedReferenceSystem>> getNamedReferenceSystem() {
         if (namedReferenceSystem == null) {

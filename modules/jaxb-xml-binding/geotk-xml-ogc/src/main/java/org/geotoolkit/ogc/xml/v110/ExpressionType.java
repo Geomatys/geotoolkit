@@ -24,9 +24,9 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * <p>Java class for ExpressionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ExpressionType">
  *   &lt;complexContent>
@@ -35,7 +35,7 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */

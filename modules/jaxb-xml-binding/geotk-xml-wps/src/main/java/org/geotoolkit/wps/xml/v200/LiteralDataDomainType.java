@@ -30,15 +30,15 @@ import org.geotoolkit.ows.xml.v200.ValuesReference;
 
 
 /**
- * 
+ *
  * A literal data domain consists of a value type and range,
  * and optionally a unit of measurement and a default value.
- * 			
- * 
+ *
+ *
  * <p>Java class for LiteralDataDomainType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LiteralDataDomainType">
  *   &lt;complexContent>
@@ -57,8 +57,8 @@ import org.geotoolkit.ows.xml.v200.ValuesReference;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LiteralDataDomainType", propOrder = {
@@ -88,10 +88,10 @@ public class LiteralDataDomainType {
     protected ValueType defaultValue;
 
     public LiteralDataDomainType() {
-        
+
     }
-    
-    public LiteralDataDomainType(AllowedValues allowedValues, AnyValue anyValue, ValuesReference valuesReference, DomainMetadataType dataType, DomainMetadataType uom, 
+
+    public LiteralDataDomainType(AllowedValues allowedValues, AnyValue anyValue, ValuesReference valuesReference, DomainMetadataType dataType, DomainMetadataType uom,
             String defaultValue) {
         this.allowedValues = allowedValues;
         this.anyValue = anyValue;
@@ -102,19 +102,19 @@ public class LiteralDataDomainType {
             this.defaultValue = new ValueType(defaultValue);
         }
     }
-    
+
     public LiteralDataDomainType(DomainMetadataType dataType, DomainMetadataType uom) {
         this.dataType = dataType;
         this.uom = uom;
     }
-    
+
     /**
      * Gets the value of the allowedValues property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedValues }
-     *     
+     *
      */
     public AllowedValues getAllowedValues() {
         return allowedValues;
@@ -122,11 +122,11 @@ public class LiteralDataDomainType {
 
     /**
      * Sets the value of the allowedValues property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedValues }
-     *     
+     *
      */
     public void setAllowedValues(AllowedValues value) {
         this.allowedValues = value;
@@ -134,11 +134,11 @@ public class LiteralDataDomainType {
 
     /**
      * Gets the value of the anyValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AnyValue }
-     *     
+     *
      */
     public AnyValue getAnyValue() {
         return anyValue;
@@ -146,11 +146,11 @@ public class LiteralDataDomainType {
 
     /**
      * Sets the value of the anyValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AnyValue }
-     *     
+     *
      */
     public void setAnyValue(AnyValue value) {
         this.anyValue = value;
@@ -158,11 +158,11 @@ public class LiteralDataDomainType {
 
     /**
      * Gets the value of the valuesReference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ValuesReference }
-     *     
+     *
      */
     public ValuesReference getValuesReference() {
         return valuesReference;
@@ -170,11 +170,11 @@ public class LiteralDataDomainType {
 
     /**
      * Sets the value of the valuesReference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ValuesReference }
-     *     
+     *
      */
     public void setValuesReference(ValuesReference value) {
         this.valuesReference = value;
@@ -182,11 +182,11 @@ public class LiteralDataDomainType {
 
     /**
      * Gets the value of the dataType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DomainMetadataType }
-     *     
+     *
      */
     public DomainMetadataType getDataType() {
         return dataType;
@@ -194,11 +194,11 @@ public class LiteralDataDomainType {
 
     /**
      * Sets the value of the dataType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DomainMetadataType }
-     *     
+     *
      */
     public void setDataType(DomainMetadataType value) {
         this.dataType = value;
@@ -206,11 +206,11 @@ public class LiteralDataDomainType {
 
     /**
      * Gets the value of the uom property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DomainMetadataType }
-     *     
+     *
      */
     public DomainMetadataType getUOM() {
         return uom;
@@ -218,11 +218,11 @@ public class LiteralDataDomainType {
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DomainMetadataType }
-     *     
+     *
      */
     public void setUOM(DomainMetadataType value) {
         this.uom = value;
@@ -230,11 +230,11 @@ public class LiteralDataDomainType {
 
     /**
      * Gets the value of the defaultValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ValueType }
-     *     
+     *
      */
     public ValueType getDefaultValue() {
         return defaultValue;
@@ -242,16 +242,16 @@ public class LiteralDataDomainType {
 
     /**
      * Sets the value of the defaultValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ValueType }
-     *     
+     *
      */
     public void setDefaultValue(ValueType value) {
         this.defaultValue = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
@@ -278,7 +278,7 @@ public class LiteralDataDomainType {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

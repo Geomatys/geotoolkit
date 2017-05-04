@@ -27,19 +27,19 @@ import org.geotoolkit.internal.sql.table.Entry;
  * @module
  */
 public class ComponentType implements Entry{
-    
+
     /**
      * L'identifiant du phénomène composé.
      */
     private String idCompositePhenomenon;
-    
+
     /**
      * Le phenomene associé a ce phenomene composé.
      */
     private PhenomenonType component;
-    
+
     /**
-     * Crée une nouvelle liste de phénomene. 
+     * Crée une nouvelle liste de phénomene.
      */
     public ComponentType(final String idCompositePhenomenon, final PhenomenonType component) {
         this.idCompositePhenomenon = idCompositePhenomenon;
@@ -57,7 +57,7 @@ public class ComponentType implements Entry{
             return component.getId();
         return null;
     }
-    
+
     /**
      * Retourne l'id du phénomène composé.
      */
@@ -71,7 +71,7 @@ public class ComponentType implements Entry{
     public PhenomenonType getComponent() {
         return component;
     }
-    
+
      /**
      * Vérifie si cette entré est identique à l'objet spécifié.
      */
@@ -96,5 +96,5 @@ public class ComponentType implements Entry{
         hash = 37 * hash + (this.component != null ? this.component.hashCode() : 0);
         return hash;
     }
-    
+
 }

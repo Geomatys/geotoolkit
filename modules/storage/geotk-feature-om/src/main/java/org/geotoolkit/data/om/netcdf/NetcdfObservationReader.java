@@ -50,25 +50,25 @@ public class NetcdfObservationReader implements ObservationReader {
 
     private final Path dataFile;
     private final NCFieldAnalyze analyze;
-    
+
     public NetcdfObservationReader(final Path dataFile, final NCFieldAnalyze analyze) {
         this.analyze = analyze;
         this.dataFile = dataFile;
     }
-    
+
     @Override
     public Collection<String> getProcedureNames() throws DataStoreException {
         final Set<String> names = new HashSet<>();
         names.add(getProcedureID());
         return names;
     }
-    
+
     @Override
     public Collection<String> getProcedureNames(String sensorType) throws DataStoreException {
         // no filter yet
         return getProcedureNames();
     }
-    
+
     private String getProcedureID() {
         return IOUtilities.filenameWithoutExtension(dataFile);
     }
@@ -211,8 +211,8 @@ public class NetcdfObservationReader implements ObservationReader {
     public void destroy() {
         //do nothing
     }
-    
-    
+
+
     @Override
     public Collection<String> getOfferingNames(final String version) throws DataStoreException {
         throw new DataStoreException("offerings are not handled in File observation reader.");

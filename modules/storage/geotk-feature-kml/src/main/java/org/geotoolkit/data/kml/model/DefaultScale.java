@@ -32,7 +32,7 @@ public class DefaultScale extends DefaultAbstractObject implements Scale {
     private double z;
 
     /**
-     * 
+     *
      */
     public DefaultScale() {
         this.x = DEF_X;

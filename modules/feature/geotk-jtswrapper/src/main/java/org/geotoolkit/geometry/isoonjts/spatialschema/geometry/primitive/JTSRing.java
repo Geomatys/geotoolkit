@@ -77,7 +77,7 @@ public class JTSRing extends JTSCompositeCurve implements Ring {
     public JTSRing(final CompositeCurve parentCurve, final CoordinateReferenceSystem crs) {
         super(parentCurve, crs);
     }
-    
+
     /**
      * This implementation returns true if the curve
      * does not cross itself, false otherwise.
@@ -86,29 +86,29 @@ public class JTSRing extends JTSCompositeCurve implements Ring {
      * @return True if this object's coordinates are a valid Ring.
      */
     public boolean isValid() {
-    	// Verify that the line doesn't cross itself
+        // Verify that the line doesn't cross itself
         com.vividsolutions.jts.geom.Coordinate[] coords =
-        	computeJTSPeer().getCoordinates();
+            computeJTSPeer().getCoordinates();
         int count = coords.length;
 //System.err.println("RingImpl.isValid -- coord count " + count);
         if (count > 2) {
-        	if (!coords[0].equals(coords)) {
+            if (!coords[0].equals(coords)) {
 //System.err.println("  Adding closure coord");
-        		// Close the set of coordinates for the validation test
-        		// if it isn't already closed
-        		com.vividsolutions.jts.geom.Coordinate[] tmp =
-        			new com.vividsolutions.jts.geom.Coordinate[count + 1];
-        		System.arraycopy(coords, 0, tmp, 0, count);
-        		tmp[count] = coords[0];
-        		coords = tmp;
-        	}
-        	LineString jtsLineString = JTSUtils.GEOMETRY_FACTORY.createLineString(coords);
-        	/*
+                // Close the set of coordinates for the validation test
+                // if it isn't already closed
+                com.vividsolutions.jts.geom.Coordinate[] tmp =
+                    new com.vividsolutions.jts.geom.Coordinate[count + 1];
+                System.arraycopy(coords, 0, tmp, 0, count);
+                tmp[count] = coords[0];
+                coords = tmp;
+            }
+            LineString jtsLineString = JTSUtils.GEOMETRY_FACTORY.createLineString(coords);
+            /*
 System.err.println("  Created JTS LineString, point count " + jtsLineString.getNumPoints()
-	+ ", length " + jtsLineString.getLength() + "\n  simple? " + jtsLineString.isSimple()
-	+ "; valid? " + jtsLineString.isValid() + "; closed? " + jtsLineString.isClosed());
-	*/        	
-        	return jtsLineString.isRing();
+    + ", length " + jtsLineString.getLength() + "\n  simple? " + jtsLineString.isSimple()
+    + "; valid? " + jtsLineString.isValid() + "; closed? " + jtsLineString.isClosed());
+    */
+            return jtsLineString.isRing();
         }
         return false;
     }

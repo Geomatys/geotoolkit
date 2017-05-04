@@ -30,14 +30,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @see HilbertAccessByteArray
  */
 abstract class WriteChannelAccessHilbertTest extends HilbertTest {
-    
+
     /**
      * Create a generic HilbertRTree Test suite where Tree is stored into byte array.
      *
      * @author Remi Marechal (Geomatys).
      * @param crs
      * @throws StoreIndexException
-     * @throws IOException 
+     * @throws IOException
      */
     protected WriteChannelAccessHilbertTest(final CoordinateReferenceSystem crs) throws StoreIndexException, IOException {
         super(crs);

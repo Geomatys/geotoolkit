@@ -38,7 +38,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
 
 /**
  * The {@code PolyhedralSurfaceImpl} class/interface...
- * 
+ *
  * @author SYS Technologies
  * @author dillard
  * @version $Revision $
@@ -62,7 +62,7 @@ public class JTSPolyhedralSurface extends AbstractJTSGeometry implements Polyhed
     public JTSPolyhedralSurface(final CoordinateReferenceSystem crs) {
         super(crs);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -166,7 +166,7 @@ public class JTSPolyhedralSurface extends AbstractJTSGeometry implements Polyhed
     protected com.vividsolutions.jts.geom.Geometry computeJTSPeer() {
         if (patches.size() > 1) {
             //throw new UnsupportedOperationException("This implementation does not support surfaces with multiple patches.");
-            final com.vividsolutions.jts.geom.Polygon[] polygons = 
+            final com.vividsolutions.jts.geom.Polygon[] polygons =
                 new com.vividsolutions.jts.geom.Polygon[patches.size()];
             for (int i = 0; i < patches.size(); i++) {
                 final JTSGeometry jtsGeometry = (JTSGeometry) patches.get(i);

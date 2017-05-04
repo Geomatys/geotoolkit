@@ -19,7 +19,7 @@ public class WMSClientDemo {
 
     public static void main(String[] args) throws MalformedURLException {
         Demos.init();
-        
+
         final WebMapClient wmsServer = new WebMapClient(new URL("http://localhost:9090/guyamapa-cstl/WS/wms/default?"), WMSVersion.v130);
         final GetCapabilitiesRequest getCapa = wmsServer.createGetCapabilities();
         final GetMapRequest getMap = wmsServer.createGetMap();
@@ -30,7 +30,7 @@ public class WMSClientDemo {
         //final WMSMapLayer layer3 = new WMSMapLayer(wmsServer, "layerTest2");
         final WMSMapLayer layer2 = new WMSMapLayer(wmsServer, "Countries");
 
-        final MapContext context = MapBuilder.createContext();        
+        final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);
         context.layers().add(layer2);
         //context.layers().add(layer3);

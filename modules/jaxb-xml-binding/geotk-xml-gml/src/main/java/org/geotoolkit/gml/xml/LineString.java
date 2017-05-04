@@ -29,8 +29,8 @@ public interface LineString extends AbstractGeometry {
     DirectPositionList getPosList();
 
     List<? extends DirectPosition> getPos();
-    
+
     Envelope getBounds();
-    
+
     void emptySrsNameOnChild();
 }

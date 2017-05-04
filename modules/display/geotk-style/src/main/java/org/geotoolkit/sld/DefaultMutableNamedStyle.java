@@ -32,18 +32,18 @@ import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Default mutable named Style, thread safe.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 class DefaultMutableNamedStyle implements MutableNamedStyle{
 
     private final EventListenerList listeners = new EventListenerList();
-        
+
     private String name = null;
-    
+
     private Description description = StyleConstants.DEFAULT_DESCRIPTION;
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -52,7 +52,7 @@ class DefaultMutableNamedStyle implements MutableNamedStyle{
     public String getName() {
         return name;
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -78,7 +78,7 @@ class DefaultMutableNamedStyle implements MutableNamedStyle{
     public Description getDescription() {
         return description;
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -86,7 +86,7 @@ class DefaultMutableNamedStyle implements MutableNamedStyle{
     @Override
     public void setDescription(final Description desc) {
         ensureNonNull("description", desc);
-        
+
         final Description oldDesc;
         synchronized (this) {
             oldDesc = this.description;
@@ -97,7 +97,7 @@ class DefaultMutableNamedStyle implements MutableNamedStyle{
         }
         firePropertyChange(DESCRIPTION_PROPERTY, oldDesc, this.description);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -105,23 +105,23 @@ class DefaultMutableNamedStyle implements MutableNamedStyle{
     public Object accept(final SLDVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
-    
+
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
-    
+
     protected void firePropertyChange(final String propertyName, final Object oldValue, final Object newValue){
         //TODO make fire property change thread safe, preserve fire order
-        
+
         final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
         final StyleListener[] lists = listeners.getListeners(StyleListener.class);
-        
+
         for(StyleListener listener : lists){
             listener.propertyChange(event);
         }
-        
+
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -151,7 +151,7 @@ class DefaultMutableNamedStyle implements MutableNamedStyle{
             listeners.remove(StyleListener.class, (StyleListener)listener);
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */

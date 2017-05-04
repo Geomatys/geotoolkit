@@ -27,12 +27,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Type describing the class for squares. A square is an open area commonly found in cities (like a
  *                 plaza). As subclass of _CityObject, a Square inherits all attributes and relations, in particular an id, names,
- *                 external references, and generalization relations. 
- * 
+ *                 external references, and generalization relations.
+ *
  * <p>Java class for SquareType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SquareType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,7 +59,7 @@ public class SquareType extends TransportationComplexType {
 
     /**
      * Gets the value of the genericApplicationPropertyOfSquare property.
-     * 
+     *
      */
     public List<Object> getGenericApplicationPropertyOfSquare() {
         if (genericApplicationPropertyOfSquare == null) {

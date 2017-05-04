@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for parametersType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="parametersType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "parametersType", propOrder = {
@@ -78,11 +78,11 @@ public class ParametersType {
 
     /**
      * Gets the value of the compression property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CompressionType }
-     *     
+     *
      */
     public CompressionType getCompression() {
         return compression;
@@ -90,11 +90,11 @@ public class ParametersType {
 
     /**
      * Sets the value of the compression property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CompressionType }
-     *     
+     *
      */
     public void setCompression(CompressionType value) {
         this.compression = value;
@@ -102,7 +102,7 @@ public class ParametersType {
 
     /**
      * Gets the value of the jpegQuality property.
-     * 
+     *
      */
     public int getJpegQuality() {
         return jpegQuality;
@@ -110,7 +110,7 @@ public class ParametersType {
 
     /**
      * Sets the value of the jpegQuality property.
-     * 
+     *
      */
     public void setJpegQuality(int value) {
         this.jpegQuality = value;
@@ -118,11 +118,11 @@ public class ParametersType {
 
     /**
      * Gets the value of the predictor property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PredictorType }
-     *     
+     *
      */
     public PredictorType getPredictor() {
         return predictor;
@@ -130,11 +130,11 @@ public class ParametersType {
 
     /**
      * Sets the value of the predictor property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PredictorType }
-     *     
+     *
      */
     public void setPredictor(PredictorType value) {
         this.predictor = value;
@@ -142,11 +142,11 @@ public class ParametersType {
 
     /**
      * Gets the value of the interleave property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link InterleaveType }
-     *     
+     *
      */
     public InterleaveType getInterleave() {
         return interleave;
@@ -154,11 +154,11 @@ public class ParametersType {
 
     /**
      * Sets the value of the interleave property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link InterleaveType }
-     *     
+     *
      */
     public void setInterleave(InterleaveType value) {
         this.interleave = value;
@@ -166,7 +166,7 @@ public class ParametersType {
 
     /**
      * Gets the value of the tiling property.
-     * 
+     *
      */
     public boolean isTiling() {
         return tiling;
@@ -174,7 +174,7 @@ public class ParametersType {
 
     /**
      * Sets the value of the tiling property.
-     * 
+     *
      */
     public void setTiling(boolean value) {
         this.tiling = value;
@@ -182,11 +182,11 @@ public class ParametersType {
 
     /**
      * Gets the value of the tileheight property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getTileheight() {
         return tileheight;
@@ -194,11 +194,11 @@ public class ParametersType {
 
     /**
      * Sets the value of the tileheight property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setTileheight(Integer value) {
         this.tileheight = value;
@@ -206,11 +206,11 @@ public class ParametersType {
 
     /**
      * Gets the value of the tilewidth property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getTilewidth() {
         return tilewidth;
@@ -218,11 +218,11 @@ public class ParametersType {
 
     /**
      * Sets the value of the tilewidth property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setTilewidth(Integer value) {
         this.tilewidth = value;
@@ -235,7 +235,7 @@ public class ParametersType {
         }
         if (o instanceof ParametersType) {
             final ParametersType that = (ParametersType) o;
-           
+
             return Objects.equals(this.compression, that.compression) &&
                    Objects.equals(this.interleave,   that.interleave) &&
                    Objects.equals(this.jpegQuality,   that.jpegQuality) &&

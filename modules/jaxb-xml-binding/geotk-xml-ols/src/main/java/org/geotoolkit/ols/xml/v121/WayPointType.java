@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines a location to be visited along a route.
- * 
+ *
  * <p>Java class for WayPointType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="WayPointType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WayPointType", propOrder = {
@@ -65,7 +65,7 @@ public class WayPointType extends AbstractWayPointType {
 
     /**
      * Gets the value of the location property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractPOIType }{@code >}
@@ -74,7 +74,7 @@ public class WayPointType extends AbstractWayPointType {
      *     {@link JAXBElement }{@code <}{@link AbstractLocationType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PointOfInterestType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractPositionType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractLocationType> getLocation() {
         return location;
@@ -82,7 +82,7 @@ public class WayPointType extends AbstractWayPointType {
 
     /**
      * Sets the value of the location property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractPOIType }{@code >}
@@ -91,7 +91,7 @@ public class WayPointType extends AbstractWayPointType {
      *     {@link JAXBElement }{@code <}{@link AbstractLocationType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PointOfInterestType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractPositionType }{@code >}
-     *     
+     *
      */
     public void setLocation(JAXBElement<? extends AbstractLocationType> value) {
         this.location = ((JAXBElement<? extends AbstractLocationType> ) value);
@@ -99,11 +99,11 @@ public class WayPointType extends AbstractWayPointType {
 
     /**
      * Gets the value of the geocodeMatchCode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeocodingQOSType }
-     *     
+     *
      */
     public GeocodingQOSType getGeocodeMatchCode() {
         return geocodeMatchCode;
@@ -111,11 +111,11 @@ public class WayPointType extends AbstractWayPointType {
 
     /**
      * Sets the value of the geocodeMatchCode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeocodingQOSType }
-     *     
+     *
      */
     public void setGeocodeMatchCode(GeocodingQOSType value) {
         this.geocodeMatchCode = value;
@@ -123,11 +123,11 @@ public class WayPointType extends AbstractWayPointType {
 
     /**
      * Gets the value of the stop property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isStop() {
         if (stop == null) {
@@ -139,11 +139,11 @@ public class WayPointType extends AbstractWayPointType {
 
     /**
      * Sets the value of the stop property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setStop(Boolean value) {
         this.stop = value;

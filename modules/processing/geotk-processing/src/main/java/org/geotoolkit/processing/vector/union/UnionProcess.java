@@ -284,7 +284,7 @@ public class UnionProcess extends AbstractProcess {
         // Copy all properties from the type2 without duplicate
         for (final PropertyType targetDesc : type2.getProperties(true)) {
             if(AttributeConvention.contains(targetDesc.getName())) continue;
-            
+
             if (!AttributeConvention.isGeometryAttribute(targetDesc)) {
                 boolean isExistDesc = false;
                 //search if target descriptor name already exist into source descriptors

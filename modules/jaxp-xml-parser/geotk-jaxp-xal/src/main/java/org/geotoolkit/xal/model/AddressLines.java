@@ -42,13 +42,13 @@ import java.util.List;
 public interface AddressLines {
 
     /**
-     * 
+     *
      * @return
      */
     List<GenericTypedGrPostal> getAddressLines();
 
     /**
-     * 
+     *
      * @param addressLines
      */
     void setAddressLines(List<GenericTypedGrPostal> addressLines);

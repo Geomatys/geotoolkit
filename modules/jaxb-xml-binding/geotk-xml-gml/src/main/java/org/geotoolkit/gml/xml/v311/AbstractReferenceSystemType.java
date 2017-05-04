@@ -29,11 +29,11 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * Description of a spatial and/or temporal reference system used by a dataset.
- * 
+ *
  * <p>Java class for AbstractReferenceSystemType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractReferenceSystemType">
  *   &lt;complexContent>
@@ -48,7 +48,7 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -85,12 +85,12 @@ public abstract class AbstractReferenceSystemType extends AbstractReferenceSyste
      * build an abstract reference system.
      */
     public AbstractReferenceSystemType(final List<IdentifierType> srsID, final ExtentType validArea, final String scope) {
-        
+
         this.scope     = scope;
         this.validArea = validArea;
         this.srsID     = srsID;
     }
-    
+
     /**
      * Set of alterative identifications of this reference system. The first srsID, if any, is normally the primary identification code, and any others are aliases.Gets the value of the srsID property.
      */

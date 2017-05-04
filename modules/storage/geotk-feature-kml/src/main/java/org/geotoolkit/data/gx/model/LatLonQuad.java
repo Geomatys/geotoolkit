@@ -48,7 +48,7 @@ public interface LatLonQuad extends AbstractObject {
     CoordinateSequence getCoordinates();
 
     /**
-     * 
+     *
      * @param coordinates
      */
     void setCoordinates(CoordinateSequence coordinates);

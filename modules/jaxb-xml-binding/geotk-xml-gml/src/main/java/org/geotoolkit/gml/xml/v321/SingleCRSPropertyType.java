@@ -31,11 +31,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * gml:SingleCRSPropertyType is a property type for association roles to a single coordinate reference system, either referencing or containing the definition of that coordinate reference system.
- * 
+ *
  * <p>Java class for SingleCRSPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SingleCRSPropertyType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SingleCRSPropertyType", propOrder = {
@@ -84,7 +84,7 @@ public class SingleCRSPropertyType {
 
     /**
      * Gets the value of the abstractSingleCRS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link ProjectedCRSType }{@code >}
@@ -98,7 +98,7 @@ public class SingleCRSPropertyType {
      *     {@link JAXBElement }{@code <}{@link GeographicCRSType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractCRSType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractGeneralDerivedCRSType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractCRSType> getAbstractSingleCRS() {
         return abstractSingleCRS;
@@ -106,7 +106,7 @@ public class SingleCRSPropertyType {
 
     /**
      * Sets the value of the abstractSingleCRS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link ProjectedCRSType }{@code >}
@@ -120,7 +120,7 @@ public class SingleCRSPropertyType {
      *     {@link JAXBElement }{@code <}{@link GeographicCRSType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractCRSType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractGeneralDerivedCRSType }{@code >}
-     *     
+     *
      */
     public void setAbstractSingleCRS(JAXBElement<? extends AbstractCRSType> value) {
         this.abstractSingleCRS = ((JAXBElement<? extends AbstractCRSType> ) value);
@@ -128,25 +128,25 @@ public class SingleCRSPropertyType {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the nilReason property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNilReason().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
@@ -157,11 +157,11 @@ public class SingleCRSPropertyType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -169,11 +169,11 @@ public class SingleCRSPropertyType {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(String value) {
         this.remoteSchema = value;
@@ -181,11 +181,11 @@ public class SingleCRSPropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -197,11 +197,11 @@ public class SingleCRSPropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -209,11 +209,11 @@ public class SingleCRSPropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -221,11 +221,11 @@ public class SingleCRSPropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -233,11 +233,11 @@ public class SingleCRSPropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -245,11 +245,11 @@ public class SingleCRSPropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -257,11 +257,11 @@ public class SingleCRSPropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -269,11 +269,11 @@ public class SingleCRSPropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -281,11 +281,11 @@ public class SingleCRSPropertyType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -293,11 +293,11 @@ public class SingleCRSPropertyType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -305,11 +305,11 @@ public class SingleCRSPropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -317,11 +317,11 @@ public class SingleCRSPropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(String value) {
         this.show = value;
@@ -329,11 +329,11 @@ public class SingleCRSPropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -341,11 +341,11 @@ public class SingleCRSPropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(String value) {
         this.actuate = value;

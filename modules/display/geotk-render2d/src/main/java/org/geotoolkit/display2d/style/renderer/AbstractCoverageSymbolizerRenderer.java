@@ -345,7 +345,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         final GeneralEnvelope intersectionInObjectiveCRS2D = GeneralEnvelope.castOrCopy(coverageEnvInObjectiveCRS2D);
         intersectionInObjectiveCRS2D.intersect(objectiveBound2D);
-        
+
         /*
          * Study rendering context envelope and internal coverage envelope.
          * For example if we store data with a third dimension or more, with the 2 dimensional renderer
@@ -385,7 +385,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         GeneralEnvelope paramEnvelope2D = GeneralEnvelope.castOrCopy(Envelopes.transform(paramEnvelope, inputCoverageCRS2D));
         assert !paramEnvelope2D.isEmpty() : "2D coverage boundary should not be empty.";
-        
+
 
         //--- Param Resolution
         //-- convert resolution adapted to coverage CRS (resolution from rendering context --> coverage resolution)
@@ -531,12 +531,12 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         // WARNING, TODO : +0.5 displacement is strange, we need to clarify the rendering context transforms.
         final AffineTransform2D displayTranslate = new AffineTransform2D(1, 0, 0, 1, minX+0.5, minY+0.5);
         gridToCrs.concatenate(displayTranslate);
-        
+
         final GridGeometry2D gg = new GridGeometry2D(
-                new GridEnvelope2D(0, 0, imgWidth, imgHeight), 
-                new AffineTransform2D(gridToCrs), 
+                new GridEnvelope2D(0, 0, imgWidth, imgHeight),
+                new AffineTransform2D(gridToCrs),
                 renderingContext.getDisplayCRS());
-        
+
         final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();
         ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COVERAGE

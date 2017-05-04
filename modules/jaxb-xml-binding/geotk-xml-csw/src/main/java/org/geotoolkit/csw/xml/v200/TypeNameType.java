@@ -28,13 +28,13 @@ import javax.xml.namespace.QName;
 
 
 /**
- * The unqualified name of the model element for which the type definition is requested. 
+ * The unqualified name of the model element for which the type definition is requested.
  * The targetNamespace MUST be specified, although it may have the value "##any" to indicate any namespace.
- * 
+ *
  * <p>Java class for TypeNameType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TypeNameType">
  *   &lt;simpleContent>
@@ -44,8 +44,8 @@ import javax.xml.namespace.QName;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -70,7 +70,7 @@ public class TypeNameType {
         this.value = localName;
         this.targetNamespace = namespace;
     }
-    
+
     public TypeNameType(final QName qname) {
         if (qname != null) {
             this.value = qname.getLocalPart();
@@ -80,7 +80,7 @@ public class TypeNameType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      */
     public String getValue() {
         return value;
@@ -88,7 +88,7 @@ public class TypeNameType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      */
     public void setValue(final String value) {
         this.value = value;
@@ -96,7 +96,7 @@ public class TypeNameType {
 
     /**
      * Gets the value of the targetNamespace property.
-     * 
+     *
      */
     public String getTargetNamespace() {
         return targetNamespace;
@@ -104,7 +104,7 @@ public class TypeNameType {
 
     /**
      * Sets the value of the targetNamespace property.
-     * 
+     *
      */
     public void setTargetNamespace(final String value) {
         this.targetNamespace = value;

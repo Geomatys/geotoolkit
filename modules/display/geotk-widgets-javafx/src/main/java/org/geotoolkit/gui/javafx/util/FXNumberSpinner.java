@@ -34,7 +34,7 @@ public class FXNumberSpinner extends DecorationPane{
 
     private final Spinner numberField;
     private final ObjectProperty<Number> valueProperty = new SimpleObjectProperty<>(0.0);
-    
+
     public FXNumberSpinner() {
         super(new Spinner(new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.MIN_VALUE, Double.MAX_VALUE, 0,1)));
         numberField = (Spinner) getContent();
@@ -59,9 +59,9 @@ public class FXNumberSpinner extends DecorationPane{
     public Spinner getSpinner() {
         return numberField;
     }
-    
+
     public ObjectProperty<Number> valueProperty(){
         return valueProperty;
     }
-            
+
 }

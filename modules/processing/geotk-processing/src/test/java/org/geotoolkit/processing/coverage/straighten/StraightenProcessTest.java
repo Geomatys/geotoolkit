@@ -44,7 +44,7 @@ public class StraightenProcessTest extends AbstractProcessTest {
     public StraightenProcessTest() {
         super(StraightenDescriptor.NAME);
     }
-    
+
     @Test
     public void testStraightenNoChange() throws ProcessException {
         final float[][] matrix = new float[40][60];
@@ -53,7 +53,7 @@ public class StraightenProcessTest extends AbstractProcessTest {
                 matrix[y][x] = x+y;
             }
         }
-        
+
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(matrix);
         final AffineTransform2D gridToCrs = new AffineTransform2D(1,0,0,-1,20,30);
@@ -61,28 +61,28 @@ public class StraightenProcessTest extends AbstractProcessTest {
         final GridGeometry2D gridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, gridToCrs, CommonCRS.WGS84.normalizedGeographic(), null);
         gcb.setGridGeometry(gridGeom);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
-        
-        
+
+
         final ProcessDescriptor desc = StraightenDescriptor.INSTANCE;
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         Parameters.getOrCreate(StraightenDescriptor.COVERAGE_IN, in).setValue(coverage);
         final Process process = desc.createProcess(in);
         final ParameterValueGroup out = process.call();
-        
+
         final GridCoverage2D res = (GridCoverage2D) out.parameter(StraightenDescriptor.COVERAGE_OUT.getName().getCode()).getValue();
-        
-        assertEquals(coverage.getCoordinateReferenceSystem(), 
+
+        assertEquals(coverage.getCoordinateReferenceSystem(),
                    res.getCoordinateReferenceSystem());
-        assertEquals(coverage.getGridGeometry().getGridToCRS2D(), 
+        assertEquals(coverage.getGridGeometry().getGridToCRS2D(),
                    res.getGridGeometry().getGridToCRS2D());
-        assertEquals(coverage.getEnvelope(), 
+        assertEquals(coverage.getEnvelope(),
                    res.getEnvelope());
-        assertEquals(coverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT), 
+        assertEquals(coverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT),
                    res.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT));
-        assertEquals(coverage.getGridGeometry().getExtent2D(), 
+        assertEquals(coverage.getGridGeometry().getExtent2D(),
                    res.getGridGeometry().getExtent2D());
     }
-    
+
     @Test
     public void testStraightenVerticalFlip() throws ProcessException {
         final float[][] matrix = new float[40][60];
@@ -91,7 +91,7 @@ public class StraightenProcessTest extends AbstractProcessTest {
                 matrix[y][x] = x+y;
             }
         }
-        
+
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(matrix);
         final AffineTransform2D gridToCrs = new AffineTransform2D(1,0,0,1,20,30);
@@ -99,20 +99,20 @@ public class StraightenProcessTest extends AbstractProcessTest {
         final GridGeometry2D gridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, gridToCrs, CommonCRS.WGS84.normalizedGeographic(), null);
         gcb.setGridGeometry(gridGeom);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
-        
-        
+
+
         final ProcessDescriptor desc = StraightenDescriptor.INSTANCE;
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         Parameters.getOrCreate(StraightenDescriptor.COVERAGE_IN, in).setValue(coverage);
         final Process process = desc.createProcess(in);
         final ParameterValueGroup out = process.call();
-        
+
         final GridCoverage2D res = (GridCoverage2D) out.parameter(StraightenDescriptor.COVERAGE_OUT.getName().getCode()).getValue();
-        
-        assertEquals(coverage.getCoordinateReferenceSystem(), 
+
+        assertEquals(coverage.getCoordinateReferenceSystem(),
                    res.getCoordinateReferenceSystem());
         assertEquals(new AffineTransform2D(1, 0, 0, -1, 20, 71),
                 res.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT));
     }
-    
+
 }

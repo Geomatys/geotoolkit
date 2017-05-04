@@ -54,10 +54,10 @@ public class BandSelectDescriptor extends AbstractProcessDescriptor {
             .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandselect_inBandsDesc))
             .setRequired(true)
             .create(int[].class,null);
-    
+
     public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder()
             .addName(NAME + "InputParameters").createGroup(IN_COVERAGE, IN_BANDS);
-    
+
     /**
      * Mandatory - Resulting coverage.
      */
@@ -70,12 +70,12 @@ public class BandSelectDescriptor extends AbstractProcessDescriptor {
 
     public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder()
             .addName(NAME + "OutputParameters").createGroup(OUT_COVERAGE);
-    
+
     public static final ProcessDescriptor INSTANCE = new BandSelectDescriptor();
 
     private BandSelectDescriptor() {
-        super(NAME, GeotkProcessingRegistry.IDENTIFICATION, 
-                new SimpleInternationalString("Select bands in a coverage."), 
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
+                new SimpleInternationalString("Select bands in a coverage."),
                 INPUT_DESC, OUTPUT_DESC);
     }
 
@@ -83,5 +83,5 @@ public class BandSelectDescriptor extends AbstractProcessDescriptor {
     public Process createProcess(ParameterValueGroup input) {
         return new BandSelectProcess(input);
     }
-    
+
 }

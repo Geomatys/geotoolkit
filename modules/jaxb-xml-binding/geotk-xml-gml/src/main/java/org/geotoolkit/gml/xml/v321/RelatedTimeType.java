@@ -26,11 +26,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * gml:RelatedTimeType provides a content model for indicating the relative position of an arbitrary member of the substitution group whose head is gml:AbstractTimePrimitive. It extends the generic gml:TimePrimitivePropertyType with an XML attribute relativePosition, whose value is selected from the set of 13 temporal relationships identified by Allen (1983)
- * 
+ *
  * <p>Java class for RelatedTimeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RelatedTimeType">
  *   &lt;complexContent>
@@ -58,8 +58,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RelatedTimeType")
@@ -69,9 +69,9 @@ public class RelatedTimeType extends TimePrimitivePropertyType {
     private String relativePosition;
 
     public RelatedTimeType() {
-        
+
     }
-    
+
     public RelatedTimeType(final RelatedTimeType that) {
         super(that);
         if (that != null) {
@@ -80,11 +80,11 @@ public class RelatedTimeType extends TimePrimitivePropertyType {
     }
     /**
      * Gets the value of the relativePosition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRelativePosition() {
         return relativePosition;
@@ -92,11 +92,11 @@ public class RelatedTimeType extends TimePrimitivePropertyType {
 
     /**
      * Sets the value of the relativePosition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRelativePosition(String value) {
         this.relativePosition = value;

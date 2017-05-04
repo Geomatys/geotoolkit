@@ -97,7 +97,7 @@ public class JAnalizePanel extends javax.swing.JPanel {
         guiTable.setHighlighters(new Highlighter[]{HighlighterFactory.createAlternateStriping(Color.white, HighlighterFactory.QUICKSILVER, 1)});
         guiTable.revalidate();
         guiTable.repaint();
-        
+
 
         guiTable.setEditable(analyze.getMethod() == METHOD.MANUAL);
 
@@ -148,19 +148,19 @@ public class JAnalizePanel extends javax.swing.JPanel {
             series.add( analyze.getMinimum()+(localmin+localmax)/2, localsum) ;
         }
 
-	XYSeriesCollection dataset = new XYSeriesCollection(series);
+    XYSeriesCollection dataset = new XYSeriesCollection(series);
 
         JFreeChart chart = ChartFactory.createXYBarChart(
-		"",
-		"",
-		false,
-		"",
-		dataset,
-		PlotOrientation.VERTICAL,
-		false,
-		false,
-		false
-		);
+        "",
+        "",
+        false,
+        "",
+        dataset,
+        PlotOrientation.VERTICAL,
+        false,
+        false,
+        false
+        );
 
         XYPlot plot = chart.getXYPlot();
         ((XYBarRenderer)plot.getRenderer()).setShadowVisible(false);
@@ -170,7 +170,7 @@ public class JAnalizePanel extends javax.swing.JPanel {
         chart.getPlot().setBackgroundAlpha(0);
         chart.setBackgroundPaint(new Color(0f,0f,0f,0f));
 
-	return chart ;
+    return chart ;
     }
 
     /** This method is called from within the constructor to

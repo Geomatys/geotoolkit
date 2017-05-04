@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2014, Geomatys
  *
@@ -31,10 +31,10 @@ public class TemporalReferenceSystemAdapter extends XmlAdapter<DefaultTemporalRe
     /**
      * Converts an object read from a XML stream to an {@link TemporalReferenceSystem}
      * implementation. JAXB invokes automatically this method at unmarshalling time.
-     * 
+     *
      * @param v the value which will be convert.
      * @return A {@link TemporalReferenceSystem} for the {@link DefaultTemporalReferenceSystem} value.
-     * @throws Exception 
+     * @throws Exception
      */
     @Override
     public TemporalReferenceSystem unmarshal(DefaultTemporalReferenceSystem v) {
@@ -44,10 +44,10 @@ public class TemporalReferenceSystemAdapter extends XmlAdapter<DefaultTemporalRe
     /**
      * Converts an {@link TemporalReferenceSystem} to an object to formatted into a
      * XML stream. JAXB invokes automatically this method at marshalling time.
-     * 
+     *
      * @param v the value which will be convert.
      * @return The adapter for the {@link TemporalReferenceSystem}.
-     * @see DefaultTemporalReferenceSystem#castOrCopy(org.opengis.temporal.TemporalReferenceSystem) 
+     * @see DefaultTemporalReferenceSystem#castOrCopy(org.opengis.temporal.TemporalReferenceSystem)
      */
     @Override
     public DefaultTemporalReferenceSystem marshal(TemporalReferenceSystem v) throws Exception {

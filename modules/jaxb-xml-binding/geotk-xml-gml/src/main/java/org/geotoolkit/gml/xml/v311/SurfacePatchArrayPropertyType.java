@@ -29,11 +29,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * A container for an array of surface patches.
- * 
+ *
  * <p>Java class for SurfacePatchArrayPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SurfacePatchArrayPropertyType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,7 +64,7 @@ public class SurfacePatchArrayPropertyType {
 
     /**
      * Gets the value of the surfacePatch property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractParametricCurveSurfaceType }{@code >}
      * {@link JAXBElement }{@code <}{@link TriangleType }{@code >}
@@ -75,8 +75,8 @@ public class SurfacePatchArrayPropertyType {
      * {@link JAXBElement }{@code <}{@link SphereType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractSurfacePatchType }{@code >}
      * {@link JAXBElement }{@code <}{@link PolygonPatchType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends AbstractSurfacePatchType>> getJbAbstractSurfacePatch() {
         if (abstractSurfacePatch == null) {

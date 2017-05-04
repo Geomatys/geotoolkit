@@ -96,5 +96,5 @@ public class FXLocalDateTimeCell<S> extends FXTableCell<S, Object> {
             setText(((LocalDateTime) item).toString());
         }
     }
-    
+
 }

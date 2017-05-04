@@ -32,9 +32,9 @@ import org.geotoolkit.wfs.xml.WFSResponse;
 
 /**
  * <p>Java class for WFS_CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="WFS_CapabilitiesType">
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import org.geotoolkit.wfs.xml.WFSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WFS_CapabilitiesType", propOrder = {
@@ -83,7 +83,7 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
         super(version, updateSequence);
     }
 
-    public WFSCapabilitiesType(final String version, final ServiceIdentification si, final ServiceProvider sp, final OperationsMetadata om, 
+    public WFSCapabilitiesType(final String version, final ServiceIdentification si, final ServiceProvider sp, final OperationsMetadata om,
             final FeatureTypeListType ft, final FilterCapabilities fc) {
         super(si, sp, om, version, null);
         this.featureTypeList = ft;
@@ -91,11 +91,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
     }
     /**
      * Gets the value of the wsdl property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link WFSCapabilitiesType.WSDL }
-     *     
+     *
      */
     public WFSCapabilitiesType.WSDL getWSDL() {
         return wsdl;
@@ -103,11 +103,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
     /**
      * Sets the value of the wsdl property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link WFSCapabilitiesType.WSDL }
-     *     
+     *
      */
     public void setWSDL(WFSCapabilitiesType.WSDL value) {
         this.wsdl = value;
@@ -115,11 +115,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
     /**
      * Gets the value of the featureTypeList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FeatureTypeListType }
-     *     
+     *
      */
     @Override
     public FeatureTypeListType getFeatureTypeList() {
@@ -128,11 +128,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
     /**
      * Sets the value of the featureTypeList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FeatureTypeListType }
-     *     
+     *
      */
     public void setFeatureTypeList(FeatureTypeListType value) {
         this.featureTypeList = value;
@@ -140,11 +140,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
     /**
      * Gets the value of the filterCapabilities property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FilterCapabilities }
-     *     
+     *
      */
     public FilterCapabilities getFilterCapabilities() {
         return filterCapabilities;
@@ -152,11 +152,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
     /**
      * Sets the value of the filterCapabilities property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FilterCapabilities }
-     *     
+     *
      */
     public void setFilterCapabilities(FilterCapabilities value) {
         this.filterCapabilities = value;
@@ -186,9 +186,9 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -198,8 +198,8 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -225,11 +225,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
             if (type == null) {
@@ -241,11 +241,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(String value) {
             this.type = value;
@@ -253,11 +253,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
         /**
          * Gets the value of the href property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getHref() {
             return href;
@@ -265,11 +265,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
         /**
          * Sets the value of the href property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setHref(String value) {
             this.href = value;
@@ -277,11 +277,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
         /**
          * Gets the value of the role property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getRole() {
             return role;
@@ -289,11 +289,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
         /**
          * Sets the value of the role property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setRole(String value) {
             this.role = value;
@@ -301,11 +301,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
         /**
          * Gets the value of the arcrole property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getArcrole() {
             return arcrole;
@@ -313,11 +313,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
         /**
          * Sets the value of the arcrole property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setArcrole(String value) {
             this.arcrole = value;
@@ -325,11 +325,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
         /**
          * Gets the value of the title property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getTitle() {
             return title;
@@ -337,11 +337,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
         /**
          * Sets the value of the title property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setTitle(String value) {
             this.title = value;
@@ -349,11 +349,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
         /**
          * Gets the value of the show property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getShow() {
             return show;
@@ -361,11 +361,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
         /**
          * Sets the value of the show property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setShow(String value) {
             this.show = value;
@@ -373,11 +373,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
         /**
          * Gets the value of the actuate property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getActuate() {
             return actuate;
@@ -385,11 +385,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
         /**
          * Sets the value of the actuate property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setActuate(String value) {
             this.actuate = value;

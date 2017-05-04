@@ -35,9 +35,9 @@ import org.opengis.filter.Filter;
 
 /**
  * <p>Java class for GetObservationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetObservationType">
  *   &lt;complexContent>
@@ -75,8 +75,8 @@ import org.opengis.filter.Filter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetObservationType", propOrder = {
@@ -105,10 +105,10 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
     private String responseFormat;
 
     public GetObservationType() {
-        
+
     }
-    
-    public GetObservationType(final String version, final String offering, final List<TemporalOpsType> eventTime, 
+
+    public GetObservationType(final String version, final String offering, final List<TemporalOpsType> eventTime,
             final List<String> procedure, final List<String> observedProperty, final SpatialOpsType spatialFilter, final String responseFormat) {
         super(version, "SOS");
         if (offering != null) {
@@ -127,8 +127,8 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
         }
         this.responseFormat = responseFormat;
     }
-    
-    public GetObservationType(final String version, final String offering, final List<TemporalOpsType> eventTime, 
+
+    public GetObservationType(final String version, final String offering, final List<TemporalOpsType> eventTime,
             final List<String> procedure, final List<String> observedProperty, final List<String> foi, final String responseFormat) {
         super(version, "SOS");
         if (offering != null) {
@@ -145,8 +145,8 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
         this.featureOfInterest = foi;
         this.responseFormat = responseFormat;
     }
-    
-    public GetObservationType(final String version, final String service, final List<String> offering, final List<TemporalOpsType> eventTime, 
+
+    public GetObservationType(final String version, final String service, final List<String> offering, final List<TemporalOpsType> eventTime,
             final List<String> procedure, final List<String> observedProperty, final SpatialOpsType spatialFilter,
             final List<String> foi, final String responseFormat) {
         super(version, service);
@@ -165,14 +165,14 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
         this.featureOfInterest = foi;
         this.responseFormat = responseFormat;
     }
-    
-    
+
+
     /**
      * Gets the value of the procedure property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     @Override
     public List<String> getProcedure() {
@@ -184,10 +184,10 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
 
     /**
      * Gets the value of the offering property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     @Override
     public List<String> getOfferings() {
@@ -199,10 +199,10 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
 
     /**
      * Gets the value of the observedProperty property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     @Override
     public List<String> getObservedProperty() {
@@ -214,10 +214,10 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
 
     /**
      * Gets the value of the temporalFilter property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link GetObservationType.TemporalFilter }
-     * 
+     *
      */
     @Override
     public List<Filter> getTemporalFilter() {
@@ -235,10 +235,10 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
 
     /**
      * Gets the value of the featureOfInterest property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     @Override
     public List<String> getFeatureIds() {
@@ -250,11 +250,11 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
 
     /**
      * Sets the value of the spatialFilter property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GetObservationType.SpatialFilter }
-     *     
+     *
      */
     public void setSpatialFilter(SpatialFilterType value) {
         this.spatialFilter = value;
@@ -262,11 +262,11 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
 
     /**
      * Gets the value of the responseFormat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getResponseFormat() {
@@ -275,11 +275,11 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
 
     /**
      * Sets the value of the responseFormat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setResponseFormat(String value) {
         this.responseFormat = value;

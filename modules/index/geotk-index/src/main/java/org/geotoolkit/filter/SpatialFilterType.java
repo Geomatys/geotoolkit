@@ -23,7 +23,7 @@ package org.geotoolkit.filter;
  */
 public enum SpatialFilterType {
 
-    CONTAINS, 
+    CONTAINS,
     INTERSECTS,
     EQUALS,
     DISJOINT,
@@ -34,7 +34,7 @@ public enum SpatialFilterType {
     WITHIN,
     TOUCHES,
     OVERLAPS;
-    
+
     public boolean isDistance() {
         return this == DWITHIN || this == BEYOND;
     }

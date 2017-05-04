@@ -34,7 +34,7 @@ import java.util.ResourceBundle;
 public enum PGEPSGQueries {
 
     NEXT_CODE,
-    
+
     CREATE_ALIAS,
     CREATE_AREA,
     CREATE_CHANGE,
@@ -56,7 +56,7 @@ public enum PGEPSGQueries {
     CREATE_SUPERSESSION,
     CREATE_UNIT_OF_MEASURE,
     CREATE_VERSION_HISTORY,
-    
+
     FIND_COORDINATE_REFERENCE_SYSTEM,
     FIND_COORDINATE_SYSTEM,
     FIND_DATUM,
@@ -64,15 +64,15 @@ public enum PGEPSGQueries {
     FIND_PRIME_MERIDIAN,
     FIND_UNIT_OF_MEASURE,
     FIND_UNIT_OF_MEASURE_SELF;
-    
+
     private final String query;
     private final Integer[] parameters;
 
     private PGEPSGQueries() {
         final String stmt = ResourceBundle.getBundle("org/geotoolkit/coverage/postgresql/epsg_queries").getString(name());
-        
+
         final StringBuilder sb = new StringBuilder();
-        
+
         int before = 0;
         final List<Integer> params = new ArrayList<Integer>();
         for(int i=stmt.indexOf('?',before); i>=0; i=stmt.indexOf('?',before)){
@@ -89,23 +89,23 @@ public enum PGEPSGQueries {
             } catch (Exception ex) {
                 throw new IllegalArgumentException("Type unknowed :  "+type+", Invalid query "+name()+" : " + stmt);
             }
-            
+
             sb.append(part.substring(0, start));
             sb.append(part.substring(end+1));
             sb.append('?');
-            
+
             before = i+1;
         }
-        
+
         sb.append(stmt.substring(before));
         this.parameters = params.toArray(new Integer[params.size()]);
         this.query = sb.toString();
     }
-    
+
     public String query(){
         return query;
     }
-    
+
     public int getNbParameters(){
         return parameters.length;
     }
@@ -117,30 +117,30 @@ public enum PGEPSGQueries {
      * will be replaced by : SELECT * FROM house WHERE user IS NULL , if paramter is null.
      */
     public PreparedStatement createStatement(final Connection cnx, Object ... params) throws SQLException {
-        
-        final int nb = getNbParameters();        
+
+        final int nb = getNbParameters();
         if(nb != params.length){
             throw new SQLException("Was expecting "+nb+" parameters for query but only received "+params.length);
         }
-        
+
         boolean hasNullValue = false;
         for(Object obj : params){
             hasNullValue = (obj==null);
             if(hasNullValue) break;
         }
-        
+
         String query = this.query;
-        
+
         //adapt query for null values
         if(hasNullValue){
             final List<Object> noNullParams = new ArrayList<Object>();
             final StringBuilder sb = new StringBuilder();
             int before = 0;
-            
+
             for(int i=query.indexOf('?',before),k=0; i>=0; i=query.indexOf('?',before),k++){
-                final Object param = params[k];                
+                final Object param = params[k];
                 final String part = query.substring(before, i);
-                
+
                 nullReplace:
                 if(param == null){
                     //check if we have a '=' before
@@ -154,7 +154,7 @@ public enum PGEPSGQueries {
                             break;
                         }
                     }
-                    
+
                     noNullParams.add(param);
                     sb.append(part);
                     sb.append('?');
@@ -163,51 +163,51 @@ public enum PGEPSGQueries {
                     sb.append(part);
                     sb.append('?');
                 }
-                
+
                 before = i+1;
             }
-            
+
             //add remaining
             params = noNullParams.toArray();
             sb.append(query.substring(before));
             query = sb.toString();
         }
-        
+
         final PreparedStatement stmt = cnx.prepareStatement(query);
         fill(stmt, params);
         return stmt;
     }
-    
+
     /**
      * Caution : if some arguments may be null consider using 'create' method to
      * automaticly refactor the query.
      */
     public void fillStatement(final PreparedStatement stmt, final Object ... params) throws SQLException{
-        
-        final int nb = getNbParameters();        
+
+        final int nb = getNbParameters();
         if(nb != params.length){
             throw new SQLException("Was expecting "+nb+" parameters for query but only received "+params.length);
         }
-        
+
         if(nb == 0){
             //nothing to fill
             return;
         }
-        
+
         fill(stmt, params);
     }
-    
+
     private void fill(final PreparedStatement stmt, final Object ... params) throws SQLException{
-                
+
         for(int i=0;i<params.length;i++){
             final Object param = params[i];
-            
+
             if(param != null){
                 stmt.setObject(i+1, params[i], parameters[i]);
             }else{
                 stmt.setNull(i+1, parameters[i]);
-            }            
+            }
         }
     }
-    
+
 }

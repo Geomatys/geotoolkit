@@ -26,8 +26,8 @@ import org.geotoolkit.wms.xml.AbstractContactPersonPrimary;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,10 +56,10 @@ public class ContactPersonPrimary implements AbstractContactPersonPrimary {
         this.contactOrganization = contactOrganization;
         this.contactPerson       = contactPerson;
     }
-    
+
     /**
      * Gets the value of the contactPerson property.
-     * 
+     *
      */
     public String getContactPerson() {
         return contactPerson;

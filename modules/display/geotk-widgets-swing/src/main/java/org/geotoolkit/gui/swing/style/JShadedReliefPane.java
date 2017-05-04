@@ -34,7 +34,7 @@ import org.opengis.style.ShadedRelief;
 
 /**
  * ShadedRelief panel
- * 
+ *
  * @author  Johann Sorel
  * @module
  */
@@ -42,22 +42,22 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
 
     private MapLayer layer = null;
 
-    /** 
-     * Creates new form JFillPanel 
+    /**
+     * Creates new form JFillPanel
      */
     public JShadedReliefPane() {
         super(ShadedRelief.class);
         initComponents();
         guiFactor.setModel(1d, 0d, 10000000d, 0.1d);
-        
+
         //those are not used by geotk engine, hide them to avoid confusing the user
         guiLabelBrightness.setVisible(false);
         guiBrightness.setVisible(false);
     }
-    
+
     public void setExpressionVisible(boolean visible){
         guiFactor.setExpressionVisible(visible);
-    } 
+    }
 
     @Override
     public void setLayer(final MapLayer layer) {
@@ -69,7 +69,7 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
     public MapLayer getLayer(){
         return layer;
     }
-    
+
     @Override
     public void parse(final ShadedRelief relief) {
         if (relief != null) {
@@ -89,7 +89,7 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiLabelFactor,guiLabelBrightness};
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -156,7 +156,7 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
         // TODO add your handling code here:
-        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());
             parse(create());
         }

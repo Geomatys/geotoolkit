@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for StyleType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="StyleType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -85,11 +85,11 @@ public class StyleType extends AbstractStyleSelectorType {
 
     /**
      * Gets the value of the iconStyle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link IconStyleType }
-     *     
+     *
      */
     public IconStyleType getIconStyle() {
         return iconStyle;
@@ -97,11 +97,11 @@ public class StyleType extends AbstractStyleSelectorType {
 
     /**
      * Sets the value of the iconStyle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link IconStyleType }
-     *     
+     *
      */
     public void setIconStyle(final IconStyleType value) {
         this.iconStyle = value;
@@ -109,11 +109,11 @@ public class StyleType extends AbstractStyleSelectorType {
 
     /**
      * Gets the value of the labelStyle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LabelStyleType }
-     *     
+     *
      */
     public LabelStyleType getLabelStyle() {
         return labelStyle;
@@ -121,11 +121,11 @@ public class StyleType extends AbstractStyleSelectorType {
 
     /**
      * Sets the value of the labelStyle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LabelStyleType }
-     *     
+     *
      */
     public void setLabelStyle(final LabelStyleType value) {
         this.labelStyle = value;
@@ -133,11 +133,11 @@ public class StyleType extends AbstractStyleSelectorType {
 
     /**
      * Gets the value of the lineStyle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LineStyleType }
-     *     
+     *
      */
     public LineStyleType getLineStyle() {
         return lineStyle;
@@ -145,11 +145,11 @@ public class StyleType extends AbstractStyleSelectorType {
 
     /**
      * Sets the value of the lineStyle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LineStyleType }
-     *     
+     *
      */
     public void setLineStyle(final LineStyleType value) {
         this.lineStyle = value;
@@ -157,11 +157,11 @@ public class StyleType extends AbstractStyleSelectorType {
 
     /**
      * Gets the value of the polyStyle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PolyStyleType }
-     *     
+     *
      */
     public PolyStyleType getPolyStyle() {
         return polyStyle;
@@ -169,11 +169,11 @@ public class StyleType extends AbstractStyleSelectorType {
 
     /**
      * Sets the value of the polyStyle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PolyStyleType }
-     *     
+     *
      */
     public void setPolyStyle(final PolyStyleType value) {
         this.polyStyle = value;
@@ -181,11 +181,11 @@ public class StyleType extends AbstractStyleSelectorType {
 
     /**
      * Gets the value of the balloonStyle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BalloonStyleType }
-     *     
+     *
      */
     public BalloonStyleType getBalloonStyle() {
         return balloonStyle;
@@ -193,11 +193,11 @@ public class StyleType extends AbstractStyleSelectorType {
 
     /**
      * Sets the value of the balloonStyle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BalloonStyleType }
-     *     
+     *
      */
     public void setBalloonStyle(final BalloonStyleType value) {
         this.balloonStyle = value;
@@ -205,11 +205,11 @@ public class StyleType extends AbstractStyleSelectorType {
 
     /**
      * Gets the value of the listStyle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ListStyleType }
-     *     
+     *
      */
     public ListStyleType getListStyle() {
         return listStyle;
@@ -217,11 +217,11 @@ public class StyleType extends AbstractStyleSelectorType {
 
     /**
      * Sets the value of the listStyle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ListStyleType }
-     *     
+     *
      */
     public void setListStyle(final ListStyleType value) {
         this.listStyle = value;
@@ -229,25 +229,25 @@ public class StyleType extends AbstractStyleSelectorType {
 
     /**
      * Gets the value of the styleSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the styleSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getStyleSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getStyleSimpleExtensionGroup() {
         if (styleSimpleExtensionGroup == null) {
@@ -258,25 +258,25 @@ public class StyleType extends AbstractStyleSelectorType {
 
     /**
      * Gets the value of the styleObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the styleObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getStyleObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getStyleObjectExtensionGroup() {
         if (styleObjectExtensionGroup == null) {

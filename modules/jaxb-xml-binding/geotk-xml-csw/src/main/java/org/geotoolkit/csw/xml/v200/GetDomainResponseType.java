@@ -29,17 +29,17 @@ import org.geotoolkit.csw.xml.GetDomainResponse;
 
 
 /**
- * 
- * Returns the actual values for some property. 
+ *
+ * Returns the actual values for some property.
  * In general this is a subset of the value domain (that is, set of permissible values),
- * although in some cases these may coincide. 
+ * although in some cases these may coincide.
  * Multiple value ranges may be returned if the property can assume values from multiple value domains (e.g. multiple taxonomies).
- *          
- * 
+ *
+ *
  * <p>Java class for GetDomainResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetDomainResponseType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.csw.xml.GetDomainResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -88,10 +88,10 @@ public class GetDomainResponseType implements GetDomainResponse {
             }
         }
     }
-    
+
     /**
      * Gets the value of the domainValues property.
-     * 
+     *
      */
     public List<DomainValuesType> getDomainValues() {
         if (domainValues == null) {

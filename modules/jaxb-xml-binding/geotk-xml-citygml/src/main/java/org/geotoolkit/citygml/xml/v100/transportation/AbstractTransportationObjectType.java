@@ -27,12 +27,12 @@ import org.geotoolkit.citygml.xml.v100.AbstractCityObjectType;
 
 
 /**
- * Type describing the abstract superclass for transportation objects. 
- * 
+ * Type describing the abstract superclass for transportation objects.
+ *
  * <p>Java class for AbstractTransportationObjectType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractTransportationObjectType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.citygml.xml.v100.AbstractCityObjectType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -66,25 +66,25 @@ public abstract class AbstractTransportationObjectType
 
     /**
      * Gets the value of the genericApplicationPropertyOfTransportationObject property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the genericApplicationPropertyOfTransportationObject property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getGenericApplicationPropertyOfTransportationObject().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getGenericApplicationPropertyOfTransportationObject() {
         if (genericApplicationPropertyOfTransportationObject == null) {

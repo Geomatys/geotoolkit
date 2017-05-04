@@ -39,7 +39,7 @@ public class DefaultPolygon extends com.vividsolutions.jts.geom.Polygon implemen
 
     /**
      * <p>This method extract LinearaRings from Boundaries list</p>
-     * 
+     *
      * @param boundaries
      * @return
      */

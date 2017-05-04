@@ -21,7 +21,7 @@ package org.geotoolkit.csw.xml;
  * @author guilhem
  */
 public interface TransactionSummary {
-    
+
     int getTotalInserted();
 
     int getTotalUpdated();

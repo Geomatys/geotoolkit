@@ -83,7 +83,7 @@ public interface Style extends AbstractStyleSelector {
      * @return
      */
     ListStyle getListStyle();
-    
+
     /**
      *
      * @param iconStyle

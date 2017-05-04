@@ -19,16 +19,16 @@ package org.geotoolkit.filter.binding;
 
 /**
  * To test acessor order by priority.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class MockBinding2 extends AbstractBinding{
 
-    
+
     public MockBinding2() {
         super(Object.class, 5);
     }
-    
+
     @Override
     public boolean support(String xpath) {
         return false;
@@ -43,5 +43,5 @@ public final class MockBinding2 extends AbstractBinding{
     public void set(Object candidate, String xpath, Object value) throws IllegalArgumentException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
 }

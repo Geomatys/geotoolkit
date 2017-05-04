@@ -23,7 +23,7 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 
 /**
  * Edition tool displaying a dialog to edit the geometry using Well Known Text.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -31,7 +31,7 @@ public class FeatureEditTool extends AbstractEditionTool {
 
     public FeatureEditTool() {
         super(2000,"featureEdit", MessageBundle.formatInternational(MessageBundle.Keys.editor),
-             new SimpleInternationalString("editor"), 
+             new SimpleInternationalString("editor"),
              null,FeatureMapLayer.class);
     }
 

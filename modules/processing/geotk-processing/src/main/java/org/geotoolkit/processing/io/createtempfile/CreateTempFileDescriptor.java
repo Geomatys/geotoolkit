@@ -40,14 +40,14 @@ import org.opengis.parameter.ParameterValueGroup;
  * <ul>
  *     <li>FILE_OUT "file" resulting temp file</li>
  * </ul>
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public final class CreateTempFileDescriptor extends AbstractProcessDescriptor {
 
     /**
-     * Process name : createTempFile 
+     * Process name : createTempFile
      */
     public static final String NAME = "io:createTempFile";
 
@@ -59,7 +59,7 @@ public final class CreateTempFileDescriptor extends AbstractProcessDescriptor {
             .setRemarks("The file prefix")
             .setRequired(false)
             .create(String.class, "temp");
-    
+
     /**
      * Optional - file postfix
      */
@@ -68,7 +68,7 @@ public final class CreateTempFileDescriptor extends AbstractProcessDescriptor {
             .setRemarks("The file postfix")
             .setRequired(false)
             .create(String.class, "tmp");
-    
+
     /**
      * Optional - delete on exit, default true.
      */
@@ -77,9 +77,9 @@ public final class CreateTempFileDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Delete file on application end")
             .setRequired(false)
             .create(Boolean.class, true);
-        
-    /** 
-     * Input Parameters 
+
+    /**
+     * Input Parameters
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(PREFIX_IN,POSTFIX_IN,DELETE_IN);
@@ -92,13 +92,13 @@ public final class CreateTempFileDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Created temp file")
             .setRequired(true)
             .create(URL.class, null);
-    
-    /** 
-     * Output Parameters 
+
+    /**
+     * Output Parameters
      */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(FILE_OUT);
-    
+
     public static final ProcessDescriptor INSTANCE = new CreateTempFileDescriptor();
 
     private CreateTempFileDescriptor() {

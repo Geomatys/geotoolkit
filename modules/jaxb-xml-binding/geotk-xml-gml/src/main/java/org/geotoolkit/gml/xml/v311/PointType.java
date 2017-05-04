@@ -32,11 +32,11 @@ import org.opengis.geometry.primitive.Point;
 
 /**
  * A Point is defined by a single coordinate tuple.
- * 
+ *
  * <p>Java class for PointType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PointType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.opengis.geometry.primitive.Point;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -122,11 +122,11 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
 
     /**
      * Gets the value of the pos property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     @Override
     public DirectPositionType getPos() {
@@ -135,26 +135,26 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
 
     /**
      * Sets the value of the pos property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     public void setPos(final DirectPositionType value) {
         this.pos = value;
     }
 
     /**
-     * Deprecated with GML version 3.1.0 for coordinates with ordinate values that are numbers. 
+     * Deprecated with GML version 3.1.0 for coordinates with ordinate values that are numbers.
      * Use "pos" instead.
      * The "coordinates" element shall only be used for coordinates with ordinates that require a string
      * representation, e.g. DMS representations.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     @Override
     public CoordinatesType getCoordinates() {
@@ -166,11 +166,11 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
      * Use "pos"instead.
      * The "coordinates" element shall only be used for coordinates with ordinates that require a string
      * representation, e.g. DMS representations.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;

@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for DataStreamPropertyByValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataStreamPropertyByValueType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataStreamPropertyByValueType", propOrder = {
@@ -53,11 +53,11 @@ public class DataStreamPropertyByValueType {
 
     /**
      * Gets the value of the dataStream property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataStreamType }
-     *     
+     *
      */
     public DataStreamType getDataStream() {
         return dataStream;
@@ -65,11 +65,11 @@ public class DataStreamPropertyByValueType {
 
     /**
      * Sets the value of the dataStream property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataStreamType }
-     *     
+     *
      */
     public void setDataStream(DataStreamType value) {
         this.dataStream = value;

@@ -23,7 +23,7 @@ package org.geotoolkit.data.kml.model;
  *
  * <pre>
  * &lt;element name="altitudeMode" type="kml:altitudeModeEnumType" default="clampToGround" substitutionGroup="kml:altitudeModeGroup"/>
- * 
+ *
  * &lt;simpleType name="altitudeModeEnumType">
  *  &lt;restriction base="string">
  *      &lt;enumeration value="clampToGround"/>

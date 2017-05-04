@@ -31,9 +31,9 @@ import org.w3c.dom.Element;
 
 /**
  * <p>Java class for QueryExpressionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="QueryExpressionType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "QueryExpressionType", propOrder = {
@@ -64,13 +64,13 @@ public class QueryExpressionType {
 
     /**
      * Gets the value of the content property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Element }
      * {@link Object }
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getContent() {
         if (content == null) {
@@ -81,11 +81,11 @@ public class QueryExpressionType {
 
     /**
      * Gets the value of the dialect property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDialect() {
         return dialect;
@@ -93,11 +93,11 @@ public class QueryExpressionType {
 
     /**
      * Sets the value of the dialect property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDialect(String value) {
         this.dialect = value;

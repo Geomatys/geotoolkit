@@ -29,23 +29,23 @@ import org.geotoolkit.gui.javafx.render2d.tool.FXMesureLengthAction;
  * @author Johann Sorel (Geomatys)
  */
 public class FXGeoToolBar extends ToolBar {
-    
+
     private static final String LEFT   = "buttongroup-left";
     private static final String CENTER = "buttongroup-center";
     private static final String RIGHT  = "buttongroup-right";
-    
+
     public FXGeoToolBar(FXMap map) {
         getStylesheets().add("/org/geotoolkit/gui/javafx/buttonbar.css");
-        
+
         final ToggleButton butLength = new FXMesureLengthAction(map).createToggleButton(ActionUtils.ActionTextBehavior.HIDE);
         final ToggleButton butArea = new FXMesureAreaAction(map).createToggleButton(ActionUtils.ActionTextBehavior.HIDE);
         butLength.getStyleClass().add(LEFT);
         butArea.getStyleClass().add(RIGHT);
         final HBox hboxAction = new HBox(butLength,butArea);
-    
+
         getItems().add(hboxAction);
-        
+
     }
-    
-    
+
+
 }

@@ -33,9 +33,9 @@ import org.opengis.filter.FilterVisitor;
 
 /**
  * <p>Java class for BinaryLogicOpType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BinaryLogicOpType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.opengis.filter.FilterVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinaryLogicOpType", propOrder = {
@@ -68,14 +68,14 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
     private List<JAXBElement<?>> comparisonOpsOrSpatialOpsOrTemporalOps;
 
     public BinaryLogicOpType() {
-        
+
     }
     /**
-      * Build a new Binary logic operator 
+      * Build a new Binary logic operator
       */
      public BinaryLogicOpType(final Object... operators) {
          this.comparisonOpsOrSpatialOpsOrTemporalOps = new ArrayList<JAXBElement<?>>();
-         
+
          for (Object obj: operators) {
 
              if(obj instanceof JAXBElement){
@@ -85,24 +85,24 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
              // comparison operator
              if (obj instanceof ComparisonOpsType)  {
                  this.comparisonOpsOrSpatialOpsOrTemporalOps.add(FilterType.createComparisonOps((ComparisonOpsType)obj));
-                 
-             // logical operator    
+
+             // logical operator
              } else if (obj instanceof LogicOpsType) {
                  this.comparisonOpsOrSpatialOpsOrTemporalOps.add(FilterType.createLogicOps((LogicOpsType)obj));
-             
-             // spatial operator    
+
+             // spatial operator
              } else if (obj instanceof SpatialOpsType) {
                  this.comparisonOpsOrSpatialOpsOrTemporalOps.add(FilterType.createSpatialOps((SpatialOpsType) obj));
-             
+
              } else {
                  throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
              }
          }
-         
+
      }
-     
+
      /**
-      * Build a new Binary logic operator 
+      * Build a new Binary logic operator
       */
      public BinaryLogicOpType(final BinaryLogicOpType that) {
          if (that != null && that.comparisonOpsOrSpatialOpsOrTemporalOps != null) {
@@ -117,22 +117,22 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
                     final ComparisonOpsType co = ((ComparisonOpsType)obj).getClone();
                     this.comparisonOpsOrSpatialOpsOrTemporalOps.add(FilterType.createComparisonOps(co));
 
-                // logical operator    
+                // logical operator
                 } else if (obj instanceof LogicOpsType) {
                     final LogicOpsType lo = ((LogicOpsType)obj).getClone();
                     this.comparisonOpsOrSpatialOpsOrTemporalOps.add(FilterType.createLogicOps(lo));
 
-                // spatial operator    
+                // spatial operator
                 } else if (obj instanceof SpatialOpsType) {
                     final SpatialOpsType so = ((SpatialOpsType)obj).getClone();
                     this.comparisonOpsOrSpatialOpsOrTemporalOps.add(FilterType.createSpatialOps(so));
-                    
-                // temporal operator    
+
+                // temporal operator
                 } else if (obj instanceof TemporalOpsType) {
                     final TemporalOpsType to = ((TemporalOpsType)obj).getClone();
                     this.comparisonOpsOrSpatialOpsOrTemporalOps.add(FilterType.createTemporalOps(to));
-                    
-                // function   
+
+                // function
                 } else if (obj instanceof FunctionType) {
                     final FunctionType fu = new FunctionType((FunctionType)obj);
                     this.comparisonOpsOrSpatialOpsOrTemporalOps.add(factory.createFunction(fu));
@@ -141,35 +141,35 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
                 } else if (obj instanceof ExtensionOpsType) {
                     final ExtensionOpsType ext = ((ExtensionOpsType)obj).getClone();
                     this.comparisonOpsOrSpatialOpsOrTemporalOps.add(factory.createExtensionOps(ext));
-                
+
                 // id
                 } else if (obj instanceof ResourceIdType) {
                     final ResourceIdType rid =  new ResourceIdType((ResourceIdType)obj);
                     this.comparisonOpsOrSpatialOpsOrTemporalOps.add(factory.createResourceId(rid));
-                    
+
                 } else {
                     throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
                 }
             }
          }
      }
-     
+
     /**
      * Gets the value of the comparisonOpsOrSpatialOpsOrTemporalOps property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the comparisonOpsOrSpatialOpsOrTemporalOps property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getComparisonOpsOrSpatialOpsOrTemporalOps().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}
@@ -218,8 +218,8 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
      * {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
      * {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
      * {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<?>> getComparisonOpsOrSpatialOpsOrTemporalOps() {
         if (comparisonOpsOrSpatialOpsOrTemporalOps == null) {
@@ -236,7 +236,7 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
         }
         return result;
     }
-    
+
     @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -246,7 +246,7 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     @Override
     public LogicOpsType getClone() {
         throw new UnsupportedOperationException("Must be overriden in sub-class.");

@@ -30,7 +30,7 @@ public class PolygonPatchesListType {
             patch.setCoordinateReferenceSystem(null);
             this.patches.add(patch);
         }
-            
+
     }
 
     /**

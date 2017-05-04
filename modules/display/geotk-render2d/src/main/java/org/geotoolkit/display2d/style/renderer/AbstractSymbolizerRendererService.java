@@ -97,5 +97,5 @@ public abstract class AbstractSymbolizerRendererService<S extends Symbolizer, C 
             return null;
         }
     }
-    
+
 }

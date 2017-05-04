@@ -29,16 +29,16 @@ import org.opengis.filter.expression.Function;
  * ColorModel which can calculate color from any sample model.
  * CAUTION : this color model is not accelerated by java2d, ComponentColorModel or
  * IndexedColorModel should always be used prior to this model.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class CompatibleColorModel extends ColorModel{
 
     private static final int TRANSLUCENT = new Color(255, 255, 255, 0).getRGB();
-    
+
     private final Function fct;
-    
+
     /**
      * @param nbbits
      * @param fct : Interpolate or Categorize function
@@ -57,7 +57,7 @@ public class CompatibleColorModel extends ColorModel{
     public boolean isCompatibleSampleModel(SampleModel sm) {
         return true;
     }
-    
+
     @Override
     public int getRGB(Object inData) {
         Object value;
@@ -87,7 +87,7 @@ public class CompatibleColorModel extends ColorModel{
         }
         return c.getRGB();
     }
-    
+
     @Override
     public int getRed(int pixel) {
         final int argb = getRGB((Object)pixel);
@@ -123,7 +123,7 @@ public class CompatibleColorModel extends ColorModel{
         final int argb = getRGB((Object)pixel);
         return 0xFF & ( argb >> 8);
     }
-    
+
     @Override
     public int getBlue(Object pixel) {
         final int argb = getRGB((Object)pixel);
@@ -137,8 +137,8 @@ public class CompatibleColorModel extends ColorModel{
     }
 
     @Override
-    public WritableRaster createCompatibleWritableRaster(int w, int h) {        
-        return Raster.createPackedRaster(new DataBufferInt(w*h),w,h,16,null); 
+    public WritableRaster createCompatibleWritableRaster(int w, int h) {
+        return Raster.createPackedRaster(new DataBufferInt(w*h),w,h,16,null);
     }
-    
+
 }

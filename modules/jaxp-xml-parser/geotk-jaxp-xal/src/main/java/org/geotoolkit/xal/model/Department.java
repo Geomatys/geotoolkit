@@ -48,7 +48,7 @@ import java.util.List;
 public interface Department {
 
     /**
-     * 
+     *
      * @return
      */
     List<GenericTypedGrPostal> getAddressLines();
@@ -62,7 +62,7 @@ public interface Department {
 
     /**
      * <p>A MailStop is where the the mail is delivered to within a premise/subpremise/firm or a facility.</p>
-     * 
+     *
      * @return
      */
     MailStop getMailStop();
@@ -105,7 +105,7 @@ public interface Department {
     void setPostalCode(PostalCode postalCode);
 
     /**
-     * 
+     *
      * @param type
      */
     void setType(String type);

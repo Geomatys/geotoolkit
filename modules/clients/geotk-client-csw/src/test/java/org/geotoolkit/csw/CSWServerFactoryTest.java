@@ -35,7 +35,7 @@ public class CSWServerFactoryTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testFactory() {
-        
+
         final Iterator<ClientFactory> ite = DataStores.getAllFactories(ClientFactory.class).iterator();
         boolean found = false;
         while (ite.hasNext()){

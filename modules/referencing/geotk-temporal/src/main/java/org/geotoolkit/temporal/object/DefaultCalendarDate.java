@@ -1,7 +1,7 @@
  /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2011, Geomatys
  *
@@ -27,7 +27,7 @@ import org.opengis.util.InternationalString;
 
 /**
  * A data type that shall be used to identify temporal position within a calendar.
- * 
+ *
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */

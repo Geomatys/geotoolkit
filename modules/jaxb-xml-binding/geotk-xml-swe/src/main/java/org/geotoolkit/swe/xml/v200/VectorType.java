@@ -31,9 +31,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for VectorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="VectorType">
  *   &lt;complexContent>
@@ -55,8 +55,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "VectorType", propOrder = {
@@ -75,10 +75,10 @@ public class VectorType extends AbstractDataComponentType {
 
     /**
      * Gets the value of the coordinate property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link VectorType.Coordinate }
-     * 
+     *
      */
     public List<VectorType.Coordinate> getCoordinate() {
         if (coordinate == null) {
@@ -89,11 +89,11 @@ public class VectorType extends AbstractDataComponentType {
 
     /**
      * Gets the value of the referenceFrame property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getReferenceFrame() {
         return referenceFrame;
@@ -101,11 +101,11 @@ public class VectorType extends AbstractDataComponentType {
 
     /**
      * Sets the value of the referenceFrame property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setReferenceFrame(String value) {
         this.referenceFrame = value;
@@ -113,11 +113,11 @@ public class VectorType extends AbstractDataComponentType {
 
     /**
      * Gets the value of the localFrame property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLocalFrame() {
         return localFrame;
@@ -125,11 +125,11 @@ public class VectorType extends AbstractDataComponentType {
 
     /**
      * Sets the value of the localFrame property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLocalFrame(String value) {
         this.localFrame = value;
@@ -138,9 +138,9 @@ public class VectorType extends AbstractDataComponentType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -150,8 +150,8 @@ public class VectorType extends AbstractDataComponentType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -166,11 +166,11 @@ public class VectorType extends AbstractDataComponentType {
 
         /**
          * Gets the value of the name property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getName() {
             return name;
@@ -178,11 +178,11 @@ public class VectorType extends AbstractDataComponentType {
 
         /**
          * Sets the value of the name property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setName(String value) {
             this.name = value;

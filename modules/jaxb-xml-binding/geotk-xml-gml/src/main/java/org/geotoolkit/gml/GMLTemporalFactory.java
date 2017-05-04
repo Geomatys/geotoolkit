@@ -41,7 +41,7 @@ public class GMLTemporalFactory extends DefaultTemporalFactory {
     protected void setOrdering(Organizer orgnzr) {
         orgnzr.before(DefaultTemporalFactory.class, false);
     }
-    
+
     @Override
     public Instant createInstant(final Date pstn) {
         if (pstn != null) {
@@ -72,8 +72,8 @@ public class GMLTemporalFactory extends DefaultTemporalFactory {
     }
 
     @Override
-    public PeriodDuration createPeriodDuration(final InternationalString years, final InternationalString months, 
-        final InternationalString week, final InternationalString days, final InternationalString hours, 
+    public PeriodDuration createPeriodDuration(final InternationalString years, final InternationalString months,
+        final InternationalString week, final InternationalString days, final InternationalString hours,
         final InternationalString minutes, final InternationalString seconds) {
         BigInteger iyears = null;
         if (years != null) {
@@ -101,6 +101,6 @@ public class GMLTemporalFactory extends DefaultTemporalFactory {
         }
         return new PeriodDurationType(true, iyears, imonths, idays, ihours, iminutes, iseconds);
     }
-    
-    
+
+
 }

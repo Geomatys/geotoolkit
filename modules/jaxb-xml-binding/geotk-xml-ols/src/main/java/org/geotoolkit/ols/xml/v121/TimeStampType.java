@@ -29,9 +29,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * <p>Java class for TimeStampType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeStampType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeStampType")
@@ -60,11 +60,11 @@ public class TimeStampType {
 
     /**
      * Gets the value of the begin property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getBegin() {
         return begin;
@@ -72,11 +72,11 @@ public class TimeStampType {
 
     /**
      * Sets the value of the begin property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setBegin(XMLGregorianCalendar value) {
         this.begin = value;
@@ -84,11 +84,11 @@ public class TimeStampType {
 
     /**
      * Gets the value of the duration property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Duration }
-     *     
+     *
      */
     public Duration getDuration() {
         return duration;
@@ -96,11 +96,11 @@ public class TimeStampType {
 
     /**
      * Sets the value of the duration property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Duration }
-     *     
+     *
      */
     public void setDuration(Duration value) {
         this.duration = value;

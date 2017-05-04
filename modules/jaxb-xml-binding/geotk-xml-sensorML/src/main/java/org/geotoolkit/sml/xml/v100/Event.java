@@ -41,9 +41,9 @@ import org.geotoolkit.swe.xml.v100.DataComponentPropertyType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -60,8 +60,8 @@ import org.geotoolkit.swe.xml.v100.DataComponentPropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -242,7 +242,7 @@ public class Event implements AbstractEvent {
             this.identification.add(new Identification(identification));
         }
     }
-    
+
     /**
      * Gets the value of the classification property.
      */
@@ -286,7 +286,7 @@ public class Event implements AbstractEvent {
             this.classification.add(new Classification(classification));
         }
     }
-    
+
     /**
      * Gets the value of the contact property.
     */
@@ -330,7 +330,7 @@ public class Event implements AbstractEvent {
     public void setContact(final List<Contact> contact) {
         this.contact = contact;
     }
-    
+
     /**
      * Gets the value of the documentation property.
      */
@@ -374,7 +374,7 @@ public class Event implements AbstractEvent {
     public void setDocumentation(final List<Documentation> documentation) {
         this.documentation = documentation;
     }
-    
+
     /**
      * Gets the value of the property property.
      */
@@ -405,7 +405,7 @@ public class Event implements AbstractEvent {
     public void setProperty(final List<DataComponentPropertyType> property) {
         this.property = property;
     }
-    
+
     /**
      * Gets the value of the id property.
      */

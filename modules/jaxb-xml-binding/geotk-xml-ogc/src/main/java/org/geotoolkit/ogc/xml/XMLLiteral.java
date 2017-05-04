@@ -23,10 +23,10 @@ import org.opengis.filter.expression.Literal;
  * @author Guilhem Legal (Geomatys)
  */
 public interface XMLLiteral extends Literal {
- 
+
     List<Object> getContent();
-    
+
     void setContent(final List<Object> content);
-    
+
     void setContent(final Object content);
 }

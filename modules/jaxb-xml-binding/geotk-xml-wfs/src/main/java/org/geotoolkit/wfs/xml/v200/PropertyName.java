@@ -30,9 +30,9 @@ import org.geotoolkit.wfs.xml.ResolveValueType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;simpleContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.wfs.xml.ResolveValueType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -65,9 +65,9 @@ public class PropertyName {
     private int resolveTimeout = 300;
 
     public PropertyName() {
-        
+
     }
-    
+
     public PropertyName(final PropertyName that) {
         if (that != null) {
             this.resolve        = that.resolve;
@@ -77,18 +77,18 @@ public class PropertyName {
             this.value          = that.value;
         }
     }
-    
+
     public PropertyName(final QName value) {
         this.value = value;
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getValue() {
         return value;
@@ -96,11 +96,11 @@ public class PropertyName {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setValue(QName value) {
         this.value = value;
@@ -108,11 +108,11 @@ public class PropertyName {
 
     /**
      * Gets the value of the resolvePath property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getResolvePath() {
         return resolvePath;
@@ -120,11 +120,11 @@ public class PropertyName {
 
     /**
      * Sets the value of the resolvePath property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setResolvePath(String value) {
         this.resolvePath = value;
@@ -132,11 +132,11 @@ public class PropertyName {
 
     /**
      * Gets the value of the resolve property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ResolveValueType }
-     *     
+     *
      */
     public ResolveValueType getResolve() {
         if (resolve == null) {
@@ -148,11 +148,11 @@ public class PropertyName {
 
     /**
      * Sets the value of the resolve property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ResolveValueType }
-     *     
+     *
      */
     public void setResolve(ResolveValueType value) {
         this.resolve = value;
@@ -160,11 +160,11 @@ public class PropertyName {
 
     /**
      * Gets the value of the resolveDepth property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getResolveDepth() {
         if (resolveDepth == null) {
@@ -176,11 +176,11 @@ public class PropertyName {
 
     /**
      * Sets the value of the resolveDepth property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setResolveDepth(String value) {
         this.resolveDepth = value;
@@ -188,11 +188,11 @@ public class PropertyName {
 
     /**
      * Gets the value of the resolveTimeout property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link int }
-     *     
+     *
      */
     public int getResolveTimeout() {
         return resolveTimeout;
@@ -200,11 +200,11 @@ public class PropertyName {
 
     /**
      * Sets the value of the resolveTimeout property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link int }
-     *     
+     *
      */
     public void setResolveTimeout(int value) {
         this.resolveTimeout = value;

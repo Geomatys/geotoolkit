@@ -23,18 +23,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.sld package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.sld package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  * @module
  */
 @XmlRegistry
@@ -79,14 +79,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.sld
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link ExternalGraphic }
-     * 
+     *
      */
     public ExternalGraphic createExternalGraphic() {
         return new ExternalGraphic();
@@ -94,7 +94,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UserLayer }
-     * 
+     *
      */
     public UserLayer createUserLayer() {
         return new UserLayer();
@@ -102,7 +102,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Displacement }
-     * 
+     *
      */
     public Displacement createDisplacement() {
         return new Displacement();
@@ -110,7 +110,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LayerFeatureConstraints }
-     * 
+     *
      */
     public LayerFeatureConstraints createLayerFeatureConstraints() {
         return new LayerFeatureConstraints();
@@ -118,7 +118,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GraphicStroke }
-     * 
+     *
      */
     public GraphicStroke createGraphicStroke() {
         return new GraphicStroke();
@@ -126,7 +126,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LATESTONTOP }
-     * 
+     *
      */
     public LATESTONTOP createLATESTONTOP() {
         return new LATESTONTOP();
@@ -134,7 +134,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TextSymbolizer }
-     * 
+     *
      */
     public TextSymbolizer createTextSymbolizer() {
         return new TextSymbolizer();
@@ -142,7 +142,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContrastEnhancement }
-     * 
+     *
      */
     public ContrastEnhancement createContrastEnhancement() {
         return new ContrastEnhancement();
@@ -150,7 +150,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CssParameter }
-     * 
+     *
      */
     public CssParameter createCssParameter() {
         return new CssParameter();
@@ -158,7 +158,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RasterSymbolizer }
-     * 
+     *
      */
     public RasterSymbolizer createRasterSymbolizer() {
         return new RasterSymbolizer();
@@ -166,7 +166,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ColorMap }
-     * 
+     *
      */
     public ColorMap createColorMap() {
         return new ColorMap();
@@ -174,7 +174,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Histogram }
-     * 
+     *
      */
     public Histogram createHistogram() {
         return new Histogram();
@@ -182,7 +182,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Font }
-     * 
+     *
      */
     public Font createFont() {
         return new Font();
@@ -190,7 +190,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ParameterValueType }
-     * 
+     *
      */
     public ParameterValueType createParameterValueType() {
         return new ParameterValueType();
@@ -198,7 +198,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StyledLayerDescriptor }
-     * 
+     *
      */
     public StyledLayerDescriptor createStyledLayerDescriptor() {
         return new StyledLayerDescriptor();
@@ -206,7 +206,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Rule }
-     * 
+     *
      */
     public Rule createRule() {
         return new Rule();
@@ -214,7 +214,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AVERAGE }
-     * 
+     *
      */
     public AVERAGE createAVERAGE() {
         return new AVERAGE();
@@ -222,7 +222,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NamedLayer }
-     * 
+     *
      */
     public NamedLayer createNamedLayer() {
         return new NamedLayer();
@@ -230,7 +230,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OnlineResource }
-     * 
+     *
      */
     public OnlineResource createOnlineResource() {
         return new OnlineResource();
@@ -238,7 +238,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Normalize }
-     * 
+     *
      */
     public Normalize createNormalize() {
         return new Normalize();
@@ -246,7 +246,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LinePlacement }
-     * 
+     *
      */
     public LinePlacement createLinePlacement() {
         return new LinePlacement();
@@ -254,7 +254,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EARLIESTONTOP }
-     * 
+     *
      */
     public EARLIESTONTOP createEARLIESTONTOP() {
         return new EARLIESTONTOP();
@@ -262,7 +262,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Fill }
-     * 
+     *
      */
     public Fill createFill() {
         return new Fill();
@@ -270,7 +270,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PolygonSymbolizer }
-     * 
+     *
      */
     public PolygonSymbolizer createPolygonSymbolizer() {
         return new PolygonSymbolizer();
@@ -278,7 +278,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Graphic }
-     * 
+     *
      */
     public Graphic createGraphic() {
         return new Graphic();
@@ -286,7 +286,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Extent }
-     * 
+     *
      */
     public Extent createExtent() {
         return new Extent();
@@ -294,7 +294,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LineSymbolizer }
-     * 
+     *
      */
     public LineSymbolizer createLineSymbolizer() {
         return new LineSymbolizer();
@@ -302,7 +302,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ElseFilter }
-     * 
+     *
      */
     public ElseFilter createElseFilter() {
         return new ElseFilter();
@@ -310,7 +310,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PointPlacement }
-     * 
+     *
      */
     public PointPlacement createPointPlacement() {
         return new PointPlacement();
@@ -318,7 +318,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OverlapBehavior }
-     * 
+     *
      */
     public OverlapBehavior createOverlapBehavior() {
         return new OverlapBehavior();
@@ -326,7 +326,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RANDOM }
-     * 
+     *
      */
     public RANDOM createRANDOM() {
         return new RANDOM();
@@ -334,7 +334,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LabelPlacement }
-     * 
+     *
      */
     public LabelPlacement createLabelPlacement() {
         return new LabelPlacement();
@@ -342,7 +342,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AnchorPoint }
-     * 
+     *
      */
     public AnchorPoint createAnchorPoint() {
         return new AnchorPoint();
@@ -350,7 +350,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RemoteOWS }
-     * 
+     *
      */
     public RemoteOWS createRemoteOWS() {
         return new RemoteOWS();
@@ -358,7 +358,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mark }
-     * 
+     *
      */
     public Mark createMark() {
         return new Mark();
@@ -366,7 +366,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NamedStyle }
-     * 
+     *
      */
     public NamedStyle createNamedStyle() {
         return new NamedStyle();
@@ -374,7 +374,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PointSymbolizer }
-     * 
+     *
      */
     public PointSymbolizer createPointSymbolizer() {
         return new PointSymbolizer();
@@ -382,7 +382,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ColorMapEntry }
-     * 
+     *
      */
     public ColorMapEntry createColorMapEntry() {
         return new ColorMapEntry();
@@ -390,7 +390,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ImageOutline }
-     * 
+     *
      */
     public ImageOutline createImageOutline() {
         return new ImageOutline();
@@ -398,7 +398,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ChannelSelection }
-     * 
+     *
      */
     public ChannelSelection createChannelSelection() {
         return new ChannelSelection();
@@ -406,7 +406,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LegendGraphic }
-     * 
+     *
      */
     public LegendGraphic createLegendGraphic() {
         return new LegendGraphic();
@@ -414,7 +414,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Halo }
-     * 
+     *
      */
     public Halo createHalo() {
         return new Halo();
@@ -422,7 +422,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeatureTypeStyle }
-     * 
+     *
      */
     public FeatureTypeStyle createFeatureTypeStyle() {
         return new FeatureTypeStyle();
@@ -430,7 +430,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Geometry }
-     * 
+     *
      */
     public Geometry createGeometry() {
         return new Geometry();
@@ -438,7 +438,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeatureTypeConstraint }
-     * 
+     *
      */
     public FeatureTypeConstraint createFeatureTypeConstraint() {
         return new FeatureTypeConstraint();
@@ -446,7 +446,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SelectedChannelType }
-     * 
+     *
      */
     public SelectedChannelType createSelectedChannelType() {
         return new SelectedChannelType();
@@ -454,7 +454,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Stroke }
-     * 
+     *
      */
     public Stroke createStroke() {
         return new Stroke();
@@ -462,7 +462,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GraphicFill }
-     * 
+     *
      */
     public GraphicFill createGraphicFill() {
         return new GraphicFill();
@@ -470,7 +470,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ShadedRelief }
-     * 
+     *
      */
     public ShadedRelief createShadedRelief() {
         return new ShadedRelief();
@@ -478,7 +478,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UserStyle }
-     * 
+     *
      */
     public UserStyle createUserStyle() {
         return new UserStyle();
@@ -486,7 +486,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ParameterValueType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "PerpendicularOffset")
     public JAXBElement<ParameterValueType> createPerpendicularOffset(final ParameterValueType value) {
@@ -495,7 +495,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Double }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "MaxScaleDenominator")
     public JAXBElement<Double> createMaxScaleDenominator(final Double value) {
@@ -504,7 +504,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Double }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "ReliefFactor")
     public JAXBElement<Double> createReliefFactor(final Double value) {
@@ -513,7 +513,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ParameterValueType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Label")
     public JAXBElement<ParameterValueType> createLabel(final ParameterValueType value) {
@@ -522,7 +522,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Abstract")
     public JAXBElement<String> createAbstract(final String value) {
@@ -531,7 +531,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Name")
     public JAXBElement<String> createName(final String value) {
@@ -540,7 +540,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SelectedChannelType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "GreenChannel")
     public JAXBElement<SelectedChannelType> createGreenChannel(final SelectedChannelType value) {
@@ -549,7 +549,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ParameterValueType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Radius")
     public JAXBElement<ParameterValueType> createRadius(final ParameterValueType value) {
@@ -558,7 +558,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Double }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "MinScaleDenominator")
     public JAXBElement<Double> createMinScaleDenominator(final Double value) {
@@ -567,7 +567,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Title")
     public JAXBElement<String> createTitle(final String value) {
@@ -576,7 +576,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RasterSymbolizer }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "RasterSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/sld", substitutionHeadName = "Symbolizer")
     public JAXBElement<RasterSymbolizer> createRasterSymbolizer(final RasterSymbolizer value) {
@@ -585,7 +585,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Boolean }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "BrightnessOnly")
     public JAXBElement<Boolean> createBrightnessOnly(final Boolean value) {
@@ -594,7 +594,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SymbolizerType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Symbolizer")
     public JAXBElement<SymbolizerType> createSymbolizer(final SymbolizerType value) {
@@ -603,7 +603,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ParameterValueType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Size")
     public JAXBElement<ParameterValueType> createSize(final ParameterValueType value) {
@@ -612,7 +612,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "FeatureTypeName")
     public JAXBElement<String> createFeatureTypeName(final String value) {
@@ -621,7 +621,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "SemanticTypeIdentifier")
     public JAXBElement<String> createSemanticTypeIdentifier(final String value) {
@@ -630,7 +630,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "SourceChannelName")
     public JAXBElement<String> createSourceChannelName(final String value) {
@@ -639,7 +639,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PointSymbolizer }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "PointSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/sld", substitutionHeadName = "Symbolizer")
     public JAXBElement<PointSymbolizer> createPointSymbolizer(final PointSymbolizer value) {
@@ -648,7 +648,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ParameterValueType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "DisplacementY")
     public JAXBElement<ParameterValueType> createDisplacementY(final ParameterValueType value) {
@@ -657,7 +657,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ParameterValueType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "DisplacementX")
     public JAXBElement<ParameterValueType> createDisplacementX(final ParameterValueType value) {
@@ -666,7 +666,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PolygonSymbolizer }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "PolygonSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/sld", substitutionHeadName = "Symbolizer")
     public JAXBElement<PolygonSymbolizer> createPolygonSymbolizer(final PolygonSymbolizer value) {
@@ -675,7 +675,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Double }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "GammaValue")
     public JAXBElement<Double> createGammaValue(final Double value) {
@@ -684,7 +684,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "WellKnownName")
     public JAXBElement<String> createWellKnownName(final String value) {
@@ -693,7 +693,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SelectedChannelType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "BlueChannel")
     public JAXBElement<SelectedChannelType> createBlueChannel(final SelectedChannelType value) {
@@ -702,7 +702,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LineSymbolizer }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "LineSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/sld", substitutionHeadName = "Symbolizer")
     public JAXBElement<LineSymbolizer> createLineSymbolizer(final LineSymbolizer value) {
@@ -711,7 +711,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Service")
     public JAXBElement<String> createService(final String value) {
@@ -720,7 +720,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Format")
     public JAXBElement<String> createFormat(final String value) {
@@ -729,7 +729,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Boolean }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "IsDefault")
     public JAXBElement<Boolean> createIsDefault(final Boolean value) {
@@ -738,7 +738,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TextSymbolizer }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "TextSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/sld", substitutionHeadName = "Symbolizer")
     public JAXBElement<TextSymbolizer> createTextSymbolizer(final TextSymbolizer value) {
@@ -747,7 +747,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ParameterValueType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "AnchorPointY")
     public JAXBElement<ParameterValueType> createAnchorPointY(final ParameterValueType value) {
@@ -756,7 +756,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ParameterValueType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Rotation")
     public JAXBElement<ParameterValueType> createRotation(final ParameterValueType value) {
@@ -765,7 +765,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ParameterValueType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "AnchorPointX")
     public JAXBElement<ParameterValueType> createAnchorPointX(final ParameterValueType value) {
@@ -774,7 +774,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SelectedChannelType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "RedChannel")
     public JAXBElement<SelectedChannelType> createRedChannel(final SelectedChannelType value) {
@@ -783,7 +783,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ParameterValueType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Opacity")
     public JAXBElement<ParameterValueType> createOpacity(final ParameterValueType value) {
@@ -792,7 +792,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SelectedChannelType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "GrayChannel")
     public JAXBElement<SelectedChannelType> createGrayChannel(final SelectedChannelType value) {
@@ -801,7 +801,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Value")
     public JAXBElement<String> createValue(final String value) {

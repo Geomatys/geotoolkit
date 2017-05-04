@@ -32,12 +32,12 @@ import org.geotoolkit.ows.xml.v110.MetadataType;
 
 
 /**
- * This type is largely a subset of the ows:DomainType as needed for a range field axis. 
- * 
+ * This type is largely a subset of the ows:DomainType as needed for a range field axis.
+ *
  * <p>Java class for AxisType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AxisType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.ows.xml.v110.MetadataType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -90,7 +90,7 @@ public class AxisType extends DescriptionType {
     AxisType() {
         super();
     }
-    
+
     /**
      * Build a new Axis
      */
@@ -106,7 +106,7 @@ public class AxisType extends DescriptionType {
         this.referenceSystem = referenceSystem;
         this.uom             = uom;
     }
-    
+
     /**
      * Gets the value of the availableKeys property.
      */
@@ -115,30 +115,30 @@ public class AxisType extends DescriptionType {
     }
 
     /**
-     * Meaning metadata, which should be referenced for this axis. 
+     * Meaning metadata, which should be referenced for this axis.
      */
     public DomainMetadataType getMeaning() {
         return meaning;
     }
 
     /**
-     * Data type metadata, which may be referenced for this axis. 
+     * Data type metadata, which may be referenced for this axis.
      */
     public DomainMetadataType getDataType() {
         return dataType;
     }
 
-   
+
     /**
-     * Identifier of unit of measure of this set of values. Should be included then this set of values has units (and not a more complete reference system). 
+     * Identifier of unit of measure of this set of values. Should be included then this set of values has units (and not a more complete reference system).
      */
     public DomainMetadataType getUOM() {
         return uom;
     }
 
     /**
-     * Identifier of reference system used by this set of values. Should be included then this set of values has a reference system (not just units). 
-     * 
+     * Identifier of reference system used by this set of values. Should be included then this set of values has a reference system (not just units).
+     *
      */
     public DomainMetadataType getReferenceSystem() {
         return referenceSystem;

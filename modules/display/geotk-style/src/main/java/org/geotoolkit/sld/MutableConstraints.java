@@ -21,21 +21,21 @@ import org.opengis.sld.Constraint;
 import org.opengis.sld.Constraints;
 
 /**
- * Super class for mutable constraints : MutableLayerFeatureConstraints and 
+ * Super class for mutable constraints : MutableLayerFeatureConstraints and
  * MutableLayerCoverageConstraints
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public interface MutableConstraints extends Constraints{
 
-    
+
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
-    
+
     void addListener(CollectionChangeListener<? extends Constraint> listener);
-    
+
     void removeListener(CollectionChangeListener<? extends Constraint> listener);
-    
+
 }

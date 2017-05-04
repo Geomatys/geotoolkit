@@ -26,12 +26,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * List of the Inputs provided as part of the Execute Request. 
- * 
+ * List of the Inputs provided as part of the Execute Request.
+ *
  * <p>Java class for DataInputsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataInputsType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,23 +55,23 @@ public class DataInputsType {
 
     @XmlElement(name = "Input", required = true)
     protected List<InputType> input;
-    
+
     public DataInputsType() {
-        
+
     }
-    
+
     public DataInputsType(List<InputType> input) {
         this.input = input;
     }
 
     /**
      * Gets the value of the input property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link InputType }
-     * 
-     * 
-     * @return 
+     *
+     *
+     * @return
      */
     public List<InputType> getInput() {
         if (input == null) {
@@ -79,7 +79,7 @@ public class DataInputsType {
         }
         return this.input;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[DataInputsType]\n");

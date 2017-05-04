@@ -31,11 +31,11 @@ import org.geotoolkit.internal.sql.table.Entry;
 /**
  * A pattern or base for derived types used to specify complex types corresponding to a UML aggregation association.
  * An instance of this type serves as a pointer to a remote Object.
- * 
+ *
  * <p>Java class for ReferenceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ReferenceType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.internal.sql.table.Entry;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -98,7 +98,7 @@ public class ReferenceType implements Reference, Entry {
         this.id   = id;
         this.href = href;
     }
-    
+
     public ReferenceType(final Reference r) {
         if (r != null) {
             this.href         = r.getHref();
@@ -135,11 +135,11 @@ public class ReferenceType implements Reference, Entry {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getRemoteSchema() {
@@ -148,11 +148,11 @@ public class ReferenceType implements Reference, Entry {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -160,11 +160,11 @@ public class ReferenceType implements Reference, Entry {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getType() {
@@ -177,11 +177,11 @@ public class ReferenceType implements Reference, Entry {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -189,11 +189,11 @@ public class ReferenceType implements Reference, Entry {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getHref() {
@@ -202,11 +202,11 @@ public class ReferenceType implements Reference, Entry {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -214,11 +214,11 @@ public class ReferenceType implements Reference, Entry {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getRole() {
@@ -227,11 +227,11 @@ public class ReferenceType implements Reference, Entry {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -239,11 +239,11 @@ public class ReferenceType implements Reference, Entry {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getArcrole() {
@@ -252,11 +252,11 @@ public class ReferenceType implements Reference, Entry {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -264,11 +264,11 @@ public class ReferenceType implements Reference, Entry {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getTitle() {
@@ -277,11 +277,11 @@ public class ReferenceType implements Reference, Entry {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -289,11 +289,11 @@ public class ReferenceType implements Reference, Entry {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getShow() {
@@ -302,11 +302,11 @@ public class ReferenceType implements Reference, Entry {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -314,11 +314,11 @@ public class ReferenceType implements Reference, Entry {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getActuate() {
@@ -327,11 +327,11 @@ public class ReferenceType implements Reference, Entry {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;

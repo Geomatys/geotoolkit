@@ -23,11 +23,11 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * Extract all geometry points.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class AllPointsFunction extends AbstractFunction {
-    
+
     public AllPointsFunction(final Expression expr1) {
         super(GeometryFunctionFactory.ALLPOINTS, new Expression[] {expr1}, null);
     }
@@ -41,7 +41,7 @@ public class AllPointsFunction extends AbstractFunction {
         } catch (Exception e){
             throw new IllegalArgumentException("Invalid function parameter."+parameters.get(0));
         }
-        
+
         if(geom==null) return null;
         final Geometry pt = getPoints(geom);
         if(pt==null) return null;
@@ -49,7 +49,7 @@ public class AllPointsFunction extends AbstractFunction {
         pt.setUserData(geom.getUserData());
         return pt;
     }
-    
+
     private static Geometry getPoints(Geometry geom){
         final Coordinate[] coordinates = geom.getCoordinates();
         if(coordinates.length==1){
@@ -58,5 +58,5 @@ public class AllPointsFunction extends AbstractFunction {
             return geom.getFactory().createMultiPoint(coordinates);
         }
     }
-    
+
 }

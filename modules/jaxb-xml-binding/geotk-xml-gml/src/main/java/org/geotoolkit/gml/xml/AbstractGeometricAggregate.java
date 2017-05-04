@@ -18,8 +18,8 @@ package org.geotoolkit.gml.xml;
 
 /**
  *
- * @author Guilhem Legal (Geomatys) 
+ * @author Guilhem Legal (Geomatys)
  */
 public interface AbstractGeometricAggregate extends AbstractGeometry {
-    
+
 }

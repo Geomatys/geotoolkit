@@ -105,7 +105,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * @throws XMLStreamException
      */
     @Override
-    public void setInput(Object input) 
+    public void setInput(Object input)
             throws IOException, XMLStreamException {
         super.setInput(input);
     }
@@ -117,7 +117,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * @throws KmlException
      * @throws URISyntaxException
      */
-    private AnimatedUpdate readAnimatedUpdate() 
+    private AnimatedUpdate readAnimatedUpdate()
             throws XMLStreamException, KmlException, URISyntaxException {
 
         // AbstractObject
@@ -168,7 +168,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * @throws KmlException
      * @throws URISyntaxException
      */
-    public Feature readTour() 
+    public Feature readTour()
             throws XMLStreamException, KmlException, URISyntaxException {
 
         // AbstractObject
@@ -282,7 +282,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * @throws KmlException
      * @throws URISyntaxException
      */
-    private PlayList readPlayList() 
+    private PlayList readPlayList()
             throws XMLStreamException, KmlException, URISyntaxException{
 
         // AbstractObject
@@ -352,7 +352,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * @throws KmlException
      * @throws URISyntaxException
      */
-    private FlyTo readFlyTo() 
+    private FlyTo readFlyTo()
             throws XMLStreamException, KmlException, URISyntaxException{
 
         // AbstractObject
@@ -379,7 +379,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                         } else if (TAG_FLY_TO_MODE.equals(eName)) {
                             flyToMode = EnumFlyToMode.transform(reader.getElementText());
                         }
-                    } 
+                    }
                     // KML
                     else if (this.kmlReader.getVersionUri().equals(eUri)) {
                         if (isAbstractView(eName)) {
@@ -405,9 +405,9 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * @return
      * @throws XMLStreamException
      */
-    private TourControl readTourControl() 
+    private TourControl readTourControl()
             throws XMLStreamException{
-        
+
         // AbstractObject
         List<SimpleTypeContainer> objectSimpleExtensions = null;
         IdAttributes idAttributes = kmlReader.readIdAttributes();
@@ -447,7 +447,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * @return
      * @throws XMLStreamException
      */
-    private Wait readWait() 
+    private Wait readWait()
             throws XMLStreamException{
 
         // AbstractObject
@@ -489,9 +489,9 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * @return
      * @throws XMLStreamException
      */
-    private SoundCue readSoundCue() 
+    private SoundCue readSoundCue()
             throws XMLStreamException{
-        
+
         // AbstractObject
         List<SimpleTypeContainer> objectSimpleExtensions = null;
         IdAttributes idAttributes = kmlReader.readIdAttributes();
@@ -526,7 +526,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                 objectSimpleExtensions, idAttributes, href);
     }
 
-    public LatLonQuad readLatLonQuad() 
+    public LatLonQuad readLatLonQuad()
             throws XMLStreamException{
 
         // AbstractObject
@@ -563,9 +563,9 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                 objectSimpleExtensions, idAttributes, coordinates);
     }
 
-    public TimeSpan readTimeSpan() 
+    public TimeSpan readTimeSpan()
             throws XMLStreamException{
-        
+
         // AbstractObject
         List<SimpleTypeContainer> objectSimpleExtensions = null;
         IdAttributes idAttributes = kmlReader.readIdAttributes();
@@ -612,13 +612,13 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      */
-    public TimeStamp readTimeStamp() 
+    public TimeStamp readTimeStamp()
             throws XMLStreamException {
-        
+
         // AbstractObject
         List<SimpleTypeContainer> objectSimpleExtensions = null;
         IdAttributes idAttributes = kmlReader.readIdAttributes();
@@ -648,7 +648,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_TIME_STAMP.equals(reader.getLocalName()) 
+                    if (TAG_TIME_STAMP.equals(reader.getLocalName())
                             && URI_GX.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
@@ -668,9 +668,9 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * @throws KmlException
      * @throws URISyntaxException
      */
-    public Track readTrack() 
+    public Track readTrack()
             throws XMLStreamException, KmlException, URISyntaxException{
-        
+
         AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
         List<Calendar> whens = new ArrayList<Calendar>();
         List<Coordinate> coordinates = new ArrayList<Coordinate>();
@@ -765,7 +765,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      */
@@ -786,7 +786,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * @return
      * @throws XMLStreamException
      */
-    private Coordinate readCoord() 
+    private Coordinate readCoord()
             throws XMLStreamException{
 
         return GX_FACTORY.createCoordinate(reader.getElementText());
@@ -797,7 +797,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * @return
      * @throws XMLStreamException
      */
-    public AltitudeMode readAltitudeMode() 
+    public AltitudeMode readAltitudeMode()
             throws XMLStreamException{
 
         return EnumAltitudeMode.transform(reader.getElementText());
@@ -808,14 +808,14 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * @return
      * @throws XMLStreamException
      */
-    public boolean readBalloonVisibility() 
+    public boolean readBalloonVisibility()
             throws XMLStreamException {
 
         return parseBoolean(reader.getElementText());
     }
 
     /**
-     * 
+     *
      * @param eName
      * @return
      */
@@ -838,7 +838,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * {@inheritDoc }
      */
     @Override
-    public boolean canHandleComplexExtension(String containingUri, 
+    public boolean canHandleComplexExtension(String containingUri,
             String containingTag, String contentsUri, String contentsTag) {
 
         try {

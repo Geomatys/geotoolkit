@@ -32,9 +32,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -82,7 +82,7 @@ public class Subscription extends RegistryObjectType {
         }
         return this.action;
     }
-    
+
     /**
      * Sets the value of the action property.
      */
@@ -92,7 +92,7 @@ public class Subscription extends RegistryObjectType {
         }
         this.action.add(action);
     }
-    
+
     /**
      * Sets the value of the action property.
      */
@@ -116,7 +116,7 @@ public class Subscription extends RegistryObjectType {
 
     /**
      * Gets the value of the startDate property.
-     * 
+     *
      */
     public XMLGregorianCalendar getStartDate() {
         return startDate;
@@ -145,7 +145,7 @@ public class Subscription extends RegistryObjectType {
 
     /**
      * Gets the value of the notificationInterval property.
-     *     
+     *
      */
     public Duration getNotificationInterval() {
         return notificationInterval;
@@ -153,7 +153,7 @@ public class Subscription extends RegistryObjectType {
 
     /**
      * Sets the value of the notificationInterval property.
-     *     
+     *
      */
     public void setNotificationInterval(final Duration value) {
         this.notificationInterval = value;

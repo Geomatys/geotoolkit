@@ -31,7 +31,7 @@ import org.geotoolkit.wms.xml.v111.BoundingBox;
 
 
 /**
- * 
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -51,7 +51,7 @@ public class TileSet {
     private String srs;
     @XmlElement(name = "BoundingBox")
     private BoundingBox boundingBox;
-    
+
     @XmlList
     @XmlElement(name = "Resolutions", required = true)
     private List<Double> resolutions;
@@ -67,9 +67,9 @@ public class TileSet {
     private List<String> styles;
 
     public TileSet() {
-        
+
     }
-    
+
     public TileSet(String srs, BoundingBox boundingBox, List<Double> resolutions, Integer width, Integer height, String format, List<String> layers) {
         this.boundingBox = boundingBox;
         this.format = format;
@@ -79,14 +79,14 @@ public class TileSet {
         this.srs = srs;
         this.width = width;
     }
-    
+
     /**
      * Gets the value of the srs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SRS }
-     *     
+     *
      */
     public String getSRS() {
         return srs;
@@ -94,11 +94,11 @@ public class TileSet {
 
     /**
      * Sets the value of the srs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SRS }
-     *     
+     *
      */
     public void setSRS(String value) {
         this.srs = value;
@@ -106,11 +106,11 @@ public class TileSet {
 
     /**
      * Gets the value of the boundingBox property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BoundingBox }
-     *     
+     *
      */
     public BoundingBox getBoundingBox() {
         return boundingBox;
@@ -118,11 +118,11 @@ public class TileSet {
 
     /**
      * Sets the value of the boundingBox property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BoundingBox }
-     *     
+     *
      */
     public void setBoundingBox(BoundingBox value) {
         this.boundingBox = value;
@@ -130,11 +130,11 @@ public class TileSet {
 
     /**
      * Gets the value of the resolutions property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public List<Double> getResolutions() {
         return resolutions;
@@ -142,11 +142,11 @@ public class TileSet {
 
     /**
      * Sets the value of the resolutions property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setResolutions(List<Double> value) {
         this.resolutions = value;
@@ -154,11 +154,11 @@ public class TileSet {
 
     /**
      * Gets the value of the width property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public Integer getWidth() {
         return width;
@@ -166,11 +166,11 @@ public class TileSet {
 
     /**
      * Sets the value of the width property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setWidth(Integer value) {
         this.width = value;
@@ -178,11 +178,11 @@ public class TileSet {
 
     /**
      * Gets the value of the height property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public Integer getHeight() {
         return height;
@@ -190,11 +190,11 @@ public class TileSet {
 
     /**
      * Sets the value of the height property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHeight(Integer value) {
         this.height = value;
@@ -202,11 +202,11 @@ public class TileSet {
 
     /**
      * Gets the value of the format property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Format }
-     *     
+     *
      */
     public String getFormat() {
         return format;
@@ -214,11 +214,11 @@ public class TileSet {
 
     /**
      * Sets the value of the format property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Format }
-     *     
+     *
      */
     public void setFormat(String value) {
         this.format = value;
@@ -236,7 +236,7 @@ public class TileSet {
 
     /**
      * Gets the value of the styles property.
-     * 
+     *
      */
     public List<String> getStyles() {
         if (styles == null) {
@@ -280,7 +280,7 @@ public class TileSet {
         hash = 79 * hash + (this.styles != null ? this.styles.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder("[TileSet]\n");

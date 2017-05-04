@@ -30,7 +30,7 @@ import org.geotoolkit.image.iterator.PixelIterator;
 public class NeighborInterpolation extends Interpolation {
     final int maxxId;
     final int maxyId;
-    
+
     /**
      * Create a NeighBor Interpolator.
      *
@@ -54,12 +54,12 @@ public class NeighborInterpolation extends Interpolation {
 
     /**
      * Return nearest pixel value.
-     * 
+     *
      * {@inheritDoc }
      */
     @Override
     public double interpolate(double x, double y, int band) {
-//        if (x < bminX || x > bmaxX || y < bminY || y > bmaxY) return fillValue[band];//-- no interpolation available 
+//        if (x < bminX || x > bmaxX || y < bminY || y > bmaxY) return fillValue[band];//-- no interpolation available
         x = Math.round(x);
         y = Math.round(y);
         pixelIterator.moveTo((int) Math.min(maxxId, x), (int) Math.min(maxyId, y), band);
@@ -71,7 +71,7 @@ public class NeighborInterpolation extends Interpolation {
      */
     @Override
     public double[] interpolate(double x, double y) {
-//        if (x < bminX || x > bmaxX || y < bminY || y > bmaxY) return fillValue;//-- no interpolation available 
+//        if (x < bminX || x > bmaxX || y < bminY || y > bmaxY) return fillValue;//-- no interpolation available
         x = Math.round(x);
         y = Math.round(y);
         pixelIterator.moveTo((int) Math.min(maxxId, x), (int) Math.min(maxyId, y), 0);

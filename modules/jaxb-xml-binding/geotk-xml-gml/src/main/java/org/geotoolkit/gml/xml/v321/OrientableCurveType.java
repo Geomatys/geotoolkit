@@ -28,9 +28,9 @@ import org.geotoolkit.gml.xml.OrientableCurve;
 
 /**
  * <p>Java class for OrientableCurveType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OrientableCurveType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.gml.xml.OrientableCurve;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OrientableCurveType", propOrder = {
@@ -60,11 +60,11 @@ public class OrientableCurveType extends AbstractCurveType implements Orientable
 
     /**
      * Gets the value of the baseCurve property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurvePropertyType }
-     *     
+     *
      */
     public CurvePropertyType getBaseCurve() {
         return baseCurve;
@@ -72,11 +72,11 @@ public class OrientableCurveType extends AbstractCurveType implements Orientable
 
     /**
      * Sets the value of the baseCurve property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurvePropertyType }
-     *     
+     *
      */
     public void setBaseCurve(CurvePropertyType value) {
         this.baseCurve = value;
@@ -84,11 +84,11 @@ public class OrientableCurveType extends AbstractCurveType implements Orientable
 
     /**
      * Gets the value of the orientation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOrientation() {
         if (orientation == null) {
@@ -100,11 +100,11 @@ public class OrientableCurveType extends AbstractCurveType implements Orientable
 
     /**
      * Sets the value of the orientation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOrientation(String value) {
         this.orientation = value;

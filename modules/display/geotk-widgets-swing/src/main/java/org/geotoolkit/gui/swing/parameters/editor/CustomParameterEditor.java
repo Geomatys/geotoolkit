@@ -20,15 +20,15 @@ import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.opengis.parameter.ParameterValue;
 
 /**
- * 
+ *
  * @author Quentin Boileau (Geomatys)
  */
 public interface CustomParameterEditor {
-    
+
     /**
      * Return the custom {@link PropertyValueEditor} for the specified
      * {@link ParameterValue}.
-     * 
+     *
      * @param parameter {@link ParameterValue}
      * @return editor or null.
      */

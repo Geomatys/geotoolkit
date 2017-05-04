@@ -31,12 +31,12 @@ import org.geotoolkit.gml.xml.v311.MultiSurfacePropertyType;
  * Type describing transportation complexes, which are aggregated features, e.g. roads, which consist
  *                 of parts (traffic areas, e.g. pedestrian path, and auxiliary traffic areas). As subclass of _CityObject, a
  *                 TransportationComplex inherits all attributes and relations, in particular an id, names, external references, and
- *                 generalization relations. 
- * 
+ *                 generalization relations.
+ *
  * <p>Java class for TransportationComplexType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TransportationComplexType">
  *   &lt;complexContent>
@@ -57,8 +57,8 @@ import org.geotoolkit.gml.xml.v311.MultiSurfacePropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -98,25 +98,25 @@ public class TransportationComplexType
 
     /**
      * Gets the value of the function property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the function property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFunction().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getFunction() {
         if (function == null) {
@@ -127,25 +127,25 @@ public class TransportationComplexType
 
     /**
      * Gets the value of the usage property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the usage property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getUsage().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getUsage() {
         if (usage == null) {
@@ -156,25 +156,25 @@ public class TransportationComplexType
 
     /**
      * Gets the value of the trafficArea property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the trafficArea property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTrafficArea().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TrafficAreaPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<TrafficAreaPropertyType> getTrafficArea() {
         if (trafficArea == null) {
@@ -185,25 +185,25 @@ public class TransportationComplexType
 
     /**
      * Gets the value of the auxiliaryTrafficArea property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the auxiliaryTrafficArea property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAuxiliaryTrafficArea().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AuxiliaryTrafficAreaPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<AuxiliaryTrafficAreaPropertyType> getAuxiliaryTrafficArea() {
         if (auxiliaryTrafficArea == null) {
@@ -214,25 +214,25 @@ public class TransportationComplexType
 
     /**
      * Gets the value of the lod0Network property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the lod0Network property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLod0Network().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link GeometricComplexPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<GeometricComplexPropertyType> getLod0Network() {
         if (lod0Network == null) {
@@ -243,11 +243,11 @@ public class TransportationComplexType
 
     /**
      * Gets the value of the lod1MultiSurface property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public MultiSurfacePropertyType getLod1MultiSurface() {
         return lod1MultiSurface;
@@ -255,11 +255,11 @@ public class TransportationComplexType
 
     /**
      * Sets the value of the lod1MultiSurface property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public void setLod1MultiSurface(final MultiSurfacePropertyType value) {
         this.lod1MultiSurface = value;
@@ -267,11 +267,11 @@ public class TransportationComplexType
 
     /**
      * Gets the value of the lod2MultiSurface property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public MultiSurfacePropertyType getLod2MultiSurface() {
         return lod2MultiSurface;
@@ -279,11 +279,11 @@ public class TransportationComplexType
 
     /**
      * Sets the value of the lod2MultiSurface property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public void setLod2MultiSurface(final MultiSurfacePropertyType value) {
         this.lod2MultiSurface = value;
@@ -291,11 +291,11 @@ public class TransportationComplexType
 
     /**
      * Gets the value of the lod3MultiSurface property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public MultiSurfacePropertyType getLod3MultiSurface() {
         return lod3MultiSurface;
@@ -303,11 +303,11 @@ public class TransportationComplexType
 
     /**
      * Sets the value of the lod3MultiSurface property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public void setLod3MultiSurface(final MultiSurfacePropertyType value) {
         this.lod3MultiSurface = value;
@@ -315,11 +315,11 @@ public class TransportationComplexType
 
     /**
      * Gets the value of the lod4MultiSurface property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public MultiSurfacePropertyType getLod4MultiSurface() {
         return lod4MultiSurface;
@@ -327,11 +327,11 @@ public class TransportationComplexType
 
     /**
      * Sets the value of the lod4MultiSurface property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public void setLod4MultiSurface(final MultiSurfacePropertyType value) {
         this.lod4MultiSurface = value;
@@ -339,25 +339,25 @@ public class TransportationComplexType
 
     /**
      * Gets the value of the genericApplicationPropertyOfTransportationComplex property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the genericApplicationPropertyOfTransportationComplex property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getGenericApplicationPropertyOfTransportationComplex().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getGenericApplicationPropertyOfTransportationComplex() {
         if (genericApplicationPropertyOfTransportationComplex == null) {

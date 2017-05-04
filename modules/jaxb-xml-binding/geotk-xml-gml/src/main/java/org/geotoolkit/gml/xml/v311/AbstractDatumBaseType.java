@@ -27,12 +27,12 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * Basic encoding for datum objects, simplifying and restricting the DefinitionType as needed. 
- * 
+ * Basic encoding for datum objects, simplifying and restricting the DefinitionType as needed.
+ *
  * <p>Java class for AbstractDatumBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractDatumBaseType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

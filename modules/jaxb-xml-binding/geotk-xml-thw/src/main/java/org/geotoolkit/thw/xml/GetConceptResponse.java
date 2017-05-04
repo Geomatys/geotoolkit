@@ -26,9 +26,9 @@ import org.geotoolkit.skos.xml.Concept;
 
 /**
  * <p>Java class for getConceptResponse complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="getConceptResponse">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import org.geotoolkit.skos.xml.Concept;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getConceptResponse", propOrder = {
@@ -60,14 +60,14 @@ public class GetConceptResponse {
     public GetConceptResponse(Concept response) {
         this.response = response;
     }
-    
+
     /**
      * Gets the value of the return property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Concept }
-     *     
+     *
      */
     public Concept getReturn() {
         return response;
@@ -75,11 +75,11 @@ public class GetConceptResponse {
 
     /**
      * Sets the value of the return property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Concept }
-     *     
+     *
      */
     public void setReturn(Concept value) {
         this.response = value;

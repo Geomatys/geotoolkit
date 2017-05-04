@@ -25,5 +25,5 @@ package org.apache.sis.internal.feature;
 public interface BiFunction<T, U, R> {
 
     R apply(T t, U u);
-    
+
 }

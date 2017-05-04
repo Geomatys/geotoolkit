@@ -38,12 +38,12 @@ public class FXTextSymbolizer extends FXStyleElementController<TextSymbolizer>{
 
     @FXML protected Label uiHaloTitle;
     @FXML private FXSymbolizerInfo uiInfo;
-    @FXML protected FXTextExpression uiText;    
-    @FXML protected FXFont uiFont;    
-    @FXML protected FXFill uiFill;    
+    @FXML protected FXTextExpression uiText;
+    @FXML protected FXFont uiFont;
+    @FXML protected FXFill uiFill;
     @FXML protected FXHalo uiHalo;
     @FXML protected FXLabelPlacement uiPlacement;
-        
+
     @Override
     public Class<TextSymbolizer> getEditedClass() {
         return TextSymbolizer.class;
@@ -59,10 +59,10 @@ public class FXTextSymbolizer extends FXStyleElementController<TextSymbolizer>{
                 DEFAULT_POINTPLACEMENT,
                 null);
     }
-    
+
     @Override
     public void initialize() {
-        super.initialize();        
+        super.initialize();
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             final String name = uiInfo.getName();
@@ -72,13 +72,13 @@ public class FXTextSymbolizer extends FXStyleElementController<TextSymbolizer>{
             value.set(getStyleFactory().textSymbolizer(
                     name,geom,desc,uom,
                     uiText.valueProperty().get(),
-                    uiFont.valueProperty().get(), 
+                    uiFont.valueProperty().get(),
                     uiPlacement.valueProperty().get(),
                     uiHalo.valueProperty().get(),
                     uiFill.valueProperty().get()
                     ));
         };
-        
+
         uiFill.valueProperty().addListener(changeListener);
         uiFont.valueProperty().addListener(changeListener);
         uiHalo.valueProperty().addListener(changeListener);
@@ -89,7 +89,7 @@ public class FXTextSymbolizer extends FXStyleElementController<TextSymbolizer>{
         FXStyleElementController.configureAdvancedProperty(
                 uiHalo,uiHaloTitle);
     }
-    
+
     @Override
     public void setLayer(MapLayer layer) {
         super.setLayer(layer);
@@ -100,7 +100,7 @@ public class FXTextSymbolizer extends FXStyleElementController<TextSymbolizer>{
         uiInfo.setLayer(layer);
         uiPlacement.setLayer(layer);
     }
-    
+
     @Override
     protected void updateEditor(TextSymbolizer styleElement) {
         uiFill.valueProperty().setValue(styleElement.getFill());
@@ -110,5 +110,5 @@ public class FXTextSymbolizer extends FXStyleElementController<TextSymbolizer>{
         uiInfo.parse(styleElement);
         uiPlacement.valueProperty().setValue(styleElement.getLabelPlacement());
     }
-    
+
 }

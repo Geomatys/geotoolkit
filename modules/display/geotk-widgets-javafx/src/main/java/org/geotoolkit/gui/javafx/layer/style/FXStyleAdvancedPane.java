@@ -28,7 +28,7 @@ import org.geotoolkit.style.MutableStyle;
  * @author Johann Sorel (Geomatys)
  */
 public class FXStyleAdvancedPane extends FXLayerStylePane {
-    
+
     private final FXUserStyle pane = new FXUserStyle();
 
     public FXStyleAdvancedPane() {
@@ -39,20 +39,20 @@ public class FXStyleAdvancedPane extends FXLayerStylePane {
     public String getTitle() {
         return GeotkFX.getString(this,"title");
     }
-    
+
     @Override
     public String getCategory() {
         return GeotkFX.getString(this,"category");
     }
-    
+
     @Override
     public boolean init(MapLayer candidate, Object StyleElement) {
         if(!(candidate instanceof MapLayer)) return false;
-        
+
         final MapLayer layer = (MapLayer) candidate;
         pane.valueProperty().set(layer.getStyle());
         pane.setLayer(layer);
-        
+
         return true;
     }
 
@@ -60,5 +60,5 @@ public class FXStyleAdvancedPane extends FXLayerStylePane {
     public MutableStyle getMutableStyle() {
         return pane.valueProperty().get();
     }
-    
+
 }

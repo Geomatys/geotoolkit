@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AbstractContentsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractContentsType">
  *   &lt;complexContent>
@@ -67,8 +67,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractContentsType", propOrder = {
@@ -90,22 +90,22 @@ public abstract class AbstractContentsType extends AbstractSWESType {
     private List<AbstractContentsType.Offering> offering;
 
     public AbstractContentsType() {
-        
+
     }
-    
+
     public AbstractContentsType(final List<JAXBElement<? extends AbstractOfferingType>> offerings) {
         this.offering = new ArrayList<Offering>();
         for (JAXBElement<? extends AbstractOfferingType> off : offerings) {
             this.offering.add(new Offering(off));
         }
     }
-    
+
     /**
      * Gets the value of the procedureDescriptionFormat property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getProcedureDescriptionFormat() {
         if (procedureDescriptionFormat == null) {
@@ -116,10 +116,10 @@ public abstract class AbstractContentsType extends AbstractSWESType {
 
     /**
      * Gets the value of the observableProperty property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getObservableProperty() {
         if (observableProperty == null) {
@@ -130,10 +130,10 @@ public abstract class AbstractContentsType extends AbstractSWESType {
 
     /**
      * Gets the value of the relatedFeature property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractContentsType.RelatedFeature }
-     * 
+     *
      */
     public List<AbstractContentsType.RelatedFeature> getRelatedFeature() {
         if (relatedFeature == null) {
@@ -144,11 +144,11 @@ public abstract class AbstractContentsType extends AbstractSWESType {
 
     /**
      * Gets the value of the offering property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractContentsType.Offering }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractContentsType.Offering> getOffering() {
         if (offering == null) {
@@ -160,9 +160,9 @@ public abstract class AbstractContentsType extends AbstractSWESType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -174,8 +174,8 @@ public abstract class AbstractContentsType extends AbstractSWESType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -187,9 +187,9 @@ public abstract class AbstractContentsType extends AbstractSWESType {
         private JAXBElement<? extends AbstractOfferingType> abstractOffering;
 
         public Offering() {
-            
+
         }
-        
+
         public Offering(final JAXBElement<? extends AbstractOfferingType> off) {
             if (off != null) {
                 this.abstractOffering = off;
@@ -198,12 +198,12 @@ public abstract class AbstractContentsType extends AbstractSWESType {
 
         /**
          * Gets the value of the abstractOffering property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link JAXBElement }{@code <}{@link ObservationOfferingType }{@code >}
          *     {@link JAXBElement }{@code <}{@link AbstractOfferingType }{@code >}
-         *     
+         *
          */
         public JAXBElement<? extends AbstractOfferingType> getAbstractOffering() {
             return abstractOffering;
@@ -211,12 +211,12 @@ public abstract class AbstractContentsType extends AbstractSWESType {
 
         /**
          * Sets the value of the abstractOffering property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link JAXBElement }{@code <}{@link ObservationOfferingType }{@code >}
          *     {@link JAXBElement }{@code <}{@link AbstractOfferingType }{@code >}
-         *     
+         *
          */
         public void setAbstractOffering(JAXBElement<? extends AbstractOfferingType> value) {
             this.abstractOffering = ((JAXBElement<? extends AbstractOfferingType> ) value);
@@ -227,9 +227,9 @@ public abstract class AbstractContentsType extends AbstractSWESType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -241,8 +241,8 @@ public abstract class AbstractContentsType extends AbstractSWESType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -255,11 +255,11 @@ public abstract class AbstractContentsType extends AbstractSWESType {
 
         /**
          * Gets the value of the featureRelationship property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link FeatureRelationshipType }
-         *     
+         *
          */
         public FeatureRelationshipType getFeatureRelationship() {
             return featureRelationship;
@@ -267,11 +267,11 @@ public abstract class AbstractContentsType extends AbstractSWESType {
 
         /**
          * Sets the value of the featureRelationship property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link FeatureRelationshipType }
-         *     
+         *
          */
         public void setFeatureRelationship(FeatureRelationshipType value) {
             this.featureRelationship = value;

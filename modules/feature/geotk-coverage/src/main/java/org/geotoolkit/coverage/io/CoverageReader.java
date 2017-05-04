@@ -26,11 +26,11 @@ import org.opengis.util.GenericName;
 /**
  * Generalized version of the GridCoverageReader for possible none grid and
  * multi-dimensional coverages.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public interface CoverageReader {
-    
+
     /**
      * Returns the list of coverage names available from the current input source. The length
      * of the returned list is the number of coverages found in the current input source. The
@@ -49,7 +49,7 @@ public interface CoverageReader {
      */
     List<? extends GenericName> getCoverageNames()
             throws CoverageStoreException, CancellationException;
-    
+
     /**
      * Returns the sample dimensions for each band of the {@link Coverage} to be read.
      * If sample dimensions are not known, then this method returns {@code null}.
@@ -66,7 +66,7 @@ public interface CoverageReader {
      */
     List<GridSampleDimension> getSampleDimensions(int index)
             throws CoverageStoreException, CancellationException;
-    
+
     /**
      * Reads the coverage.
      *
@@ -81,7 +81,7 @@ public interface CoverageReader {
      */
     Coverage read(int index, GridCoverageReadParam param)
             throws CoverageStoreException, CancellationException;
-    
+
     /**
      * Restores the {@code CoverageReader} to its initial state.
      *
@@ -96,5 +96,5 @@ public interface CoverageReader {
      * @throws CoverageStoreException If an error occurs while disposing resources.
      */
     void dispose() throws CoverageStoreException;
-    
+
 }

@@ -28,9 +28,9 @@ import org.opengis.filter.capability.ScalarCapabilities;
 
 /**
  * <p>Java class for Scalar_CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Scalar_CapabilitiesType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.opengis.filter.capability.ScalarCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Scalar_CapabilitiesType", propOrder = {
@@ -62,13 +62,13 @@ public class ScalarCapabilitiesType implements ScalarCapabilities {
 
     /**
      * Gets the value of the logicalOperatorsOrComparisonOperatorsOrArithmeticOperators property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ArithmeticOperatorsType }
      * {@link ComparisonOperatorsType }
      * {@link LogicalOperators }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getLogicalOperatorsOrComparisonOperatorsOrArithmeticOperators() {
         if (logicalOperatorsOrComparisonOperatorsOrArithmeticOperators == null) {

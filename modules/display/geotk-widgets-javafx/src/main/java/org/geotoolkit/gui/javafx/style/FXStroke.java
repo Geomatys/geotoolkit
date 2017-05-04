@@ -31,9 +31,9 @@ import org.opengis.style.Stroke;
  * @author Johann Sorel (Geomatys)
  */
 public class FXStroke extends FXStyleElementController<Stroke> {
- 
-    @FXML private FXColorExpression uiColor; 
-    @FXML private FXNumberExpression uiOpacity;    
+
+    @FXML private FXColorExpression uiColor;
+    @FXML private FXNumberExpression uiOpacity;
     @FXML private FXNumberExpression uiWidth;
     @FXML private FXLineCapExpression uiLineCap;
     @FXML private FXLineJoinExpression uiLineJoin;
@@ -41,27 +41,27 @@ public class FXStroke extends FXStyleElementController<Stroke> {
     @FXML private FXNumberSpinner uiDash2;
     @FXML private FXNumberSpinner uiDash3;
 
-            
+
     @Override
     public Class<Stroke> getEditedClass() {
         return Stroke.class;
     }
-    
+
     @Override
     public Stroke newValue() {
         return StyleConstants.DEFAULT_STROKE;
     }
-    
+
     @Override
     public void initialize() {
-        super.initialize();     
-        
+        super.initialize();
+
         uiWidth.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 200, 1, 1));
         uiOpacity.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 1, 1, 0.1));
         uiDash1.getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 1000, 0, 1));
         uiDash2.getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 1000, 0, 1));
         uiDash3.getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 1000, 0, 1));
-        
+
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             final Stroke stroke;
@@ -106,10 +106,10 @@ public class FXStroke extends FXStyleElementController<Stroke> {
                     (d0!=0&&d1!=0&&d2!=0)?new float[]{d0,d1,d2}:null,
                     StyleConstants.DEFAULT_STROKE_OFFSET);
             //            }
-            
+
             value.set(stroke);
         };
-        
+
         uiWidth.valueProperty().addListener(changeListener);
         uiOpacity.valueProperty().addListener(changeListener);
         uiColor.valueProperty().addListener(changeListener);
@@ -119,7 +119,7 @@ public class FXStroke extends FXStyleElementController<Stroke> {
         uiDash2.valueProperty().addListener(changeListener);
         uiDash3.valueProperty().addListener(changeListener);
     }
-    
+
     @Override
     public void setLayer(MapLayer layer) {
         super.setLayer(layer);
@@ -129,7 +129,7 @@ public class FXStroke extends FXStyleElementController<Stroke> {
         uiLineCap.setLayer(layer);
         uiLineJoin.setLayer(layer);
     }
-    
+
     @Override
     protected void updateEditor(Stroke styleElement) {
         uiWidth.valueProperty().setValue(styleElement.getWidth());
@@ -137,7 +137,7 @@ public class FXStroke extends FXStyleElementController<Stroke> {
         uiColor.valueProperty().setValue(styleElement.getColor());
         uiLineCap.valueProperty().setValue(styleElement.getLineCap());
         uiLineJoin.valueProperty().setValue(styleElement.getLineJoin());
-        
+
         final Double d = styleElement.getDashOffset().evaluate(null, Double.class);
         final float[] dashes = styleElement.getDashArray();
         float d0 = 0f;

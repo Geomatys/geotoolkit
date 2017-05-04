@@ -25,23 +25,23 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
 
 /**
  * Edition Decoration
- * 
+ *
  * @author Johann Sorel
  * @module
  */
 public class EditionDecoration extends JComponent implements MapDecoration{
 
     private final Color color = Color.RED;
-    
+
     private int startx =0;
     private int starty =0;
     private int endx = 0;
     private int endy = 0;
     private boolean draw = false;
-    
+
     public EditionDecoration(){}
-        
-    
+
+
     public void setCoord(final int sx, final int sy, final int ex, final int ey, final boolean draw){
         startx = sx;
         starty = sy;
@@ -50,28 +50,28 @@ public class EditionDecoration extends JComponent implements MapDecoration{
         this.draw = draw;
         repaint();
     }
-    
+
     public void setEnd(final int x, final int y){
         endx = x;
         endy = y;
         repaint();
     }
-    
+
     public void setDraw(final boolean b){
         this.draw = b;
         repaint();
     }
-    
-    
+
+
     @Override
     public void paintComponent(final Graphics g) {
         if(draw && (startx != endx || starty != endy)){
-                        
+
             g.setColor(color);
-            g.drawLine(startx, starty, endx, endy);      
+            g.drawLine(startx, starty, endx, endy);
             g.drawLine(endx, endy-4, endx, endy+4);
             g.drawLine(endx-4, endy, endx+4, endy);
-            
+
             }
     }
 
@@ -82,9 +82,9 @@ public class EditionDecoration extends JComponent implements MapDecoration{
     public JComponent getComponent() {
         return this;
     }
-    
+
     public void setMap2D(final JMap2D map) {
-        
+
     }
 
     public JMap2D getMap2D() {
@@ -93,5 +93,5 @@ public class EditionDecoration extends JComponent implements MapDecoration{
 
     public void dispose() {
     }
-    
+
 }

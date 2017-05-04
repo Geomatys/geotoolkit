@@ -30,9 +30,9 @@ import org.geotoolkit.sml.xml.AbstractComponents;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -67,8 +67,8 @@ import org.geotoolkit.sml.xml.AbstractComponents;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -136,7 +136,7 @@ public class Components implements AbstractComponents {
 
     /**
      * Sets the value of the componentList property.
-     * 
+     *
      */
     public void setComponentList(final ComponentList value) {
         this.componentList = value;
@@ -144,7 +144,7 @@ public class Components implements AbstractComponents {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      */
     public List<String> getNilReason() {
         if (nilReason == null) {

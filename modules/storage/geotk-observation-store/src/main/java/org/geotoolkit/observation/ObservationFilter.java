@@ -27,7 +27,7 @@ import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.sos.xml.ResponseModeType;
 
 /**
- * 
+ *
  * @author Guilhem Legal (Geomatys)
  */
 public interface ObservationFilter {
@@ -49,7 +49,7 @@ public interface ObservationFilter {
      * @throws org.apache.sis.storage.DataStoreException
      */
     void initFilterGetResult(final String procedure, final QName resultModel) throws DataStoreException;
-    
+
     /**
      * Initialize the query for a restricted to the results request.
      * @throws org.apache.sis.storage.DataStoreException
@@ -82,7 +82,7 @@ public interface ObservationFilter {
 
     /**
      * Add a TM_Equals filter to the current request.
-     * 
+     *
      * @param time
      * @throws org.apache.sis.storage.DataStoreException
      */
@@ -111,14 +111,14 @@ public interface ObservationFilter {
      * @throws org.apache.sis.storage.DataStoreException
      */
     void setTimeDuring(Object time) throws DataStoreException;
-    
+
     /**
      * Add a latest time filter to the current request.
      *
      * @throws org.apache.sis.storage.DataStoreException
      */
     void setTimeLatest() throws DataStoreException;
-    
+
     /**
      * Add a first time filter to the current request.
      *
@@ -142,7 +142,7 @@ public interface ObservationFilter {
      * @throws org.apache.sis.storage.DataStoreException
      */
     void setOfferings(final List<ObservationOffering> offerings) throws DataStoreException;
-            
+
     /**
      * Add a filter on the result for the specified property.
      *
@@ -154,14 +154,14 @@ public interface ObservationFilter {
 
     /**
      * Return the list of properties that can be applied on the result.
-     * 
+     *
      * @return  the list of properties that can be applied on the result.
      */
     List<String> supportedQueryableResultProperties();
 
     /**
      * Execute the current query and return a list of observation result.
-     * 
+     *
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
@@ -173,8 +173,8 @@ public interface ObservationFilter {
      * @throws org.apache.sis.storage.DataStoreException
      */
     Set<String> filterObservation() throws DataStoreException;
-    
-    
+
+
     /**
      * Execute the current query and return a list of FOI ID.
      * @return
@@ -192,7 +192,7 @@ public interface ObservationFilter {
      * @throws org.apache.sis.storage.DataStoreException
      */
     void refresh() throws DataStoreException;
-    
+
     /**
      * Return true if each observation has a position.
      */
@@ -202,7 +202,7 @@ public interface ObservationFilter {
      * Return true if template are filled with a default period when there is no eventTime suplied.
      */
     boolean isDefaultTemplateTime();
-    
+
     /**
      * Set the global level for information message.
      *

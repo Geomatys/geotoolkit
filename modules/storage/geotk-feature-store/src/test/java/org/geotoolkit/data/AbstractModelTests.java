@@ -69,11 +69,11 @@ public abstract class AbstractModelTests {
             //create the schema ------------------------------------------------
             final String name = "testname";
             sftb = new FeatureTypeBuilder();
-            sftb.setName(name);            
+            sftb.setName(name);
             sftb.addAttribute(geomType).setName("att_geometry").setCRS(CommonCRS.WGS84.geographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
             for(int i=0; i<bindinds.size(); i++){
                 sftb.addAttribute(bindinds.get(i)).setName("att"+i);
-            }            
+            }
             final FeatureType sft = sftb.build();
 
             //add listeners

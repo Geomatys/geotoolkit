@@ -25,18 +25,18 @@ import javax.xml.datatype.Duration;
 import javax.xml.namespace.QName;
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.gml package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.gml package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  * @module
  */
 @XmlRegistry
@@ -281,14 +281,14 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.gml
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link RingType }
-     * 
+     *
      */
     public RingType createRingType() {
         return new RingType();
@@ -296,7 +296,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link RingPropertyType }
-     * 
+     *
      */
     public RingPropertyType createRingPropertyType() {
         return new RingPropertyType();
@@ -304,7 +304,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link LineStringSegmentArrayPropertyType }
-     * 
+     *
      */
     public LineStringSegmentArrayPropertyType createLineStringSegmentArrayPropertyType() {
         return new LineStringSegmentArrayPropertyType();
@@ -312,7 +312,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link GeometryArrayPropertyType }
-     * 
+     *
      */
     public GeometryArrayPropertyType createGeometryArrayPropertyType() {
         return new GeometryArrayPropertyType();
@@ -320,7 +320,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link MultiCurvePropertyType }
-     * 
+     *
      */
     public MultiCurvePropertyType createMultiCurvePropertyType() {
         return new MultiCurvePropertyType();
@@ -328,7 +328,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link BagType }
-     * 
+     *
      */
     public BagType createBagType() {
         return new BagType();
@@ -336,7 +336,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link SurfacePropertyType }
-     * 
+     *
      */
     public SurfacePropertyType createSurfacePropertyType() {
         return new SurfacePropertyType();
@@ -344,7 +344,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link StringOrRefType }
-     * 
+     *
      */
     public StringOrRefType createStringOrRefType() {
         return new StringOrRefType();
@@ -352,7 +352,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link AbstractGriddedSurfaceType }
-     * 
+     *
      */
     public AbstractGriddedSurfaceType createAbstractGriddedSurfaceType() {
         return new AbstractGriddedSurfaceType();
@@ -360,7 +360,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link PolygonType }
-     * 
+     *
      */
     public PolygonType createPolygonType() {
         return new PolygonType();
@@ -368,7 +368,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link CoordinatesType }
-     * 
+     *
      */
     public CoordinatesType createCoordinatesType() {
         return new CoordinatesType();
@@ -376,7 +376,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link SolidPropertyType }
-     * 
+     *
      */
     public SolidPropertyType createSolidPropertyType() {
         return new SolidPropertyType();
@@ -384,7 +384,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link TimePrimitivePropertyType }
-     * 
+     *
      */
     public TimePrimitivePropertyType createTimePrimitivePropertyType() {
         return new TimePrimitivePropertyType();
@@ -392,7 +392,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link CodeType }
-     * 
+     *
      */
     public CodeType createCodeType() {
         return new CodeType();
@@ -400,7 +400,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link TimeInstantType }
-     * 
+     *
      */
     public TimeInstantType createTimeInstantType() {
         return new TimeInstantType();
@@ -408,7 +408,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link VectorType }
-     * 
+     *
      */
     public VectorType createVectorType() {
         return new VectorType();
@@ -416,7 +416,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link MeasureOrNullListType }
-     * 
+     *
      */
     public MeasureOrNullListType createMeasureOrNullListType() {
         return new MeasureOrNullListType();
@@ -424,7 +424,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link BezierType }
-     * 
+     *
      */
     public BezierType createBezierType() {
         return new BezierType();
@@ -432,7 +432,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link PointArrayPropertyType }
-     * 
+     *
      */
     public PointArrayPropertyType createPointArrayPropertyType() {
         return new PointArrayPropertyType();
@@ -440,7 +440,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link GenericMetaDataType }
-     * 
+     *
      */
     public GenericMetaDataType createGenericMetaDataType() {
         return new GenericMetaDataType();
@@ -448,7 +448,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link MultiGeometryType }
-     * 
+     *
      */
     public MultiGeometryType createMultiGeometryType() {
         return new MultiGeometryType();
@@ -456,7 +456,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link CurveType }
-     * 
+     *
      */
     public CurveType createCurveType() {
         return new CurveType();
@@ -464,7 +464,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link LineStringType }
-     * 
+     *
      */
     public LineStringType createLineStringType() {
         return new LineStringType();
@@ -472,7 +472,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link MultiPolygonType }
-     * 
+     *
      */
     public MultiPolygonType createMultiPolygonType() {
         return new MultiPolygonType();
@@ -480,7 +480,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link CodeOrNullListType }
-     * 
+     *
      */
     public CodeOrNullListType createCodeOrNullListType() {
         return new CodeOrNullListType();
@@ -488,7 +488,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link PriorityLocationPropertyType }
-     * 
+     *
      */
     public PriorityLocationPropertyType createPriorityLocationPropertyType() {
         return new PriorityLocationPropertyType();
@@ -496,7 +496,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link TimePositionType }
-     * 
+     *
      */
     public TimePositionType createTimePositionType() {
         return new TimePositionType();
@@ -504,7 +504,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link OffsetCurveType }
-     * 
+     *
      */
     public OffsetCurveType createOffsetCurveType() {
         return new OffsetCurveType();
@@ -512,7 +512,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link EnvelopeWithTimePeriodType }
-     * 
+     *
      */
     public EnvelopeWithTimePeriodType createEnvelopeWithTimePeriodType() {
         return new EnvelopeWithTimePeriodType();
@@ -520,7 +520,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link TimePeriodPropertyType }
-     * 
+     *
      */
     public TimePeriodPropertyType createTimePeriodPropertyType() {
         return new TimePeriodPropertyType();
@@ -528,7 +528,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link FeatureCollectionType }
-     * 
+     *
      */
     public FeatureCollectionType createFeatureCollectionType() {
         return new FeatureCollectionType();
@@ -536,7 +536,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link GeodesicType }
-     * 
+     *
      */
     public GeodesicType createGeodesicType() {
         return new GeodesicType();
@@ -544,7 +544,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link TinType }
-     * 
+     *
      */
     public TinType createTinType() {
         return new TinType();
@@ -552,7 +552,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link BaseUnitType }
-     * 
+     *
      */
     public BaseUnitType createBaseUnitType() {
         return new BaseUnitType();
@@ -560,7 +560,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link SurfaceType }
-     * 
+     *
      */
     public SurfaceType createSurfaceType() {
         return new SurfaceType();
@@ -568,7 +568,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link AngleChoiceType }
-     * 
+     *
      */
     public AngleChoiceType createAngleChoiceType() {
         return new AngleChoiceType();
@@ -576,7 +576,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link DefinitionProxyType }
-     * 
+     *
      */
     public DefinitionProxyType createDefinitionProxyType() {
         return new DefinitionProxyType();
@@ -584,7 +584,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link AbstractGriddedSurfaceType.Row }
-     * 
+     *
      */
     public AbstractGriddedSurfaceType.Row createAbstractGriddedSurfaceTypeRow() {
         return new AbstractGriddedSurfaceType.Row();
@@ -592,7 +592,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link TimeGeometricPrimitivePropertyType }
-     * 
+     *
      */
     public TimeGeometricPrimitivePropertyType createTimeGeometricPrimitivePropertyType() {
         return new TimeGeometricPrimitivePropertyType();
@@ -600,7 +600,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link CircleType }
-     * 
+     *
      */
     public CircleType createCircleType() {
         return new CircleType();
@@ -608,7 +608,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link ArrayAssociationType }
-     * 
+     *
      */
     public ArrayAssociationType createArrayAssociationType() {
         return new ArrayAssociationType();
@@ -616,7 +616,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link BSplineType }
-     * 
+     *
      */
     public BSplineType createBSplineType() {
         return new BSplineType();
@@ -624,7 +624,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link TinType.ControlPoint }
-     * 
+     *
      */
     public TinType.ControlPoint createTinTypeControlPoint() {
         return new TinType.ControlPoint();
@@ -632,7 +632,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link AbstractRingPropertyType }
-     * 
+     *
      */
     public AbstractRingPropertyType createAbstractRingPropertyType() {
         return new AbstractRingPropertyType();
@@ -640,7 +640,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link AbstractSolidType }
-     * 
+     *
      */
     public AbstractSolidType createAbstractSolidType() {
         return new AbstractSolidType();
@@ -648,7 +648,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link DirectPositionListType }
-     * 
+     *
      */
     public DirectPositionListType createDirectPositionListType() {
         return new DirectPositionListType();
@@ -656,7 +656,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link PointType }
-     * 
+     *
      */
     public PointType createPointType() {
         return new PointType();
@@ -664,7 +664,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link ConventionalUnitType }
-     * 
+     *
      */
     public ConventionalUnitType createConventionalUnitType() {
         return new ConventionalUnitType();
@@ -672,7 +672,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link PointPropertyType }
-     * 
+     *
      */
     public PointPropertyType createPointPropertyType() {
         return new PointPropertyType();
@@ -680,7 +680,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link AssociationType }
-     * 
+     *
      */
     public AssociationType createAssociationType() {
         return new AssociationType();
@@ -688,7 +688,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link ConeType }
-     * 
+     *
      */
     public ConeType createConeType() {
         return new ConeType();
@@ -696,7 +696,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link LengthType }
-     * 
+     *
      */
     public LengthType createLengthType() {
         return new LengthType();
@@ -704,7 +704,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link TimeType }
-     * 
+     *
      */
     public TimeType createTimeType() {
         return new TimeType();
@@ -712,7 +712,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link DegreesType }
-     * 
+     *
      */
     public DegreesType createDegreesType() {
         return new DegreesType();
@@ -720,7 +720,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link TriangleType }
-     * 
+     *
      */
     public TriangleType createTriangleType() {
         return new TriangleType();
@@ -728,7 +728,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link ConversionToPreferredUnitType }
-     * 
+     *
      */
     public ConversionToPreferredUnitType createConversionToPreferredUnitType() {
         return new ConversionToPreferredUnitType();
@@ -736,7 +736,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link TrianglePatchArrayPropertyType }
-     * 
+     *
      */
     public TrianglePatchArrayPropertyType createTrianglePatchArrayPropertyType() {
         return new TrianglePatchArrayPropertyType();
@@ -744,7 +744,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link BoundingShapeType }
-     * 
+     *
      */
     public BoundingShapeType createBoundingShapeType() {
         return new BoundingShapeType();
@@ -752,7 +752,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link TimeInstantPropertyType }
-     * 
+     *
      */
     public TimeInstantPropertyType createTimeInstantPropertyType() {
         return new TimeInstantPropertyType();
@@ -760,7 +760,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link MeasureType }
-     * 
+     *
      */
     public MeasureType createMeasureType() {
         return new MeasureType();
@@ -768,7 +768,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link KnotType }
-     * 
+     *
      */
     public KnotType createKnotType() {
         return new KnotType();
@@ -776,7 +776,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link PolygonPropertyType }
-     * 
+     *
      */
     public PolygonPropertyType createPolygonPropertyType() {
         return new PolygonPropertyType();
@@ -784,7 +784,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link MeasureListType }
-     * 
+     *
      */
     public MeasureListType createMeasureListType() {
         return new MeasureListType();
@@ -792,7 +792,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link LineStringPropertyType }
-     * 
+     *
      */
     public LineStringPropertyType createLineStringPropertyType() {
         return new LineStringPropertyType();
@@ -800,7 +800,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link FormulaType }
-     * 
+     *
      */
     public FormulaType createFormulaType() {
         return new FormulaType();
@@ -808,7 +808,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link SurfacePatchArrayPropertyType }
-     * 
+     *
      */
     public SurfacePatchArrayPropertyType createSurfacePatchArrayPropertyType() {
         return new SurfacePatchArrayPropertyType();
@@ -816,7 +816,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link SphereType }
-     * 
+     *
      */
     public SphereType createSphereType() {
         return new SphereType();
@@ -824,7 +824,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link DerivedUnitType }
-     * 
+     *
      */
     public DerivedUnitType createDerivedUnitType() {
         return new DerivedUnitType();
@@ -832,7 +832,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link DefinitionType }
-     * 
+     *
      */
     public DefinitionType createDefinitionType() {
         return new DefinitionType();
@@ -840,7 +840,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link MultiGeometryPropertyType }
-     * 
+     *
      */
     public MultiGeometryPropertyType createMultiGeometryPropertyType() {
         return new MultiGeometryPropertyType();
@@ -848,7 +848,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link ArcByBulgeType }
-     * 
+     *
      */
     public ArcByBulgeType createArcByBulgeType() {
         return new ArcByBulgeType();
@@ -856,7 +856,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link CurveArrayPropertyType }
-     * 
+     *
      */
     public CurveArrayPropertyType createCurveArrayPropertyType() {
         return new CurveArrayPropertyType();
@@ -864,7 +864,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link DictionaryType }
-     * 
+     *
      */
     public DictionaryType createDictionaryType() {
         return new DictionaryType();
@@ -872,7 +872,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link IndirectEntryType }
-     * 
+     *
      */
     public IndirectEntryType createIndirectEntryType() {
         return new IndirectEntryType();
@@ -880,7 +880,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link MultiSolidType }
-     * 
+     *
      */
     public MultiSolidType createMultiSolidType() {
         return new MultiSolidType();
@@ -888,7 +888,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link SolidType }
-     * 
+     *
      */
     public SolidType createSolidType() {
         return new SolidType();
@@ -896,7 +896,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link SurfaceArrayPropertyType }
-     * 
+     *
      */
     public SurfaceArrayPropertyType createSurfaceArrayPropertyType() {
         return new SurfaceArrayPropertyType();
@@ -904,7 +904,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link ArrayType }
-     * 
+     *
      */
     public ArrayType createArrayType() {
         return new ArrayType();
@@ -912,7 +912,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link TriangulatedSurfaceType }
-     * 
+     *
      */
     public TriangulatedSurfaceType createTriangulatedSurfaceType() {
         return new TriangulatedSurfaceType();
@@ -920,7 +920,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link CurveSegmentArrayPropertyType }
-     * 
+     *
      */
     public CurveSegmentArrayPropertyType createCurveSegmentArrayPropertyType() {
         return new CurveSegmentArrayPropertyType();
@@ -928,7 +928,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link CylinderType }
-     * 
+     *
      */
     public CylinderType createCylinderType() {
         return new CylinderType();
@@ -936,7 +936,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link KnotPropertyType }
-     * 
+     *
      */
     public KnotPropertyType createKnotPropertyType() {
         return new KnotPropertyType();
@@ -944,7 +944,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link DMSAngleType }
-     * 
+     *
      */
     public DMSAngleType createDMSAngleType() {
         return new DMSAngleType();
@@ -952,7 +952,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link MultiPointType }
-     * 
+     *
      */
     public MultiPointType createMultiPointType() {
         return new MultiPointType();
@@ -960,7 +960,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link EnvelopeType }
-     * 
+     *
      */
     public EnvelopeType createEnvelopeType() {
         return new EnvelopeType();
@@ -968,7 +968,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link AbstractSurfaceType }
-     * 
+     *
      */
     public AbstractSurfaceType createAbstractSurfaceType() {
         return new AbstractSurfaceType();
@@ -976,7 +976,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link FeaturePropertyType }
-     * 
+     *
      */
     public FeaturePropertyType createFeaturePropertyType() {
         return new FeaturePropertyType();
@@ -984,7 +984,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link DerivationUnitTermType }
-     * 
+     *
      */
     public DerivationUnitTermType createDerivationUnitTermType() {
         return new DerivationUnitTermType();
@@ -992,7 +992,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link LinearRingPropertyType }
-     * 
+     *
      */
     public LinearRingPropertyType createLinearRingPropertyType() {
         return new LinearRingPropertyType();
@@ -1000,7 +1000,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link UnitDefinitionType }
-     * 
+     *
      */
     public UnitDefinitionType createUnitDefinitionType() {
         return new UnitDefinitionType();
@@ -1008,7 +1008,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link GeometryPropertyType }
-     * 
+     *
      */
     public GeometryPropertyType createGeometryPropertyType() {
         return new GeometryPropertyType();
@@ -1016,7 +1016,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link MultiLineStringPropertyType }
-     * 
+     *
      */
     public MultiLineStringPropertyType createMultiLineStringPropertyType() {
         return new MultiLineStringPropertyType();
@@ -1024,7 +1024,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link SolidArrayPropertyType }
-     * 
+     *
      */
     public SolidArrayPropertyType createSolidArrayPropertyType() {
         return new SolidArrayPropertyType();
@@ -1032,7 +1032,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link RelatedTimeType }
-     * 
+     *
      */
     public RelatedTimeType createRelatedTimeType() {
         return new RelatedTimeType();
@@ -1040,7 +1040,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link ScaleType }
-     * 
+     *
      */
     public ScaleType createScaleType() {
         return new ScaleType();
@@ -1048,7 +1048,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link TimeIntervalLengthType }
-     * 
+     *
      */
     public TimeIntervalLengthType createTimeIntervalLengthType() {
         return new TimeIntervalLengthType();
@@ -1056,7 +1056,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link MultiCurveType }
-     * 
+     *
      */
     public MultiCurveType createMultiCurveType() {
         return new MultiCurveType();
@@ -1064,7 +1064,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link GridLengthType }
-     * 
+     *
      */
     public GridLengthType createGridLengthType() {
         return new GridLengthType();
@@ -1072,7 +1072,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link UnitOfMeasureType }
-     * 
+     *
      */
     public UnitOfMeasureType createUnitOfMeasureType() {
         return new UnitOfMeasureType();
@@ -1080,7 +1080,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link MultiLineStringType }
-     * 
+     *
      */
     public MultiLineStringType createMultiLineStringType() {
         return new MultiLineStringType();
@@ -1088,7 +1088,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link ReferenceType }
-     * 
+     *
      */
     public ReferenceType createReferenceType() {
         return new ReferenceType();
@@ -1096,7 +1096,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link PolygonPatchArrayPropertyType }
-     * 
+     *
      */
     public PolygonPatchArrayPropertyType createPolygonPatchArrayPropertyType() {
         return new PolygonPatchArrayPropertyType();
@@ -1104,7 +1104,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link AffinePlacementType }
-     * 
+     *
      */
     public AffinePlacementType createAffinePlacementType() {
         return new AffinePlacementType();
@@ -1112,7 +1112,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link CircleByCenterPointType }
-     * 
+     *
      */
     public CircleByCenterPointType createCircleByCenterPointType() {
         return new CircleByCenterPointType();
@@ -1120,7 +1120,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link ClothoidType }
-     * 
+     *
      */
     public ClothoidType createClothoidType() {
         return new ClothoidType();
@@ -1128,7 +1128,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link GeometricPrimitivePropertyType }
-     * 
+     *
      */
     public GeometricPrimitivePropertyType createGeometricPrimitivePropertyType() {
         return new GeometricPrimitivePropertyType();
@@ -1136,7 +1136,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link SpeedType }
-     * 
+     *
      */
     public SpeedType createSpeedType() {
         return new SpeedType();
@@ -1144,7 +1144,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link OrientableCurveType }
-     * 
+     *
      */
     public OrientableCurveType createOrientableCurveType() {
         return new OrientableCurveType();
@@ -1152,7 +1152,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link AreaType }
-     * 
+     *
      */
     public AreaType createAreaType() {
         return new AreaType();
@@ -1296,7 +1296,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link MultiSolidPropertyType }
-     * 
+     *
      */
     public MultiSolidPropertyType createMultiSolidPropertyType() {
         return new MultiSolidPropertyType();
@@ -1304,7 +1304,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link GeodesicStringType }
-     * 
+     *
      */
     public GeodesicStringType createGeodesicStringType() {
         return new GeodesicStringType();
@@ -1312,7 +1312,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link MultiPointPropertyType }
-     * 
+     *
      */
     public MultiPointPropertyType createMultiPointPropertyType() {
         return new MultiPointPropertyType();
@@ -1472,7 +1472,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link LinearRingType }
-     * 
+     *
      */
     public LinearRingType createLinearRingType() {
         return new LinearRingType();
@@ -1480,7 +1480,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link PolyhedralSurfaceType }
-     * 
+     *
      */
     public PolyhedralSurfaceType createPolyhedralSurfaceType() {
         return new PolyhedralSurfaceType();
@@ -1488,7 +1488,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link ClothoidType.RefLocation }
-     * 
+     *
      */
     public ClothoidType.RefLocation createClothoidTypeRefLocation() {
         return new ClothoidType.RefLocation();
@@ -1496,7 +1496,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link ArcByCenterPointType }
-     * 
+     *
      */
     public ArcByCenterPointType createArcByCenterPointType() {
         return new ArcByCenterPointType();
@@ -1504,7 +1504,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link MetaDataPropertyType }
-     * 
+     *
      */
     public MetaDataPropertyType createMetaDataPropertyType() {
         return new MetaDataPropertyType();
@@ -1512,7 +1512,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link PolygonPatchType }
-     * 
+     *
      */
     public PolygonPatchType createPolygonPatchType() {
         return new PolygonPatchType();
@@ -1520,7 +1520,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link LineStringSegmentType }
-     * 
+     *
      */
     public LineStringSegmentType createLineStringSegmentType() {
         return new LineStringSegmentType();
@@ -1528,7 +1528,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link DirectPositionType }
-     * 
+     *
      */
     public DirectPositionType createDirectPositionType() {
         return new DirectPositionType();
@@ -1536,7 +1536,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link ArcStringType }
-     * 
+     *
      */
     public ArcStringType createArcStringType() {
         return new ArcStringType();
@@ -1544,7 +1544,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link LocationPropertyType }
-     * 
+     *
      */
     public LocationPropertyType createLocationPropertyType() {
         return new LocationPropertyType();
@@ -1552,7 +1552,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link TimePeriodType }
-     * 
+     *
      */
     public TimePeriodType createTimePeriodType() {
         return new TimePeriodType();
@@ -1560,7 +1560,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link CurvePropertyType }
-     * 
+     *
      */
     public CurvePropertyType createCurvePropertyType() {
         return new CurvePropertyType();
@@ -1568,7 +1568,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link ArcStringByBulgeType }
-     * 
+     *
      */
     public ArcStringByBulgeType createArcStringByBulgeType() {
         return new ArcStringByBulgeType();
@@ -1576,7 +1576,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link CodeListType }
-     * 
+     *
      */
     public CodeListType createCodeListType() {
         return new CodeListType();
@@ -1584,7 +1584,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link VolumeType }
-     * 
+     *
      */
     public VolumeType createVolumeType() {
         return new VolumeType();
@@ -1592,7 +1592,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link CubicSplineType }
-     * 
+     *
      */
     public CubicSplineType createCubicSplineType() {
         return new CubicSplineType();
@@ -1600,7 +1600,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link FeatureArrayPropertyType }
-     * 
+     *
      */
     public FeatureArrayPropertyType createFeatureArrayPropertyType() {
         return new FeatureArrayPropertyType();
@@ -1608,7 +1608,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link AbstractParametricCurveSurfaceType }
-     * 
+     *
      */
     public AbstractParametricCurveSurfaceType createAbstractParametricCurveSurfaceType() {
         return new AbstractParametricCurveSurfaceType();
@@ -1616,7 +1616,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link OrientableSurfaceType }
-     * 
+     *
      */
     public OrientableSurfaceType createOrientableSurfaceType() {
         return new OrientableSurfaceType();
@@ -1624,7 +1624,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link ArcType }
-     * 
+     *
      */
     public ArcType createArcType() {
         return new ArcType();
@@ -1632,7 +1632,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link CoordType }
-     * 
+     *
      */
     public CoordType createCoordType() {
         return new CoordType();
@@ -1640,7 +1640,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link MultiSurfacePropertyType }
-     * 
+     *
      */
     public MultiSurfacePropertyType createMultiSurfacePropertyType() {
         return new MultiSurfacePropertyType();
@@ -1648,7 +1648,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link MultiPolygonPropertyType }
-     * 
+     *
      */
     public MultiPolygonPropertyType createMultiPolygonPropertyType() {
         return new MultiPolygonPropertyType();
@@ -1656,7 +1656,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link RectangleType }
-     * 
+     *
      */
     public RectangleType createRectangleType() {
         return new RectangleType();
@@ -1664,7 +1664,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link MultiSurfaceType }
-     * 
+     *
      */
     public MultiSurfaceType createMultiSurfaceType() {
         return new MultiSurfaceType();
@@ -1672,7 +1672,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link DictionaryEntryType }
-     * 
+     *
      */
     public DictionaryEntryType createDictionaryEntryType() {
         return new DictionaryEntryType();
@@ -1680,7 +1680,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link AngleType }
-     * 
+     *
      */
     public AngleType createAngleType() {
         return new AngleType();
@@ -1690,7 +1690,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
     public JAXBElement<Object> createAbstractObject(Object value) {
         return new JAXBElement<Object>(_AbstractObject_QNAME, Object.class, null, value);
     }
-    
+
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractGMLType }{@code >}}
      *
@@ -1711,7 +1711,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnitDefinitionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "UnitDefinition", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
     public JAXBElement<UnitDefinitionType> createUnitDefinition(final UnitDefinitionType value) {
@@ -1720,7 +1720,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "outerBoundaryIs", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "exterior")
     public JAXBElement<AbstractRingPropertyType> createOuterBoundaryIs(final AbstractRingPropertyType value) {
@@ -1729,7 +1729,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiLineStringType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiLineString", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GeometricAggregate")
     public JAXBElement<MultiLineStringType> createMultiLineString(final MultiLineStringType value) {
@@ -1738,7 +1738,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractGeometricAggregateType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_GeometricAggregate", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
     public JAXBElement<AbstractGeometricAggregateType> createGeometricAggregate(final AbstractGeometricAggregateType value) {
@@ -1747,7 +1747,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BSplineType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "BSpline", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
     public JAXBElement<BSplineType> createBSpline(final BSplineType value) {
@@ -1756,7 +1756,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TimePrimitivePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "validTime")
     public JAXBElement<TimePrimitivePropertyType> createValidTime(final TimePrimitivePropertyType value) {
@@ -1765,7 +1765,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SolidPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "solidProperty")
     public JAXBElement<SolidPropertyType> createSolidProperty(final SolidPropertyType value) {
@@ -1774,7 +1774,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TriangulatedSurfaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "TriangulatedSurface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Surface")
     public JAXBElement<TriangulatedSurfaceType> createTriangulatedSurface(final TriangulatedSurfaceType value) {
@@ -1783,7 +1783,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LinearRingType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "LinearRing", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractRing")
     public JAXBElement<LinearRingType> createLinearRing(final LinearRingType value) {
@@ -1792,7 +1792,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LineStringSegmentType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "LineStringSegment", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
     public JAXBElement<LineStringSegmentType> createLineStringSegment(final LineStringSegmentType value) {
@@ -1801,7 +1801,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DictionaryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "DefinitionCollection", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
     public JAXBElement<DictionaryType> createDefinitionCollection(final DictionaryType value) {
@@ -1810,7 +1810,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "innerBoundaryIs", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "interior")
     public JAXBElement<AbstractRingPropertyType> createInnerBoundaryIs(final AbstractRingPropertyType value) {
@@ -1819,7 +1819,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractTimePrimitiveType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractTimePrimitive", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractTimeObject")
     public JAXBElement<AbstractTimePrimitiveType> createAbstractTimePrimitive(final AbstractTimePrimitiveType value) {
@@ -1828,7 +1828,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ReferenceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_reference")
     public JAXBElement<ReferenceType> createReference(final ReferenceType value) {
@@ -1837,7 +1837,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiSolidPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiSolidProperty")
     public JAXBElement<MultiSolidPropertyType> createMultiSolidProperty(final MultiSolidPropertyType value) {
@@ -1846,7 +1846,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractGriddedSurfaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_GriddedSurface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_ParametricCurveSurface")
     public JAXBElement<AbstractGriddedSurfaceType> createGriddedSurface(final AbstractGriddedSurfaceType value) {
@@ -1855,7 +1855,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SolidArrayPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "solidMembers")
     public JAXBElement<SolidArrayPropertyType> createSolidMembers(final SolidArrayPropertyType value) {
@@ -1864,7 +1864,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnitOfMeasureType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "unitOfMeasure")
     public JAXBElement<UnitOfMeasureType> createUnitOfMeasure(final UnitOfMeasureType value) {
@@ -1873,7 +1873,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CircleType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Circle", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Arc")
     public JAXBElement<CircleType> createCircle(final CircleType value) {
@@ -1882,7 +1882,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CurvePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "curveProperty")
     public JAXBElement<CurvePropertyType> createCurveProperty(final CurvePropertyType value) {
@@ -1891,7 +1891,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConventionalUnitType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ConventionalUnit", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "UnitDefinition")
     public JAXBElement<ConventionalUnitType> createConventionalUnit(final ConventionalUnitType value) {
@@ -1900,7 +1900,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link StringOrRefType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "description")
     public JAXBElement<StringOrRefType> createDescription(final StringOrRefType value) {
@@ -1909,7 +1909,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SurfaceArrayPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "surfaceMembers")
     public JAXBElement<SurfaceArrayPropertyType> createSurfaceMembers(final SurfaceArrayPropertyType value) {
@@ -1918,7 +1918,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PolygonPatchType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "PolygonPatch", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurfacePatch")
     public JAXBElement<PolygonPatchType> createPolygonPatch(final PolygonPatchType value) {
@@ -1927,7 +1927,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractSolidType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractSolid", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometricPrimitive")
     public JAXBElement<AbstractSolidType> createAbstractSolid(final AbstractSolidType value) {
@@ -1936,7 +1936,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AffinePlacementType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AffinePlacement")
     public JAXBElement<AffinePlacementType> createAffinePlacement(final AffinePlacementType value) {
@@ -1945,7 +1945,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArcByCenterPointType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ArcByCenterPoint", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
     public JAXBElement<ArcByCenterPointType> createArcByCenterPoint(final ArcByCenterPointType value) {
@@ -1954,7 +1954,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DirectPositionListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "posList")
     public JAXBElement<DirectPositionListType> createPosList(final DirectPositionListType value) {
@@ -1963,7 +1963,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MetaDataPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "metaDataProperty")
     public JAXBElement<MetaDataPropertyType> createMetaDataProperty(final MetaDataPropertyType value) {
@@ -1972,7 +1972,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TimeIntervalLengthType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "timeInterval")
     public JAXBElement<TimeIntervalLengthType> createTimeInterval(final TimeIntervalLengthType value) {
@@ -1981,7 +1981,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SurfacePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "surfaceProperty")
     public JAXBElement<SurfacePropertyType> createSurfaceProperty(final SurfacePropertyType value) {
@@ -1990,7 +1990,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiSolidType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiSolid", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GeometricAggregate")
     public JAXBElement<MultiSolidType> createMultiSolid(final MultiSolidType value) {
@@ -1999,7 +1999,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OrientableCurveType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "OrientableCurve", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurve")
     public JAXBElement<OrientableCurveType> createOrientableCurve(final OrientableCurveType value) {
@@ -2008,7 +2008,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiPointPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiPosition")
     public JAXBElement<MultiPointPropertyType> createMultiPosition(final MultiPointPropertyType value) {
@@ -2017,7 +2017,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SurfacePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "surfaceMember")
     public JAXBElement<SurfacePropertyType> createSurfaceMember(final SurfacePropertyType value) {
@@ -2026,7 +2026,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ReferenceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "definitionRef")
     public JAXBElement<ReferenceType> createDefinitionRef(final ReferenceType value) {
@@ -2035,7 +2035,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiPolygonType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiPolygon", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GeometricAggregate")
     public JAXBElement<MultiPolygonType> createMultiPolygon(final MultiPolygonType value) {
@@ -2044,7 +2044,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SolidType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Solid", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSolid")
     public JAXBElement<SolidType> createSolid(final SolidType value) {
@@ -2053,7 +2053,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MeasureType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "measure")
     public JAXBElement<MeasureType> createMeasure(final MeasureType value) {
@@ -2062,7 +2062,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PolygonPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "polygonMember")
     public JAXBElement<PolygonPropertyType> createPolygonMember(final PolygonPropertyType value) {
@@ -2071,7 +2071,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiGeometryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiGeometry", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GeometricAggregate")
     public JAXBElement<MultiGeometryType> createMultiGeometry(final MultiGeometryType value) {
@@ -2080,7 +2080,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArrayAssociationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "members")
     public JAXBElement<ArrayAssociationType> createMembers(final ArrayAssociationType value) {
@@ -2089,7 +2089,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AssociationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_association")
     public JAXBElement<AssociationType> createAssociation(final AssociationType value) {
@@ -2098,7 +2098,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiCurvePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiCurveProperty")
     public JAXBElement<MultiCurvePropertyType> createMultiCurveProperty(final MultiCurvePropertyType value) {
@@ -2107,7 +2107,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PolygonPatchArrayPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "polygonPatches", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "patches")
     public JAXBElement<PolygonPatchArrayPropertyType> createPolygonPatches(final PolygonPatchArrayPropertyType value) {
@@ -2116,7 +2116,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PolyhedralSurfaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "PolyhedralSurface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Surface")
     public JAXBElement<PolyhedralSurfaceType> createPolyhedralSurface(final PolyhedralSurfaceType value) {
@@ -2125,7 +2125,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CodeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "name")
     public JAXBElement<CodeType> createName(final CodeType value) {
@@ -2134,7 +2134,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TimePeriodType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "TimePeriod", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractTimeGeometricPrimitive")
     public JAXBElement<TimePeriodType> createTimePeriod(final TimePeriodType value) {
@@ -2143,7 +2143,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractCurveType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractCurve", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometricPrimitive")
     public JAXBElement<AbstractCurveType> createAbstractCurve(final AbstractCurveType value) {
@@ -2152,7 +2152,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConversionToPreferredUnitType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "roughConversionToPreferredUnit")
     public JAXBElement<ConversionToPreferredUnitType> createRoughConversionToPreferredUnit(final ConversionToPreferredUnitType value) {
@@ -2161,7 +2161,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ClothoidType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Clothoid", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
     public JAXBElement<ClothoidType> createClothoid(final ClothoidType value) {
@@ -2170,7 +2170,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractGeometricPrimitiveType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractGeometricPrimitive", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
     public JAXBElement<AbstractGeometricPrimitiveType> createAbstractGeometricPrimitive(final AbstractGeometricPrimitiveType value) {
@@ -2179,7 +2179,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link List }{@code <}{@link String }{@code >}{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Null")
     public JAXBElement<List<String>> createNull(final List<String> value) {
@@ -2188,7 +2188,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "pointProperty")
     public JAXBElement<PointPropertyType> createPointProperty(final PointPropertyType value) {
@@ -2197,7 +2197,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GeometryPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "geometryMember")
     public JAXBElement<GeometryPropertyType> createGeometryMember(final GeometryPropertyType value) {
@@ -2206,7 +2206,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiCurvePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiEdgeOf")
     public JAXBElement<MultiCurvePropertyType> createMultiEdgeOf(final MultiCurvePropertyType value) {
@@ -2215,7 +2215,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CurveType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Curve", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurve")
     public JAXBElement<CurveType> createCurve(final CurveType value) {
@@ -2224,7 +2224,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CurveArrayPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "curveMembers")
     public JAXBElement<CurveArrayPropertyType> createCurveMembers(final CurveArrayPropertyType value) {
@@ -2233,7 +2233,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LineStringPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "lineStringMember")
     public JAXBElement<LineStringPropertyType> createLineStringMember(final LineStringPropertyType value) {
@@ -2242,7 +2242,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArrayType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Array", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
     public JAXBElement<ArrayType> createArray(final ArrayType value) {
@@ -2251,7 +2251,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DirectPositionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "pos")
     public JAXBElement<DirectPositionType> createPos(final DirectPositionType value) {
@@ -2260,7 +2260,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArcType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Arc", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "ArcString")
     public JAXBElement<ArcType> createArc(final ArcType value) {
@@ -2269,7 +2269,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "exterior")
     public JAXBElement<AbstractRingPropertyType> createExterior(final AbstractRingPropertyType value) {
@@ -2278,7 +2278,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GenericMetaDataType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "GenericMetaData", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_MetaData")
     public JAXBElement<GenericMetaDataType> createGenericMetaData(final GenericMetaDataType value) {
@@ -2287,7 +2287,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SurfaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Surface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurface")
     public JAXBElement<SurfaceType> createSurface(final SurfaceType value) {
@@ -2296,7 +2296,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PointType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Point", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometricPrimitive")
     public JAXBElement<PointType> createPoint(final PointType value) {
@@ -2305,7 +2305,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CoordType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "coord")
     public JAXBElement<CoordType> createCoord(final CoordType value) {
@@ -2314,7 +2314,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiSurfacePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiCoverage")
     public JAXBElement<MultiSurfacePropertyType> createMultiCoverage(final MultiSurfacePropertyType value) {
@@ -2323,7 +2323,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PolygonPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "polygonProperty")
     public JAXBElement<PolygonPropertyType> createPolygonProperty(final PolygonPropertyType value) {
@@ -2332,7 +2332,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiSurfaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiSurface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GeometricAggregate")
     public JAXBElement<MultiSurfaceType> createMultiSurface(final MultiSurfaceType value) {
@@ -2341,7 +2341,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MeasureType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "angle")
     public JAXBElement<MeasureType> createAngle(final MeasureType value) {
@@ -2350,7 +2350,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SolidPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "solidMember")
     public JAXBElement<SolidPropertyType> createSolidMember(final SolidPropertyType value) {
@@ -2359,7 +2359,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GeodesicType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Geodesic", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "GeodesicString")
     public JAXBElement<GeodesicType> createGeodesic(final GeodesicType value) {
@@ -2368,7 +2368,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OrientableSurfaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "OrientableSurface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurface")
     public JAXBElement<OrientableSurfaceType> createOrientableSurface(final OrientableSurfaceType value) {
@@ -2377,7 +2377,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AssociationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "member")
     public JAXBElement<AssociationType> createMember(final AssociationType value) {
@@ -2386,7 +2386,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CurvePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "curveMember")
     public JAXBElement<CurvePropertyType> createCurveMember(final CurvePropertyType value) {
@@ -2395,7 +2395,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BigDecimal }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "decimalMinutes")
     public JAXBElement<BigDecimal> createDecimalMinutes(final BigDecimal value) {
@@ -2404,7 +2404,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TinType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Tin", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "TriangulatedSurface")
     public JAXBElement<TinType> createTin(final TinType value) {
@@ -2413,7 +2413,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RectangleType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Rectangle", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurfacePatch")
     public JAXBElement<RectangleType> createRectangle(final RectangleType value) {
@@ -2422,7 +2422,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DerivationUnitTermType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "derivationUnitTerm")
     public JAXBElement<DerivationUnitTermType> createDerivationUnitTerm(final DerivationUnitTermType value) {
@@ -2431,7 +2431,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PolygonType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Polygon", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurface")
     public JAXBElement<PolygonType> createPolygon(final PolygonType value) {
@@ -2440,7 +2440,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DefinitionProxyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "DefinitionProxy", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
     public JAXBElement<DefinitionProxyType> createDefinitionProxy(final DefinitionProxyType value) {
@@ -2449,7 +2449,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BigDecimal }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "seconds")
     public JAXBElement<BigDecimal> createSeconds(final BigDecimal value) {
@@ -2458,7 +2458,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CubicSplineType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "CubicSpline", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
     public JAXBElement<CubicSplineType> createCubicSpline(final CubicSplineType value) {
@@ -2467,7 +2467,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CurvePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "centerLineOf")
     public JAXBElement<CurvePropertyType> createCenterLineOf(final CurvePropertyType value) {
@@ -2476,7 +2476,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RingType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Ring", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractRing")
     public JAXBElement<RingType> createRing(final RingType value) {
@@ -2485,7 +2485,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CodeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "catalogSymbol")
     public JAXBElement<CodeType> createCatalogSymbol(final CodeType value) {
@@ -2494,7 +2494,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SurfacePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "extentOf")
     public JAXBElement<SurfacePropertyType> createExtentOf(final SurfacePropertyType value) {
@@ -2503,7 +2503,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DerivedUnitType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "DerivedUnit", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "UnitDefinition")
     public JAXBElement<DerivedUnitType> createDerivedUnit(final DerivedUnitType value) {
@@ -2512,7 +2512,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArcStringType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ArcString", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
     public JAXBElement<ArcStringType> createArcString(final ArcStringType value) {
@@ -2521,7 +2521,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractSurfacePatchType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractSurfacePatch")
     public JAXBElement<AbstractSurfacePatchType> createAbstractSurfacePatch(final AbstractSurfacePatchType value) {
@@ -2530,7 +2530,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiSurfacePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiExtentOf")
     public JAXBElement<MultiSurfacePropertyType> createMultiExtentOf(final MultiSurfacePropertyType value) {
@@ -2539,7 +2539,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiGeometryPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiGeometryProperty")
     public JAXBElement<MultiGeometryPropertyType> createMultiGeometryProperty(final MultiGeometryPropertyType value) {
@@ -2548,7 +2548,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiPointPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiCenterOf")
     public JAXBElement<MultiPointPropertyType> createMultiCenterOf(final MultiPointPropertyType value) {
@@ -2557,7 +2557,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BoundingShapeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "boundedBy")
     public JAXBElement<BoundingShapeType> createBoundedBy(final BoundingShapeType value) {
@@ -2566,7 +2566,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractCurveSegmentType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractCurveSegment")
     public JAXBElement<AbstractCurveSegmentType> createAbstractCurveSegment(final AbstractCurveSegmentType value) {
@@ -2575,7 +2575,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FeatureCollectionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "FeatureCollection", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
     public JAXBElement<FeatureCollectionType> createFeatureCollection(final FeatureCollectionType value) {
@@ -2584,7 +2584,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "interior")
     public JAXBElement<AbstractRingPropertyType> createInterior(final AbstractRingPropertyType value) {
@@ -2593,7 +2593,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LocationPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "location")
     public JAXBElement<LocationPropertyType> createLocation(final LocationPropertyType value) {
@@ -2602,7 +2602,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CircleByCenterPointType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "CircleByCenterPoint", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "ArcByCenterPoint")
     public JAXBElement<CircleByCenterPointType> createCircleByCenterPoint(final CircleByCenterPointType value) {
@@ -2611,7 +2611,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SphereType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Sphere", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GriddedSurface")
     public JAXBElement<SphereType> createSphere(final SphereType value) {
@@ -2620,7 +2620,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SolidArrayPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "solidArrayProperty")
     public JAXBElement<SolidArrayPropertyType> createSolidArrayProperty(final SolidArrayPropertyType value) {
@@ -2629,7 +2629,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PointArrayPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "pointMembers")
     public JAXBElement<PointArrayPropertyType> createPointMembers(final PointArrayPropertyType value) {
@@ -2638,7 +2638,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DegreesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "degrees")
     public JAXBElement<DegreesType> createDegrees(final DegreesType value) {
@@ -2647,7 +2647,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "minutes")
     public JAXBElement<Integer> createMinutes(final Integer value) {
@@ -2656,7 +2656,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractMetaDataType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_MetaData", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractObject")
     public JAXBElement<AbstractMetaDataType> createMetaData(final AbstractMetaDataType value) {
@@ -2665,7 +2665,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PriorityLocationPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "priorityLocation", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "location")
     public JAXBElement<PriorityLocationPropertyType> createPriorityLocation(final PriorityLocationPropertyType value) {
@@ -2674,7 +2674,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AssociationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_strictAssociation")
     public JAXBElement<AssociationType> createStrictAssociation(final AssociationType value) {
@@ -2683,7 +2683,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EnvelopeWithTimePeriodType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "EnvelopeWithTimePeriod", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Envelope")
     public JAXBElement<EnvelopeWithTimePeriodType> createEnvelopeWithTimePeriod(final EnvelopeWithTimePeriodType value) {
@@ -2692,7 +2692,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArcByBulgeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ArcByBulge", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "ArcStringByBulge")
     public JAXBElement<ArcByBulgeType> createArcByBulge(final ArcByBulgeType value) {
@@ -2701,7 +2701,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CurveArrayPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "curveArrayProperty")
     public JAXBElement<CurveArrayPropertyType> createCurveArrayProperty(final CurveArrayPropertyType value) {
@@ -2710,7 +2710,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Duration }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "duration")
     public JAXBElement<Duration> createDuration(final Duration value) {
@@ -2719,7 +2719,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractTimeObjectType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractTimeObject", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
     public JAXBElement<AbstractTimeObjectType> createAbstractTimeObject(final AbstractTimeObjectType value) {
@@ -2728,7 +2728,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "pointRep")
     public JAXBElement<PointPropertyType> createPointRep(final PointPropertyType value) {
@@ -2737,7 +2737,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "centerOf")
     public JAXBElement<PointPropertyType> createCenterOf(final PointPropertyType value) {
@@ -2746,7 +2746,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PointArrayPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "pointArrayProperty")
     public JAXBElement<PointArrayPropertyType> createPointArrayProperty(final PointArrayPropertyType value) {
@@ -2755,7 +2755,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractFeatureCollectionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractFeatureCollection", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
     public JAXBElement<AbstractFeatureCollectionType> createAbstractFeatureCollection(final AbstractFeatureCollectionType value) {
@@ -2764,7 +2764,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DMSAngleType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "dmsAngle")
     public JAXBElement<DMSAngleType> createDmsAngle(final DMSAngleType value) {
@@ -2773,7 +2773,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BagType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Bag", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
     public JAXBElement<BagType> createBag(final BagType value) {
@@ -2782,7 +2782,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OffsetCurveType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "OffsetCurve", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
     public JAXBElement<OffsetCurveType> createOffsetCurve(final OffsetCurveType value) {
@@ -2791,7 +2791,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConversionToPreferredUnitType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "conversionToPreferredUnit")
     public JAXBElement<ConversionToPreferredUnitType> createConversionToPreferredUnit(final ConversionToPreferredUnitType value) {
@@ -2800,7 +2800,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CoordinatesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "coordinates")
     public JAXBElement<CoordinatesType> createCoordinates(final CoordinatesType value) {
@@ -2809,7 +2809,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiCurveType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiCurve", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GeometricAggregate")
     public JAXBElement<MultiCurveType> createMultiCurve(final MultiCurveType value) {
@@ -2818,7 +2818,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiPointType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiPoint", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GeometricAggregate")
     public JAXBElement<MultiPointType> createMultiPoint(final MultiPointType value) {
@@ -2827,7 +2827,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link VectorType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "vector")
     public JAXBElement<VectorType> createVector(final VectorType value) {
@@ -2836,7 +2836,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CurvePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "edgeOf")
     public JAXBElement<CurvePropertyType> createEdgeOf(final CurvePropertyType value) {
@@ -2845,7 +2845,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiCurvePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiCenterLineOf")
     public JAXBElement<MultiCurvePropertyType> createMultiCenterLineOf(final MultiCurvePropertyType value) {
@@ -2854,7 +2854,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GeometryArrayPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "geometryMembers")
     public JAXBElement<GeometryArrayPropertyType> createGeometryMembers(final GeometryArrayPropertyType value) {
@@ -2863,7 +2863,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CodeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "LocationKeyWord")
     public JAXBElement<CodeType> createLocationKeyWord(final CodeType value) {
@@ -2872,7 +2872,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DictionaryEntryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "dictionaryEntry")
     public JAXBElement<DictionaryEntryType> createDictionaryEntry(final DictionaryEntryType value) {
@@ -2881,7 +2881,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link IndirectEntryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "indirectEntry")
     public JAXBElement<IndirectEntryType> createIndirectEntry(final IndirectEntryType value) {
@@ -2890,7 +2890,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BezierType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Bezier", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "BSpline")
     public JAXBElement<BezierType> createBezier(final BezierType value) {
@@ -2899,7 +2899,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiPointPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiPointProperty")
     public JAXBElement<MultiPointPropertyType> createMultiPointProperty(final MultiPointPropertyType value) {
@@ -2908,7 +2908,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SurfacePatchArrayPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "patches")
     public JAXBElement<SurfacePatchArrayPropertyType> createPatches(final SurfacePatchArrayPropertyType value) {
@@ -2917,7 +2917,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArcStringByBulgeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ArcStringByBulge", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
     public JAXBElement<ArcStringByBulgeType> createArcStringByBulge(final ArcStringByBulgeType value) {
@@ -2926,7 +2926,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractFeatureType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractFeature", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
     public JAXBElement<AbstractFeatureType> createAbstractFeature(final AbstractFeatureType value) {
@@ -2935,7 +2935,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiPointPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiLocation")
     public JAXBElement<MultiPointPropertyType> createMultiLocation(final MultiPointPropertyType value) {
@@ -2944,7 +2944,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FeaturePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "featureProperty")
     public JAXBElement<FeaturePropertyType> createFeatureProperty(final FeaturePropertyType value) {
@@ -2953,7 +2953,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LineStringPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "lineStringProperty")
     public JAXBElement<LineStringPropertyType> createLineStringProperty(final LineStringPropertyType value) {
@@ -2962,7 +2962,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TrianglePatchArrayPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "trianglePatches", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "patches")
     public JAXBElement<TrianglePatchArrayPropertyType> createTrianglePatches(final TrianglePatchArrayPropertyType value) {
@@ -2971,7 +2971,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractRingType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractRing", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
     public JAXBElement<AbstractRingType> createAbstractRing(final AbstractRingType value) {
@@ -2980,7 +2980,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TimePositionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "timePosition")
     public JAXBElement<TimePositionType> createTimePosition(final TimePositionType value) {
@@ -2989,7 +2989,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiSurfacePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiSurfaceProperty")
     public JAXBElement<MultiSurfacePropertyType> createMultiSurfaceProperty(final MultiSurfacePropertyType value) {
@@ -2998,7 +2998,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DictionaryEntryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "definitionMember", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "dictionaryEntry")
     public JAXBElement<DictionaryEntryType> createDefinitionMember(final DictionaryEntryType value) {
@@ -3007,7 +3007,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SurfaceArrayPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "surfaceArrayProperty")
     public JAXBElement<SurfaceArrayPropertyType> createSurfaceArrayProperty(final SurfaceArrayPropertyType value) {
@@ -3016,7 +3016,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TriangleType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Triangle", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurfacePatch")
     public JAXBElement<TriangleType> createTriangle(final TriangleType value) {
@@ -3025,7 +3025,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Cone", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GriddedSurface")
     public JAXBElement<ConeType> createCone(final ConeType value) {
@@ -3034,7 +3034,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link StringOrRefType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "quantityType")
     public JAXBElement<StringOrRefType> createQuantityType(final StringOrRefType value) {
@@ -3043,7 +3043,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FeaturePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "featureMember")
     public JAXBElement<FeaturePropertyType> createFeatureMember(final FeaturePropertyType value) {
@@ -3052,7 +3052,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LineStringType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "LineString", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurve")
     public JAXBElement<LineStringType> createLineString(final LineStringType value) {
@@ -3061,7 +3061,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BaseUnitType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "BaseUnit", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "UnitDefinition")
     public JAXBElement<BaseUnitType> createBaseUnit(final BaseUnitType value) {
@@ -3070,7 +3070,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link StringOrRefType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "LocationString")
     public JAXBElement<StringOrRefType> createLocationString(final StringOrRefType value) {
@@ -3079,7 +3079,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EnvelopeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Envelope")
     public JAXBElement<EnvelopeType> createEnvelope(final EnvelopeType value) {
@@ -3088,7 +3088,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractSurfaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractSurface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometricPrimitive")
     public JAXBElement<AbstractSurfaceType> createAbstractSurface(final AbstractSurfaceType value) {
@@ -3097,7 +3097,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DefinitionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Definition", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
     public JAXBElement<DefinitionType> createDefinition(final DefinitionType value) {
@@ -3106,7 +3106,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FeatureArrayPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "featureMembers")
     public JAXBElement<FeatureArrayPropertyType> createFeatureMembers(final FeatureArrayPropertyType value) {
@@ -3115,7 +3115,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GeodesicStringType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "GeodesicString", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
     public JAXBElement<GeodesicStringType> createGeodesicString(final GeodesicStringType value) {
@@ -3124,7 +3124,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SurfacePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "baseSurface")
     public JAXBElement<SurfacePropertyType> createBaseSurface(final SurfacePropertyType value) {
@@ -3133,7 +3133,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "pointMember")
     public JAXBElement<PointPropertyType> createPointMember(final PointPropertyType value) {
@@ -3142,7 +3142,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractTimeGeometricPrimitiveType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractTimeGeometricPrimitive", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractTimePrimitive")
     public JAXBElement<AbstractTimeGeometricPrimitiveType> createAbstractTimeGeometricPrimitive(final AbstractTimeGeometricPrimitiveType value) {
@@ -3151,7 +3151,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CylinderType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Cylinder", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GriddedSurface")
     public JAXBElement<CylinderType> createCylinder(final CylinderType value) {
@@ -3160,7 +3160,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "position")
     public JAXBElement<PointPropertyType> createPosition(final PointPropertyType value) {
@@ -3169,7 +3169,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CurveSegmentArrayPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "segments")
     public JAXBElement<CurveSegmentArrayPropertyType> createSegments(final CurveSegmentArrayPropertyType value) {
@@ -3178,7 +3178,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractParametricCurveSurfaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_ParametricCurveSurface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurfacePatch")
     public JAXBElement<AbstractParametricCurveSurfaceType> createParametricCurveSurface(final AbstractParametricCurveSurfaceType value) {
@@ -3187,7 +3187,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractTimeComplexType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_TimeComplex", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractTimeObject")
     public JAXBElement<AbstractTimeComplexType> createTimeComplex(final AbstractTimeComplexType value) {
@@ -3196,7 +3196,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DictionaryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Dictionary", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
     public JAXBElement<DictionaryType> createDictionary(final DictionaryType value) {
@@ -3205,7 +3205,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CurvePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "baseCurve")
     public JAXBElement<CurvePropertyType> createBaseCurve(final CurvePropertyType value) {
@@ -3214,7 +3214,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TimeInstantType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "TimeInstant", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractTimeGeometricPrimitive")
     public JAXBElement<TimeInstantType> createTimeInstant(final TimeInstantType value) {
@@ -3797,7 +3797,7 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
         return new JAXBElement<TrackType>(_Track_QNAME, TrackType.class, null, value);
     }
 
- 
+
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractReferenceSystemType }{@code >}}

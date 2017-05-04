@@ -34,12 +34,12 @@ import javax.xml.bind.annotation.XmlValue;
  *                 (s,t) from a homogeneous world position p as (s,t) = (s'/q', t'/q') with (s', t', q') = T*p. Thus, perspective
  *                 projections can be specified. The SRS can be specified using standard attributes. If an object is given in a
  *                 different reference system, it is transformed to the SRS before applying the transformation. A transformation
- *                 matrix can be used for whole surfaces. It is not required to specify it per LinearRing. 
- * 
+ *                 matrix can be used for whole surfaces. It is not required to specify it per LinearRing.
+ *
  * <p>Java class for TexCoordGenType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TexCoordGenType">
  *   &lt;complexContent>
@@ -60,8 +60,8 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TexCoordGenType", propOrder = {
@@ -77,11 +77,11 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
     /**
      * Gets the value of the worldToTexture property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TexCoordGenType.WorldToTexture }
-     *     
+     *
      */
     public TexCoordGenType.WorldToTexture getWorldToTexture() {
         return worldToTexture;
@@ -89,11 +89,11 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
     /**
      * Sets the value of the worldToTexture property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TexCoordGenType.WorldToTexture }
-     *     
+     *
      */
     public void setWorldToTexture(TexCoordGenType.WorldToTexture value) {
         this.worldToTexture = value;
@@ -101,7 +101,7 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
     /**
      * Gets the value of the genericApplicationPropertyOfTexCoordGen property.
-     * 
+     *
      */
     public List<Object> getGenericApplicationPropertyOfTexCoordGen() {
         if (genericApplicationPropertyOfTexCoordGen == null) {
@@ -127,9 +127,9 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;simpleContent>
@@ -139,8 +139,8 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
      *   &lt;/simpleContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -165,7 +165,7 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
          * Used for texture parameterization. The Transformation matrix is a 3 by 4 matrix, thus it must be a
          * list with 12 items. The order the matrix element are represented is row-major, i. e. the first 4 elements
          * represent the first row, the fifth to the eight element the second row,... Gets the value of the value property.
-         * 
+         *
          */
         public List<Double> getValue() {
             if (value == null) {
@@ -176,11 +176,11 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
         /**
          * Gets the value of the srsName property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getSrsName() {
             return srsName;
@@ -188,11 +188,11 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
         /**
          * Sets the value of the srsName property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setSrsName(String value) {
             this.srsName = value;
@@ -200,11 +200,11 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
         /**
          * Gets the value of the srsDimension property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link BigInteger }
-         *     
+         *
          */
         public Integer getSrsDimension() {
             return srsDimension;
@@ -212,11 +212,11 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
         /**
          * Sets the value of the srsDimension property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link BigInteger }
-         *     
+         *
          */
         public void setSrsDimension(Integer value) {
             this.srsDimension = value;
@@ -224,7 +224,7 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
         /**
          * Gets the value of the axisLabels property.
-         * 
+         *
          */
         public List<String> getAxisLabels() {
             if (axisLabels == null) {
@@ -235,7 +235,7 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
         /**
          * Gets the value of the uomLabels property.
-         * 
+         *
          */
         public List<String> getUomLabels() {
             if (uomLabels == null) {

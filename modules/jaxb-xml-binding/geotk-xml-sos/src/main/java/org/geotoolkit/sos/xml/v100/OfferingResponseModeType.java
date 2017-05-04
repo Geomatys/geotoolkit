@@ -31,14 +31,14 @@ public class OfferingResponseModeType implements Entry {
      * L'identifiant de l'offering.
      */
     private String idOffering;
-    
+
     /**
      * Le mode de reponse associe a cet offering.
      */
     private ResponseModeType mode;
-    
+
     /**
-     * Cree une nouveau lien entre une procedure et un offering. 
+     * Cree une nouveau lien entre une procedure et un offering.
      */
     public OfferingResponseModeType(final String idOffering, final ResponseModeType mode) {
         this.idOffering = idOffering;

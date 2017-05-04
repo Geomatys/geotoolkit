@@ -27,7 +27,7 @@ import javafx.scene.control.TreeItem;
  * @author Johann Sorel (Geomatys)
  */
 public class TreeMenuItem {
-    
+
     protected MenuItem menuItem;
 
     public TreeMenuItem() {
@@ -36,21 +36,21 @@ public class TreeMenuItem {
     public TreeMenuItem(MenuItem item) {
         this.menuItem = item;
     }
-    
+
     /**
-     * 
+     *
      * @param selectedItems currently selected items.
      * @return MenuItem if valid for current selection. null if not valid
      */
     public MenuItem init(List<? extends TreeItem> selectedItems){
         return menuItem;
     }
-    
+
     /**
-     * 
+     *
      * @param selection selected nodes
      * @param type expected type
-     * @return true if selection is unique and the selected item is instance of type. 
+     * @return true if selection is unique and the selected item is instance of type.
      */
     protected static boolean uniqueAndType(final List<? extends TreeItem> selection, final Class type) {
         if (selection != null && selection.size() == 1){
@@ -60,10 +60,10 @@ public class TreeMenuItem {
         }
         return false;
     }
-    
+
     /**
      * Get all values of queried types from input items.
-     * 
+     *
      * Note : Input items are not browsed recursively, we don't check their children.
      * @param <T> Type of object to return.
      * @param selection The list of tree items we want to extract value from.
@@ -84,5 +84,5 @@ public class TreeMenuItem {
         }
         return result;
     }
-            
+
 }

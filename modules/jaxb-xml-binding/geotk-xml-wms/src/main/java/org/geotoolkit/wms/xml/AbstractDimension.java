@@ -25,19 +25,19 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @XmlTransient
 public interface AbstractDimension {
-    
+
     String getValue();
-    
+
     void setValue(String value);
-    
+
     String getName();
-    
+
     String getUnits();
-    
+
     String getUnitSymbol();
-    
+
     String getDefault();
-    
+
     void setDefault(String _default);
 
 }

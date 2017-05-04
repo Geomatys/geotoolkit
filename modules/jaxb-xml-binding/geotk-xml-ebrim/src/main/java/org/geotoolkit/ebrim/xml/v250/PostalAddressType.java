@@ -27,14 +27,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
+ *
  * Mapping of the same named interface in ebRIM.
- * 			
- * 
+ *
+ *
  * <p>Java class for PostalAddressType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PostalAddressType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -79,7 +79,7 @@ public class PostalAddressType {
 
     /**
      * Gets the value of the slot property.
-     * 
+     *
      */
     public List<SlotType> getSlot() {
         if (slot == null) {
@@ -97,7 +97,7 @@ public class PostalAddressType {
         }
         this.slot.add(slot);
     }
-    
+
      /**
      * Sets the value of the slot property.
      */
@@ -105,7 +105,7 @@ public class PostalAddressType {
         this.slot = slot;
     }
 
-    
+
     /**
      * Gets the value of the city property.
      */

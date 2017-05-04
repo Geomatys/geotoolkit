@@ -74,7 +74,7 @@ public interface FlyTo extends AbstractTourPrimitive {
     void setFlyToMode(EnumFlyToMode flyToMode);
 
     /**
-     * 
+     *
      * @param view
      */
     void setView(AbstractView view);

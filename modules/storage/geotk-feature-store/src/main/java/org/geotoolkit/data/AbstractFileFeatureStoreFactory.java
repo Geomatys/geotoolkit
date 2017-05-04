@@ -67,7 +67,7 @@ public abstract class AbstractFileFeatureStoreFactory extends AbstractFeatureSto
         }
 
     }
-    
+
     /**
      * {@inheritDoc }
      * @param uri

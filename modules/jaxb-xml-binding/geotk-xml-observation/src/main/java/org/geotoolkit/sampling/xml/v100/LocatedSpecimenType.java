@@ -27,9 +27,9 @@ import org.opengis.geometry.Geometry;
 
 /**
  * <p>Java class for LocatedSpecimenType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LocatedSpecimenType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.opengis.geometry.Geometry;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,11 +56,11 @@ public class LocatedSpecimenType extends SpecimenType {
 
     /**
      * Gets the value of the samplingLocation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeometryPropertyType }
-     *     
+     *
      */
     public GeometryPropertyType getSamplingLocation() {
         return samplingLocation;
@@ -68,16 +68,16 @@ public class LocatedSpecimenType extends SpecimenType {
 
     /**
      * Sets the value of the samplingLocation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeometryPropertyType }
-     *     
+     *
      */
     public void setSamplingLocation(final GeometryPropertyType value) {
         this.samplingLocation = value;
     }
-    
+
     @Override
     public Geometry getGeometry() {
        if (samplingLocation != null) {

@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for NilValuesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="NilValuesType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "NilValuesType", propOrder = {
@@ -55,10 +55,10 @@ public class NilValuesType extends AbstractSWEType {
 
     /**
      * Gets the value of the nilValue property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link NilValue }
-     * 
+     *
      */
     public List<NilValue> getNilValue() {
         if (nilValue == null) {

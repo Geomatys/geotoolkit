@@ -20,7 +20,7 @@ import java.util.EventListener;
 
 /**
  * Interface to listen to collection events.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -30,6 +30,6 @@ public interface CollectionChangeListener<T> extends EventListener{
      * Called when a change occurs in the living collection.
      */
     void collectionChange(CollectionChangeEvent<T> event);
-    
-    
+
+
 }

@@ -31,9 +31,9 @@ import org.geotoolkit.wfs.xml.DeleteElement;
 
 /**
  * <p>Java class for DeleteType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DeleteType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.wfs.xml.DeleteElement;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DeleteType", propOrder = {
@@ -69,14 +69,14 @@ public class DeleteType extends AbstractTransactionActionType implements DeleteE
         this.filter   = filter;
         this.typeName = typeName;
     }
-    
+
     /**
      * Gets the value of the filter property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FilterType }
-     *     
+     *
      */
     @Override
     public FilterType getFilter() {
@@ -85,11 +85,11 @@ public class DeleteType extends AbstractTransactionActionType implements DeleteE
 
     /**
      * Sets the value of the filter property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FilterType }
-     *     
+     *
      */
     public void setFilter(FilterType value) {
         this.filter = value;
@@ -97,11 +97,11 @@ public class DeleteType extends AbstractTransactionActionType implements DeleteE
 
     /**
      * Gets the value of the typeName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     @Override
     public QName getTypeName() {
@@ -110,11 +110,11 @@ public class DeleteType extends AbstractTransactionActionType implements DeleteE
 
     /**
      * Sets the value of the typeName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setTypeName(QName value) {
         this.typeName = value;
@@ -131,13 +131,13 @@ public class DeleteType extends AbstractTransactionActionType implements DeleteE
         }
         return sb.toString();
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
-        
+
         if (obj instanceof DeleteType) {
             DeleteType that = (DeleteType) obj;
             return Objects.equals(this.filter, that.filter) &&

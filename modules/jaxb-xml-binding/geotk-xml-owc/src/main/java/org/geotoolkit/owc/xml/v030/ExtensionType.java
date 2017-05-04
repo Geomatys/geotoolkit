@@ -25,12 +25,12 @@ import org.w3c.dom.Element;
 
 /**
  * This allows additional elements to be added to support non WMS Layer
- * 				services.
- * 
+ *              services.
+ *
  * <p>Java class for ExtensionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ExtensionType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,12 +57,12 @@ public class ExtensionType {
 
     /**
      * Gets the value of the any property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Element }
      *     {@link Object }
-     *     
+     *
      */
     public Object getAny() {
         return any;
@@ -70,12 +70,12 @@ public class ExtensionType {
 
     /**
      * Sets the value of the any property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Element }
      *     {@link Object }
-     *     
+     *
      */
     public void setAny(final Object value) {
         this.any = value;

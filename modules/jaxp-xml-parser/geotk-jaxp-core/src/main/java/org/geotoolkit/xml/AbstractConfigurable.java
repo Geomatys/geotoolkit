@@ -24,13 +24,13 @@ import java.util.Map;
  * @author Guilhem Legal (Geomatys)
  */
 public class AbstractConfigurable {
-    
+
     protected final Map<String, Object> properties = new HashMap<>();
 
     public Object getProperty(final String key) {
         return properties.get(key);
     }
-    
+
     /**
      * @return the properties
      */

@@ -28,12 +28,12 @@ import org.geotoolkit.citygml.xml.v100.AddressPropertyType;
 /**
  *  Type for doors in walls. Used in LOD3 and LOD4 only . As subclass of _CityObject, a Door inherits
  *                 all attributes and relations, in particular an id, names, external references, and generalization relations.
- *             
- * 
+ *
+ *
  * <p>Java class for DoorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DoorType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.citygml.xml.v100.AddressPropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,25 +65,25 @@ public class DoorType
 
     /**
      * Gets the value of the address property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the address property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAddress().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AddressPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<AddressPropertyType> getAddress() {
         if (address == null) {
@@ -94,25 +94,25 @@ public class DoorType
 
     /**
      * Gets the value of the genericApplicationPropertyOfDoor property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the genericApplicationPropertyOfDoor property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getGenericApplicationPropertyOfDoor().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getGenericApplicationPropertyOfDoor() {
         if (genericApplicationPropertyOfDoor == null) {

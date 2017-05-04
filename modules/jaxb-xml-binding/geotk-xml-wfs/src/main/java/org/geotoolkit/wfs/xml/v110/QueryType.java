@@ -36,11 +36,11 @@ import org.geotoolkit.wfs.xml.Query;
 
 /**
  * The Query element is of type QueryType.
- * 
+ *
  * <p>Java class for QueryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="QueryType">
  *   &lt;complexContent>
@@ -62,8 +62,8 @@ import org.geotoolkit.wfs.xml.Query;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -103,7 +103,7 @@ public class QueryType implements Query {
         this.filter         = filter;
         this.typeName       = typeName;
     }
-    
+
     public QueryType(final FilterType filter, final List<QName> typeName, final String featureVersion, final String srsName,
             final SortByType sortBy, final List<String> properties) {
         this.filter         = filter;
@@ -118,7 +118,7 @@ public class QueryType implements Query {
             this.propertyNameOrXlinkPropertyNameOrFunction.addAll(properties);
         }
     }
-    
+
     public QueryType(final QueryType that) {
         if (that != null) {
             this.featureVersion = that.featureVersion;
@@ -147,7 +147,7 @@ public class QueryType implements Query {
             }
         }
     }
-    
+
     /**
      * Gets the value of the propertyNameOrXlinkPropertyNameOrFunction property.
      */
@@ -157,7 +157,7 @@ public class QueryType implements Query {
         }
         return this.propertyNameOrXlinkPropertyNameOrFunction;
     }
-    
+
     @Override
     public List<Object> getPropertyNames() {
         return getPropertyNameOrXlinkPropertyNameOrFunction();
@@ -165,16 +165,16 @@ public class QueryType implements Query {
 
     /**
      * The Filter element is used to define spatial and/or non-spatial
-     * constraints on query.  
+     * constraints on query.
      * Spatial constrains use GML3 to specify the constraining geometry.
      * A full description of the Filter element can be found in the Filter Encoding Implementation
      * Specification.
-     *              
-     * 
+     *
+     *
      * @return
      *     possible object is
      *     {@link FilterType }
-     *     
+     *
      */
     @Override
     public FilterType getFilter() {
@@ -186,26 +186,26 @@ public class QueryType implements Query {
      * Spatial constrains use GML3 to specify the constraining geometry.
      * A full description of the Filter element can be found in the Filter Encoding Implementation
      * Specification.
-     *              
-     * 
+     *
+     *
      * @param value
      *     allowed object is
      *     {@link FilterType }
-     *     
+     *
      */
     public void setFilter(final FilterType value) {
         this.filter = value;
     }
 
     /**
-     * The SortBy element is used specify property names whose values should be used to order 
+     * The SortBy element is used specify property names whose values should be used to order
      * (upon presentation) the set of feature instances that satisfy the query.
-     *              
-     * 
+     *
+     *
      * @return
      *     possible object is
      *     {@link SortByType }
-     *     
+     *
      */
     @Override
     public SortByType getSortBy() {
@@ -215,12 +215,12 @@ public class QueryType implements Query {
     /**
      * The SortBy element is used specify property names whose values should be used to order
      * (upon presentation) the set of feature instances that satisfy the query.
-     *              
-     * 
+     *
+     *
      * @param value
      *     allowed object is
      *     {@link SortByType }
-     *     
+     *
      */
     public void setSortBy(final SortByType value) {
         this.sortBy = value;
@@ -228,11 +228,11 @@ public class QueryType implements Query {
 
     /**
      * Gets the value of the handle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHandle() {
         return handle;
@@ -240,11 +240,11 @@ public class QueryType implements Query {
 
     /**
      * Sets the value of the handle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHandle(final String value) {
         this.handle = value;
@@ -259,7 +259,7 @@ public class QueryType implements Query {
         }
         return this.typeName;
     }
-    
+
     @Override
     public List<QName> getTypeNames() {
         return getTypeName();
@@ -267,11 +267,11 @@ public class QueryType implements Query {
 
     /**
      * Gets the value of the featureVersion property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFeatureVersion() {
         return featureVersion;
@@ -279,11 +279,11 @@ public class QueryType implements Query {
 
     /**
      * Sets the value of the featureVersion property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFeatureVersion(final String value) {
         this.featureVersion = value;
@@ -291,11 +291,11 @@ public class QueryType implements Query {
 
     /**
      * Gets the value of the srsName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getSrsName() {
@@ -304,17 +304,17 @@ public class QueryType implements Query {
 
     /**
      * Sets the value of the srsName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setSrsName(final String value) {
         this.srsName = value;
     }
-    
+
     @Override
     public List<String> getAliases() {
         return new ArrayList<String>();
@@ -371,7 +371,7 @@ public class QueryType implements Query {
         if (this == obj) {
             return true;
         }
-        
+
         if (obj instanceof QueryType) {
             QueryType that = (QueryType) obj;
             return Objects.equals(this.featureVersion, that.featureVersion) &&

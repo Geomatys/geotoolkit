@@ -25,11 +25,11 @@ import org.geotoolkit.swe.xml.AbstractQuantityProperty;
 
 /**
  * Quantity is a data-type so usually appears "by value" rather than by reference.
- * 
+ *
  * <p>Java class for QuantityPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="QuantityPropertyType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.swe.xml.AbstractQuantityProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,14 +63,14 @@ public class QuantityPropertyType implements AbstractQuantityProperty {
             this.quantity = new QuantityType(qp.getQuantity());
         }
     }
-    
+
     /**
      * Gets the value of the quantity property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Quantity }
-     *     
+     *
      */
     public QuantityType getQuantity() {
         return quantity;
@@ -78,11 +78,11 @@ public class QuantityPropertyType implements AbstractQuantityProperty {
 
     /**
      * Sets the value of the quantity property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Quantity }
-     *     
+     *
      */
     public void setQuantity(final QuantityType value) {
         this.quantity = value;

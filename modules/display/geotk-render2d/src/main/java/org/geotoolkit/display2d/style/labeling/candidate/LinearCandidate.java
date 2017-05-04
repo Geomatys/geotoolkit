@@ -37,5 +37,5 @@ public class LinearCandidate extends Candidate<LinearLabelDescriptor> {
     public Shape getShape() {
         return shape;
     }
-    
+
 }

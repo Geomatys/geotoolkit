@@ -30,9 +30,9 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for AbstractVectorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractVectorType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,7 +84,7 @@ public abstract class AbstractVectorType extends AbstractDataRecordType implemen
         this.localFrame = localFrame;
         this.referenceFrame = referenceFrame;
     }
-    
+
     /**
      * Gets the value of the referenceFrame property.
      */
@@ -138,7 +138,7 @@ public abstract class AbstractVectorType extends AbstractDataRecordType implemen
         hash = 37 * hash + (this.localFrame != null ? this.localFrame.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(super.toString());

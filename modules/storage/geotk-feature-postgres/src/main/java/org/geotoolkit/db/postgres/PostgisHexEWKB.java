@@ -38,30 +38,30 @@ import static org.postgis.Geometry.*;
 /**
  * PostGIS Hexa-EWKB Geometry reader/write classes.
  * http://postgis.net/docs/using_postgis_dbmanagement.html#EWKB_EWKT
- * 
+ *
  * This format is the natural form returned by a query selection a geometry field
  * whithout using any ST_X method.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 final class PostgisHexEWKB {
-    
+
     private static final int MASK_Z         = 0x80000000;
     private static final int MASK_M         = 0x40000000;
     private static final int MASK_SRID      = 0x20000000;
     private static final int MASK_GEOMTYPE  = 0x1FFFFFFF;
-    
+
     private final GeometryFactory gf;
     private final PostgresDialect dialect;
-    
+
     PostgisHexEWKB(final GeometryFactory gf, final PostgresDialect dialect) {
         this.dialect = dialect;
         this.gf = gf;
     }
-    
+
     public Geometry read(final String value) {
         if(value == null) return null;
-        
+
         final ByteGetter.StringByteGetter bytes = new ByteGetter.StringByteGetter(value);
         final ValueGetter vg;
         final int endianess = bytes.get(0);
@@ -72,7 +72,7 @@ final class PostgisHexEWKB {
         }else{
             throw new IllegalArgumentException("Illegal endianess value : " + endianess);
         }
-        
+
         return readGeometry(vg,0);
     }
 
@@ -81,7 +81,7 @@ final class PostgisHexEWKB {
         if (endian != data.endian) {
             throw new IllegalArgumentException("Endian inconsistency!");
         }
-        
+
         //parse flags
         final int     flags     = data.getInt();
         final boolean flagZ     = (flags & MASK_Z)    != 0;
@@ -89,11 +89,11 @@ final class PostgisHexEWKB {
         final boolean flagSRID  = (flags & MASK_SRID) != 0;
         final int     geomType  = (flags & MASK_GEOMTYPE);
         final int     nbDim     = 2 + ((flagZ)?1:0) + ((flagM)?1:0);
-                
+
         if(flagSRID){
             srid = data.getInt();
         }
-       
+
         final Geometry geom;
         switch (geomType) {
             case POINT:             geom = readPoint(data, nbDim);           break;
@@ -105,7 +105,7 @@ final class PostgisHexEWKB {
             case GEOMETRYCOLLECTION:geom = readCollection(data, srid);       break;
             default: throw new IllegalArgumentException("Unknown geometry type : "+geomType);
         }
-        
+
         geom.setSRID(srid);
         if(srid >= 0){
             try {
@@ -118,7 +118,7 @@ final class PostgisHexEWKB {
         return geom;
     }
 
-    private Point readPoint(final ValueGetter data, final int nbDim) {        
+    private Point readPoint(final ValueGetter data, final int nbDim) {
         switch(nbDim){
             case 2:
                 return gf.createPoint(new Coordinate(data.getDouble(),data.getDouble()));
@@ -138,7 +138,7 @@ final class PostgisHexEWKB {
 
     private CoordinateSequence readCS(final ValueGetter data, final int nbDim) {
         final int nb = data.getInt();
-        final CoordinateSequence cs = new PackedCoordinateSequence.Double(nb, nbDim);        
+        final CoordinateSequence cs = new PackedCoordinateSequence.Double(nb, nbDim);
         for(int index=0; index<nb; index++){
             for(int ordinal=0; ordinal<nbDim; ordinal++){
                 cs.setOrdinate(index, ordinal, data.getDouble());
@@ -197,5 +197,5 @@ final class PostgisHexEWKB {
         }
         return gf.createGeometryCollection(geoms);
     }
-    
+
 }

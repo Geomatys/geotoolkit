@@ -34,15 +34,15 @@ import org.opengis.style.LinePlacement;
 
 /**
  * Line placement panel
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
 public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
-    
+
     private MapLayer layer = null;
     private LinePlacement placement = null;
-    
+
     public JLinePlacementPane() {
         super(LinePlacement.class);
         initComponents();
@@ -50,13 +50,13 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
         guiInitial.setModel(0d, 0d, Double.POSITIVE_INFINITY, 1d);
         guiGap.setModel(0d, 0d, Double.POSITIVE_INFINITY, 1d);
     }
-    
+
     public void setExpressionVisible(boolean visible){
         guiGap.setExpressionVisible(visible);
         guiInitial.setExpressionVisible(visible);
         guiOffset.setExpressionVisible(visible);
-    } 
-    
+    }
+
     @Override
     public void setLayer(final MapLayer layer) {
         this.layer = layer;
@@ -73,7 +73,7 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
     @Override
     public void parse(final LinePlacement target) {
         placement = target;
-        
+
         if(placement != null){
             guiOffset.parse(placement.getPerpendicularOffset());
             guiInitial.parse(placement.getInitialGap());
@@ -82,7 +82,7 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
             guiGeneralized.setSelected(placement.isGeneralizeLine());
             guiRepetead.setSelected(placement.isRepeated());
         }
-        
+
     }
 
     @Override
@@ -96,13 +96,13 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
                 guiGeneralized.isSelected()
                 );
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiLabelAlign,guiLabelGap,guiLabelGeneralize,
             guiLabelInitial,guiLabelOffset,guiLabelRepeat};
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -256,12 +256,12 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
     }//GEN-LAST:event_propertyChange
 
     private void propertyChange2(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange2
-        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());
         }
     }//GEN-LAST:event_propertyChange2
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JCheckBox guiAligned;
     private JNumberExpressionPane guiGap;
@@ -276,5 +276,5 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
     private JNumberExpressionPane guiOffset;
     private JCheckBox guiRepetead;
     // End of variables declaration//GEN-END:variables
-    
+
 }

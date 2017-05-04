@@ -25,5 +25,5 @@ import org.geotoolkit.ows.xml.RequestBase;
 public interface GetFeatureOfInterestTime extends RequestBase {
 
     String getFeatureOfInterestId();
-    
+
 }

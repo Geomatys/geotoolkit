@@ -26,7 +26,7 @@ import org.opengis.util.InternationalString;
 
 /**
  * <p>This class provides a GeneralParameterValue writing method.</p>
- * 
+ *
  * @author Samuel Andrés
  * @module
  */
@@ -283,7 +283,7 @@ public class ParameterDescriptorWriter extends StaxStreamWriter {
 
     /**
      * <p>This method writes a general parameter descriptor</p>
-     * 
+     *
      * @param parameterDescriptor
      * @throws XMLStreamException
      */

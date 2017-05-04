@@ -32,7 +32,7 @@ import org.geotoolkit.factory.FactoryRegistry;
 /**
  * Searches for all available {@link ExternalGraphicFactory} and
  * {@link MarkFactory} implementations.
- * 
+ *
  * <p>
  * In addition to implementing this interface dynamic symbol handlers should
  * have a services file:
@@ -43,7 +43,7 @@ import org.geotoolkit.factory.FactoryRegistry;
  * if the are {@link ExternalGraphicFactory} instances</li>
  * </ul>
  * </p>
- * 
+ *
  * @module
  */
 public final class DynamicSymbolFactoryFinder {
@@ -92,7 +92,7 @@ public final class DynamicSymbolFactoryFinder {
     /**
      * Finds all implementations of {@link MarkFactory} which have registered
      * using the services mechanism.
-     * 
+     *
      * @return An iterator over all discovered datastores which have registered
      *         factories, and whose available method returns true.
      */
@@ -103,7 +103,7 @@ public final class DynamicSymbolFactoryFinder {
     /**
      * Finds all implementations of {@link ExternalGraphicFactory} which have
      * registered using the services mechanism.
-     * 
+     *
      * @return An iterator over all discovered datastores which have registered
      *         factories, and whose available method returns true.
      */

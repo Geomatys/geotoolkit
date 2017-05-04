@@ -58,14 +58,14 @@ public class DBFReadingTest extends AbstractReadingTests{
         }
 
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        
+
         final GenericName name = NamesExt.create(ns, "sample");
         builder.setName(name);
         builder.addAttribute(Double.class).setName(NamesExt.create(ns,"N1")).setMaximalLength(5);
         builder.addAttribute(Double.class).setName(NamesExt.create(ns,"N2")).setMaximalLength(5);
         builder.addAttribute(String.class).setName(NamesExt.create(ns,"N3")).setMaximalLength(6);
         final FeatureType type3 = builder.build();
-        
+
         names.add(name);
         expecteds.add(new ExpectedResult(name,type3,3,null));
     }

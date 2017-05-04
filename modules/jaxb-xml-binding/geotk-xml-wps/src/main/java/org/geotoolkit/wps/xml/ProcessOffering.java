@@ -20,7 +20,7 @@ import org.geotoolkit.ows.xml.AbstractCodeType;
 import org.geotoolkit.ows.xml.AbstractDescription;
 
 /**
- * 
+ *
  * @author Quentin Boileau (Geomatys)
  * @author Johann Sorel (Geomatys)
  * @module

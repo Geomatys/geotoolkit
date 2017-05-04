@@ -30,9 +30,9 @@ import org.opengis.temporal.TemporalPrimitive;
 
 /**
  * <p>Java class for AbstractTimePrimitiveType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractTimePrimitiveType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.opengis.temporal.TemporalPrimitive;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractTimePrimitiveType", propOrder = {
@@ -60,13 +60,13 @@ public abstract class AbstractTimePrimitiveType extends AbstractTimeObjectType i
     private List<RelatedTimeType> relatedTime;
 
     public AbstractTimePrimitiveType() {
-        
+
     }
-    
+
     public AbstractTimePrimitiveType(final String id) {
         super(id);
     }
-    
+
     public AbstractTimePrimitiveType(final AbstractTimePrimitiveType that) {
         super(that);
         if (that != null && that.relatedTime != null) {
@@ -76,14 +76,14 @@ public abstract class AbstractTimePrimitiveType extends AbstractTimeObjectType i
             }
         }
     }
-    
+
     /**
      * Gets the value of the relatedTime property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link RelatedTimeType }
-     * 
-     * 
+     *
+     *
      */
     public List<RelatedTimeType> getRelatedTime() {
         if (relatedTime == null) {

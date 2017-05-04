@@ -34,9 +34,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -74,12 +74,12 @@ public class Annotation extends OpenAttrs {
 
     /**
      * Gets the value of the appinfoOrDocumentation property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Appinfo }
      * {@link Documentation }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getAppinfoOrDocumentation() {
         if (appinfoOrDocumentation == null) {
@@ -90,11 +90,11 @@ public class Annotation extends OpenAttrs {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -102,11 +102,11 @@ public class Annotation extends OpenAttrs {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(final String value) {
         this.id = value;

@@ -29,9 +29,9 @@ import org.apache.sis.util.Version;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.apache.sis.util.Version;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -78,11 +78,11 @@ public class GetFeatureInfo implements RequestBase, org.geotoolkit.ows.xml.GetFe
 
     /**
      * The corresponding GetTile request parameters
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GetTile }
-     *     
+     *
      */
     public GetTile getGetTile() {
         return getTile;
@@ -90,11 +90,11 @@ public class GetFeatureInfo implements RequestBase, org.geotoolkit.ows.xml.GetFe
 
     /**
      * The corresponding GetTile request parameters
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GetTile }
-     *     
+     *
      */
     public void setGetTile(final GetTile value) {
         this.getTile = value;
@@ -102,11 +102,11 @@ public class GetFeatureInfo implements RequestBase, org.geotoolkit.ows.xml.GetFe
 
     /**
      * Gets the value of the j property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getJ() {
         return j;
@@ -114,11 +114,11 @@ public class GetFeatureInfo implements RequestBase, org.geotoolkit.ows.xml.GetFe
 
     /**
      * Sets the value of the j property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setJ(final Integer value) {
         this.j = value;
@@ -126,11 +126,11 @@ public class GetFeatureInfo implements RequestBase, org.geotoolkit.ows.xml.GetFe
 
     /**
      * Gets the value of the i property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getI() {
         return i;
@@ -138,11 +138,11 @@ public class GetFeatureInfo implements RequestBase, org.geotoolkit.ows.xml.GetFe
 
     /**
      * Sets the value of the i property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setI(final Integer value) {
         this.i = value;
@@ -150,11 +150,11 @@ public class GetFeatureInfo implements RequestBase, org.geotoolkit.ows.xml.GetFe
 
     /**
      * Gets the value of the infoFormat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getInfoFormat() {
@@ -163,11 +163,11 @@ public class GetFeatureInfo implements RequestBase, org.geotoolkit.ows.xml.GetFe
 
     /**
      * Sets the value of the infoFormat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setInfoFormat(final String value) {
         this.infoFormat = value;
@@ -175,11 +175,11 @@ public class GetFeatureInfo implements RequestBase, org.geotoolkit.ows.xml.GetFe
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getService() {
@@ -188,11 +188,11 @@ public class GetFeatureInfo implements RequestBase, org.geotoolkit.ows.xml.GetFe
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setService(final String value) {
         this.service = value;
@@ -200,11 +200,11 @@ public class GetFeatureInfo implements RequestBase, org.geotoolkit.ows.xml.GetFe
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public Version getVersion() {
@@ -216,11 +216,11 @@ public class GetFeatureInfo implements RequestBase, org.geotoolkit.ows.xml.GetFe
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(final String value) {
         this.version = value;

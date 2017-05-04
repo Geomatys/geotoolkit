@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Encapsulates a MultiGeometry element.
- * 
+ *
  * <p>Java class for MultiGeometryPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MultiGeometryPropertyType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -50,13 +50,13 @@ import javax.xml.bind.annotation.XmlType;
 public class MultiGeometryPropertyType extends GeometryAssociationType {
 
     public MultiGeometryPropertyType() {
-        
+
     }
-    
+
     public MultiGeometryPropertyType(MultiGeometryPropertyType that) {
         super(that);
     }
-    
+
     @Override
     public GeometryAssociationType getClone() {
         return new MultiGeometryPropertyType(this);

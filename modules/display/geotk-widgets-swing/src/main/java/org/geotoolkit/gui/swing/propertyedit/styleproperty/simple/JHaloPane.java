@@ -36,7 +36,7 @@ import org.opengis.style.Halo;
  * @author Johann Sorel (Geomatys)
  */
 public class JHaloPane extends StyleElementEditor<Halo> {
-    
+
     /**
      * Creates new form JHaloPane
      */
@@ -140,21 +140,21 @@ public class JHaloPane extends StyleElementEditor<Halo> {
 
     @Override
     public void parse(Halo target) {
-        
+
         if(target!= null) {
             guiRadius.parse(target.getRadius());
             guiHaloFillPane.parse(target.getFill());
-        }        
+        }
     }
 
     @Override
     public Halo create() {
         return getStyleFactory().halo(guiHaloFillPane.create(), guiRadius.create());
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
 }

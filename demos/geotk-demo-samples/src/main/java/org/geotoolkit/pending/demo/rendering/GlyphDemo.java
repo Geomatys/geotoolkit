@@ -24,7 +24,7 @@ public class GlyphDemo {
 
     public static void main(String[] args) {
         Demos.init();
-        
+
         //generate a style
         final Style style = SF.style(StyleConstants.DEFAULT_LINE_SYMBOLIZER);
 

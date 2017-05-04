@@ -24,7 +24,7 @@ import javax.xml.bind.ValidationEventHandler;
 /**
  * A JAXB Validation Handler allowing not to lost the Exception throw by the CoordinateReferenceSystemAdapter
  * When a GML geometry srsName is unknow.
- * 
+ *
  * @author Guilhem Legal (Geomatys)
  */
 public class JAXBEventHandler implements ValidationEventHandler {

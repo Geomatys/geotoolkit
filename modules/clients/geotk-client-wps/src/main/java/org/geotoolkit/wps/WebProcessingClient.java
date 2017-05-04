@@ -78,24 +78,24 @@ public class WebProcessingClient extends AbstractClient {
     /**
      * Constructor
      * Auto detect version.
-     * 
+     *
      * @param serverURL
      */
     public WebProcessingClient(final URL serverURL) {
         this(serverURL,null,null,true);
     }
-    
+
     /**
      * Constructor
      * Auto detect version.
-     * 
+     *
      * @param serverURL
      * @param security
      */
     public WebProcessingClient(final URL serverURL, final ClientSecurity security) {
         this(serverURL,security,null,true);
     }
-    
+
     /**
      * Constructor
      *
@@ -128,7 +128,7 @@ public class WebProcessingClient extends AbstractClient {
      */
     public WebProcessingClient(final URL serverURL, final ClientSecurity security, String version, final boolean forceGET) {
         super(create(WPSClientFactory.PARAMETERS, serverURL, security));
-        
+
         if(version==null || "auto".equalsIgnoreCase(version)){
             //if version is null, call getCapabilities to found service version
             if(LOGGER.isLoggable(Level.FINE)){
@@ -322,7 +322,7 @@ public class WebProcessingClient extends AbstractClient {
         final GetStatusRequest request = new GetStatusRequest(serverURL.toString(), getClientSecurity());
 
         switch (getVersion()) {
-            case v100: 
+            case v100:
                 throw new IllegalArgumentException("GetStatus requests are not available in WPS 1.0.0");
             case v200: {
                 final org.geotoolkit.wps.xml.v200.GetStatus content = new org.geotoolkit.wps.xml.v200.GetStatus();
@@ -359,7 +359,7 @@ public class WebProcessingClient extends AbstractClient {
         }
         return request;
     }
-    
+
     /**
      * Create a Dismiss request
      *
@@ -382,5 +382,5 @@ public class WebProcessingClient extends AbstractClient {
         }
         return request;
     }
-    
+
 }

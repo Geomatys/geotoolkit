@@ -40,7 +40,7 @@ public class ZoomDecoration extends JComponent implements MapDecoration{
 
     private final Color borderColor = Color.GRAY;
     private final Color fillColor = new Color(0.7f,0.7f,0.7f,0.3f);
-    
+
     private Image buffer = null;
     private JMap2D map = null;
     private int startx = 0;

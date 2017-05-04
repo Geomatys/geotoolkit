@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -54,20 +54,20 @@ public class BoundingBoxData extends DataDescriptionType {
     protected List<SupportedCRS> supportedCRS;
 
     public BoundingBoxData() {
-        
+
     }
-    
+
     public BoundingBoxData(List<SupportedCRS> supportedCRS) {
         this.supportedCRS = supportedCRS;
     }
-    
+
     /**
      * Gets the value of the supportedCRS property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link SupportedCRS }
-     * 
-     * 
+     *
+     *
      */
     public List<SupportedCRS> getSupportedCRS() {
         if (supportedCRS == null) {

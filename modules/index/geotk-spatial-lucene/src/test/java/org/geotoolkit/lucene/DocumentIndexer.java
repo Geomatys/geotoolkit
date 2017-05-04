@@ -26,7 +26,7 @@ public class DocumentIndexer extends AbstractIndexer<DocumentEnvelope>{
         super("", directory, analyzer);
         this.docs = docs;
     }
-    
+
     @Override
     protected Collection<String> getAllIdentifiers() throws IndexingException {
         final List<String> ids = new ArrayList<>();

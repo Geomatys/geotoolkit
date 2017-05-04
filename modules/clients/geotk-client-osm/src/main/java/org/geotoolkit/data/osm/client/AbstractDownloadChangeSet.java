@@ -43,5 +43,5 @@ public abstract class AbstractDownloadChangeSet extends AbstractRequest implemen
     public void setChangeSetID(final int id) {
         this.id = id;
     }
-    
+
 }

@@ -25,9 +25,9 @@ import org.geotoolkit.sml.xml.AbstractRelaxNG;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import org.geotoolkit.sml.xml.AbstractRelaxNG;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,15 +61,15 @@ public class RelaxNG extends RuleLanguageType implements AbstractRelaxNG {
             this.any = rn.getAny();
         }
     }
-    
+
     /**
      * Gets the value of the any property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Element }
      *     {@link Object }
-     *     
+     *
      */
     public Object getAny() {
         return any;
@@ -77,12 +77,12 @@ public class RelaxNG extends RuleLanguageType implements AbstractRelaxNG {
 
     /**
      * Sets the value of the any property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Element }
      *     {@link Object }
-     *     
+     *
      */
     public void setAny(final Object value) {
         this.any = value;

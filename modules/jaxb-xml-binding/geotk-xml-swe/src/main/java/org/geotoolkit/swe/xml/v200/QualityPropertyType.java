@@ -30,9 +30,9 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
 
 /**
  * <p>Java class for QualityPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="QualityPropertyType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "QualityPropertyType", propOrder = {
@@ -82,11 +82,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Gets the value of the quantity property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QuantityType }
-     *     
+     *
      */
     @Override
     public QuantityType getQuantity() {
@@ -95,11 +95,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Sets the value of the quantity property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QuantityType }
-     *     
+     *
      */
     public void setQuantity(QuantityType value) {
         this.quantity = value;
@@ -107,11 +107,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Gets the value of the quantityRange property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QuantityRangeType }
-     *     
+     *
      */
     @Override
     public QuantityRangeType getQuantityRange() {
@@ -120,11 +120,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Sets the value of the quantityRange property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QuantityRangeType }
-     *     
+     *
      */
     public void setQuantityRange(QuantityRangeType value) {
         this.quantityRange = value;
@@ -132,11 +132,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Gets the value of the category property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CategoryType }
-     *     
+     *
      */
     @Override
     public CategoryType getCategory() {
@@ -145,11 +145,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Sets the value of the category property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CategoryType }
-     *     
+     *
      */
     public void setCategory(CategoryType value) {
         this.category = value;
@@ -157,11 +157,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Gets the value of the text property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TextType }
-     *     
+     *
      */
     @Override
     public TextType getText() {
@@ -170,11 +170,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Sets the value of the text property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TextType }
-     *     
+     *
      */
     public void setText(TextType value) {
         this.text = value;
@@ -182,11 +182,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TypeType }
-     *     
+     *
      */
     @Override
     public String getType() {
@@ -199,11 +199,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TypeType }
-     *     
+     *
      */
     public void setType(TypeType value) {
         this.type = value;
@@ -211,11 +211,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getHref() {
@@ -224,11 +224,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -236,11 +236,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getRole() {
@@ -249,11 +249,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -261,11 +261,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getArcrole() {
@@ -274,11 +274,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -286,11 +286,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Gets the value of the titleTemp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getTitle() {
@@ -299,11 +299,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Sets the value of the titleTemp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -311,11 +311,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShowType }
-     *     
+     *
      */
     @Override
     public String getShow() {
@@ -327,11 +327,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShowType }
-     *     
+     *
      */
     public void setShow(ShowType value) {
         this.show = value;
@@ -339,11 +339,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ActuateType }
-     *     
+     *
      */
     @Override
     public String getActuate() {
@@ -355,11 +355,11 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public void setActuate(ActuateType value) {
         this.actuate = value;

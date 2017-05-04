@@ -21,5 +21,5 @@ package org.geotoolkit.csw.xml;
  * @author Guilhem Legal (Geomatys)
  */
 public interface InsertResult {
-    
+
 }

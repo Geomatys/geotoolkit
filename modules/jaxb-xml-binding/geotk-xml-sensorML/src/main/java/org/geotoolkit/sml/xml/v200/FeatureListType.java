@@ -28,9 +28,9 @@ import org.geotoolkit.gml.xml.v321.FeaturePropertyType;
 
 /**
  * <p>Java class for FeatureListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FeatureListType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.gml.xml.v321.FeaturePropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureListType", propOrder = {
@@ -58,25 +58,25 @@ public class FeatureListType
 
     /**
      * Gets the value of the feature property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the feature property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFeature().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link FeaturePropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<FeaturePropertyType> getFeature() {
         if (feature == null) {

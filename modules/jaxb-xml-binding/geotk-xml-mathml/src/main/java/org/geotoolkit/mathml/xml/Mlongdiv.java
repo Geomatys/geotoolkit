@@ -37,9 +37,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Classe Java pour anonymous complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -164,31 +164,31 @@ public class Mlongdiv {
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
     /**
-     * Obtient le reste du modèle de contenu. 
-     * 
+     * Obtient le reste du modèle de contenu.
+     *
      * <p>
-     * Vous obtenez la propriété "catch-all" pour la raison suivante : 
-     * Le nom de champ "Apply" est utilisé par deux parties différentes d'un schéma. Reportez-vous à : 
+     * Vous obtenez la propriété "catch-all" pour la raison suivante :
+     * Le nom de champ "Apply" est utilisé par deux parties différentes d'un schéma. Reportez-vous à :
      * ligne 9 sur file:/home/guilhem/xsd/mathml3/mathml3-strict-content.xsd
      * ligne 9 sur file:/home/guilhem/xsd/mathml3/mathml3-strict-content.xsd
      * <p>
-     * Pour vous débarrasser de cette propriété, appliquez une personnalisation de propriété à l'une 
-     * des deux déclarations suivantes afin de modifier leurs noms : 
+     * Pour vous débarrasser de cette propriété, appliquez une personnalisation de propriété à l'une
+     * des deux déclarations suivantes afin de modifier leurs noms :
      * Gets the value of the content property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the content property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getContent().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link Neq }{@code >}
@@ -370,8 +370,8 @@ public class Mlongdiv {
      * {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}
      * {@link JAXBElement }{@code <}{@link Mo }{@code >}
      * {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<Object> getContent() {
         if (content == null) {
@@ -382,11 +382,11 @@ public class Mlongdiv {
 
     /**
      * Obtient la valeur de la propriété longdivstyle.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLongdivstyle() {
         return longdivstyle;
@@ -394,11 +394,11 @@ public class Mlongdiv {
 
     /**
      * Définit la valeur de la propriété longdivstyle.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLongdivstyle(String value) {
         this.longdivstyle = value;
@@ -406,11 +406,11 @@ public class Mlongdiv {
 
     /**
      * Obtient la valeur de la propriété position.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getPosition() {
         return position;
@@ -418,11 +418,11 @@ public class Mlongdiv {
 
     /**
      * Définit la valeur de la propriété position.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setPosition(BigInteger value) {
         this.position = value;
@@ -430,11 +430,11 @@ public class Mlongdiv {
 
     /**
      * Obtient la valeur de la propriété shift.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getShift() {
         return shift;
@@ -442,11 +442,11 @@ public class Mlongdiv {
 
     /**
      * Définit la valeur de la propriété shift.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setShift(BigInteger value) {
         this.shift = value;
@@ -454,11 +454,11 @@ public class Mlongdiv {
 
     /**
      * Obtient la valeur de la propriété id.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -466,11 +466,11 @@ public class Mlongdiv {
 
     /**
      * Définit la valeur de la propriété id.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(String value) {
         this.id = value;
@@ -478,11 +478,11 @@ public class Mlongdiv {
 
     /**
      * Obtient la valeur de la propriété xref.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getXref() {
         return xref;
@@ -490,11 +490,11 @@ public class Mlongdiv {
 
     /**
      * Définit la valeur de la propriété xref.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setXref(String value) {
         this.xref = value;
@@ -502,25 +502,25 @@ public class Mlongdiv {
 
     /**
      * Gets the value of the clazz property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the clazz property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getClazz().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<String> getClazz() {
         if (clazz == null) {
@@ -531,11 +531,11 @@ public class Mlongdiv {
 
     /**
      * Obtient la valeur de la propriété style.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStyle() {
         return style;
@@ -543,11 +543,11 @@ public class Mlongdiv {
 
     /**
      * Définit la valeur de la propriété style.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStyle(String value) {
         this.style = value;
@@ -555,11 +555,11 @@ public class Mlongdiv {
 
     /**
      * Obtient la valeur de la propriété href.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -567,11 +567,11 @@ public class Mlongdiv {
 
     /**
      * Définit la valeur de la propriété href.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -579,11 +579,11 @@ public class Mlongdiv {
 
     /**
      * Obtient la valeur de la propriété other.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOther() {
         return other;
@@ -591,11 +591,11 @@ public class Mlongdiv {
 
     /**
      * Définit la valeur de la propriété other.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOther(String value) {
         this.other = value;
@@ -603,11 +603,11 @@ public class Mlongdiv {
 
     /**
      * Obtient la valeur de la propriété mathcolor.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMathcolor() {
         return mathcolor;
@@ -615,11 +615,11 @@ public class Mlongdiv {
 
     /**
      * Définit la valeur de la propriété mathcolor.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMathcolor(String value) {
         this.mathcolor = value;
@@ -627,11 +627,11 @@ public class Mlongdiv {
 
     /**
      * Obtient la valeur de la propriété mathbackground.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMathbackground() {
         return mathbackground;
@@ -639,11 +639,11 @@ public class Mlongdiv {
 
     /**
      * Définit la valeur de la propriété mathbackground.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMathbackground(String value) {
         this.mathbackground = value;
@@ -651,15 +651,15 @@ public class Mlongdiv {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * <p>
-     * the map is keyed by the name of the attribute and 
+     * the map is keyed by the name of the attribute and
      * the value is the string value of the attribute.
-     * 
+     *
      * the map returned by this method is live, and you can add new attribute
      * by updating the map directly. Because of this design, there's no setter.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */

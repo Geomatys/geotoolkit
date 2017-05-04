@@ -24,18 +24,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.sensorml._2 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.sensorml._2 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -80,14 +80,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.sensorml._2
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link ArraySettingPropertyType }
-     * 
+     *
      */
     public ArraySettingPropertyType createArraySettingPropertyType() {
         return new ArraySettingPropertyType();
@@ -95,7 +95,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ArraySettingPropertyType.ArrayValues }
-     * 
+     *
      */
     public ArraySettingPropertyType.ArrayValues createArraySettingPropertyTypeArrayValues() {
         return new ArraySettingPropertyType.ArrayValues();
@@ -103,7 +103,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ClassifierListType }
-     * 
+     *
      */
     public ClassifierListType createClassifierListType() {
         return new ClassifierListType();
@@ -111,7 +111,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ParameterListType }
-     * 
+     *
      */
     public ParameterListType createParameterListType() {
         return new ParameterListType();
@@ -119,7 +119,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CapabilityListType }
-     * 
+     *
      */
     public CapabilityListType createCapabilityListType() {
         return new CapabilityListType();
@@ -127,7 +127,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ConnectionListType }
-     * 
+     *
      */
     public ConnectionListType createConnectionListType() {
         return new ConnectionListType();
@@ -135,7 +135,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CharacteristicListType }
-     * 
+     *
      */
     public CharacteristicListType createCharacteristicListType() {
         return new CharacteristicListType();
@@ -143,7 +143,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EventType }
-     * 
+     *
      */
     public EventType createEventType() {
         return new EventType();
@@ -151,7 +151,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SpatialFrameType }
-     * 
+     *
      */
     public SpatialFrameType createSpatialFrameType() {
         return new SpatialFrameType();
@@ -159,7 +159,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link IdentifierListType }
-     * 
+     *
      */
     public IdentifierListType createIdentifierListType() {
         return new IdentifierListType();
@@ -167,7 +167,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OutputListType }
-     * 
+     *
      */
     public OutputListType createOutputListType() {
         return new OutputListType();
@@ -175,7 +175,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ProcessMethodType }
-     * 
+     *
      */
     public ProcessMethodType createProcessMethodType() {
         return new ProcessMethodType();
@@ -183,7 +183,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ComponentListType }
-     * 
+     *
      */
     public ComponentListType createComponentListType() {
         return new ComponentListType();
@@ -191,7 +191,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InputListType }
-     * 
+     *
      */
     public InputListType createInputListType() {
         return new InputListType();
@@ -199,7 +199,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ObservablePropertyType }
-     * 
+     *
      */
     public ObservablePropertyType createObservablePropertyType() {
         return new ObservablePropertyType();
@@ -207,7 +207,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeatureListType }
-     * 
+     *
      */
     public FeatureListType createFeatureListType() {
         return new FeatureListType();
@@ -215,7 +215,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractMetadataListType }
-     * 
+     *
      */
     public AbstractMetadataListType createAbstractMetadataListType() {
         return new AbstractMetadataListType();
@@ -223,7 +223,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AggregateProcessType }
-     * 
+     *
      */
     public AggregateProcessType createAggregateProcessType() {
         return new AggregateProcessType();
@@ -231,7 +231,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DocumentListType }
-     * 
+     *
      */
     public DocumentListType createDocumentListType() {
         return new DocumentListType();
@@ -239,7 +239,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractSettingsType }
-     * 
+     *
      */
     public AbstractSettingsType createAbstractSettingsType() {
         return new AbstractSettingsType();
@@ -247,7 +247,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link KeywordListType }
-     * 
+     *
      */
     public KeywordListType createKeywordListType() {
         return new KeywordListType();
@@ -255,7 +255,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractModesType }
-     * 
+     *
      */
     public AbstractModesType createAbstractModesType() {
         return new AbstractModesType();
@@ -263,7 +263,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PhysicalComponentType }
-     * 
+     *
      */
     public PhysicalComponentType createPhysicalComponentType() {
         return new PhysicalComponentType();
@@ -271,7 +271,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TemporalFrameType }
-     * 
+     *
      */
     public TemporalFrameType createTemporalFrameType() {
         return new TemporalFrameType();
@@ -279,7 +279,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SimpleProcessType }
-     * 
+     *
      */
     public SimpleProcessType createSimpleProcessType() {
         return new SimpleProcessType();
@@ -287,7 +287,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SettingsType }
-     * 
+     *
      */
     public SettingsType createSettingsType() {
         return new SettingsType();
@@ -295,7 +295,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PhysicalSystemType }
-     * 
+     *
      */
     public PhysicalSystemType createPhysicalSystemType() {
         return new PhysicalSystemType();
@@ -303,7 +303,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataInterfaceType }
-     * 
+     *
      */
     public DataInterfaceType createDataInterfaceType() {
         return new DataInterfaceType();
@@ -311,7 +311,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ModeType }
-     * 
+     *
      */
     public ModeType createModeType() {
         return new ModeType();
@@ -319,7 +319,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TermType }
-     * 
+     *
      */
     public TermType createTermType() {
         return new TermType();
@@ -327,7 +327,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContactListType }
-     * 
+     *
      */
     public ContactListType createContactListType() {
         return new ContactListType();
@@ -335,7 +335,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LinkType }
-     * 
+     *
      */
     public LinkType createLinkType() {
         return new LinkType();
@@ -343,7 +343,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EventListType }
-     * 
+     *
      */
     public EventListType createEventListType() {
         return new EventListType();
@@ -351,7 +351,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ModeChoiceType }
-     * 
+     *
      */
     public ModeChoiceType createModeChoiceType() {
         return new ModeChoiceType();
@@ -359,7 +359,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ClassifierListPropertyType }
-     * 
+     *
      */
     public ClassifierListPropertyType createClassifierListPropertyType() {
         return new ClassifierListPropertyType();
@@ -367,7 +367,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractAlgorithmPropertyType }
-     * 
+     *
      */
     public AbstractAlgorithmPropertyType createAbstractAlgorithmPropertyType() {
         return new AbstractAlgorithmPropertyType();
@@ -375,7 +375,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InputListPropertyType }
-     * 
+     *
      */
     public InputListPropertyType createInputListPropertyType() {
         return new InputListPropertyType();
@@ -383,7 +383,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ConnectionListPropertyType }
-     * 
+     *
      */
     public ConnectionListPropertyType createConnectionListPropertyType() {
         return new ConnectionListPropertyType();
@@ -391,7 +391,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TemporalFramePropertyType }
-     * 
+     *
      */
     public TemporalFramePropertyType createTemporalFramePropertyType() {
         return new TemporalFramePropertyType();
@@ -399,7 +399,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ParameterListPropertyType }
-     * 
+     *
      */
     public ParameterListPropertyType createParameterListPropertyType() {
         return new ParameterListPropertyType();
@@ -407,7 +407,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeatureListPropertyType }
-     * 
+     *
      */
     public FeatureListPropertyType createFeatureListPropertyType() {
         return new FeatureListPropertyType();
@@ -415,7 +415,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PhysicalComponentPropertyType }
-     * 
+     *
      */
     public PhysicalComponentPropertyType createPhysicalComponentPropertyType() {
         return new PhysicalComponentPropertyType();
@@ -423,7 +423,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ProcessMethodPropertyType }
-     * 
+     *
      */
     public ProcessMethodPropertyType createProcessMethodPropertyType() {
         return new ProcessMethodPropertyType();
@@ -431,7 +431,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link IdentifierListPropertyType }
-     * 
+     *
      */
     public IdentifierListPropertyType createIdentifierListPropertyType() {
         return new IdentifierListPropertyType();
@@ -439,7 +439,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link KeywordListPropertyType }
-     * 
+     *
      */
     public KeywordListPropertyType createKeywordListPropertyType() {
         return new KeywordListPropertyType();
@@ -447,7 +447,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractSettingsPropertyType }
-     * 
+     *
      */
     public AbstractSettingsPropertyType createAbstractSettingsPropertyType() {
         return new AbstractSettingsPropertyType();
@@ -455,7 +455,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StatusSettingPropertyType }
-     * 
+     *
      */
     public StatusSettingPropertyType createStatusSettingPropertyType() {
         return new StatusSettingPropertyType();
@@ -463,7 +463,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OutputListPropertyType }
-     * 
+     *
      */
     public OutputListPropertyType createOutputListPropertyType() {
         return new OutputListPropertyType();
@@ -471,7 +471,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ObservablePropertyPropertyType }
-     * 
+     *
      */
     public ObservablePropertyPropertyType createObservablePropertyPropertyType() {
         return new ObservablePropertyPropertyType();
@@ -479,7 +479,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ConstraintPropertyType }
-     * 
+     *
      */
     public ConstraintPropertyType createConstraintPropertyType() {
         return new ConstraintPropertyType();
@@ -487,7 +487,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataComponentRefPropertyType }
-     * 
+     *
      */
     public DataComponentRefPropertyType createDataComponentRefPropertyType() {
         return new DataComponentRefPropertyType();
@@ -495,7 +495,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AggregateProcessPropertyType }
-     * 
+     *
      */
     public AggregateProcessPropertyType createAggregateProcessPropertyType() {
         return new AggregateProcessPropertyType();
@@ -503,7 +503,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CharacteristicListPropertyType }
-     * 
+     *
      */
     public CharacteristicListPropertyType createCharacteristicListPropertyType() {
         return new CharacteristicListPropertyType();
@@ -511,7 +511,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EventPropertyType }
-     * 
+     *
      */
     public EventPropertyType createEventPropertyType() {
         return new EventPropertyType();
@@ -519,7 +519,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PositionUnionPropertyType }
-     * 
+     *
      */
     public PositionUnionPropertyType createPositionUnionPropertyType() {
         return new PositionUnionPropertyType();
@@ -527,7 +527,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SimpleProcessPropertyType }
-     * 
+     *
      */
     public SimpleProcessPropertyType createSimpleProcessPropertyType() {
         return new SimpleProcessPropertyType();
@@ -535,7 +535,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractProcessPropertyType }
-     * 
+     *
      */
     public AbstractProcessPropertyType createAbstractProcessPropertyType() {
         return new AbstractProcessPropertyType();
@@ -543,7 +543,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContactListPropertyType }
-     * 
+     *
      */
     public ContactListPropertyType createContactListPropertyType() {
         return new ContactListPropertyType();
@@ -551,7 +551,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataComponentOrObservablePropertyType }
-     * 
+     *
      */
     public DataComponentOrObservablePropertyType createDataComponentOrObservablePropertyType() {
         return new DataComponentOrObservablePropertyType();
@@ -559,7 +559,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractPhysicalProcessPropertyType }
-     * 
+     *
      */
     public AbstractPhysicalProcessPropertyType createAbstractPhysicalProcessPropertyType() {
         return new AbstractPhysicalProcessPropertyType();
@@ -567,7 +567,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EventListPropertyType }
-     * 
+     *
      */
     public EventListPropertyType createEventListPropertyType() {
         return new EventListPropertyType();
@@ -575,7 +575,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ConstraintSettingPropertyType }
-     * 
+     *
      */
     public ConstraintSettingPropertyType createConstraintSettingPropertyType() {
         return new ConstraintSettingPropertyType();
@@ -583,7 +583,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ModeSettingPropertyType }
-     * 
+     *
      */
     public ModeSettingPropertyType createModeSettingPropertyType() {
         return new ModeSettingPropertyType();
@@ -591,7 +591,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SettingsPropertyType }
-     * 
+     *
      */
     public SettingsPropertyType createSettingsPropertyType() {
         return new SettingsPropertyType();
@@ -599,7 +599,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataInterfacePropertyType }
-     * 
+     *
      */
     public DataInterfacePropertyType createDataInterfacePropertyType() {
         return new DataInterfacePropertyType();
@@ -607,7 +607,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CapabilityListPropertyType }
-     * 
+     *
      */
     public CapabilityListPropertyType createCapabilityListPropertyType() {
         return new CapabilityListPropertyType();
@@ -615,7 +615,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TermPropertyType }
-     * 
+     *
      */
     public TermPropertyType createTermPropertyType() {
         return new TermPropertyType();
@@ -623,7 +623,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ModeChoicePropertyType }
-     * 
+     *
      */
     public ModeChoicePropertyType createModeChoicePropertyType() {
         return new ModeChoicePropertyType();
@@ -631,7 +631,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractMetadataListPropertyType }
-     * 
+     *
      */
     public AbstractMetadataListPropertyType createAbstractMetadataListPropertyType() {
         return new AbstractMetadataListPropertyType();
@@ -639,7 +639,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LinkPropertyType }
-     * 
+     *
      */
     public LinkPropertyType createLinkPropertyType() {
         return new LinkPropertyType();
@@ -647,7 +647,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DocumentListPropertyType }
-     * 
+     *
      */
     public DocumentListPropertyType createDocumentListPropertyType() {
         return new DocumentListPropertyType();
@@ -655,7 +655,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TimeInstantOrPeriodPropertyType }
-     * 
+     *
      */
     public TimeInstantOrPeriodPropertyType createTimeInstantOrPeriodPropertyType() {
         return new TimeInstantOrPeriodPropertyType();
@@ -663,7 +663,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ComponentListPropertyType }
-     * 
+     *
      */
     public ComponentListPropertyType createComponentListPropertyType() {
         return new ComponentListPropertyType();
@@ -671,7 +671,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractModesPropertyType }
-     * 
+     *
      */
     public AbstractModesPropertyType createAbstractModesPropertyType() {
         return new AbstractModesPropertyType();
@@ -679,7 +679,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribedObjectPropertyType }
-     * 
+     *
      */
     public DescribedObjectPropertyType createDescribedObjectPropertyType() {
         return new DescribedObjectPropertyType();
@@ -687,7 +687,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ValueSettingPropertyType }
-     * 
+     *
      */
     public ValueSettingPropertyType createValueSettingPropertyType() {
         return new ValueSettingPropertyType();
@@ -695,7 +695,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PhysicalSystemPropertyType }
-     * 
+     *
      */
     public PhysicalSystemPropertyType createPhysicalSystemPropertyType() {
         return new PhysicalSystemPropertyType();
@@ -703,7 +703,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ModePropertyType }
-     * 
+     *
      */
     public ModePropertyType createModePropertyType() {
         return new ModePropertyType();
@@ -711,7 +711,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SpatialFramePropertyType }
-     * 
+     *
      */
     public SpatialFramePropertyType createSpatialFramePropertyType() {
         return new SpatialFramePropertyType();
@@ -719,7 +719,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ArraySettingPropertyType.ArrayValues.Encoding }
-     * 
+     *
      */
     public ArraySettingPropertyType.ArrayValues.Encoding createArraySettingPropertyTypeArrayValuesEncoding() {
         return new ArraySettingPropertyType.ArrayValues.Encoding();
@@ -727,7 +727,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ClassifierListType.Classifier }
-     * 
+     *
      */
     public ClassifierListType.Classifier createClassifierListTypeClassifier() {
         return new ClassifierListType.Classifier();
@@ -735,7 +735,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ParameterListType.Parameter }
-     * 
+     *
      */
     public ParameterListType.Parameter createParameterListTypeParameter() {
         return new ParameterListType.Parameter();
@@ -743,7 +743,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CapabilityListType.Capability }
-     * 
+     *
      */
     public CapabilityListType.Capability createCapabilityListTypeCapability() {
         return new CapabilityListType.Capability();
@@ -751,7 +751,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ConnectionListType.Connection }
-     * 
+     *
      */
     public ConnectionListType.Connection createConnectionListTypeConnection() {
         return new ConnectionListType.Connection();
@@ -759,7 +759,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CharacteristicListType.Characteristic }
-     * 
+     *
      */
     public CharacteristicListType.Characteristic createCharacteristicListTypeCharacteristic() {
         return new CharacteristicListType.Characteristic();
@@ -767,7 +767,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribedObjectType.ValidTime }
-     * 
+     *
      */
     public DescribedObjectType.ValidTime createDescribedObjectTypeValidTime() {
         return new DescribedObjectType.ValidTime();
@@ -775,7 +775,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribedObjectType.Characteristics }
-     * 
+     *
      */
     public DescribedObjectType.Characteristics createDescribedObjectTypeCharacteristics() {
         return new DescribedObjectType.Characteristics();
@@ -783,7 +783,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribedObjectType.Capabilities }
-     * 
+     *
      */
     public DescribedObjectType.Capabilities createDescribedObjectTypeCapabilities() {
         return new DescribedObjectType.Capabilities();
@@ -791,7 +791,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EventType.Time }
-     * 
+     *
      */
     public EventType.Time createEventTypeTime() {
         return new EventType.Time();
@@ -799,7 +799,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EventType.Configuration }
-     * 
+     *
      */
     public EventType.Configuration createEventTypeConfiguration() {
         return new EventType.Configuration();
@@ -807,7 +807,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractProcessType.Configuration }
-     * 
+     *
      */
     public AbstractProcessType.Configuration createAbstractProcessTypeConfiguration() {
         return new AbstractProcessType.Configuration();
@@ -815,7 +815,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractProcessType.FeaturesOfInterest }
-     * 
+     *
      */
     public AbstractProcessType.FeaturesOfInterest createAbstractProcessTypeFeaturesOfInterest() {
         return new AbstractProcessType.FeaturesOfInterest();
@@ -823,7 +823,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractProcessType.Inputs }
-     * 
+     *
      */
     public AbstractProcessType.Inputs createAbstractProcessTypeInputs() {
         return new AbstractProcessType.Inputs();
@@ -831,7 +831,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractProcessType.Outputs }
-     * 
+     *
      */
     public AbstractProcessType.Outputs createAbstractProcessTypeOutputs() {
         return new AbstractProcessType.Outputs();
@@ -839,7 +839,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractProcessType.Parameters }
-     * 
+     *
      */
     public AbstractProcessType.Parameters createAbstractProcessTypeParameters() {
         return new AbstractProcessType.Parameters();
@@ -847,7 +847,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractProcessType.Modes }
-     * 
+     *
      */
     public AbstractProcessType.Modes createAbstractProcessTypeModes() {
         return new AbstractProcessType.Modes();
@@ -855,7 +855,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractPhysicalProcessType.LocalReferenceFrame }
-     * 
+     *
      */
     public AbstractPhysicalProcessType.LocalReferenceFrame createAbstractPhysicalProcessTypeLocalReferenceFrame() {
         return new AbstractPhysicalProcessType.LocalReferenceFrame();
@@ -863,7 +863,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractPhysicalProcessType.LocalTimeFrame }
-     * 
+     *
      */
     public AbstractPhysicalProcessType.LocalTimeFrame createAbstractPhysicalProcessTypeLocalTimeFrame() {
         return new AbstractPhysicalProcessType.LocalTimeFrame();
@@ -871,7 +871,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SpatialFrameType.Axis }
-     * 
+     *
      */
     public SpatialFrameType.Axis createSpatialFrameTypeAxis() {
         return new SpatialFrameType.Axis();
@@ -879,7 +879,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link IdentifierListType.Identifier }
-     * 
+     *
      */
     public IdentifierListType.Identifier createIdentifierListTypeIdentifier() {
         return new IdentifierListType.Identifier();
@@ -887,7 +887,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OutputListType.Output }
-     * 
+     *
      */
     public OutputListType.Output createOutputListTypeOutput() {
         return new OutputListType.Output();
@@ -895,7 +895,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ProcessMethodType.Algorithm }
-     * 
+     *
      */
     public ProcessMethodType.Algorithm createProcessMethodTypeAlgorithm() {
         return new ProcessMethodType.Algorithm();
@@ -903,7 +903,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ComponentListType.Component }
-     * 
+     *
      */
     public ComponentListType.Component createComponentListTypeComponent() {
         return new ComponentListType.Component();
@@ -911,7 +911,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InputListType.Input }
-     * 
+     *
      */
     public InputListType.Input createInputListTypeInput() {
         return new InputListType.Input();
@@ -919,7 +919,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractSettingsType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "AbstractSettings", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWE")
     public JAXBElement<AbstractSettingsType> createAbstractSettings(AbstractSettingsType value) {
@@ -928,7 +928,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractProcessType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "AbstractProcess", substitutionHeadNamespace = "http://www.opengis.net/sensorml/2.0", substitutionHeadName = "DescribedObject")
     public JAXBElement<AbstractProcessType> createAbstractProcess(AbstractProcessType value) {
@@ -937,7 +937,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InputListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "InputList", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWE")
     public JAXBElement<InputListType> createInputList(InputListType value) {
@@ -946,7 +946,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConnectionListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "ConnectionList", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWE")
     public JAXBElement<ConnectionListType> createConnectionList(ConnectionListType value) {
@@ -955,7 +955,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleProcessType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "SimpleProcess", substitutionHeadNamespace = "http://www.opengis.net/sensorml/2.0", substitutionHeadName = "AbstractProcess")
     public JAXBElement<SimpleProcessType> createSimpleProcess(SimpleProcessType value) {
@@ -964,7 +964,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EventListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "EventList", substitutionHeadNamespace = "http://www.opengis.net/sensorml/2.0", substitutionHeadName = "AbstractMetadataList")
     public JAXBElement<EventListType> createEventList(EventListType value) {
@@ -973,7 +973,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EventType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "Event", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWEIdentifiable")
     public JAXBElement<EventType> createEvent(EventType value) {
@@ -982,7 +982,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractModesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "AbstractModes", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWE")
     public JAXBElement<AbstractModesType> createAbstractModes(AbstractModesType value) {
@@ -991,7 +991,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ComponentListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "ComponentList", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWE")
     public JAXBElement<ComponentListType> createComponentList(ComponentListType value) {
@@ -1000,7 +1000,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FeatureListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "FeatureList", substitutionHeadNamespace = "http://www.opengis.net/sensorml/2.0", substitutionHeadName = "AbstractMetadataList")
     public JAXBElement<FeatureListType> createFeatureList(FeatureListType value) {
@@ -1009,7 +1009,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ModeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "Mode", substitutionHeadNamespace = "http://www.opengis.net/sensorml/2.0", substitutionHeadName = "DescribedObject")
     public JAXBElement<ModeType> createMode(ModeType value) {
@@ -1018,7 +1018,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ModeChoiceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "ModeChoice", substitutionHeadNamespace = "http://www.opengis.net/sensorml/2.0", substitutionHeadName = "AbstractModes")
     public JAXBElement<ModeChoiceType> createModeChoice(ModeChoiceType value) {
@@ -1027,7 +1027,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractMetadataListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "AbstractMetadataList", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWEIdentifiable")
     public JAXBElement<AbstractMetadataListType> createAbstractMetadataList(AbstractMetadataListType value) {
@@ -1036,7 +1036,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OutputListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "OutputList", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWE")
     public JAXBElement<OutputListType> createOutputList(OutputListType value) {
@@ -1045,7 +1045,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ProcessMethodType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "ProcessMethod", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWEIdentifiable")
     public JAXBElement<ProcessMethodType> createProcessMethod(ProcessMethodType value) {
@@ -1054,7 +1054,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LinkType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "Link", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractObject")
     public JAXBElement<LinkType> createLink(LinkType value) {
@@ -1063,7 +1063,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DescribedObjectType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "DescribedObject", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractFeature")
     public JAXBElement<DescribedObjectType> createDescribedObject(DescribedObjectType value) {
@@ -1072,7 +1072,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractPhysicalProcessType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "AbstractPhysicalProcess", substitutionHeadNamespace = "http://www.opengis.net/sensorml/2.0", substitutionHeadName = "AbstractProcess")
     public JAXBElement<AbstractPhysicalProcessType> createAbstractPhysicalProcess(AbstractPhysicalProcessType value) {
@@ -1081,7 +1081,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CharacteristicListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "CharacteristicList", substitutionHeadNamespace = "http://www.opengis.net/sensorml/2.0", substitutionHeadName = "AbstractMetadataList")
     public JAXBElement<CharacteristicListType> createCharacteristicList(CharacteristicListType value) {
@@ -1090,7 +1090,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SpatialFrameType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "SpatialFrame", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWEIdentifiable")
     public JAXBElement<SpatialFrameType> createSpatialFrame(SpatialFrameType value) {
@@ -1099,7 +1099,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link KeywordListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "KeywordList", substitutionHeadNamespace = "http://www.opengis.net/sensorml/2.0", substitutionHeadName = "AbstractMetadataList")
     public JAXBElement<KeywordListType> createKeywordList(KeywordListType value) {
@@ -1108,7 +1108,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TemporalFrameType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "TemporalFrame", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWEIdentifiable")
     public JAXBElement<TemporalFrameType> createTemporalFrame(TemporalFrameType value) {
@@ -1117,7 +1117,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PhysicalComponentType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "PhysicalComponent", substitutionHeadNamespace = "http://www.opengis.net/sensorml/2.0", substitutionHeadName = "AbstractPhysicalProcess")
     public JAXBElement<PhysicalComponentType> createPhysicalComponent(PhysicalComponentType value) {
@@ -1126,7 +1126,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AggregateProcessType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "AggregateProcess", substitutionHeadNamespace = "http://www.opengis.net/sensorml/2.0", substitutionHeadName = "AbstractProcess")
     public JAXBElement<AggregateProcessType> createAggregateProcess(AggregateProcessType value) {
@@ -1135,7 +1135,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ObservablePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "ObservableProperty", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWEIdentifiable")
     public JAXBElement<ObservablePropertyType> createObservableProperty(ObservablePropertyType value) {
@@ -1144,7 +1144,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DataInterfaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "DataInterface", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWEIdentifiable")
     public JAXBElement<DataInterfaceType> createDataInterface(DataInterfaceType value) {
@@ -1153,7 +1153,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ClassifierListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "ClassifierList", substitutionHeadNamespace = "http://www.opengis.net/sensorml/2.0", substitutionHeadName = "AbstractMetadataList")
     public JAXBElement<ClassifierListType> createClassifierList(ClassifierListType value) {
@@ -1162,7 +1162,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ContactListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "ContactList", substitutionHeadNamespace = "http://www.opengis.net/sensorml/2.0", substitutionHeadName = "AbstractMetadataList")
     public JAXBElement<ContactListType> createContactList(ContactListType value) {
@@ -1171,7 +1171,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DocumentListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "DocumentList", substitutionHeadNamespace = "http://www.opengis.net/sensorml/2.0", substitutionHeadName = "AbstractMetadataList")
     public JAXBElement<DocumentListType> createDocumentList(DocumentListType value) {
@@ -1180,7 +1180,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractAlgorithmType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "AbstractAlgorithm", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractObject")
     public JAXBElement<AbstractAlgorithmType> createAbstractAlgorithm(AbstractAlgorithmType value) {
@@ -1189,7 +1189,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TermType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "Term", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWE")
     public JAXBElement<TermType> createTerm(TermType value) {
@@ -1198,7 +1198,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link IdentifierListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "IdentifierList", substitutionHeadNamespace = "http://www.opengis.net/sensorml/2.0", substitutionHeadName = "AbstractMetadataList")
     public JAXBElement<IdentifierListType> createIdentifierList(IdentifierListType value) {
@@ -1207,7 +1207,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SettingsType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "Settings", substitutionHeadNamespace = "http://www.opengis.net/sensorml/2.0", substitutionHeadName = "AbstractSettings")
     public JAXBElement<SettingsType> createSettings(SettingsType value) {
@@ -1216,7 +1216,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CapabilityListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "CapabilityList", substitutionHeadNamespace = "http://www.opengis.net/sensorml/2.0", substitutionHeadName = "AbstractMetadataList")
     public JAXBElement<CapabilityListType> createCapabilityList(CapabilityListType value) {
@@ -1225,7 +1225,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PhysicalSystemType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "PhysicalSystem", substitutionHeadNamespace = "http://www.opengis.net/sensorml/2.0", substitutionHeadName = "AbstractPhysicalProcess")
     public JAXBElement<PhysicalSystemType> createPhysicalSystem(PhysicalSystemType value) {
@@ -1234,7 +1234,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ParameterListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "ParameterList", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWE")
     public JAXBElement<ParameterListType> createParameterList(ParameterListType value) {
@@ -1243,7 +1243,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link IdentifierListType.Identifier }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorml/2.0", name = "identifier", scope = IdentifierListType.class)
     public JAXBElement<IdentifierListType.Identifier> createIdentifierListTypeIdentifier(IdentifierListType.Identifier value) {

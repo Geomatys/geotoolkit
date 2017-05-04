@@ -49,5 +49,5 @@ public class AnimationNotValidException extends Exception {
     public AnimationNotValidException(Throwable cause) {
         super(cause);
     }
-    
+
 }

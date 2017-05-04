@@ -28,7 +28,7 @@ import org.geotoolkit.data.kml.model.AltitudeMode;
 public interface MultiTrack extends AbstractGeometry {
 
     /**
-     * 
+     *
      * @return
      */
     AltitudeMode getAltitudeMode();
@@ -46,7 +46,7 @@ public interface MultiTrack extends AbstractGeometry {
     void setAltitudeMode(AltitudeMode altitudeMode);
 
     /**
-     * 
+     *
      * @param interpolate
      */
     void setInterpolate(boolean interpolate);
@@ -58,7 +58,7 @@ public interface MultiTrack extends AbstractGeometry {
     List<Track> getTracks();
 
     /**
-     * 
+     *
      * @param tracks
      */
     void setTracks(List<Track> tracks);

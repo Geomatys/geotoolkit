@@ -4,7 +4,7 @@
  *
  *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2010, Geomatys
- * 
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  * Field definition
- * 
+ *
  * @author Tommaso Nolli
  * @author Johann Sorel (Geomatys)
  * @module
@@ -38,7 +38,7 @@ public class DataDefinition {
         if(charset == null){
             throw new IllegalArgumentException("Charset can not be null");
         }
-        
+
         this.charset = Charset.forName(charset);
 
         if(fields == null){
@@ -67,7 +67,7 @@ public class DataDefinition {
 
     /**
      * Well known classes
-     * 
+     *
      * <ul>
      * <li> Short </li>
      * <li> Integer </li>
@@ -76,10 +76,10 @@ public class DataDefinition {
      * <li> Double </li>
      * <li> Date </li>
      * </ul>
-     * 
-     * 
+     *
+     *
      * @param clazz
-     * 
+     *
      * @throws TreeException
      *                 DOCUMENT ME!
      */
@@ -104,7 +104,7 @@ public class DataDefinition {
     /**
      * For classes with unknown length; this values will be threated as
      * <code>String</code>s and truncated at the specified len
-     * 
+     *
      * @param len
      */
     public void addField(final int len) {
@@ -113,7 +113,7 @@ public class DataDefinition {
 
     /**
      * Character set values are encoded in.
-     * 
+     *
      */
     public Charset getCharset() {
         return charset;
@@ -133,7 +133,7 @@ public class DataDefinition {
     /**
      * Gets the len of this field after the encoding, this method may be
      * different from getLen() only if exists strings in the definition
-     * 
+     *
      */
     public int getEncodedLen() {
         int len = 0;
@@ -145,7 +145,7 @@ public class DataDefinition {
 
     /**
      * Inner class for Data fields
-     * 
+     *
      * @author Tommaso Nolli
      */
     public class Field {

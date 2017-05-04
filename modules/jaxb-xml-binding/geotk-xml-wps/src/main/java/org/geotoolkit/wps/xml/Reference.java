@@ -21,18 +21,18 @@ package org.geotoolkit.wps.xml;
  * @author guilhem
  */
 public interface Reference {
-    
+
     Object getBody();
-    
+
     String getHref();
     void setHref(final String value);
-    
+
     String getSchema();
     void setSchema(final String value);
-    
+
     String getEncoding();
     void setEncoding(final String value);
-    
+
     String getMimeType();
     void setMimeType(final String value);
 }

@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for SettingsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SettingsType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SettingsType", propOrder = {
@@ -67,25 +67,25 @@ public class SettingsType
 
     /**
      * Gets the value of the setValue property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the setValue property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSetValue().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ValueSettingPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<ValueSettingPropertyType> getSetValue() {
         if (setValue == null) {
@@ -96,25 +96,25 @@ public class SettingsType
 
     /**
      * Gets the value of the setArrayValues property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the setArrayValues property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSetArrayValues().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ArraySettingPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<ArraySettingPropertyType> getSetArrayValues() {
         if (setArrayValues == null) {
@@ -125,25 +125,25 @@ public class SettingsType
 
     /**
      * Gets the value of the setConstraint property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the setConstraint property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSetConstraint().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ConstraintSettingPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<ConstraintSettingPropertyType> getSetConstraint() {
         if (setConstraint == null) {
@@ -154,25 +154,25 @@ public class SettingsType
 
     /**
      * Gets the value of the setMode property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the setMode property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSetMode().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ModeSettingPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<ModeSettingPropertyType> getSetMode() {
         if (setMode == null) {
@@ -183,25 +183,25 @@ public class SettingsType
 
     /**
      * Gets the value of the setStatus property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the setStatus property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSetStatus().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link StatusSettingPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<StatusSettingPropertyType> getSetStatus() {
         if (setStatus == null) {

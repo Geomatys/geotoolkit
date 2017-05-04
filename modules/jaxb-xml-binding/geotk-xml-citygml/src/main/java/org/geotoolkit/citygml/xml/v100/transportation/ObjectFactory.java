@@ -23,18 +23,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.citygml.transportation._1 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.citygml.transportation._1 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  * @module
  */
 @XmlRegistry
@@ -59,14 +59,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.citygml.transportation._1
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link TrafficAreaType }
-     * 
+     *
      */
     public TrafficAreaType createTrafficAreaType() {
         return new TrafficAreaType();
@@ -74,7 +74,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RoadType }
-     * 
+     *
      */
     public RoadType createRoadType() {
         return new RoadType();
@@ -82,7 +82,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TrackType }
-     * 
+     *
      */
     public TrackType createTrackType() {
         return new TrackType();
@@ -90,7 +90,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AuxiliaryTrafficAreaPropertyType }
-     * 
+     *
      */
     public AuxiliaryTrafficAreaPropertyType createAuxiliaryTrafficAreaPropertyType() {
         return new AuxiliaryTrafficAreaPropertyType();
@@ -98,7 +98,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SquareType }
-     * 
+     *
      */
     public SquareType createSquareType() {
         return new SquareType();
@@ -106,7 +106,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TrafficAreaPropertyType }
-     * 
+     *
      */
     public TrafficAreaPropertyType createTrafficAreaPropertyType() {
         return new TrafficAreaPropertyType();
@@ -114,7 +114,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AuxiliaryTrafficAreaType }
-     * 
+     *
      */
     public AuxiliaryTrafficAreaType createAuxiliaryTrafficAreaType() {
         return new AuxiliaryTrafficAreaType();
@@ -122,7 +122,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RailwayType }
-     * 
+     *
      */
     public RailwayType createRailwayType() {
         return new RailwayType();
@@ -130,7 +130,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TransportationComplexType }
-     * 
+     *
      */
     public TransportationComplexType createTransportationComplexType() {
         return new TransportationComplexType();
@@ -138,7 +138,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TrafficAreaType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/transportation/1.0", name = "TrafficArea", substitutionHeadNamespace = "http://www.opengis.net/citygml/transportation/1.0", substitutionHeadName = "_TransportationObject")
     public JAXBElement<TrafficAreaType> createTrafficArea(final TrafficAreaType value) {
@@ -147,7 +147,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TransportationComplexType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/transportation/1.0", name = "TransportationComplex", substitutionHeadNamespace = "http://www.opengis.net/citygml/transportation/1.0", substitutionHeadName = "_TransportationObject")
     public JAXBElement<TransportationComplexType> createTransportationComplex(final TransportationComplexType value) {
@@ -156,7 +156,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/transportation/1.0", name = "_GenericApplicationPropertyOfSquare")
     public JAXBElement<Object> createGenericApplicationPropertyOfSquare(final Object value) {
@@ -165,7 +165,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/transportation/1.0", name = "_GenericApplicationPropertyOfRoad")
     public JAXBElement<Object> createGenericApplicationPropertyOfRoad(final Object value) {
@@ -174,7 +174,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/transportation/1.0", name = "_GenericApplicationPropertyOfTransportationComplex")
     public JAXBElement<Object> createGenericApplicationPropertyOfTransportationComplex(final Object value) {
@@ -183,7 +183,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/transportation/1.0", name = "_GenericApplicationPropertyOfTrack")
     public JAXBElement<Object> createGenericApplicationPropertyOfTrack(final Object value) {
@@ -192,7 +192,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RailwayType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/transportation/1.0", name = "Railway", substitutionHeadNamespace = "http://www.opengis.net/citygml/transportation/1.0", substitutionHeadName = "TransportationComplex")
     public JAXBElement<RailwayType> createRailway(final RailwayType value) {
@@ -201,7 +201,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RoadType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/transportation/1.0", name = "Road", substitutionHeadNamespace = "http://www.opengis.net/citygml/transportation/1.0", substitutionHeadName = "TransportationComplex")
     public JAXBElement<RoadType> createRoad(final RoadType value) {
@@ -210,7 +210,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TrackType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/transportation/1.0", name = "Track", substitutionHeadNamespace = "http://www.opengis.net/citygml/transportation/1.0", substitutionHeadName = "TransportationComplex")
     public JAXBElement<TrackType> createTrack(final TrackType value) {
@@ -219,7 +219,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/transportation/1.0", name = "_GenericApplicationPropertyOfTransportationObject")
     public JAXBElement<Object> createGenericApplicationPropertyOfTransportationObject(final Object value) {
@@ -228,7 +228,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/transportation/1.0", name = "_GenericApplicationPropertyOfRailway")
     public JAXBElement<Object> createGenericApplicationPropertyOfRailway(final Object value) {
@@ -237,7 +237,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractTransportationObjectType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/transportation/1.0", name = "_TransportationObject", substitutionHeadNamespace = "http://www.opengis.net/citygml/1.0", substitutionHeadName = "_CityObject")
     public JAXBElement<AbstractTransportationObjectType> createTransportationObject(final AbstractTransportationObjectType value) {
@@ -246,7 +246,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SquareType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/transportation/1.0", name = "Square", substitutionHeadNamespace = "http://www.opengis.net/citygml/transportation/1.0", substitutionHeadName = "TransportationComplex")
     public JAXBElement<SquareType> createSquare(final SquareType value) {
@@ -255,7 +255,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AuxiliaryTrafficAreaType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/transportation/1.0", name = "AuxiliaryTrafficArea", substitutionHeadNamespace = "http://www.opengis.net/citygml/transportation/1.0", substitutionHeadName = "_TransportationObject")
     public JAXBElement<AuxiliaryTrafficAreaType> createAuxiliaryTrafficArea(final AuxiliaryTrafficAreaType value) {
@@ -264,7 +264,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/transportation/1.0", name = "_GenericApplicationPropertyOfTrafficArea")
     public JAXBElement<Object> createGenericApplicationPropertyOfTrafficArea(final Object value) {
@@ -273,7 +273,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/transportation/1.0", name = "_GenericApplicationPropertyOfAuxiliaryTrafficArea")
     public JAXBElement<Object> createGenericApplicationPropertyOfAuxiliaryTrafficArea(final Object value) {

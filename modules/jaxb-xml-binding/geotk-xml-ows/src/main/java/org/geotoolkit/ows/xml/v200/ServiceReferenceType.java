@@ -32,11 +32,11 @@ import javax.xml.bind.annotation.XmlType;
  *       another web service using a XML-encoded OWS operation request. This
  *       element shall not be used for local payload input data or for requesting
  *       the resource from a web server using HTTP Get.
- * 
+ *
  * <p>Java class for ServiceReferenceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ServiceReferenceType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ServiceReferenceType", propOrder = {
@@ -67,11 +67,11 @@ public class ServiceReferenceType extends ReferenceType {
 
     /**
      * Gets the value of the requestMessage property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Object }
-     *     
+     *
      */
     public Object getRequestMessage() {
         return requestMessage;
@@ -79,11 +79,11 @@ public class ServiceReferenceType extends ReferenceType {
 
     /**
      * Sets the value of the requestMessage property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Object }
-     *     
+     *
      */
     public void setRequestMessage(Object value) {
         this.requestMessage = value;
@@ -91,11 +91,11 @@ public class ServiceReferenceType extends ReferenceType {
 
     /**
      * Gets the value of the requestMessageReference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRequestMessageReference() {
         return requestMessageReference;
@@ -103,11 +103,11 @@ public class ServiceReferenceType extends ReferenceType {
 
     /**
      * Sets the value of the requestMessageReference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRequestMessageReference(String value) {
         this.requestMessageReference = value;

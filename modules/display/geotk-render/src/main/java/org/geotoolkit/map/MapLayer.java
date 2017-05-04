@@ -31,7 +31,7 @@ import org.opengis.geometry.Envelope;
  * @module
  */
 public interface MapLayer extends MapItem {
-    
+
     public static final String STYLE_PROPERTY = "style";
     public static final String OPACITY_PROPERTY = "opacity";
     public static final String SELECTABLE_PROPERTY = "selectable";
@@ -40,21 +40,21 @@ public interface MapLayer extends MapItem {
     public static final String ELEVATION_PROPERTY = "elevation";
     public static final String SELECTION_FILTER_PROPERTY = "selection_filter";
     public static final String SELECTION_STYLE_PROPERTY = "selection_style";
-    
+
     /**
      * Use this key in the User map properties and add a Boolean.TRUE
      * to indicate if features store their own Symbolizer.
      * Symbolizer should be stored in the user map of each feature with this key.
-     * 
+     *
      * TODO make a special feature and feature collection implementation to define this case.
      */
     public static final String USERKEY_STYLED_FEATURE = "styled_feature";
-    
+
     /**
      * Convinient method to test if the current layer is well knowned, it means
      * using conventional types : Features or Coverages. Other layer types
      * like WMS or KML are unusual types.
-     * 
+     *
      * @return true if the layer is a FeatureMapLayer or CoverageMapLayer
      */
     boolean isWellKnownedType();
@@ -76,7 +76,7 @@ public interface MapLayer extends MapItem {
     void setStyle(MutableStyle style);
 
     /**
-     * 
+     *
      * @return double layer opacity between 0 and 1
      */
     double getOpacity();
@@ -85,7 +85,7 @@ public interface MapLayer extends MapItem {
      * Specify the global opacity of this layer.
      * 0 is fully translucent and 1 is opaque.
      * A {@link PropertyChangeEvent} is fired if the opacity changed.
-     * 
+     *
      * @param opacity : value between 0 and 1
      */
     void setOpacity(double opacity);
@@ -105,7 +105,7 @@ public interface MapLayer extends MapItem {
      * @param selectable Show the layer if <code>true</code>.
      */
     void setSelectable(boolean selectable);
-    
+
     /**
      *
      * @return Style associated for the selected datas
@@ -177,5 +177,5 @@ public interface MapLayer extends MapItem {
      * @param listener Layer listener to unregister
      */
     void removeLayerListener(LayerListener listener);
-    
+
 }

@@ -27,7 +27,7 @@ import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 
 /**
  * Wrap a DataNode and it's children.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 final class AmendedDataNode extends DefaultDataNode {

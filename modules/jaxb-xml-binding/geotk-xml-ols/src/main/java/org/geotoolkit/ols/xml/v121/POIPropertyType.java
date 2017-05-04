@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines a POI property, represented as a name/value pair
- * 
+ *
  * <p>Java class for POIPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="POIPropertyType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "POIPropertyType")
@@ -54,11 +54,11 @@ public class POIPropertyType extends AbstractPOIPropertyType {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link POIPropertyNameType }
-     *     
+     *
      */
     public POIPropertyNameType getName() {
         return name;
@@ -66,11 +66,11 @@ public class POIPropertyType extends AbstractPOIPropertyType {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link POIPropertyNameType }
-     *     
+     *
      */
     public void setName(POIPropertyNameType value) {
         this.name = value;
@@ -78,11 +78,11 @@ public class POIPropertyType extends AbstractPOIPropertyType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValue() {
         return value;
@@ -90,11 +90,11 @@ public class POIPropertyType extends AbstractPOIPropertyType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(String value) {
         this.value = value;

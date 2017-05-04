@@ -33,17 +33,17 @@ import org.opengis.style.Stroke;
  * @module
  */
 public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>{
-    
+
     //cached values
     private float[] cachedDisps = null;
     private float cachedDispX = Float.NaN;
     private float cachedDispY = Float.NaN;
     private float cachedOffset = Float.NaN;
-    
+
     private final CachedStroke cacheStroke;
     private final CachedFill cacheFill;
-        
-    
+
+
     public CachedPolygonSymbolizer(final PolygonSymbolizer poly,
             final SymbolizerRendererService<PolygonSymbolizer,? extends CachedSymbolizer<PolygonSymbolizer>> renderer){
         super(poly,renderer);
@@ -62,14 +62,14 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
             cacheFill = CachedFill.cache(poly.getFill());
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
     protected void evaluate() {
         if(!isNotEvaluated) return;
-        
+
         //call this first seens more evaluation may clear the cache
         evaluateOffset();
         evaluateDisplacement();
@@ -80,12 +80,12 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
         if(cacheFill != null){
             cacheFill.getRequieredAttributsName(requieredAttributs);
         }
-        
+
         if(requieredAttributs.isEmpty()) requieredAttributs = EMPTY_ATTRIBUTS;
-        
+
         isNotEvaluated = false;
     }
-    
+
     private void evaluateOffset(){
         final Expression offset = styleElement.getPerpendicularOffset();
 
@@ -96,38 +96,38 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
         }
 
     }
-    
+
     private void evaluateDisplacement(){
         Displacement disp = styleElement.getDisplacement();
-        
+
         if(disp != null){
-            
+
             final Expression dispX = disp.getDisplacementX();
             final Expression dispY = disp.getDisplacementY();
-            
+
             if(GO2Utilities.isStatic(dispX)){
                 cachedDispX = GO2Utilities.evaluate(dispX, null, Float.class, 0f);
             }else{
                 GO2Utilities.getRequieredAttributsName(dispX,requieredAttributs);
             }
-            
+
              if(GO2Utilities.isStatic(dispY)){
                 cachedDispY = GO2Utilities.evaluate(dispY, null, Float.class, 0f);
             }else{
                 GO2Utilities.getRequieredAttributsName(dispY,requieredAttributs);
             }
-             
+
             if(!Float.isNaN(cachedDispX) && !Float.isNaN(cachedDispY)){
                 cachedDisps = new float[]{cachedDispX,cachedDispY};
             }
-            
+
         }else{
             //we can a disp X and Y of 0
             cachedDispX = 0f;
             cachedDispY = 0f;
             cachedDisps = new float[]{0,0};
         }
-        
+
     }
 
     public CachedStroke getCachedStroke(){
@@ -135,11 +135,11 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
     }
 
     public boolean isMosaic(){
-        return  (cacheFill != null && cacheFill.isMosaic()) 
+        return  (cacheFill != null && cacheFill.isMosaic())
                 ||
                 (cacheStroke instanceof CachedStrokeSimple && ((CachedStrokeSimple)cacheStroke).isMosaicPaint() );
     }
-    
+
     public boolean isStrokeVisible(final Object candidate){
         return cacheStroke != null && cacheStroke.isVisible(candidate);
     }
@@ -151,7 +151,7 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
     public AlphaComposite getJ2DFillComposite(final Object candidate){
         return cacheFill.getJ2DComposite(candidate);
     }
-    
+
     public Paint getJ2DFillPaint(final Object candidate, final int x, final int y, final float coeff, final RenderingHints hints){
         return cacheFill.getJ2DPaint(candidate, x,y, coeff,hints);
     }
@@ -161,7 +161,7 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
      */
     public float getOffset(final Object candidate, final float coeff){
         evaluate();
-        
+
         if(Float.isNaN(cachedOffset)){
             //if offset is null it means it is dynamic
             final Expression offset = styleElement.getPerpendicularOffset();
@@ -170,19 +170,19 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
 
         return cachedOffset*coeff;
     }
-    
+
     /**
      * @return an Array of 2 floats always in display unit.
      */
     public float[] getDisplacement(final Object candidate){
         evaluate();
-        
+
         if(cachedDisps != null){
             return cachedDisps;
         }
-        
+
         final float[] disps = new float[2];
-                
+
         if(Float.isNaN(cachedDispX)){
             //if dispX is Float.NaN it means it is dynamic
             final Expression dispX = styleElement.getDisplacement().getDisplacementX();
@@ -190,7 +190,7 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
         } else {
             disps[0] = cachedDispX;
         }
-        
+
         if(Float.isNaN(cachedDispY)){
             //if dispY is Float.NaN it means it is dynamic
             final Expression dispY = styleElement.getDisplacement().getDisplacementY();
@@ -198,11 +198,11 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
         } else {
             disps[1] = cachedDispY;
         }
-        
-        
+
+
         return disps;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -211,7 +211,7 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
         return (cacheStroke == null || cacheStroke.isVisible(candidate))
                 || (cacheFill == null || cacheFill.isVisible(candidate));
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -220,7 +220,7 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
         return (cacheStroke == null || cacheStroke.isStatic())
                 && (cacheFill == null || cacheFill.isStatic());
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -228,11 +228,11 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
     public VisibilityState isStaticVisible(){
         VisibilityState v1 = (cacheStroke==null)?VisibilityState.UNVISIBLE : cacheStroke.isStaticVisible();
         VisibilityState v2 = (cacheFill==null)?VisibilityState.UNVISIBLE : cacheFill.isStaticVisible();
-        
+
         if(v1 == VisibilityState.UNVISIBLE && v2 == VisibilityState.UNVISIBLE) return VisibilityState.UNVISIBLE ;
         else if(v1 == VisibilityState.DYNAMIC || v2 == VisibilityState.DYNAMIC) return VisibilityState.DYNAMIC ;
         else return VisibilityState.VISIBLE ;
-        
+
     }
 
     /**
@@ -245,7 +245,7 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
         }else{
             return cacheStroke.getMargin(candidate,coeff);
         }
-        
+
     }
-    
+
 }

@@ -22,40 +22,40 @@ package org.geotoolkit.csw.xml;
  * @module
  */
 public interface GetRecordsResponse extends CSWResponse {
-    
+
     /**
      * Gets the value of the requestId property.
-     * 
+     *
      */
     public String getRequestId();
 
     /**
      * Sets the value of the requestId property.
-     * 
+     *
      */
     public void setRequestId(String value);
 
     /**
      * Gets the value of the searchStatus property.
-     * 
+     *
      */
     public RequestStatus getSearchStatus();
 
     /**
      * Gets the value of the searchResults property.
-     * 
+     *
      */
     public SearchResults getSearchResults();
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      */
     public String getVersion();
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      */
     public void setVersion(String value);
 

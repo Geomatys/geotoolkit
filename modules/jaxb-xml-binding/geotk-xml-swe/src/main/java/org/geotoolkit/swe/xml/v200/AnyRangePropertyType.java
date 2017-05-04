@@ -29,9 +29,9 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
 
 /**
  * <p>Java class for AnyRangePropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AnyRangePropertyType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AnyRangePropertyType", propOrder = {
@@ -81,11 +81,11 @@ public class AnyRangePropertyType {
 
     /**
      * Gets the value of the quantityRange property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QuantityRangeType }
-     *     
+     *
      */
     public QuantityRangeType getQuantityRange() {
         return quantityRange;
@@ -93,11 +93,11 @@ public class AnyRangePropertyType {
 
     /**
      * Sets the value of the quantityRange property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QuantityRangeType }
-     *     
+     *
      */
     public void setQuantityRange(QuantityRangeType value) {
         this.quantityRange = value;
@@ -105,11 +105,11 @@ public class AnyRangePropertyType {
 
     /**
      * Gets the value of the timeRange property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimeRangeType }
-     *     
+     *
      */
     public TimeRangeType getTimeRange() {
         return timeRange;
@@ -117,11 +117,11 @@ public class AnyRangePropertyType {
 
     /**
      * Sets the value of the timeRange property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimeRangeType }
-     *     
+     *
      */
     public void setTimeRange(TimeRangeType value) {
         this.timeRange = value;
@@ -129,11 +129,11 @@ public class AnyRangePropertyType {
 
     /**
      * Gets the value of the countRange property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CountRangeType }
-     *     
+     *
      */
     public CountRangeType getCountRange() {
         return countRange;
@@ -141,11 +141,11 @@ public class AnyRangePropertyType {
 
     /**
      * Sets the value of the countRange property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CountRangeType }
-     *     
+     *
      */
     public void setCountRange(CountRangeType value) {
         this.countRange = value;
@@ -153,11 +153,11 @@ public class AnyRangePropertyType {
 
     /**
      * Gets the value of the categoryRange property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CategoryRangeType }
-     *     
+     *
      */
     public CategoryRangeType getCategoryRange() {
         return categoryRange;
@@ -165,11 +165,11 @@ public class AnyRangePropertyType {
 
     /**
      * Sets the value of the categoryRange property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CategoryRangeType }
-     *     
+     *
      */
     public void setCategoryRange(CategoryRangeType value) {
         this.categoryRange = value;
@@ -177,11 +177,11 @@ public class AnyRangePropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TypeType }
-     *     
+     *
      */
     public TypeType getType() {
         if (type == null) {
@@ -193,11 +193,11 @@ public class AnyRangePropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TypeType }
-     *     
+     *
      */
     public void setType(TypeType value) {
         this.type = value;
@@ -205,11 +205,11 @@ public class AnyRangePropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -217,11 +217,11 @@ public class AnyRangePropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -229,11 +229,11 @@ public class AnyRangePropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -241,11 +241,11 @@ public class AnyRangePropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -253,11 +253,11 @@ public class AnyRangePropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -265,11 +265,11 @@ public class AnyRangePropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -277,11 +277,11 @@ public class AnyRangePropertyType {
 
     /**
      * Gets the value of the titleTemp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitleTemp() {
         return titleTemp;
@@ -289,11 +289,11 @@ public class AnyRangePropertyType {
 
     /**
      * Sets the value of the titleTemp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitleTemp(String value) {
         this.titleTemp = value;
@@ -301,11 +301,11 @@ public class AnyRangePropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShowType }
-     *     
+     *
      */
     public ShowType getShow() {
         return show;
@@ -313,11 +313,11 @@ public class AnyRangePropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShowType }
-     *     
+     *
      */
     public void setShow(ShowType value) {
         this.show = value;
@@ -325,11 +325,11 @@ public class AnyRangePropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public ActuateType getActuate() {
         return actuate;
@@ -337,11 +337,11 @@ public class AnyRangePropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public void setActuate(ActuateType value) {
         this.actuate = value;

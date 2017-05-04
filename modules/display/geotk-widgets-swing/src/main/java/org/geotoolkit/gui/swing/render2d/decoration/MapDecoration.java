@@ -36,29 +36,29 @@ public interface MapDecoration {
      * reset completely
      */
     public void refresh();
-    
+
     /**
      * must be called when the decoration is not used anymore.
      * to avoid memoryleack if it uses thread or other resources
      */
     public void dispose();
-    
+
     /**
      * set the related map2d
      * @param map the map2D
      */
     public void setMap2D(JMap2D map);
-    
+
     /**
-     * 
+     *
      * @return Map2D, the related map2d of this decoration
      */
     public JMap2D getMap2D();
-    
+
     /**
-     * 
-     * @return JComponent, the component which will be added at the map2D 
+     *
+     * @return JComponent, the component which will be added at the map2D
      */
     public JComponent getComponent();
-    
+
 }

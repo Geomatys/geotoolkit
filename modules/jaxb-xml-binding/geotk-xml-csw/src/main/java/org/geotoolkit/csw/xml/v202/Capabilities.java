@@ -34,14 +34,14 @@ import org.geotoolkit.ows.xml.v100.ServiceProvider;
 
 
 /**
- * This type extends ows:CapabilitiesBaseType defined in OGC-05-008 
+ * This type extends ows:CapabilitiesBaseType defined in OGC-05-008
  * to include information about supported OGC filter components.
  * A profile may extend this type to describe additional capabilities.
- * 
+ *
  * <p>Java class for CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CapabilitiesType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.geotoolkit.ows.xml.v100.ServiceProvider;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,14 +72,14 @@ public class Capabilities extends CapabilitiesBaseType implements AbstractCapabi
      */
     public Capabilities(){
     }
-    
+
      /**
      * Build a new Capabilities document
      */
     public Capabilities(final String version, final String updateSequence){
         super(version, updateSequence);
     }
-    
+
     /**
      * Build a new Capabilities document
      */
@@ -88,7 +88,7 @@ public class Capabilities extends CapabilitiesBaseType implements AbstractCapabi
         super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
             this.filterCapabilities = filterCapabilities;
     }
-    
+
     /**
      * Gets the value of the filterCapabilities property.
      */
@@ -133,7 +133,7 @@ public class Capabilities extends CapabilitiesBaseType implements AbstractCapabi
         ServiceProvider       sp = null;
         OperationsMetadata    om = null;
         FilterCapabilities    fc = null;
-        
+
         //we enter the information for service identification.
         if (sections.containsSection("ServiceIdentification") || sections.containsSection("All")) {
             si = getServiceIdentification();

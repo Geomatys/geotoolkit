@@ -23,18 +23,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.gml package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.gml package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  * @module
  */
 @XmlRegistry
@@ -91,14 +91,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.gml
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link PolygonMemberType }
-     * 
+     *
      */
     public PolygonMemberType createPolygonMemberType() {
         return new PolygonMemberType();
@@ -106,7 +106,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeatureAssociationType }
-     * 
+     *
      */
     public FeatureAssociationType createFeatureAssociationType() {
         return new FeatureAssociationType();
@@ -114,7 +114,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MultiPolygonType }
-     * 
+     *
      */
     public MultiPolygonType createMultiPolygonType() {
         return new MultiPolygonType();
@@ -122,7 +122,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BoxType }
-     * 
+     *
      */
     public BoxType createBoxType() {
         return new BoxType();
@@ -130,7 +130,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MultiPointType }
-     * 
+     *
      */
     public MultiPointType createMultiPointType() {
         return new MultiPointType();
@@ -138,7 +138,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MultiLineStringPropertyType }
-     * 
+     *
      */
     public MultiLineStringPropertyType createMultiLineStringPropertyType() {
         return new MultiLineStringPropertyType();
@@ -146,7 +146,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MultiPolygonPropertyType }
-     * 
+     *
      */
     public MultiPolygonPropertyType createMultiPolygonPropertyType() {
         return new MultiPolygonPropertyType();
@@ -154,7 +154,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BoundingShapeType }
-     * 
+     *
      */
     public BoundingShapeType createBoundingShapeType() {
         return new BoundingShapeType();
@@ -162,7 +162,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LinearRingMemberType }
-     * 
+     *
      */
     public LinearRingMemberType createLinearRingMemberType() {
         return new LinearRingMemberType();
@@ -170,7 +170,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MultiPointPropertyType }
-     * 
+     *
      */
     public MultiPointPropertyType createMultiPointPropertyType() {
         return new MultiPointPropertyType();
@@ -178,7 +178,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PointMemberType }
-     * 
+     *
      */
     public PointMemberType createPointMemberType() {
         return new PointMemberType();
@@ -186,7 +186,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GeometryAssociationType }
-     * 
+     *
      */
     public GeometryAssociationType createGeometryAssociationType() {
         return new GeometryAssociationType();
@@ -194,7 +194,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LineStringPropertyType }
-     * 
+     *
      */
     public LineStringPropertyType createLineStringPropertyType() {
         return new LineStringPropertyType();
@@ -202,7 +202,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PointType }
-     * 
+     *
      */
     public PointType createPointType() {
         return new PointType();
@@ -210,7 +210,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CoordinatesType }
-     * 
+     *
      */
     public CoordinatesType createCoordinatesType() {
         return new CoordinatesType();
@@ -218,7 +218,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GeometryPropertyType }
-     * 
+     *
      */
     public GeometryPropertyType createGeometryPropertyType() {
         return new GeometryPropertyType();
@@ -226,7 +226,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MultiLineStringType }
-     * 
+     *
      */
     public MultiLineStringType createMultiLineStringType() {
         return new MultiLineStringType();
@@ -234,7 +234,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LineStringType }
-     * 
+     *
      */
     public LineStringType createLineStringType() {
         return new LineStringType();
@@ -242,7 +242,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PolygonPropertyType }
-     * 
+     *
      */
     public PolygonPropertyType createPolygonPropertyType() {
         return new PolygonPropertyType();
@@ -250,7 +250,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PointPropertyType }
-     * 
+     *
      */
     public PointPropertyType createPointPropertyType() {
         return new PointPropertyType();
@@ -258,7 +258,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CoordType }
-     * 
+     *
      */
     public CoordType createCoordType() {
         return new CoordType();
@@ -266,7 +266,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GeometryCollectionType }
-     * 
+     *
      */
     public GeometryCollectionType createGeometryCollectionType() {
         return new GeometryCollectionType();
@@ -274,7 +274,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PolygonType }
-     * 
+     *
      */
     public PolygonType createPolygonType() {
         return new PolygonType();
@@ -282,7 +282,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LinearRingType }
-     * 
+     *
      */
     public LinearRingType createLinearRingType() {
         return new LinearRingType();
@@ -290,7 +290,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MultiGeometryPropertyType }
-     * 
+     *
      */
     public MultiGeometryPropertyType createMultiGeometryPropertyType() {
         return new MultiGeometryPropertyType();
@@ -298,7 +298,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LineStringMemberType }
-     * 
+     *
      */
     public LineStringMemberType createLineStringMemberType() {
         return new LineStringMemberType();
@@ -306,7 +306,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiLineStringType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiLineString", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
     public JAXBElement<MultiLineStringType> createMultiLineString(final MultiLineStringType value) {
@@ -315,7 +315,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LinearRingType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "LinearRing", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
     public JAXBElement<LinearRingType> createLinearRing(final LinearRingType value) {
@@ -324,7 +324,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LinearRingMemberType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "innerBoundaryIs")
     public JAXBElement<LinearRingMemberType> createInnerBoundaryIs(final LinearRingMemberType value) {
@@ -333,7 +333,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PolygonPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "coverage", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "polygonProperty")
     public JAXBElement<PolygonPropertyType> createCoverage(final PolygonPropertyType value) {
@@ -342,7 +342,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiPointPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiPosition", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "multiPointProperty")
     public JAXBElement<MultiPointPropertyType> createMultiPosition(final MultiPointPropertyType value) {
@@ -351,7 +351,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PolygonMemberType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "polygonMember", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "geometryMember")
     public JAXBElement<PolygonMemberType> createPolygonMember(final PolygonMemberType value) {
@@ -360,7 +360,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GeometryCollectionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiGeometry", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
     public JAXBElement<GeometryCollectionType> createMultiGeometry(final GeometryCollectionType value) {
@@ -369,7 +369,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GeometryCollectionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractGeometryCollection", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
     public JAXBElement<GeometryCollectionType> createAbstractGeometryCollection(final GeometryCollectionType value) {
@@ -378,7 +378,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GeometryAssociationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "geometryMember")
     public JAXBElement<GeometryAssociationType> createGeometryMember(final GeometryAssociationType value) {
@@ -387,7 +387,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiLineStringPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiEdgeOf", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "multiLineStringProperty")
     public JAXBElement<MultiLineStringPropertyType> createMultiEdgeOf(final MultiLineStringPropertyType value) {
@@ -396,7 +396,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LineStringMemberType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "lineStringMember", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "geometryMember")
     public JAXBElement<LineStringMemberType> createLineStringMember(final LineStringMemberType value) {
@@ -405,7 +405,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PolygonPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "polygonProperty", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometryProperty")
     public JAXBElement<PolygonPropertyType> createPolygonProperty(final PolygonPropertyType value) {
@@ -414,7 +414,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LineStringPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "centerLineOf", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "lineStringProperty")
     public JAXBElement<LineStringPropertyType> createCenterLineOf(final LineStringPropertyType value) {
@@ -423,7 +423,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiPolygonPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiExtentOf", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "multiPolygonProperty")
     public JAXBElement<MultiPolygonPropertyType> createMultiExtentOf(final MultiPolygonPropertyType value) {
@@ -432,7 +432,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BoundingShapeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "boundedBy")
     public JAXBElement<BoundingShapeType> createBoundedBy(final BoundingShapeType value) {
@@ -441,7 +441,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BoxType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Box")
     public JAXBElement<BoxType> createBox(final BoxType value) {
@@ -450,7 +450,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiPolygonPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiPolygonProperty", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometryProperty")
     public JAXBElement<MultiPolygonPropertyType> createMultiPolygonProperty(final MultiPolygonPropertyType value) {
@@ -459,7 +459,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiPointType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiPoint", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
     public JAXBElement<MultiPointType> createMultiPoint(final MultiPointType value) {
@@ -468,7 +468,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiLineStringPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiCenterLineOf", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "multiLineStringProperty")
     public JAXBElement<MultiLineStringPropertyType> createMultiCenterLineOf(final MultiLineStringPropertyType value) {
@@ -477,7 +477,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiPointPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiPointProperty", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometryProperty")
     public JAXBElement<MultiPointPropertyType> createMultiPointProperty(final MultiPointPropertyType value) {
@@ -486,7 +486,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LineStringType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "LineString", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
     public JAXBElement<LineStringType> createLineString(final LineStringType value) {
@@ -495,7 +495,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PointMemberType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "pointMember", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "geometryMember")
     public JAXBElement<PointMemberType> createPointMember(final PointMemberType value) {
@@ -504,7 +504,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "position", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "pointProperty")
     public JAXBElement<PointPropertyType> createPosition(final PointPropertyType value) {
@@ -513,7 +513,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LinearRingMemberType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "outerBoundaryIs")
     public JAXBElement<LinearRingMemberType> createOuterBoundaryIs(final LinearRingMemberType value) {
@@ -522,7 +522,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "description")
     public JAXBElement<String> createDescription(final String value) {
@@ -531,7 +531,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiPolygonType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiPolygon", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
     public JAXBElement<MultiPolygonType> createMultiPolygon(final MultiPolygonType value) {
@@ -540,7 +540,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "name")
     public JAXBElement<String> createName(final String value) {
@@ -549,7 +549,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "pointProperty", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometryProperty")
     public JAXBElement<PointPropertyType> createPointProperty(final PointPropertyType value) {
@@ -558,7 +558,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiLineStringPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiLineStringProperty", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometryProperty")
     public JAXBElement<MultiLineStringPropertyType> createMultiLineStringProperty(final MultiLineStringPropertyType value) {
@@ -567,7 +567,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PointType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Point", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
     public JAXBElement<PointType> createPoint(final PointType value) {
@@ -576,7 +576,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CoordType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "coord")
     public JAXBElement<CoordType> createCoord(final CoordType value) {
@@ -585,7 +585,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiPolygonPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiCoverage", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "multiPolygonProperty")
     public JAXBElement<MultiPolygonPropertyType> createMultiCoverage(final MultiPolygonPropertyType value) {
@@ -594,7 +594,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PolygonType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Polygon", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
     public JAXBElement<PolygonType> createPolygon(final PolygonType value) {
@@ -603,7 +603,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GeometryAssociationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "geometryProperty")
     public JAXBElement<GeometryAssociationType> createGeometryProperty(final GeometryAssociationType value) {
@@ -612,7 +612,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GeometryAssociationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractGeometryProperty")
     public JAXBElement<GeometryAssociationType> createAbstractGeometryProperty(final GeometryAssociationType value) {
@@ -621,7 +621,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PolygonPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "extentOf", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "polygonProperty")
     public JAXBElement<PolygonPropertyType> createExtentOf(final PolygonPropertyType value) {
@@ -630,7 +630,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiGeometryPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiGeometryProperty", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometryProperty")
     public JAXBElement<MultiGeometryPropertyType> createMultiGeometryProperty(final MultiGeometryPropertyType value) {
@@ -639,7 +639,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiPointPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiCenterOf", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "multiPointProperty")
     public JAXBElement<MultiPointPropertyType> createMultiCenterOf(final MultiPointPropertyType value) {
@@ -648,7 +648,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "location", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "pointProperty")
     public JAXBElement<PointPropertyType> createLocation(final PointPropertyType value) {
@@ -657,7 +657,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "centerOf", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "pointProperty")
     public JAXBElement<PointPropertyType> createCenterOf(final PointPropertyType value) {
@@ -666,7 +666,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractFeatureCollectionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractFeatureCollection", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
     public JAXBElement<AbstractFeatureCollectionType> createAbstractFeatureCollection(final AbstractFeatureCollectionType value) {
@@ -675,7 +675,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CoordinatesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "coordinates")
     public JAXBElement<CoordinatesType> createCoordinates(final CoordinatesType value) {
@@ -684,7 +684,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LineStringPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "edgeOf", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "lineStringProperty")
     public JAXBElement<LineStringPropertyType> createEdgeOf(final LineStringPropertyType value) {
@@ -693,7 +693,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiPointPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiLocation", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "multiPointProperty")
     public JAXBElement<MultiPointPropertyType> createMultiLocation(final MultiPointPropertyType value) {
@@ -702,7 +702,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractFeatureType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractFeature")
     public JAXBElement<AbstractFeatureType> createAbstractFeature(final AbstractFeatureType value) {
@@ -711,7 +711,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LineStringPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "lineStringProperty", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometryProperty")
     public JAXBElement<LineStringPropertyType> createLineStringProperty(final LineStringPropertyType value) {
@@ -720,7 +720,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FeatureAssociationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "featureMember")
     public JAXBElement<FeatureAssociationType> createFeatureMember(final FeatureAssociationType value) {
@@ -729,7 +729,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractGeometryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractGeometry")
     public JAXBElement<AbstractGeometryType> createAbstractGeometry(final AbstractGeometryType value) {

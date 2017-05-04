@@ -39,12 +39,12 @@ import org.opengis.style.TextSymbolizer;
 public class DefaultTextSymbolizerRendererService extends AbstractSymbolizerRendererService<TextSymbolizer, CachedTextSymbolizer>{
 
     private static final String GLYPH_CANDIDATE = "T";
-    
+
     @Override
     public boolean isGroupSymbolizer() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -85,7 +85,7 @@ public class DefaultTextSymbolizerRendererService extends AbstractSymbolizerRend
         g.setClip(rectangle);
 
         final String family;
-        if(!symbol.getSource().getFont().getFamily().isEmpty() && 
+        if(!symbol.getSource().getFont().getFamily().isEmpty() &&
             symbol.getSource().getFont().getFamily().get(0)!=null){
             family = symbol.getSource().getFont().getFamily().get(0).toString();
         }else{
@@ -108,7 +108,7 @@ public class DefaultTextSymbolizerRendererService extends AbstractSymbolizerRend
         } else {
             font = new Font(family, Font.PLAIN, defaultSize);
         }
-        
+
         final FontRenderContext frc = g.getFontRenderContext();
         final GlyphVector glyphVector = font.createGlyphVector(frc, GLYPH_CANDIDATE);
         final Shape shape = glyphVector.getOutline();

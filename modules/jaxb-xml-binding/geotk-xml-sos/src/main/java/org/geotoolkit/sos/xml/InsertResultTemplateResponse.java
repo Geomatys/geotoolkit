@@ -23,5 +23,5 @@ import org.geotoolkit.swes.xml.SOSResponse;
  * @author Guilhem Legal (Geomatys)
  */
 public interface InsertResultTemplateResponse extends SOSResponse {
-    
+
 }

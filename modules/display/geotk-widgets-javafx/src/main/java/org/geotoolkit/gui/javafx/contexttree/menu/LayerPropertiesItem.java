@@ -45,10 +45,10 @@ import org.geotoolkit.map.MapLayer;
  * @author Johann Sorel (Geomatys)
  */
 public class LayerPropertiesItem extends TreeMenuItem{
-    
+
     private final FXMap map;
     private WeakReference<TreeItem> itemRef;
-    
+
     /**
      * show layer properties in contextTree.
      * @param map source map

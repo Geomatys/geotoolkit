@@ -34,7 +34,7 @@ public interface Selector extends Source{
     /**
      * In the case of mutiple selector in a query, each selector must specify
      * it's session. When the query is composed of only one selector then
-     * the session might be null.  
+     * the session might be null.
      * @return Session never null in multiple selector query.
      *         might be null in single selector query.
      */

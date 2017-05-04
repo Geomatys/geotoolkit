@@ -28,7 +28,7 @@ import org.opengis.style.StyleVisitor;
 
 /**
  * Immutable implementation of Types Graphic.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -36,10 +36,10 @@ public class DefaultGraphicFill extends DefaultGraphic implements GraphicFill{
 
     /**
      * Create a default immutable Graphic fill.
-     * 
+     *
      * @param symbols : can not be null and must hold at least one graphicalSymbol
      * @param opacity : if null will be replaced by Expression.NIL
-     * @param size : if null will be replaced by Expression.NIL, 
+     * @param size : if null will be replaced by Expression.NIL,
      * if null the size od the graphicalSymbol is used
      * @param rotation : if null will be replaced by Expression.NIL
      * @param anchor : can be null, if so renderers shall use the default specification value.
@@ -82,8 +82,8 @@ public class DefaultGraphicFill extends DefaultGraphic implements GraphicFill{
                 && Objects.equals(this.disp,other.disp);
 
     }
-    
-    
+
+
     /**
      * {@inheritDoc }
      */

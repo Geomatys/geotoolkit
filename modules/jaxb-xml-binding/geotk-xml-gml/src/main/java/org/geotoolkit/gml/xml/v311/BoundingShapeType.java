@@ -32,11 +32,11 @@ import org.geotoolkit.gml.xml.EnvelopeWithTimePeriod;
 
 /**
  * Bounding shape.
- * 
+ *
  * <p>Java class for BoundingShapeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BoundingShapeType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.gml.xml.EnvelopeWithTimePeriod;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -92,7 +92,7 @@ public class BoundingShapeType implements BoundingShape {
            }
         }
     }
-     
+
     public BoundingShapeType(final EnvelopeType envelope) {
         this.envelope = envelope;
         if (envelope == null) {
@@ -108,7 +108,7 @@ public class BoundingShapeType implements BoundingShape {
     }
 
     /**
-     * Gets the value of the envelope property.  
+     * Gets the value of the envelope property.
      */
     @Override
     public EnvelopeType getEnvelope() {
@@ -121,7 +121,7 @@ public class BoundingShapeType implements BoundingShape {
     }
 
     /**
-     * Sets the value of the envelope property.   
+     * Sets the value of the envelope property.
      */
     public void setEnvelope(final EnvelopeType value) {
         this.envelope = value;
@@ -159,7 +159,7 @@ public class BoundingShapeType implements BoundingShape {
             return true;
         }
         if (object instanceof BoundingShapeType) {
-            
+
             final BoundingShapeType that = (BoundingShapeType) object;
 
             return Objects.equals(this.getNull(),              that.getNull())              &&

@@ -103,7 +103,7 @@ public class LenghtDecoration extends AbstractGeometryDecoration{
         for(int i=0;i<objectiveGeoms.length;i++){
             final Geometry objectiveGeom = objectiveGeoms[i];
             final Shape displayGeom = displayGeoms[i];
-            
+
             if(objectiveGeom instanceof Point){
                 //draw a single cross
                 final Point p = (Point) objectiveGeom;

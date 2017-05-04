@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -50,7 +50,7 @@ public class ScaleHint {
 
     /**
      * Gets the value of the max property.
-     * 
+     *
      */
     public String getMax() {
         return max;

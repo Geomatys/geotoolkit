@@ -20,7 +20,7 @@ import org.geotoolkit.wms.GetFeatureInfoRequest;
 
 /**
  * Interface for GetFeatureInfo requests
- * 
+ *
  * @author Olivier Terral (Geomatys)
  * @module
  */

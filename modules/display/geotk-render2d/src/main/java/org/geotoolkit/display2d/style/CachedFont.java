@@ -33,20 +33,20 @@ public class CachedFont extends Cache<Font>{
     private String fontFamily = null;
     private int fontSize = Integer.MIN_VALUE;
     private int fontStyle = Integer.MIN_VALUE;
-    
+
     private CachedFont(final Font font){
         super(font);
     }
-    
+
     public java.awt.Font getJ2dFont(final Object candidate, final float coeff) {
         evaluate();
 
         if(cache != null && coeff == 1){
             return cache;
         }
-        
+
         final Font font = styleElement;
-        
+
         final int j2dSize;
         if(fontSize != Integer.MIN_VALUE){
             j2dSize = fontSize;
@@ -54,7 +54,7 @@ public class CachedFont extends Cache<Font>{
             //size is dynamic
             j2dSize = GO2Utilities.evaluate(font.getSize(), candidate, Integer.class, 10);
         }
-        
+
         final int j2dStyle;
         if(fontStyle != Integer.MIN_VALUE){
             j2dStyle = fontStyle;
@@ -81,7 +81,7 @@ public class CachedFont extends Cache<Font>{
                 }
             }
         }
-        
+
         final String name;
         if(fontFamily != null){
             name = fontFamily;
@@ -93,23 +93,23 @@ public class CachedFont extends Cache<Font>{
                 name = "Dialog";
             }
         }
-        
+
         return new java.awt.Font(name, j2dStyle, (int) (j2dSize * coeff));
     }
-    
+
     @Override
     protected void evaluate() {
         if(!isNotEvaluated) return;
-        
+
         final List<Expression> expFamily = styleElement.getFamily();
         final Expression expSize = styleElement.getSize();
         final Expression expWeight = styleElement.getWeight();
         final Expression expStyle = styleElement.getStyle();
-        
+
         //we can not know so always visible
         isStaticVisible = VisibilityState.VISIBLE;
-        
-        
+
+
         //TODO find the best font acoording to OS font list
         if(!expFamily.isEmpty() && GO2Utilities.isStatic(expFamily.get(0))){
             fontFamily = GO2Utilities.evaluate(expFamily.get(0), null, String.class, "Dialog");
@@ -119,8 +119,8 @@ public class CachedFont extends Cache<Font>{
         }else{
             fontFamily = "Dialog";
         }
-        
-        
+
+
         if(GO2Utilities.isStatic(expSize)){
             final Float f = GO2Utilities.evaluate(expSize, null, Float.class, 10f);
             if (f != null) {
@@ -130,11 +130,11 @@ public class CachedFont extends Cache<Font>{
             GO2Utilities.getRequieredAttributsName(expSize,requieredAttributs);
             isStatic = false;
         }
-        
+
         if(GO2Utilities.isStatic(expWeight) && GO2Utilities.isStatic(expStyle)){
             String strWeight = GO2Utilities.evaluate(expWeight, null, String.class, FONT_STYLE_NORMAL_STRING);
             String strStyle = GO2Utilities.evaluate(expStyle, null, String.class, FONT_WEIGHT_NORMAL_STRING);
-            
+
             if (FONT_WEIGHT_BOLD_STRING.equalsIgnoreCase(strWeight)) {
                 if (FONT_STYLE_ITALIC_STRING.equalsIgnoreCase(strStyle)) {
                     fontStyle = java.awt.Font.BOLD | java.awt.Font.ITALIC;
@@ -152,23 +152,23 @@ public class CachedFont extends Cache<Font>{
                     fontStyle = java.awt.Font.PLAIN;
                 }
             }
-            
+
         }else{
             GO2Utilities.getRequieredAttributsName(expWeight,requieredAttributs);
             GO2Utilities.getRequieredAttributsName(expStyle,requieredAttributs);
             isStatic = false;
         }
-        
+
         //no attributs needed replace with static empty list.
         if(requieredAttributs.isEmpty()){
             requieredAttributs = EMPTY_ATTRIBUTS;
         }
-        
+
         //cache the font if possible
         if(fontSize != Integer.MIN_VALUE && fontStyle != Integer.MIN_VALUE && fontFamily != null){
             cache = new java.awt.Font(fontFamily, fontStyle, (int)fontSize);
         }
-        
+
         isNotEvaluated = false;
     }
 

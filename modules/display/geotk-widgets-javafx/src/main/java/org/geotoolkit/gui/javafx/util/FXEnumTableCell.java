@@ -33,7 +33,7 @@ import javafx.util.StringConverter;
  * @param <T> cell target type
  */
 public class FXEnumTableCell<S, T extends Enum> extends TableCell<S, T> {
-    
+
     private final Class<T> enumClass;
     private final ComboBox<T> field = new ComboBox<>();
     private final StringConverter<T> converter;
@@ -51,10 +51,10 @@ public class FXEnumTableCell<S, T extends Enum> extends TableCell<S, T> {
                 commitEdit(field.getValue());
             }
         });
-        
+
         this.converter=converter;
         if(converter!=null) field.setConverter(converter);
-        
+
         setGraphic(field);
         setAlignment(Pos.CENTER);
         setContentDisplay(ContentDisplay.CENTER);

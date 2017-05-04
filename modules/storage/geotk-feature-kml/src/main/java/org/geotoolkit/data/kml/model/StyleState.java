@@ -39,7 +39,7 @@ public enum StyleState {
     private final String styleState;
 
     /**
-     * 
+     *
      * @param itemIconState
      */
     private StyleState(String itemIconState){

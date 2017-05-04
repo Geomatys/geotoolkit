@@ -189,7 +189,7 @@ public class ElementFeatureWriter {
                 //skip attributes
                continue;
             }
-            
+
             final Collection values = Utils.propertyValueAsList(feature, desc.getName().toString());
             for (Object valueA : values) {
                 final PropertyType typeA = desc;

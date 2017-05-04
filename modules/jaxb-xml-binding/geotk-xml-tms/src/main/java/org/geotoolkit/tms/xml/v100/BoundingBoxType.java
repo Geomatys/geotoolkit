@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for BoundingBoxType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BoundingBoxType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BoundingBoxType")
@@ -67,11 +67,11 @@ public class BoundingBoxType {
 
     /**
      * Gets the value of the minx property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMinx() {
         return minx;
@@ -79,11 +79,11 @@ public class BoundingBoxType {
 
     /**
      * Sets the value of the minx property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMinx(Double value) {
         this.minx = value;
@@ -91,11 +91,11 @@ public class BoundingBoxType {
 
     /**
      * Gets the value of the miny property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMiny() {
         return miny;
@@ -103,11 +103,11 @@ public class BoundingBoxType {
 
     /**
      * Sets the value of the miny property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMiny(Double value) {
         this.miny = value;
@@ -115,11 +115,11 @@ public class BoundingBoxType {
 
     /**
      * Gets the value of the maxx property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMaxx() {
         return maxx;
@@ -127,11 +127,11 @@ public class BoundingBoxType {
 
     /**
      * Sets the value of the maxx property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMaxx(Double value) {
         this.maxx = value;
@@ -139,11 +139,11 @@ public class BoundingBoxType {
 
     /**
      * Gets the value of the maxy property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMaxy() {
         return maxy;
@@ -151,11 +151,11 @@ public class BoundingBoxType {
 
     /**
      * Sets the value of the maxy property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMaxy(Double value) {
         this.maxy = value;

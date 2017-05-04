@@ -25,11 +25,11 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * Extract last geometry segment angle in radians.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class EndAngleFunction extends AbstractFunction {
-    
+
     public EndAngleFunction(final Expression expr1) {
         super(GeometryFunctionFactory.ENDANGLE, new Expression[] {expr1}, null);
     }
@@ -43,7 +43,7 @@ public class EndAngleFunction extends AbstractFunction {
         } catch (Exception e){
             throw new IllegalArgumentException("Invalid function parameter."+parameters.get(0));
         }
-        
+
         if(geom==null) return 0.0;
         final LineString line = getLine(geom);
         if(line==null) return 0.0;
@@ -52,7 +52,7 @@ public class EndAngleFunction extends AbstractFunction {
         final CoordinateSequence cs = line.getCoordinateSequence();
         return Math.atan2(cs.getY(nb-2)-cs.getY(nb-1),cs.getX(nb-2)-cs.getX(nb-1));
     }
-    
+
     private static LineString getLine(Geometry geom){
         if(geom instanceof LineString){
             return (LineString) geom;
@@ -64,5 +64,5 @@ public class EndAngleFunction extends AbstractFunction {
         }
         return null;
     }
-    
+
 }

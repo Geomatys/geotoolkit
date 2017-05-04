@@ -32,14 +32,14 @@ import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 
 
 /**
- * This type extends DCMIRecordType to add ows:BoundingBox; 
+ * This type extends DCMIRecordType to add ows:BoundingBox;
  * it may be used to specify a bounding envelope for the catalogued resource.
- *       
- * 
+ *
+ *
  * <p>Java class for RecordType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RecordType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,38 +69,38 @@ public class RecordType extends DCMIRecordType implements Record {
      * An empty constructor used by JAXB
      */
     public RecordType() {
-        
+
     }
-    
+
     /**
      * Build a new Record TODO add contributor, source , spatial, right, relation
      */
-    public RecordType(final SimpleLiteral identifier, final SimpleLiteral title, final SimpleLiteral type, 
+    public RecordType(final SimpleLiteral identifier, final SimpleLiteral title, final SimpleLiteral type,
             final List<SimpleLiteral> subject, final SimpleLiteral format, final SimpleLiteral modified, final SimpleLiteral _abstract,
-            final BoundingBoxType bbox, final SimpleLiteral creator, final SimpleLiteral distributor, final SimpleLiteral language, 
+            final BoundingBoxType bbox, final SimpleLiteral creator, final SimpleLiteral distributor, final SimpleLiteral language,
             final SimpleLiteral spatial,final SimpleLiteral references) {
-        
+
         super(identifier, title,type, subject, format, modified, _abstract, creator, distributor, language, spatial, references);
-        
+
         if (bbox instanceof WGS84BoundingBoxType) {
             this.boundingBox = owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox);
         } else {
             this.boundingBox = owsFactory.createBoundingBox(bbox);
         }
     }
-    
+
     /**
      * Gets the value of the boundingBox property.
-     * 
+     *
      */
     @Override
     public JAXBElement<? extends BoundingBoxType> getBoundingBox() {
         return boundingBox;
     }
-    
+
     /**
      * Sets the value of the boundingBox property.
-     * 
+     *
      */
     public void setBoundingBox(final JAXBElement<? extends BoundingBoxType> value) {
         this.boundingBox = ((JAXBElement<? extends BoundingBoxType> ) value);
@@ -123,7 +123,7 @@ public class RecordType extends DCMIRecordType implements Record {
         }
         return s.toString();
     }
-    
+
      /**
      * Verify if this entry is identical to the specified object.
      */
@@ -134,10 +134,10 @@ public class RecordType extends DCMIRecordType implements Record {
         }
         if (object instanceof RecordType && super.equals(object)) {
             final RecordType that = (RecordType) object;
-            
+
             if (this.boundingBox != null && that.boundingBox != null) {
                 return Objects.equals(this.boundingBox.getValue(),   that.boundingBox.getValue());
-                
+
             } else {
                  if (this.boundingBox == null && that.boundingBox == null) {
                      return true;

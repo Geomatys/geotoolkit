@@ -25,11 +25,11 @@ import org.geotoolkit.sml.xml.AbstractProcessModel;
 
 /**
  * Complex Type for atomic processes
- * 
+ *
  * <p>Java class for ProcessModelType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ProcessModelType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.sml.xml.AbstractProcessModel;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

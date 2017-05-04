@@ -36,24 +36,24 @@ import org.geotoolkit.swe.xml.CompositePhenomenon;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CompositePhenomenon", propOrder = {"base", "component"})
 public class CompositePhenomenonType extends CompoundPhenomenonType implements CompositePhenomenon {
-    
+
     /**
      * The base phenomenon.
      */
     private PhenomenonType base;
-    
+
     /**
      * The components.
      */
     @XmlElement(name="component")
     private List<PhenomenonPropertyType> component;
-   
-    /** 
+
+    /**
      * Empty constructor used by JAXB.
      */
     CompositePhenomenonType(){}
-            
-    /** 
+
+    /**
      * Build a new composite phenomenon.
      */
     public CompositePhenomenonType(final String id, final String name, final String description,
@@ -65,21 +65,21 @@ public class CompositePhenomenonType extends CompoundPhenomenonType implements C
             this.component.add(new PhenomenonPropertyType(pheno));
         }
     }
-    
+
     /**
      * Return the base phenomenone.
      */
     public PhenomenonType getBase(){
         return base;
     }
-    
+
     /**
-     * Add a component to the list 
+     * Add a component to the list
      */
     public void addComponent(final PhenomenonType phenomenon) {
         component.add(new PhenomenonPropertyType(phenomenon));
     }
-    
+
     /**
      * Return the components.
      */
@@ -93,7 +93,7 @@ public class CompositePhenomenonType extends CompoundPhenomenonType implements C
 
     /**
      * Return true if the composite phenomenon contains the specified phenomenon.
-     * 
+     *
      * @param phenomenonId
      * @return
      */
@@ -107,7 +107,7 @@ public class CompositePhenomenonType extends CompoundPhenomenonType implements C
         }
         return false;
     }
-    
+
     /**
      * Return the components.
      */
@@ -123,7 +123,7 @@ public class CompositePhenomenonType extends CompoundPhenomenonType implements C
         this.setName(name);
         this.setDimension(Dimension);
     }
-    
+
     /**
      * Return a code representing this composite phenomenon.
      */
@@ -140,12 +140,12 @@ public class CompositePhenomenonType extends CompoundPhenomenonType implements C
         if (object == this) {
             return true;
         }
-        
+
         if (object instanceof CompositePhenomenonType && super.equals(object, mode)) {
             final CompositePhenomenonType that = (CompositePhenomenonType) object;
            if ((this.component !=null && that.component == null)||(this.component ==null && that.component != null))
                 return false;
-        
+
             if (this.component !=null && that.component != null) {
                 if (this.component.size() == that.component.size()) {
                     Iterator<PhenomenonPropertyType> i = this.component.iterator();
@@ -154,28 +154,28 @@ public class CompositePhenomenonType extends CompoundPhenomenonType implements C
                             return false;
                     }
                 } else return false;
-            } 
+            }
             return Objects.equals(this.getId(),             that.getId()) &&
                    Objects.equals(this.getDescription(),    that.getDescription()) &&
                    Objects.equals(this.getName(),           that.getName()) &&
-                   Objects.equals(this.base,                that.base) && 
+                   Objects.equals(this.base,                that.base) &&
                    Objects.equals(this.component,           that.component);
        }
        return false;
     }
-   
+
     /**
      * Retourne une chaine de charactere representant la station.
      */
     @Override
-    public String toString() { 
+    public String toString() {
         StringBuilder s = new StringBuilder(super.toString() + '\n');
         if( base != null) {
             s.append("base: ").append(base.toString()).append('\n');
         } else {
             s.append("base is null (relatively normal)");
         }
-        
+
         if (component != null) {
             Iterator i =  component.iterator();
             s.append("components :").append('\n');
@@ -188,6 +188,6 @@ public class CompositePhenomenonType extends CompoundPhenomenonType implements C
              s.append("COMPONENT IS NULL");
         }
         return s.toString();
-    }    
-    
+    }
+
 }

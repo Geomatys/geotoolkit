@@ -23,16 +23,16 @@ import java.io.InputStream;
 
 /**
  * Little endian Data input stream.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class LEDataInputStream extends InputStream implements DataInput {
 
-    private final DataInputStream ds; 
-    private final InputStream in; 
+    private final DataInputStream ds;
+    private final InputStream in;
     private final byte buffer[] = new byte[8];
     private long position = 0;
-        
+
     public LEDataInputStream(final InputStream in) {
         this.in = in;
         this.ds = new DataInputStream(in);
@@ -172,12 +172,12 @@ public class LEDataInputStream extends InputStream implements DataInput {
     public final void close() throws IOException {
         ds.close();
     }
-    
-    
+
+
     public static short readUnsignedByte(final byte[] buffer, final int offset){
         return (short) (buffer[offset] & 0xff);
     }
-    
+
     public static short readShort(final byte[] buffer, final int offset){
         return (short) ((buffer[offset+1] & 0xff) << 8
                 | (buffer[offset+0] & 0xff));
@@ -205,7 +205,7 @@ public class LEDataInputStream extends InputStream implements DataInput {
                 | (long) (buffer[offset+1] & 0xff) << 8
                 | (long) (buffer[offset+0] & 0xff);
     }
-    
+
     public static long readLong(final byte[] buffer, final int offset){
         return    (long) (buffer[offset+7]) << 56
                 | (long) (buffer[offset+6] & 0xff) << 48

@@ -26,9 +26,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for InterpolationPointType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InterpolationPointType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,7 +61,7 @@ public class InterpolationPointType
 
     /**
      * Gets the value of the data property.
-     * 
+     *
      */
     public double getData() {
         return data;
@@ -69,7 +69,7 @@ public class InterpolationPointType
 
     /**
      * Sets the value of the data property.
-     * 
+     *
      */
     public void setData(final double value) {
         this.data = value;
@@ -77,11 +77,11 @@ public class InterpolationPointType
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getValue() {
         return value;
@@ -89,11 +89,11 @@ public class InterpolationPointType
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setValue(final ParameterValueType value) {
         this.value = value;

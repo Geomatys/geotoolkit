@@ -83,7 +83,7 @@ public class CoordinateType implements Coordinate {
             }
         }
     }
-    
+
     public CoordinateType(final String name, final QuantityType quantity) {
         this.name     = name;
         this.quantity = quantity;

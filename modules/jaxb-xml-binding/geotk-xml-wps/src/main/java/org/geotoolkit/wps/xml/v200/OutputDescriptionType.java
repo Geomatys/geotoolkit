@@ -33,15 +33,15 @@ import org.geotoolkit.wps.xml.OutputDescription;
 
 
 /**
- * Description of a process Output. 
- * 
+ * Description of a process Output.
+ *
  * In this use, the DescriptionType shall describe a process output.
- * 					
- * 
+ *
+ *
  * <p>Java class for OutputDescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OutputDescriptionType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.wps.xml.OutputDescription;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OutputDescriptionType", propOrder = {
@@ -70,10 +70,10 @@ public class OutputDescriptionType extends DescriptionType implements OutputDesc
     protected List<OutputDescriptionType> output;
 
     public OutputDescriptionType() {
-        
+
     }
-    
-    public OutputDescriptionType(CodeType identifier, List<LanguageStringType> title, List<LanguageStringType> _abstract, 
+
+    public OutputDescriptionType(CodeType identifier, List<LanguageStringType> title, List<LanguageStringType> _abstract,
            List<KeywordsType>keywords, DataDescription dataDescription) {
         super(identifier, title, _abstract, keywords);
         final ObjectFactory factory = new ObjectFactory();
@@ -89,14 +89,14 @@ public class OutputDescriptionType extends DescriptionType implements OutputDesc
     }
     /**
      * Gets the value of the dataDescription property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link BoundingBoxData }{@code >}
      *     {@link JAXBElement }{@code <}{@link LiteralDataType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ComplexDataType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DataDescriptionType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends DataDescriptionType> getDataDescription() {
         return dataDescription;
@@ -104,14 +104,14 @@ public class OutputDescriptionType extends DescriptionType implements OutputDesc
 
     /**
      * Sets the value of the dataDescription property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link BoundingBoxData }{@code >}
      *     {@link JAXBElement }{@code <}{@link LiteralDataType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ComplexDataType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DataDescriptionType }{@code >}
-     *     
+     *
      */
     public void setDataDescription(JAXBElement<? extends DataDescriptionType> value) {
         this.dataDescription = value;
@@ -119,11 +119,11 @@ public class OutputDescriptionType extends DescriptionType implements OutputDesc
 
     /**
      * Gets the value of the output property.
-     * 
+     *
      * @return Objects of the following type(s) are allowed in the list
      * {@link OutputDescriptionType }
-     * 
-     * 
+     *
+     *
      */
     public List<OutputDescriptionType> getOutput() {
         if (output == null) {

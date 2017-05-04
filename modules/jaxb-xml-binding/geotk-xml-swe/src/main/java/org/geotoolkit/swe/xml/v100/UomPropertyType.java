@@ -31,11 +31,11 @@ import org.geotoolkit.swe.xml.UomProperty;
 
 /**
  * Property type that indicates unit-of-measure, either by (i) inline definition; (ii)  reference; (iii)  UCUM code
- * 
+ *
  * <p>Java class for UomPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UomPropertyType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.swe.xml.UomProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,7 +61,7 @@ public class UomPropertyType implements UomProperty {
 
     public static final UomPropertyType DEGREE = new UomPropertyType("degree", null);
     public static final UomPropertyType METER  = new UomPropertyType("m", null);
-    
+
     @XmlElementRef(name = "UnitDefinition", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private JAXBElement<? extends UnitDefinitionType> unitDefinition;
     @XmlAttribute
@@ -117,14 +117,14 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Defines a unit inline
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link ConventionalUnitType }{@code >}
      *     {@link JAXBElement }{@code <}{@link UnitDefinitionType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DerivedUnitType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BaseUnitType }{@code >}
-     *     
+     *
      */
     public UnitDefinitionType getUnitDefinition() {
         return (unitDefinition != null) ? unitDefinition.getValue() : null;
@@ -135,14 +135,14 @@ public class UomPropertyType implements UomProperty {
     }
     /**
      * Defines a unit inline
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link ConventionalUnitType }{@code >}
      *     {@link JAXBElement }{@code <}{@link UnitDefinitionType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DerivedUnitType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BaseUnitType }{@code >}
-     *     
+     *
      */
     public void setUnitDefinition(final JAXBElement<? extends UnitDefinitionType> value) {
         this.unitDefinition = ((JAXBElement<? extends UnitDefinitionType> ) value);
@@ -150,11 +150,11 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Gets the value of the code property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCode() {
         return code;
@@ -162,11 +162,11 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Sets the value of the code property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCode(final String value) {
         this.code = value;
@@ -174,11 +174,11 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -186,11 +186,11 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -198,11 +198,11 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -210,11 +210,11 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -222,11 +222,11 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -234,11 +234,11 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -246,11 +246,11 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -258,11 +258,11 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -270,11 +270,11 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -282,11 +282,11 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -294,11 +294,11 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -306,11 +306,11 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -318,11 +318,11 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -330,11 +330,11 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -342,11 +342,11 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -354,11 +354,11 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;

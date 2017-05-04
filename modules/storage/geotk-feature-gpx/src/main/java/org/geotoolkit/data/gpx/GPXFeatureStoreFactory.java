@@ -52,9 +52,9 @@ public class GPXFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("GPXParameters").createGroup(IDENTIFIER, PATH);
@@ -94,7 +94,7 @@ public class GPXFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     public String[] getFileExtensions() {
         return new String[] {".gpx"};
     }
-    
+
     @Override
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, GEOMS_ALL);

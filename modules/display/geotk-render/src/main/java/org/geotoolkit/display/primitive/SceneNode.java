@@ -37,11 +37,11 @@ import org.opengis.display.primitive.Graphic;
 
 /**
  * A scene node is an element in the graphic container.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class SceneNode extends DisplayElement implements Graphic {
-    
+
     /**
      * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
      * {@linkplain SceneNode#getParent node parent} changed.
@@ -57,7 +57,7 @@ public class SceneNode extends DisplayElement implements Graphic {
      * {@linkplain SceneNode#getName node name} changed.
      */
     public static final String NAME_KEY = "name";
-        
+
     private final List<SceneNode> children;
     protected SceneNode parent;
     protected boolean visible = true;
@@ -70,7 +70,7 @@ public class SceneNode extends DisplayElement implements Graphic {
      * Used to listen to children events and push them back to the root.
      */
     private CollectionChangeListener childListener;
-    
+
     /**
      * Create a default scene node which allows children.
      */
@@ -79,7 +79,7 @@ public class SceneNode extends DisplayElement implements Graphic {
     }
 
     /**
-     * 
+     *
      * @param allowChildren indicate this node allows children.
      */
     public SceneNode(final Canvas canvas, final boolean allowChildren) {
@@ -91,10 +91,10 @@ public class SceneNode extends DisplayElement implements Graphic {
             childListener = new CollectionChangeListener() {
                 @Override
                 public void collectionChange(CollectionChangeEvent event) {
-                    
+
                 }
             };
-            
+
             children = new NotifiedCheckedList<SceneNode>(SceneNode.class, 0) {
                 @Override
                 protected void notifyAdd(SceneNode item, int index) {
@@ -131,7 +131,7 @@ public class SceneNode extends DisplayElement implements Graphic {
                         }
 
                     }
-                    
+
                     //fire event
                     fireChildrenChange(CollectionChangeEvent.ITEM_ADDED,items, range);
                 }
@@ -182,7 +182,7 @@ public class SceneNode extends DisplayElement implements Graphic {
                             }
                         }
                     }
-                    
+
                     //fire event
                     fireChildrenChange(CollectionChangeEvent.ITEM_REMOVED,items, range);
                 }
@@ -199,7 +199,7 @@ public class SceneNode extends DisplayElement implements Graphic {
     public Canvas getCanvas() {
         return canvas;
     }
-    
+
     /**
      * Get the parent scene node.
      * @return SceneNode , can be null
@@ -207,7 +207,7 @@ public class SceneNode extends DisplayElement implements Graphic {
     public SceneNode getParent() {
         return parent;
     }
-    
+
     /**
      * Set this node parent.
      * @param parent , can be null
@@ -218,10 +218,10 @@ public class SceneNode extends DisplayElement implements Graphic {
         this.parent = parent;
         firePropertyChange(PARENT_KEY, old, parent);
     }
-    
+
     /**
      * Get scene node children, modifiable list.
-     * 
+     *
      * @return List, never null, can be empty
      */
     public List<SceneNode> getChildren(){
@@ -239,7 +239,7 @@ public class SceneNode extends DisplayElement implements Graphic {
         this.visible = visible;
         firePropertyChange(VISIBLE_KEY, !visible, visible);
     }
-    
+
     public String getName() {
         return name;
     }
@@ -262,29 +262,29 @@ public class SceneNode extends DisplayElement implements Graphic {
             child.dispose();
         }
     }
-    
+
     public void addChildrenListener(CollectionChangeListener listener){
         getListenerList(true).add(CollectionChangeListener.class, listener);
     }
-    
+
     public void removeChildrenListener(CollectionChangeListener listener){
         getListenerList(true).remove(CollectionChangeListener.class, listener);
     }
-    
+
     /**
      * Accepts a visitor.
      */
     public Object accept(SceneVisitor visitor, Object extraData){
         return visitor.visit(this, extraData);
     }
-    
+
     protected void fireChildrenChange(final int type, final SceneNode item, final NumberRange<Integer> range, final EventObject orig) {
         final EventListenerList lst = getListenerList(false);
         if(lst==null) return;
-        
+
         final CollectionChangeListener[] lists = lst.getListeners(CollectionChangeListener.class);
         if(lists.length==0) return;
-        
+
         final CollectionChangeEvent<SceneNode> event = new CollectionChangeEvent<>(this, item, type, range, orig);
         for (CollectionChangeListener listener : lists){
             listener.collectionChange(event);
@@ -295,14 +295,14 @@ public class SceneNode extends DisplayElement implements Graphic {
     protected void fireChildrenChange(final int type, final Collection<? extends SceneNode> item, final NumberRange<Integer> range){
         final EventListenerList lst = getListenerList(false);
         if(lst==null) return;
-        
+
         final CollectionChangeListener[] lists = lst.getListeners(CollectionChangeListener.class);
         if(lists.length==0) return;
-        
+
         final CollectionChangeEvent<SceneNode> event = new CollectionChangeEvent<>(this,item,type,range, null);
         for (CollectionChangeListener listener : lists){
             listener.collectionChange(event);
         }
     }
-    
+
 }

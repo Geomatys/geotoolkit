@@ -29,18 +29,18 @@ import org.opengis.filter.PropertyIsNotEqualTo;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsNotEqualTo")
 public class PropertyIsNotEqualToType extends BinaryComparisonOpType implements PropertyIsNotEqualTo {
-    
+
     public PropertyIsNotEqualToType() {
-        
+
     }
-    
+
     /**
      * Build a new Binary comparison operator
      */
     public PropertyIsNotEqualToType(final LiteralType literal, final PropertyNameType propertyName) {
         super(literal, propertyName);
     }
-    
+
     public PropertyIsNotEqualToType(final PropertyIsNotEqualToType that) {
         super(that);
     }

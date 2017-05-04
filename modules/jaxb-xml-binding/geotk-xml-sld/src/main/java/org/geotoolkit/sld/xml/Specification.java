@@ -18,7 +18,7 @@ package org.geotoolkit.sld.xml;
 
 /**
  * Enumerations of all specifications versions.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -28,15 +28,15 @@ public final class Specification {
         V_1_0_0,
         V_1_1_0
     }
-    
+
     public enum SymbologyEncoding{
         SLD_1_0_0,
         V_1_1_0
     }
-    
+
     public enum StyledLayerDescriptor{
         V_1_0_0,
         V_1_1_0
     }
-    
+
 }

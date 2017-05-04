@@ -22,7 +22,7 @@ import org.opengis.sld.LayerFeatureConstraints;
 
 /**
  * Mutable layer feature constraints
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  * @since Types 2.2
@@ -30,9 +30,9 @@ import org.opengis.sld.LayerFeatureConstraints;
 public interface MutableLayerFeatureConstraints extends MutableConstraints, LayerFeatureConstraints {
 
     List<FeatureTypeConstraint> constraints();
-    
+
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
-        
+
 }

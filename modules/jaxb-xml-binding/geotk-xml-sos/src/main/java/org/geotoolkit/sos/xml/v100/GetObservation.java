@@ -49,9 +49,9 @@ import org.opengis.filter.Filter;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -103,7 +103,7 @@ import org.opengis.filter.Filter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  *  @author Guilhem Legal
  * @module
  */
@@ -142,14 +142,14 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
      * Empty constructor used by JAXB
      */
     GetObservation(){
-        
+
     }
-    
+
     /**
      * Build a new full GetObservation request
      */
     public GetObservation(final String version, final String offering, final List<EventTime> eventTime, final List<String> procedure,
-            final List<String> observedProperty, final GetObservation.FeatureOfInterest featureOfInterest, 
+            final List<String> observedProperty, final GetObservation.FeatureOfInterest featureOfInterest,
             final GetObservation.Result result, final String responseFormat, final QName resultModel, final ResponseModeType responseMode,
             final String srsName){
         super(version);
@@ -165,19 +165,19 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
         this.result            = result;
         this.resultModel       = resultModel;
         this.srsName           = srsName;
-        
+
     }
-    
+
     /**
      * Gets the value of the offering property.
      */
     public String getOffering() {
         return offering;
     }
-    
+
     /**
      * compatibility with SOS 2.0.0
-     * @return 
+     * @return
      */
     @Override
     public List<String> getOfferings() {
@@ -274,7 +274,7 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
         }
         return new ArrayList<String>();
     }
-    
+
     @Override
     public Filter getSpatialFilter() {
         if (featureOfInterest != null) {
@@ -290,7 +290,7 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
         }
         return null;
     }
-    
+
     @Override
     public List<Filter> getTemporalFilter() {
         if (eventTime != null) {
@@ -302,7 +302,7 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
         }
         return new ArrayList<Filter>();
     }
-    
+
     /**
      * Verify if this entry is identical to�the specified object.
      */
@@ -323,7 +323,7 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
                    Objects.equals(this.result,            that.result)            &&
                    Objects.equals(this.resultModel,       that.resultModel)       &&
                    Objects.equals(this.srsName,           that.srsName);
-        } 
+        }
         return false;
     }
 
@@ -342,7 +342,7 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
         hash = 73 * hash + (this.srsName != null ? this.srsName.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("GetObservation:");
@@ -361,7 +361,7 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
         if (resultModel != null) {
              s.append("result model:").append('\n').append(resultModel.toString()).append('\n');
         }
-        
+
         s.append("observed properties:").append('\n');
         if (observedProperty != null) {
             for (String ss:observedProperty) {
@@ -383,9 +383,9 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
 
    /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -411,7 +411,7 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
+     *
      * @author Guilhem Legal
      */
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -478,7 +478,7 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
          * @return
          *     possible object is
          *     {@link SpatialOpsType }
-         *     
+         *
          */
         public SpatialOpsType getSpatialOps() {
             if (bbox != null) {
@@ -591,7 +591,7 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
         public List<String> getObjectID() {
             return Collections.unmodifiableList(objectID);
         }
-        
+
     /**
      * Verify if this entry is identical to�the specified object.
      */
@@ -643,9 +643,9 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
 
    /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -666,7 +666,7 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
+     *
      * @author Guilhem Legal
      */
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -828,7 +828,7 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
                 return comparisonOps;
             }
         }
-        
+
         /**
          * Verify if this entry is identical to�the specified object.
          */

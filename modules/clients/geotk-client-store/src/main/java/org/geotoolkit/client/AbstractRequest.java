@@ -133,7 +133,7 @@ public abstract class AbstractRequest implements Request {
 
     /**
      * Returns request timeout.
-     * 
+     *
      * @return timeout in milliseconds.
      */
     public int getTimeout() {
@@ -262,7 +262,7 @@ public abstract class AbstractRequest implements Request {
     /**
      * Open an url connection from getURL method.
      * connection timeout and security are configured.
-     * 
+     *
      * @return URLConnection
      */
     protected URLConnection openConnection() throws MalformedURLException, IOException {
@@ -276,9 +276,9 @@ public abstract class AbstractRequest implements Request {
     /**
      * Java do not follow urls if there is a change in protocol.
      * See : http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4620571
-     * 
+     *
      * @param cnx
-     * @return 
+     * @return
      */
     protected InputStream followLink(URLConnection cnx) throws IOException {
 
@@ -297,7 +297,7 @@ public abstract class AbstractRequest implements Request {
                 // get new cookies
                 final String cookies = httpCnx.getHeaderField("Set-Cookie");
                 is.close();
-                
+
                 // open redirection
                 httpCnx = (HttpURLConnection) new URL(newUrl).openConnection();
                 cnx = httpCnx;

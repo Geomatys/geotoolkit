@@ -69,7 +69,7 @@ public class JTSComplexFactory extends Factory implements ComplexFactory {
     @Override
     public CompositeSurface createCompositeSurface( final List list ) {
         JTSCompositeSurface composite = new JTSCompositeSurface();
-        composite.getElementList().addAll( list );        
+        composite.getElementList().addAll( list );
         return composite;
     }
 

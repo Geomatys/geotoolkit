@@ -42,7 +42,7 @@ import org.opengis.filter.identity.Identifier;
 
 /**
  * Provide JDBC transaction support for asynchrone sessions.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
  */
@@ -56,7 +56,7 @@ public class JDBCSession extends DefaultSession {
     private static final int MAX_ID_IN_REQUEST = 5000;
 
     private Connection transaction = null;
-    
+
     public JDBCSession(DefaultJDBCFeatureStore store, boolean async, Version version) {
         super(store, async, version);
     }
@@ -77,7 +77,7 @@ public class JDBCSession extends DefaultSession {
         }else{
             return super.createModifyDelta(session, typeName, filter, values);
         }
-        
+
     }
 
     @Override
@@ -103,7 +103,7 @@ public class JDBCSession extends DefaultSession {
         }
 
         getDiff().commit(store);
-        
+
         //everything is ok, close transaction and diff
         if(transaction!=null){
             try {
@@ -113,7 +113,7 @@ public class JDBCSession extends DefaultSession {
             }
         }
         closeTransaction();
-        
+
         fireSessionChanged();
 
         for (GenericName deltaChange : deltaChanges) {
@@ -132,13 +132,13 @@ public class JDBCSession extends DefaultSession {
         }
         return transaction;
     }
-    
+
     @Override
     public synchronized void rollback() {
         super.rollback();
         closeTransaction();
     }
-    
+
     private void closeTransaction(){
         if(transaction!=null){
             try {
@@ -231,5 +231,5 @@ public class JDBCSession extends DefaultSession {
             store.removeFeatures(groupName, filter);
         }
     }
-    
+
 }

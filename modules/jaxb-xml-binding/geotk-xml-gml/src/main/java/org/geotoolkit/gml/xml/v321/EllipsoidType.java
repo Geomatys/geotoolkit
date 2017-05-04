@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for EllipsoidType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="EllipsoidType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
@@ -58,11 +58,11 @@ public class EllipsoidType extends IdentifiedObjectType {
 
     /**
      * Gets the value of the semiMajorAxis property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public MeasureType getSemiMajorAxis() {
         return semiMajorAxis;
@@ -70,11 +70,11 @@ public class EllipsoidType extends IdentifiedObjectType {
 
     /**
      * Sets the value of the semiMajorAxis property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public void setSemiMajorAxis(MeasureType value) {
         this.semiMajorAxis = value;
@@ -82,11 +82,11 @@ public class EllipsoidType extends IdentifiedObjectType {
 
     /**
      * Gets the value of the secondDefiningParameter property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SecondDefiningParameter }
-     *     
+     *
      */
     public SecondDefiningParameter getSecondDefiningParameter() {
         return secondDefiningParameter;
@@ -94,11 +94,11 @@ public class EllipsoidType extends IdentifiedObjectType {
 
     /**
      * Sets the value of the secondDefiningParameter property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SecondDefiningParameter }
-     *     
+     *
      */
     public void setSecondDefiningParameter(SecondDefiningParameter value) {
         this.secondDefiningParameter = value;

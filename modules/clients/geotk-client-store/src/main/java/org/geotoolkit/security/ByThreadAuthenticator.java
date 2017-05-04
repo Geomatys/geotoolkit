@@ -54,7 +54,7 @@ public class ByThreadAuthenticator extends Authenticator{
 
     /**
      * Set the current thread authentication informations.
-     * 
+     *
      * @param user : this thread current login
      * @param password : this thread current password
      */

@@ -30,9 +30,9 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for OutputFormatListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OutputFormatListType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OutputFormatListType", propOrder = {
@@ -58,7 +58,7 @@ public class OutputFormatListType {
 
     /**
      * Gets the value of the format property.
-     * 
+     *
      */
     public List<String> getFormat() {
         if (format == null) {
@@ -66,7 +66,7 @@ public class OutputFormatListType {
         }
         return this.format;
     }
-    
+
     /**
      * Verify if this entry is identical to specified object.
      */
@@ -90,7 +90,7 @@ public class OutputFormatListType {
         return hash;
     }
 
-   
+
 
     @Override
     public String toString() {

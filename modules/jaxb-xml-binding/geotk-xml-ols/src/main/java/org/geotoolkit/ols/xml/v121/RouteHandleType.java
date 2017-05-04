@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines a reference to a route stored at the Route Determination Service server.
- * 
+ *
  * <p>Java class for RouteHandleType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RouteHandleType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RouteHandleType")
@@ -54,11 +54,11 @@ public class RouteHandleType {
 
     /**
      * Gets the value of the serviceID property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getServiceID() {
         return serviceID;
@@ -66,11 +66,11 @@ public class RouteHandleType {
 
     /**
      * Sets the value of the serviceID property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setServiceID(String value) {
         this.serviceID = value;
@@ -78,11 +78,11 @@ public class RouteHandleType {
 
     /**
      * Gets the value of the routeID property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRouteID() {
         return routeID;
@@ -90,11 +90,11 @@ public class RouteHandleType {
 
     /**
      * Sets the value of the routeID property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRouteID(String value) {
         this.routeID = value;

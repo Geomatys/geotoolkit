@@ -28,9 +28,9 @@ import org.geotoolkit.gmlcov.xml.v100.AbstractCoverageType;
 
 /**
  * <p>Java class for OfferedCoverageType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OfferedCoverageType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.gmlcov.xml.v100.AbstractCoverageType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OfferedCoverageType", propOrder = {
@@ -60,7 +60,7 @@ public class OfferedCoverageType {
 
     /**
      * Gets the value of the abstractCoverage property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractDiscreteCoverageType }{@code >}
@@ -72,7 +72,7 @@ public class OfferedCoverageType {
      *     {@link JAXBElement }{@code <}{@link AbstractDiscreteCoverageType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractDiscreteCoverageType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractDiscreteCoverageType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractCoverageType> getAbstractCoverage() {
         return abstractCoverage;
@@ -80,7 +80,7 @@ public class OfferedCoverageType {
 
     /**
      * Sets the value of the abstractCoverage property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractDiscreteCoverageType }{@code >}
@@ -92,7 +92,7 @@ public class OfferedCoverageType {
      *     {@link JAXBElement }{@code <}{@link AbstractDiscreteCoverageType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractDiscreteCoverageType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractDiscreteCoverageType }{@code >}
-     *     
+     *
      */
     public void setAbstractCoverage(JAXBElement<? extends AbstractCoverageType> value) {
         this.abstractCoverage = ((JAXBElement<? extends AbstractCoverageType> ) value);
@@ -100,11 +100,11 @@ public class OfferedCoverageType {
 
     /**
      * Gets the value of the serviceParameters property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ServiceParametersType }
-     *     
+     *
      */
     public ServiceParametersType getServiceParameters() {
         return serviceParameters;
@@ -112,11 +112,11 @@ public class OfferedCoverageType {
 
     /**
      * Sets the value of the serviceParameters property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ServiceParametersType }
-     *     
+     *
      */
     public void setServiceParameters(ServiceParametersType value) {
         this.serviceParameters = value;

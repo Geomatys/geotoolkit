@@ -196,7 +196,7 @@ public class JFontPane extends StyleElementEditor<Font> {
         guiSize.setText(String.valueOf(guiSizeList.getSelectedValue()));
         guiStyle.setText(String.valueOf(guiStyleList.getSelectedValue()));
         guiFontFamily.setText(String.valueOf(guiFamilyFontList.getSelectedValue()));
-        
+
         firePropertyChange(PROPERTY_UPDATED, null, create());
     }//GEN-LAST:event_propertyChange
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -218,7 +218,7 @@ public class JFontPane extends StyleElementEditor<Font> {
     @Override
     public void parse(Font target) {
         if(target == null) return;
-        
+
         //Parsing family fonts
         for(Expression f : target.getFamily()){
             if(!FilterUtilities.isStatic(f))continue;
@@ -266,10 +266,10 @@ public class JFontPane extends StyleElementEditor<Font> {
                 getFilterFactory().literal(weight),
                 getFilterFactory().literal(guiSize.getText()));
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
 }

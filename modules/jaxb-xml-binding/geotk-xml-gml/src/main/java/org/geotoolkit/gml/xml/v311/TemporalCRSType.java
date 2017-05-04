@@ -25,12 +25,12 @@ import org.apache.sis.util.ComparisonMode;
 
 
 /**
- * A 1D coordinate reference system used for the recording of time. 
- * 
+ * A 1D coordinate reference system used for the recording of time.
+ *
  * <p>Java class for TemporalCRSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TemporalCRSType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -93,7 +93,7 @@ public class TemporalCRSType extends AbstractReferenceSystemType {
 
     /**
      * Sets the value of the usesTemporalDatum property.
-     * 
+     *
      */
     public void setUsesTemporalDatum(final TemporalDatumRefType value) {
         this.usesTemporalDatum = value;

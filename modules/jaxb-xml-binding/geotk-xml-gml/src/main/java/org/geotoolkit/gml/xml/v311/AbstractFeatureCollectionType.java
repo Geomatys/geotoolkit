@@ -29,11 +29,11 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * A feature collection contains zero or more features.
- * 
+ *
  * <p>Java class for AbstractFeatureCollectionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractFeatureCollectionType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -66,7 +66,7 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureType 
     public AbstractFeatureCollectionType() {
 
     }
-    
+
     public AbstractFeatureCollectionType(final String id) {
         super(id, null, null);
     }
@@ -116,11 +116,11 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureType 
 
     /**
      * Gets the value of the featureMembers property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FeatureArrayPropertyType }
-     *     
+     *
      */
     public FeatureArrayPropertyType getFeatureMembers() {
         return featureMembers;
@@ -128,23 +128,23 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureType 
 
     /**
      * Sets the value of the featureMembers property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FeatureArrayPropertyType }
-     *     
+     *
      */
     public void setFeatureMembers(final FeatureArrayPropertyType value) {
         this.featureMembers = value;
     }
-    
+
     @Override
     public void computeBounds() {
         double minx = Double.MAX_VALUE;
         double miny = Double.MAX_VALUE;
         double maxx = -Double.MAX_VALUE;
         double maxy = -Double.MAX_VALUE;
-        
+
         for (FeaturePropertyType memberProp : featureMember) {
             final AbstractFeatureType member = memberProp.getAbstractFeature();
             if (member != null) {
@@ -177,7 +177,7 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureType 
                 }
             }
         }
-        
+
         if (minx == Double.MAX_VALUE) {
             minx = -180.0;
         }
@@ -220,7 +220,7 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureType 
         hash = 23 * hash + (this.featureMembers != null ? this.featureMembers.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());

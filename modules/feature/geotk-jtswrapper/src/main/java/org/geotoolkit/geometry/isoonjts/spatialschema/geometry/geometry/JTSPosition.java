@@ -20,20 +20,20 @@ import org.opengis.geometry.primitive.Point;
  * position} shall be obtained. The use of this data type allows the identification of a
  * position either directly as a coordinate (variant direct) or indirectly as a reference
  * to a {@linkplain Point point} (variant indirect).
- *  
+ *
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  * @module
  */
 public class JTSPosition implements Position {
-        
+
     private DirectPosition position;
-        
+
     public JTSPosition(final DirectPosition position) {
         this.position = position;
     }
-        
+
     /**
      * {@inheritDoc }
      */

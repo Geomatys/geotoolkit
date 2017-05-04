@@ -28,9 +28,9 @@ import org.opengis.filter.capability.ArithmeticOperators;
 
 /**
  * <p>Java class for Arithmetic_OperatorsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Arithmetic_OperatorsType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.opengis.filter.capability.ArithmeticOperators;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Arithmetic_OperatorsType", propOrder = {
@@ -60,13 +60,13 @@ public class ArithmeticOperatorsType implements ArithmeticOperators {
 
     /**
      * Gets the value of the simpleArithmeticOrFunctions property.
-     * 
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link SimpleArithmetic }
      * {@link FunctionsType }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getSimpleArithmeticOrFunctions() {
         if (simpleArithmeticOrFunctions == null) {

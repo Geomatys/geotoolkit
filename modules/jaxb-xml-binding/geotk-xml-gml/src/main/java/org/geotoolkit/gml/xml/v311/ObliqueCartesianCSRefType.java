@@ -25,12 +25,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Association to an oblique-Cartesian coordinate system, either referencing or containing the definition of that coordinate system. 
- * 
+ * Association to an oblique-Cartesian coordinate system, either referencing or containing the definition of that coordinate system.
+ *
  * <p>Java class for ObliqueCartesianCSRefType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ObliqueCartesianCSRefType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -78,7 +78,7 @@ public class ObliqueCartesianCSRefType {
 
     /**
      * Gets the value of the obliqueCartesianCS property.
-     * 
+     *
      */
     public ObliqueCartesianCSType getObliqueCartesianCS() {
         return obliqueCartesianCS;
@@ -86,7 +86,7 @@ public class ObliqueCartesianCSRefType {
 
     /**
      * Sets the value of the obliqueCartesianCS property.
-     * 
+     *
     */
     public void setObliqueCartesianCS(final ObliqueCartesianCSType value) {
         this.obliqueCartesianCS = value;
@@ -94,7 +94,7 @@ public class ObliqueCartesianCSRefType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
     */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -102,7 +102,7 @@ public class ObliqueCartesianCSRefType {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -110,7 +110,7 @@ public class ObliqueCartesianCSRefType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      */
     public String getType() {
         if (type == null) {
@@ -122,7 +122,7 @@ public class ObliqueCartesianCSRefType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -130,7 +130,7 @@ public class ObliqueCartesianCSRefType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      */
     public String getHref() {
         return href;
@@ -138,7 +138,7 @@ public class ObliqueCartesianCSRefType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -146,7 +146,7 @@ public class ObliqueCartesianCSRefType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      */
     public String getRole() {
         return role;
@@ -154,7 +154,7 @@ public class ObliqueCartesianCSRefType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -162,7 +162,7 @@ public class ObliqueCartesianCSRefType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -170,7 +170,7 @@ public class ObliqueCartesianCSRefType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -178,7 +178,7 @@ public class ObliqueCartesianCSRefType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      */
     public String getTitle() {
         return title;
@@ -186,7 +186,7 @@ public class ObliqueCartesianCSRefType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -194,7 +194,7 @@ public class ObliqueCartesianCSRefType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      */
     public String getShow() {
         return show;
@@ -202,7 +202,7 @@ public class ObliqueCartesianCSRefType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -210,7 +210,7 @@ public class ObliqueCartesianCSRefType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      */
     public String getActuate() {
         return actuate;
@@ -218,7 +218,7 @@ public class ObliqueCartesianCSRefType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;

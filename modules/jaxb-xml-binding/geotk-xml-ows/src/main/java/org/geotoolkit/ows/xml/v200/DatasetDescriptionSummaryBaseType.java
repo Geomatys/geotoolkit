@@ -32,11 +32,11 @@ import javax.xml.bind.annotation.XmlType;
  *       an OWS service metadata (Capabilities) document. This type shall be
  *       extended and/or restricted if needed for specific OWS use, to include
  *       the specific Dataset description metadata needed.
- * 
+ *
  * <p>Java class for DatasetDescriptionSummaryBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DatasetDescriptionSummaryBaseType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DatasetDescriptionSummaryBaseType", propOrder = {
@@ -91,7 +91,7 @@ public class DatasetDescriptionSummaryBaseType extends DescriptionType {
      *               region. If multiple WGS 84 bounding boxes are included, this
      *               shall be interpreted as the union of the areas of these bounding
      *               boxes.Gets the value of the wgs84BoundingBox property.
-     * 
+     *
      */
     public List<WGS84BoundingBoxType> getWGS84BoundingBox() {
         if (wgs84BoundingBox == null) {
@@ -102,11 +102,11 @@ public class DatasetDescriptionSummaryBaseType extends DescriptionType {
 
     /**
      * Gets the value of the identifier property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getIdentifier() {
         return identifier;
@@ -114,11 +114,11 @@ public class DatasetDescriptionSummaryBaseType extends DescriptionType {
 
     /**
      * Sets the value of the identifier property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setIdentifier(CodeType value) {
         this.identifier = value;
@@ -140,12 +140,12 @@ public class DatasetDescriptionSummaryBaseType extends DescriptionType {
      *               If multiple bounding boxes are included with the same CRS, this
      *               shall be interpreted as the union of the areas of these bounding
      *               boxes.Gets the value of the boundingBox property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link BoundingBoxType }{@code >}
      * {@link JAXBElement }{@code <}{@link WGS84BoundingBoxType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends BoundingBoxType>> getBoundingBox() {
         if (boundingBox == null) {
@@ -159,12 +159,12 @@ public class DatasetDescriptionSummaryBaseType extends DescriptionType {
      *               about this dataset. A list of optional metadata elements for
      *               this dataset description could be specified in the
      *               Implementation Specification for this service.Gets the value of the metadata property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link MetadataType }{@code >}
      * {@link JAXBElement }{@code <}{@link AdditionalParametersType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends MetadataType>> getMetadata() {
         if (metadata == null) {
@@ -176,7 +176,7 @@ public class DatasetDescriptionSummaryBaseType extends DescriptionType {
     /**
      * Metadata describing zero or more unordered
      *               subsidiary datasets available from this server.Gets the value of the datasetDescriptionSummary property.
-     * 
+     *
      */
     public List<DatasetDescriptionSummaryBaseType> getDatasetDescriptionSummary() {
         if (datasetDescriptionSummary == null) {

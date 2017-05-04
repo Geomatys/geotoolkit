@@ -55,7 +55,7 @@ public class DefaultAdministrativeArea implements AdministrativeArea {
     public DefaultAdministrativeArea(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> administrativeAreaNames,
             SubAdministrativeArea subAdministrativeArea,
-            Object localisation, String type, 
+            Object localisation, String type,
             String usageType, String indicator)
             throws XalException {
         this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;

@@ -37,27 +37,27 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Extends default jdbc feature store with versioning and subsampling capabilities.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
-    
+
     private static final QueryCapabilities PG_CAPA = new DefaultQueryCapabilities(false, true, new String[]{Query.GEOTK_QOM, CUSTOM_SQL});
-    
+
     //historisation informations
     private Boolean hasHSFunctions;
     private PostgresQueryBuilder querybuilder = null;
-    
+
     public PostgresFeatureStore(String host, int port, String database, String schema, String user, String password) throws DataStoreException {
         super(toParameters(host,port,database,schema,user,password), PostgresFeatureStoreFactory.NAME);
         ((PostgresFeatureStoreFactory)getFactory()).prepareStore(this, parameters);
     }
-    
+
     public PostgresFeatureStore(ParameterValueGroup params, String factoryId) {
         super(params, factoryId);
     }
 
-    private static ParameterValueGroup toParameters(String host, int port, 
+    private static ParameterValueGroup toParameters(String host, int port,
             String database, String schema, String user, String password){
         final ParameterValueGroup params = PostgresFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         Parameters.getOrCreate(PostgresFeatureStoreFactory.HOST,    params).setValue(host);
@@ -68,7 +68,7 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
         Parameters.getOrCreate(PostgresFeatureStoreFactory.PASSWORD,params).setValue(password);
         return params;
     }
-    
+
     @Override
     public QueryCapabilities getQueryCapabilities() {
         return PG_CAPA;
@@ -81,11 +81,11 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
         }
         return querybuilder;
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // Versioning control //////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public VersionControl getVersioning(String typeName) throws VersioningException {
         final FeatureType type;
@@ -94,18 +94,18 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
         } catch (DataStoreException ex) {
             throw new VersioningException(ex.getMessage(),ex);
         }
-        
+
         return new PostgresVersionControl(this, type);
     }
-    
+
     /**
      * Search for historisation functions.
      * @return true if HS_ functions are available
-     * @throws VersioningException 
+     * @throws VersioningException
      */
     public synchronized boolean hasHSFunctions() throws VersioningException {
         if(hasHSFunctions!=null) return hasHSFunctions;
-        
+
         //search if historization procedure are present
         Connection cnx = null;
         Statement stmt = null;
@@ -121,17 +121,17 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
         }finally{
             JDBCFeatureStoreUtilities.closeSafe(getLogger(), cnx,stmt,rs);
         }
-        
+
         return hasHSFunctions;
     }
-    
+
     /**
      * Install the ISO-13249:7 History functions.
-     * @throws VersioningException 
+     * @throws VersioningException
      */
     public synchronized void installHSFunctions() throws VersioningException {
         hasHSFunctions = null;
-        
+
         Connection cnx = null;
         try{
             cnx = getDataSource().getConnection();
@@ -145,14 +145,14 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
             JDBCFeatureStoreUtilities.closeSafe(getLogger(), cnx);
         }
     }
-    
+
     /**
      * Uninstall the ISO-13249:7 History functions.
-     * @throws VersioningException 
+     * @throws VersioningException
      */
     public synchronized void dropHSFunctions() throws VersioningException {
         hasHSFunctions = null;
-        
+
         Connection cnx = null;
         try{
             cnx = getDataSource().getConnection();
@@ -175,7 +175,7 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
             throw new DataStoreException(ex);
         }
          super.deleteFeatureType(typeName);
-        
+
     }
 
     /**

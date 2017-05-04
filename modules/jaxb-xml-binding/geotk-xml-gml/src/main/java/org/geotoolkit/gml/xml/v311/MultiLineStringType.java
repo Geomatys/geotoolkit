@@ -30,11 +30,11 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * A MultiLineString is defined by one or more LineCharSequences, referenced through lineStringMember elements. Deprecated with GML version 3.0. Use MultiCurveType instead.
- * 
+ *
  * <p>Java class for MultiLineStringType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MultiLineStringType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,21 +60,21 @@ public class MultiLineStringType extends AbstractGeometricAggregateType implemen
     private List<LineStringPropertyType> lineStringMember;
 
     public MultiLineStringType() {
-        
+
     }
-    
+
     public MultiLineStringType(final String srsName, final List<LineStringPropertyType> lineStringMember) {
         super(srsName);
         this.lineStringMember = lineStringMember;
     }
-    
+
     /**
      * Gets the value of the lineStringMember property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link LineStringPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<LineStringPropertyType> getLineStringMember() {
         if (lineStringMember == null) {
@@ -134,7 +134,7 @@ public class MultiLineStringType extends AbstractGeometricAggregateType implemen
         return hash;
     }
 
-    
+
 
     @Override
     public String toString() {

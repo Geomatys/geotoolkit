@@ -28,7 +28,7 @@ import org.geotoolkit.font.IconBuilder;
 
 /**
  * Component used to present layer visibility
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */

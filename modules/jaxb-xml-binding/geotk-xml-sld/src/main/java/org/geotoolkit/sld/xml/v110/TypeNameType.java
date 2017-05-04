@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TypeNameType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TypeNameType">
  *   &lt;complexContent>
@@ -39,7 +39,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -53,18 +53,18 @@ public class TypeNameType {
     /**
      * Empty constructor used by JAXB.
      */
-    TypeNameType() {        
+    TypeNameType() {
     }
-    
+
     /**
      * Build a new TypeName with the specified coverage name.
-     * 
+     *
      * @param coverageName
      */
     public TypeNameType(final String coverageName) {
         this.coverageName = coverageName;
     }
-    
+
     /**
      * Gets the value of the coverageName property.
      */

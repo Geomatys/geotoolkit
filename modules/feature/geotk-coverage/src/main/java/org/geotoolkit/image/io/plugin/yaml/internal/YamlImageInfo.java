@@ -34,12 +34,12 @@ public class YamlImageInfo {
      * Define version of Yaml Image information.
      */
     static final String VERSION = "1.0";
-    
+
     /**
      * Define current version.
      */
     private String version;
-    
+
     /**
      * Image {@link SampleDimension} which will be written.
      */
@@ -47,10 +47,10 @@ public class YamlImageInfo {
 
     public YamlImageInfo() {
     }
-    
+
     /**
-     * Build and prepare future written attributs from {@link YamlWriterBuilder}. 
-     * 
+     * Build and prepare future written attributs from {@link YamlWriterBuilder}.
+     *
      * @param yamlWB Builder which contains all image informations which will be written into Yaml format.
      */
     public YamlImageInfo(final YamlWriterBuilder yamlWB) {
@@ -68,17 +68,17 @@ public class YamlImageInfo {
 
     /**
      * Returns current version of Yaml work.
-     * 
+     *
      * @return current version of Yaml work.
      */
     public String getVersion() {
         return version;
     }
-    
+
     /**
      * Returns all {@link YamlSampleDimension} which just have been read from Yaml file.
-     * 
-     * @return {@link YamlSampleDimension} 
+     *
+     * @return {@link YamlSampleDimension}
      */
     public List<YamlSampleDimension> getSampleDimension() {
         return sampleDimension;
@@ -86,17 +86,17 @@ public class YamlImageInfo {
 
     /**
      * Set current version of Yaml work.
-     * 
+     *
      * @param version current version of Yaml work.
      */
     public void setVersion(String version) {
         this.version = version;
     }
-    
+
     /**
      * Set {@link YamlSampleDimension} which will be written into Yaml.
-     * 
-     * @param sampleDimension 
+     *
+     * @param sampleDimension
      */
     public void setSampleDimension(final List<YamlSampleDimension> sampleDimension) {
         this.sampleDimension = sampleDimension;

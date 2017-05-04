@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * A non-abstract generic collection type that can be used as a document element for a homogeneous collection of any GML types - Geometries, Topologies, Features ...
- * 
+ *
  * <p>Java class for ArrayType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ArrayType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -54,11 +54,11 @@ public class ArrayType extends AbstractGMLType {
 
     /**
      * Gets the value of the members property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ArrayAssociationType }
-     *     
+     *
      */
     public ArrayAssociationType getMembers() {
         return members;
@@ -66,11 +66,11 @@ public class ArrayType extends AbstractGMLType {
 
     /**
      * Sets the value of the members property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ArrayAssociationType }
-     *     
+     *
      */
     public void setMembers(final ArrayAssociationType value) {
         this.members = value;

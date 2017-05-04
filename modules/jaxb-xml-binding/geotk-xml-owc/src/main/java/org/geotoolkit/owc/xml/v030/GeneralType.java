@@ -26,13 +26,13 @@ import org.geotoolkit.ows.xml.v100.BoundingBoxType;
 import org.geotoolkit.ows.xml.v100.KeywordsType;
 import org.geotoolkit.ows.xml.v100.ServiceProvider;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
- 
+
 
 /**
  * <p>Java class for GeneralType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeneralType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -99,11 +99,11 @@ public class GeneralType {
 
     /**
      * Gets the value of the window property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link WindowType }
-     *     
+     *
      */
     public WindowType getWindow() {
         return window;
@@ -111,11 +111,11 @@ public class GeneralType {
 
     /**
      * Sets the value of the window property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link WindowType }
-     *     
+     *
      */
     public void setWindow(final WindowType value) {
         this.window = value;
@@ -123,12 +123,12 @@ public class GeneralType {
 
     /**
      * Gets the value of the boundingBox property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link WGS84BoundingBoxType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BoundingBoxType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends BoundingBoxType> getBoundingBox() {
         return boundingBox;
@@ -136,12 +136,12 @@ public class GeneralType {
 
     /**
      * Sets the value of the boundingBox property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link WGS84BoundingBoxType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BoundingBoxType }{@code >}
-     *     
+     *
      */
     public void setBoundingBox(final JAXBElement<? extends BoundingBoxType> value) {
         this.boundingBox = ((JAXBElement<? extends BoundingBoxType> ) value);
@@ -149,11 +149,11 @@ public class GeneralType {
 
     /**
      * Gets the value of the minScaleDenominator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMinScaleDenominator() {
         return minScaleDenominator;
@@ -161,11 +161,11 @@ public class GeneralType {
 
     /**
      * Sets the value of the minScaleDenominator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMinScaleDenominator(final Double value) {
         this.minScaleDenominator = value;
@@ -173,11 +173,11 @@ public class GeneralType {
 
     /**
      * Gets the value of the maxScaleDenominator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMaxScaleDenominator() {
         return maxScaleDenominator;
@@ -185,11 +185,11 @@ public class GeneralType {
 
     /**
      * Sets the value of the maxScaleDenominator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMaxScaleDenominator(final Double value) {
         this.maxScaleDenominator = value;
@@ -197,11 +197,11 @@ public class GeneralType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -209,11 +209,11 @@ public class GeneralType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -221,11 +221,11 @@ public class GeneralType {
 
     /**
      * Gets the value of the abstract property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAbstract() {
         return _abstract;
@@ -233,11 +233,11 @@ public class GeneralType {
 
     /**
      * Sets the value of the abstract property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAbstract(final String value) {
         this._abstract = value;
@@ -245,11 +245,11 @@ public class GeneralType {
 
     /**
      * Gets the value of the keywords property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link KeywordsType }
-     *     
+     *
      */
     public KeywordsType getKeywords() {
         return keywords;
@@ -257,11 +257,11 @@ public class GeneralType {
 
     /**
      * Sets the value of the keywords property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link KeywordsType }
-     *     
+     *
      */
     public void setKeywords(final KeywordsType value) {
         this.keywords = value;
@@ -269,11 +269,11 @@ public class GeneralType {
 
     /**
      * Gets the value of the logoURL property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link URLType }
-     *     
+     *
      */
     public URLType getLogoURL() {
         return logoURL;
@@ -281,11 +281,11 @@ public class GeneralType {
 
     /**
      * Sets the value of the logoURL property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link URLType }
-     *     
+     *
      */
     public void setLogoURL(final URLType value) {
         this.logoURL = value;
@@ -293,11 +293,11 @@ public class GeneralType {
 
     /**
      * Gets the value of the descriptionURL property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link URLType }
-     *     
+     *
      */
     public URLType getDescriptionURL() {
         return descriptionURL;
@@ -305,11 +305,11 @@ public class GeneralType {
 
     /**
      * Sets the value of the descriptionURL property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link URLType }
-     *     
+     *
      */
     public void setDescriptionURL(final URLType value) {
         this.descriptionURL = value;
@@ -317,11 +317,11 @@ public class GeneralType {
 
     /**
      * Gets the value of the serviceProvider property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ServiceProvider }
-     *     
+     *
      */
     public ServiceProvider getServiceProvider() {
         return serviceProvider;
@@ -329,11 +329,11 @@ public class GeneralType {
 
     /**
      * Sets the value of the serviceProvider property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ServiceProvider }
-     *     
+     *
      */
     public void setServiceProvider(final ServiceProvider value) {
         this.serviceProvider = value;
@@ -341,11 +341,11 @@ public class GeneralType {
 
     /**
      * Gets the value of the extension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExtensionType }
-     *     
+     *
      */
     public ExtensionType getExtension() {
         return extension;
@@ -353,11 +353,11 @@ public class GeneralType {
 
     /**
      * Sets the value of the extension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExtensionType }
-     *     
+     *
      */
     public void setExtension(final ExtensionType value) {
         this.extension = value;

@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for getSupportedLangsResponse complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="getSupportedLangsResponse">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getSupportedLangsResponse", propOrder = {
@@ -61,7 +61,7 @@ public class GetSupportedLangsResponse {
     public GetSupportedLangsResponse(List<String> response) {
         this.response = response;
     }
-    
+
     /**
      * Gets the value of the return property.
      */

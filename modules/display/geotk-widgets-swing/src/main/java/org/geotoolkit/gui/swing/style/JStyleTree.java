@@ -123,7 +123,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
             treemodel.setRoot(style);
             revalidate();
         }
-        
+
         expandAll();
     }
 
@@ -261,13 +261,13 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
         }
 
     }
-    
+
     private static boolean isDeletable(final Object removeObject){
         return     removeObject instanceof MutableFeatureTypeStyle
                 || removeObject instanceof MutableRule
                 || removeObject instanceof Symbolizer;
     }
-    
+
 
     //-------------private classes----------------------------------------------
     class StyleCellRenderer extends DefaultTreeCellRenderer {
@@ -383,7 +383,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
             super.setVisible(visible);
         }
     }
-    
+
     class CollapseAction extends AbstractAction{
         private final TreePath path;
 

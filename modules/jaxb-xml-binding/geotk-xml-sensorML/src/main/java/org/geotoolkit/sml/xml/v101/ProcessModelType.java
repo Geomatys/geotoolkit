@@ -25,11 +25,11 @@ import org.geotoolkit.sml.xml.AbstractProcessModel;
 
 /**
  * Complex Type for atomic processes
- * 
+ *
  * <p>Java class for ProcessModelType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ProcessModelType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.sml.xml.AbstractProcessModel;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -67,11 +67,11 @@ public class ProcessModelType extends AbstractPureProcessType implements Abstrac
 
     /**
      * Gets the value of the method property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MethodPropertyType }
-     *     
+     *
      */
     public MethodPropertyType getMethod() {
         return method;
@@ -79,11 +79,11 @@ public class ProcessModelType extends AbstractPureProcessType implements Abstrac
 
     /**
      * Sets the value of the method property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MethodPropertyType }
-     *     
+     *
      */
     public void setMethod(final MethodPropertyType value) {
         this.method = value;

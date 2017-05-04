@@ -29,11 +29,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines a spatial filter which selects the POI nearest to the specified location.
- * 
+ *
  * <p>Java class for NearestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="NearestType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "NearestType", propOrder = {
@@ -62,7 +62,7 @@ public class NearestType {
 
     /**
      * Gets the value of the location property.
-     * 
+     *
     */
     public List<JAXBElement<? extends AbstractLocationType>> getLocation() {
         if (location == null) {
@@ -73,11 +73,11 @@ public class NearestType {
 
     /**
      * Gets the value of the nearestCriterion property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link NearestCriterionType }
-     *     
+     *
      */
     public NearestCriterionType getNearestCriterion() {
         if (nearestCriterion == null) {
@@ -89,11 +89,11 @@ public class NearestType {
 
     /**
      * Sets the value of the nearestCriterion property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link NearestCriterionType }
-     *     
+     *
      */
     public void setNearestCriterion(NearestCriterionType value) {
         this.nearestCriterion = value;

@@ -31,9 +31,9 @@ import org.geotoolkit.sml.xml.AbstractPerson;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.sml.xml.AbstractPerson;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -105,7 +105,7 @@ public class Person implements AbstractPerson {
             this.userID      = person.getUserID();
         }
     }
-    
+
     /**
      * Gets the value of the surname property.
      */

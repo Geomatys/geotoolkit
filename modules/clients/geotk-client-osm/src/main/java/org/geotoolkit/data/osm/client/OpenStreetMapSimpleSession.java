@@ -74,7 +74,7 @@ public class OpenStreetMapSimpleSession {
 
         ByThreadAuthenticator.register();
         ByThreadAuthenticator.setCurrentThreadAuthentication(user, password);
-        
+
         final CreateChangeSetRequest request = server.createCreateChangeSet();
         request.setChangeSet(set);
 

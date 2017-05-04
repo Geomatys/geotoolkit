@@ -27,12 +27,12 @@ import org.geotoolkit.wfs.xml.WFSResponse;
 
 /**
  * The LockFeatureResponseType is used to define an element to contains the response to a LockFeature operation.
- *          
- * 
+ *
+ *
  * <p>Java class for LockFeatureResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LockFeatureResponseType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.wfs.xml.WFSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,12 +75,12 @@ public class LockFeatureResponseType implements WFSResponse, LockFeatureResponse
      * The LockFeatureResponse includes a LockId element that contains a lock identifier.
      * The lock identifier can be used by a client,
      * in subsequent operations, to operate upon the locked feature instances.
-     *                
-     * 
+     *
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLockId() {
         return lockId;
@@ -90,12 +90,12 @@ public class LockFeatureResponseType implements WFSResponse, LockFeatureResponse
      * The LockFeatureResponse includes a LockId element that contains a lock identifier.
      * The lock identifier can be used by a client,
      * in subsequent operations, to operate upon the locked feature instances.
-     *                
-     * 
+     *
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLockId(final String value) {
         this.lockId = value;
@@ -103,11 +103,11 @@ public class LockFeatureResponseType implements WFSResponse, LockFeatureResponse
 
     /**
      * Gets the value of the featuresLocked property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FeaturesLockedType }
-     *     
+     *
      */
     public FeaturesLockedType getFeaturesLocked() {
         return featuresLocked;
@@ -115,11 +115,11 @@ public class LockFeatureResponseType implements WFSResponse, LockFeatureResponse
 
     /**
      * Sets the value of the featuresLocked property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FeaturesLockedType }
-     *     
+     *
      */
     public void setFeaturesLocked(final FeaturesLockedType value) {
         this.featuresLocked = value;
@@ -127,11 +127,11 @@ public class LockFeatureResponseType implements WFSResponse, LockFeatureResponse
 
     /**
      * Gets the value of the featuresNotLocked property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FeaturesNotLockedType }
-     *     
+     *
      */
     public FeaturesNotLockedType getFeaturesNotLocked() {
         return featuresNotLocked;
@@ -139,11 +139,11 @@ public class LockFeatureResponseType implements WFSResponse, LockFeatureResponse
 
     /**
      * Sets the value of the featuresNotLocked property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FeaturesNotLockedType }
-     *     
+     *
      */
     public void setFeaturesNotLocked(final FeaturesNotLockedType value) {
         this.featuresNotLocked = value;

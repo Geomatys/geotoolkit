@@ -28,15 +28,15 @@ import org.geotoolkit.wfs.xml.GetGmlObject;
 
 
 /**
- * A GetGmlObjectType element contains exactly one GmlObjectId.  
+ * A GetGmlObjectType element contains exactly one GmlObjectId.
  * The value of the gml:id attribute on that GmlObjectId is used as a unique key to retrieve the complex element with a
- * gml:id attribute with the same value.  
- *          
- * 
+ * gml:id attribute with the same value.
+ *
+ *
  * <p>Java class for GetGmlObjectType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetGmlObjectType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.wfs.xml.GetGmlObject;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -90,14 +90,14 @@ public class GetGmlObjectType extends BaseRequestType implements GetGmlObject {
         this.traverseXlinkDepth  = traverseXlinkDepth;
         this.traverseXlinkExpiry = traverseXlinkExpiry;
     }
-    
+
     /**
      * Gets the value of the gmlObjectId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GmlObjectIdType }
-     *     
+     *
      */
     public GmlObjectIdType getGmlObjectId() {
         return gmlObjectId;
@@ -105,11 +105,11 @@ public class GetGmlObjectType extends BaseRequestType implements GetGmlObject {
 
     /**
      * Sets the value of the gmlObjectId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GmlObjectIdType }
-     *     
+     *
      */
     public void setGmlObjectId(final GmlObjectIdType value) {
         this.gmlObjectId = value;
@@ -117,11 +117,11 @@ public class GetGmlObjectType extends BaseRequestType implements GetGmlObject {
 
     /**
      * Gets the value of the outputFormat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOutputFormat() {
         if (outputFormat == null) {
@@ -133,11 +133,11 @@ public class GetGmlObjectType extends BaseRequestType implements GetGmlObject {
 
     /**
      * Sets the value of the outputFormat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOutputFormat(final String value) {
         this.outputFormat = value;
@@ -145,11 +145,11 @@ public class GetGmlObjectType extends BaseRequestType implements GetGmlObject {
 
     /**
      * Gets the value of the traverseXlinkDepth property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTraverseXlinkDepth() {
         return traverseXlinkDepth;
@@ -157,11 +157,11 @@ public class GetGmlObjectType extends BaseRequestType implements GetGmlObject {
 
     /**
      * Sets the value of the traverseXlinkDepth property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTraverseXlinkDepth(final String value) {
         this.traverseXlinkDepth = value;
@@ -169,11 +169,11 @@ public class GetGmlObjectType extends BaseRequestType implements GetGmlObject {
 
     /**
      * Gets the value of the traverseXlinkExpiry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getTraverseXlinkExpiry() {
         return traverseXlinkExpiry;
@@ -181,11 +181,11 @@ public class GetGmlObjectType extends BaseRequestType implements GetGmlObject {
 
     /**
      * Sets the value of the traverseXlinkExpiry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setTraverseXlinkExpiry(final Integer value) {
         this.traverseXlinkExpiry = value;

@@ -43,7 +43,7 @@ public interface AtomPersonConstruct {
     List<Object> getParams();
 
     /**
-     * 
+     *
      * @param params
      */
     void setParams(final List<Object> params);

@@ -30,9 +30,9 @@ import org.geotoolkit.wmts.xml.Contents;
 
 /**
  * <p>Java class for ContentsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ContentsType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.wmts.xml.Contents;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ContentsType", propOrder = {
@@ -57,21 +57,21 @@ public class ContentsType extends ContentsBaseType implements Contents {
     private List<TileMatrixSet> tileMatrixSet;
 
     public ContentsType() {
-        
+
     }
-    
+
     public ContentsType(final List<LayerType> outputLayers, final List<TileMatrixSet> tileMatrixSet) {
         setLayers(outputLayers);
         this.tileMatrixSet = tileMatrixSet;
     }
-    
+
     /**
      * A description of the geometry of a tile fragmentation Gets the value of the tileMatrixSet property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link TileMatrixSet }
-     * 
-     * 
+     *
+     *
      */
     public List<TileMatrixSet> getTileMatrixSet() {
         if (tileMatrixSet == null) {

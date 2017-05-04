@@ -30,14 +30,14 @@ import org.geotoolkit.wps.xml.InputDescription;
 
 
 /**
- * Description of an input to a process. 
- * 
- * In this use, the DescriptionType shall describe this process input. 
- * 
+ * Description of an input to a process.
+ *
+ * In this use, the DescriptionType shall describe this process input.
+ *
  * <p>Java class for InputDescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InputDescriptionType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.wps.xml.InputDescription;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,10 +77,10 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
     protected Integer maxOccurs;
 
     public InputDescriptionType() {
-        
+
     }
-    
-    public InputDescriptionType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, 
+
+    public InputDescriptionType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract,
             Integer minOccur, Integer maxOccur, DataDescription dataDescription) {
         super(identifier, title, _abstract);
         this.minOccurs = minOccur;
@@ -95,14 +95,14 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
             throw new IllegalArgumentException("unecpected data description type:" + dataDescription.getClass().getName());
         }
     }
-    
+
     /**
      * Gets the value of the complexData property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SupportedComplexDataInputType }
-     *     
+     *
      */
     public SupportedComplexDataInputType getComplexData() {
         return complexData;
@@ -110,11 +110,11 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
 
     /**
      * Sets the value of the complexData property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SupportedComplexDataInputType }
-     *     
+     *
      */
     public void setComplexData(final SupportedComplexDataInputType value) {
         this.complexData = value;
@@ -122,11 +122,11 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
 
     /**
      * Gets the value of the literalData property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LiteralInputType }
-     *     
+     *
      */
     public LiteralInputType getLiteralData() {
         return literalData;
@@ -134,11 +134,11 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
 
     /**
      * Sets the value of the literalData property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LiteralInputType }
-     *     
+     *
      */
     public void setLiteralData(final LiteralInputType value) {
         this.literalData = value;
@@ -146,11 +146,11 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
 
     /**
      * Gets the value of the boundingBoxData property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SupportedCRSsType }
-     *     
+     *
      */
     public SupportedCRSsType getBoundingBoxData() {
         return boundingBoxData;
@@ -158,11 +158,11 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
 
     /**
      * Sets the value of the boundingBoxData property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SupportedCRSsType }
-     *     
+     *
      */
     public void setBoundingBoxData(final SupportedCRSsType value) {
         this.boundingBoxData = value;
@@ -170,11 +170,11 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
 
     /**
      * Gets the value of the minOccurs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMinOccurs() {
         return minOccurs;
@@ -182,11 +182,11 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
 
     /**
      * Sets the value of the minOccurs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMinOccurs(final Integer value) {
         this.minOccurs = value;
@@ -194,11 +194,11 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
 
     /**
      * Gets the value of the maxOccurs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMaxOccurs() {
         return maxOccurs;
@@ -206,11 +206,11 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
 
     /**
      * Sets the value of the maxOccurs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMaxOccurs(final Integer value) {
         this.maxOccurs = value;
@@ -236,7 +236,7 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ArrayAssociationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ArrayAssociationType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ArrayAssociationType", propOrder = {
@@ -61,20 +61,20 @@ public class ArrayAssociationType {
 
     /**
      * Gets the value of the abstractObject property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the abstractObject property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAbstractObject().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link List }{@code <}{@link String }{@code >}{@code >}
@@ -256,8 +256,8 @@ public class ArrayAssociationType {
      * {@link JAXBElement }{@code <}{@link AbstractTimeObjectType }{@code >}
      * {@link JAXBElement }{@code <}{@link TimeClockType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractDatumType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<?>> getAbstractObject() {
         if (abstractObject == null) {
@@ -268,11 +268,11 @@ public class ArrayAssociationType {
 
     /**
      * Gets the value of the owns property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public boolean isOwns() {
         if (owns == null) {
@@ -284,11 +284,11 @@ public class ArrayAssociationType {
 
     /**
      * Sets the value of the owns property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public void setOwns(java.lang.Boolean value) {
         this.owns = value;

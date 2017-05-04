@@ -54,7 +54,7 @@ public interface Angles {
     void setTilt(double tilt);
 
     /**
-     * 
+     *
      * @param setRoll
      */
     void setRoll(double roll);

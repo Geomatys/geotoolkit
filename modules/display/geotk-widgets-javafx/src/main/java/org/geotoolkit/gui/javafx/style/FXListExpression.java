@@ -30,7 +30,7 @@ import org.opengis.filter.expression.Expression;
 public class FXListExpression extends FXExpression {
 
     private final ChoiceBox<Expression> uiChoice = new ChoiceBoxEditor<>();
-    
+
     public FXListExpression(){
         uiChoice.valueProperty().addListener(new ChangeListener<Expression>() {
             @Override
@@ -40,7 +40,7 @@ public class FXListExpression extends FXExpression {
         });
         uiChoice.setMaxWidth(Double.MAX_VALUE);
     }
-    
+
     @Override
     public Expression newValue() {
         return StyleConstants.DEFAULT_STROKE_WIDTH;
@@ -60,5 +60,5 @@ public class FXListExpression extends FXExpression {
             return false;
         }
     }
-    
+
 }

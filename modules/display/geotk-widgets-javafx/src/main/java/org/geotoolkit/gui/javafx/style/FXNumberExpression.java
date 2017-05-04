@@ -31,7 +31,7 @@ import org.opengis.filter.expression.Literal;
 public class FXNumberExpression extends FXExpression {
 
     private FXNumberSpinner uiNumber = new FXNumberSpinner();
-    
+
     public FXNumberExpression(){
         super();
 
@@ -43,7 +43,7 @@ public class FXNumberExpression extends FXExpression {
         });
 
     }
-    
+
     @Override
     public Expression newValue() {
         return StyleConstants.DEFAULT_STROKE_WIDTH;

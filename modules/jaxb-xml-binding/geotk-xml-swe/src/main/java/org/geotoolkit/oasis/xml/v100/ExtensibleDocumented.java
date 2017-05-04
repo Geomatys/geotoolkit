@@ -29,9 +29,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for ExtensibleDocumented complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ExtensibleDocumented">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ExtensibleDocumented", propOrder = {
@@ -64,11 +64,11 @@ public abstract class ExtensibleDocumented {
 
     /**
      * Gets the value of the documentation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Documentation }
-     *     
+     *
      */
     public Documentation getDocumentation() {
         return documentation;
@@ -76,11 +76,11 @@ public abstract class ExtensibleDocumented {
 
     /**
      * Sets the value of the documentation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Documentation }
-     *     
+     *
      */
     public void setDocumentation(Documentation value) {
         this.documentation = value;
@@ -88,15 +88,15 @@ public abstract class ExtensibleDocumented {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * <p>
-     * the map is keyed by the name of the attribute and 
+     * the map is keyed by the name of the attribute and
      * the value is the string value of the attribute.
-     * 
+     *
      * the map returned by this method is live, and you can add new attribute
      * by updating the map directly. Because of this design, there's no setter.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */

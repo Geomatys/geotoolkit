@@ -75,14 +75,14 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
     private final JColorMapPane guiColorMapPane = new JColorMapPane();
     private final JLineSymbolizerPane guiLinePane = new JLineSymbolizerPane();
     private final JPolygonSymbolizerPane guiPolygonPane = new JPolygonSymbolizerPane();
-    
+
     private final String cmRGB = MessageBundle.format("style_rastersymbolizer_cm_rgb");
     private final String cmColorMap = MessageBundle.format("style_rastersymbolizer_cm_colormap");
-    
+
     public JRasterSymbolizerPane() {
         super(RasterSymbolizer.class);
         initComponents();
-        
+
         guiColorCombo.setModel(new ListComboBoxModel(Arrays.asList("-",cmRGB,cmColorMap)));
         guiColorCombo.addItemListener(new ItemListener() {
             @Override
@@ -98,24 +98,24 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                 firePropertyChange(PROPERTY_UPDATED, null, create());
             }
         });
-        
+
         //those are not used by geotk engine, hide them to avoid confusing the user
         guiOverLap.setVisible(false);
         guiOverlapsLbl.setVisible(false);
         guiOpacity.setExpressionVisible(false);
-        
+
         final PropertyChangeListener propListener = new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 JRasterSymbolizerPane.this.propertyChange(evt);
             }
         };
-        
+
         guiChannelPane.addPropertyChangeListener(propListener);
         guiColorMapPane.addPropertyChangeListener(propListener);
         guiLinePane.addPropertyChangeListener(propListener);
         guiPolygonPane.addPropertyChangeListener(propListener);
-        
+
     }
 
     /**
@@ -142,14 +142,14 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
     public MapLayer getLayer() {
         return layer;
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
     public void parse(final RasterSymbolizer symbol) {
         this.oldSymbolizer = symbol;
-        
+
         if (symbol != null) {
             guiGeom.parse(getSymbolizerGeometryExpression(symbol));
             guiUOM.parse(symbol.getUnitOfMeasure());
@@ -159,7 +159,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
             guiRelief.parse(symbol.getShadedRelief());
             guiChannelPane.parse(symbol.getChannelSelection());
             guiColorMapPane.parse(symbol);
-            
+
             final Symbolizer outLine = symbol.getImageOutline();
             if(outLine instanceof LineSymbolizer){
                 guiLine.setSelected(true);
@@ -170,15 +170,15 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
             }else{
                 guinone.setSelected(true);
             }
-            
+
             if(symbol.getColorMap()!=null && symbol.getColorMap().getFunction()!=null){
                 guiColorCombo.getModel().setSelectedItem(cmColorMap);
             }else{
                 guiColorCombo.getModel().setSelectedItem(cmRGB);
             }
-            
+
         }
-        
+
     }
 
     /**
@@ -192,7 +192,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         }else if(guiPolygon.isSelected()){
             outline = guiPolygonPane.create();
         }
-        
+
         final ChannelSelection chanSelect;
         final ColorMap colorMap;
         if(cmRGB.equals(guiColorCombo.getSelectedItem())){
@@ -206,7 +206,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
             chanSelect = null;
             colorMap = null;
         }
-        
+
         return getStyleFactory().rasterSymbolizer(
                 (oldSymbolizer!=null) ? oldSymbolizer.getName(): "RasterSymbolizer",
                 guiGeom.create(),
@@ -214,19 +214,19 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                 guiUOM.create(),
                 guiOpacity.create(),
                 chanSelect,
-                (oldSymbolizer!=null) ? oldSymbolizer.getOverlapBehavior() : OverlapBehavior.AVERAGE, 
-                colorMap, 
-                guiContrast.create(), 
-                guiRelief.create(), 
+                (oldSymbolizer!=null) ? oldSymbolizer.getOverlapBehavior() : OverlapBehavior.AVERAGE,
+                colorMap,
+                guiContrast.create(),
+                guiRelief.create(),
                 outline);
-    
+
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -455,7 +455,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
     }//GEN-LAST:event_guinoneActionPerformed
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
-        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());
         }
     }//GEN-LAST:event_propertyChange
@@ -482,5 +482,5 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
     private JPanel jPanel3;
     private JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
-    
+
 }

@@ -29,8 +29,8 @@ import org.geotoolkit.wms.xml.AbstractLegendURL;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
- * 
+ *
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -68,9 +68,9 @@ public class Style implements org.geotoolkit.wms.xml.Style {
     /**
      * Build a new Contact person primary object.
      */
-    public Style(final String name, final String title, final String _abstract, 
+    public Style(final String name, final String title, final String _abstract,
             final StyleURL styleURL, final StyleSheetURL styleSheetURL,final LegendURL... legendURLs) {
-        
+
         this._abstract     = _abstract;
         this.name          = name;
         this.styleSheetURL = styleSheetURL;
@@ -80,9 +80,9 @@ public class Style implements org.geotoolkit.wms.xml.Style {
             this.legendURL.add(element);
         }
     }
-    
+
     public Style(final org.geotoolkit.wms.xml.Style that) {
-        
+
         if (that != null) {
             this._abstract     = that.getAbstract();
             this.name          = that.getName();
@@ -101,11 +101,11 @@ public class Style implements org.geotoolkit.wms.xml.Style {
             }
         }
     }
-    
-    
+
+
     /**
      * Gets the value of the name property.
-     * 
+     *
      */
     @Override
     public String getName() {
@@ -122,7 +122,7 @@ public class Style implements org.geotoolkit.wms.xml.Style {
 
     /**
      * Gets the value of the abstract property.
-     * 
+     *
      */
     @Override
     public String getAbstract() {
@@ -131,7 +131,7 @@ public class Style implements org.geotoolkit.wms.xml.Style {
 
     /**
      * Gets the value of the legendURL property.
-     * 
+     *
      */
     @Override
     public List<LegendURL> getLegendURL() {
@@ -148,7 +148,7 @@ public class Style implements org.geotoolkit.wms.xml.Style {
 
     /**
      * Gets the value of the styleURL property.
-     * 
+     *
      */
     @Override
     public StyleURL getStyleURL() {

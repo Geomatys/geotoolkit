@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "And")
 public class AndType extends BinaryLogicOpType {
-    
+
     public AndType() {
-        
+
     }
-    
+
     public AndType(final AndType that) {
         super(that);
     }
-    
+
     @Override
     public LogicOpsType getClone() {
         return new AndType(this);

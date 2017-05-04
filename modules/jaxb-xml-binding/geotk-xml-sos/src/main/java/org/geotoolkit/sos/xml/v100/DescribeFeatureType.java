@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -53,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
 public class DescribeFeatureType extends RequestBaseType {
 
     /**
-     * Identifier of the feature of interest, for which detailed information is requested. 
+     * Identifier of the feature of interest, for which detailed information is requested.
      * These identifiers are usually listed in the Contents section of the service metadata (Capabilities) document.
      */
     @XmlElement(name = "FeatureId", required = true)
@@ -80,7 +80,7 @@ public class DescribeFeatureType extends RequestBaseType {
     public String getFeatureId() {
         return featureId;
     }
-    
+
 
     /**
      * Verify if this entry is identical to the specified object.
@@ -93,7 +93,7 @@ public class DescribeFeatureType extends RequestBaseType {
         if (object instanceof DescribeFeatureType && super.equals(object)) {
             final DescribeFeatureType that = (DescribeFeatureType) object;
             return Objects.equals(this.featureId, that.featureId);
-        } 
+        }
         return false;
     }
 

@@ -26,7 +26,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Default imumutable coverage constraint, thread safe.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -34,7 +34,7 @@ class DefaultCoverageConstraint implements CoverageConstraint{
 
     private final String coverageName;
     private final CoverageExtent extent;
-    
+
     /**
      * default constructor.
      */
@@ -43,7 +43,7 @@ class DefaultCoverageConstraint implements CoverageConstraint{
         this.coverageName = coverageName;
         this.extent = extent;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -115,5 +115,5 @@ class DefaultCoverageConstraint implements CoverageConstraint{
         builder.append(']');
         return builder.toString();
     }
-    
+
 }

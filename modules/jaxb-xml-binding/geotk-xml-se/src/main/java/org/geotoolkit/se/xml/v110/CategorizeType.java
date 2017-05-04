@@ -31,9 +31,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for CategorizeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CategorizeType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -79,11 +79,11 @@ public class CategorizeType
 
     /**
      * Gets the value of the lookupValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getLookupValue() {
         return lookupValue;
@@ -91,11 +91,11 @@ public class CategorizeType
 
     /**
      * Sets the value of the lookupValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setLookupValue(final ParameterValueType value) {
         this.lookupValue = value;
@@ -103,11 +103,11 @@ public class CategorizeType
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getValue() {
         return value;
@@ -115,11 +115,11 @@ public class CategorizeType
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setValue(final ParameterValueType value) {
         this.value = value;
@@ -127,26 +127,26 @@ public class CategorizeType
 
     /**
      * Gets the value of the thresholdAndTValue property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the thresholdAndTValue property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getThresholdAndTValue().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link ParameterValueType }{@code >}
      * {@link JAXBElement }{@code <}{@link ParameterValueType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<ParameterValueType>> getThresholdAndTValue() {
         if (thresholdAndTValue == null) {
@@ -157,11 +157,11 @@ public class CategorizeType
 
     /**
      * Gets the value of the threshholdsBelongTo property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ThreshholdsBelongToType }
-     *     
+     *
      */
     public ThreshholdsBelongToType getThreshholdsBelongTo() {
         return threshholdsBelongTo;
@@ -169,11 +169,11 @@ public class CategorizeType
 
     /**
      * Sets the value of the threshholdsBelongTo property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ThreshholdsBelongToType }
-     *     
+     *
      */
     public void setThreshholdsBelongTo(final ThreshholdsBelongToType value) {
         this.threshholdsBelongTo = value;

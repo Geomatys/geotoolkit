@@ -7,7 +7,7 @@ import org.opengis.util.GenericName;
 
 /**
  * Feature stores may have some specific XSD definitions.
- * The base featuretype to XSD transformer do not produce the exact same XSD 
+ * The base featuretype to XSD transformer do not produce the exact same XSD
  * as the original, this is because some informations are xml specific and are
  * lost when mapped to feature types.
  *
@@ -26,5 +26,5 @@ public interface XSDFeatureStore {
      * @throws DataStoreException
      */
     Map<String,?> getSchema(final GenericName name) throws DataStoreException;
-    
+
 }

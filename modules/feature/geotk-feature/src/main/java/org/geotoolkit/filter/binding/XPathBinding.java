@@ -85,11 +85,11 @@ public class XPathBinding<C> extends AbstractBinding<C> {
         try {
             final JaxenFeatureXPath xpath = JaxenFeatureXPath.create(path);
             Object v = xpath.evaluate(candidate);
-            
+
             if(v instanceof Fake){
                 v = ((Fake)v).value;
             }
-            
+
             if(v instanceof Collection){
                 //several property for this path
                 final Collection properties = (Collection) v;
@@ -102,7 +102,7 @@ public class XPathBinding<C> extends AbstractBinding<C> {
                     }
                 }
             }
-            
+
             if(v instanceof Fake && Property.class.isAssignableFrom(target)){
                 v = ((Fake)v).value;
             }

@@ -26,9 +26,9 @@ import org.geotoolkit.gml.xml.v311.PointType;
 
 /**
  * <p>Java class for CenterContextType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CenterContextType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.gml.xml.v311.PointType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CenterContextType", propOrder = {
@@ -78,11 +78,11 @@ public class CenterContextType {
 
     /**
      * Gets the value of the centerPoint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PointType }
-     *     
+     *
      */
     public PointType getCenterPoint() {
         return centerPoint;
@@ -90,11 +90,11 @@ public class CenterContextType {
 
     /**
      * Sets the value of the centerPoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PointType }
-     *     
+     *
      */
     public void setCenterPoint(PointType value) {
         this.centerPoint = value;
@@ -102,11 +102,11 @@ public class CenterContextType {
 
     /**
      * Gets the value of the displayScale property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getDisplayScale() {
         return displayScale;
@@ -114,11 +114,11 @@ public class CenterContextType {
 
     /**
      * Sets the value of the displayScale property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setDisplayScale(Integer value) {
         this.displayScale = value;
@@ -126,11 +126,11 @@ public class CenterContextType {
 
     /**
      * Gets the value of the dpi property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getDPI() {
         return dpi;
@@ -138,11 +138,11 @@ public class CenterContextType {
 
     /**
      * Sets the value of the dpi property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setDPI(Integer value) {
         this.dpi = value;
@@ -150,11 +150,11 @@ public class CenterContextType {
 
     /**
      * Gets the value of the radius property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RadiusType }
-     *     
+     *
      */
     public RadiusType getRadius() {
         return radius;
@@ -162,11 +162,11 @@ public class CenterContextType {
 
     /**
      * Sets the value of the radius property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RadiusType }
-     *     
+     *
      */
     public void setRadius(RadiusType value) {
         this.radius = value;
@@ -174,11 +174,11 @@ public class CenterContextType {
 
     /**
      * Gets the value of the azimuth property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getAzimuth() {
         return azimuth;
@@ -186,11 +186,11 @@ public class CenterContextType {
 
     /**
      * Sets the value of the azimuth property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setAzimuth(Integer value) {
         this.azimuth = value;
@@ -198,11 +198,11 @@ public class CenterContextType {
 
     /**
      * Gets the value of the srs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSRS() {
         return srs;
@@ -210,11 +210,11 @@ public class CenterContextType {
 
     /**
      * Sets the value of the srs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSRS(String value) {
         this.srs = value;

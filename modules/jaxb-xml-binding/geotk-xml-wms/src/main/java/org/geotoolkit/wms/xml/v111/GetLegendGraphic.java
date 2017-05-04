@@ -28,7 +28,7 @@ import org.geotoolkit.wms.xml.AbstractOperation;
 
 
 /**
- * 
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,7 +62,7 @@ public class GetLegendGraphic implements AbstractOperation {
             }
         }
     }
-    
+
     public GetLegendGraphic(final List<String> formats, final DCPType... dcpList) {
         if (formats != null) {
             this.format = new ArrayList<Format>();
@@ -75,10 +75,10 @@ public class GetLegendGraphic implements AbstractOperation {
             this.dcpType.addAll(Arrays.asList(dcpList));
         }
     }
-    
+
     /**
      * Gets the value of the format property.
-     * 
+     *
      */
     public List<Format> getFormat() {
         if (format == null) {
@@ -86,14 +86,14 @@ public class GetLegendGraphic implements AbstractOperation {
         }
         return this.format;
     }
-    
+
     /**
      * Gets the string values of the available formats.
      */
     public List<String> getFormats() {
         final List<String> formats = new ArrayList<String>();
         final List<Format> list = getFormat();
-        
+
         for (final Format curr : list) {
             formats.add(curr.getvalue());
         }

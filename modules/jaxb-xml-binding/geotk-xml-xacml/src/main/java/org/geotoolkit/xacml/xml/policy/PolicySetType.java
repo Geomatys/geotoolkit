@@ -31,9 +31,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for PolicySetType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PolicySetType">
  *   &lt;complexContent>
@@ -60,16 +60,16 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name      = "PolicySetType", 
-         propOrder ={ "description", 
-                      "policySetDefaults", 
-                      "target", 
-                      "policySetOrPolicyOrPolicySetIdReference", 
+@XmlType(name      = "PolicySetType",
+         propOrder ={ "description",
+                      "policySetDefaults",
+                      "target",
+                      "policySetOrPolicyOrPolicySetIdReference",
                       "obligations"})
 @XmlRootElement(name="PolicySet")
 public class PolicySetType {
@@ -152,7 +152,7 @@ public class PolicySetType {
 
    /**
     * Gets the value of the policySetOrPolicyOrPolicySetIdReference property.
-    * 
+    *
     */
    public List<JAXBElement<?>> getPolicySetOrPolicyOrPolicySetIdReference() {
       if (policySetOrPolicyOrPolicySetIdReference == null) {
@@ -160,10 +160,10 @@ public class PolicySetType {
       }
       return this.policySetOrPolicyOrPolicySetIdReference;
    }
-   
+
    /**
     * Gets the value of the policies child.
-    * 
+    *
     */
    public List<PolicyType> getPoliciesChild() {
       List<PolicyType> policies = new ArrayList<PolicyType>();
@@ -196,7 +196,7 @@ public class PolicySetType {
 
    /**
     * Gets the value of the policySetId property.
-    * 
+    *
     */
    public String getPolicySetId() {
       return policySetId;
@@ -211,7 +211,7 @@ public class PolicySetType {
 
    /**
     * Gets the value of the version property.
-    * 
+    *
     */
    public String getVersion() {
       if (version == null) {
@@ -223,7 +223,7 @@ public class PolicySetType {
 
    /**
     * Sets the value of the version property.
-    * 
+    *
     */
    public void setVersion(final String value) {
       this.version = value;
@@ -231,7 +231,7 @@ public class PolicySetType {
 
    /**
     * Gets the value of the policyCombiningAlgId property.
-    * 
+    *
     */
    public String getPolicyCombiningAlgId() {
       return policyCombiningAlgId;
@@ -239,7 +239,7 @@ public class PolicySetType {
 
    /**
     * Sets the value of the policyCombiningAlgId property.
-    * 
+    *
     */
    public void setPolicyCombiningAlgId(final String value) {
       this.policyCombiningAlgId = value;

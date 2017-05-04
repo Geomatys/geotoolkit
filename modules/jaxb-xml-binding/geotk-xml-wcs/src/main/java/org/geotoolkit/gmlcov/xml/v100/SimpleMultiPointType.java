@@ -28,9 +28,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for SimpleMultiPointType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SimpleMultiPointType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SimpleMultiPointType", propOrder = {
@@ -56,11 +56,11 @@ public class SimpleMultiPointType extends AbstractGeometricAggregateType {
 
     /**
      * Gets the value of the positions property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public DirectPositionListType getPositions() {
         return positions;
@@ -68,11 +68,11 @@ public class SimpleMultiPointType extends AbstractGeometricAggregateType {
 
     /**
      * Sets the value of the positions property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public void setPositions(DirectPositionListType value) {
         this.positions = value;
@@ -80,17 +80,17 @@ public class SimpleMultiPointType extends AbstractGeometricAggregateType {
 
     @Override
     public Object evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public <T> T evaluate(Object o, Class<T> type) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public Object accept(ExpressionVisitor ev, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

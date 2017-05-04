@@ -52,7 +52,7 @@ public class WPSXmlFactory {
             final AbstractOperationsMetadata om, final String updateSequence, ProcessOfferings po, final Languages lg) {
 
          if ("1.0.0".equals(version)) {
-             
+
             if (si != null && !(si instanceof org.geotoolkit.ows.xml.v110.ServiceIdentification)) {
                 throw new IllegalArgumentException("Unexpected object class for 1.0.0 service Identification.");
             }
@@ -78,7 +78,7 @@ public class WPSXmlFactory {
                        (org.geotoolkit.wps.xml.v100.Languages)            lg,
                        null);
         } else if ("2.0.0".equals(version)) {
-            
+
             if (si != null && !(si instanceof org.geotoolkit.ows.xml.v200.ServiceIdentification)) {
                 throw new IllegalArgumentException("Unexpected object class for 2.0.0 service Identification.");
             }
@@ -106,14 +106,14 @@ public class WPSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static WPSCapabilities buildWPSCapabilities(final String version, final String updateSequence) {
          if ("1.0.0".equals(version)) {
             return new  org.geotoolkit.wps.xml.v100.WPSCapabilitiesType(
                        version,
                        updateSequence);
         } else if ("2.0.0".equals(version)) {
-            
+
             return new  org.geotoolkit.wps.xml.v200.WPSCapabilitiesType(
                        version,
                        updateSequence);
@@ -121,7 +121,7 @@ public class WPSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static Languages buildLanguages(final String version, final String _default, final List<String> supported) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wps.xml.v100.Languages(_default, supported);
@@ -130,7 +130,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static AbstractCodeType buildCode(final String version, final String value, final String codespace) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.ows.xml.v110.CodeType(value, codespace);
@@ -139,7 +139,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static ComplexDataType buildComplexDataType(final String version, final String encoding, final String mimeType, final String schema) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wps.xml.v100.ComplexDataType(encoding, mimeType, schema);
@@ -149,7 +149,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static Reference buildInOutReference(final String version, final WPSIO.IOType ioType) {
         if ("1.0.0".equals(version)) {
             if (ioType.equals(WPSIO.IOType.INPUT)) {
@@ -162,7 +162,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static Reference buildInputReference(final String version, final String encoding, final String mimeType, final String href) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wps.xml.v100.InputReferenceType(encoding, mimeType, href);
@@ -171,7 +171,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static Reference buildOutputReference(final String version, final String encoding, final String mimeType, final String href) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wps.xml.v100.OutputReferenceType(encoding, mimeType, href);
@@ -180,7 +180,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static ExecuteResponse buildExecuteResponse(final String version, final String service, final String lang, final String serviceInstance, final ProcessSummary processSum,
             List<? extends Input> inputs, List<DocumentOutputDefinition> outputs, List<DataOutput> dataOutput, StatusInfo status, final String jobId) {
         if ("1.0.0".equals(version)) {
@@ -222,7 +222,7 @@ public class WPSXmlFactory {
                 throw new IllegalArgumentException("Unexpected object class for 1.0.0 process brief.");
             }
             return new org.geotoolkit.wps.xml.v100.ExecuteResponse(version, service, lang, serviceInstance, (org.geotoolkit.wps.xml.v100.ProcessBriefType)processSum, dataInputs, outputDef, outData100, (org.geotoolkit.wps.xml.v100.StatusType)status);
-        
+
         } else if ("2.0.0".equals(version)) {
             List<org.geotoolkit.wps.xml.v200.DataOutputType> outData200 = new ArrayList<>();
             if (dataOutput != null) {
@@ -237,7 +237,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static DataType buildDataType(final String version, Object content) {
         if ("1.0.0".equals(version)) {
             if (content instanceof org.geotoolkit.ows.xml.v110.BoundingBoxType) {
@@ -256,7 +256,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static LiteralDataType buildLiteralDataValue(final String version, final String value, final String dataType, final String uom) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wps.xml.v100.LiteralDataType(value, dataType, uom);
@@ -265,7 +265,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static BoundingBox buildBoundingBoxDataValue(final String version, final Envelope env) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.ows.xml.v110.BoundingBoxType(env);
@@ -274,7 +274,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static DataOutput buildDataOutput(final String version, final String id, final LanguageString title, final LanguageString _abstract, Reference ref) {
         if ("1.0.0".equals(version)) {
             if (ref != null && !(ref instanceof org.geotoolkit.wps.xml.v100.OutputReferenceType)) {
@@ -287,9 +287,9 @@ public class WPSXmlFactory {
                 throw new IllegalArgumentException("Unexpected object class for 1.0.0 output abstract.");
             }
             return new org.geotoolkit.wps.xml.v100.OutputDataType(
-                 new org.geotoolkit.ows.xml.v110.CodeType(id), 
+                 new org.geotoolkit.ows.xml.v110.CodeType(id),
                     (org.geotoolkit.ows.xml.v110.LanguageStringType)title,
-                    (org.geotoolkit.ows.xml.v110.LanguageStringType)_abstract, 
+                    (org.geotoolkit.ows.xml.v110.LanguageStringType)_abstract,
                     (org.geotoolkit.wps.xml.v100.OutputReferenceType)ref);
         } else if ("2.0.0".equals(version)) {
             if (ref != null && !(ref instanceof org.geotoolkit.wps.xml.v200.ReferenceType)) {
@@ -299,7 +299,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static Input buildInput(final String version, final String id, final Reference title, final LanguageString _abstract, DataType data) {
         if ("1.0.0".equals(version)) {
             if (data != null && !(data instanceof org.geotoolkit.wps.xml.v100.DataType)) {
@@ -311,9 +311,9 @@ public class WPSXmlFactory {
             if (_abstract != null && !(_abstract instanceof org.geotoolkit.ows.xml.v110.LanguageStringType)) {
                 throw new IllegalArgumentException("Unexpected object class for 1.0.0 output abstract.");
             }
-            return new org.geotoolkit.wps.xml.v100.InputType(new org.geotoolkit.ows.xml.v110.CodeType(id), 
+            return new org.geotoolkit.wps.xml.v100.InputType(new org.geotoolkit.ows.xml.v110.CodeType(id),
                     (org.geotoolkit.ows.xml.v110.LanguageStringType)title,
-                    (org.geotoolkit.ows.xml.v110.LanguageStringType)_abstract, 
+                    (org.geotoolkit.ows.xml.v110.LanguageStringType)_abstract,
                     (org.geotoolkit.wps.xml.v100.DataType)data);
         } else if ("2.0.0".equals(version)) {
             if (data != null && !(data instanceof org.geotoolkit.wps.xml.v200.Data)) {
@@ -323,7 +323,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static Input buildInput(final String version, final String id, final Reference title, final LanguageString _abstract, Reference ref) {
         if ("1.0.0".equals(version)) {
             if (ref != null && !(ref instanceof org.geotoolkit.wps.xml.v100.InputReferenceType)) {
@@ -335,9 +335,9 @@ public class WPSXmlFactory {
             if (_abstract != null && !(_abstract instanceof org.geotoolkit.ows.xml.v110.LanguageStringType)) {
                 throw new IllegalArgumentException("Unexpected object class for 1.0.0 input abstract.");
             }
-            return new org.geotoolkit.wps.xml.v100.InputType(new org.geotoolkit.ows.xml.v110.CodeType(id), 
+            return new org.geotoolkit.wps.xml.v100.InputType(new org.geotoolkit.ows.xml.v110.CodeType(id),
                     (org.geotoolkit.ows.xml.v110.LanguageStringType)title,
-                    (org.geotoolkit.ows.xml.v110.LanguageStringType)_abstract, 
+                    (org.geotoolkit.ows.xml.v110.LanguageStringType)_abstract,
                     (org.geotoolkit.wps.xml.v100.InputReferenceType)ref);
         } else if ("2.0.0".equals(version)) {
             if (ref != null && !(ref instanceof org.geotoolkit.wps.xml.v200.ReferenceType)) {
@@ -347,7 +347,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static DataOutput buildDataOutput(final String version, final String id, final LanguageString title, final LanguageString _abstract, DataType data) {
         if ("1.0.0".equals(version)) {
             if (data != null && !(data instanceof org.geotoolkit.wps.xml.v100.DataType)) {
@@ -359,9 +359,9 @@ public class WPSXmlFactory {
             if (_abstract != null && !(_abstract instanceof org.geotoolkit.ows.xml.v110.LanguageStringType)) {
                 throw new IllegalArgumentException("Unexpected object class for 1.0.0 output abstract.");
             }
-            return new org.geotoolkit.wps.xml.v100.OutputDataType(new org.geotoolkit.ows.xml.v110.CodeType(id), 
+            return new org.geotoolkit.wps.xml.v100.OutputDataType(new org.geotoolkit.ows.xml.v110.CodeType(id),
                     (org.geotoolkit.ows.xml.v110.LanguageStringType)title,
-                    (org.geotoolkit.ows.xml.v110.LanguageStringType)_abstract, 
+                    (org.geotoolkit.ows.xml.v110.LanguageStringType)_abstract,
                     (org.geotoolkit.wps.xml.v100.DataType)data);
         } else if ("2.0.0".equals(version)) {
             if (data != null && !(data instanceof org.geotoolkit.wps.xml.v200.Data)) {
@@ -371,7 +371,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static LanguageString buildLanguageString(final String version, final String value, final String lang) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.ows.xml.v110.LanguageStringType(value, lang);
@@ -380,7 +380,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static ProcessSummary buildProcessSummary(final String version, final String id, final LanguageString title, final LanguageString _abstract, String processVersion) {
         if ("1.0.0".equals(version)) {
             if (title != null && !(title instanceof org.geotoolkit.ows.xml.v110.LanguageStringType)) {
@@ -389,7 +389,7 @@ public class WPSXmlFactory {
             if (_abstract != null && !(_abstract instanceof org.geotoolkit.ows.xml.v110.LanguageStringType)) {
                 throw new IllegalArgumentException("Unexpected object class for 1.0.0 output abstract.");
             }
-            return new org.geotoolkit.wps.xml.v100.ProcessBriefType(new org.geotoolkit.ows.xml.v110.CodeType(id), 
+            return new org.geotoolkit.wps.xml.v100.ProcessBriefType(new org.geotoolkit.ows.xml.v110.CodeType(id),
                                                                    (org.geotoolkit.ows.xml.v110.LanguageStringType) title,
                                                                    (org.geotoolkit.ows.xml.v110.LanguageStringType) _abstract,
                                                                    processVersion);
@@ -406,7 +406,7 @@ public class WPSXmlFactory {
             }else {
                 abstracts.add((org.geotoolkit.ows.xml.v200.LanguageStringType) _abstract);
             }
-            return new org.geotoolkit.wps.xml.v200.ProcessSummaryType(new org.geotoolkit.ows.xml.v200.CodeType(id), 
+            return new org.geotoolkit.wps.xml.v200.ProcessSummaryType(new org.geotoolkit.ows.xml.v200.CodeType(id),
                                                                    titles,
                                                                    abstracts,
                                                                    null,
@@ -414,7 +414,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static ProcessDescription buildProcessDescription(final String version, final AbstractCodeType id, final LanguageString title, final LanguageString _abstract, String processVersion,
             final boolean supportStorage, final boolean statusSupported, final List<InputDescription> inputs, final List<OutputDescription> outputs) {
         if ("1.0.0".equals(version)) {
@@ -441,7 +441,7 @@ public class WPSXmlFactory {
                 }
                 out100.add((org.geotoolkit.wps.xml.v100.OutputDescriptionType)po);
             }
-            return new org.geotoolkit.wps.xml.v100.ProcessDescriptionType((org.geotoolkit.ows.xml.v110.CodeType)id, 
+            return new org.geotoolkit.wps.xml.v100.ProcessDescriptionType((org.geotoolkit.ows.xml.v110.CodeType)id,
                                                                    (org.geotoolkit.ows.xml.v110.LanguageStringType) title,
                                                                    (org.geotoolkit.ows.xml.v110.LanguageStringType) _abstract,
                                                                    processVersion,
@@ -479,7 +479,7 @@ public class WPSXmlFactory {
                 }
                 out200.add((org.geotoolkit.wps.xml.v200.OutputDescriptionType)po);
             }
-            return new org.geotoolkit.wps.xml.v200.ProcessDescriptionType((org.geotoolkit.ows.xml.v200.CodeType)id, 
+            return new org.geotoolkit.wps.xml.v200.ProcessDescriptionType((org.geotoolkit.ows.xml.v200.CodeType)id,
                                                                    titles,
                                                                    abstracts,
                                                                    null,
@@ -488,7 +488,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static ProcessOfferings buildProcessOfferings(final String version, List<ProcessSummary> processOfferings) {
         if ("1.0.0".equals(version)) {
             List<org.geotoolkit.wps.xml.v100.ProcessBriefType> po100 = new ArrayList<>();
@@ -511,10 +511,10 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static InputDescription buildInputDescription(final String version, final AbstractCodeType id, final LanguageString title, final LanguageString _abstract,
             final Integer minOccur, final String maxOccur, final DataDescription dataDescription) {
-        
+
         if ("1.0.0".equals(version)) {
             if (id != null && !(id instanceof org.geotoolkit.ows.xml.v110.CodeType)) {
                 throw new IllegalArgumentException("Unexpected object class for 1.0.0 intput description id.");
@@ -529,9 +529,9 @@ public class WPSXmlFactory {
             if (maxOccur != null) {
                 maxOccurNumber = Integer.parseInt(maxOccur);
             }
-            if (dataDescription != null && 
-              !((dataDescription instanceof org.geotoolkit.wps.xml.v100.SupportedComplexDataInputType) || 
-                (dataDescription instanceof org.geotoolkit.wps.xml.v100.LiteralInputType) || 
+            if (dataDescription != null &&
+              !((dataDescription instanceof org.geotoolkit.wps.xml.v100.SupportedComplexDataInputType) ||
+                (dataDescription instanceof org.geotoolkit.wps.xml.v100.LiteralInputType) ||
                 (dataDescription instanceof org.geotoolkit.wps.xml.v100.SupportedCRSsType))) {
                 throw new IllegalArgumentException("Unexpected object class for 1.0.0 intput data description.");
             }
@@ -557,9 +557,9 @@ public class WPSXmlFactory {
             }else {
                 abstracts.add((org.geotoolkit.ows.xml.v200.LanguageStringType) _abstract);
             }
-            if (dataDescription != null && 
-              !((dataDescription instanceof org.geotoolkit.wps.xml.v200.ComplexDataType) || 
-                (dataDescription instanceof org.geotoolkit.wps.xml.v200.LiteralDataType) || 
+            if (dataDescription != null &&
+              !((dataDescription instanceof org.geotoolkit.wps.xml.v200.ComplexDataType) ||
+                (dataDescription instanceof org.geotoolkit.wps.xml.v200.LiteralDataType) ||
                 (dataDescription instanceof org.geotoolkit.wps.xml.v200.BoundingBoxData))) {
                 throw new IllegalArgumentException("Unexpected object class for 1.0.0 intput data description.");
             }
@@ -573,10 +573,10 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static OutputDescription buildOutputDescription(final String version, final AbstractCodeType id, final LanguageString title, final LanguageString _abstract,
             final DataDescription dataDescription) {
-        
+
         if ("1.0.0".equals(version)) {
             if (id != null && !(id instanceof org.geotoolkit.ows.xml.v110.CodeType)) {
                 throw new IllegalArgumentException("Unexpected object class for 1.0.0 output description id.");
@@ -587,9 +587,9 @@ public class WPSXmlFactory {
             if (_abstract != null && !(_abstract instanceof org.geotoolkit.ows.xml.v110.LanguageStringType)) {
                 throw new IllegalArgumentException("Unexpected object class for 1.0.0 output description abstract.");
             }
-            if (dataDescription != null && 
-              !((dataDescription instanceof org.geotoolkit.wps.xml.v100.SupportedComplexDataInputType) || 
-                (dataDescription instanceof org.geotoolkit.wps.xml.v100.LiteralOutputType) || 
+            if (dataDescription != null &&
+              !((dataDescription instanceof org.geotoolkit.wps.xml.v100.SupportedComplexDataInputType) ||
+                (dataDescription instanceof org.geotoolkit.wps.xml.v100.LiteralOutputType) ||
                 (dataDescription instanceof org.geotoolkit.wps.xml.v100.SupportedCRSsType))) {
                 throw new IllegalArgumentException("Unexpected object class for 1.0.0 output data description.");
             }
@@ -613,9 +613,9 @@ public class WPSXmlFactory {
             }else {
                 abstracts.add((org.geotoolkit.ows.xml.v200.LanguageStringType) _abstract);
             }
-            if (dataDescription != null && 
-              !((dataDescription instanceof org.geotoolkit.wps.xml.v200.ComplexDataType) || 
-                (dataDescription instanceof org.geotoolkit.wps.xml.v200.LiteralDataType) || 
+            if (dataDescription != null &&
+              !((dataDescription instanceof org.geotoolkit.wps.xml.v200.ComplexDataType) ||
+                (dataDescription instanceof org.geotoolkit.wps.xml.v200.LiteralDataType) ||
                 (dataDescription instanceof org.geotoolkit.wps.xml.v200.BoundingBoxData))) {
                 throw new IllegalArgumentException("Unexpected object class for 1.0.0 output data description.");
             }
@@ -636,7 +636,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static ComplexDataTypeDescription buildComplexDataDescriptions(String version, Format _default, List<Format> formats, Integer maximumMegabytes) {
         if ("1.0.0".equals(version)) {
             if (_default != null && !(_default instanceof org.geotoolkit.wps.xml.v100.ComplexDataDescriptionType)) {
@@ -668,7 +668,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static Object buildUOMS(String version, DomainMetadata _default, List<DomainMetadata> supported) {
         if ("1.0.0".equals(version)) {
             if (_default != null && !(_default instanceof org.geotoolkit.ows.xml.v110.DomainMetadataType)) {
@@ -690,7 +690,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static DomainMetadata buildDomainMetadata(String version, String value, String reference) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.ows.xml.v110.DomainMetadataType(value, reference);
@@ -699,7 +699,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static AnyValue buildAnyValue(String version) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.ows.xml.v110.AnyValue();
@@ -708,7 +708,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static AllowedValues buildAllowedValues(String version, Collection values) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.ows.xml.v110.AllowedValues(values);
@@ -717,7 +717,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static AcceptVersions buildAcceptVersions(String version, String... versions) {
         if ("1.0.0".equals(version)) {
            return new org.geotoolkit.ows.xml.v110.AcceptVersionsType(versions);
@@ -726,7 +726,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static AcceptFormats buildAcceptFormats(String version, String... formats) {
         if ("1.0.0".equals(version)) {
            return new org.geotoolkit.ows.xml.v110.AcceptFormatsType(formats);
@@ -735,8 +735,8 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
-    public static LiteralDataDescription buildLiteralInputDataDescription(String version, DomainMetadata dataType, Object uoMs, AllowedValues allowedValues, 
+
+    public static LiteralDataDescription buildLiteralInputDataDescription(String version, DomainMetadata dataType, Object uoMs, AllowedValues allowedValues,
             AnyValue anyValue, ValueReference valuesReference, String defaultValue) {
         if ("1.0.0".equals(version)) {
             if (dataType != null && !(dataType instanceof org.geotoolkit.ows.xml.v110.DomainMetadataType)) {
@@ -785,7 +785,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static LiteralDataDescription buildLiteralOutputDataDescription(String version, DomainMetadata dataType, Object uoMs) {
         if ("1.0.0".equals(version)) {
             if (dataType != null && !(dataType instanceof org.geotoolkit.ows.xml.v110.DomainMetadataType)) {
@@ -808,7 +808,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static ProcessOfferings buildProcessOfferings(String version, String lang, List<ProcessDescription> descriptions) {
         if ("1.0.0".equals(version)) {
             List<org.geotoolkit.wps.xml.v100.ProcessDescriptionType> po100 = new ArrayList<>();
@@ -841,7 +841,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static StatusInfo buildStatusInfoAccepted(String version, XMLGregorianCalendar creationDate, String acceptedStatus, String jobId) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wps.xml.v100.StatusType(creationDate, acceptedStatus, null);
@@ -850,20 +850,20 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static StatusInfo buildStatusInfoFailed(String version, XMLGregorianCalendar creationDate, ExceptionResponse exceptionReport, String jobId) {
         if ("1.0.0".equals(version)) {
             if (exceptionReport != null && !(exceptionReport instanceof org.geotoolkit.ows.xml.v110.ExceptionReport)) {
                 throw new IllegalArgumentException("Unexpected object class for 1.0.0 exception report.");
             }
-            
+
             return new org.geotoolkit.wps.xml.v100.StatusType(creationDate, (org.geotoolkit.ows.xml.v110.ExceptionReport) exceptionReport);
         } else if ("2.0.0".equals(version)) {
            return new org.geotoolkit.wps.xml.v200.StatusInfo("Process failed:" + exceptionReport.toString(), jobId);
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static StatusInfo buildStatusInfoPaused(String version, XMLGregorianCalendar creationDate, Integer progression, String msg, String jobId) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wps.xml.v100.StatusType(creationDate, null, new org.geotoolkit.wps.xml.v100.ProcessStartedType(msg, progression));
@@ -872,7 +872,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static StatusInfo buildStatusInfoStarted(String version, XMLGregorianCalendar creationDate, Integer progression, String msg, String jobId) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wps.xml.v100.StatusType(creationDate, new org.geotoolkit.wps.xml.v100.ProcessStartedType(msg, progression), null);
@@ -881,7 +881,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static ExceptionResponse buildExceptionReport(String version, final String exceptionText, final String exceptionCode, final String locator, final String exVersion) {
         if ("1.0.0".equals(version)) {
            return new org.geotoolkit.ows.xml.v110.ExceptionReport(exceptionText, exceptionCode, locator, version);
@@ -890,7 +890,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static StatusInfo buildStatusInfoSucceed(String version, XMLGregorianCalendar creationDate, String succeedStatus, String jobId) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wps.xml.v100.StatusType(creationDate, null, succeedStatus);
@@ -900,9 +900,9 @@ public class WPSXmlFactory {
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
 
-    public static Execute buildExecuteRequest(String version, String language, String identifier, List<Input> inputs, boolean isRaw, 
+    public static Execute buildExecuteRequest(String version, String language, String identifier, List<Input> inputs, boolean isRaw,
             Boolean storeExecuteResponse, Boolean lineage, Boolean status, List<OutputDefinition> outputs) {
-        
+
         if ("1.0.0".equals(version)) {
             org.geotoolkit.wps.xml.v100.DataInputsType dataInputs = null;
             if (inputs != null) {
@@ -915,7 +915,7 @@ public class WPSXmlFactory {
                 }
                 dataInputs = new org.geotoolkit.wps.xml.v100.DataInputsType(in100);
             }
-            
+
             org.geotoolkit.wps.xml.v100.ResponseFormType responseForm;
             // raw data
             if (isRaw) {
@@ -939,9 +939,9 @@ public class WPSXmlFactory {
                 org.geotoolkit.wps.xml.v100.ResponseDocumentType responseDocument = new org.geotoolkit.wps.xml.v100.ResponseDocumentType(storeExecuteResponse, lineage, status, out100);
                 responseForm = new org.geotoolkit.wps.xml.v100.ResponseFormType(responseDocument);
             }
-            
+
             return new org.geotoolkit.wps.xml.v100.Execute(language, new org.geotoolkit.ows.xml.v110.CodeType(identifier), dataInputs, responseForm);
-            
+
         } else if ("2.0.0".equals(version)) {
             List<org.geotoolkit.wps.xml.v200.DataInputType> in200 = new ArrayList<>();
             for (Input in : inputs) {
@@ -980,7 +980,7 @@ public class WPSXmlFactory {
                 throw new IllegalArgumentException("Unexpected object class for 2.0.0 acceptversion.");
             }
            return new org.geotoolkit.wps.xml.v200.GetCapabilitiesType((org.geotoolkit.ows.xml.v200.AcceptVersionsType)versions,
-                                                                       null, 
+                                                                       null,
                                                                        (org.geotoolkit.ows.xml.v200.AcceptFormatsType)formats,
                                                                        updateSequence, service);
         }
@@ -1048,7 +1048,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static GetResult buildGetResult(String version, String service, String jobId) {
         if ("1.0.0".equals(version)) {
             throw new IllegalArgumentException("GetResult operation does not exist in WPS 1.0.0");
@@ -1057,7 +1057,7 @@ public class WPSXmlFactory {
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
-    
+
     public static GetStatus buildGetStatus(String version, String service, String jobId) {
         if ("1.0.0".equals(version)) {
             throw new IllegalArgumentException("GetResult operation does not exist in WPS 1.0.0");

@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ServiceBindingType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ServiceBindingType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -79,7 +79,7 @@ public class ServiceBindingType extends RegistryObjectType {
         }
         return this.specificationLink;
     }
-    
+
     /**
      * Sets the value of the specificationLink property.
      */
@@ -89,7 +89,7 @@ public class ServiceBindingType extends RegistryObjectType {
         }
         this.specificationLink.add(specification);
     }
-    
+
     /**
      * Sets the value of the specificationLink property.
      */

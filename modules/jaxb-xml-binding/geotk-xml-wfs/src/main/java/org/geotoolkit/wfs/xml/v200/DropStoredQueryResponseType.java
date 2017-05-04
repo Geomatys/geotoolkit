@@ -27,11 +27,11 @@ import org.geotoolkit.wfs.xml.DropStoredQueryResponse;
 @XmlType(name = "DropStoredQueryResponseType")
 @XmlRootElement(name = "DropStoredQueryResponse", namespace= "http://www.opengis.net/wfs/2.0")
 public class DropStoredQueryResponseType extends ExecutionStatusType implements DropStoredQueryResponse {
-    
+
     public DropStoredQueryResponseType() {
-        
+
     }
-    
+
     public DropStoredQueryResponseType(final String status) {
         super(status);
     }

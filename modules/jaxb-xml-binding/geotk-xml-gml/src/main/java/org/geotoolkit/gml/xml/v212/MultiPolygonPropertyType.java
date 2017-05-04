@@ -22,15 +22,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *         Encapsulates a MultiPolygon to represent the following discontiguous 
+ *
+ *         Encapsulates a MultiPolygon to represent the following discontiguous
  *         geometric properties: multiCoverage, multiExtentOf.
- *       
- * 
+ *
+ *
  * <p>Java class for MultiPolygonPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MultiPolygonPropertyType">
  *   &lt;complexContent>
@@ -44,22 +44,22 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiPolygonPropertyType")
 public class MultiPolygonPropertyType extends GeometryAssociationType {
-    
+
     public MultiPolygonPropertyType() {
-        
+
     }
-    
+
     public MultiPolygonPropertyType(MultiPolygonPropertyType that) {
         super(that);
     }
-    
+
     @Override
     public GeometryAssociationType getClone() {
         return new MultiPolygonPropertyType(this);

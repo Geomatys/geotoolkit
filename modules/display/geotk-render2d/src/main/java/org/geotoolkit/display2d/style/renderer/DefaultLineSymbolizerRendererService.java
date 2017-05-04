@@ -32,12 +32,12 @@ import org.opengis.style.LineSymbolizer;
  */
 public class DefaultLineSymbolizerRendererService extends AbstractSymbolizerRendererService<LineSymbolizer, CachedLineSymbolizer>{
 
-    
+
     @Override
     public boolean isGroupSymbolizer() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -85,5 +85,5 @@ public class DefaultLineSymbolizerRendererService extends AbstractSymbolizerRend
 
         GO2Utilities.renderStroke(shape, symbol.getSource().getStroke(), symbol.getSource().getUnitOfMeasure(), g);
     }
-    
+
 }

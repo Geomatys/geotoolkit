@@ -36,7 +36,7 @@ public class FXPointSymbolizer extends FXStyleElementController<PointSymbolizer>
 
     @FXML private FXSymbolizerInfo uiInfo;
     @FXML protected FXGraphic uiGraphic;
-    
+
     @Override
     public Class<PointSymbolizer> getEditedClass() {
         return PointSymbolizer.class;
@@ -46,10 +46,10 @@ public class FXPointSymbolizer extends FXStyleElementController<PointSymbolizer>
     public PointSymbolizer newValue() {
         return getStyleFactory().pointSymbolizer(DEFAULT_GRAPHIC,null);
     }
-    
+
     @Override
     public void initialize() {
-        super.initialize();        
+        super.initialize();
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             final String name = uiInfo.getName();
@@ -58,22 +58,22 @@ public class FXPointSymbolizer extends FXStyleElementController<PointSymbolizer>
             final Expression geom = uiInfo.getGeom();
             value.set(getStyleFactory().pointSymbolizer(name,geom,desc,uom,uiGraphic.valueProperty().get()));
         };
-        
+
         uiGraphic.valueProperty().addListener(changeListener);
         uiInfo.valueProperty().addListener(changeListener);
     }
-    
+
     @Override
     public void setLayer(MapLayer layer) {
         super.setLayer(layer);
         uiGraphic.setLayer(layer);
         uiInfo.setLayer(layer);
     }
-    
+
     @Override
     protected void updateEditor(PointSymbolizer pointSymbolizer) {
         uiGraphic.valueProperty().setValue(pointSymbolizer.getGraphic());
         uiInfo.parse(pointSymbolizer);
     }
-    
+
 }

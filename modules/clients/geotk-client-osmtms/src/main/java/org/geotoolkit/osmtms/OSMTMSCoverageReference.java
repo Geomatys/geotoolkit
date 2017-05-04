@@ -24,7 +24,7 @@ import org.opengis.util.GenericName;
 
 /**
  * Open Street Map Tile Map Server.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -42,9 +42,9 @@ public class OSMTMSCoverageReference extends AbstractPyramidalCoverageReference 
     /**
      * Returns adapted {@link ViewType} for OSM TMS reference.
      * The default associated view is {@link ViewType#PHOTOGRAPHIC}.
-     * 
+     *
      * @return
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     @Override
     public ViewType getPackMode() throws DataStoreException {

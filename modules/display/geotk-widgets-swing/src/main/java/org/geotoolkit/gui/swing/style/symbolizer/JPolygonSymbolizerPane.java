@@ -21,16 +21,16 @@ import org.opengis.style.PolygonSymbolizer;
 
 /**
  * Simple and complet polygon symbolizer editor.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class JPolygonSymbolizerPane extends JTwoStateEditor<PolygonSymbolizer>{
 
     public JPolygonSymbolizerPane() {
         super(new JPolygonSymbolizerSimple(), new JPolygonSymbolizerAdvanced());
-        
+
         //configure panel with a default symbolizer
         parse(getStyleFactory().polygonSymbolizer());
     }
-    
+
 }

@@ -167,7 +167,7 @@ public class JMap3D extends JPanel {
         final GLProfile glp = GLProfile.getDefault();
         // Specifies a set of OpenGL capabilities, based on your profile.
         final GLCapabilities caps = new GLCapabilities(glp);
-	caps.setDoubleBuffered(true);
+    caps.setDoubleBuffered(true);
         // Allocate a GLDrawable, based on your OpenGL capabilities.
         glCanvas = new GLJPanel(caps);
         glCanvas.setIgnoreRepaint(true);

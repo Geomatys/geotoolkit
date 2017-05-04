@@ -18,22 +18,22 @@ package org.geotoolkit.display.canvas.control;
 
 /**
  * Abstract monitor.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public abstract class AbstractCanvasMonitor implements CanvasMonitor{
-    
+
     /**
      * Thread safe value, volatile
      */
     protected volatile boolean isRendering = false;
-    
+
     /**
      * Thread safe value, volatile
      */
     protected volatile boolean stopRequest = false;
-    
+
     /**
      * {@inheritDoc }
      */

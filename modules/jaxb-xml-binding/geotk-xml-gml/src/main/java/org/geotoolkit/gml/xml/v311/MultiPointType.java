@@ -30,11 +30,11 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * A MultiPoint is defined by one or more Points, referenced through pointMember elements.
- * 
+ *
  * <p>Java class for MultiPointType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MultiPointType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -103,11 +103,11 @@ public class MultiPointType extends AbstractGeometricAggregateType implements Mu
 
     /**
      * Gets the value of the pointMembers property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PointArrayPropertyType }
-     *     
+     *
      */
     public PointArrayPropertyType getPointMembers() {
         return pointMembers;
@@ -115,11 +115,11 @@ public class MultiPointType extends AbstractGeometricAggregateType implements Mu
 
     /**
      * Sets the value of the pointMembers property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PointArrayPropertyType }
-     *     
+     *
      */
     public void setPointMembers(final PointArrayPropertyType value) {
         this.pointMembers = value;
@@ -165,7 +165,7 @@ public class MultiPointType extends AbstractGeometricAggregateType implements Mu
         return hash;
     }
 
-   
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(super.toString());

@@ -25,12 +25,12 @@ import org.geotoolkit.wcs.xml.CoverageDomain;
 
 
 /**
- * Definition of the spatial-temporal domain of a coverage. The Domain shall include a SpatialDomain (describing the spatial locations for which coverages can be requested), and should included a TemporalDomain (describing the time instants or intervals for which coverages can be requested). 
- * 
+ * Definition of the spatial-temporal domain of a coverage. The Domain shall include a SpatialDomain (describing the spatial locations for which coverages can be requested), and should included a TemporalDomain (describing the time instants or intervals for which coverages can be requested).
+ *
  * <p>Java class for CoverageDomainType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoverageDomainType">
  *   &lt;complexContent>
@@ -43,7 +43,7 @@ import org.geotoolkit.wcs.xml.CoverageDomain;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -64,7 +64,7 @@ public class CoverageDomainType implements CoverageDomain {
      */
     CoverageDomainType() {
     }
-    
+
     /**
      * build a new coverage domain.
      */
@@ -72,23 +72,23 @@ public class CoverageDomainType implements CoverageDomain {
         this.spatialDomain  = spatialDomain;
         this.temporalDomain = temporalDomain;
     }
-    
+
     public CoverageDomainType(final SpatialDomainType spatialDomain, final List<Object> times) {
         this.spatialDomain  = spatialDomain;
         this.temporalDomain = new TimeSequenceType(times);
     }
-    
+
     /**
      * Gets the value of the spatialDomain property.
-     * 
+     *
      */
     @Override
     public SpatialDomainType getSpatialDomain() {
         return spatialDomain;
     }
-   
+
     /**
-     * Although optional, the TemporalDomain should be included whenever a value is known or a useful estimate is available. 
+     * Although optional, the TemporalDomain should be included whenever a value is known or a useful estimate is available.
      */
     @Override
     public TimeSequenceType getTemporalDomain() {

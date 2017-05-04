@@ -28,9 +28,9 @@ import org.geotoolkit.gml.xml.v311.EnvelopeType;
 
 /**
  * <p>Java class for OutputType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OutputType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.gml.xml.v311.EnvelopeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OutputType", propOrder = {
@@ -80,11 +80,11 @@ public class OutputType {
 
     /**
      * Gets the value of the bBoxContext property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EnvelopeType }
-     *     
+     *
      */
     public EnvelopeType getBBoxContext() {
         return bBoxContext;
@@ -92,11 +92,11 @@ public class OutputType {
 
     /**
      * Sets the value of the bBoxContext property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EnvelopeType }
-     *     
+     *
      */
     public void setBBoxContext(EnvelopeType value) {
         this.bBoxContext = value;
@@ -104,11 +104,11 @@ public class OutputType {
 
     /**
      * Gets the value of the centerContext property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CenterContextType }
-     *     
+     *
      */
     public CenterContextType getCenterContext() {
         return centerContext;
@@ -116,11 +116,11 @@ public class OutputType {
 
     /**
      * Sets the value of the centerContext property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CenterContextType }
-     *     
+     *
      */
     public void setCenterContext(CenterContextType value) {
         this.centerContext = value;
@@ -128,11 +128,11 @@ public class OutputType {
 
     /**
      * Gets the value of the width property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getWidth() {
         return width;
@@ -140,11 +140,11 @@ public class OutputType {
 
     /**
      * Sets the value of the width property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setWidth(Integer value) {
         this.width = value;
@@ -152,11 +152,11 @@ public class OutputType {
 
     /**
      * Gets the value of the height property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getHeight() {
         return height;
@@ -164,11 +164,11 @@ public class OutputType {
 
     /**
      * Sets the value of the height property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setHeight(Integer value) {
         this.height = value;
@@ -176,11 +176,11 @@ public class OutputType {
 
     /**
      * Gets the value of the format property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFormat() {
         return format;
@@ -188,11 +188,11 @@ public class OutputType {
 
     /**
      * Sets the value of the format property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFormat(String value) {
         this.format = value;
@@ -200,11 +200,11 @@ public class OutputType {
 
     /**
      * Gets the value of the bGcolor property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getBGcolor() {
         return bGcolor;
@@ -212,11 +212,11 @@ public class OutputType {
 
     /**
      * Sets the value of the bGcolor property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setBGcolor(String value) {
         this.bGcolor = value;
@@ -224,11 +224,11 @@ public class OutputType {
 
     /**
      * Gets the value of the transparent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isTransparent() {
         return transparent;
@@ -236,11 +236,11 @@ public class OutputType {
 
     /**
      * Sets the value of the transparent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setTransparent(Boolean value) {
         this.transparent = value;
@@ -248,11 +248,11 @@ public class OutputType {
 
     /**
      * Gets the value of the content property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PresentationContentType }
-     *     
+     *
      */
     public PresentationContentType getContent() {
         if (content == null) {
@@ -264,11 +264,11 @@ public class OutputType {
 
     /**
      * Sets the value of the content property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PresentationContentType }
-     *     
+     *
      */
     public void setContent(PresentationContentType value) {
         this.content = value;

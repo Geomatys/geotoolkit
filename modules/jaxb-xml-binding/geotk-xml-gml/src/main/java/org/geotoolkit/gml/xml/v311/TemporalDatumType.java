@@ -27,13 +27,13 @@ import org.apache.sis.util.ComparisonMode;
 
 
 /**
- * Defines the origin of a temporal coordinate reference system. 
- * This type extends the TemporalDatumRestrictionType to add the "origin" element with the dateTime type. 
- * 
+ * Defines the origin of a temporal coordinate reference system.
+ * This type extends the TemporalDatumRestrictionType to add the "origin" element with the dateTime type.
+ *
  * <p>Java class for TemporalDatumType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TemporalDatumType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,7 +61,7 @@ public class TemporalDatumType extends TemporalDatumBaseType {
 
     /**
      * Gets the value of the origin property.
-     * 
+     *
      */
     public XMLGregorianCalendar getOrigin() {
         return origin;
@@ -69,7 +69,7 @@ public class TemporalDatumType extends TemporalDatumBaseType {
 
     /**
      * Sets the value of the origin property.
-     * 
+     *
      */
     public void setOrigin(final XMLGregorianCalendar value) {
         this.origin = value;

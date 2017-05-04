@@ -34,7 +34,7 @@ public class DefaultAnchorPoint implements AnchorPoint{
     private Expression anchorX;
 
     private Expression anchorY;
-        
+
     /**
      * Create a default immutable AnchorPoint.
      *

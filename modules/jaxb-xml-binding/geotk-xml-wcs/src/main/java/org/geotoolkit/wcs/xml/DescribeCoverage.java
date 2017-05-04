@@ -26,8 +26,8 @@ import org.geotoolkit.ows.xml.RequestBase;
  * @module
  */
 public interface DescribeCoverage extends RequestBase {
-    
+
     String toKvp();
-    
+
     List<String> getIdentifier();
 }

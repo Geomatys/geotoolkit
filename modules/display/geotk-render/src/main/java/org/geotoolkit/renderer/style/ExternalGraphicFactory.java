@@ -44,7 +44,7 @@ public interface ExternalGraphicFactory {
 
     /**
      * Render in vector quality if possible.
-     * @see #getImage(java.net.URI, java.lang.String, java.lang.Float, java.awt.RenderingHints) 
+     * @see #getImage(java.net.URI, java.lang.String, java.lang.Float, java.awt.RenderingHints)
      */
     void renderImage(URI uri, String mime, Float size, Graphics2D g,
             Point2D center,RenderingHints hints) throws Exception;

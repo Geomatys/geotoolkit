@@ -32,16 +32,16 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @see TreeAccessByteArray
  */
 abstract class WriteChannelAccessStarTest extends AbstractTreeTest {
-    
+
     /**
      * Create a generic StarRTree Test suite where Tree is stored into byte array.
      *
      * @author Remi Marechal (Geomatys).
      * @param crs
      * @throws StoreIndexException
-     * @throws IOException 
+     * @throws IOException
      */
-    protected WriteChannelAccessStarTest(final CoordinateReferenceSystem crs) 
+    protected WriteChannelAccessStarTest(final CoordinateReferenceSystem crs)
             throws StoreIndexException, IOException {
         super(crs);
         final File treeMapperFile = File.createTempFile("mapper", "test", tempDir);

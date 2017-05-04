@@ -35,9 +35,9 @@ import org.geotoolkit.sml.xml.AbstractDocumentListMember;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -63,8 +63,8 @@ import org.geotoolkit.sml.xml.AbstractDocumentListMember;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -100,7 +100,7 @@ public class DocumentList implements AbstractDocumentList {
             }
         }
     }
-    
+
     /**
      * Gets the value of the description property.
      */
@@ -195,9 +195,9 @@ public class DocumentList implements AbstractDocumentList {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -211,8 +211,8 @@ public class DocumentList implements AbstractDocumentList {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -264,7 +264,7 @@ public class DocumentList implements AbstractDocumentList {
                 this.type = m.getType();
             }
         }
-        
+
         /**
          * Gets the value of the document property.
          */
@@ -375,7 +375,7 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Gets the value of the show property.
-         *     
+         *
          */
         public String getShow() {
             return show;

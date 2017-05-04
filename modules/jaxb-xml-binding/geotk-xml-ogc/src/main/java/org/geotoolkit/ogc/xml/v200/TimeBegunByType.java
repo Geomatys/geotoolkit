@@ -45,7 +45,7 @@ public class TimeBegunByType extends BinaryTemporalOpType implements BegunBy {
     public TemporalOpsType getClone() {
         return new TimeBegunByType(this);
     }
-    
+
     @Override
     public boolean evaluate(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");

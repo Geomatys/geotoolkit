@@ -39,13 +39,13 @@ public class FXPolygonSymbolizer extends FXStyleElementController<PolygonSymboli
     private static final double LIMIT = 1000000000;
 
     @FXML private FXSymbolizerInfo uiInfo;
-    @FXML protected FXFill uiFill;    
+    @FXML protected FXFill uiFill;
     @FXML protected FXStroke uiStroke;
     @FXML protected FXDisplacement uiDisplacement;
     @FXML private Label uiOffsetLbl;
     @FXML private FXNumberExpression uiOffset;
 
-    
+
     @Override
     public Class<PolygonSymbolizer> getEditedClass() {
         return PolygonSymbolizer.class;
@@ -55,11 +55,11 @@ public class FXPolygonSymbolizer extends FXStyleElementController<PolygonSymboli
     public PolygonSymbolizer newValue() {
         return StyleConstants.DEFAULT_POLYGON_SYMBOLIZER;
     }
-    
+
     @Override
     public void initialize() {
         super.initialize();
-        
+
         uiOffset.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-LIMIT, +LIMIT, 0, 1));
 
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
@@ -84,7 +84,7 @@ public class FXPolygonSymbolizer extends FXStyleElementController<PolygonSymboli
         FXStyleElementController.configureAdvancedProperty(
                 uiOffset,uiOffsetLbl);
     }
-    
+
     @Override
     public void setLayer(MapLayer layer) {
         super.setLayer(layer);
@@ -94,7 +94,7 @@ public class FXPolygonSymbolizer extends FXStyleElementController<PolygonSymboli
         uiOffset.setLayer(layer);
         uiDisplacement.setLayer(layer);
     }
-    
+
     @Override
     protected void updateEditor(PolygonSymbolizer styleElement) {
         uiFill.valueProperty().setValue(styleElement.getFill());

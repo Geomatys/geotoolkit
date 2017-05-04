@@ -68,7 +68,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
             storageFiles.put(FIX, storageFile);
             this.fidWriter = getLocker().getFIXWriter(storageFile);
         }
-        
+
         //runnable called when closing writer, we use it to rebuild id index and quadtree
         postClose = new Runnable() {
             @Override
@@ -91,7 +91,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
                 }
             }
         };
-        
+
     }
 
     @Override
@@ -143,7 +143,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
         currentFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), currentFid);
         super.write();
     }
-    
+
     @Override
     protected void doClose() throws FeatureStoreRuntimeException {
         super.doClose();

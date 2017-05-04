@@ -27,9 +27,9 @@ import org.geotoolkit.gml.xml.v311.PointType;
 
 /**
  * <p>Java class for PointOfInterestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PointOfInterestType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.gml.xml.v311.PointType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PointOfInterestType", propOrder = {
@@ -75,11 +75,11 @@ public class PointOfInterestType extends AbstractPOIType {
 
     /**
      * Gets the value of the poiAttributeList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link POIAttributeListType }
-     *     
+     *
      */
     public POIAttributeListType getPOIAttributeList() {
         return poiAttributeList;
@@ -87,11 +87,11 @@ public class PointOfInterestType extends AbstractPOIType {
 
     /**
      * Sets the value of the poiAttributeList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link POIAttributeListType }
-     *     
+     *
      */
     public void setPOIAttributeList(POIAttributeListType value) {
         this.poiAttributeList = value;
@@ -99,11 +99,11 @@ public class PointOfInterestType extends AbstractPOIType {
 
     /**
      * Gets the value of the point property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PointType }
-     *     
+     *
      */
     public PointType getPoint() {
         return point;
@@ -111,11 +111,11 @@ public class PointOfInterestType extends AbstractPOIType {
 
     /**
      * Sets the value of the point property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PointType }
-     *     
+     *
      */
     public void setPoint(PointType value) {
         this.point = value;
@@ -123,11 +123,11 @@ public class PointOfInterestType extends AbstractPOIType {
 
     /**
      * Gets the value of the address property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AddressType }
-     *     
+     *
      */
     public AddressType getAddress() {
         return address;
@@ -135,11 +135,11 @@ public class PointOfInterestType extends AbstractPOIType {
 
     /**
      * Sets the value of the address property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AddressType }
-     *     
+     *
      */
     public void setAddress(AddressType value) {
         this.address = value;
@@ -147,11 +147,11 @@ public class PointOfInterestType extends AbstractPOIType {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getID() {
         return id;
@@ -159,11 +159,11 @@ public class PointOfInterestType extends AbstractPOIType {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setID(String value) {
         this.id = value;
@@ -171,11 +171,11 @@ public class PointOfInterestType extends AbstractPOIType {
 
     /**
      * Gets the value of the poiName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPOIName() {
         return poiName;
@@ -183,11 +183,11 @@ public class PointOfInterestType extends AbstractPOIType {
 
     /**
      * Sets the value of the poiName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPOIName(String value) {
         this.poiName = value;
@@ -195,11 +195,11 @@ public class PointOfInterestType extends AbstractPOIType {
 
     /**
      * Gets the value of the phoneNumber property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPhoneNumber() {
         return phoneNumber;
@@ -207,11 +207,11 @@ public class PointOfInterestType extends AbstractPOIType {
 
     /**
      * Sets the value of the phoneNumber property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPhoneNumber(String value) {
         this.phoneNumber = value;
@@ -219,11 +219,11 @@ public class PointOfInterestType extends AbstractPOIType {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDescription() {
         return description;
@@ -231,11 +231,11 @@ public class PointOfInterestType extends AbstractPOIType {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDescription(String value) {
         this.description = value;

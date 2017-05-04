@@ -106,8 +106,8 @@ public abstract class AbstractReferenceInputConverter<T> extends WPSDefaultConve
             method = ((InputReferenceType) source).getMethod();
         } else if (source instanceof OutputReferenceType) {
             method = "GET";
-            
-        // WPS 2.0 TODO    
+
+        // WPS 2.0 TODO
         } else {
             method = "GET";
         }

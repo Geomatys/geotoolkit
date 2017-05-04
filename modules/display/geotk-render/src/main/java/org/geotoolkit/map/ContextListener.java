@@ -32,7 +32,7 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
  * @module
  */
 public interface ContextListener extends ItemListener {
-        
+
     /**
      * Called when a change occurs in the living layer list.
      */

@@ -34,8 +34,8 @@ public class FXExternalGraphic extends FXStyleElementController<ExternalGraphic>
     protected TextField uiUrl;
     @FXML
     protected TextField uiMime;
-    
-    
+
+
     @Override
     public Class<ExternalGraphic> getEditedClass() {
         return ExternalGraphic.class;
@@ -45,19 +45,19 @@ public class FXExternalGraphic extends FXStyleElementController<ExternalGraphic>
     public ExternalGraphic newValue() {
         return getStyleFactory().externalGraphic("", "");
     }
-    
+
     @Override
     public void initialize() {
-        super.initialize();        
+        super.initialize();
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             value.set(getStyleFactory().externalGraphic(uiUrl.getText(), uiMime.getText()));
         };
-        
+
         uiUrl.textProperty().addListener(changeListener);
         uiMime.textProperty().addListener(changeListener);
     }
-    
+
     @Override
     protected void updateEditor(ExternalGraphic styleElement) {
         uiMime.setText(styleElement.getFormat());
@@ -67,5 +67,5 @@ public class FXExternalGraphic extends FXStyleElementController<ExternalGraphic>
             uiUrl.setPromptText(styleElement.getOnlineResource().toString());
         }
     }
-    
+
 }

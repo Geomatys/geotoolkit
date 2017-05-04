@@ -31,12 +31,12 @@ import javax.swing.table.DefaultTableCellRenderer;
 public class NumberAlignRenderer extends DefaultTableCellRenderer{
 
     private final NumberFormat format = new DecimalFormat("#0.000");
-    
+
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         final JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         lbl.setHorizontalAlignment(JLabel.RIGHT);
-        
+
         if(value instanceof Number){
             double val = ((Number)value).doubleValue();
             if(Double.isNaN(val)){
@@ -45,10 +45,10 @@ public class NumberAlignRenderer extends DefaultTableCellRenderer{
                 lbl.setText(format.format(val));
             }
         }
-        
+
         return lbl;
     }
-    
-    
-    
+
+
+
 }

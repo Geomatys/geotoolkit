@@ -90,7 +90,7 @@ public class CachedRule extends Cache<Rule>{
         if(filter != null){
             filter.accept(ListingPropertyVisitor.VISITOR, requieredAttributs);
         }
-        
+
         for(CachedSymbolizer cached : symbols){
             cached.getRequieredAttributsName(requieredAttributs);
         }
@@ -118,5 +118,5 @@ public class CachedRule extends Cache<Rule>{
         }
         return f;
     }
-    
+
 }

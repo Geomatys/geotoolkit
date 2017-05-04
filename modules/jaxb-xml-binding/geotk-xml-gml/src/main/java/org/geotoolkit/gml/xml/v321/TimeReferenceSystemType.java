@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TimeReferenceSystemType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeReferenceSystemType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeReferenceSystemType", propOrder = {
@@ -64,11 +64,11 @@ public class TimeReferenceSystemType
 
     /**
      * Gets the value of the domainOfValidity property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDomainOfValidity() {
         return domainOfValidity;
@@ -76,11 +76,11 @@ public class TimeReferenceSystemType
 
     /**
      * Sets the value of the domainOfValidity property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDomainOfValidity(String value) {
         this.domainOfValidity = value;

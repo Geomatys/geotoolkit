@@ -38,7 +38,7 @@ import org.opengis.style.PointPlacement;
 
 /**
  * Label placement panel
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -98,12 +98,12 @@ public class JLabelPlacementPane extends StyleElementEditor<LabelPlacement> {
         guiPlacePane.revalidate();
         guiPlacePane.repaint();
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiLine,guiPoint};
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -185,7 +185,7 @@ public class JLabelPlacementPane extends StyleElementEditor<LabelPlacement> {
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
         // TODO add your handling code here:
-        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());
             parse(create());
         }

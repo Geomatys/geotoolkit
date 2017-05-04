@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for GroundOverlayType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GroundOverlayType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,11 +75,11 @@ public class GroundOverlayType extends AbstractOverlayType {
 
     /**
      * Gets the value of the altitude property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getAltitude() {
         return altitude;
@@ -87,11 +87,11 @@ public class GroundOverlayType extends AbstractOverlayType {
 
     /**
      * Sets the value of the altitude property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setAltitude(final Double value) {
         this.altitude = value;
@@ -99,12 +99,12 @@ public class GroundOverlayType extends AbstractOverlayType {
 
     /**
      * Gets the value of the altitudeModeGroup property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link AltitudeModeEnumType }{@code >}
-     *     
+     *
      */
     public JAXBElement<?> getAltitudeModeGroup() {
         return altitudeModeGroup;
@@ -112,12 +112,12 @@ public class GroundOverlayType extends AbstractOverlayType {
 
     /**
      * Sets the value of the altitudeModeGroup property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link AltitudeModeEnumType }{@code >}
-     *     
+     *
      */
     public void setAltitudeModeGroup(final JAXBElement<?> value) {
         this.altitudeModeGroup = ((JAXBElement<?> ) value);
@@ -125,11 +125,11 @@ public class GroundOverlayType extends AbstractOverlayType {
 
     /**
      * Gets the value of the latLonBox property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LatLonBoxType }
-     *     
+     *
      */
     public LatLonBoxType getLatLonBox() {
         return latLonBox;
@@ -137,11 +137,11 @@ public class GroundOverlayType extends AbstractOverlayType {
 
     /**
      * Sets the value of the latLonBox property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LatLonBoxType }
-     *     
+     *
      */
     public void setLatLonBox(final LatLonBoxType value) {
         this.latLonBox = value;
@@ -149,25 +149,25 @@ public class GroundOverlayType extends AbstractOverlayType {
 
     /**
      * Gets the value of the groundOverlaySimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the groundOverlaySimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getGroundOverlaySimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getGroundOverlaySimpleExtensionGroup() {
         if (groundOverlaySimpleExtensionGroup == null) {
@@ -178,25 +178,25 @@ public class GroundOverlayType extends AbstractOverlayType {
 
     /**
      * Gets the value of the groundOverlayObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the groundOverlayObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getGroundOverlayObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getGroundOverlayObjectExtensionGroup() {
         if (groundOverlayObjectExtensionGroup == null) {

@@ -43,7 +43,7 @@ public class DefaultLargeMailUser implements LargeMailUser {
     }
 
     /**
-     * 
+     *
      * @param addressLines
      * @param largeMailUserNames
      * @param largeMailUserIdentifier

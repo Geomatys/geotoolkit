@@ -24,13 +24,13 @@ import org.geotoolkit.dublincore.xml.v1.elements.SimpleLiteral;
 
 
 /**
- * This object contains factory methods for each Java content interface and Java element interface 
- * generated in the org.constellation.dublincore.v1.terms package. 
- * An ObjectFactory allows you to programatically construct new instances of the Java representation for XML content. 
- * The Java representation of XML content can consist of schema derived interfaces and classes representing the binding of schema 
- * type definitions, element declarations and model groups.  
+ * This object contains factory methods for each Java content interface and Java element interface
+ * generated in the org.constellation.dublincore.v1.terms package.
+ * An ObjectFactory allows you to programatically construct new instances of the Java representation for XML content.
+ * The Java representation of XML content can consist of schema derived interfaces and classes representing the binding of schema
+ * type definitions, element declarations and model groups.
  * Factory methods for each of these are provided in this class.
- * 
+ *
  * @module
  */
 @XmlRegistry
@@ -72,14 +72,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.constellation.dublincore.v1.terms
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "isPartOf", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "relation")
     public JAXBElement<SimpleLiteral> createIsPartOf(final SimpleLiteral value) {
@@ -88,7 +88,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "replaces", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "relation")
     public JAXBElement<SimpleLiteral> createReplaces(final SimpleLiteral value) {
@@ -97,7 +97,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "issued", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "date")
     public JAXBElement<SimpleLiteral> createIssued(final SimpleLiteral value) {
@@ -106,7 +106,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "alternative", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "title")
     public JAXBElement<SimpleLiteral> createAlternative(final SimpleLiteral value) {
@@ -115,7 +115,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "modified", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "date")
     public JAXBElement<SimpleLiteral> createModified(final SimpleLiteral value) {
@@ -124,7 +124,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "requires", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "relation")
     public JAXBElement<SimpleLiteral> createRequires(final SimpleLiteral value) {
@@ -133,7 +133,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "hasFormat", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "relation")
     public JAXBElement<SimpleLiteral> createHasFormat(final SimpleLiteral value) {
@@ -142,7 +142,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "educationLevel", substitutionHeadNamespace = "http://www.purl.org/dc/terms/", substitutionHeadName = "audience")
     public JAXBElement<SimpleLiteral> createEducationLevel(final SimpleLiteral value) {
@@ -151,7 +151,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "isReplacedBy", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "relation")
     public JAXBElement<SimpleLiteral> createIsReplacedBy(final SimpleLiteral value) {
@@ -160,7 +160,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "accessRights", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "rights")
     public JAXBElement<SimpleLiteral> createAccessRights(final SimpleLiteral value) {
@@ -169,7 +169,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "temporal", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "coverage")
     public JAXBElement<SimpleLiteral> createTemporal(final SimpleLiteral value) {
@@ -178,7 +178,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "isVersionOf", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "relation")
     public JAXBElement<SimpleLiteral> createIsVersionOf(final SimpleLiteral value) {
@@ -187,7 +187,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "isReferencedBy", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "relation")
     public JAXBElement<SimpleLiteral> createIsReferencedBy(final SimpleLiteral value) {
@@ -196,7 +196,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "abstract", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "description")
     public JAXBElement<SimpleLiteral> createAbstract(final SimpleLiteral value) {
@@ -205,7 +205,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "audience", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "DC-element")
     public JAXBElement<SimpleLiteral> createAudience(final SimpleLiteral value) {
@@ -214,7 +214,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "hasPart", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "relation")
     public JAXBElement<SimpleLiteral> createHasPart(final SimpleLiteral value) {
@@ -223,7 +223,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "extent", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "format")
     public JAXBElement<SimpleLiteral> createExtent(final SimpleLiteral value) {
@@ -232,7 +232,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "bibliographicCitation", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "identifier")
     public JAXBElement<SimpleLiteral> createBibliographicCitation(final SimpleLiteral value) {
@@ -241,7 +241,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "valid", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "date")
     public JAXBElement<SimpleLiteral> createValid(final SimpleLiteral value) {
@@ -250,7 +250,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "isFormatOf", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "relation")
     public JAXBElement<SimpleLiteral> createIsFormatOf(final SimpleLiteral value) {
@@ -259,7 +259,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "dateAccepted", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "date")
     public JAXBElement<SimpleLiteral> createDateAccepted(final SimpleLiteral value) {
@@ -268,7 +268,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "mediator", substitutionHeadNamespace = "http://www.purl.org/dc/terms/", substitutionHeadName = "audience")
     public JAXBElement<SimpleLiteral> createMediator(final SimpleLiteral value) {
@@ -277,7 +277,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "hasVersion", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "relation")
     public JAXBElement<SimpleLiteral> createHasVersion(final SimpleLiteral value) {
@@ -286,7 +286,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "available", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "date")
     public JAXBElement<SimpleLiteral> createAvailable(final SimpleLiteral value) {
@@ -295,7 +295,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "isRequiredBy", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "relation")
     public JAXBElement<SimpleLiteral> createIsRequiredBy(final SimpleLiteral value) {
@@ -304,7 +304,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "references", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "relation")
     public JAXBElement<SimpleLiteral> createReferences(final SimpleLiteral value) {
@@ -313,7 +313,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "created", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "date")
     public JAXBElement<SimpleLiteral> createCreated(final SimpleLiteral value) {
@@ -322,7 +322,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "dateCopyrighted", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "date")
     public JAXBElement<SimpleLiteral> createDateCopyrighted(final SimpleLiteral value) {
@@ -331,7 +331,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "spatial", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "coverage")
     public JAXBElement<SimpleLiteral> createSpatial(final SimpleLiteral value) {
@@ -340,7 +340,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "dateSubmitted", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "date")
     public JAXBElement<SimpleLiteral> createDateSubmitted(final SimpleLiteral value) {
@@ -349,7 +349,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "medium", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "format")
     public JAXBElement<SimpleLiteral> createMedium(final SimpleLiteral value) {
@@ -358,7 +358,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "conformsTo", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "relation")
     public JAXBElement<SimpleLiteral> createConformsTo(final SimpleLiteral value) {
@@ -367,7 +367,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.purl.org/dc/terms/", name = "tableOfContents", substitutionHeadNamespace = "http://www.purl.org/dc/elements/1.1/", substitutionHeadName = "description")
     public JAXBElement<SimpleLiteral> createTableOfContents(final SimpleLiteral value) {

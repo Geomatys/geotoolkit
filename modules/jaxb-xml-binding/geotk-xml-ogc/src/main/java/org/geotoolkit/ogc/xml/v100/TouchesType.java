@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Touches")
 public class TouchesType extends BinarySpatialOpType {
-    
+
     public TouchesType() {
-        
+
     }
-    
+
     public TouchesType(final TouchesType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new TouchesType(this);

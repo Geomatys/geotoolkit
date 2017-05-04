@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
- * 
+ *
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -51,7 +51,7 @@ public class Attribution {
      */
     Attribution() {
     }
-    
+
     /**
      * Build a new Attribution.
      */
@@ -60,7 +60,7 @@ public class Attribution {
         this.onlineResource = onlineResource;
         this.logoURL        = logoURL;
     }
-    
+
     /**
      * Build a new Attribution.
      */

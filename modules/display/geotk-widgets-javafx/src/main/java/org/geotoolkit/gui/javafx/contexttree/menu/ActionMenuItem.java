@@ -34,13 +34,13 @@ import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 public class ActionMenuItem extends TreeMenuItem{
 
     protected List<? extends TreeItem> items;
-    
+
     public ActionMenuItem(String title, Image icon) {
         super(new MenuItem(title));
         if(icon!=null){
             menuItem.setGraphic(new ImageView(icon));
         }
-        
+
         menuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -54,9 +54,9 @@ public class ActionMenuItem extends TreeMenuItem{
         items = new ArrayList<>(selectedItems);
         return super.init(selectedItems);
     }
-    
+
     protected void handle(ActionEvent event){
-        
+
     }
-    
+
 }

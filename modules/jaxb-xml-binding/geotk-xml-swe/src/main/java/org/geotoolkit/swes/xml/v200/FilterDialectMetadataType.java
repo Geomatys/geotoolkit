@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for FilterDialectMetadataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FilterDialectMetadataType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FilterDialectMetadataType", propOrder = {
@@ -63,11 +63,11 @@ public class FilterDialectMetadataType extends AbstractSWESType {
 
     /**
      * Gets the value of the topicExpressionDialect property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getTopicExpressionDialect() {
         if (topicExpressionDialect == null) {
@@ -78,11 +78,11 @@ public class FilterDialectMetadataType extends AbstractSWESType {
 
     /**
      * Gets the value of the messageContentDialect property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getMessageContentDialect() {
         if (messageContentDialect == null) {
@@ -93,10 +93,10 @@ public class FilterDialectMetadataType extends AbstractSWESType {
 
     /**
      * Gets the value of the producerPropertiesDialect property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getProducerPropertiesDialect() {
         if (producerPropertiesDialect == null) {

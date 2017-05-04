@@ -31,9 +31,9 @@ public final class WritableChannelAccessBasic3DTest extends WritableChannelAcces
 
     /**
      * Create a BasicRTree Test suite in a Cartesian 3D space stored into byte array.
-     * 
+     *
      * @throws StoreIndexException
-     * @throws IOException 
+     * @throws IOException
      */
     public WritableChannelAccessBasic3DTest() throws IOException, StoreIndexException {
         super(PredefinedCRS.CARTESIAN_3D);

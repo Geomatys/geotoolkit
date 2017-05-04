@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * ADT for a DirectoryRequest
- * 
+ *
  * <p>Java class for DirectoryRequestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DirectoryRequestType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DirectoryRequestType", propOrder = {
@@ -71,11 +71,11 @@ public class DirectoryRequestType extends AbstractRequestParametersType {
 
     /**
      * Gets the value of the poiLocation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link POILocationType }
-     *     
+     *
      */
     public POILocationType getPOILocation() {
         return poiLocation;
@@ -83,11 +83,11 @@ public class DirectoryRequestType extends AbstractRequestParametersType {
 
     /**
      * Sets the value of the poiLocation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link POILocationType }
-     *     
+     *
      */
     public void setPOILocation(POILocationType value) {
         this.poiLocation = value;
@@ -95,12 +95,12 @@ public class DirectoryRequestType extends AbstractRequestParametersType {
 
     /**
      * Gets the value of the poiSelectionCriteria property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractPOISelectionCriteriaType }{@code >}
      *     {@link JAXBElement }{@code <}{@link POIProperties }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractPOISelectionCriteriaType> getPOISelectionCriteria() {
         return poiSelectionCriteria;
@@ -108,12 +108,12 @@ public class DirectoryRequestType extends AbstractRequestParametersType {
 
     /**
      * Sets the value of the poiSelectionCriteria property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractPOISelectionCriteriaType }{@code >}
      *     {@link JAXBElement }{@code <}{@link POIProperties }{@code >}
-     *     
+     *
      */
     public void setPOISelectionCriteria(JAXBElement<? extends AbstractPOISelectionCriteriaType> value) {
         this.poiSelectionCriteria = ((JAXBElement<? extends AbstractPOISelectionCriteriaType> ) value);
@@ -121,11 +121,11 @@ public class DirectoryRequestType extends AbstractRequestParametersType {
 
     /**
      * Gets the value of the sortCriteria property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSortCriteria() {
         return sortCriteria;
@@ -133,11 +133,11 @@ public class DirectoryRequestType extends AbstractRequestParametersType {
 
     /**
      * Sets the value of the sortCriteria property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSortCriteria(String value) {
         this.sortCriteria = value;
@@ -145,11 +145,11 @@ public class DirectoryRequestType extends AbstractRequestParametersType {
 
     /**
      * Gets the value of the sortDirection property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SortDirectionType }
-     *     
+     *
      */
     public SortDirectionType getSortDirection() {
         if (sortDirection == null) {
@@ -161,11 +161,11 @@ public class DirectoryRequestType extends AbstractRequestParametersType {
 
     /**
      * Sets the value of the sortDirection property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SortDirectionType }
-     *     
+     *
      */
     public void setSortDirection(SortDirectionType value) {
         this.sortDirection = value;
@@ -173,11 +173,11 @@ public class DirectoryRequestType extends AbstractRequestParametersType {
 
     /**
      * Gets the value of the distanceUnit property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DistanceUnitType }
-     *     
+     *
      */
     public DistanceUnitType getDistanceUnit() {
         if (distanceUnit == null) {
@@ -189,11 +189,11 @@ public class DirectoryRequestType extends AbstractRequestParametersType {
 
     /**
      * Sets the value of the distanceUnit property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DistanceUnitType }
-     *     
+     *
      */
     public void setDistanceUnit(DistanceUnitType value) {
         this.distanceUnit = value;

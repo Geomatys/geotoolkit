@@ -33,25 +33,25 @@ public class ChainShapes implements AnchorShape{
     public static final Shape SHP_ANCHOR_INPUT;
     public static final Shape SHP_ANCHOR_OUTPUT;
     public static final AffineTransform trs = new AffineTransform();
-    
-    
+
+
     static{
         SHP_ANCHOR_INPUT = new java.awt.geom.Ellipse2D.Double(-0.5, -0.5, 1, 1);
-        SHP_ANCHOR_OUTPUT = new java.awt.geom.Ellipse2D.Double(-0.5, -0.5, 1, 1);        
+        SHP_ANCHOR_OUTPUT = new java.awt.geom.Ellipse2D.Double(-0.5, -0.5, 1, 1);
         trs.scale(SIZE, SIZE);
     }
-    
+
     public static final AnchorShape ANCHOR_INPUT = new ChainShapes(SHP_ANCHOR_INPUT,-0.1);
     public static final AnchorShape ANCHOR_OUTPUT = new ChainShapes(SHP_ANCHOR_OUTPUT,+0.1);
-    
+
     private final Shape shape;
     private final double tx;
-    
+
     private ChainShapes(Shape shape, double tx){
         this.shape = shape;
         this.tx=tx;
     }
-    
+
     @Override
     public boolean isLineOriented() {
         return false;
@@ -70,19 +70,19 @@ public class ChainShapes implements AnchorShape{
     @Override
     public void paint(Graphics2D g, boolean bln) {
         g = (Graphics2D) g.create();
-                
+
         AffineTransform t = new AffineTransform(trs);
         t.translate(tx, 0);
-        
+
         final Shape shp = t.createTransformedShape(shape);
-        
+
         g.setPaint(Color.DARK_GRAY.brighter());
         g.fill(shp);
-        
+
         g.setStroke(new BasicStroke(1));
         g.setPaint(Color.BLACK);
         g.draw(shp);
-        
+
     }
-    
+
 }

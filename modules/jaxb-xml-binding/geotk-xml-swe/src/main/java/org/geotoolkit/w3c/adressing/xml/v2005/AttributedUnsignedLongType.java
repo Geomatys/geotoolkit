@@ -31,9 +31,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for AttributedUnsignedLongType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AttributedUnsignedLongType">
  *   &lt;simpleContent>
@@ -43,8 +43,8 @@ import javax.xml.namespace.QName;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AttributedUnsignedLongType", propOrder = {
@@ -60,11 +60,11 @@ public class AttributedUnsignedLongType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getValue() {
         return value;
@@ -72,11 +72,11 @@ public class AttributedUnsignedLongType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setValue(BigInteger value) {
         this.value = value;
@@ -84,7 +84,7 @@ public class AttributedUnsignedLongType {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * @return
      *     always non-null
      */

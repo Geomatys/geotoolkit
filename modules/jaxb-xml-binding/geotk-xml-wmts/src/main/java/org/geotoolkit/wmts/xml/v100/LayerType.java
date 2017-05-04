@@ -29,9 +29,9 @@ import org.geotoolkit.ows.xml.v110.DatasetDescriptionSummaryBaseType;
 
 /**
  * <p>Java class for LayerType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LayerType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.ows.xml.v110.DatasetDescriptionSummaryBaseType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LayerType", propOrder = {
@@ -151,7 +151,7 @@ public class LayerType extends DatasetDescriptionSummaryBaseType {
 
     /**
      * Reference to a tileMatrixSet and limits Gets the value of the tileMatrixSetLink property.
-     * 
+     *
      */
     public List<TileMatrixSetLink> getTileMatrixSetLink() {
         if (tileMatrixSetLink == null) {
@@ -159,7 +159,7 @@ public class LayerType extends DatasetDescriptionSummaryBaseType {
         }
         return this.tileMatrixSetLink;
     }
-    
+
     public void addTileMatrixSetLink(final TileMatrixSetLink tmsl) {
         if (tmsl != null) {
             if (tileMatrixSetLink == null) {

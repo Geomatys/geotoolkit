@@ -27,9 +27,9 @@ import org.geotoolkit.sml.xml.AbstractRuleLanguage;
 
 /**
  * <p>Java class for ruleLanguageType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ruleLanguageType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import org.geotoolkit.sml.xml.AbstractRuleLanguage;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -47,7 +47,7 @@ public class CreatePointTool extends AbstractEditionTool{
                 GeotkFX.getI18NString(CreatePointTool.class, "abstract"),
                 GeotkFX.ICON_ADD);
         }
-    
+
         @Override
         public boolean canHandle(Object candidate) {
             if(candidate instanceof FeatureMapLayer){

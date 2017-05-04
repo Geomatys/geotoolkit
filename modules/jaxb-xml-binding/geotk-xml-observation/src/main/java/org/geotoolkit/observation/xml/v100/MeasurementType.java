@@ -52,7 +52,7 @@ public class MeasurementType extends ObservationType implements Measurement {
      * constructeur vide utilisé par JAXB.
      */
     protected MeasurementType() {}
-    
+
     /**
      * Crée une nouvelle mesure.
      *
@@ -81,7 +81,7 @@ public class MeasurementType extends ObservationType implements Measurement {
         super(name, definition, station, observedProperty, procedure, quality, result,
                 samplingTime, observationMetadata, procedureTime, procedureParameter);
     }
-    
+
     /**
      * Crée une nouvelle mesure  reduite adapté a BRGM.
      *
@@ -100,9 +100,9 @@ public class MeasurementType extends ObservationType implements Measurement {
                            final AbstractTimeGeometricPrimitiveType  samplingTime) {
         super(name, definition, station, observedProperty, procedure, result,
                 samplingTime);
-        
+
     }
-    
+
     public MeasurementType(final String              name,
                            final String              definition,
                            final FeaturePropertyType station,
@@ -112,14 +112,14 @@ public class MeasurementType extends ObservationType implements Measurement {
                            final AbstractTimeGeometricPrimitiveType  samplingTime) {
         super(name, definition, station, observedProperty, procedure, result,
                 samplingTime);
-        
+
     }
-    
+
     public MeasurementType(final MeasurementType meas) {
         super(meas);
-        
+
     }
-    
+
     @Override
     public Measure getResult() {
         final Object result = super.getResult();

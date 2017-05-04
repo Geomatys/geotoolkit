@@ -39,13 +39,13 @@ public interface Update extends TransactionElement{
     Filter getFilter();
 
     void setFilter(Filter filter);
-    
+
     CoordinateReferenceSystem getCoordinateReferenceSystem();
-    
+
     void setCoordinateReferenceSystem(CoordinateReferenceSystem crs);
-    
+
     String getInputFormat();
-    
+
     void setInputFormat(String format);
 
     /**

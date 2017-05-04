@@ -43,7 +43,7 @@ public class DefaultKml implements Kml {
     }
 
     /**
-     * 
+     *
      * @param networkLinkControl
      * @param abstractFeature
      * @param kmlSimpleExtensions

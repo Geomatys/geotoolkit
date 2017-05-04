@@ -27,12 +27,12 @@ import org.geotoolkit.wps.xml.LiteralDataDescription;
 
 
 /**
- * Description of a literal output (or input). 
- * 
+ * Description of a literal output (or input).
+ *
  * <p>Java class for LiteralOutputType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LiteralOutputType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.wps.xml.LiteralDataDescription;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,33 +65,33 @@ public class LiteralOutputType implements LiteralDataDescription {
     protected SupportedUOMsType uoMs;
 
     public LiteralOutputType() {
-        
+
     }
-    
+
     public LiteralOutputType(DomainMetadataType dataType, SupportedUOMsType uoMs) {
         this.dataType = dataType;
         this.uoMs = uoMs;
     }
-    
+
     /**
-     * Data type of this set of values (e.g. integer, real, etc). This data type metadata should be included for each quantity whose data type is not a string. 
-     * 
+     * Data type of this set of values (e.g. integer, real, etc). This data type metadata should be included for each quantity whose data type is not a string.
+     *
      * @return
      *     possible object is
      *     {@link DomainMetadataType }
-     *     
+     *
      */
     public DomainMetadataType getDataType() {
         return dataType;
     }
 
     /**
-     * Data type of this set of values (e.g. integer, real, etc). This data type metadata should be included for each quantity whose data type is not a string. 
-     * 
+     * Data type of this set of values (e.g. integer, real, etc). This data type metadata should be included for each quantity whose data type is not a string.
+     *
      * @param value
      *     allowed object is
      *     {@link DomainMetadataType }
-     *     
+     *
      */
     public void setDataType(final DomainMetadataType value) {
         this.dataType = value;
@@ -99,11 +99,11 @@ public class LiteralOutputType implements LiteralDataDescription {
 
     /**
      * Gets the value of the uoMs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SupportedUOMsType }
-     *     
+     *
      */
     public SupportedUOMsType getUOMs() {
         return uoMs;
@@ -111,16 +111,16 @@ public class LiteralOutputType implements LiteralDataDescription {
 
     /**
      * Sets the value of the uoMs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SupportedUOMsType }
-     *     
+     *
      */
     public void setUOMs(final SupportedUOMsType value) {
         this.uoMs = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
@@ -132,7 +132,7 @@ public class LiteralOutputType implements LiteralDataDescription {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

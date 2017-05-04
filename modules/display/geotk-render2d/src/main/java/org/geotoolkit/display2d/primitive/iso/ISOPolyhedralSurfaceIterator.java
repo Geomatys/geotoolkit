@@ -89,7 +89,7 @@ public final  class ISOPolyhedralSurfaceIterator extends ISOGeometryIterator<Pol
     @Override
     public int currentSegment(final double[] coords) {
         if(empty) return 0;
-        
+
         // first make sure we're not at the last element, this prevents us from exceptions
         // in the case where coords.size() == 0
         if (currentCoord == this.coordinate.size()) {
@@ -108,7 +108,7 @@ public final  class ISOPolyhedralSurfaceIterator extends ISOGeometryIterator<Pol
             return SEG_LINETO;
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -147,5 +147,5 @@ public final  class ISOPolyhedralSurfaceIterator extends ISOGeometryIterator<Pol
             currentCoord++;
         }
     }
-    
+
 }

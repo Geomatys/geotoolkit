@@ -32,9 +32,9 @@ import org.geotoolkit.se.xml.vext.RangeType;
 
 /**
  * <p>Java class for RasterSymbolizerType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RasterSymbolizerType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.geotoolkit.se.xml.vext.RangeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,11 +73,11 @@ public class PatternSymbolizerType extends SymbolizerType {
 
     /**
      * Gets the value of the channelSelection property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ChannelSelectionType }
-     *     
+     *
      */
     public ParameterValueType getChannel() {
         return channel;
@@ -85,11 +85,11 @@ public class PatternSymbolizerType extends SymbolizerType {
 
     /**
      * Sets the value of the channelSelection property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ChannelSelectionType }
-     *     
+     *
      */
     public void setChannel(final ParameterValueType value) {
         this.channel = value;

@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AdditionalParametersType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AdditionalParametersType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AdditionalParametersType", propOrder = {
@@ -55,7 +55,7 @@ public class AdditionalParametersType extends AdditionalParametersBaseType {
 
     /**
      * Gets the value of the additionalParameter property.
-     * 
+     *
      */
     public List<AdditionalParameter> getAdditionalParameter() {
         if (additionalParameter == null) {

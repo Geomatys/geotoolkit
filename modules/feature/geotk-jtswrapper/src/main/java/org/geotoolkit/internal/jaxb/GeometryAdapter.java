@@ -27,7 +27,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSRing
 public class GeometryAdapter<T> extends XmlAdapter<GeometryAdapter, Geometry> {
 
     private static ObjectFactory FACTORY = new ObjectFactory();
-    
+
     @XmlElementRef(name="Point", namespace = "http://www.opengis.net/gml")
     private JAXBElement<JTSPoint> point;
 
@@ -150,7 +150,7 @@ public class GeometryAdapter<T> extends XmlAdapter<GeometryAdapter, Geometry> {
 
         } else if (v != null && v.ring != null) {
             return (Geometry) v.ring.getValue();
-        
+
         } else if (v != null && v.multiPrimitive != null) {
             return (Geometry) v.multiPrimitive.getValue();
         }
@@ -203,7 +203,7 @@ public class GeometryAdapter<T> extends XmlAdapter<GeometryAdapter, Geometry> {
 
         } else if (ring != null) {
             sb.append(ring.getValue());
-        
+
         } else if (multiPrimitive != null) {
             sb.append(multiPrimitive.getValue());
 

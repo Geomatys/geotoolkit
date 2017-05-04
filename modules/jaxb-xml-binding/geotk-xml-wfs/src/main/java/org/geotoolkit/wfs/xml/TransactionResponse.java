@@ -24,6 +24,6 @@ import org.opengis.filter.identity.FeatureId;
  * @author Guilhem Legal (Geomatys)
  */
 public interface TransactionResponse {
- 
+
     List<FeatureId> getInsertedFID();
 }

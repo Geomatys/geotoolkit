@@ -25,12 +25,12 @@ import org.opengis.style.GraphicFill;
  * @module
  */
 public class JGraphicFillPane extends JGraphicPane{
-    
+
     @Override
     public GraphicFill create() {
         return getStyleFactory().graphicFill(super.create());
     }
 
-    
-    
+
+
 }

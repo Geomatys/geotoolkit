@@ -31,11 +31,11 @@ import javax.xml.bind.annotation.XmlValue;
  * Human-readable name of the list of values provided
  *             by the referenced document. Can be empty string when this list has
  *             no name.
- * 
+ *
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;simpleContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -66,14 +66,14 @@ public class ValuesReference implements org.geotoolkit.ows.xml.ValueReference {
      */
     ValuesReference(){
     }
-    
+
     public ValuesReference(final ValuesReference that){
         if (that != null) {
             this.reference = that.reference;
             this.value     = that.value;
         }
     }
-    
+
     /**
      * Build a new Values reference.
      */
@@ -81,14 +81,14 @@ public class ValuesReference implements org.geotoolkit.ows.xml.ValueReference {
         this.value     = value;
         this.reference = reference;
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getValue() {
@@ -97,11 +97,11 @@ public class ValuesReference implements org.geotoolkit.ows.xml.ValueReference {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setValue(String value) {
@@ -110,11 +110,11 @@ public class ValuesReference implements org.geotoolkit.ows.xml.ValueReference {
 
     /**
      * Gets the value of the reference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getReference() {
@@ -123,17 +123,17 @@ public class ValuesReference implements org.geotoolkit.ows.xml.ValueReference {
 
     /**
      * Sets the value of the reference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setReference(String value) {
         this.reference = value;
     }
-    
+
      @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
@@ -145,7 +145,7 @@ public class ValuesReference implements org.geotoolkit.ows.xml.ValueReference {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

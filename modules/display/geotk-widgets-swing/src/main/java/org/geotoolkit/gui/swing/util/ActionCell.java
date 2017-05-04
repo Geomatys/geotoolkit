@@ -31,17 +31,17 @@ import javax.swing.table.TableCellEditor;
 
 /**
  * Convenient class to handle actions in table cells.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class ActionCell {
-    
+
     protected ActionCell(){}
-    
+
     public static class Renderer extends DefaultTableCellRenderer{
 
         private final Icon icon;
-        
+
         public Renderer(final Icon icon) {
             this.icon = icon;
         }
@@ -53,12 +53,12 @@ public class ActionCell {
             lbl.setIcon(getIcon(value));
             lbl.setHorizontalTextPosition(SwingConstants.CENTER);
             lbl.setHorizontalAlignment(SwingConstants.CENTER);
-            
+
             final Color bg = getBackgroundColor(value);
             if(!isSelected && bg != null){
                 lbl.setBackground(bg);
             }
-            
+
             final Color fg = getForegroundColor(value);
             if(!isSelected && fg != null){
                 lbl.setForeground(fg);
@@ -69,19 +69,19 @@ public class ActionCell {
 
             return lbl;
         }
-        
+
         public Icon getIcon(Object value){
             return icon;
         }
-        
+
         public String getText(Object value){
             return "";
         }
-        
+
         public Color getBackgroundColor(Object value){
             return null;
         }
-        
+
         public Color getForegroundColor(Object value){
             return null;
         }
@@ -91,23 +91,23 @@ public class ActionCell {
         }
 
     }
-    
+
     public static abstract class Editor extends AbstractCellEditor implements TableCellEditor, ActionListener{
 
         private Icon icon;
         private final JButton button;
         private Object value;
-        
+
         public Editor(final Icon icon) {
             this.icon = icon;
             button = new JButton(icon);
             button.addActionListener(this);
-            button.setText("");         
+            button.setText("");
             button.setIconTextGap(0);
             button.setHorizontalTextPosition(SwingConstants.CENTER);
-            button.setHorizontalAlignment(SwingConstants.CENTER);  
+            button.setHorizontalAlignment(SwingConstants.CENTER);
         }
-        
+
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             this.value = value;
@@ -115,7 +115,7 @@ public class ActionCell {
             button.setText(getText(value));
             return button;
         }
-        
+
         @Override
         public Object getCellEditorValue() {
             return value;
@@ -131,19 +131,19 @@ public class ActionCell {
                     actionPerformed(e, value);
                 }
             }.start();
-            
+
         }
 
         public Icon getIcon(Object value){
             return icon;
         }
-        
+
         public String getText(Object value){
             return "";
         }
-        
+
         public abstract void actionPerformed(ActionEvent e, Object value);
-        
+
     }
-    
+
 }

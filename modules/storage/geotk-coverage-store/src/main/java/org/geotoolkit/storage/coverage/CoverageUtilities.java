@@ -306,7 +306,7 @@ public final class CoverageUtilities {
             final double v = (d == maxHorizOrdinate) ? envelope.getMaximum(d) : envelope.getMinimum(d);
             newUpperleft.setOrdinate(d, v);
         }
-        
+
         //generate each mosaic
         for (final double scale : scales) {
             final double gridWidth  = envelope.getSpan(0) / (scale*tileSize.width);

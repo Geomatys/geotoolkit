@@ -30,19 +30,19 @@ import org.opengis.filter.identity.FeatureId;
 
 
 /**
- * 
+ *
  *             The WFS_TransactionResponseType defines the format of
- *             the XML document that a Web Feature Service generates 
- *             in response to a Transaction request.  The response 
- *             includes the completion status of the transaction 
+ *             the XML document that a Web Feature Service generates
+ *             in response to a Transaction request.  The response
+ *             includes the completion status of the transaction
  *             and the feature identifiers of any newly created
  *             feature instances.
- *          
- * 
+ *
+ *
  * <p>Java class for WFS_TransactionResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="WFS_TransactionResponseType">
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import org.opengis.filter.identity.FeatureId;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WFS_TransactionResponseType", propOrder = {
@@ -82,10 +82,10 @@ public class WFSTransactionResponseType implements WFSResponse, TransactionRespo
         this.insertResult      = insertResults;
         this.version           = version;
     }
-    
+
     /**
      * Gets the value of the insertResult property.
-     * 
+     *
      */
     public List<InsertResultType> getInsertResult() {
         if (insertResult == null) {
@@ -96,11 +96,11 @@ public class WFSTransactionResponseType implements WFSResponse, TransactionRespo
 
     /**
      * Gets the value of the transactionResult property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TransactionResultType }
-     *     
+     *
      */
     public TransactionResultType getTransactionResult() {
         return transactionResult;
@@ -108,11 +108,11 @@ public class WFSTransactionResponseType implements WFSResponse, TransactionRespo
 
     /**
      * Sets the value of the transactionResult property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TransactionResultType }
-     *     
+     *
      */
     public void setTransactionResult(TransactionResultType value) {
         this.transactionResult = value;
@@ -120,11 +120,11 @@ public class WFSTransactionResponseType implements WFSResponse, TransactionRespo
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         if (version == null) {
@@ -136,11 +136,11 @@ public class WFSTransactionResponseType implements WFSResponse, TransactionRespo
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(String value) {
         this.version = value;

@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -31,9 +31,9 @@ import org.opengis.feature.catalog.util.MultiplicityRange;
  * @author Guilhem Legal
  */
 public class MultiplicityRangeAdapter extends XmlAdapter<MultiplicityRangeAdapter, MultiplicityRange> {
-    
+
     private MultiplicityRange multiplicityRange;
-    
+
     /**
      * Empty constructor for JAXB only.
      */
@@ -106,7 +106,7 @@ public class MultiplicityRangeAdapter extends XmlAdapter<MultiplicityRangeAdapte
         return new MultiplicityRangeAdapter(value);
     }
 
-    
-    
+
+
 
 }

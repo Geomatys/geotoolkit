@@ -1,10 +1,10 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
- *    
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -50,7 +50,7 @@ import org.opengis.filter.identity.Identifier;
  * By default all feature ids are valid. DataStores that want non valid fids to be wiped out should
  * set a {@link FIDValidator} through the {@link #setFIDValidator(FIDValidator)} method.
  * </p>
- * 
+ *
  * @author Andrea Aime - OpenGeo
  * @author Gabriel Roldan (OpenGeo)
  * @module
@@ -82,7 +82,7 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
     /**
      * A FID validator that matches the fids with a given regular expression to determine the fid's
      * validity.
-     * 
+     *
      * @author Gabriel Roldan (OpenGeo)
      */
     public static class RegExFIDValidator implements FIDValidator {
@@ -133,30 +133,30 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
         for (Filter child : children) {
             final Filter cloned = (Filter) child.accept(this, extraData);
 
-            // if any of the child filters is exclude, 
+            // if any of the child filters is exclude,
             // the whole chain of AND is equivalent to EXCLUDE
             if(cloned == Filter.EXCLUDE)
                 return Filter.EXCLUDE;
-            
+
             // these can be skipped
             if(cloned == Filter.INCLUDE)
                 continue;
 
             newChildren.add(cloned);
         }
-        
+
         // we might end up with an empty list
         if(newChildren.size() == 0)
             return Filter.INCLUDE;
-        
+
         // remove the logic we have only one filter
         if(newChildren.size() == 1)
             return newChildren.get(0);
-        
+
         // else return the cloned and simplified up list
         return getFactory(extraData).and(newChildren);
     }
-    
+
     @Override
     public Object visit(final Or filter, final Object extraData) {
      // scan, clone and simplify the children
@@ -165,19 +165,19 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
 
         Set<Identifier> mergedIds = null;
         Id regroupedIds = null;
-        
+
         for (Filter child : children) {
             final Filter cloned = (Filter) child.accept(this, extraData);
 
-            // if any of the child filters is include, 
+            // if any of the child filters is include,
             // the whole chain of OR is equivalent to INCLUDE
             if(cloned == Filter.INCLUDE)
                 return Filter.INCLUDE;
-            
+
             // these can be skipped
             if(cloned == Filter.EXCLUDE)
                 continue;
-            
+
             if(cloned instanceof Id){
                 //merge id filters
                 if(regroupedIds == null && mergedIds == null){
@@ -193,32 +193,32 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
                 newChildren.add(cloned);
             }
         }
-        
+
         if(regroupedIds != null){
             newChildren.add(regroupedIds);
         }else if(mergedIds != null){
             newChildren.add(ff.id(mergedIds));
         }
-        
-        
+
+
         // we might end up with an empty list
         if(newChildren.size() == 0)
             return Filter.EXCLUDE;
-        
+
         // remove the logic we have only one filter
         if(newChildren.size() == 1)
             return newChildren.get(0);
-        
+
         // else return the cloned and simplified up list
         return getFactory(extraData).or(newChildren);
     }
-    
+
     /**
      * Uses the current {@link FIDValidator} to wipe out illegal feature ids from the returned
      * filters.
-     * 
+     *
      * @return a filter containing only valid fids as per the current {@link FIDValidator}, may be
-     *         {@link Filter#EXCLUDE} if none matches or the filter is already empty 
+     *         {@link Filter#EXCLUDE} if none matches or the filter is already empty
      */
     @Override
     public Object visit(final Id filter, final Object extraData) {
@@ -249,7 +249,7 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
 
     @Override
     public Object visit(PropertyIsEqualTo filter, Object extraData) {
-        if(   filter.getExpression1() instanceof Literal 
+        if(   filter.getExpression1() instanceof Literal
            && filter.getExpression2() instanceof Literal){
             //we can preevaluate this one
             return (filter.evaluate(null)) ? Filter.INCLUDE : Filter.EXCLUDE;
@@ -257,5 +257,5 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
             return super.visit(filter, extraData);
         }
     }
-    
+
 }

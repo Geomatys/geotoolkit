@@ -35,7 +35,7 @@ import org.opengis.temporal.TemporalPrimitive;
  * @author Guilhem Legal (Geomatys)
  */
 public interface ObservationReader {
-    
+
     /**
      * Return the list of offering names.
      *
@@ -44,13 +44,13 @@ public interface ObservationReader {
      * @throws org.apache.sis.storage.DataStoreException
      */
     Collection<String> getOfferingNames(final String version) throws DataStoreException;
-    
+
     /**
      * Return the list of offering names filtering on the procedure type.
      *
      * @param version SOS version of the request
      * @param sensorType A filter on the type of sensor or @{code null}
-     * 
+     *
      * @return A list of offering name.
      * @throws org.apache.sis.storage.DataStoreException
      */
@@ -65,7 +65,7 @@ public interface ObservationReader {
      * @throws org.apache.sis.storage.DataStoreException
      */
     ObservationOffering getObservationOffering(final String offeringName, final String version) throws DataStoreException;
-    
+
     /**
      * Return The offerings for the specified names.
      *
@@ -78,16 +78,16 @@ public interface ObservationReader {
 
     /**
      * Return a list of all the offerings.
-     * 
+     *
      * @param version SOS version of the request
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
     List<ObservationOffering> getObservationOfferings(final String version) throws DataStoreException;
-    
+
     /**
      * Return a list of all the offerings filtering on the procedure type.
-     * 
+     *
      * @param version SOS version of the request
      * @param sensorType A filter on the type of sensor or @{code null}
      * @return
@@ -101,11 +101,11 @@ public interface ObservationReader {
      * @throws org.apache.sis.storage.DataStoreException
      */
     Collection<String> getProcedureNames() throws DataStoreException;
-    
+
     /**
      * Return a list of the sensor identifiers.
      * @param sensorType A filter on the type of sensor or @{code null}
-     * 
+     *
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
@@ -120,40 +120,40 @@ public interface ObservationReader {
 
     /**
      * Return a list of the sensor identifiers measuring the specified phenomenon.
-     * 
+     *
      * @param observedProperty an observed phenomenon.
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
     Collection<String> getProceduresForPhenomenon(final String observedProperty) throws DataStoreException;
-    
+
     /**
      * Return a list of the observedProperties identifiers measured by the specified procedure.
-     * 
+     *
      * @param sensorID an procedure identifier.
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
     Collection<String> getPhenomenonsForProcedure(final String sensorID) throws DataStoreException;
-    
+
     /**
      * Return a the temporal bounds for the specified procedure.
-     * 
+     *
      * @param version SOS version of the request.
      * @param sensorID an procedure identifier.
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
     TemporalGeometricPrimitive getTimeForProcedure(final String version, final String sensorID) throws DataStoreException;
-    
+
     /**
-     * 
+     *
      * @param phenomenonName
      * @return
-     * @throws org.apache.sis.storage.DataStoreException 
+     * @throws org.apache.sis.storage.DataStoreException
      */
     boolean existPhenomenon(final String phenomenonName) throws DataStoreException;
-    
+
     /**
      * Return a list of sampling feature identifiers.
      *
@@ -179,7 +179,7 @@ public interface ObservationReader {
      *
      * @param samplingFeatureName
      * @param version SOS version of the request.
-     * 
+     *
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
@@ -187,7 +187,7 @@ public interface ObservationReader {
 
     /**
      * Return an observation for the specified identifier.
-     * 
+     *
      * @param identifier
      * @param resultModel
      * @param mode
@@ -199,14 +199,14 @@ public interface ObservationReader {
 
     /**
      * return an observation template for the specified procedure.
-     * 
+     *
      * @param procedure a procedure identifier.
      * @param version output version of the template.
      * @return
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     Observation getTemplateForProcedure(final String procedure, final String version) throws DataStoreException;
-    
+
     /**
      * Return a result for the specified identifier.
      *
@@ -225,51 +225,51 @@ public interface ObservationReader {
      * @throws org.apache.sis.storage.DataStoreException
      */
     boolean existProcedure(final String href) throws DataStoreException;
-    
+
     /**
      * Create a new identifier for an observation.
-     * @return 
+     * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
     String getNewObservationId() throws DataStoreException;
-    
+
     /**
      * Return the minimal/maximal value for the offering event Time
-     * @return 
+     * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
     List<String> getEventTime() throws DataStoreException;
 
     /**
      * Return the list of supported response Mode
-     * @return 
+     * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
     List<ResponseModeType> getResponseModes() throws DataStoreException;
 
     /**
      * Return the list of supported response Mode
-     * @return 
+     * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
     List<String> getResponseFormats() throws DataStoreException;
 
     /**
      * Extract the geometry for a procedure.
-     * 
+     *
      * @param sensorID the procedure/sensor identifier
      * @param version
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
     AbstractGeometry getSensorLocation(final String sensorID, final String version) throws DataStoreException;
-    
+
     /**
      * Return informations about the implementation class.
-     * @return 
+     * @return
      */
     String getInfos();
-    
+
     /**
      * free the resources and close the database connection if there is one.
      */

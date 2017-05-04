@@ -26,7 +26,7 @@ public class DefaultPostalCodeNumberExtension extends DefaultGenericTypedGrPosta
     private String numberExtensionSeparator;
 
     /**
-     * 
+     *
      */
     public DefaultPostalCodeNumberExtension(){}
 

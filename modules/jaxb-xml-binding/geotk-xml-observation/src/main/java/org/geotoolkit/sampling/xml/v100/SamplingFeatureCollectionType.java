@@ -26,14 +26,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * A Sampling Feature Collection is a simple collection of sampling features. 
- * The relationship of members to the collection is equivalent to a part-whole relation. 
+ * A Sampling Feature Collection is a simple collection of sampling features.
+ * The relationship of members to the collection is equivalent to a part-whole relation.
  * A collection is a sampling feature so must still carry the sampledFeature association to indicate intention.
- * 
+ *
  * <p>Java class for SamplingFeatureCollectionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SamplingFeatureCollectionType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

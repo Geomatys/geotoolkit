@@ -55,8 +55,8 @@ public class ToDegreeTest extends AbstractProcessTest {
 
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
-       
+
         assertEquals(32.0856, result.doubleValue(), 0.0001) ;
     }
-    
+
 }

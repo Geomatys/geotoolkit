@@ -43,9 +43,9 @@ import org.geotoolkit.swe.xml.v100.VectorType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -61,8 +61,8 @@ import org.geotoolkit.swe.xml.v100.VectorType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -154,7 +154,7 @@ public class Position implements AbstractPosition {
             }
         }
     }
-    
+
     /**
      * Gets the value of the process property.
      */
@@ -300,7 +300,7 @@ public class Position implements AbstractPosition {
 
     /**
      * Gets the value of the show property.
-     *     
+     *
      */
     public String getShow() {
         return show;

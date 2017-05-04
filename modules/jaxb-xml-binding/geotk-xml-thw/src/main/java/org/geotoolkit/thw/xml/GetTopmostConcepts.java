@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for getTopmostConcepts complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="getTopmostConcepts">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getTopmostConcepts", propOrder = {
@@ -67,7 +67,7 @@ public class GetTopmostConcepts {
         this.language  = language;
         this.thesaurus = thesaurus;
     }
-    
+
     public GetTopmostConcepts(final String thesaurus, final String language, final String outputFormat, final List<String> themes) {
         this.language  = language;
         this.thesaurus = Arrays.asList(thesaurus);
@@ -77,11 +77,11 @@ public class GetTopmostConcepts {
 
     /**
      * Gets the value of the thesaurus property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public List<String> getThesaurus() {
         return thesaurus;
@@ -89,11 +89,11 @@ public class GetTopmostConcepts {
 
     /**
      * Sets the value of the thesaurus property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setThesaurus(List<String> value) {
         this.thesaurus = value;
@@ -101,11 +101,11 @@ public class GetTopmostConcepts {
 
     /**
      * Gets the value of the language property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLanguage() {
         return language;
@@ -113,11 +113,11 @@ public class GetTopmostConcepts {
 
     /**
      * Sets the value of the language property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLanguage(String value) {
         this.language = value;

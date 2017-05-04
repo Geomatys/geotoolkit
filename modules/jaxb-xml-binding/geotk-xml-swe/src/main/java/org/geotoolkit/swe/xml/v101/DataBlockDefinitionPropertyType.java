@@ -28,9 +28,9 @@ import org.geotoolkit.swe.xml.DataBlockDefinitionProperty;
 
 /**
  * <p>Java class for DataBlockDefinitionPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataBlockDefinitionPropertyType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.swe.xml.DataBlockDefinitionProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,7 +77,7 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
     private String actuate;
 
     public DataBlockDefinitionPropertyType() {
-        
+
     }
 
     public DataBlockDefinitionPropertyType(final DataBlockDefinitionProperty db) {
@@ -169,7 +169,7 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -223,7 +223,7 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
     public void setActuate(final String value) {
         this.actuate = value;
     }
-    
+
     /**
      * Verify if this entry is identical to specified object.
      */
@@ -248,7 +248,7 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
         return false;
     }
 
-    
+
     @Override
     public int hashCode() {
         int hash = 5;
@@ -267,7 +267,7 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
     /**
      * Retourne une representation de l'objet.
      */
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder("[DataBlockDefinitionPropertyType]");

@@ -38,9 +38,9 @@ import org.geotoolkit.swe.xml.ByteOrder;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -93,8 +93,8 @@ import org.geotoolkit.swe.xml.ByteOrder;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -218,9 +218,9 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -260,8 +260,8 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -346,9 +346,9 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -363,8 +363,8 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "")
@@ -407,7 +407,7 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
             }
             /**
              * Gets the value of the ref property.
-             * 
+             *
              */
             public String getRef() {
                 return ref;
@@ -415,7 +415,7 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
 
             /**
              * Sets the value of the ref property.
-             * 
+             *
              */
             public void setRef(final String value) {
                 this.ref = value;
@@ -537,9 +537,9 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -555,8 +555,8 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "")
@@ -603,7 +603,7 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
 
             /**
              * Gets the value of the ref property.
-             *     
+             *
              */
             public String getRef() {
                 return ref;
@@ -646,7 +646,7 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
 
             /**
              * Gets the value of the bitLength property.
-             * 
+             *
              */
             public Integer getBitLength() {
                 return bitLength;
@@ -654,7 +654,7 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
 
             /**
              * Sets the value of the bitLength property.
-             * 
+             *
              */
             public void setBitLength(final Integer value) {
                 this.bitLength = value;
@@ -662,7 +662,7 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
 
             /**
              * Gets the value of the paddingBitsBefore property.
-             * 
+             *
              */
             public Integer getPaddingBitsBefore() {
                 if (paddingBitsBefore == null) {
@@ -699,7 +699,7 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
 
             /**
              * Gets the value of the encryption property.
-             * 
+             *
              */
             public String getEncryption() {
                 return encryption;

@@ -30,12 +30,12 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
- * Defines spatial extent by extending LonLatEnvelope with an optional time position pair. 
- * 
+ * Defines spatial extent by extending LonLatEnvelope with an optional time position pair.
+ *
  * <p>Java class for LonLatEnvelopeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LonLatEnvelopeType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,16 +61,16 @@ public class LonLatEnvelopeType extends LonLatEnvelopeBaseType {
     private List<TimePositionType> timePosition;
 
     LonLatEnvelopeType(){
-        
+
     }
-    
+
     public LonLatEnvelopeType(final List<DirectPositionType> pos, final String srsName){
         super (pos, srsName);
     }
-    
+
     /**
      * Gets the value of the timePosition property.
-     * 
+     *
      */
     public List<TimePositionType> getTimePosition() {
         if (timePosition == null) {
@@ -78,7 +78,7 @@ public class LonLatEnvelopeType extends LonLatEnvelopeBaseType {
         }
         return this.timePosition;
     }
-    
+
     public void addTimePosition(final String... dates) {
         if (dates != null) {
             if (timePosition == null) {

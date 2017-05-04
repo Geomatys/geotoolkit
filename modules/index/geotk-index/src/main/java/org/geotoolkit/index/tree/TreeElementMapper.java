@@ -26,50 +26,50 @@ import org.opengis.geometry.Envelope;
  * @author Remi Marechal (Geomatys).
  */
 public interface TreeElementMapper<E> {
-    
+
     /**
      * Return an appropriate tree identifier from object define by user.
-     * 
+     *
      * @param object
      * @return an appropriate tree identifier from object define by user.
      */
     public int getTreeIdentifier(E object) throws IOException;
-    
+
     /**
      * Return {@link Envelope} boundary from object.
-     * 
+     *
      * @param object
-     * @return {@link Envelope} boundary from object. 
+     * @return {@link Envelope} boundary from object.
      */
     public Envelope getEnvelope(E object) throws IOException;
-    
+
     /**
      * Affect a tree identifier define by user.
-     * 
+     *
      * @param object
-     * @param treeIdentifier 
+     * @param treeIdentifier
      */
     public void setTreeIdentifier(E object, int treeIdentifier) throws IOException;
-    
+
     /**
      * <p>Return object from its tree identifier.<br/>
-     * User must set tree identifier ({@link #setTreeIdentifier(java.lang.Object, int)}) 
+     * User must set tree identifier ({@link #setTreeIdentifier(java.lang.Object, int)})
      * before it.</p>
-     * 
+     *
      * @param treeIdentifier
      * @return object from its tree identifier.
      */
     public E getObjectFromTreeIdentifier(int treeIdentifier) throws IOException;
-    
+
     /**
      * Return the full map of object.
      * This method should be used carrefully with a large number of object.
      * Mostly used for debugging purpose.
-     * 
-     * @return 
+     *
+     * @return
      */
     public Map<Integer, E> getFullMap() throws IOException;
-    
+
     /**
      * Initialize attributs like just after class constructor.
      */
@@ -84,10 +84,10 @@ public interface TreeElementMapper<E> {
      * Close write and read stream if exist.
      */
     public void close() throws IOException;
-    
+
     /**
      * Return true if {@link TreeElementMapper} has already been closed else false.
-     * 
+     *
      * @return true if {@link TreeElementMapper} has already been closed else false.
      */
     public boolean isClosed();

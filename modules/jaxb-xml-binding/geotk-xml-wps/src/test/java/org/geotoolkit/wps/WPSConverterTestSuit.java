@@ -87,7 +87,7 @@ import org.junit.runners.Suite;
         ReferenceToRenderedImageConverterTest.class,
         CoverageToComplexConverterTest.class,
         RenderedImageToComplexConverterTest.class,
-        
+
         StringToDoubleArrayConverterTest.class,
         StringToFloatArrayConverterTest.class,
         StringToIntegerArrayConverterTest.class,

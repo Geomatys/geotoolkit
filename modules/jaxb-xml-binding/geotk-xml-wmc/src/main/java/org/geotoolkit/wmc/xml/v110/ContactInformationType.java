@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ContactInformationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ContactInformationType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,11 +73,11 @@ public class ContactInformationType {
 
     /**
      * Gets the value of the contactPersonPrimary property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ContactPersonPrimaryType }
-     *     
+     *
      */
     public ContactPersonPrimaryType getContactPersonPrimary() {
         return contactPersonPrimary;
@@ -85,11 +85,11 @@ public class ContactInformationType {
 
     /**
      * Sets the value of the contactPersonPrimary property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ContactPersonPrimaryType }
-     *     
+     *
      */
     public void setContactPersonPrimary(final ContactPersonPrimaryType value) {
         this.contactPersonPrimary = value;
@@ -97,11 +97,11 @@ public class ContactInformationType {
 
     /**
      * Gets the value of the contactPosition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getContactPosition() {
         return contactPosition;
@@ -109,11 +109,11 @@ public class ContactInformationType {
 
     /**
      * Sets the value of the contactPosition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setContactPosition(final String value) {
         this.contactPosition = value;
@@ -121,11 +121,11 @@ public class ContactInformationType {
 
     /**
      * Gets the value of the contactAddress property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AddressType }
-     *     
+     *
      */
     public AddressType getContactAddress() {
         return contactAddress;
@@ -133,11 +133,11 @@ public class ContactInformationType {
 
     /**
      * Sets the value of the contactAddress property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AddressType }
-     *     
+     *
      */
     public void setContactAddress(final AddressType value) {
         this.contactAddress = value;
@@ -145,11 +145,11 @@ public class ContactInformationType {
 
     /**
      * Gets the value of the contactVoiceTelephone property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getContactVoiceTelephone() {
         return contactVoiceTelephone;
@@ -157,11 +157,11 @@ public class ContactInformationType {
 
     /**
      * Sets the value of the contactVoiceTelephone property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setContactVoiceTelephone(final String value) {
         this.contactVoiceTelephone = value;
@@ -169,11 +169,11 @@ public class ContactInformationType {
 
     /**
      * Gets the value of the contactFacsimileTelephone property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getContactFacsimileTelephone() {
         return contactFacsimileTelephone;
@@ -181,11 +181,11 @@ public class ContactInformationType {
 
     /**
      * Sets the value of the contactFacsimileTelephone property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setContactFacsimileTelephone(final String value) {
         this.contactFacsimileTelephone = value;
@@ -193,11 +193,11 @@ public class ContactInformationType {
 
     /**
      * Gets the value of the contactElectronicMailAddress property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getContactElectronicMailAddress() {
         return contactElectronicMailAddress;
@@ -205,11 +205,11 @@ public class ContactInformationType {
 
     /**
      * Sets the value of the contactElectronicMailAddress property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setContactElectronicMailAddress(final String value) {
         this.contactElectronicMailAddress = value;

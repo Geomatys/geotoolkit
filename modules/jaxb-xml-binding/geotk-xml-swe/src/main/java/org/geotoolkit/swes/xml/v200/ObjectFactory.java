@@ -24,18 +24,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.swes._2 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.swes._2 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -66,14 +66,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.swes._2
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link UpdateSensorDescriptionType }
-     * 
+     *
      */
     public UpdateSensorDescriptionType createUpdateSensorDescriptionType() {
         return new UpdateSensorDescriptionType();
@@ -81,7 +81,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SensorChangedPropertyType }
-     * 
+     *
      */
     public SensorChangedPropertyType createSensorChangedPropertyType() {
         return new SensorChangedPropertyType();
@@ -89,7 +89,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeatureRelationshipPropertyType }
-     * 
+     *
      */
     public FeatureRelationshipPropertyType createFeatureRelationshipPropertyType() {
         return new FeatureRelationshipPropertyType();
@@ -97,7 +97,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DeleteSensorResponsePropertyType }
-     * 
+     *
      */
     public DeleteSensorResponsePropertyType createDeleteSensorResponsePropertyType() {
         return new DeleteSensorResponsePropertyType();
@@ -105,7 +105,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SensorDescriptionUpdatedType.ValidTime }
-     * 
+     *
      */
     public SensorDescriptionUpdatedType.ValidTime createSensorDescriptionUpdatedTypeValidTime() {
         return new SensorDescriptionUpdatedType.ValidTime();
@@ -113,7 +113,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExtensibleRequestPropertyType }
-     * 
+     *
      */
     public ExtensibleRequestPropertyType createExtensibleRequestPropertyType() {
         return new ExtensibleRequestPropertyType();
@@ -121,7 +121,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractContentsPropertyType }
-     * 
+     *
      */
     public AbstractContentsPropertyType createAbstractContentsPropertyType() {
         return new AbstractContentsPropertyType();
@@ -129,7 +129,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeatureRelationshipType }
-     * 
+     *
      */
     public FeatureRelationshipType createFeatureRelationshipType() {
         return new FeatureRelationshipType();
@@ -137,7 +137,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractContentsType.RelatedFeature }
-     * 
+     *
      */
     public AbstractContentsType.RelatedFeature createAbstractContentsTypeRelatedFeature() {
         return new AbstractContentsType.RelatedFeature();
@@ -145,7 +145,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribeSensorType.ValidTime }
-     * 
+     *
      */
     public DescribeSensorType.ValidTime createDescribeSensorTypeValidTime() {
         return new DescribeSensorType.ValidTime();
@@ -153,7 +153,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertSensorResponsePropertyType }
-     * 
+     *
      */
     public InsertSensorResponsePropertyType createInsertSensorResponsePropertyType() {
         return new InsertSensorResponsePropertyType();
@@ -161,7 +161,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExtensibleResponsePropertyType }
-     * 
+     *
      */
     public ExtensibleResponsePropertyType createExtensibleResponsePropertyType() {
         return new ExtensibleResponsePropertyType();
@@ -169,7 +169,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertSensorType }
-     * 
+     *
      */
     public InsertSensorType createInsertSensorType() {
         return new InsertSensorType();
@@ -177,7 +177,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractContentsType.Offering }
-     * 
+     *
      */
     public AbstractContentsType.Offering createAbstractContentsTypeOffering() {
         return new AbstractContentsType.Offering();
@@ -185,7 +185,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NotificationProducerMetadataType.ProducerEndpoint }
-     * 
+     *
      */
     public NotificationProducerMetadataType.ProducerEndpoint createNotificationProducerMetadataTypeProducerEndpoint() {
         return new NotificationProducerMetadataType.ProducerEndpoint();
@@ -193,7 +193,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SensorDescriptionType }
-     * 
+     *
      */
     public SensorDescriptionType createSensorDescriptionType() {
         return new SensorDescriptionType();
@@ -201,7 +201,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractOfferingPropertyType }
-     * 
+     *
      */
     public AbstractOfferingPropertyType createAbstractOfferingPropertyType() {
         return new AbstractOfferingPropertyType();
@@ -209,7 +209,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SWESEventPropertyType }
-     * 
+     *
      */
     public SWESEventPropertyType createSWESEventPropertyType() {
         return new SWESEventPropertyType();
@@ -217,7 +217,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribeSensorResponseType }
-     * 
+     *
      */
     public DescribeSensorResponseType createDescribeSensorResponseType() {
         return new DescribeSensorResponseType();
@@ -225,7 +225,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NotificationBrokerMetadataType }
-     * 
+     *
      */
     public NotificationBrokerMetadataType createNotificationBrokerMetadataType() {
         return new NotificationBrokerMetadataType();
@@ -233,7 +233,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SensorDescriptionType.Data }
-     * 
+     *
      */
     public SensorDescriptionType.Data createSensorDescriptionTypeData() {
         return new SensorDescriptionType.Data();
@@ -241,7 +241,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractOfferingType.RelatedFeature }
-     * 
+     *
      */
     public AbstractOfferingType.RelatedFeature createAbstractOfferingTypeRelatedFeature() {
         return new AbstractOfferingType.RelatedFeature();
@@ -249,7 +249,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractSWESPropertyType }
-     * 
+     *
      */
     public AbstractSWESPropertyType createAbstractSWESPropertyType() {
         return new AbstractSWESPropertyType();
@@ -257,7 +257,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribeSensorResponsePropertyType }
-     * 
+     *
      */
     public DescribeSensorResponsePropertyType createDescribeSensorResponsePropertyType() {
         return new DescribeSensorResponsePropertyType();
@@ -265,7 +265,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SensorChangedType }
-     * 
+     *
      */
     public SensorChangedType createSensorChangedType() {
         return new SensorChangedType();
@@ -273,7 +273,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UpdateSensorDescriptionPropertyType }
-     * 
+     *
      */
     public UpdateSensorDescriptionPropertyType createUpdateSensorDescriptionPropertyType() {
         return new UpdateSensorDescriptionPropertyType();
@@ -281,7 +281,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SensorDescriptionType.ValidTime }
-     * 
+     *
      */
     public SensorDescriptionType.ValidTime createSensorDescriptionTypeValidTime() {
         return new SensorDescriptionType.ValidTime();
@@ -289,7 +289,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OfferingChangedPropertyType }
-     * 
+     *
      */
     public OfferingChangedPropertyType createOfferingChangedPropertyType() {
         return new OfferingChangedPropertyType();
@@ -297,7 +297,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NotificationProducerMetadataType.ServedTopics }
-     * 
+     *
      */
     public NotificationProducerMetadataType.ServedTopics createNotificationProducerMetadataTypeServedTopics() {
         return new NotificationProducerMetadataType.ServedTopics();
@@ -305,7 +305,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DeleteSensorPropertyType }
-     * 
+     *
      */
     public DeleteSensorPropertyType createDeleteSensorPropertyType() {
         return new DeleteSensorPropertyType();
@@ -313,7 +313,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OfferingChangedType }
-     * 
+     *
      */
     public OfferingChangedType createOfferingChangedType() {
         return new OfferingChangedType();
@@ -321,7 +321,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SensorDescriptionUpdatedType }
-     * 
+     *
      */
     public SensorDescriptionUpdatedType createSensorDescriptionUpdatedType() {
         return new SensorDescriptionUpdatedType();
@@ -329,7 +329,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SWESEventType.Service }
-     * 
+     *
      */
     public SWESEventType.Service createSWESEventTypeService() {
         return new SWESEventType.Service();
@@ -337,7 +337,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribeSensorType }
-     * 
+     *
      */
     public DescribeSensorType createDescribeSensorType() {
         return new DescribeSensorType();
@@ -345,7 +345,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DeleteSensorResponseType }
-     * 
+     *
      */
     public DeleteSensorResponseType createDeleteSensorResponseType() {
         return new DeleteSensorResponseType();
@@ -353,7 +353,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertSensorPropertyType }
-     * 
+     *
      */
     public InsertSensorPropertyType createInsertSensorPropertyType() {
         return new InsertSensorPropertyType();
@@ -361,7 +361,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FilterDialectMetadataType }
-     * 
+     *
      */
     public FilterDialectMetadataType createFilterDialectMetadataType() {
         return new FilterDialectMetadataType();
@@ -369,7 +369,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FilterDialectMetadataPropertyType }
-     * 
+     *
      */
     public FilterDialectMetadataPropertyType createFilterDialectMetadataPropertyType() {
         return new FilterDialectMetadataPropertyType();
@@ -377,7 +377,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertSensorType.ProcedureDescription }
-     * 
+     *
      */
     public ProcedureDescription createProcedureDescription() {
         return new ProcedureDescription();
@@ -385,7 +385,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UpdateSensorDescriptionResponseType }
-     * 
+     *
      */
     public UpdateSensorDescriptionResponseType createUpdateSensorDescriptionResponseType() {
         return new UpdateSensorDescriptionResponseType();
@@ -393,7 +393,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UpdateSensorDescriptionResponsePropertyType }
-     * 
+     *
      */
     public UpdateSensorDescriptionResponsePropertyType createUpdateSensorDescriptionResponsePropertyType() {
         return new UpdateSensorDescriptionResponsePropertyType();
@@ -401,7 +401,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DeleteSensorType }
-     * 
+     *
      */
     public DeleteSensorType createDeleteSensorType() {
         return new DeleteSensorType();
@@ -409,7 +409,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertionMetadataPropertyType }
-     * 
+     *
      */
     public InsertionMetadataPropertyType createInsertionMetadataPropertyType() {
         return new InsertionMetadataPropertyType();
@@ -417,7 +417,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UpdateSensorDescriptionType.Description }
-     * 
+     *
      */
     public UpdateSensorDescriptionType.Description createUpdateSensorDescriptionTypeDescription() {
         return new UpdateSensorDescriptionType.Description();
@@ -425,7 +425,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SWESEventType }
-     * 
+     *
      */
     public SWESEventType createSWESEventType() {
         return new SWESEventType();
@@ -433,7 +433,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SensorDescriptionPropertyType }
-     * 
+     *
      */
     public SensorDescriptionPropertyType createSensorDescriptionPropertyType() {
         return new SensorDescriptionPropertyType();
@@ -441,7 +441,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NotificationProducerMetadataPropertyType }
-     * 
+     *
      */
     public NotificationProducerMetadataPropertyType createNotificationProducerMetadataPropertyType() {
         return new NotificationProducerMetadataPropertyType();
@@ -449,7 +449,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribeSensorPropertyType }
-     * 
+     *
      */
     public DescribeSensorPropertyType createDescribeSensorPropertyType() {
         return new DescribeSensorPropertyType();
@@ -457,7 +457,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribeSensorResponseType.Description }
-     * 
+     *
      */
     public DescribeSensorResponseType.Description createDescribeSensorResponseTypeDescription() {
         return new DescribeSensorResponseType.Description();
@@ -465,7 +465,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertSensorResponseType }
-     * 
+     *
      */
     public InsertSensorResponseType createInsertSensorResponseType() {
         return new InsertSensorResponseType();
@@ -473,7 +473,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NotificationProducerMetadataType }
-     * 
+     *
      */
     public NotificationProducerMetadataType createNotificationProducerMetadataType() {
         return new NotificationProducerMetadataType();
@@ -481,7 +481,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SensorDescriptionUpdatedPropertyType }
-     * 
+     *
      */
     public SensorDescriptionUpdatedPropertyType createSensorDescriptionUpdatedPropertyType() {
         return new SensorDescriptionUpdatedPropertyType();
@@ -489,7 +489,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertSensorType.RelatedFeature }
-     * 
+     *
      */
     public InsertSensorType.RelatedFeature createInsertSensorTypeRelatedFeature() {
         return new InsertSensorType.RelatedFeature();
@@ -497,7 +497,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertSensorType.Metadata }
-     * 
+     *
      */
     public InsertSensorType.Metadata createInsertSensorTypeMetadata() {
         return new InsertSensorType.Metadata();
@@ -505,7 +505,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NotificationBrokerMetadataPropertyType }
-     * 
+     *
      */
     public NotificationBrokerMetadataPropertyType createNotificationBrokerMetadataPropertyType() {
         return new NotificationBrokerMetadataPropertyType();
@@ -513,7 +513,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NotificationProducerMetadataType.SupportedDialects }
-     * 
+     *
      */
     public NotificationProducerMetadataType.SupportedDialects createNotificationProducerMetadataTypeSupportedDialects() {
         return new NotificationProducerMetadataType.SupportedDialects();
@@ -521,7 +521,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NotificationProducerMetadataType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "NotificationProducerMetadata", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "AbstractSWES")
     public JAXBElement<NotificationProducerMetadataType> createNotificationProducerMetadata(NotificationProducerMetadataType value) {
@@ -530,7 +530,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InsertionMetadataType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "InsertionMetadata")
     public JAXBElement<InsertionMetadataType> createInsertionMetadata(InsertionMetadataType value) {
@@ -539,7 +539,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SensorChangedType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "SensorChanged", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "SWESEvent")
     public JAXBElement<SensorChangedType> createSensorChanged(SensorChangedType value) {
@@ -548,7 +548,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NotificationBrokerMetadataType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "NotificationBrokerMetadata", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "NotificationProducerMetadata")
     public JAXBElement<NotificationBrokerMetadataType> createNotificationBrokerMetadata(NotificationBrokerMetadataType value) {
@@ -557,7 +557,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SensorDescriptionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "SensorDescription")
     public JAXBElement<SensorDescriptionType> createSensorDescription(SensorDescriptionType value) {
@@ -566,7 +566,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ExtensibleResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "ExtensibleResponse")
     public JAXBElement<ExtensibleResponseType> createExtensibleResponse(ExtensibleResponseType value) {
@@ -575,7 +575,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FeatureRelationshipType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "FeatureRelationship")
     public JAXBElement<FeatureRelationshipType> createFeatureRelationship(FeatureRelationshipType value) {
@@ -584,7 +584,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractContentsType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "AbstractContents", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "AbstractSWES")
     public JAXBElement<AbstractContentsType> createAbstractContents(AbstractContentsType value) {
@@ -593,7 +593,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ExtensibleRequestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "ExtensibleRequest")
     public JAXBElement<ExtensibleRequestType> createExtensibleRequest(ExtensibleRequestType value) {
@@ -602,7 +602,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UpdateSensorDescriptionResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "UpdateSensorDescriptionResponse", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleResponse")
     public JAXBElement<UpdateSensorDescriptionResponseType> createUpdateSensorDescriptionResponse(UpdateSensorDescriptionResponseType value) {
@@ -611,7 +611,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InsertSensorResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "InsertSensorResponse", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleResponse")
     public JAXBElement<InsertSensorResponseType> createInsertSensorResponse(InsertSensorResponseType value) {
@@ -620,7 +620,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DeleteSensorResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "DeleteSensorResponse", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleResponse")
     public JAXBElement<DeleteSensorResponseType> createDeleteSensorResponse(DeleteSensorResponseType value) {
@@ -629,7 +629,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InsertSensorType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "InsertSensor", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleRequest")
     public JAXBElement<InsertSensorType> createInsertSensor(InsertSensorType value) {
@@ -638,7 +638,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OfferingChangedType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "OfferingChanged", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "SWESEvent")
     public JAXBElement<OfferingChangedType> createOfferingChanged(OfferingChangedType value) {
@@ -647,7 +647,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DeleteSensorType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "DeleteSensor", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleRequest")
     public JAXBElement<DeleteSensorType> createDeleteSensor(DeleteSensorType value) {
@@ -656,7 +656,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractSWESType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "AbstractSWES")
     public JAXBElement<AbstractSWESType> createAbstractSWES(AbstractSWESType value) {
@@ -665,7 +665,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FilterDialectMetadataType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "FilterDialectMetadata", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "AbstractSWES")
     public JAXBElement<FilterDialectMetadataType> createFilterDialectMetadata(FilterDialectMetadataType value) {
@@ -674,7 +674,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UpdateSensorDescriptionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "UpdateSensorDescription", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleRequest")
     public JAXBElement<UpdateSensorDescriptionType> createUpdateSensorDescription(UpdateSensorDescriptionType value) {
@@ -683,7 +683,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DescribeSensorResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "DescribeSensorResponse", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleResponse")
     public JAXBElement<DescribeSensorResponseType> createDescribeSensorResponse(DescribeSensorResponseType value) {
@@ -692,7 +692,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SWESEventType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "SWESEvent", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "AbstractSWES")
     public JAXBElement<SWESEventType> createSWESEvent(SWESEventType value) {
@@ -701,7 +701,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SensorDescriptionUpdatedType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "SensorDescriptionUpdated", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "SensorChanged")
     public JAXBElement<SensorDescriptionUpdatedType> createSensorDescriptionUpdated(SensorDescriptionUpdatedType value) {
@@ -710,7 +710,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DescribeSensorType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "DescribeSensor", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleRequest")
     public JAXBElement<DescribeSensorType> createDescribeSensor(DescribeSensorType value) {
@@ -719,7 +719,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractOfferingType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swes/2.0", name = "AbstractOffering", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "AbstractSWES")
     public JAXBElement<AbstractOfferingType> createAbstractOffering(AbstractOfferingType value) {

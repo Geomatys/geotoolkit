@@ -29,9 +29,9 @@ import org.geotoolkit.csw.xml.ListOfValues;
 
 /**
  * <p>Java class for ListOfValuesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ListOfValuesType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.csw.xml.ListOfValues;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,21 +55,21 @@ public class ListOfValuesType implements ListOfValues {
 
     @XmlElement(name = "Value", required = true)
     private List<String> value;
-    
+
     /**
-     * An empty constructor used by JAXB 
+     * An empty constructor used by JAXB
      */
      public ListOfValuesType(){
-         
+
      }
-     
+
      /**
       * Build a new List of values
       */
      public ListOfValuesType(final List<String> values){
          value  = values;
      }
-     
+
     /**
      * Gets the value of the value property.
      * (unmodifiable)

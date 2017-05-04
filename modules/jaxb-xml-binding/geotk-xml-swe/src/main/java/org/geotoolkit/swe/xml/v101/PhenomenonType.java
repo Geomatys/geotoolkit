@@ -31,7 +31,7 @@ import org.geotoolkit.swe.xml.Phenomenon;
 
 /**
  * Implementation of an entry representing a {@linkplain Phenomenon phenomenon}.
- * 
+ *
  * @version $Id: PhenomenonType.java 1286 2009-01-22 15:28:09Z glegal $
  * @author Antoine Hnawia
  * @author Guilhem Legal
@@ -47,12 +47,12 @@ public class PhenomenonType extends DefinitionType implements Phenomenon {
      */
     private static final long serialVersionUID = 5140595674231914861L;
 
-    
+
     /**
      * Empty constructor used by JAXB.
      */
     protected PhenomenonType(){}
-    
+
     /**
      * Construit un nouveau phénomène du nom spécifié.
      *
@@ -61,14 +61,14 @@ public class PhenomenonType extends DefinitionType implements Phenomenon {
      */
     public PhenomenonType(final String id, final String name) {
         super(id, name, null);
-        
+
     }
 
     /**
-     * 
+     *
      * Construit un nouveau phénomène du nom spécifié.
-     * 
-     * 
+     *
+     *
      * @param id L'identifiant de ce phenomene.
      * @param name Le nom du phénomène.
      * @param description La description de ce phénomène, ou {@code null}.
@@ -94,7 +94,7 @@ public class PhenomenonType extends DefinitionType implements Phenomenon {
             return true;
         } else return (object instanceof PhenomenonType && super.equals(object, mode));
     }
-    
+
     /**
      * Retourne une chaine de charactere representant le phenomene.
      */

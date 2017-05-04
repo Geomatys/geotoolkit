@@ -27,8 +27,8 @@ import org.opengis.feature.FeatureType;
 public interface FeatureMapper {
 
     FeatureType getSourceType();
-    
+
     FeatureType getTargetType();
-    
+
     Feature transform(Feature feature);
 }

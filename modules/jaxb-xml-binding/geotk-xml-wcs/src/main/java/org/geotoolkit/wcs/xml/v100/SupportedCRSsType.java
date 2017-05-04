@@ -25,12 +25,12 @@ import org.geotoolkit.gml.xml.v311.CodeListType;
 
 
 /**
- * Unordered list(s) of identifiers of Coordinate Reference Systems (CRSs) supported in server operation requests and responses. 
- * 
+ * Unordered list(s) of identifiers of Coordinate Reference Systems (CRSs) supported in server operation requests and responses.
+ *
  * <p>Java class for SupportedCRSsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SupportedCRSsType">
  *   &lt;complexContent>
@@ -49,7 +49,7 @@ import org.geotoolkit.gml.xml.v311.CodeListType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -66,21 +66,21 @@ public class SupportedCRSsType {
     private List<CodeListType> requestCRSs;
     private List<CodeListType> responseCRSs;
     private List<CodeListType> nativeCRSs;
-    
-    
+
+
     /**
      * An empty constructor used by JAXB
      */
     SupportedCRSsType(){
     }
-    
+
     /**
      * Build a new light Supported Crs element with only the request/reponse CRS accepted.
      */
     public SupportedCRSsType(final List<CodeListType> requestResponseCRSs){
         this.requestResponseCRSs = requestResponseCRSs;
     }
-    
+
     /**
      * Build a new light Supported Crs element with only the request/reponse CRS accepted.
      * all the element of the list of codeList are in the parameters.
@@ -91,14 +91,14 @@ public class SupportedCRSsType {
             requestResponseCRSs.add(element);
         }
     }
-    
+
     public SupportedCRSsType(final String... requestResponseCRS){
         this.requestResponseCRSs = new ArrayList<CodeListType>();
         for (String element:requestResponseCRS) {
             requestResponseCRSs.add(new CodeListType(element));
         }
     }
-    
+
     /**
      * Build a new full Supported Crs element.
      */
@@ -109,7 +109,7 @@ public class SupportedCRSsType {
         this.requestResponseCRSs = requestResponseCRSs;
         this.responseCRSs        = responseCRSs;
     }
-    
+
     /**
      * Gets the value of the requestResponseCRSs property (unmodifiable).
      */
@@ -145,10 +145,10 @@ public class SupportedCRSsType {
         }
         this.requestCRSs.add(requestCRSs);
     }
-    
+
     /**
      * Gets the value of the responseCRSs property (unmodifiable).
-     * 
+     *
      */
     public List<CodeListType> getResponseCRSs() {
         return responseCRSs;
@@ -167,7 +167,7 @@ public class SupportedCRSsType {
 
     /**
      * Gets the value of the nativeCRSs property (unmodifiable).
-     * 
+     *
      */
     public List<CodeListType> getNativeCRSs() {
         return nativeCRSs;
@@ -183,7 +183,7 @@ public class SupportedCRSsType {
         }
         this.nativeCRSs.add(nativeCRSs);
     }
-    
+
     public void addNativeCRSs(final String nativeCRSs) {
         if (this.nativeCRSs == null) {
             this.nativeCRSs = new ArrayList<CodeListType>();

@@ -61,7 +61,7 @@ public class InternationalStringEditor extends PropertyValueEditor implements Do
     public Object getValue() {
         return new SimpleInternationalString(current.getText());
     }
-    
+
     @Override
     public void insertUpdate(DocumentEvent e) {
         valueChanged();

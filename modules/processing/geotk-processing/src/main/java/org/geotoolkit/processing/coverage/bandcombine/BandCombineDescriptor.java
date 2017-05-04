@@ -45,10 +45,10 @@ public class BandCombineDescriptor extends AbstractProcessDescriptor {
                 .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandcombine_inCoveragesDesc))
                 .setRequired(true)
                 .create(Coverage[].class, null);
-    
+
     public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder()
             .addName(NAME + "InputParameters").createGroup(IN_COVERAGES);
-    
+
     /**
      * Mandatory - Resulting coverage.
      */
@@ -61,13 +61,13 @@ public class BandCombineDescriptor extends AbstractProcessDescriptor {
 
     public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder()
             .addName(NAME + "OutputParameters").createGroup(OUT_COVERAGE);
-    
+
 
     public static final ProcessDescriptor INSTANCE = new BandCombineDescriptor();
 
     private BandCombineDescriptor() {
-        super(NAME, GeotkProcessingRegistry.IDENTIFICATION, 
-                new SimpleInternationalString("Combine multiple coverage."), 
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
+                new SimpleInternationalString("Combine multiple coverage."),
                 INPUT_DESC, OUTPUT_DESC);
     }
 
@@ -75,5 +75,5 @@ public class BandCombineDescriptor extends AbstractProcessDescriptor {
     public Process createProcess(ParameterValueGroup input) {
         return new BandCombineProcess(input);
     }
-    
+
 }

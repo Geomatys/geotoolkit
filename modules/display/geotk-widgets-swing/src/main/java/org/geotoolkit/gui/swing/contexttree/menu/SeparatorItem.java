@@ -29,7 +29,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
 
 /**
  * Default popup control separator, use for JContextTreePopup
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
@@ -38,14 +38,14 @@ public class SeparatorItem extends JSeparator implements TreePopupItem{
     private JContextTree tree = null;
     private JMap2D map = null;
 
-    /** 
+    /**
      * Creates a new instance of separator
      */
     public SeparatorItem() {
         super();
         setOrientation(SwingConstants.HORIZONTAL);
     }
-    
+
     @Override
     public boolean isValid(final TreePath[] selection) {
         return true;
@@ -75,5 +75,5 @@ public class SeparatorItem extends JSeparator implements TreePopupItem{
     public JMap2D getMapView() {
         return map;
     }
-    
+
 }

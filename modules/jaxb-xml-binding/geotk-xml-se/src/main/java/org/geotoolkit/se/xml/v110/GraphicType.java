@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for GraphicType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GraphicType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -82,26 +82,26 @@ public class GraphicType {
 
     /**
      * Gets the value of the externalGraphicOrMark property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the externalGraphicOrMark property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getExternalGraphicOrMark().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link MarkType }
      * {@link ExternalGraphicType }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getExternalGraphicOrMark() {
         if (externalGraphicOrMark == null) {
@@ -112,11 +112,11 @@ public class GraphicType {
 
     /**
      * Gets the value of the opacity property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getOpacity() {
         return opacity;
@@ -124,11 +124,11 @@ public class GraphicType {
 
     /**
      * Sets the value of the opacity property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setOpacity(final ParameterValueType value) {
         this.opacity = value;
@@ -136,11 +136,11 @@ public class GraphicType {
 
     /**
      * Gets the value of the size property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getSize() {
         return size;
@@ -148,11 +148,11 @@ public class GraphicType {
 
     /**
      * Sets the value of the size property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setSize(final ParameterValueType value) {
         this.size = value;
@@ -160,11 +160,11 @@ public class GraphicType {
 
     /**
      * Gets the value of the rotation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getRotation() {
         return rotation;
@@ -172,11 +172,11 @@ public class GraphicType {
 
     /**
      * Sets the value of the rotation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setRotation(final ParameterValueType value) {
         this.rotation = value;
@@ -184,11 +184,11 @@ public class GraphicType {
 
     /**
      * Gets the value of the anchorPoint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AnchorPointType }
-     *     
+     *
      */
     public AnchorPointType getAnchorPoint() {
         return anchorPoint;
@@ -196,11 +196,11 @@ public class GraphicType {
 
     /**
      * Sets the value of the anchorPoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AnchorPointType }
-     *     
+     *
      */
     public void setAnchorPoint(final AnchorPointType value) {
         this.anchorPoint = value;
@@ -208,11 +208,11 @@ public class GraphicType {
 
     /**
      * Gets the value of the displacement property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DisplacementType }
-     *     
+     *
      */
     public DisplacementType getDisplacement() {
         return displacement;
@@ -220,11 +220,11 @@ public class GraphicType {
 
     /**
      * Sets the value of the displacement property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DisplacementType }
-     *     
+     *
      */
     public void setDisplacement(final DisplacementType value) {
         this.displacement = value;

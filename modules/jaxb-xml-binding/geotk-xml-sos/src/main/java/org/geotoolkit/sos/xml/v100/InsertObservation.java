@@ -32,9 +32,9 @@ import org.geotoolkit.observation.xml.v100.ObservationType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -47,7 +47,7 @@ import org.geotoolkit.observation.xml.v100.ObservationType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -65,7 +65,7 @@ public class InsertObservation extends RequestBaseType implements org.geotoolkit
     @XmlElements({
        @XmlElement(name = "Measurement", namespace = "http://www.opengis.net/om/1.0", type = MeasurementType.class),
        @XmlElement(name = "Observation", namespace = "http://www.opengis.net/om/1.0", type = ObservationType.class)
-       
+
     })
     private ObservationType observation;
 
@@ -73,10 +73,10 @@ public class InsertObservation extends RequestBaseType implements org.geotoolkit
      * An empty constructor used by jaxB
      */
     InsertObservation(){}
-    
+
     /**
      * Build a new InsertObservation request
-     * 
+     *
      * @param version the version of the SOS interfaces.
      * @param observation The observation to insert in the database.
      */
@@ -84,12 +84,12 @@ public class InsertObservation extends RequestBaseType implements org.geotoolkit
         super(version);
         this.assignedSensorId = assignedSensorId;
         this.observation = observation;
-        
+
     }
-    
+
     /**
      * Gets the value of the insertId property.
-     * 
+     *
      */
     @Override
     public String getAssignedSensorId() {
@@ -98,7 +98,7 @@ public class InsertObservation extends RequestBaseType implements org.geotoolkit
 
     /**
      * The observation to be inserted to the SOS.
-     * 
+     *
      */
     public ObservationType getObservation() {
         return observation;
@@ -108,7 +108,7 @@ public class InsertObservation extends RequestBaseType implements org.geotoolkit
     public List<ObservationType> getObservations() {
         return Arrays.asList(observation);
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -121,7 +121,7 @@ public class InsertObservation extends RequestBaseType implements org.geotoolkit
             final InsertObservation that = (InsertObservation) object;
             return Objects.equals(this.assignedSensorId, that.assignedSensorId) &&
                    Objects.equals(this.observation,      that.observation);
-        } 
+        }
         return false;
     }
 
@@ -132,7 +132,7 @@ public class InsertObservation extends RequestBaseType implements org.geotoolkit
         hash = 31 * hash + (this.observation != null ? this.observation.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder("[Insert Observation]\n");

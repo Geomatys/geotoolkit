@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.XmlType;
  *    NOTE! Given the same working assumptions as in the previous
  *    note, a Cylinder can be given by two circles, giving us the
  *    control points of the form ((P1, P2, P3),(P4, P5, P6)).
- * 
+ *
  * <p>Java class for CylinderType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CylinderType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,11 +62,11 @@ public class CylinderType
 
     /**
      * Gets the value of the horizontalCurveType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public CurveInterpolationType getHorizontalCurveType() {
         if (horizontalCurveType == null) {
@@ -78,11 +78,11 @@ public class CylinderType
 
     /**
      * Sets the value of the horizontalCurveType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public void setHorizontalCurveType(final CurveInterpolationType value) {
         this.horizontalCurveType = value;
@@ -90,11 +90,11 @@ public class CylinderType
 
     /**
      * Gets the value of the verticalCurveType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public CurveInterpolationType getVerticalCurveType() {
         if (verticalCurveType == null) {
@@ -106,11 +106,11 @@ public class CylinderType
 
     /**
      * Sets the value of the verticalCurveType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public void setVerticalCurveType(final CurveInterpolationType value) {
         this.verticalCurveType = value;

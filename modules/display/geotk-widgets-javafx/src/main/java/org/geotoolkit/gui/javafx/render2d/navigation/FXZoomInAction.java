@@ -35,24 +35,24 @@ import org.geotoolkit.internal.GeotkFX;
  */
 public final class FXZoomInAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_SEARCH_PLUS, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
-    
+
     public FXZoomInAction(FXMap map) {
         super(map,GeotkFX.getString(FXZoomInAction.class,"zoom_in"),GeotkFX.getString(FXZoomInAction.class,"zoom_in"),ICON);
-        
+
         map.getHandlerProperty().addListener(new ChangeListener<FXCanvasHandler>() {
             @Override
             public void changed(ObservableValue<? extends FXCanvasHandler> observable, FXCanvasHandler oldValue, FXCanvasHandler newValue) {
                 selectedProperty().set(newValue instanceof FXZoomInHandler);
             }
         });
-        
+
     }
-    
+
     @Override
     public void accept(ActionEvent event) {
         if (map != null) {
             map.setHandler(new FXZoomInHandler());
         }
     }
-    
+
 }

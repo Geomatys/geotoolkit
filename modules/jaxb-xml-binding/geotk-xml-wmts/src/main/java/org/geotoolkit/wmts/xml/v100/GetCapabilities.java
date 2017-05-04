@@ -29,9 +29,9 @@ import org.geotoolkit.ows.xml.v110.SectionsType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.ows.xml.v110.SectionsType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -54,7 +54,7 @@ public class GetCapabilities extends GetCapabilitiesType {
      * An empty constructor used by JAXB
      */
     GetCapabilities() {}
-    
+
     public GetCapabilities(final String service) {
         super(service);
     }

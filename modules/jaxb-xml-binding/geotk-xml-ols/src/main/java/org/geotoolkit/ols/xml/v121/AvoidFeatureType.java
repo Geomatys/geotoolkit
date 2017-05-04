@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AvoidFeatureType.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "AvoidFeatureType")
 @XmlEnum
@@ -44,14 +44,14 @@ public enum AvoidFeatureType {
 
     /**
      * Minimize the use of highways.
-     * 
+     *
      */
     @XmlEnumValue("Highway")
     HIGHWAY("Highway"),
 
     /**
      * Minimize tolls.
-     * 
+     *
      */
     @XmlEnumValue("Tollway")
     TOLLWAY("Tollway");

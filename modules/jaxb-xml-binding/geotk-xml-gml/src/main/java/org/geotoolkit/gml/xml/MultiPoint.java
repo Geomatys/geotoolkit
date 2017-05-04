@@ -23,7 +23,7 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  */
 public interface MultiPoint extends AbstractGeometricAggregate {
-    
+
     List<? extends PointProperty> getPointMember();
-    
+
 }

@@ -27,12 +27,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * A registry query.
  * A QueryExpression child element is not required when invoking a stored query.
- *       
- * 
+ *
+ *
  * <p>Java class for AdhocQueryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AdhocQueryType">
  *   &lt;complexContent>
@@ -44,15 +44,15 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AdhocQueryType", propOrder = {
     "queryExpression"
 })
-@XmlRootElement(name = "AdhocQuery")        
+@XmlRootElement(name = "AdhocQuery")
 public class AdhocQueryType extends RegistryObjectType {
 
     @XmlElement(name = "QueryExpression")

@@ -23,18 +23,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the org.geotoolkit.mathml.xml package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the org.geotoolkit.mathml.xml package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -194,14 +194,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.geotoolkit.mathml.xml
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link Bvar }
-     * 
+     *
      */
     public Bvar createBvar() {
         return new Bvar();
@@ -209,7 +209,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mscarries }
-     * 
+     *
      */
     public Mscarries createMscarries() {
         return new Mscarries();
@@ -217,7 +217,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PartialdiffClass }
-     * 
+     *
      */
     public PartialdiffClass createPartialdiffClass() {
         return new PartialdiffClass();
@@ -225,7 +225,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UnaryLogicalClass }
-     * 
+     *
      */
     public UnaryLogicalClass createUnaryLogicalClass() {
         return new UnaryLogicalClass();
@@ -233,7 +233,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Apply }
-     * 
+     *
      */
     public Apply createApply() {
         return new Apply();
@@ -241,7 +241,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ApplyContent }
-     * 
+     *
      */
     public ApplyContent createApplyContent() {
         return new ApplyContent();
@@ -249,7 +249,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Bind }
-     * 
+     *
      */
     public Bind createBind() {
         return new Bind();
@@ -257,7 +257,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BindContent }
-     * 
+     *
      */
     public BindContent createBindContent() {
         return new BindContent();
@@ -265,7 +265,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Ci }
-     * 
+     *
      */
     public Ci createCi() {
         return new Ci();
@@ -273,7 +273,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CiContent }
-     * 
+     *
      */
     public CiContent createCiContent() {
         return new CiContent();
@@ -281,7 +281,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mglyph }
-     * 
+     *
      */
     public Mglyph createMglyph() {
         return new Mglyph();
@@ -289,7 +289,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Cn }
-     * 
+     *
      */
     public Cn createCn() {
         return new Cn();
@@ -297,7 +297,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CnContent }
-     * 
+     *
      */
     public CnContent createCnContent() {
         return new CnContent();
@@ -305,7 +305,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Sep }
-     * 
+     *
      */
     public Sep createSep() {
         return new Sep();
@@ -313,7 +313,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Csymbol }
-     * 
+     *
      */
     public Csymbol createCsymbol() {
         return new Csymbol();
@@ -321,7 +321,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CsymbolContent }
-     * 
+     *
      */
     public CsymbolContent createCsymbolContent() {
         return new CsymbolContent();
@@ -329,7 +329,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Cbytes }
-     * 
+     *
      */
     public Cbytes createCbytes() {
         return new Cbytes();
@@ -337,7 +337,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Cerror }
-     * 
+     *
      */
     public Cerror createCerror() {
         return new Cerror();
@@ -345,7 +345,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Cs }
-     * 
+     *
      */
     public Cs createCs() {
         return new Cs();
@@ -353,7 +353,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Share }
-     * 
+     *
      */
     public Share createShare() {
         return new Share();
@@ -361,7 +361,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Piecewise }
-     * 
+     *
      */
     public Piecewise createPiecewise() {
         return new Piecewise();
@@ -369,7 +369,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Piece }
-     * 
+     *
      */
     public Piece createPiece() {
         return new Piece();
@@ -377,7 +377,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link IntervalClass }
-     * 
+     *
      */
     public IntervalClass createIntervalClass() {
         return new IntervalClass();
@@ -385,7 +385,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UnaryFunctionalClass }
-     * 
+     *
      */
     public UnaryFunctionalClass createUnaryFunctionalClass() {
         return new UnaryFunctionalClass();
@@ -393,7 +393,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LambdaClass }
-     * 
+     *
      */
     public LambdaClass createLambdaClass() {
         return new LambdaClass();
@@ -401,7 +401,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NaryFunctionalClass }
-     * 
+     *
      */
     public NaryFunctionalClass createNaryFunctionalClass() {
         return new NaryFunctionalClass();
@@ -409,7 +409,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Quotient }
-     * 
+     *
      */
     public Quotient createQuotient() {
         return new Quotient();
@@ -417,7 +417,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Divide }
-     * 
+     *
      */
     public Divide createDivide() {
         return new Divide();
@@ -425,7 +425,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Minus }
-     * 
+     *
      */
     public Minus createMinus() {
         return new Minus();
@@ -433,7 +433,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Power }
-     * 
+     *
      */
     public Power createPower() {
         return new Power();
@@ -441,7 +441,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Rem }
-     * 
+     *
      */
     public Rem createRem() {
         return new Rem();
@@ -449,7 +449,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Root }
-     * 
+     *
      */
     public Root createRoot() {
         return new Root();
@@ -457,7 +457,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Factorial }
-     * 
+     *
      */
     public Factorial createFactorial() {
         return new Factorial();
@@ -465,7 +465,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Abs }
-     * 
+     *
      */
     public Abs createAbs() {
         return new Abs();
@@ -473,7 +473,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Conjugate }
-     * 
+     *
      */
     public Conjugate createConjugate() {
         return new Conjugate();
@@ -481,7 +481,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Arg }
-     * 
+     *
      */
     public Arg createArg() {
         return new Arg();
@@ -489,7 +489,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Real }
-     * 
+     *
      */
     public Real createReal() {
         return new Real();
@@ -497,7 +497,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Imaginary }
-     * 
+     *
      */
     public Imaginary createImaginary() {
         return new Imaginary();
@@ -505,7 +505,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Floor }
-     * 
+     *
      */
     public Floor createFloor() {
         return new Floor();
@@ -513,7 +513,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Ceiling }
-     * 
+     *
      */
     public Ceiling createCeiling() {
         return new Ceiling();
@@ -521,7 +521,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Exp }
-     * 
+     *
      */
     public Exp createExp() {
         return new Exp();
@@ -529,7 +529,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NaryMinmaxClass }
-     * 
+     *
      */
     public NaryMinmaxClass createNaryMinmaxClass() {
         return new NaryMinmaxClass();
@@ -537,7 +537,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NaryArithClass }
-     * 
+     *
      */
     public NaryArithClass createNaryArithClass() {
         return new NaryArithClass();
@@ -545,7 +545,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NaryLogicalClass }
-     * 
+     *
      */
     public NaryLogicalClass createNaryLogicalClass() {
         return new NaryLogicalClass();
@@ -553,7 +553,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BinaryLogicalClass }
-     * 
+     *
      */
     public BinaryLogicalClass createBinaryLogicalClass() {
         return new BinaryLogicalClass();
@@ -561,7 +561,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QuantifierClass }
-     * 
+     *
      */
     public QuantifierClass createQuantifierClass() {
         return new QuantifierClass();
@@ -569,7 +569,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NaryRelnClass }
-     * 
+     *
      */
     public NaryRelnClass createNaryRelnClass() {
         return new NaryRelnClass();
@@ -577,7 +577,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link IntClass }
-     * 
+     *
      */
     public IntClass createIntClass() {
         return new IntClass();
@@ -585,7 +585,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NarySetClass }
-     * 
+     *
      */
     public NarySetClass createNarySetClass() {
         return new NarySetClass();
@@ -593,7 +593,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BinarySetClass }
-     * 
+     *
      */
     public BinarySetClass createBinarySetClass() {
         return new BinarySetClass();
@@ -601,7 +601,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NarySetRelnClass }
-     * 
+     *
      */
     public NarySetRelnClass createNarySetRelnClass() {
         return new NarySetRelnClass();
@@ -609,7 +609,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UnarySetClass }
-     * 
+     *
      */
     public UnarySetClass createUnarySetClass() {
         return new UnarySetClass();
@@ -617,7 +617,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SumClass }
-     * 
+     *
      */
     public SumClass createSumClass() {
         return new SumClass();
@@ -625,7 +625,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ProductClass }
-     * 
+     *
      */
     public ProductClass createProductClass() {
         return new ProductClass();
@@ -633,7 +633,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LimitClass }
-     * 
+     *
      */
     public LimitClass createLimitClass() {
         return new LimitClass();
@@ -641,7 +641,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NaryStatsClass }
-     * 
+     *
      */
     public NaryStatsClass createNaryStatsClass() {
         return new NaryStatsClass();
@@ -649,7 +649,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NaryConstructorClass }
-     * 
+     *
      */
     public NaryConstructorClass createNaryConstructorClass() {
         return new NaryConstructorClass();
@@ -657,7 +657,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UnaryLinalgClass }
-     * 
+     *
      */
     public UnaryLinalgClass createUnaryLinalgClass() {
         return new UnaryLinalgClass();
@@ -665,7 +665,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NaryLinalgClass }
-     * 
+     *
      */
     public NaryLinalgClass createNaryLinalgClass() {
         return new NaryLinalgClass();
@@ -673,7 +673,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BinaryLinalgClass }
-     * 
+     *
      */
     public BinaryLinalgClass createBinaryLinalgClass() {
         return new BinaryLinalgClass();
@@ -681,7 +681,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ConstantSetClass }
-     * 
+     *
      */
     public ConstantSetClass createConstantSetClass() {
         return new ConstantSetClass();
@@ -689,7 +689,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ConstantArithClass }
-     * 
+     *
      */
     public ConstantArithClass createConstantArithClass() {
         return new ConstantArithClass();
@@ -697,7 +697,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Otherwise }
-     * 
+     *
      */
     public Otherwise createOtherwise() {
         return new Otherwise();
@@ -705,7 +705,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Bvar.Semantics }
-     * 
+     *
      */
     public Bvar.Semantics createBvarSemantics() {
         return new Bvar.Semantics();
@@ -713,7 +713,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Degree }
-     * 
+     *
      */
     public Degree createDegree() {
         return new Degree();
@@ -721,7 +721,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Domainofapplication }
-     * 
+     *
      */
     public Domainofapplication createDomainofapplication() {
         return new Domainofapplication();
@@ -729,7 +729,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Condition }
-     * 
+     *
      */
     public Condition createCondition() {
         return new Condition();
@@ -737,7 +737,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Lowlimit }
-     * 
+     *
      */
     public Lowlimit createLowlimit() {
         return new Lowlimit();
@@ -745,7 +745,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Uplimit }
-     * 
+     *
      */
     public Uplimit createUplimit() {
         return new Uplimit();
@@ -753,7 +753,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Momentabout }
-     * 
+     *
      */
     public Momentabout createMomentabout() {
         return new Momentabout();
@@ -761,7 +761,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Logbase }
-     * 
+     *
      */
     public Logbase createLogbase() {
         return new Logbase();
@@ -769,7 +769,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mscarries.Semantics }
-     * 
+     *
      */
     public Mscarries.Semantics createMscarriesSemantics() {
         return new Mscarries.Semantics();
@@ -777,7 +777,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link None }
-     * 
+     *
      */
     public None createNone() {
         return new None();
@@ -785,7 +785,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mscarry }
-     * 
+     *
      */
     public Mscarry createMscarry() {
         return new Mscarry();
@@ -793,7 +793,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mtext }
-     * 
+     *
      */
     public Mtext createMtext() {
         return new Mtext();
@@ -801,7 +801,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Fn }
-     * 
+     *
      */
     public Fn createFn() {
         return new Fn();
@@ -809,7 +809,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mroot }
-     * 
+     *
      */
     public Mroot createMroot() {
         return new Mroot();
@@ -817,7 +817,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Declare }
-     * 
+     *
      */
     public Declare createDeclare() {
         return new Declare();
@@ -825,7 +825,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Merror }
-     * 
+     *
      */
     public Merror createMerror() {
         return new Merror();
@@ -833,7 +833,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TableCellExpression }
-     * 
+     *
      */
     public TableCellExpression createTableCellExpression() {
         return new TableCellExpression();
@@ -841,7 +841,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Neq }
-     * 
+     *
      */
     public Neq createNeq() {
         return new Neq();
@@ -849,7 +849,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mlongdiv }
-     * 
+     *
      */
     public Mlongdiv createMlongdiv() {
         return new Mlongdiv();
@@ -857,7 +857,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Math }
-     * 
+     *
      */
     public Math createMath() {
         return new Math();
@@ -865,7 +865,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mfenced }
-     * 
+     *
      */
     public Mfenced createMfenced() {
         return new Mfenced();
@@ -873,7 +873,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mover }
-     * 
+     *
      */
     public Mover createMover() {
         return new Mover();
@@ -881,7 +881,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mtr }
-     * 
+     *
      */
     public Mtr createMtr() {
         return new Mtr();
@@ -889,7 +889,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Reln }
-     * 
+     *
      */
     public Reln createReln() {
         return new Reln();
@@ -897,7 +897,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mmultiscripts }
-     * 
+     *
      */
     public Mmultiscripts createMmultiscripts() {
         return new Mmultiscripts();
@@ -905,7 +905,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Msgroup }
-     * 
+     *
      */
     public Msgroup createMsgroup() {
         return new Msgroup();
@@ -913,7 +913,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Msline }
-     * 
+     *
      */
     public Msline createMsline() {
         return new Msline();
@@ -921,7 +921,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Msrow }
-     * 
+     *
      */
     public Msrow createMsrow() {
         return new Msrow();
@@ -929,7 +929,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mphantom }
-     * 
+     *
      */
     public Mphantom createMphantom() {
         return new Mphantom();
@@ -937,7 +937,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mstyle }
-     * 
+     *
      */
     public Mstyle createMstyle() {
         return new Mstyle();
@@ -945,7 +945,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mstack }
-     * 
+     *
      */
     public Mstack createMstack() {
         return new Mstack();
@@ -953,7 +953,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Set }
-     * 
+     *
      */
     public Set createSet() {
         return new Set();
@@ -961,7 +961,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Msqrt }
-     * 
+     *
      */
     public Msqrt createMsqrt() {
         return new Msqrt();
@@ -969,7 +969,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Approx }
-     * 
+     *
      */
     public Approx createApprox() {
         return new Approx();
@@ -977,7 +977,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Maligngroup }
-     * 
+     *
      */
     public Maligngroup createMaligngroup() {
         return new Maligngroup();
@@ -985,7 +985,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mspace }
-     * 
+     *
      */
     public Mspace createMspace() {
         return new Mspace();
@@ -993,7 +993,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Malignmark }
-     * 
+     *
      */
     public Malignmark createMalignmark() {
         return new Malignmark();
@@ -1001,7 +1001,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Annotation }
-     * 
+     *
      */
     public Annotation createAnnotation() {
         return new Annotation();
@@ -1009,7 +1009,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mfrac }
-     * 
+     *
      */
     public Mfrac createMfrac() {
         return new Mfrac();
@@ -1017,7 +1017,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Msubsup }
-     * 
+     *
      */
     public Msubsup createMsubsup() {
         return new Msubsup();
@@ -1025,7 +1025,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Tendsto }
-     * 
+     *
      */
     public Tendsto createTendsto() {
         return new Tendsto();
@@ -1033,7 +1033,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mtable }
-     * 
+     *
      */
     public Mtable createMtable() {
         return new Mtable();
@@ -1041,7 +1041,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Maction }
-     * 
+     *
      */
     public Maction createMaction() {
         return new Maction();
@@ -1049,7 +1049,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mpadded }
-     * 
+     *
      */
     public Mpadded createMpadded() {
         return new Mpadded();
@@ -1057,7 +1057,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mi }
-     * 
+     *
      */
     public Mi createMi() {
         return new Mi();
@@ -1065,7 +1065,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mn }
-     * 
+     *
      */
     public Mn createMn() {
         return new Mn();
@@ -1073,7 +1073,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mlabeledtr }
-     * 
+     *
      */
     public Mlabeledtr createMlabeledtr() {
         return new Mlabeledtr();
@@ -1081,7 +1081,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mo }
-     * 
+     *
      */
     public Mo createMo() {
         return new Mo();
@@ -1089,7 +1089,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Ms }
-     * 
+     *
      */
     public Ms createMs() {
         return new Ms();
@@ -1097,7 +1097,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AnnotationXml }
-     * 
+     *
      */
     public AnnotationXml createAnnotationXml() {
         return new AnnotationXml();
@@ -1105,7 +1105,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AnnotationXmlModel }
-     * 
+     *
      */
     public AnnotationXmlModel createAnnotationXmlModel() {
         return new AnnotationXmlModel();
@@ -1113,7 +1113,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Msub }
-     * 
+     *
      */
     public Msub createMsub() {
         return new Msub();
@@ -1121,7 +1121,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Munderover }
-     * 
+     *
      */
     public Munderover createMunderover() {
         return new Munderover();
@@ -1129,7 +1129,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mrow }
-     * 
+     *
      */
     public Mrow createMrow() {
         return new Mrow();
@@ -1137,7 +1137,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Factorof }
-     * 
+     *
      */
     public Factorof createFactorof() {
         return new Factorof();
@@ -1145,7 +1145,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Munder }
-     * 
+     *
      */
     public Munder createMunder() {
         return new Munder();
@@ -1153,7 +1153,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Menclose }
-     * 
+     *
      */
     public Menclose createMenclose() {
         return new Menclose();
@@ -1161,7 +1161,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link List }
-     * 
+     *
      */
     public List createList() {
         return new List();
@@ -1169,7 +1169,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Msup }
-     * 
+     *
      */
     public Msup createMsup() {
         return new Msup();
@@ -1177,7 +1177,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Mprescripts }
-     * 
+     *
      */
     public Mprescripts createMprescripts() {
         return new Mprescripts();
@@ -1185,7 +1185,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ImpliedMrow }
-     * 
+     *
      */
     public ImpliedMrow createImpliedMrow() {
         return new ImpliedMrow();
@@ -1193,7 +1193,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = Mroot.class)
     public JAXBElement<Mscarries.Semantics> createMrootSemantics(Mscarries.Semantics value) {
@@ -1202,7 +1202,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Menclose }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "menclose", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Menclose> createMenclose(Menclose value) {
@@ -1211,7 +1211,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryLogicalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "xor", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-logical.class")
     public JAXBElement<NaryLogicalClass> createXor(NaryLogicalClass value) {
@@ -1220,7 +1220,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link List }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "list", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-setlist-constructor.class")
     public JAXBElement<List> createList(List value) {
@@ -1229,7 +1229,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryLinalgClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "nary-linalg.class")
     public JAXBElement<NaryLinalgClass> createNaryLinalgClass(NaryLinalgClass value) {
@@ -1238,7 +1238,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryStatsClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "variance", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-stats.class")
     public JAXBElement<NaryStatsClass> createVariance(NaryStatsClass value) {
@@ -1247,7 +1247,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "TableRowExpression")
     public JAXBElement<Object> createTableRowExpression(Object value) {
@@ -1256,7 +1256,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Maligngroup }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "maligngroup", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "MalignExpression")
     public JAXBElement<Maligngroup> createMaligngroup(Maligngroup value) {
@@ -1265,7 +1265,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinarySetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "in", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "binary-set.class")
     public JAXBElement<BinarySetClass> createIn(BinarySetClass value) {
@@ -1274,7 +1274,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NarySetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "cartesianproduct", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-set.class")
     public JAXBElement<NarySetClass> createCartesianproduct(NarySetClass value) {
@@ -1283,7 +1283,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mspace }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mspace", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "TokenExpression")
     public JAXBElement<Mspace> createMspace(Mspace value) {
@@ -1292,7 +1292,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Malignmark }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "malignmark", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "MalignExpression")
     public JAXBElement<Malignmark> createMalignmark(Malignmark value) {
@@ -1301,7 +1301,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnaryLinalgClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "unary-linalg.class")
     public JAXBElement<UnaryLinalgClass> createUnaryLinalgClass(UnaryLinalgClass value) {
@@ -1310,7 +1310,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Msup }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "msup", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Msup> createMsup(Msup value) {
@@ -1319,7 +1319,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConstantSetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "primes", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "constant-set.class")
     public JAXBElement<ConstantSetClass> createPrimes(ConstantSetClass value) {
@@ -1328,7 +1328,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryArithClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "gcd", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-arith.class")
     public JAXBElement<NaryArithClass> createGcd(NaryArithClass value) {
@@ -1337,7 +1337,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryLogicalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "equivalent", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "binary-logical.class")
     public JAXBElement<BinaryLogicalClass> createEquivalent(BinaryLogicalClass value) {
@@ -1346,7 +1346,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mstack }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mstack", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Mstack> createMstack(Mstack value) {
@@ -1355,7 +1355,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "TokenExpression", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Object> createTokenExpression(Object value) {
@@ -1364,7 +1364,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Set }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "set", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-setlist-constructor.class")
     public JAXBElement<Set> createSet(Set value) {
@@ -1373,7 +1373,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryLogicalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "implies", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "binary-logical.class")
     public JAXBElement<BinaryLogicalClass> createImplies(BinaryLogicalClass value) {
@@ -1382,7 +1382,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinarySetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "notprsubset", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "binary-set.class")
     public JAXBElement<BinarySetClass> createNotprsubset(BinarySetClass value) {
@@ -1391,7 +1391,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryLinalgClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "binary-linalg.class")
     public JAXBElement<BinaryLinalgClass> createBinaryLinalgClass(BinaryLinalgClass value) {
@@ -1400,7 +1400,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Msqrt }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "msqrt", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Msqrt> createMsqrt(Msqrt value) {
@@ -1409,7 +1409,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SumClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "sum", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "sum.class")
     public JAXBElement<SumClass> createSum(SumClass value) {
@@ -1418,7 +1418,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConstantArithClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "infinity", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "constant-arith.class")
     public JAXBElement<ConstantArithClass> createInfinity(ConstantArithClass value) {
@@ -1427,7 +1427,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Approx }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "approx", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "binary-reln.class")
     public JAXBElement<Approx> createApprox(Approx value) {
@@ -1436,7 +1436,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NarySetRelnClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "subset", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-set-reln.class")
     public JAXBElement<NarySetRelnClass> createSubset(NarySetRelnClass value) {
@@ -1445,7 +1445,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryLinalgClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "scalarproduct", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "binary-linalg.class")
     public JAXBElement<BinaryLinalgClass> createScalarproduct(BinaryLinalgClass value) {
@@ -1454,7 +1454,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NarySetRelnClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "nary-set-reln.class")
     public JAXBElement<NarySetRelnClass> createNarySetRelnClass(NarySetRelnClass value) {
@@ -1463,7 +1463,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryConstructorClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "vector", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-constructor.class")
     public JAXBElement<NaryConstructorClass> createVector(NaryConstructorClass value) {
@@ -1472,7 +1472,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "ident", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "unary-functional.class")
     public JAXBElement<UnaryFunctionalClass> createIdent(UnaryFunctionalClass value) {
@@ -1481,7 +1481,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryStatsClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mean", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-stats.class")
     public JAXBElement<NaryStatsClass> createMean(NaryStatsClass value) {
@@ -1490,7 +1490,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryLinalgClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "outerproduct", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "binary-linalg.class")
     public JAXBElement<BinaryLinalgClass> createOuterproduct(BinaryLinalgClass value) {
@@ -1499,7 +1499,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PartialdiffClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "partialdiff", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "partialdiff.class")
     public JAXBElement<PartialdiffClass> createPartialdiff(PartialdiffClass value) {
@@ -1508,7 +1508,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryRelnClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "geq", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-reln.class")
     public JAXBElement<NaryRelnClass> createGeq(NaryRelnClass value) {
@@ -1517,7 +1517,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link IntClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "int", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "int.class")
     public JAXBElement<IntClass> createInt(IntClass value) {
@@ -1526,7 +1526,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mrow }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mrow", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Mrow> createMrow(Mrow value) {
@@ -1535,7 +1535,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "MalignExpression", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Object> createMalignExpression(Object value) {
@@ -1544,7 +1544,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Factorof }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "factorof", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "binary-reln.class")
     public JAXBElement<Factorof> createFactorof(Factorof value) {
@@ -1553,7 +1553,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryLogicalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "and", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-logical.class")
     public JAXBElement<NaryLogicalClass> createAnd(NaryLogicalClass value) {
@@ -1562,7 +1562,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConstantArithClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "exponentiale", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "constant-arith.class")
     public JAXBElement<ConstantArithClass> createExponentiale(ConstantArithClass value) {
@@ -1571,7 +1571,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mmultiscripts }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mmultiscripts", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Mmultiscripts> createMmultiscripts(Mmultiscripts value) {
@@ -1580,7 +1580,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link QuantifierClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "forall", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "quantifier.class")
     public JAXBElement<QuantifierClass> createForall(QuantifierClass value) {
@@ -1589,7 +1589,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TableCellExpression }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mtd", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "TableCellExpression")
     public JAXBElement<TableCellExpression> createMtd(TableCellExpression value) {
@@ -1598,7 +1598,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NarySetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "intersect", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-set.class")
     public JAXBElement<NarySetClass> createIntersect(NarySetClass value) {
@@ -1607,7 +1607,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConstantSetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "rationals", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "constant-set.class")
     public JAXBElement<ConstantSetClass> createRationals(ConstantSetClass value) {
@@ -1616,7 +1616,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Munder }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "munder", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Munder> createMunder(Munder value) {
@@ -1625,7 +1625,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link IntervalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "interval.class")
     public JAXBElement<IntervalClass> createIntervalClass(IntervalClass value) {
@@ -1634,7 +1634,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mstyle }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mstyle", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Mstyle> createMstyle(Mstyle value) {
@@ -1643,7 +1643,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mphantom }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mphantom", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Mphantom> createMphantom(Mphantom value) {
@@ -1652,7 +1652,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConstantSetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "integers", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "constant-set.class")
     public JAXBElement<ConstantSetClass> createIntegers(ConstantSetClass value) {
@@ -1661,7 +1661,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConstantSetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "complexes", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "constant-set.class")
     public JAXBElement<ConstantSetClass> createComplexes(ConstantSetClass value) {
@@ -1670,7 +1670,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryLinalgClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "selector", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-linalg.class")
     public JAXBElement<NaryLinalgClass> createSelector(NaryLinalgClass value) {
@@ -1679,7 +1679,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinarySetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "binary-set.class")
     public JAXBElement<BinarySetClass> createBinarySetClass(BinarySetClass value) {
@@ -1688,7 +1688,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mover }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mover", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Mover> createMover(Mover value) {
@@ -1697,7 +1697,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mtr }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mtr", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "TableRowExpression")
     public JAXBElement<Mtr> createMtr(Mtr value) {
@@ -1706,7 +1706,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Reln }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "reln", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "DeprecatedContExp")
     public JAXBElement<Reln> createReln(Reln value) {
@@ -1715,7 +1715,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Msub }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "msub", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Msub> createMsub(Msub value) {
@@ -1724,7 +1724,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Munderover }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "munderover", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Munderover> createMunderover(Munderover value) {
@@ -1733,7 +1733,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryArithClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "lcm", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-arith.class")
     public JAXBElement<NaryArithClass> createLcm(NaryArithClass value) {
@@ -1742,7 +1742,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LimitClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "limit.class")
     public JAXBElement<LimitClass> createLimitClass(LimitClass value) {
@@ -1751,7 +1751,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ProductClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "product.class")
     public JAXBElement<ProductClass> createProductClass(ProductClass value) {
@@ -1760,7 +1760,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryStatsClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "sdev", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-stats.class")
     public JAXBElement<NaryStatsClass> createSdev(NaryStatsClass value) {
@@ -1769,7 +1769,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryArithClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "nary-arith.class")
     public JAXBElement<NaryArithClass> createNaryArithClass(NaryArithClass value) {
@@ -1778,7 +1778,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinarySetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "notin", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "binary-set.class")
     public JAXBElement<BinarySetClass> createNotin(BinarySetClass value) {
@@ -1787,7 +1787,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "unary-functional.class")
     public JAXBElement<UnaryFunctionalClass> createUnaryFunctionalClass(UnaryFunctionalClass value) {
@@ -1796,7 +1796,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnarySetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "card", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "unary-set.class")
     public JAXBElement<UnarySetClass> createCard(UnarySetClass value) {
@@ -1805,7 +1805,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConstantArithClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "eulergamma", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "constant-arith.class")
     public JAXBElement<ConstantArithClass> createEulergamma(ConstantArithClass value) {
@@ -1814,7 +1814,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryMinmaxClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "nary-minmax.class")
     public JAXBElement<NaryMinmaxClass> createNaryMinmaxClass(NaryMinmaxClass value) {
@@ -1823,7 +1823,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "PresentationExpression")
     public JAXBElement<Object> createPresentationExpression(Object value) {
@@ -1832,7 +1832,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mlabeledtr }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mlabeledtr", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "TableRowExpression")
     public JAXBElement<Mlabeledtr> createMlabeledtr(Mlabeledtr value) {
@@ -1841,7 +1841,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mo }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mo", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "TokenExpression")
     public JAXBElement<Mo> createMo(Mo value) {
@@ -1850,7 +1850,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryMinmaxClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "max", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-minmax.class")
     public JAXBElement<NaryMinmaxClass> createMax(NaryMinmaxClass value) {
@@ -1859,7 +1859,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinarySetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "setdiff", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "binary-set.class")
     public JAXBElement<BinarySetClass> createSetdiff(BinarySetClass value) {
@@ -1868,7 +1868,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mn }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mn", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "TokenExpression")
     public JAXBElement<Mn> createMn(Mn value) {
@@ -1877,7 +1877,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryMinmaxClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "min", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-minmax.class")
     public JAXBElement<NaryMinmaxClass> createMin(NaryMinmaxClass value) {
@@ -1886,7 +1886,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryRelnClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "leq", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-reln.class")
     public JAXBElement<NaryRelnClass> createLeq(NaryRelnClass value) {
@@ -1895,7 +1895,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryStatsClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "nary-stats.class")
     public JAXBElement<NaryStatsClass> createNaryStatsClass(NaryStatsClass value) {
@@ -1904,7 +1904,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Ms }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "ms", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "TokenExpression")
     public JAXBElement<Ms> createMs(Ms value) {
@@ -1913,7 +1913,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryConstructorClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "matrix", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-constructor.class")
     public JAXBElement<NaryConstructorClass> createMatrix(NaryConstructorClass value) {
@@ -1922,7 +1922,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mlongdiv }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mlongdiv", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Mlongdiv> createMlongdiv(Mlongdiv value) {
@@ -1931,7 +1931,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConstantArithClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "true", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "constant-arith.class")
     public JAXBElement<ConstantArithClass> createTrue(ConstantArithClass value) {
@@ -1940,7 +1940,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link IntClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "int.class")
     public JAXBElement<IntClass> createIntClass(IntClass value) {
@@ -1949,7 +1949,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ProductClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "product", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "product.class")
     public JAXBElement<ProductClass> createProduct(ProductClass value) {
@@ -1958,7 +1958,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LambdaClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "lambda.class")
     public JAXBElement<LambdaClass> createLambdaClass(LambdaClass value) {
@@ -1967,7 +1967,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "nary-setlist-constructor.class")
     public JAXBElement<Object> createNarySetlistConstructorClass(Object value) {
@@ -1976,7 +1976,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConstantSetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "constant-set.class")
     public JAXBElement<ConstantSetClass> createConstantSetClass(ConstantSetClass value) {
@@ -1985,7 +1985,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mfenced }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mfenced", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Mfenced> createMfenced(Mfenced value) {
@@ -1994,7 +1994,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link QuantifierClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "exists", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "quantifier.class")
     public JAXBElement<QuantifierClass> createExists(QuantifierClass value) {
@@ -2003,7 +2003,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConstantSetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "emptyset", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "constant-set.class")
     public JAXBElement<ConstantSetClass> createEmptyset(ConstantSetClass value) {
@@ -2012,7 +2012,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryConstructorClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "nary-constructor.class")
     public JAXBElement<NaryConstructorClass> createNaryConstructorClass(NaryConstructorClass value) {
@@ -2021,7 +2021,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryRelnClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "eq", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-reln.class")
     public JAXBElement<NaryRelnClass> createEq(NaryRelnClass value) {
@@ -2030,7 +2030,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConstantArithClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "imaginaryi", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "constant-arith.class")
     public JAXBElement<ConstantArithClass> createImaginaryi(ConstantArithClass value) {
@@ -2039,7 +2039,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mtable }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mtable", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Mtable> createMtable(Mtable value) {
@@ -2048,7 +2048,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Merror }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "merror", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Merror> createMerror(Merror value) {
@@ -2057,7 +2057,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Maction }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "maction", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Maction> createMaction(Maction value) {
@@ -2066,7 +2066,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NarySetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "nary-set.class")
     public JAXBElement<NarySetClass> createNarySetClass(NarySetClass value) {
@@ -2075,7 +2075,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "ln", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "unary-functional.class")
     public JAXBElement<UnaryFunctionalClass> createLn(UnaryFunctionalClass value) {
@@ -2084,7 +2084,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "moment", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "unary-functional.class")
     public JAXBElement<UnaryFunctionalClass> createMoment(UnaryFunctionalClass value) {
@@ -2093,7 +2093,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TableCellExpression }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "TableCellExpression")
     public JAXBElement<TableCellExpression> createTableCellExpression(TableCellExpression value) {
@@ -2102,7 +2102,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryRelnClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "nary-reln.class")
     public JAXBElement<NaryRelnClass> createNaryRelnClass(NaryRelnClass value) {
@@ -2111,7 +2111,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnaryLinalgClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "transpose", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "unary-linalg.class")
     public JAXBElement<UnaryLinalgClass> createTranspose(UnaryLinalgClass value) {
@@ -2120,7 +2120,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link IntervalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "interval", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "interval.class")
     public JAXBElement<IntervalClass> createInterval(IntervalClass value) {
@@ -2129,7 +2129,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mpadded }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mpadded", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Mpadded> createMpadded(Mpadded value) {
@@ -2138,7 +2138,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryLinalgClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "vectorproduct", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "binary-linalg.class")
     public JAXBElement<BinaryLinalgClass> createVectorproduct(BinaryLinalgClass value) {
@@ -2147,7 +2147,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryRelnClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "lt", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-reln.class")
     public JAXBElement<NaryRelnClass> createLt(NaryRelnClass value) {
@@ -2156,7 +2156,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Neq }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "neq", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "binary-reln.class")
     public JAXBElement<Neq> createNeq(Neq value) {
@@ -2165,7 +2165,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryStatsClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mode", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-stats.class")
     public JAXBElement<NaryStatsClass> createMode(NaryStatsClass value) {
@@ -2174,7 +2174,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SumClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "sum.class")
     public JAXBElement<SumClass> createSumClass(SumClass value) {
@@ -2183,7 +2183,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnaryLinalgClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "determinant", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "unary-linalg.class")
     public JAXBElement<UnaryLinalgClass> createDeterminant(UnaryLinalgClass value) {
@@ -2192,7 +2192,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NarySetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "union", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-set.class")
     public JAXBElement<NarySetClass> createUnion(NarySetClass value) {
@@ -2201,7 +2201,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "inverse", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "unary-functional.class")
     public JAXBElement<UnaryFunctionalClass> createInverse(UnaryFunctionalClass value) {
@@ -2210,7 +2210,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryLogicalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "nary-logical.class")
     public JAXBElement<NaryLogicalClass> createNaryLogicalClass(NaryLogicalClass value) {
@@ -2219,7 +2219,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryArithClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "times", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-arith.class")
     public JAXBElement<NaryArithClass> createTimes(NaryArithClass value) {
@@ -2228,7 +2228,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "domain", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "unary-functional.class")
     public JAXBElement<UnaryFunctionalClass> createDomain(UnaryFunctionalClass value) {
@@ -2237,7 +2237,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mi }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mi", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "TokenExpression")
     public JAXBElement<Mi> createMi(Mi value) {
@@ -2246,7 +2246,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryLogicalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "binary-logical.class")
     public JAXBElement<BinaryLogicalClass> createBinaryLogicalClass(BinaryLogicalClass value) {
@@ -2255,7 +2255,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryConstructorClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "matrixrow", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-constructor.class")
     public JAXBElement<NaryConstructorClass> createMatrixrow(NaryConstructorClass value) {
@@ -2264,7 +2264,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LimitClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "limit", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "limit.class")
     public JAXBElement<LimitClass> createLimit(LimitClass value) {
@@ -2273,7 +2273,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryArithClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "plus", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-arith.class")
     public JAXBElement<NaryArithClass> createPlus(NaryArithClass value) {
@@ -2282,7 +2282,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryLogicalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "or", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-logical.class")
     public JAXBElement<NaryLogicalClass> createOr(NaryLogicalClass value) {
@@ -2291,7 +2291,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Msubsup }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "msubsup", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Msubsup> createMsubsup(Msubsup value) {
@@ -2300,7 +2300,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NarySetRelnClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "prsubset", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-set-reln.class")
     public JAXBElement<NarySetRelnClass> createPrsubset(NarySetRelnClass value) {
@@ -2309,7 +2309,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mroot }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mroot", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Mroot> createMroot(Mroot value) {
@@ -2318,7 +2318,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "image", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "unary-functional.class")
     public JAXBElement<UnaryFunctionalClass> createImage(UnaryFunctionalClass value) {
@@ -2327,7 +2327,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Declare }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "declare", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "DeprecatedContExp")
     public JAXBElement<Declare> createDeclare(Declare value) {
@@ -2336,7 +2336,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Tendsto }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "tendsto", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "binary-reln.class")
     public JAXBElement<Tendsto> createTendsto(Tendsto value) {
@@ -2345,7 +2345,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "log", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "unary-functional.class")
     public JAXBElement<UnaryFunctionalClass> createLog(UnaryFunctionalClass value) {
@@ -2354,7 +2354,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryStatsClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "median", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-stats.class")
     public JAXBElement<NaryStatsClass> createMedian(NaryStatsClass value) {
@@ -2363,7 +2363,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnaryLogicalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "not", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "unary-logical.class")
     public JAXBElement<UnaryLogicalClass> createNot(UnaryLogicalClass value) {
@@ -2372,7 +2372,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "DeprecatedContExp")
     public JAXBElement<Object> createDeprecatedContExp(Object value) {
@@ -2381,7 +2381,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryRelnClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "gt", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-reln.class")
     public JAXBElement<NaryRelnClass> createGt(NaryRelnClass value) {
@@ -2390,7 +2390,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link QuantifierClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "quantifier.class")
     public JAXBElement<QuantifierClass> createQuantifierClass(QuantifierClass value) {
@@ -2399,7 +2399,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "binary-reln.class")
     public JAXBElement<Object> createBinaryRelnClass(Object value) {
@@ -2408,7 +2408,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConstantArithClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "pi", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "constant-arith.class")
     public JAXBElement<ConstantArithClass> createPi(ConstantArithClass value) {
@@ -2417,7 +2417,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConstantArithClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "constant-arith.class")
     public JAXBElement<ConstantArithClass> createConstantArithClass(ConstantArithClass value) {
@@ -2426,7 +2426,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PartialdiffClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "partialdiff.class")
     public JAXBElement<PartialdiffClass> createPartialdiffClass(PartialdiffClass value) {
@@ -2435,7 +2435,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnarySetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "unary-set.class")
     public JAXBElement<UnarySetClass> createUnarySetClass(UnarySetClass value) {
@@ -2444,7 +2444,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnaryLogicalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "unary-logical.class")
     public JAXBElement<UnaryLogicalClass> createUnaryLogicalClass(UnaryLogicalClass value) {
@@ -2453,7 +2453,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConstantSetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "reals", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "constant-set.class")
     public JAXBElement<ConstantSetClass> createReals(ConstantSetClass value) {
@@ -2462,7 +2462,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConstantSetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "naturalnumbers", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "constant-set.class")
     public JAXBElement<ConstantSetClass> createNaturalnumbers(ConstantSetClass value) {
@@ -2471,7 +2471,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LambdaClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "lambda", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "lambda.class")
     public JAXBElement<LambdaClass> createLambda(LambdaClass value) {
@@ -2480,7 +2480,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConstantArithClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "notanumber", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "constant-arith.class")
     public JAXBElement<ConstantArithClass> createNotanumber(ConstantArithClass value) {
@@ -2489,7 +2489,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mtext }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mtext", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "TokenExpression")
     public JAXBElement<Mtext> createMtext(Mtext value) {
@@ -2498,7 +2498,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "codomain", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "unary-functional.class")
     public JAXBElement<UnaryFunctionalClass> createCodomain(UnaryFunctionalClass value) {
@@ -2507,7 +2507,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryFunctionalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "nary-functional.class")
     public JAXBElement<NaryFunctionalClass> createNaryFunctionalClass(NaryFunctionalClass value) {
@@ -2516,7 +2516,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mfrac }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "mfrac", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "PresentationExpression")
     public JAXBElement<Mfrac> createMfrac(Mfrac value) {
@@ -2525,7 +2525,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinarySetClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "notsubset", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "binary-set.class")
     public JAXBElement<BinarySetClass> createNotsubset(BinarySetClass value) {
@@ -2534,7 +2534,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConstantArithClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "false", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "constant-arith.class")
     public JAXBElement<ConstantArithClass> createFalse(ConstantArithClass value) {
@@ -2543,7 +2543,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NaryFunctionalClass }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "compose", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "nary-functional.class")
     public JAXBElement<NaryFunctionalClass> createCompose(NaryFunctionalClass value) {
@@ -2552,7 +2552,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Fn }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "fn", substitutionHeadNamespace = "http://www.w3.org/1998/Math/MathML", substitutionHeadName = "DeprecatedContExp")
     public JAXBElement<Fn> createFn(Fn value) {
@@ -2561,7 +2561,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = ImpliedMrow.class)
     public JAXBElement<Mscarries.Semantics> createImpliedMrowSemantics(Mscarries.Semantics value) {
@@ -2570,7 +2570,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = Mscarries.class)
     public JAXBElement<Mscarries.Semantics> createMscarriesSemantics(Mscarries.Semantics value) {
@@ -2579,7 +2579,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = Mlongdiv.class)
     public JAXBElement<Mscarries.Semantics> createMlongdivSemantics(Mscarries.Semantics value) {
@@ -2588,7 +2588,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = Msub.class)
     public JAXBElement<Mscarries.Semantics> createMsubSemantics(Mscarries.Semantics value) {
@@ -2597,7 +2597,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = Munderover.class)
     public JAXBElement<Mscarries.Semantics> createMunderoverSemantics(Mscarries.Semantics value) {
@@ -2606,7 +2606,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = Mscarry.class)
     public JAXBElement<Mscarries.Semantics> createMscarrySemantics(Mscarries.Semantics value) {
@@ -2615,7 +2615,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = Mfrac.class)
     public JAXBElement<Mscarries.Semantics> createMfracSemantics(Mscarries.Semantics value) {
@@ -2624,7 +2624,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = Maction.class)
     public JAXBElement<Mscarries.Semantics> createMactionSemantics(Mscarries.Semantics value) {
@@ -2633,7 +2633,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = Mfenced.class)
     public JAXBElement<Mscarries.Semantics> createMfencedSemantics(Mscarries.Semantics value) {
@@ -2642,7 +2642,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = Mrow.class)
     public JAXBElement<Mscarries.Semantics> createMrowSemantics(Mscarries.Semantics value) {
@@ -2651,7 +2651,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = Math.class)
     public JAXBElement<Mscarries.Semantics> createMathSemantics(Mscarries.Semantics value) {
@@ -2660,7 +2660,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = Msrow.class)
     public JAXBElement<Mscarries.Semantics> createMsrowSemantics(Mscarries.Semantics value) {
@@ -2669,7 +2669,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = Msgroup.class)
     public JAXBElement<Mscarries.Semantics> createMsgroupSemantics(Mscarries.Semantics value) {
@@ -2678,7 +2678,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = AnnotationXmlModel.class)
     public JAXBElement<Mscarries.Semantics> createAnnotationXmlModelSemantics(Mscarries.Semantics value) {
@@ -2687,7 +2687,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = Munder.class)
     public JAXBElement<Mscarries.Semantics> createMunderSemantics(Mscarries.Semantics value) {
@@ -2696,7 +2696,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = Mover.class)
     public JAXBElement<Mscarries.Semantics> createMoverSemantics(Mscarries.Semantics value) {
@@ -2705,7 +2705,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = Msubsup.class)
     public JAXBElement<Mscarries.Semantics> createMsubsupSemantics(Mscarries.Semantics value) {
@@ -2714,7 +2714,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = Msup.class)
     public JAXBElement<Mscarries.Semantics> createMsupSemantics(Mscarries.Semantics value) {
@@ -2723,7 +2723,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Mscarries.Semantics }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/1998/Math/MathML", name = "semantics", scope = Mstack.class)
     public JAXBElement<Mscarries.Semantics> createMstackSemantics(Mscarries.Semantics value) {

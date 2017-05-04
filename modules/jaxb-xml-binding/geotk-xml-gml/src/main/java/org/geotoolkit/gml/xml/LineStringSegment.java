@@ -23,12 +23,12 @@ import java.util.List;
   * @author Guilhem Legal (Geomatys)
  */
 public interface LineStringSegment extends AbstractCurveSegment{
-    
+
     Coordinates getCoordinates();
-    
+
     DirectPositionList getPosList();
-    
+
     List<? extends DirectPosition> getPos();
-    
+
     List getRest();
 }

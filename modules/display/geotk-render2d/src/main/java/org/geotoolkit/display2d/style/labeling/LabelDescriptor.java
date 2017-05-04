@@ -23,7 +23,7 @@ import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 /**
  * A labelDescriptor contains all informations relative to a String to paint
  * in the rendering context, like size,color, halo, ...
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -33,22 +33,22 @@ public interface LabelDescriptor {
      * @return Message text to display, can not be null
      */
     String getText();
-    
+
     /**
      * @return Font to use, can not be null
      */
     Font getTextFont();
-    
+
     /**
      * @return Paint to use for the text, can not be null
      */
     Paint getTextPaint();
-    
+
     /**
      * @return width of the halo, can not be null
      */
     float getHaloWidth();
-    
+
     /**
      * @return Paint for the halo, can not be null
      */

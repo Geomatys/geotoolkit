@@ -35,15 +35,15 @@ public class ExtrapolationException extends Exception {
      * demandée peut être en dessous ou au dessus de la plage des <var>x</var>.
      * Ce champs contiendra typiquement une des valeurs suivantes:<p>
      *
-     *		-1	Indique que le <var>xi</var> demandé précède les données du vecteur des.
-     *			<var>x</var>. Ce serait le cas par exemple si on demandait <var>xi</var>=8
-     *			alors que le vecteur des <var>x</var> contient [9 12 13 16] ou [6 4 2 1].
+     *      -1  Indique que le <var>xi</var> demandé précède les données du vecteur des.
+     *          <var>x</var>. Ce serait le cas par exemple si on demandait <var>xi</var>=8
+     *          alors que le vecteur des <var>x</var> contient [9 12 13 16] ou [6 4 2 1].
      *
-     *		 0	Cette information n'est pas disponible.
+     *       0  Cette information n'est pas disponible.
      *
-     *		+1	Indique que le <var>xi</var> demandé suit les données du vecteur des
-     *			<var>x</var>. Ce serait le cas par exemple si on demandait <var>xi</var>=8
-     *			alors que le vecteur des <var>x</var> contient [1 2 4 6] ou [16 13 12 9].
+     *      +1  Indique que le <var>xi</var> demandé suit les données du vecteur des
+     *          <var>x</var>. Ce serait le cas par exemple si on demandait <var>xi</var>=8
+     *          alors que le vecteur des <var>x</var> contient [1 2 4 6] ou [16 13 12 9].
      */
     public byte raison = 0;
     /**
@@ -75,7 +75,7 @@ public class ExtrapolationException extends Exception {
     }
 
     /**
-     *	Construit un objet déclarant qu'une extrapolation a eu lieu.
+     *  Construit un objet déclarant qu'une extrapolation a eu lieu.
      *
      * @param raison Raison de l'extrapolation (-1, 0 ou +1).
      *        Voyez la description de {@link #raison}.
@@ -86,11 +86,11 @@ public class ExtrapolationException extends Exception {
     }
 
     /**
-     *	Construit une exception déclarant qu'une extrapolation a eu lieu.
+     *  Construit une exception déclarant qu'une extrapolation a eu lieu.
      *
-     * @param raison	Raison de l'extrapolation (-1, 0 ou +1).
-     *					Voyez la description de {@link #raison}.
-     * @param index		index d'une donnée valide.
+     * @param raison    Raison de l'extrapolation (-1, 0 ou +1).
+     *                  Voyez la description de {@link #raison}.
+     * @param index     index d'une donnée valide.
      */
     public ExtrapolationException(final int raison, final int index) {
         this(raison);
@@ -98,7 +98,7 @@ public class ExtrapolationException extends Exception {
     }
 
     /**
-     *	Renvoie un message décrivant l'erreur.
+     *  Renvoie un message décrivant l'erreur.
      */
     @Override
     public String getMessage() {

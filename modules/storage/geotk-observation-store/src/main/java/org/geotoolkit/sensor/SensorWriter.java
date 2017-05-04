@@ -53,7 +53,7 @@ public interface SensorWriter {
      *
      * @param id The identifier of the sensor
      * @param process The sensorML object
-     * @return 
+     * @return
      *
      * @throws org.apache.sis.storage.DataStoreException
      */
@@ -79,7 +79,7 @@ public interface SensorWriter {
     /**
      * End a transaction (if there is one running)
      * and store the changement made during this transaction on the datasource.
-     * 
+     *
      * @throws org.apache.sis.storage.DataStoreException
      */
     @Deprecated
@@ -87,7 +87,7 @@ public interface SensorWriter {
 
     /**
      * Create a new identifier for a sensor.
-     * 
+     *
      * @return The new available identifier.
      * @throws org.apache.sis.storage.DataStoreException
      */

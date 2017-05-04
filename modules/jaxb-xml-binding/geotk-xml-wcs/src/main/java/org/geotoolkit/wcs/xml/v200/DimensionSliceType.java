@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for DimensionSliceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DimensionSliceType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DimensionSliceType", propOrder = {
@@ -53,11 +53,11 @@ public class DimensionSliceType extends DimensionSubsetType {
 
     /**
      * Gets the value of the slicePoint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSlicePoint() {
         return slicePoint;
@@ -65,11 +65,11 @@ public class DimensionSliceType extends DimensionSubsetType {
 
     /**
      * Sets the value of the slicePoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSlicePoint(String value) {
         this.slicePoint = value;

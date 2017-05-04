@@ -30,12 +30,12 @@ import org.geotoolkit.wps.xml.ProcessDescription;
 
 
 /**
- * Full description of a process. 
- * 
+ * Full description of a process.
+ *
  * <p>Java class for ProcessDescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ProcessDescriptionType">
  *   &lt;complexContent>
@@ -70,8 +70,8 @@ import org.geotoolkit.wps.xml.ProcessDescription;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -92,10 +92,10 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
 
 
     public ProcessDescriptionType() {
-        
+
     }
-    
-    public ProcessDescriptionType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, 
+
+    public ProcessDescriptionType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract,
             String processVersion,final boolean supportStorage, final boolean statusSupported, List<InputDescriptionType> inputs,
              List<OutputDescriptionType> outputs) {
         super(identifier, title, _abstract, processVersion);
@@ -108,14 +108,14 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
             this.processOutputs = new ProcessOutputs(outputs);
         }
     }
-    
+
     /**
      * Gets the value of the dataInputs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ProcessDescriptionType.DataInputs }
-     *     
+     *
      */
     public ProcessDescriptionType.DataInputs getDataInputs() {
         return dataInputs;
@@ -123,11 +123,11 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
 
     /**
      * Sets the value of the dataInputs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ProcessDescriptionType.DataInputs }
-     *     
+     *
      */
     public void setDataInputs(final ProcessDescriptionType.DataInputs value) {
         this.dataInputs = value;
@@ -135,11 +135,11 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
 
     /**
      * Gets the value of the processOutputs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ProcessDescriptionType.ProcessOutputs }
-     *     
+     *
      */
     public ProcessDescriptionType.ProcessOutputs getProcessOutputs() {
         return processOutputs;
@@ -147,11 +147,11 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
 
     /**
      * Sets the value of the processOutputs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ProcessDescriptionType.ProcessOutputs }
-     *     
+     *
      */
     public void setProcessOutputs(final ProcessDescriptionType.ProcessOutputs value) {
         this.processOutputs = value;
@@ -159,11 +159,11 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
 
     /**
      * Gets the value of the storeSupported property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isStoreSupported() {
         if (storeSupported == null) {
@@ -175,11 +175,11 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
 
     /**
      * Sets the value of the storeSupported property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setStoreSupported(final Boolean value) {
         this.storeSupported = value;
@@ -187,11 +187,11 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
 
     /**
      * Gets the value of the statusSupported property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isStatusSupported() {
         if (statusSupported == null) {
@@ -203,11 +203,11 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
 
     /**
      * Sets the value of the statusSupported property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setStatusSupported(final Boolean value) {
         this.statusSupported = value;
@@ -230,7 +230,7 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare
@@ -262,9 +262,9 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -276,8 +276,8 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -289,20 +289,20 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
         protected List<InputDescriptionType> input;
 
         public DataInputs() {
-            
+
         }
-        
+
         public DataInputs(List<InputDescriptionType> input) {
             this.input = input;
         }
-        
+
         /**
          * Gets the value of the input property.
-         * 
+         *
          * @return Objects of the following type(s) are allowed in the list
          * {@link InputDescriptionType }
-         * 
-         * 
+         *
+         *
          */
         public List<InputDescriptionType> getInput() {
             if (input == null) {
@@ -310,7 +310,7 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
             }
             return this.input;
         }
-        
+
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder("[DataInputs]\n");
@@ -352,9 +352,9 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -366,8 +366,8 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -379,20 +379,20 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
         protected List<OutputDescriptionType> output;
 
         public ProcessOutputs() {
-            
+
         }
-        
+
         public ProcessOutputs(List<OutputDescriptionType> output) {
             this.output = output;
         }
-        
+
         /**
          * Gets the value of the output property.
-         * 
+         *
          * @return Objects of the following type(s) are allowed in the list
          * {@link OutputDescriptionType }
-         * 
-         * 
+         *
+         *
          */
         public List<OutputDescriptionType> getOutput() {
             if (output == null) {
@@ -400,7 +400,7 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
             }
             return this.output;
         }
-        
+
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder("[ProcessOutputs]\n");

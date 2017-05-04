@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AnchorPointType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AnchorPointType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,11 +57,11 @@ public class AnchorPointType {
 
     /**
      * Gets the value of the anchorPointX property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getAnchorPointX() {
         return anchorPointX;
@@ -69,11 +69,11 @@ public class AnchorPointType {
 
     /**
      * Sets the value of the anchorPointX property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setAnchorPointX(final ParameterValueType value) {
         this.anchorPointX = value;
@@ -81,11 +81,11 @@ public class AnchorPointType {
 
     /**
      * Gets the value of the anchorPointY property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getAnchorPointY() {
         return anchorPointY;
@@ -93,11 +93,11 @@ public class AnchorPointType {
 
     /**
      * Sets the value of the anchorPointY property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setAnchorPointY(final ParameterValueType value) {
         this.anchorPointY = value;

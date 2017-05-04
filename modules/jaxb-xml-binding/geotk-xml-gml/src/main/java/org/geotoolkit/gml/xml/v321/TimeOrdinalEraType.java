@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TimeOrdinalEraType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeOrdinalEraType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeOrdinalEraType", propOrder = {
@@ -72,25 +72,25 @@ public class TimeOrdinalEraType
 
     /**
      * Gets the value of the relatedTime property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the relatedTime property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRelatedTime().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link RelatedTimeType }
-     * 
-     * 
+     *
+     *
      */
     public List<RelatedTimeType> getRelatedTime() {
         if (relatedTime == null) {
@@ -101,11 +101,11 @@ public class TimeOrdinalEraType
 
     /**
      * Gets the value of the start property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimeNodePropertyType }
-     *     
+     *
      */
     public TimeNodePropertyType getStart() {
         return start;
@@ -113,11 +113,11 @@ public class TimeOrdinalEraType
 
     /**
      * Sets the value of the start property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimeNodePropertyType }
-     *     
+     *
      */
     public void setStart(TimeNodePropertyType value) {
         this.start = value;
@@ -125,11 +125,11 @@ public class TimeOrdinalEraType
 
     /**
      * Gets the value of the end property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimeNodePropertyType }
-     *     
+     *
      */
     public TimeNodePropertyType getEnd() {
         return end;
@@ -137,11 +137,11 @@ public class TimeOrdinalEraType
 
     /**
      * Sets the value of the end property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimeNodePropertyType }
-     *     
+     *
      */
     public void setEnd(TimeNodePropertyType value) {
         this.end = value;
@@ -149,11 +149,11 @@ public class TimeOrdinalEraType
 
     /**
      * Gets the value of the extent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimePeriodPropertyType }
-     *     
+     *
      */
     public TimePeriodPropertyType getExtent() {
         return extent;
@@ -161,11 +161,11 @@ public class TimeOrdinalEraType
 
     /**
      * Sets the value of the extent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimePeriodPropertyType }
-     *     
+     *
      */
     public void setExtent(TimePeriodPropertyType value) {
         this.extent = value;
@@ -173,25 +173,25 @@ public class TimeOrdinalEraType
 
     /**
      * Gets the value of the member property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the member property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMember().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TimeOrdinalEraPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<TimeOrdinalEraPropertyType> getMember() {
         if (member == null) {
@@ -202,11 +202,11 @@ public class TimeOrdinalEraType
 
     /**
      * Gets the value of the group property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getGroup() {
         return group;
@@ -214,11 +214,11 @@ public class TimeOrdinalEraType
 
     /**
      * Sets the value of the group property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setGroup(ReferenceType value) {
         this.group = value;

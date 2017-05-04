@@ -33,7 +33,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * A range for each band indicate how values are stretched.
  * Values inferior or superior to the range will be clamped.
  * NaN values are mapped to a transparent color.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class DynamicRangeStretchDescriptor extends AbstractProcessDescriptor {
@@ -67,10 +67,10 @@ public class DynamicRangeStretchDescriptor extends AbstractProcessDescriptor {
             .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inRangesDesc))
             .setRequired(true)
             .create(double[][].class, null);
-    
+
     public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder()
             .addName(NAME + "InputParameters").createGroup(IN_IMAGE, IN_BANDS, IN_RANGES);
-    
+
     /**
      * Mandatory - Resulting image.
      */
@@ -83,12 +83,12 @@ public class DynamicRangeStretchDescriptor extends AbstractProcessDescriptor {
 
     public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder()
             .addName(NAME + "OutputParameters").createGroup(OUT_IMAGE);
-    
+
     public static final ProcessDescriptor INSTANCE = new DynamicRangeStretchDescriptor();
 
     private DynamicRangeStretchDescriptor() {
         super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
-                new SimpleInternationalString("Stretch colors in an image."), 
+                new SimpleInternationalString("Stretch colors in an image."),
                 INPUT_DESC, OUTPUT_DESC);
     }
 
@@ -96,5 +96,5 @@ public class DynamicRangeStretchDescriptor extends AbstractProcessDescriptor {
     public org.geotoolkit.process.Process createProcess(ParameterValueGroup input) {
         return new DynamicRangeStretchProcess(input);
     }
-    
+
 }

@@ -22,8 +22,8 @@ package org.geotoolkit.index;
  * @author Guilhem Legal (Geomatys)
  */
 public enum LogicalFilterType {
-    
-    AND,	     
+
+    AND,
     OR,
     NOT,
     XOR,

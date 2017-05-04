@@ -26,11 +26,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * OrientableSurface consists of a surface and an orientation. If the orientation is "+", then the OrientableSurface is identical to the baseSurface. If the orientation is "-", then the OrientableSurface is a reference to a Surface with an up-normal that reverses the direction for this OrientableSurface, the sense of "the top of the surface".
- * 
+ *
  * <p>Java class for OrientableSurfaceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OrientableSurfaceType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,11 +61,11 @@ public class OrientableSurfaceType extends AbstractSurfaceType {
 
     /**
      * References or contains the base surface (positive orientation).
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SurfacePropertyType }
-     *     
+     *
      */
     public SurfacePropertyType getBaseSurface() {
         return baseSurface;
@@ -73,11 +73,11 @@ public class OrientableSurfaceType extends AbstractSurfaceType {
 
     /**
      * References or contains the base surface (positive orientation).
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SurfacePropertyType }
-     *     
+     *
      */
     public void setBaseSurface(final SurfacePropertyType value) {
         this.baseSurface = value;
@@ -85,11 +85,11 @@ public class OrientableSurfaceType extends AbstractSurfaceType {
 
     /**
      * Gets the value of the orientation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOrientation() {
         if (orientation == null) {
@@ -101,11 +101,11 @@ public class OrientableSurfaceType extends AbstractSurfaceType {
 
     /**
      * Sets the value of the orientation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOrientation(final String value) {
         this.orientation = value;

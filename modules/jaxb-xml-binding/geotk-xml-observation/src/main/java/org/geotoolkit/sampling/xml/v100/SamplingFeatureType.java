@@ -61,39 +61,39 @@ public class SamplingFeatureType extends AbstractFeatureType implements Sampling
     private static final long serialVersionUID = 8822736167506306189L;
 
     /**
-     * 
+     *
      */
     private List<SamplingFeatureRelationType> relatedSamplingFeature;
-    
+
     /**
      * Les Observations
      */
     private List<ObservationType> relatedObservation;
-    
+
     /**
      * Les features designé
      */
     @XmlElement(required = true)
     private List<FeaturePropertyType> sampledFeature = new ArrayList<>();
-    
+
     /**
      * Connexion vers la table des "survey details"
      * Optionnel peut etre {@code null}
      */
     private SurveyProcedureType surveyDetail;
-    
+
 
     /**
      * Constructeur vide utilisé par JAXB.
      */
     protected SamplingFeatureType(){}
-    
+
     /**
-     * 
+     *
      * Construit une entrée pour l'identifiant de station spécifié.
      * adapté au modele de BRGM.
-     * 
-     * 
+     *
+     *
      * @param id  L'identifiant numérique de la station.
      * @param name        Le nom de la station.
      * @param description Une description de la station.
@@ -109,9 +109,9 @@ public class SamplingFeatureType extends AbstractFeatureType implements Sampling
         if (sampledFeature != null) {
             this.sampledFeature.add(sampledFeature);
         }
-        
+
     }
-    
+
     public SamplingFeatureType(   final String                 id,
                                    final String                 name,
                                    final String                 description,
@@ -133,23 +133,23 @@ public class SamplingFeatureType extends AbstractFeatureType implements Sampling
     public synchronized List<SamplingFeatureRelation> getRelatedSamplingFeature() {
         return new ArrayList<SamplingFeatureRelation>(relatedSamplingFeature);
     }
-  
-    
+
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized List<Observation> getRelatedObservation() {       
+    public synchronized List<Observation> getRelatedObservation() {
         return new ArrayList<Observation>(relatedObservation);
     }
-    
+
      /**
      * {@inheritDoc}
      */
     public synchronized List<FeaturePropertyType> getSampledFeatures() {
         return sampledFeature;
     }
-    
+
     @Override
     public List<AnyFeature> getSampledFeature() {
         return new ArrayList<>();// TODO
@@ -168,7 +168,7 @@ public class SamplingFeatureType extends AbstractFeatureType implements Sampling
         if (object == this) {
             return true;
         }
-        
+
         if (object instanceof SamplingFeatureType && super.equals(object, mode)) {
             final SamplingFeatureType that = (SamplingFeatureType) object;
             return Objects.equals(this.surveyDetail,           that.surveyDetail)   &&

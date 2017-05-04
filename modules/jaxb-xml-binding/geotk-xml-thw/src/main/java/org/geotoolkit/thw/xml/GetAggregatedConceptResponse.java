@@ -43,14 +43,14 @@ public class GetAggregatedConceptResponse {
     public GetAggregatedConceptResponse(Concept response) {
         this.response = response;
     }
-    
+
     /**
      * Gets the value of the return property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Concept }
-     *     
+     *
      */
     public Concept getReturn() {
         return response;
@@ -58,11 +58,11 @@ public class GetAggregatedConceptResponse {
 
     /**
      * Sets the value of the return property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Concept }
-     *     
+     *
      */
     public void setReturn(Concept value) {
         this.response = value;

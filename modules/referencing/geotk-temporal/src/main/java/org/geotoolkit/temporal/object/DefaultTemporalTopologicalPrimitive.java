@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2014, Geomatys
  *
@@ -21,19 +21,19 @@ import java.util.Map;
 import org.opengis.temporal.TemporalTopologicalPrimitive;
 
 /**
- * 
+ *
  * @author Remi Marechal (Geomatys).
  */
 public class DefaultTemporalTopologicalPrimitive extends DefaultTemporalPrimitive implements TemporalTopologicalPrimitive {
-    
+
     protected DefaultTemporalTopologicalPrimitive(final Map<String, ?> properties) {
         super(properties);
     }
-    
+
     protected DefaultTemporalTopologicalPrimitive() {
-        
+
     }
-    
+
     /**
      * Constructs a new instance initialized with the values from the specified metadata object.
      * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the

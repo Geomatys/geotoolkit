@@ -33,9 +33,9 @@ import org.geotoolkit.xal.xml.v20.AddressDetails;
 
 /**
  * <p>Java class for AbstractFeatureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractFeatureType">
  *   &lt;complexContent>
@@ -70,8 +70,8 @@ import org.geotoolkit.xal.xml.v20.AddressDetails;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -144,11 +144,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -156,11 +156,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -168,11 +168,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the visibility property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isVisibility() {
         return visibility;
@@ -180,11 +180,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Sets the value of the visibility property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setVisibility(final Boolean value) {
         this.visibility = value;
@@ -192,11 +192,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the open property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isOpen() {
         return open;
@@ -204,11 +204,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Sets the value of the open property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setOpen(final Boolean value) {
         this.open = value;
@@ -216,11 +216,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the author property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AtomPersonConstruct }
-     *     
+     *
      */
     public AtomPersonConstruct getAuthor() {
         return author;
@@ -228,11 +228,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Sets the value of the author property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AtomPersonConstruct }
-     *     
+     *
      */
     public void setAuthor(final AtomPersonConstruct value) {
         this.author = value;
@@ -240,11 +240,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the link property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Link }
-     *     
+     *
      */
     public Link getLink() {
         return link;
@@ -252,11 +252,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Sets the value of the link property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Link }
-     *     
+     *
      */
     public void setLink(final Link value) {
         this.link = value;
@@ -264,11 +264,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the address property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAddress() {
         return address;
@@ -276,11 +276,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Sets the value of the address property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAddress(final String value) {
         this.address = value;
@@ -288,11 +288,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the addressDetails property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AddressDetails }
-     *     
+     *
      */
     public AddressDetails getAddressDetails() {
         return addressDetails;
@@ -300,11 +300,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Sets the value of the addressDetails property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AddressDetails }
-     *     
+     *
      */
     public void setAddressDetails(final AddressDetails value) {
         this.addressDetails = value;
@@ -312,11 +312,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the phoneNumber property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPhoneNumber() {
         return phoneNumber;
@@ -324,11 +324,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Sets the value of the phoneNumber property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPhoneNumber(final String value) {
         this.phoneNumber = value;
@@ -336,11 +336,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the snippet property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SnippetType }
-     *     
+     *
      */
     public SnippetType getSnippet() {
         return snippet;
@@ -348,11 +348,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Sets the value of the snippet property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SnippetType }
-     *     
+     *
      */
     public void setSnippet(final SnippetType value) {
         this.snippet = value;
@@ -360,11 +360,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the snippetDenominator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSnippetDenominator() {
         return snippetDenominator;
@@ -372,11 +372,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Sets the value of the snippetDenominator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSnippetDenominator(final String value) {
         this.snippetDenominator = value;
@@ -384,11 +384,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDescription() {
         return description;
@@ -396,11 +396,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDescription(final String value) {
         this.description = value;
@@ -408,13 +408,13 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the abstractViewGroup property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link LookAtType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CameraType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractViewType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractViewType> getAbstractViewGroup() {
         return abstractViewGroup;
@@ -422,13 +422,13 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Sets the value of the abstractViewGroup property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link LookAtType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CameraType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractViewType }{@code >}
-     *     
+     *
      */
     public void setAbstractViewGroup(final JAXBElement<? extends AbstractViewType> value) {
         this.abstractViewGroup = ((JAXBElement<? extends AbstractViewType> ) value);
@@ -436,13 +436,13 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the abstractTimePrimitiveGroup property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link TimeStampType }{@code >}
      *     {@link JAXBElement }{@code <}{@link TimeSpanType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractTimePrimitiveType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractTimePrimitiveType> getAbstractTimePrimitiveGroup() {
         return abstractTimePrimitiveGroup;
@@ -450,13 +450,13 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Sets the value of the abstractTimePrimitiveGroup property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link TimeStampType }{@code >}
      *     {@link JAXBElement }{@code <}{@link TimeSpanType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractTimePrimitiveType }{@code >}
-     *     
+     *
      */
     public void setAbstractTimePrimitiveGroup(final JAXBElement<? extends AbstractTimePrimitiveType> value) {
         this.abstractTimePrimitiveGroup = ((JAXBElement<? extends AbstractTimePrimitiveType> ) value);
@@ -464,11 +464,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the styleUrl property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStyleUrl() {
         return styleUrl;
@@ -476,11 +476,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Sets the value of the styleUrl property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStyleUrl(final String value) {
         this.styleUrl = value;
@@ -488,27 +488,27 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the abstractStyleSelectorGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the abstractStyleSelectorGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAbstractStyleSelectorGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractStyleSelectorType }{@code >}
      * {@link JAXBElement }{@code <}{@link StyleMapType }{@code >}
      * {@link JAXBElement }{@code <}{@link StyleType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends AbstractStyleSelectorType>> getAbstractStyleSelectorGroup() {
         if (abstractStyleSelectorGroup == null) {
@@ -519,11 +519,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the region property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RegionType }
-     *     
+     *
      */
     public RegionType getRegion() {
         return region;
@@ -531,11 +531,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Sets the value of the region property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RegionType }
-     *     
+     *
      */
     public void setRegion(final RegionType value) {
         this.region = value;
@@ -543,11 +543,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the metadata property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MetadataType }
-     *     
+     *
      */
     public MetadataType getMetadata() {
         return metadata;
@@ -555,11 +555,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Sets the value of the metadata property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MetadataType }
-     *     
+     *
      */
     public void setMetadata(final MetadataType value) {
         this.metadata = value;
@@ -567,11 +567,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the extendedData property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExtendedDataType }
-     *     
+     *
      */
     public ExtendedDataType getExtendedData() {
         return extendedData;
@@ -579,11 +579,11 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Sets the value of the extendedData property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExtendedDataType }
-     *     
+     *
      */
     public void setExtendedData(final ExtendedDataType value) {
         this.extendedData = value;
@@ -591,25 +591,25 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the abstractFeatureSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the abstractFeatureSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAbstractFeatureSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getAbstractFeatureSimpleExtensionGroup() {
         if (abstractFeatureSimpleExtensionGroup == null) {
@@ -620,25 +620,25 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
 
     /**
      * Gets the value of the abstractFeatureObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the abstractFeatureObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAbstractFeatureObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getAbstractFeatureObjectExtensionGroup() {
         if (abstractFeatureObjectExtensionGroup == null) {

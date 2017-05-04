@@ -30,11 +30,11 @@ import org.geotoolkit.gml.xml.v311.TimePeriodType;
 
 /**
  * Property type not provided by GML
- * 
+ *
  * <p>Java class for TimeGeometricPrimitivePropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeGeometricPrimitivePropertyType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.gml.xml.v311.TimePeriodType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -90,11 +90,11 @@ public class TimeGeometricPrimitivePropertyType {
      * An empty constructor used by JAXB
      */
     TimeGeometricPrimitivePropertyType(){
-        
+
     }
-    
+
     /**
-     * 
+     *
      */
     public TimeGeometricPrimitivePropertyType(final AbstractTimeGeometricPrimitiveType time) {
         if (time instanceof TimePeriodType) {
@@ -193,7 +193,7 @@ public class TimeGeometricPrimitivePropertyType {
     public String getActuate() {
         return actuate;
     }
-    
+
      /**
      * Verify if this entry is identical to specified object.
      */
@@ -210,7 +210,7 @@ public class TimeGeometricPrimitivePropertyType {
                Objects.equals(this.timeInstant,            that.timeInstant)            &&
                Objects.equals(this.timePeriod,             that.timePeriod)             &&
                Objects.equals(this.actuate,                that.actuate)                &&
-               Objects.equals(this.arcrole,                that.arcrole)                &&  
+               Objects.equals(this.arcrole,                that.arcrole)                &&
                Objects.equals(this.type,                   that.type)                   &&
                Objects.equals(this.href,                   that.href)                   &&
                Objects.equals(this.remoteSchema,           that.remoteSchema)           &&
@@ -219,7 +219,7 @@ public class TimeGeometricPrimitivePropertyType {
                Objects.equals(this.title,                  that.title);
     }
 
-    
+
     @Override
     public int hashCode() {
         int hash = 5;
@@ -238,7 +238,7 @@ public class TimeGeometricPrimitivePropertyType {
     /**
      * Retourne une representation de l'objet.
      */
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -274,5 +274,5 @@ public class TimeGeometricPrimitivePropertyType {
         }
         return s.toString();
     }
-    
+
 }

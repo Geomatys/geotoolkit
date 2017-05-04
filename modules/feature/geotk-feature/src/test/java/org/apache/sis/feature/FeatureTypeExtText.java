@@ -41,7 +41,7 @@ public class FeatureTypeExtText {
         final GeneralParameterDescriptor att1 = new DefaultParameterDescriptor(
                 Collections.singletonMap("name", "att1"), 1, 1, String.class, null, null, "testString");
         final PropertyType prop1 = FeatureTypeExt.toPropertyType(att1);
-        
+
         atb.reset();
         atb.setName("att1");
         atb.setValueClass(String.class);

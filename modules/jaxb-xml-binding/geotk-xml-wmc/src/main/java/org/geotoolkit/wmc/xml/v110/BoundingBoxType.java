@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for BoundingBoxType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BoundingBoxType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,11 +62,11 @@ public class BoundingBoxType {
 
     /**
      * Gets the value of the srs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSRS() {
         return srs;
@@ -74,11 +74,11 @@ public class BoundingBoxType {
 
     /**
      * Sets the value of the srs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSRS(final String value) {
         this.srs = value;
@@ -86,11 +86,11 @@ public class BoundingBoxType {
 
     /**
      * Gets the value of the maxx property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getMaxx() {
         return maxx;
@@ -98,11 +98,11 @@ public class BoundingBoxType {
 
     /**
      * Sets the value of the maxx property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setMaxx(final BigDecimal value) {
         this.maxx = value;
@@ -110,11 +110,11 @@ public class BoundingBoxType {
 
     /**
      * Gets the value of the maxy property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getMaxy() {
         return maxy;
@@ -122,11 +122,11 @@ public class BoundingBoxType {
 
     /**
      * Sets the value of the maxy property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setMaxy(final BigDecimal value) {
         this.maxy = value;
@@ -134,11 +134,11 @@ public class BoundingBoxType {
 
     /**
      * Gets the value of the minx property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getMinx() {
         return minx;
@@ -146,11 +146,11 @@ public class BoundingBoxType {
 
     /**
      * Sets the value of the minx property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setMinx(final BigDecimal value) {
         this.minx = value;
@@ -158,11 +158,11 @@ public class BoundingBoxType {
 
     /**
      * Gets the value of the miny property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getMiny() {
         return miny;
@@ -170,11 +170,11 @@ public class BoundingBoxType {
 
     /**
      * Sets the value of the miny property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setMiny(final BigDecimal value) {
         this.miny = value;

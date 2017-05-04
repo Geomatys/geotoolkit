@@ -29,15 +29,15 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- *  
- * 
+ *
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class ReformatDescriptor extends AbstractProcessDescriptor {
 
     public static final String NAME = "image:reformat";
 
-    
+
     /**
      * Mandatory - Image to reformat.
      */
@@ -47,7 +47,7 @@ public class ReformatDescriptor extends AbstractProcessDescriptor {
             .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.image_reformat_inImageDesc))
             .setRequired(true)
             .create(RenderedImage.class, null);
-    
+
     /**
      * Mandatory - new data type
      */
@@ -60,7 +60,7 @@ public class ReformatDescriptor extends AbstractProcessDescriptor {
 
     public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder()
             .addName(NAME + "InputParameters").createGroup(IN_IMAGE, IN_DATATYPE);
-    
+
     /**
      * Mandatory - Resulting image.
      */
@@ -73,12 +73,12 @@ public class ReformatDescriptor extends AbstractProcessDescriptor {
 
     public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder()
             .addName(NAME + "OutputParameters").createGroup(OUT_IMAGE);
-    
+
     public static final ProcessDescriptor INSTANCE = new ReformatDescriptor();
 
     private ReformatDescriptor() {
         super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
-                new SimpleInternationalString("Change the sample type of a image."), 
+                new SimpleInternationalString("Change the sample type of a image."),
                 INPUT_DESC, OUTPUT_DESC);
     }
 
@@ -86,6 +86,6 @@ public class ReformatDescriptor extends AbstractProcessDescriptor {
     public Process createProcess(ParameterValueGroup input) {
         return new ReformatProcess(input);
     }
-    
-    
+
+
 }

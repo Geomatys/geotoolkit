@@ -98,7 +98,7 @@ public class BufferProcess extends AbstractProcess {
         FeatureExt.setId(resultFeature, FeatureExt.getId(oldFeature));
         for (final PropertyType property : oldFeature.getType().getProperties(true)) {
             if(!(property instanceof AttributeType)) continue;
-            
+
             final String name = property.getName().toString();
             final Object value = oldFeature.getPropertyValue(name);
 

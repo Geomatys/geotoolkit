@@ -27,9 +27,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for ServiceParametersType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ServiceParametersType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ServiceParametersType", propOrder = {
@@ -67,21 +67,21 @@ public class ServiceParametersType {
     private ExtensionType extension;
 
     public ServiceParametersType() {
-        
+
     }
-    
+
     public ServiceParametersType(final QName coverageSubtype, final String nativeFormat) {
         this.coverageSubtype = coverageSubtype;
         this.nativeFormat    = nativeFormat;
     }
-    
+
     /**
      * Gets the value of the coverageSubtype property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getCoverageSubtype() {
         return coverageSubtype;
@@ -89,11 +89,11 @@ public class ServiceParametersType {
 
     /**
      * Sets the value of the coverageSubtype property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setCoverageSubtype(QName value) {
         this.coverageSubtype = value;
@@ -101,11 +101,11 @@ public class ServiceParametersType {
 
     /**
      * Gets the value of the coverageSubtypeParent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoverageSubtypeParentType }
-     *     
+     *
      */
     public CoverageSubtypeParentType getCoverageSubtypeParent() {
         return coverageSubtypeParent;
@@ -113,11 +113,11 @@ public class ServiceParametersType {
 
     /**
      * Sets the value of the coverageSubtypeParent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoverageSubtypeParentType }
-     *     
+     *
      */
     public void setCoverageSubtypeParent(CoverageSubtypeParentType value) {
         this.coverageSubtypeParent = value;
@@ -125,11 +125,11 @@ public class ServiceParametersType {
 
     /**
      * Gets the value of the nativeFormat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getNativeFormat() {
         return nativeFormat;
@@ -137,11 +137,11 @@ public class ServiceParametersType {
 
     /**
      * Sets the value of the nativeFormat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setNativeFormat(String value) {
         this.nativeFormat = value;
@@ -149,11 +149,11 @@ public class ServiceParametersType {
 
     /**
      * Gets the value of the extension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExtensionType }
-     *     
+     *
      */
     public ExtensionType getExtension() {
         return extension;
@@ -161,11 +161,11 @@ public class ServiceParametersType {
 
     /**
      * Sets the value of the extension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExtensionType }
-     *     
+     *
      */
     public void setExtension(ExtensionType value) {
         this.extension = value;

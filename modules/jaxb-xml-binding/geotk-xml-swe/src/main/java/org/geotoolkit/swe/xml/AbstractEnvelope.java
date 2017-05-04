@@ -25,7 +25,7 @@ package org.geotoolkit.swe.xml;
 public interface AbstractEnvelope extends AbstractVector {
 
     AbstractTimeRangeProperty getTime();
-    
+
     AbstractVectorProperty getLowerCorner();
 
     AbstractVectorProperty getUpperCorner();

@@ -35,9 +35,9 @@ import org.geotoolkit.wfs.xml.Transaction;
 
 /**
  * <p>Java class for TransactionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TransactionType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.wfs.xml.Transaction;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TransactionType", propOrder = {
@@ -88,7 +88,7 @@ public class TransactionType extends BaseRequestType implements Transaction {
             this.abstractTransactionAction.add(jb);
         }
     }
-    
+
     public TransactionType(final String service, final String version, final String handle, final AllSomeType releaseAction, final InsertType insert) {
         super(service, version, handle);
         this.releaseAction = releaseAction;
@@ -99,7 +99,7 @@ public class TransactionType extends BaseRequestType implements Transaction {
             this.abstractTransactionAction.add(jb);
         }
     }
-    
+
     public TransactionType(final String service, final String version, final String handle, final AllSomeType releaseAction, final UpdateType udpate) {
         super(service, version, handle);
         this.releaseAction = releaseAction;
@@ -110,7 +110,7 @@ public class TransactionType extends BaseRequestType implements Transaction {
             this.abstractTransactionAction.add(jb);
         }
     }
-    
+
     public TransactionType(final String service, final String version, final String handle, final AllSomeType releaseAction, final ReplaceType replace) {
         super(service, version, handle);
         this.releaseAction = releaseAction;
@@ -121,7 +121,7 @@ public class TransactionType extends BaseRequestType implements Transaction {
             this.abstractTransactionAction.add(jb);
         }
     }
-    
+
     /**
      * Gets the value of the abstractTransactionAction property.
      *
@@ -132,8 +132,8 @@ public class TransactionType extends BaseRequestType implements Transaction {
      * {@link JAXBElement }{@code <}{@link NativeType }{@code >}
      * {@link JAXBElement }{@code <}{@link UpdateType }{@code >}
      * {@link JAXBElement }{@code <}{@link ReplaceType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<?>> getAbstractTransactionAction() {
         if (abstractTransactionAction == null) {
@@ -152,14 +152,14 @@ public class TransactionType extends BaseRequestType implements Transaction {
         }
         return result;
     }
-    
+
     /**
      * Gets the value of the lockId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLockId() {
         return lockId;
@@ -167,11 +167,11 @@ public class TransactionType extends BaseRequestType implements Transaction {
 
     /**
      * Sets the value of the lockId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLockId(String value) {
         this.lockId = value;
@@ -179,11 +179,11 @@ public class TransactionType extends BaseRequestType implements Transaction {
 
     /**
      * Gets the value of the releaseAction property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllSomeType }
-     *     
+     *
      */
     public AllSomeType getReleaseAction() {
         if (releaseAction == null) {
@@ -195,11 +195,11 @@ public class TransactionType extends BaseRequestType implements Transaction {
 
     /**
      * Sets the value of the releaseAction property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllSomeType }
-     *     
+     *
      */
     public void setReleaseAction(AllSomeType value) {
         this.releaseAction = value;
@@ -207,11 +207,11 @@ public class TransactionType extends BaseRequestType implements Transaction {
 
     /**
      * Gets the value of the srsName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSrsName() {
         return srsName;
@@ -219,16 +219,16 @@ public class TransactionType extends BaseRequestType implements Transaction {
 
     /**
      * Sets the value of the srsName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSrsName(String value) {
         this.srsName = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString()).append('\n');
@@ -270,7 +270,7 @@ public class TransactionType extends BaseRequestType implements Transaction {
                     }
                 }
             }
-            
+
             return  ok &&
                     Objects.equals(this.lockId, that.lockId) &&
                     Objects.equals(this.srsName, that.srsName) &&

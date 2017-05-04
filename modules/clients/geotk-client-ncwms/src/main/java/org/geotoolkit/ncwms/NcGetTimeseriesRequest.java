@@ -32,7 +32,7 @@ public interface NcGetTimeseriesRequest extends NcGetFeatureInfoRequest {
      * Sets the DateBegin in ISO8601 format.
      */
     void setDateBegin(final String dateBegin);
-    
+
     /**
      * Returns the DateEnd in ISO8601 format.
      */

@@ -24,9 +24,9 @@ import org.geotoolkit.sml.xml.ComponentArray;
 
 /**
  * <p>Java class for ComponentArrayType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ComponentArrayType">
  *   &lt;complexContent>
@@ -75,8 +75,8 @@ import org.geotoolkit.sml.xml.ComponentArray;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

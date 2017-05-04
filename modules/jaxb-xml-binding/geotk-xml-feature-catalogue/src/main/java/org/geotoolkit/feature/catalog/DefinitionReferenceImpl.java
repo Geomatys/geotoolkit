@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -33,11 +33,11 @@ import org.opengis.feature.catalog.DefinitionSource;
 
 /**
  * Class that links a data instance to the source of its definition.
- * 
+ *
  * <p>Java class for FC_DefinitionReference_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FC_DefinitionReference_Type">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.opengis.feature.catalog.DefinitionSource;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -70,9 +70,9 @@ public class DefinitionReferenceImpl extends AbstractMetadata implements Definit
      * An empty constructor used by JAXB
      */
     public DefinitionReferenceImpl() {
-        
+
     }
-    
+
     /**
      * Clone a DefinitionReference
      */
@@ -82,7 +82,7 @@ public class DefinitionReferenceImpl extends AbstractMetadata implements Definit
             this.sourceIdentifier = feature.getSourceIdentifier();
         }
     }
-    
+
     /**
      *Build a new definition reference
      */
@@ -91,10 +91,10 @@ public class DefinitionReferenceImpl extends AbstractMetadata implements Definit
         this.definitionSource = definitionSource;
         this.sourceIdentifier = sourceIdentifier;
     }
-    
+
     /**
      * Gets the value of the sourceIdentifier property.
-     * 
+     *
      */
     public String getSourceIdentifier() {
         return sourceIdentifier;
@@ -102,7 +102,7 @@ public class DefinitionReferenceImpl extends AbstractMetadata implements Definit
 
     /**
      * Sets the value of the sourceIdentifier property.
-     * 
+     *
      */
     public void setSourceIdentifier(final String value) {
         this.sourceIdentifier = value;
@@ -110,7 +110,7 @@ public class DefinitionReferenceImpl extends AbstractMetadata implements Definit
 
     /**
      * Gets the value of the definitionSource property.
-     * 
+     *
     */
     public DefinitionSource getDefinitionSource() {
         return definitionSource;
@@ -122,11 +122,11 @@ public class DefinitionReferenceImpl extends AbstractMetadata implements Definit
     public void setDefinitionSource(final DefinitionSource value) {
         this.definitionSource = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[DefinitionReference]:").append('\n');
-        
+
         if (definitionSource != null) {
             s.append("definition source: ").append(definitionSource).append('\n');
         }
@@ -135,7 +135,7 @@ public class DefinitionReferenceImpl extends AbstractMetadata implements Definit
         }
         return s.toString();
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -146,7 +146,7 @@ public class DefinitionReferenceImpl extends AbstractMetadata implements Definit
         }
         if (object instanceof DefinitionReferenceImpl) {
             final DefinitionReferenceImpl that = (DefinitionReferenceImpl) object;
-         
+
             return Objects.equals(this.definitionSource, that.definitionSource) &&
                    Objects.equals(this.sourceIdentifier, that.sourceIdentifier);
         }

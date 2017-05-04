@@ -99,7 +99,7 @@ public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory {
             .setRemarks("user password")
             .setRequired(true)
             .create(String.class,null);
-    
+
     /** parameter for rootDirectory password */
     public static final ParameterDescriptor<String> ROOTDIRECTORY = new ParameterBuilder()
             .addName("rootDirectory")
@@ -107,7 +107,7 @@ public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory {
             .setRequired(true)
             .create(String.class,null);
 
-    
+
     public static final ParameterDescriptorGroup PARAMETERS = new ParameterBuilder().addName("CoverageDatabase").createGroup(
             IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,USER,PASSWORD,ROOTDIRECTORY,NAMESPACE);
 

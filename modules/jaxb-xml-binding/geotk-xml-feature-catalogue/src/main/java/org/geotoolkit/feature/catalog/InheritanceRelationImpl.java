@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -42,11 +42,11 @@ import org.opengis.feature.catalog.InheritanceRelation;
 
 /**
  * FC_InheritanceRelation realizes GF_InheritanceRelation.  - [ocl] - FC_InheritanceRelation always assumes that its GF_InheritanceRelation::uniqueInstance is TRUE. - [/ocl]
- * 
+ *
  * <p>Java class for FC_InheritanceRelation_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FC_InheritanceRelation_Type">
  *   &lt;complexContent>
@@ -63,8 +63,8 @@ import org.opengis.feature.catalog.InheritanceRelation;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,7 +75,7 @@ import org.opengis.feature.catalog.InheritanceRelation;
     "subtype",
     "supertype"
 })
-@XmlRootElement(name = "FC_InheritanceRelation")        
+@XmlRootElement(name = "FC_InheritanceRelation")
 public class InheritanceRelationImpl extends AbstractMetadata implements InheritanceRelation, Referenceable {
 
     @XmlAttribute
@@ -83,7 +83,7 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
     @XmlID
     @XmlSchemaType(name = "ID")
     private String id;
-    
+
     private String name;
     @XmlElement(required = true)
     private String description;
@@ -93,20 +93,20 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
     private FeatureType subtype;
     @XmlElement(required = true)
     private FeatureType supertype;
-    
+
     @XmlTransient
     private boolean isReference = false;
     @XmlTransient
     protected boolean rootElement = true;
-    
-    
+
+
     /**
      * An empty constructor used by JAXB
      */
     public InheritanceRelationImpl() {
-        
+
     }
-    
+
     /**
      * Clone a InheritanceRelation
      */
@@ -120,7 +120,7 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
             this.uniqueInstance = relation.getUniqueInstance();
         }
     }
-    
+
     /**
      * Clone a InheritanceRelation
      */
@@ -131,10 +131,10 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
         this.supertype      = supertype;
         this.uniqueInstance = uniqueInstance;
     }
-    
+
     /**
      * Gets the value of the name property.
-     * 
+     *
      */
     @Override
     public String getName() {
@@ -143,7 +143,7 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -151,7 +151,7 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      */
     @Override
     public String getDescription() {
@@ -160,7 +160,7 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      */
     public void setDescription(final String value) {
         this.description = value;
@@ -168,7 +168,7 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
 
     /**
      * Gets the value of the uniqueInstance property.
-     * 
+     *
      */
     @Override
     public Boolean getUniqueInstance() {
@@ -177,7 +177,7 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
 
     /**
      * Sets the value of the uniqueInstance property.
-     * 
+     *
      */
     public void setUniqueInstance(final Boolean value) {
         this.uniqueInstance = value;
@@ -200,7 +200,7 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
 
     /**
      * Gets the value of the supertype property.
-     * 
+     *
      */
     @Override
     public FeatureType getSupertype() {
@@ -209,12 +209,12 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
 
     /**
      * Sets the value of the supertype property.
-     * 
+     *
      */
     public void setSupertype(final FeatureType value) {
         this.supertype = value;
     }
-    
+
     /**
      * Return the identifier of the relation
      */
@@ -222,11 +222,11 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
     public String getId() {
         return this.id;
     }
-    
+
     public void setId(final String id) {
         this.id = id;
     }
-    
+
     /**
      * set the feature in reference mode
      */
@@ -234,7 +234,7 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
     public void setReference(final boolean mode) {
         this.isReference = mode;
     }
-    
+
      /**
      * get the current feature in reference mode
      */
@@ -242,26 +242,26 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
     public boolean isReference() {
         return isReference;
     }
-    
+
     @Override
     public InheritanceRelationImpl getReferenceableObject() {
         InheritanceRelationImpl result = new InheritanceRelationImpl(this);
         result.setReference(true);
         return result;
     }
-    
+
     private void beforeMarshal(final Marshaller marshaller) {
         if (rootElement) {
             beforeMarshal(new HashMap<>());
         }
     }
-    
+
      public Map<String, Referenceable> beforeMarshal(Map<String, Referenceable> alreadySee) {
         if (id != null && !id.isEmpty()) {
            alreadySee.put(id, this);
         }
         rootElement = false;
-        
+
         if (subtype != null) {
             if (alreadySee.get(subtype.getId()) != null) {
                 subtype = ((FeatureTypeImpl)subtype).getReferenceableObject();
@@ -269,7 +269,7 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
                 alreadySee = ((FeatureTypeImpl)subtype).beforeMarshal(alreadySee);
             }
         }
-        
+
         if (supertype != null) {
             if (alreadySee.get(supertype.getId()) != null) {
                 supertype = ((FeatureTypeImpl)supertype).getReferenceableObject();
@@ -279,7 +279,7 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
         }
         return alreadySee;
      }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[InheritanceRelation]:").append('\n');
@@ -308,7 +308,7 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
         }
         return s.toString();
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -319,7 +319,7 @@ public class InheritanceRelationImpl extends AbstractMetadata implements Inherit
         }
         if (object instanceof InheritanceRelationImpl) {
             final InheritanceRelationImpl that = (InheritanceRelationImpl) object;
-            
+
             return Objects.equals(this.description,    that.description) &&
                    Objects.equals(this.id,             that.id)          &&
                    Objects.equals(this.name,           that.name)        &&

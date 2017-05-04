@@ -13,7 +13,7 @@ public final class Demos {
     private Demos(){}
 
     public static void init(){
-        
+
         //allow reprojection even if grid or bursawolf parameters are missing
         Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
 

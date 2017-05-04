@@ -125,7 +125,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
             this.matchCase   = that.matchCase;
         }
     }
-    
+
     /**
      * Gets the value of the expression property.
      *

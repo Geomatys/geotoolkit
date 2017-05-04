@@ -31,9 +31,9 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * <p>Java class for BinaryComparisonOpType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BinaryComparisonOpType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,11 +59,11 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
     private List<JAXBElement<?>> expression;
 
     private static final ObjectFactory FACTORY = new ObjectFactory();
-    
+
     public BinaryComparisonOpType() {
 
     }
-    
+
     /**
      * Build a new Binary comparison operator
      */
@@ -78,8 +78,8 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
             this.expression.add(FACTORY.createLiteral(literal));
         }
     }
-    
-    
+
+
     public BinaryComparisonOpType(final BinaryComparisonOpType that) {
         if (that != null) {
             if (that.expression != null) {
@@ -104,7 +104,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
     }
     /**
      * Gets the value of the expression property.
-     * 
+     *
      */
     public List<JAXBElement<?>> getExpression() {
         if (expression == null) {

@@ -43,7 +43,7 @@ public abstract class GraphicJ2D extends SpatialNode {
     public J2DCanvas getCanvas() {
         return (J2DCanvas)super.getCanvas();
     }
-    
+
     /**
      * Called by the J2DCanvas to ask the graphic object to paint itself on the canvas
      * using the rendering context parameters.
@@ -54,5 +54,5 @@ public abstract class GraphicJ2D extends SpatialNode {
     public abstract void paint(final RenderingContext2D context);
 
     public abstract Object getUserObject();
-    
+
 }

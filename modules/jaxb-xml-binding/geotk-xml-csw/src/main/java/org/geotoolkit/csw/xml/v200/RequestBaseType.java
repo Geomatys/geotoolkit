@@ -28,14 +28,14 @@ import org.apache.sis.util.Version;
 
 
 /**
- * 
+ *
  * XML encoded CSW operation request base, for all operations except Get Capabilities.
- *          
- * 
+ *
+ *
  * <p>Java class for RequestBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RequestBaseType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.apache.sis.util.Version;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,12 +69,12 @@ public abstract class RequestBaseType implements RequestBase, AbstractCswRequest
      * An empty constructor used by JAXB
      */
     RequestBaseType() {
-        
+
     }
-    
+
     /**
      * Super contructor used by thi child classes
-     * 
+     *
      * @param service the name of the service (fixed to "CSW")
      * @param version the version of the service
      */
@@ -82,10 +82,10 @@ public abstract class RequestBaseType implements RequestBase, AbstractCswRequest
         this.service = service;
         this.version = version;
     }
-    
+
     /**
      * Gets the value of the service property.
-     * 
+     *
      */
     @Override
     public String getService() {
@@ -98,7 +98,7 @@ public abstract class RequestBaseType implements RequestBase, AbstractCswRequest
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      */
     public void setService(final String value) {
         this.service = value;
@@ -106,19 +106,19 @@ public abstract class RequestBaseType implements RequestBase, AbstractCswRequest
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      */
     @Override
     public Version getVersion() {
         if (version != null) {
             return new Version(version);
-        } 
+        }
         return null;
     }
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      */
     public void setVersion(final String value) {
         this.version = value;

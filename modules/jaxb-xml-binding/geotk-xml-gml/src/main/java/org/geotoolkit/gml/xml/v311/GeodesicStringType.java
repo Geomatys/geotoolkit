@@ -32,13 +32,13 @@ import javax.xml.bind.annotation.XmlType;
  *    geodesic segments. The type essentially combines a sequence of
  *    Geodesic into a single object.
  *    The GeodesicString is computed from two or more positions and an
- *    interpolation using geodesics defined from the geoid (or 
+ *    interpolation using geodesics defined from the geoid (or
  *    ellipsoid) of the co-ordinate reference system being used.
- * 
+ *
  * <p>Java class for GeodesicStringType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeodesicStringType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -79,11 +79,11 @@ public class GeodesicStringType
 
     /**
      * Gets the value of the posList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public DirectPositionListType getPosList() {
         return posList;
@@ -91,11 +91,11 @@ public class GeodesicStringType
 
     /**
      * Sets the value of the posList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public void setPosList(final DirectPositionListType value) {
         this.posList = value;
@@ -103,26 +103,26 @@ public class GeodesicStringType
 
     /**
      * Gets the value of the geometricPositionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the geometricPositionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getGeometricPositionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DirectPositionType }
      * {@link PointPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getGeometricPositionGroup() {
         if (geometricPositionGroup == null) {
@@ -133,11 +133,11 @@ public class GeodesicStringType
 
     /**
      * Gets the value of the interpolation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public CurveInterpolationType getInterpolation() {
         if (interpolation == null) {
@@ -149,11 +149,11 @@ public class GeodesicStringType
 
     /**
      * Sets the value of the interpolation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public void setInterpolation(final CurveInterpolationType value) {
         this.interpolation = value;

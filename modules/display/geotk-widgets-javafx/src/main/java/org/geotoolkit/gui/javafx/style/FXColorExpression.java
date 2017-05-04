@@ -33,7 +33,7 @@ import org.opengis.filter.expression.Literal;
 public class FXColorExpression extends FXExpression {
 
     private final ColorPicker uiPicker = new ColorPicker();
-    
+
     public FXColorExpression(){
         uiPicker.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -43,7 +43,7 @@ public class FXColorExpression extends FXExpression {
         });
         uiPicker.setMaxWidth(Double.MAX_VALUE);
     }
-    
+
     @Override
     public Expression newValue() {
         return StyleConstants.DEFAULT_FILL_COLOR;
@@ -53,7 +53,7 @@ public class FXColorExpression extends FXExpression {
     protected Node getEditor() {
         return uiPicker;
     }
-    
+
     @Override
     protected boolean canHandle(Expression exp) {
         if(!(exp instanceof Literal)) return false;
@@ -64,5 +64,5 @@ public class FXColorExpression extends FXExpression {
         }
         return false;
     }
-    
+
 }

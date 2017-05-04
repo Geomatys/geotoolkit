@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for IconStyleType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="IconStyleType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -76,11 +76,11 @@ public class IconStyleType extends AbstractColorStyleType {
 
     /**
      * Gets the value of the scaleDenominator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getScaleDenominator() {
         return scaleDenominator;
@@ -88,11 +88,11 @@ public class IconStyleType extends AbstractColorStyleType {
 
     /**
      * Sets the value of the scaleDenominator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setScaleDenominator(final Double value) {
         this.scaleDenominator = value;
@@ -100,11 +100,11 @@ public class IconStyleType extends AbstractColorStyleType {
 
     /**
      * Gets the value of the heading property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getHeading() {
         return heading;
@@ -112,11 +112,11 @@ public class IconStyleType extends AbstractColorStyleType {
 
     /**
      * Sets the value of the heading property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setHeading(final Double value) {
         this.heading = value;
@@ -124,11 +124,11 @@ public class IconStyleType extends AbstractColorStyleType {
 
     /**
      * Gets the value of the icon property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BasicLinkType }
-     *     
+     *
      */
     public BasicLinkType getIcon() {
         return icon;
@@ -136,11 +136,11 @@ public class IconStyleType extends AbstractColorStyleType {
 
     /**
      * Sets the value of the icon property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BasicLinkType }
-     *     
+     *
      */
     public void setIcon(final BasicLinkType value) {
         this.icon = value;
@@ -148,11 +148,11 @@ public class IconStyleType extends AbstractColorStyleType {
 
     /**
      * Gets the value of the hotSpot property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Vec2Type }
-     *     
+     *
      */
     public Vec2Type getHotSpot() {
         return hotSpot;
@@ -160,11 +160,11 @@ public class IconStyleType extends AbstractColorStyleType {
 
     /**
      * Sets the value of the hotSpot property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Vec2Type }
-     *     
+     *
      */
     public void setHotSpot(final Vec2Type value) {
         this.hotSpot = value;
@@ -172,25 +172,25 @@ public class IconStyleType extends AbstractColorStyleType {
 
     /**
      * Gets the value of the iconStyleSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the iconStyleSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIconStyleSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getIconStyleSimpleExtensionGroup() {
         if (iconStyleSimpleExtensionGroup == null) {
@@ -201,25 +201,25 @@ public class IconStyleType extends AbstractColorStyleType {
 
     /**
      * Gets the value of the iconStyleObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the iconStyleObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIconStyleObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getIconStyleObjectExtensionGroup() {
         if (iconStyleObjectExtensionGroup == null) {

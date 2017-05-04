@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for BalloonStyleType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BalloonStyleType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -89,11 +89,11 @@ public class BalloonStyleType
 
     /**
      * Gets the value of the color property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public byte[] getColor() {
         return color;
@@ -101,11 +101,11 @@ public class BalloonStyleType
 
     /**
      * Sets the value of the color property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setColor(final byte[] value) {
         this.color = ((byte[]) value);
@@ -113,11 +113,11 @@ public class BalloonStyleType
 
     /**
      * Gets the value of the bgColor property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public byte[] getBgColor() {
         return bgColor;
@@ -125,11 +125,11 @@ public class BalloonStyleType
 
     /**
      * Sets the value of the bgColor property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setBgColor(final byte[] value) {
         this.bgColor = ((byte[]) value);
@@ -137,11 +137,11 @@ public class BalloonStyleType
 
     /**
      * Gets the value of the textColor property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public byte[] getTextColor() {
         return textColor;
@@ -149,11 +149,11 @@ public class BalloonStyleType
 
     /**
      * Sets the value of the textColor property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTextColor(final byte[] value) {
         this.textColor = ((byte[]) value);
@@ -161,11 +161,11 @@ public class BalloonStyleType
 
     /**
      * Gets the value of the text property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getText() {
         return text;
@@ -173,11 +173,11 @@ public class BalloonStyleType
 
     /**
      * Sets the value of the text property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setText(final String value) {
         this.text = value;
@@ -185,11 +185,11 @@ public class BalloonStyleType
 
     /**
      * Gets the value of the displayMode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DisplayModeEnumType }
-     *     
+     *
      */
     public DisplayModeEnumType getDisplayMode() {
         return displayMode;
@@ -197,11 +197,11 @@ public class BalloonStyleType
 
     /**
      * Sets the value of the displayMode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DisplayModeEnumType }
-     *     
+     *
      */
     public void setDisplayMode(final DisplayModeEnumType value) {
         this.displayMode = value;
@@ -209,25 +209,25 @@ public class BalloonStyleType
 
     /**
      * Gets the value of the balloonStyleSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the balloonStyleSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getBalloonStyleSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getBalloonStyleSimpleExtensionGroup() {
         if (balloonStyleSimpleExtensionGroup == null) {
@@ -238,25 +238,25 @@ public class BalloonStyleType
 
     /**
      * Gets the value of the balloonStyleObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the balloonStyleObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getBalloonStyleObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getBalloonStyleObjectExtensionGroup() {
         if (balloonStyleObjectExtensionGroup == null) {

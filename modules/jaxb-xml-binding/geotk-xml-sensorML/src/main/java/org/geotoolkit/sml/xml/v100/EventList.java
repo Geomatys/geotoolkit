@@ -34,9 +34,9 @@ import org.geotoolkit.sml.xml.AbstractEventListMember;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -61,8 +61,8 @@ import org.geotoolkit.sml.xml.AbstractEventListMember;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -94,7 +94,7 @@ public class EventList implements AbstractEventList {
             }
         }
     }
-    
+
     /**
      * Gets the value of the member property.
      */
@@ -122,7 +122,7 @@ public class EventList implements AbstractEventList {
         this.member.add(member);
     }
 
-    
+
     /**
      * Gets the value of the id property.
      */

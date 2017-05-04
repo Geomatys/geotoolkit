@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for InputMSIDsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InputMSIDsType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InputMSIDsType", propOrder = {
@@ -53,11 +53,11 @@ public class InputMSIDsType extends AbstractMSIDsType {
 
     /**
      * Gets the value of the inputMSInformation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link InputMSInformationType }
-     *     
+     *
      */
     public InputMSInformationType getInputMSInformation() {
         return inputMSInformation;
@@ -65,11 +65,11 @@ public class InputMSIDsType extends AbstractMSIDsType {
 
     /**
      * Sets the value of the inputMSInformation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link InputMSInformationType }
-     *     
+     *
      */
     public void setInputMSInformation(InputMSInformationType value) {
         this.inputMSInformation = value;

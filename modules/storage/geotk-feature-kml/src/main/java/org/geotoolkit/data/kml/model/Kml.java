@@ -69,19 +69,19 @@ public interface Kml {
     Map<String, String> getExtensionsUris();
 
     /**
-     * 
+     *
      * @param version
      */
     void setVersion(String version) throws KmlException;
 
     /**
-     * 
+     *
      * @param networkLinkControl
      */
     void setNetworkLinkControl(NetworkLinkControl networkLinkControl);
 
     /**
-     * 
+     *
      * @param feature
      */
     void setAbstractFeature(Feature feature);
@@ -93,14 +93,14 @@ public interface Kml {
     void setExtensionsUris(Map<String, String> extensionsUris);
 
     /**
-     * 
+     *
      * @param uri
      * @param prefix
      */
     void addExtensionUri(String uri, String prefix);
 
     /**
-     * 
+     *
      * @return
      */
     Extensions extensions();

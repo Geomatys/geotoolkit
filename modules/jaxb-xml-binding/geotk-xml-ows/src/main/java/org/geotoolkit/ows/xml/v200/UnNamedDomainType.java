@@ -32,11 +32,11 @@ import javax.xml.bind.annotation.XmlType;
  * Valid domain (or allowed set of values) of one quantity,
  *       with needed metadata but without a quantity name or
  *       identifier.
- * 
+ *
  * <p>Java class for UnNamedDomainType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UnNamedDomainType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UnNamedDomainType", propOrder = {
@@ -96,7 +96,7 @@ public class UnNamedDomainType {
     private List<JAXBElement<? extends MetadataType>> metadata;
 
     UnNamedDomainType() {
-        
+
     }
 
     public UnNamedDomainType(final List<String> allowedvalues) {
@@ -109,7 +109,7 @@ public class UnNamedDomainType {
         this.noValues     = nv;
         this.defaultValue = defaultvalue;
     }
-    
+
     public UnNamedDomainType(final UnNamedDomainType that) {
         if (that != null) {
             if (that.allowedValues != null) {
@@ -131,7 +131,7 @@ public class UnNamedDomainType {
                 final ObjectFactory factory = new ObjectFactory();
                 this.metadata        = new ArrayList<>();
                 for (JAXBElement<? extends MetadataType>  jb : that.metadata) {
-                    
+
                     this.metadata.add(factory.createMetadata(new MetadataType(jb.getValue())));
                 }
             }
@@ -161,14 +161,14 @@ public class UnNamedDomainType {
     public UnNamedDomainType(final AllowedValues value) {
         this.allowedValues = value;
     }
-    
+
     /**
      * Gets the value of the allowedValues property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedValues }
-     *     
+     *
      */
     public AllowedValues getAllowedValues() {
         return allowedValues;
@@ -176,11 +176,11 @@ public class UnNamedDomainType {
 
     /**
      * Sets the value of the allowedValues property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedValues }
-     *     
+     *
      */
     public void setAllowedValues(AllowedValues value) {
         this.allowedValues = value;
@@ -188,11 +188,11 @@ public class UnNamedDomainType {
 
     /**
      * Gets the value of the anyValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AnyValue }
-     *     
+     *
      */
     public AnyValue getAnyValue() {
         return anyValue;
@@ -200,11 +200,11 @@ public class UnNamedDomainType {
 
     /**
      * Sets the value of the anyValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AnyValue }
-     *     
+     *
      */
     public void setAnyValue(AnyValue value) {
         this.anyValue = value;
@@ -212,11 +212,11 @@ public class UnNamedDomainType {
 
     /**
      * Gets the value of the noValues property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link NoValues }
-     *     
+     *
      */
     public NoValues getNoValues() {
         return noValues;
@@ -224,11 +224,11 @@ public class UnNamedDomainType {
 
     /**
      * Sets the value of the noValues property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link NoValues }
-     *     
+     *
      */
     public void setNoValues(NoValues value) {
         this.noValues = value;
@@ -236,11 +236,11 @@ public class UnNamedDomainType {
 
     /**
      * Gets the value of the valuesReference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ValuesReference }
-     *     
+     *
      */
     public ValuesReference getValuesReference() {
         return valuesReference;
@@ -248,11 +248,11 @@ public class UnNamedDomainType {
 
     /**
      * Sets the value of the valuesReference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ValuesReference }
-     *     
+     *
      */
     public void setValuesReference(ValuesReference value) {
         this.valuesReference = value;
@@ -262,11 +262,11 @@ public class UnNamedDomainType {
      * Optional default value for this quantity, which
      *           should be included when this quantity has a default
      *           value.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ValueType }
-     *     
+     *
      */
     public String getDefaultValue() {
         if (defaultValue != null) {
@@ -277,11 +277,11 @@ public class UnNamedDomainType {
 
     /**
      * Sets the value of the defaultValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ValueType }
-     *     
+     *
      */
     public void setDefaultValue(ValueType value) {
         this.defaultValue = value;
@@ -298,11 +298,11 @@ public class UnNamedDomainType {
     /**
      * Meaning metadata should be referenced or included for
      *           each quantity.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DomainMetadataType }
-     *     
+     *
      */
     public DomainMetadataType getMeaning() {
         return meaning;
@@ -310,11 +310,11 @@ public class UnNamedDomainType {
 
     /**
      * Sets the value of the meaning property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DomainMetadataType }
-     *     
+     *
      */
     public void setMeaning(DomainMetadataType value) {
         this.meaning = value;
@@ -323,11 +323,11 @@ public class UnNamedDomainType {
     /**
      * This data type metadata should be referenced or
      *           included for each quantity.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DomainMetadataType }
-     *     
+     *
      */
     public DomainMetadataType getDataType() {
         return dataType;
@@ -335,11 +335,11 @@ public class UnNamedDomainType {
 
     /**
      * Sets the value of the dataType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DomainMetadataType }
-     *     
+     *
      */
     public void setDataType(DomainMetadataType value) {
         this.dataType = value;
@@ -349,11 +349,11 @@ public class UnNamedDomainType {
      * Identifier of unit of measure of this set of values.
      *           Should be included then this set of values has units (and not a more
      *           complete reference system).
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DomainMetadataType }
-     *     
+     *
      */
     public DomainMetadataType getUOM() {
         return uom;
@@ -361,11 +361,11 @@ public class UnNamedDomainType {
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DomainMetadataType }
-     *     
+     *
      */
     public void setUOM(DomainMetadataType value) {
         this.uom = value;
@@ -375,11 +375,11 @@ public class UnNamedDomainType {
      * Identifier of reference system used by this set of
      *           values. Should be included then this set of values has a reference
      *           system (not just units).
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DomainMetadataType }
-     *     
+     *
      */
     public DomainMetadataType getReferenceSystem() {
         return referenceSystem;
@@ -387,11 +387,11 @@ public class UnNamedDomainType {
 
     /**
      * Sets the value of the referenceSystem property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DomainMetadataType }
-     *     
+     *
      */
     public void setReferenceSystem(DomainMetadataType value) {
         this.referenceSystem = value;
@@ -402,12 +402,12 @@ public class UnNamedDomainType {
      *           quantity. A list of required and optional other metadata elements
      *           for this quantity should be specified in the Implementation
      *           Specification for this service.Gets the value of the metadata property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link MetadataType }{@code >}
      * {@link JAXBElement }{@code <}{@link AdditionalParametersType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends MetadataType>> getRealMetadata() {
         if (metadata == null) {
@@ -415,7 +415,7 @@ public class UnNamedDomainType {
         }
         return this.metadata;
     }
-    
+
     public List<MetadataType> getMetadata() {
         if (metadata == null) {
             metadata = new ArrayList<>();

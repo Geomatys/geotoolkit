@@ -109,5 +109,5 @@ public class FXCoverageBand extends BorderPane {
 
     }
 
-    
+
 }

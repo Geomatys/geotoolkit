@@ -29,44 +29,44 @@ import javax.xml.namespace.QName;
  */
 @XmlRegistry
 public class ObjectFactory {
-    
+
     private static final QName _Observation_QNAME   = new QName("http://www.opengis.net/om/1.0", "Observation");
     private static final QName _Measurement_QNAME   = new QName("http://www.opengis.net/om/1.0", "Measurement");
     private static final QName _Result_QNAME        = new QName("http://www.opengis.net/om/1.0", "result");
-     
+
     /**
      *
      */
     public ObjectFactory() {
     }
-    
+
      /**
      * Create an instance of {@link ObservationType }
-     * 
+     *
      */
     public ObservationType createObservationType() {
         return new ObservationType();
     }
-    
+
     /**
      * Create an instance of {@link ObservationCollectionType }
-     * 
+     *
      */
     public ObservationCollectionType createObservationCollectionType() {
         return new ObservationCollectionType();
     }
-    
+
       /**
      * Create an instance of {@link MeasurementType }
-     * 
+     *
      */
     public MeasurementType createMeasurementType() {
         return new MeasurementType();
     }
-    
+
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ObservationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/om/1.0", name = "Observation", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
     public JAXBElement<ObservationType> createObservation(final ObservationType value) {

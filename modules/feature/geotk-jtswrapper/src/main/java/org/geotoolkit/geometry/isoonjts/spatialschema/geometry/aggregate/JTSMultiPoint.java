@@ -23,7 +23,7 @@ import org.opengis.geometry.aggregate.MultiPoint;
  * @module
  */
 @XmlType(name="MultiPointType", namespace="http://www.opengis.net/gml")
-public class JTSMultiPoint extends AbstractJTSAggregate<Point>	implements MultiPoint {
+public class JTSMultiPoint extends AbstractJTSAggregate<Point>  implements MultiPoint {
 
     public JTSMultiPoint() {
         this(null);

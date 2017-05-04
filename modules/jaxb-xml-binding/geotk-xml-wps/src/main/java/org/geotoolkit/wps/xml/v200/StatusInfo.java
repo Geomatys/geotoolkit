@@ -29,9 +29,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -72,8 +72,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -95,7 +95,7 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
     public static final String STATUS_ACCEPTED = "Accepted";
     /** The job is running. */
     public static final String STATUS_RUNNING = "Running";
-    
+
     @XmlElement(name = "JobID", required = true)
     protected String jobID;
     @XmlElement(name = "Status", required = true)
@@ -113,27 +113,27 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
     protected Integer percentCompleted;
 
     public StatusInfo() {
-        
+
     }
-    
+
     public StatusInfo(String status, String jobId) {
         this.status = status;
         this.jobID = jobId;
     }
-    
+
     public StatusInfo(String status, Integer percentCompleted, String jobId) {
         this.status = status;
         this.percentCompleted = percentCompleted;
         this.jobID = jobId;
     }
-    
+
     /**
      * Gets the value of the jobID property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getJobID() {
         return jobID;
@@ -141,11 +141,11 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
 
     /**
      * Sets the value of the jobID property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setJobID(String value) {
         this.jobID = value;
@@ -153,11 +153,11 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
 
     /**
      * Gets the value of the status property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStatus() {
         return status;
@@ -165,11 +165,11 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
 
     /**
      * Sets the value of the status property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStatus(String value) {
         this.status = value;
@@ -177,11 +177,11 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
 
     /**
      * Gets the value of the expirationDate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getExpirationDate() {
         return expirationDate;
@@ -189,11 +189,11 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
 
     /**
      * Sets the value of the expirationDate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setExpirationDate(XMLGregorianCalendar value) {
         this.expirationDate = value;
@@ -201,11 +201,11 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
 
     /**
      * Gets the value of the estimatedCompletion property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getEstimatedCompletion() {
         return estimatedCompletion;
@@ -213,11 +213,11 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
 
     /**
      * Sets the value of the estimatedCompletion property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setEstimatedCompletion(XMLGregorianCalendar value) {
         this.estimatedCompletion = value;
@@ -225,11 +225,11 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
 
     /**
      * Gets the value of the nextPoll property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getNextPoll() {
         return nextPoll;
@@ -237,11 +237,11 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
 
     /**
      * Sets the value of the nextPoll property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setNextPoll(XMLGregorianCalendar value) {
         this.nextPoll = value;
@@ -249,11 +249,11 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
 
     /**
      * Gets the value of the percentCompleted property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getPercentCompleted() {
         return percentCompleted;
@@ -261,11 +261,11 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
 
     /**
      * Sets the value of the percentCompleted property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setPercentCompleted(Integer value) {
         this.percentCompleted = value;
@@ -294,7 +294,7 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

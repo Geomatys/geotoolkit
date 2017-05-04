@@ -32,9 +32,9 @@ import org.geotoolkit.ows.xml.v200.CodeType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.ows.xml.v200.CodeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -63,25 +63,25 @@ public class DescribeProcess extends RequestBaseType implements org.geotoolkit.w
     protected String lang;
 
     public DescribeProcess() {
-        
+
     }
-    
+
     public DescribeProcess(String service, String language, List<CodeType> identifiers) {
         super(service);
         this.identifier = identifiers;
         this.lang = language;
     }
-    
+
     /**
-     * 
+     *
      * One or more identifiers for which the process description shall be obtained.
      * "ALL"" is reserved to retrieve the  descriptions for all available process offerings.
      * Gets the value of the identifier property.
-     * 
+     *
      * @return Objects of the following type(s) are allowed in the list
      * {@link CodeType }
-     * 
-     * 
+     *
+     *
      */
     @Override
     public List<CodeType> getIdentifier() {
@@ -102,7 +102,7 @@ public class DescribeProcess extends RequestBaseType implements org.geotoolkit.w
 
     /**
      * RFC 4646 language code of the human-readable text (e.g. "en-CA") in the process description.
-     * 	
+     *
      * @return
      *     possible object is
      *     {@link String }
@@ -114,7 +114,7 @@ public class DescribeProcess extends RequestBaseType implements org.geotoolkit.w
 
     /**
      * Sets the value of the lang property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }

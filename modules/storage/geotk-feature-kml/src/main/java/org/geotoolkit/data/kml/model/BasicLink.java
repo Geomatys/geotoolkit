@@ -19,12 +19,12 @@ package org.geotoolkit.data.kml.model;
 /**
  *
  * <p>This interface maps BasicLinkType type.</p>
- * 
+ *
  * <p>This element is an extension of AbstractObject but is not member of
  * the substitution group of this abstract element. So it cannot replace it
  * as java inheritance would allow.</p>
- * 
- * <p>This interface is not an extension of AbstractObject, and 
+ *
+ * <p>This interface is not an extension of AbstractObject, and
  * redefines AbstractObject fields.</p>
  *
  * <pre>
@@ -43,7 +43,7 @@ package org.geotoolkit.data.kml.model;
  * &lt;element name="BasicLinkSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
  * &lt;element name="BasicLinkObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
  * </pre>
- * 
+ *
  * @author Samuel Andrés
  * @module
  */
@@ -74,7 +74,7 @@ public interface BasicLink {
     void setHref(String href);
 
     /**
-     * 
+     *
      * @return
      */
     Extensions extensions();

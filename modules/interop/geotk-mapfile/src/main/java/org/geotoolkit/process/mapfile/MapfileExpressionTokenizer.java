@@ -173,8 +173,8 @@ public final class MapfileExpressionTokenizer {
                 || ch == ']'
                 || ch == '=');
     }
-    
-    
+
+
     public static class Token {
 
         public String value;
@@ -202,6 +202,6 @@ public final class MapfileExpressionTokenizer {
 
         return tokenStack;
     }
-    
+
 }
 

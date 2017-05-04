@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009 - 2010, Geomatys
  *
@@ -40,7 +40,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * This class is the counterpart of javax.jcr.query.qom.QueryObjectModel
  * from JSR-283 (Java Content Repository 2).
  * </p>
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @author Chris Holmes
  * @version $Id$
@@ -205,7 +205,7 @@ public interface Query {
      * Set The wished resolution of the geometries.
      * Since there is no Envelope provided in the query like in CoverageReadParam
      * this resolution must be expressed in the native data coordinate reference system.
-     * 
+     *
      * @return resolution or null if no resolution provided.
      */
     double[] getResolution();
@@ -251,7 +251,7 @@ public interface Query {
      * @return String, may be null.
      */
     String getVersionLabel();
-    
+
     /**
      * Requested version date of the features.
      * If the value is null the latest version is returned.
@@ -259,7 +259,7 @@ public interface Query {
      * @return Date, may be null.
      */
     Date getVersionDate();
-    
+
     /**
      * Specifies some hints to drive the query execution and results build-up.
      * Hints examples can be the GeometryFactory to be used, a generalization
@@ -274,5 +274,5 @@ public interface Query {
      *         (eventually empty but never null).
      */
     Hints getHints();
-    
+
 }

@@ -83,7 +83,7 @@ public class PeriodDurationType implements PeriodDuration {
     }
 
     public PeriodDurationType(final boolean isPositive, final int years, final int months, final int days, final int hours, final int minutes,
-		final int seconds) {
+        final int seconds) {
         try {
             final DatatypeFactory factory = DatatypeFactory.newInstance();
             this.tmPeriodDuration = factory.newDuration(isPositive, years, months, days, hours, minutes, seconds);
@@ -94,7 +94,7 @@ public class PeriodDurationType implements PeriodDuration {
     }
 
     public PeriodDurationType(final boolean isPositive, final BigInteger years, final BigInteger months, final BigInteger days, final BigInteger hours, final BigInteger minutes,
-		final BigDecimal seconds) {
+        final BigDecimal seconds) {
         try {
             final DatatypeFactory factory = DatatypeFactory.newInstance();
             this.tmPeriodDuration = factory.newDuration(isPositive, years, months, days, hours, minutes, seconds);

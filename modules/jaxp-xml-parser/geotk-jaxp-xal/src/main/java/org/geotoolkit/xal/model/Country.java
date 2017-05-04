@@ -67,7 +67,7 @@ public interface Country {
     List<CountryNameCode> getCountryNameCodes();
 
     /**
-     * 
+     *
      * @param countryNameCodes
      */
     void setCountryNamesCodes(List<CountryNameCode> countryNameCodes);
@@ -80,7 +80,7 @@ public interface Country {
     List<GenericTypedGrPostal> getCountryNames();
 
     /**
-     * 
+     *
      * @param countryNames
      */
     void setCountryNames(List<GenericTypedGrPostal> countryNames);
@@ -96,7 +96,7 @@ public interface Country {
     AdministrativeArea getAdministrativeArea();
 
     /**
-     * 
+     *
      * @param administrativeArea
      */
     void setAdministrativeArea(AdministrativeArea administrativeArea);
@@ -108,19 +108,19 @@ public interface Country {
     Locality getLocality();
 
     /**
-     * 
+     *
      * @param locality
      */
     void setLocality(Locality locality);
 
     /**
-     * 
+     *
      * @return
      */
     Thoroughfare getThoroughfare();
 
     /**
-     * 
+     *
      * @param thoroughfare
      */
     void setThoroughfare(Thoroughfare thoroughfare);

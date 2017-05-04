@@ -31,7 +31,7 @@ import java.util.List;
 public class XMLCoverageStoreTest extends AbstractPyramidalModelStoreTest {
 
     private static final List<File> folders = new ArrayList<File>();
-    
+
     @Override
     protected CoverageStore createStore() throws Exception{
 
@@ -51,5 +51,5 @@ public class XMLCoverageStoreTest extends AbstractPyramidalModelStoreTest {
         }
         folders.clear();
     }
-    
+
 }

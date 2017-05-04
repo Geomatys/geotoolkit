@@ -41,14 +41,14 @@ import org.geotoolkit.csw.xml.Update;
  *
  * 2) To update selected properties of an existing record, include a set of RecordProperty elements.
  * The scope of the update statement is determined by the Constraint element.
- * 
+ *
  * The 'handle' is a local identifier for the action.
- *          
- * 
+ *
+ *
  * <p>Java class for UpdateType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UpdateType">
  *   &lt;complexContent>
@@ -67,8 +67,8 @@ import org.geotoolkit.csw.xml.Update;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -154,7 +154,7 @@ public class UpdateType implements Update {
     public void setConstraint(final QueryConstraintType constraint) {
         this.constraint = constraint;
     }
-    
+
     /**
      * Gets the value of the handle property.
      */

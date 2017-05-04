@@ -36,7 +36,7 @@ public class MokSymbolizerRendererService extends AbstractSymbolizerRendererServ
     public boolean isGroupSymbolizer() {
         return false;
     }
-    
+
     @Override
     public Class<MokSymbolizer> getSymbolizerClass() {
         return MokSymbolizer.class;

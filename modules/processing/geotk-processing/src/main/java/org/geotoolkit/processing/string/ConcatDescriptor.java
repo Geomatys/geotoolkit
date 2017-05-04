@@ -45,7 +45,7 @@ public class ConcatDescriptor  extends AbstractProcessDescriptor {
             .setRemarks("Prefix to add to the string value")
             .setRequired(false)
             .create(String.class, null);
-    
+
     /**
      * Mandatory - path
      */
@@ -54,15 +54,15 @@ public class ConcatDescriptor  extends AbstractProcessDescriptor {
             .setRemarks("Suffix to add to the string value")
             .setRequired(false)
             .create(String.class, null);
-    
+
     public static final ParameterDescriptor<String> VALUE = new ParameterBuilder()
             .addName("value")
             .setRemarks("The string value")
             .setRequired(true)
             .create(String.class, null);
-            
-    /** 
-     * Input Parameters 
+
+    /**
+     * Input Parameters
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(PREFIX, SUFFIX, VALUE);
@@ -75,13 +75,13 @@ public class ConcatDescriptor  extends AbstractProcessDescriptor {
             .setRemarks("The concatened string")
             .setRequired(true)
             .create(String.class, null);
-    
-    /** 
-     * Output Parameters 
+
+    /**
+     * Output Parameters
      */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_OUT);
-    
+
     public static final ProcessDescriptor INSTANCE = new ConcatDescriptor();
 
     public ConcatDescriptor() {

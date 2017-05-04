@@ -26,11 +26,11 @@ import org.geotoolkit.swe.xml.XmlBlock;
 
 /**
  * Carries the designator for an element implementing an XML-encoded data-type
- * 
+ *
  * <p>Java class for XMLBlockType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="XMLBlockType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import org.geotoolkit.swe.xml.XmlBlock;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for BaseUnitType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BaseUnitType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BaseUnitType", propOrder = {
@@ -56,11 +56,11 @@ public class BaseUnitType
 
     /**
      * Gets the value of the unitsSystem property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getUnitsSystem() {
         return unitsSystem;
@@ -68,11 +68,11 @@ public class BaseUnitType
 
     /**
      * Sets the value of the unitsSystem property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setUnitsSystem(ReferenceType value) {
         this.unitsSystem = value;

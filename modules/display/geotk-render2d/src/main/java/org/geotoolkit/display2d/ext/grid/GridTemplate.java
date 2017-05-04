@@ -56,7 +56,7 @@ public interface GridTemplate {
     Paint getMainHaloPaint();
 
     float getXTextOffset();
-    
+
     float getYTextOffset();
-    
+
 }

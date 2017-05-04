@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for NativeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="NativeType">
  *   &lt;complexContent>
@@ -37,8 +37,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "NativeType")
@@ -51,11 +51,11 @@ public class NativeType {
 
     /**
      * Gets the value of the vendorId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVendorId() {
         return vendorId;
@@ -63,11 +63,11 @@ public class NativeType {
 
     /**
      * Sets the value of the vendorId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVendorId(String value) {
         this.vendorId = value;
@@ -75,7 +75,7 @@ public class NativeType {
 
     /**
      * Gets the value of the safeToIgnore property.
-     * 
+     *
      */
     public boolean isSafeToIgnore() {
         return safeToIgnore;
@@ -83,7 +83,7 @@ public class NativeType {
 
     /**
      * Sets the value of the safeToIgnore property.
-     * 
+     *
      */
     public void setSafeToIgnore(boolean value) {
         this.safeToIgnore = value;

@@ -91,7 +91,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
     public TimePeriodType(final Instant beginPosition, final Instant endPosition) {
         this(null, beginPosition, endPosition);
     }
-    
+
     /**
      * Build a new Time period bounded by the begin and end time specified.
      */
@@ -104,7 +104,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
             this.endPosition = new TimePositionType(endPosition.getDate());
         }
     }
-    
+
     /**
      * Build a new Time period bounded by the begin and end time specified.
      */
@@ -164,7 +164,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         this.beginPosition = new TimePositionType(indeterminateBegin);
         this.endPosition   = endPosition;
     }
-    
+
     /**
      * Build a new Time period bounded by an indeterminate time at begin.
      */
@@ -186,7 +186,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         this.endPosition = new TimePositionType(endPosition);
         this.endPosition = new TimePositionType(indeterminateEnd);
     }
-    
+
     /**
      * Build a new Time periodwith a duration.
      */
@@ -325,7 +325,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
             this.endPosition = value.getTimePosition();
         }
     }
-    
+
     /**
      * Sets the value of the endPosition property.
      *

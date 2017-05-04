@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for VerticalCRSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="VerticalCRSType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
@@ -59,12 +59,12 @@ public class VerticalCRSType extends AbstractCRSType {
 
     /**
      * Gets the value of the verticalCSProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link VerticalCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link VerticalCSPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<VerticalCSPropertyType> getVerticalCSProperty() {
         return verticalCSProperty;
@@ -72,12 +72,12 @@ public class VerticalCRSType extends AbstractCRSType {
 
     /**
      * Sets the value of the verticalCSProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link VerticalCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link VerticalCSPropertyType }{@code >}
-     *     
+     *
      */
     public void setVerticalCSProperty(JAXBElement<VerticalCSPropertyType> value) {
         this.verticalCSProperty = ((JAXBElement<VerticalCSPropertyType> ) value);
@@ -85,12 +85,12 @@ public class VerticalCRSType extends AbstractCRSType {
 
     /**
      * Gets the value of the verticalDatumProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link VerticalDatumPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link VerticalDatumPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<VerticalDatumPropertyType> getVerticalDatumProperty() {
         return verticalDatumProperty;
@@ -98,12 +98,12 @@ public class VerticalCRSType extends AbstractCRSType {
 
     /**
      * Sets the value of the verticalDatumProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link VerticalDatumPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link VerticalDatumPropertyType }{@code >}
-     *     
+     *
      */
     public void setVerticalDatumProperty(JAXBElement<VerticalDatumPropertyType> value) {
         this.verticalDatumProperty = ((JAXBElement<VerticalDatumPropertyType> ) value);

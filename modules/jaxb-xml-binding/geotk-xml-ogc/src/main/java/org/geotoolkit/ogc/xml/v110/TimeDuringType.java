@@ -36,7 +36,7 @@ public class TimeDuringType extends BinaryTemporalOpType implements During {
     public TimeDuringType(final String propertyName, final Object temporal) {
         super(propertyName, temporal);
     }
-    
+
     public TimeDuringType(final TimeDuringType that) {
         super(that);
     }
@@ -45,7 +45,7 @@ public class TimeDuringType extends BinaryTemporalOpType implements During {
     public TemporalOpsType getClone() {
         return new TimeDuringType(this);
     }
-    
+
 
     @Override
     public boolean evaluate(Object o) {

@@ -28,7 +28,7 @@ import org.geotoolkit.wmsc.xml.v111.TileSet;
 
 
 /**
- * 
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -70,7 +70,7 @@ public class VendorSpecificCapabilities {
         hash = 41 * hash + (this.tileSet != null ? this.tileSet.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder("[VendorSpecificCapabilities]\n");

@@ -24,8 +24,8 @@ import java.util.List;
  * @module
  */
 public class WPSInputBoundingBox extends AbstractWPSInput{
-    
-     
+
+
     private List<Double> lowerCorner;
     private List<Double> upperCorner;
     private String crs;
@@ -38,9 +38,9 @@ public class WPSInputBoundingBox extends AbstractWPSInput{
      * @param lowerCorner
      * @param upperCorner
      * @param crs
-     * @param dimension 
+     * @param dimension
      */
-    public WPSInputBoundingBox(final String identifier, final List<Double> lowerCorner, final List<Double> upperCorner, 
+    public WPSInputBoundingBox(final String identifier, final List<Double> lowerCorner, final List<Double> upperCorner,
             final String crs, final int dimension) {
         super(identifier);
         this.lowerCorner = lowerCorner;
@@ -76,5 +76,5 @@ public class WPSInputBoundingBox extends AbstractWPSInput{
     public List<Double> getUpperCorner() {
         return upperCorner;
     }
-    
+
 }

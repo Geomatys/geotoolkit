@@ -134,7 +134,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
     public TimePositionType(final Date time) {
         setValue(time);
     }
-    
+
     /**
      * The simple type gml:TimePositionUnion is a union of XML Schema simple types which instantiate the subtypes for temporal position described in ISO 19108.
      *  An ordinal era may be referenced via URI.  A decimal value may be used to indicate the distance from the scale origin .  time is used for a position that recurs daily (see ISO 19108:2002 5.4.4.2).
@@ -179,7 +179,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
             }
         }
     }
-    
+
     /**
      * Gets the value of the frame property.
      *

@@ -24,8 +24,8 @@ import org.geotoolkit.ows.xml.RequestBase;
  * @author Guilhem Legal (Geomatys)
  */
 public interface InsertResultTemplate extends RequestBase {
-    
+
     ResultTemplate getTemplate();
-    
+
     String getResponseFormat();
 }

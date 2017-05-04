@@ -27,16 +27,16 @@ import javax.xml.namespace.QName;
  */
 @XmlRegistry
 public class DynamicRangeSymbolizerObjectFactory {
-    
+
     private static final QName _DynamicRangeSymbolizer_QNAME = new QName("http://geotoolkit.org", "DynamicRangeSymbolizer");
-    
+
     public DynamicRangeSymbolizer createBandSymbolizer() {
         return new DynamicRangeSymbolizer();
     }
-    
+
     @XmlElementDecl(namespace = "http://geotoolkit.org", name = "DynamicRangeSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/se", substitutionHeadName = "Symbolizer")
     public JAXBElement<DynamicRangeSymbolizer> createCellSymbolizer(final DynamicRangeSymbolizer value) {
         return new JAXBElement<DynamicRangeSymbolizer>(_DynamicRangeSymbolizer_QNAME, DynamicRangeSymbolizer.class, null, value);
     }
-    
+
 }

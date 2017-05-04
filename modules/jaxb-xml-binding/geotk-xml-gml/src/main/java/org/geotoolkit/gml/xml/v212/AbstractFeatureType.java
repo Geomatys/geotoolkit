@@ -28,17 +28,17 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- *         An abstract feature provides a set of common properties. A concrete 
- *         feature type must derive from this type and specify additional 
- *         properties in an application schema. A feature may optionally 
+ *
+ *         An abstract feature provides a set of common properties. A concrete
+ *         feature type must derive from this type and specify additional
+ *         properties in an application schema. A feature may optionally
  *         possess an identifying attribute ('fid').
- *       
- * 
+ *
+ *
  * <p>Java class for AbstractFeatureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractFeatureType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,14 +84,14 @@ public abstract class AbstractFeatureType {
     public AbstractFeatureType(final String fid) {
         this.fid = fid;
     }
-    
+
     /**
      * Gets the value of the description property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDescription() {
         return description;
@@ -99,11 +99,11 @@ public abstract class AbstractFeatureType {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDescription(final String value) {
         this.description = value;
@@ -111,11 +111,11 @@ public abstract class AbstractFeatureType {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -123,11 +123,11 @@ public abstract class AbstractFeatureType {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -135,11 +135,11 @@ public abstract class AbstractFeatureType {
 
     /**
      * Gets the value of the boundedBy property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BoundingShapeType }
-     *     
+     *
      */
     public BoundingShapeType getBoundedBy() {
         return boundedBy;
@@ -147,11 +147,11 @@ public abstract class AbstractFeatureType {
 
     /**
      * Sets the value of the boundedBy property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BoundingShapeType }
-     *     
+     *
      */
     public void setBoundedBy(final BoundingShapeType value) {
         this.boundedBy = value;
@@ -159,11 +159,11 @@ public abstract class AbstractFeatureType {
 
     /**
      * Gets the value of the fid property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFid() {
         return fid;
@@ -171,11 +171,11 @@ public abstract class AbstractFeatureType {
 
     /**
      * Sets the value of the fid property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFid(final String value) {
         this.fid = value;

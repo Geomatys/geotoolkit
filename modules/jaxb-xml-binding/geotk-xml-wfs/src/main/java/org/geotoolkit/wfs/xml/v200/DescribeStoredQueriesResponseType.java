@@ -32,9 +32,9 @@ import org.geotoolkit.wfs.xml.DescribeStoredQueriesResponse;
 
 /**
  * <p>Java class for DescribeStoredQueriesResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DescribeStoredQueriesResponseType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.wfs.xml.DescribeStoredQueriesResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DescribeStoredQueriesResponseType", propOrder = {
@@ -60,16 +60,16 @@ public class DescribeStoredQueriesResponseType implements DescribeStoredQueriesR
     private List<StoredQueryDescriptionType> storedQueryDescription;
 
     public DescribeStoredQueriesResponseType() {
-        
+
     }
-    
+
     public DescribeStoredQueriesResponseType(final List<StoredQueryDescriptionType> storedQueryDescription) {
         this.storedQueryDescription = storedQueryDescription;
     }
-    
+
     /**
      * Gets the value of the storedQueryDescription property.
-     * 
+     *
      */
     public List<StoredQueryDescriptionType> getStoredQueryDescription() {
         if (storedQueryDescription == null) {

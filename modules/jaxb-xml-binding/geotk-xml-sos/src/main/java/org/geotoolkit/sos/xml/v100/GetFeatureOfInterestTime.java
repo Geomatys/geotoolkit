@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -73,7 +73,7 @@ public class GetFeatureOfInterestTime extends RequestBaseType implements org.geo
     public String getFeatureOfInterestId() {
         return featureOfInterestId;
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -85,7 +85,7 @@ public class GetFeatureOfInterestTime extends RequestBaseType implements org.geo
         if (object instanceof GetFeatureOfInterestTime && super.equals(object)) {
             final GetFeatureOfInterestTime that = (GetFeatureOfInterestTime) object;
             return Objects.equals(this.featureOfInterestId, that.featureOfInterestId);
-        } 
+        }
         return false;
     }
 

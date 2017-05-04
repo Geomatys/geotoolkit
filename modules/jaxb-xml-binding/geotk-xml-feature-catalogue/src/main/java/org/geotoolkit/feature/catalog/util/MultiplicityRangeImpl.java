@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -79,7 +79,7 @@ public class MultiplicityRangeImpl implements MultiplicityRange {
             this.upper = range.getUpper();
         }
     }
-    
+
     /**
      * An empty constructor used by JAXB
      */
@@ -124,7 +124,7 @@ public class MultiplicityRangeImpl implements MultiplicityRange {
     public String toString() {
         return "lower=" + lower + " upper=" + upper;
     }
-    
+
     public String toString(final String margin) {
         return margin + "[MultiplicityRange]: lower=" + lower + " upper=" + upper;
     }

@@ -26,19 +26,19 @@ import org.geotoolkit.swe.xml.v101.PhenomenonType;
  * @module
  */
 public class OfferingPhenomenonType implements Entry{
-    
+
     /**
      * The offering identifier.
      */
     private String idOffering;
-    
+
     /**
      * The phenomenon associed to this offering (reference).
      */
     private PhenomenonType component;
-    
+
     /**
-     * Build a new link between a procedure and an offering. 
+     * Build a new link between a procedure and an offering.
      */
     public OfferingPhenomenonType(final String idOffering, final PhenomenonType component) {
         this.idOffering = idOffering;

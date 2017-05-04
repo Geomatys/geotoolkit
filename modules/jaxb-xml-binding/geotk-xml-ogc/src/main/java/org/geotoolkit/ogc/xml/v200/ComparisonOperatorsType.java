@@ -33,9 +33,9 @@ import org.opengis.filter.capability.Operator;
 
 /**
  * <p>Java class for ComparisonOperatorsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ComparisonOperatorsType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.opengis.filter.capability.Operator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ComparisonOperatorsType", propOrder = {
@@ -63,12 +63,12 @@ public class ComparisonOperatorsType implements ComparisonOperators {
      * An empty constructor used by JAXB
      */
     public ComparisonOperatorsType() {
-        
+
     }
-    
+
     /**
-     * Build a new comparison operators with the specified array of operator 
-     * 
+     * Build a new comparison operators with the specified array of operator
+     *
      * @param operators an array of comparison operator
      */
     public ComparisonOperatorsType(Operator[] operators) {
@@ -77,10 +77,10 @@ public class ComparisonOperatorsType implements ComparisonOperators {
         }
         this.comparisonOperator = new ArrayList(Arrays.asList(operators));
     }
-    
+
     /**
      * Gets the value of the comparisonOperator property.
-     * 
+     *
      */
     public List<ComparisonOperatorType> getComparisonOperator() {
         if (comparisonOperator == null) {
@@ -91,7 +91,7 @@ public class ComparisonOperatorsType implements ComparisonOperators {
 
     /**
      * Gets the value of the comparisonOperator property.
-     * 
+     *
      */
     @Override
     public Collection<Operator> getOperators() {
@@ -114,15 +114,15 @@ public class ComparisonOperatorsType implements ComparisonOperators {
     public Operator getOperator(final String name) {
         if ( name == null || comparisonOperator == null) {
             return null;
-        }        
-        for ( Operator operator : comparisonOperator ) {            
+        }
+        for ( Operator operator : comparisonOperator ) {
             if ( name.equals( operator.getName() ) ) {
                 return operator;
             }
-        }        
+        }
         return null;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("[ComparisonOperatorsType]").append("\n");

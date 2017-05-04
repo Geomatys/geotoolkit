@@ -28,11 +28,11 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * A solid is the basis for 3-dimensional geometry. The extent of a solid is defined by the boundary surfaces (shells). A shell is represented by a composite surface, where every  shell is used to represent a single connected component of the boundary of a solid. It consists of a composite surface (a list of orientable surfaces) connected in a topological cycle (an object whose boundary is empty). Unlike a Ring, a Shell's elements have no natural sort order. Like Rings, Shells are simple.
- * 
+ *
  * <p>Java class for SolidType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SolidType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,11 +62,11 @@ public class SolidType extends AbstractSolidType {
 
     /**
      * Gets the value of the exterior property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SurfacePropertyType }
-     *     
+     *
      */
     public SurfacePropertyType getExterior() {
         return exterior;
@@ -74,11 +74,11 @@ public class SolidType extends AbstractSolidType {
 
     /**
      * Sets the value of the exterior property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SurfacePropertyType }
-     *     
+     *
      */
     public void setExterior(final SurfacePropertyType value) {
         this.exterior = value;
@@ -86,11 +86,11 @@ public class SolidType extends AbstractSolidType {
 
     /**
      * Gets the value of the interior property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link SurfacePropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<SurfacePropertyType> getInterior() {
         if (interior == null) {
@@ -123,7 +123,7 @@ public class SolidType extends AbstractSolidType {
         return hash;
     }
 
-    
+
 
     @Override
     public String toString() {

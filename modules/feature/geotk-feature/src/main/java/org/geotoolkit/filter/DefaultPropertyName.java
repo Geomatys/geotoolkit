@@ -74,9 +74,9 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
         final Binding accessor = Bindings.getBinding(cs,property);
         if (accessor == null) {
             return null;
-    	}
+        }
         lastAccessor = accessor;
-    	return accessor.get( candidate, property, null );
+        return accessor.get( candidate, property, null );
     }
 
     /**

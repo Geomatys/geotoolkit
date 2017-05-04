@@ -25,12 +25,12 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
 /**
  * Denotes the relation of an _AbstractBuilding to its building installations.
  * The BuildingInstallationPropertyType element must either carry a reference to a BuildingInstallation object or contain
- * a BuildingInstallation object inline, but neither both nor none. 
- * 
+ * a BuildingInstallation object inline, but neither both nor none.
+ *
  * <p>Java class for BuildingInstallationPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BuildingInstallationPropertyType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

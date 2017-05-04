@@ -33,7 +33,7 @@ public class DefaultPostalCode implements PostalCode {
     private String type;
 
     /**
-     * 
+     *
      */
     public DefaultPostalCode() {
         this.addressLines = EMPTY_LIST;

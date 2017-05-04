@@ -57,15 +57,15 @@ public interface IconStyle extends AbstractColorStyle {
      * @return
      */
     double getHeading();
-    
+
     /**
-     * 
+     *
      * @return
      */
     BasicLink getIcon();
 
     /**
-     * 
+     *
      * @return
      */
     Vec2 getHotSpot();

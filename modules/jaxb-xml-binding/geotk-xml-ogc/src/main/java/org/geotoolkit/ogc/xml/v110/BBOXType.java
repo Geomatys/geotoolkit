@@ -88,11 +88,11 @@ public class BBOXType extends SpatialOpsType implements BBOX {
         }
         this.envelope = new EnvelopeType(null, lower, upper, srs);
     }
-    
+
     public BBOXType(final BBOXType that) {
         if (that != null) {
             this.propertyName = that.propertyName;
-            
+
             if (that.envelope != null) {
                 this.envelope = new EnvelopeType(envelope);
             }
@@ -101,7 +101,7 @@ public class BBOXType extends SpatialOpsType implements BBOX {
             }
         }
     }
-    
+
     /**
      * Gets the value of the propertyName property.
      */
@@ -231,7 +231,7 @@ public class BBOXType extends SpatialOpsType implements BBOX {
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new BBOXType(this);

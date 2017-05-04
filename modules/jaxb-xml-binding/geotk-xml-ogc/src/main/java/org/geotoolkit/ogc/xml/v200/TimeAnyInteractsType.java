@@ -35,9 +35,9 @@ public class TimeAnyInteractsType extends BinaryTemporalOpType implements AnyInt
     public Object accept(FilterVisitor fv, Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     public TimeAnyInteractsType() {
-        
+
     }
     public TimeAnyInteractsType(final TimeAnyInteractsType that) {
         super(that);

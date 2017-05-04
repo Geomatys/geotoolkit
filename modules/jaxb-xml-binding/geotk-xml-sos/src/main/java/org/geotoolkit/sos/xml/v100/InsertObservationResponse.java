@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * @author Guilhem Legal 
+ *
+ * @author Guilhem Legal
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,20 +60,20 @@ public class InsertObservationResponse extends ResponseBaseType implements org.g
      * Constructor empty used by JAXB.
      */
     InsertObservationResponse() {}
-    
-   
+
+
     /**
      * Build a new response with the specified ID
-     * 
-     * @param assignedObservationId The id of the observation whitch have been inserted previously. 
+     *
+     * @param assignedObservationId The id of the observation whitch have been inserted previously.
      */
     public InsertObservationResponse(final String assignedObservationId) {
         this.assignedObservationId = assignedObservationId;
     }
-    
+
     /**
      * Return the new Observation Id assigned.
-     * 
+     *
      */
     public String getAssignedObservationId() {
         return assignedObservationId;
@@ -100,10 +100,10 @@ public class InsertObservationResponse extends ResponseBaseType implements org.g
         hash = 67 * hash + (this.assignedObservationId != null ? this.assignedObservationId.hashCode() : 0);
         return hash;
     }
-    
-    
+
+
     @Override
     public String toString() {
-        return "class:InsertObservationResponse observation ID=" + assignedObservationId; 
+        return "class:InsertObservationResponse observation ID=" + assignedObservationId;
     }
 }

@@ -79,7 +79,7 @@ public class JOffSetPane extends StyleElementEditor<Expression> {
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiLabel};
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -123,7 +123,7 @@ public class JOffSetPane extends StyleElementEditor<Expression> {
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
         // TODO add your handling code here:
-        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());
         }
     }//GEN-LAST:event_propertyChange

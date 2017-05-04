@@ -26,7 +26,7 @@ import org.apache.sis.xml.MarshallerPool;
  * @author Guilhem Legal (Geomatys)
  */
 public class ChainMarshallerPool {
-    
+
      private static final MarshallerPool instance;
     static {
         try {

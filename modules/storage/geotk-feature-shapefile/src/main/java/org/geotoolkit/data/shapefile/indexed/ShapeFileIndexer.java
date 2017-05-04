@@ -41,7 +41,7 @@ import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Utility class for Shapefile spatial indexing
- * 
+ *
  * @author Tommaso Nolli
  * @module
  */
@@ -58,14 +58,14 @@ public class ShapeFileIndexer {
      * a thread starts, another thread is indexing the same file, this thread
      * will wait that the first thread ends indexing; in this case <b>zero</b>
      * is reurned as result of the indexing process.
-     * 
+     *
      * @param verbose
      *                enable/disable printing of dots every 500 indexed records
      * @param listener
      *                DOCUMENT ME!
-     * 
+     *
      * @return The number of indexed records (or zero)
-     * 
+     *
      * @throws MalformedURLException
      * @throws IOException
      * @throws TreeException
@@ -81,7 +81,7 @@ public class ShapeFileIndexer {
             throw new IOException("You have to set a shape file name!");
         }
 
-        final AccessManager locker = shpFiles.createLocker();        
+        final AccessManager locker = shpFiles.createLocker();
         int cnt = 0;
 
         // Temporary file for building...
@@ -107,7 +107,7 @@ public class ShapeFileIndexer {
         return cnt;
     }
 
-    private int buildQuadTree(final AccessManager locker, final ShapefileReader reader, 
+    private int buildQuadTree(final AccessManager locker, final ShapefileReader reader,
             final Path file, final boolean verbose)
             throws IOException, StoreException {
         byte order = 0;
@@ -120,7 +120,7 @@ public class ShapeFileIndexer {
             throw new StoreException("Asked byte order '" + this.byteOrder
                     + "' must be 'NL' or 'NM'!");
         }
-        
+
         final ShxReader shpIndex = locker.getSHXReader(false);
         QuadTree tree = null;
         int cnt = 0;
@@ -158,7 +158,7 @@ public class ShapeFileIndexer {
 
     /**
      * For quad tree this is the max depth. I don't know what it is for RTree
-     * 
+     *
      * @param i
      */
     public void setMax(final int i) {
@@ -167,7 +167,7 @@ public class ShapeFileIndexer {
 
     /**
      * DOCUMENT ME!
-     * 
+     *
      * @param i
      */
     public void setMin(final int i) {
@@ -176,7 +176,7 @@ public class ShapeFileIndexer {
 
     /**
      * DOCUMENT ME!
-     * 
+     *
      * @param shpFiles
      */
     public void setShapeFileName(final ShpFiles shpFiles) {
@@ -185,7 +185,7 @@ public class ShapeFileIndexer {
 
     /**
      * Sets the type of index to create
-     * 
+     *
      * @param indexType
      *                The idxType to set.
      */
@@ -195,7 +195,7 @@ public class ShapeFileIndexer {
 
     /**
      * DOCUMENT ME!
-     * 
+     *
      * @param byteOrder The byteOrder to set.
      */
     public void setByteOrder(final String byteOrder) {

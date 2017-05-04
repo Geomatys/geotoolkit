@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for OutputMSInformationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OutputMSInformationType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OutputMSInformationType", propOrder = {
@@ -53,11 +53,11 @@ public class OutputMSInformationType extends AbstractMSInformationType {
 
     /**
      * Gets the value of the position property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PositionType }
-     *     
+     *
      */
     public PositionType getPosition() {
         return position;
@@ -65,11 +65,11 @@ public class OutputMSInformationType extends AbstractMSInformationType {
 
     /**
      * Sets the value of the position property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PositionType }
-     *     
+     *
      */
     public void setPosition(PositionType value) {
         this.position = value;

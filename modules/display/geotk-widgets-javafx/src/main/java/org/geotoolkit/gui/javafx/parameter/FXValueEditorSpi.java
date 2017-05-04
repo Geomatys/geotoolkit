@@ -24,22 +24,22 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.apache.sis.internal.system.SystemListener;
 
 /**
- * A service provider for javaFx editors of values which can be defined by a 
+ * A service provider for javaFx editors of values which can be defined by a
  * {@link ParameterDescriptor} or {@link AttributeType}.
- * 
+ *
  * @author Alexis Manin (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
 public abstract class FXValueEditorSpi {
-    
+
     /** List of all registered Spis in current context. */
     private static final ServiceLoader<FXValueEditorSpi> SERVICE_LOADER = ServiceLoader.load(FXValueEditorSpi.class);
-    
+
     /**
      * Service loader can be reloaded / accessed from multiple threads, we have to synnchronize its accesses.
      */
     private static final ReentrantReadWriteLock CONTEXT_LOCK = new ReentrantReadWriteLock();
-    
+
     /**
      * Listen on classpath changes (due to OSGi, etc.) to reload service loader and so, be aware of new editors arrival.
      */
@@ -57,7 +57,7 @@ public abstract class FXValueEditorSpi {
     static {
         SystemListener.add(CONTEXT_LISTENER);
     }
-    
+
     /**
      * Check if the current provider can work on values whose definition is compatible
      * with given attribute type.
@@ -67,7 +67,7 @@ public abstract class FXValueEditorSpi {
     public boolean canHandle(AttributeType property){
         return canHandle(property.getValueClass());
     }
-        
+
     /**
      * Check if the current provider can work on values whose definition is compatible
      * with given descriptor.
@@ -77,18 +77,18 @@ public abstract class FXValueEditorSpi {
     public boolean canHandle(ParameterDescriptor param){
         return canHandle(param.getValueClass());
     }
-    
+
     /**
      * Check if current Spi can provide objects of input class.
      * @param binding The type of object which must be provided by an editor.
-     * @return True if this Spi can create an editor which will work on objects 
+     * @return True if this Spi can create an editor which will work on objects
      * of given type.
      */
     public abstract boolean canHandle(Class binding);
-    
+
     /**
      * Search an editor capable of editing values compliant with input attribute type.
-     * 
+     *
      * @param target The attribute type describing the value to edit.
      * @return An editor matching given type, or an empty optional.
      */
@@ -107,10 +107,10 @@ public abstract class FXValueEditorSpi {
         }
         return Optional.empty();
     }
-        
+
     /**
      * Search an editor capable of editing values compliant with input descriptor.
-     * 
+     *
      * @param target The descriptor of the parameter to edit.
      * @return An editor matching given type, or an empty optional.
      */
@@ -129,7 +129,7 @@ public abstract class FXValueEditorSpi {
         }
         return Optional.empty();
     }
-    
+
     /**
      * @return an editor provided by current Spi.
      */

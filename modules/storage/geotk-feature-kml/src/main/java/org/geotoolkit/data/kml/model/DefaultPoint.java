@@ -35,7 +35,7 @@ public class DefaultPoint extends com.vividsolutions.jts.geom.Point implements P
     private AltitudeMode altitudeMode;
 
     /**
-     * 
+     *
      * @param coordinates
      * @param factory
      */

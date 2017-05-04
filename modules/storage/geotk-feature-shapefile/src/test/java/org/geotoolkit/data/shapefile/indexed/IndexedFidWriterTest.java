@@ -31,11 +31,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class IndexedFidWriterTest extends FIDTestCase {
-    
+
     private AccessManager locker;
     private ShxReader indexFile;
     private IndexedFidWriter writer;
-    
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -55,7 +55,7 @@ public class IndexedFidWriterTest extends FIDTestCase {
         indexFile = locker.getSHXReader(false);
         writer = locker.getFIXWriter(locker.getStorageFile(ShpFileType.FIX));
     }
-     
+
     private void close() throws IOException {
         //will close index reader and writer
         if(locker != null){
@@ -107,7 +107,7 @@ public class IndexedFidWriterTest extends FIDTestCase {
     @Test
     public void testRemoveCounting() throws Exception {
         final AccessManager locker = shpFiles.createLocker();
-        
+
         IndexedFidWriter.generate(backshp.toURI().toURL());
         initWriter();
         writer.next();

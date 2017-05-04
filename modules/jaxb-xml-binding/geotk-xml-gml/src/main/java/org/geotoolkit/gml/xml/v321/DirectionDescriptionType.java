@@ -25,15 +25,15 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * direction descriptions are specified by a compass point code, a keyword, a textual description or a reference to a description.
- * A gml:compassPoint is specified by a simple enumeration.  	
- * In addition, thre elements to contain text-based descriptions of direction are provided.  
- * If the direction is specified using a term from a list, gml:keyword should be used, and the list indicated using the value of the codeSpace attribute. 
+ * A gml:compassPoint is specified by a simple enumeration.
+ * In addition, thre elements to contain text-based descriptions of direction are provided.
+ * If the direction is specified using a term from a list, gml:keyword should be used, and the list indicated using the value of the codeSpace attribute.
  * if the direction is decribed in prose, gml:direction or gml:reference should be used, allowing the value to be included inline or by reference.
- * 
+ *
  * <p>Java class for DirectionDescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DirectionDescriptionType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DirectionDescriptionType", propOrder = {
@@ -67,11 +67,11 @@ public class DirectionDescriptionType {
 
     /**
      * Gets the value of the compassPoint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CompassPointEnumeration }
-     *     
+     *
      */
     public CompassPointEnumeration getCompassPoint() {
         return compassPoint;
@@ -79,11 +79,11 @@ public class DirectionDescriptionType {
 
     /**
      * Sets the value of the compassPoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CompassPointEnumeration }
-     *     
+     *
      */
     public void setCompassPoint(CompassPointEnumeration value) {
         this.compassPoint = value;
@@ -91,11 +91,11 @@ public class DirectionDescriptionType {
 
     /**
      * Gets the value of the keyword property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getKeyword() {
         return keyword;
@@ -103,11 +103,11 @@ public class DirectionDescriptionType {
 
     /**
      * Sets the value of the keyword property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setKeyword(CodeType value) {
         this.keyword = value;
@@ -115,11 +115,11 @@ public class DirectionDescriptionType {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDescription() {
         return description;
@@ -127,11 +127,11 @@ public class DirectionDescriptionType {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDescription(String value) {
         this.description = value;
@@ -139,11 +139,11 @@ public class DirectionDescriptionType {
 
     /**
      * Gets the value of the reference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getReference() {
         return reference;
@@ -151,11 +151,11 @@ public class DirectionDescriptionType {
 
     /**
      * Sets the value of the reference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setReference(ReferenceType value) {
         this.reference = value;

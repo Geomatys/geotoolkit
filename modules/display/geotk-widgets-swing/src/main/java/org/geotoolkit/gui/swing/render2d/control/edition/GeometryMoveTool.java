@@ -36,7 +36,7 @@ public class GeometryMoveTool extends AbstractEditionTool {
 
     public GeometryMoveTool() {
         super(200,"geometryMove", MessageBundle.formatInternational(MessageBundle.Keys.move),
-             new SimpleInternationalString("Tool for moving geometry around."), 
+             new SimpleInternationalString("Tool for moving geometry around."),
              IconBundle.getIcon("16_move"), FeatureMapLayer.class);
     }
 
@@ -50,7 +50,7 @@ public class GeometryMoveTool extends AbstractEditionTool {
         final FeatureMapLayer layer = (FeatureMapLayer) candidate;
         final FeatureType ft = layer.getCollection().getFeatureType();
         final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(ft);
-        
+
         if(desc == null){
             return false;
         }

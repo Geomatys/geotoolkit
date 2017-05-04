@@ -47,8 +47,8 @@ import org.apache.sis.util.logging.Logging;
  * one or more names (elements identifier and name) and a description (elements description and descriptionReference) .
  * It may be associated with a spatial reference system (attribute group gml:SRSReferenceGroup).
  * The following rules shall be adhered to:
- * -	Every geometry type shall derive from this abstract type.
- * -	Every geometry element (i.e. an element of a geometry type) shall be directly or indirectly in the substitution group of AbstractGeometry.
+ * -    Every geometry type shall derive from this abstract type.
+ * -    Every geometry element (i.e. an element of a geometry type) shall be directly or indirectly in the substitution group of AbstractGeometry.
  *
  * <p>Java class for AbstractGeometryType complex type.
  *

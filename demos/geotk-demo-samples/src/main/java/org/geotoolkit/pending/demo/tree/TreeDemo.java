@@ -152,9 +152,9 @@ public class TreeDemo {
             }
 
             @Override
-	    public Map<Integer, Envelope> getFullMap() throws IOException {
-		return new HashMap<>();
-	    }
+        public Map<Integer, Envelope> getFullMap() throws IOException {
+        return new HashMap<>();
+        }
         };
 
         /*

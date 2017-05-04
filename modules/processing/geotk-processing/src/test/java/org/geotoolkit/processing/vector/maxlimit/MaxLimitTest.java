@@ -50,7 +50,7 @@ import org.opengis.feature.FeatureType;
 /**
  * JUnit test of MaxLimit process
  *
- * @author Quentin Boileau 
+ * @author Quentin Boileau
  * @module
  */
 public class MaxLimitTest extends AbstractProcessTest {

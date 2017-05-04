@@ -41,5 +41,5 @@ public class FileToArrayConverter extends SimpleConverter<File, File[]> {
     public File[] apply(File object) throws UnconvertibleObjectException {
         return new File[]{object};
     }
-    
+
 }

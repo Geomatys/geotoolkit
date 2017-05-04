@@ -36,18 +36,18 @@ public interface AbstractEvent {
     void setDescription(StringOrRefType value);
 
     List<? extends AbstractKeywords> getKeywords();
-    
+
     List<? extends AbstractIdentification> getIdentification();
-    
+
     List<? extends AbstractClassification> getClassification();
-    
+
     List<? extends AbstractContact> getContact();
-    
+
     List<? extends AbstractDocumentation> getDocumentation();
-    
+
     List<? extends DataComponentProperty> getProperty();
 
     String getId();
-    
+
     void setId(String value);
 }

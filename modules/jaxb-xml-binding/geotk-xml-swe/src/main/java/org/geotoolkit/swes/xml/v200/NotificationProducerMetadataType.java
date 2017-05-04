@@ -31,9 +31,9 @@ import org.geotoolkit.w3c.adressing.xml.v2005.EndpointReferenceType;
 
 /**
  * <p>Java class for NotificationProducerMetadataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="NotificationProducerMetadataType">
  *   &lt;complexContent>
@@ -79,8 +79,8 @@ import org.geotoolkit.w3c.adressing.xml.v2005.EndpointReferenceType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "NotificationProducerMetadataType", propOrder = {
@@ -108,11 +108,11 @@ public class NotificationProducerMetadataType
 
     /**
      * Gets the value of the producerEndpoint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link NotificationProducerMetadataType.ProducerEndpoint }
-     *     
+     *
      */
     public NotificationProducerMetadataType.ProducerEndpoint getProducerEndpoint() {
         return producerEndpoint;
@@ -120,11 +120,11 @@ public class NotificationProducerMetadataType
 
     /**
      * Sets the value of the producerEndpoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link NotificationProducerMetadataType.ProducerEndpoint }
-     *     
+     *
      */
     public void setProducerEndpoint(NotificationProducerMetadataType.ProducerEndpoint value) {
         this.producerEndpoint = value;
@@ -132,11 +132,11 @@ public class NotificationProducerMetadataType
 
     /**
      * Gets the value of the supportedDialects property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link NotificationProducerMetadataType.SupportedDialects }
-     *     
+     *
      */
     public NotificationProducerMetadataType.SupportedDialects getSupportedDialects() {
         return supportedDialects;
@@ -144,11 +144,11 @@ public class NotificationProducerMetadataType
 
     /**
      * Sets the value of the supportedDialects property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link NotificationProducerMetadataType.SupportedDialects }
-     *     
+     *
      */
     public void setSupportedDialects(NotificationProducerMetadataType.SupportedDialects value) {
         this.supportedDialects = value;
@@ -156,7 +156,7 @@ public class NotificationProducerMetadataType
 
     /**
      * Gets the value of the fixedTopicSet property.
-     * 
+     *
      */
     public boolean isFixedTopicSet() {
         return fixedTopicSet;
@@ -164,7 +164,7 @@ public class NotificationProducerMetadataType
 
     /**
      * Sets the value of the fixedTopicSet property.
-     * 
+     *
      */
     public void setFixedTopicSet(boolean value) {
         this.fixedTopicSet = value;
@@ -172,11 +172,11 @@ public class NotificationProducerMetadataType
 
     /**
      * Gets the value of the servedTopics property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link NotificationProducerMetadataType.ServedTopics }
-     *     
+     *
      */
     public NotificationProducerMetadataType.ServedTopics getServedTopics() {
         return servedTopics;
@@ -184,11 +184,11 @@ public class NotificationProducerMetadataType
 
     /**
      * Sets the value of the servedTopics property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link NotificationProducerMetadataType.ServedTopics }
-     *     
+     *
      */
     public void setServedTopics(NotificationProducerMetadataType.ServedTopics value) {
         this.servedTopics = value;
@@ -196,10 +196,10 @@ public class NotificationProducerMetadataType
 
     /**
      * Gets the value of the usedTopicNamespace property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link TopicNamespaceType }
-     * 
+     *
      */
     public List<TopicNamespaceType> getUsedTopicNamespace() {
         if (usedTopicNamespace == null) {
@@ -211,9 +211,9 @@ public class NotificationProducerMetadataType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -225,8 +225,8 @@ public class NotificationProducerMetadataType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -239,11 +239,11 @@ public class NotificationProducerMetadataType
 
         /**
          * Gets the value of the endpointReference property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link EndpointReferenceType }
-         *     
+         *
          */
         public EndpointReferenceType getEndpointReference() {
             return endpointReference;
@@ -251,11 +251,11 @@ public class NotificationProducerMetadataType
 
         /**
          * Sets the value of the endpointReference property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link EndpointReferenceType }
-         *     
+         *
          */
         public void setEndpointReference(EndpointReferenceType value) {
             this.endpointReference = value;
@@ -266,9 +266,9 @@ public class NotificationProducerMetadataType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -280,8 +280,8 @@ public class NotificationProducerMetadataType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -294,11 +294,11 @@ public class NotificationProducerMetadataType
 
         /**
          * Gets the value of the topicSet property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TopicSetType }
-         *     
+         *
          */
         public TopicSetType getTopicSet() {
             return topicSet;
@@ -306,11 +306,11 @@ public class NotificationProducerMetadataType
 
         /**
          * Sets the value of the topicSet property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TopicSetType }
-         *     
+         *
          */
         public void setTopicSet(TopicSetType value) {
             this.topicSet = value;
@@ -321,9 +321,9 @@ public class NotificationProducerMetadataType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -335,8 +335,8 @@ public class NotificationProducerMetadataType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -349,11 +349,11 @@ public class NotificationProducerMetadataType
 
         /**
          * Gets the value of the filterDialectMetadata property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link FilterDialectMetadataType }
-         *     
+         *
          */
         public FilterDialectMetadataType getFilterDialectMetadata() {
             return filterDialectMetadata;
@@ -361,11 +361,11 @@ public class NotificationProducerMetadataType
 
         /**
          * Sets the value of the filterDialectMetadata property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link FilterDialectMetadataType }
-         *     
+         *
          */
         public void setFilterDialectMetadata(FilterDialectMetadataType value) {
             this.filterDialectMetadata = value;

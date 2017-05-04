@@ -24,7 +24,7 @@ import java.util.List;
  * @module
  */
 public interface GetRecordByIdResponse extends CSWResponse {
-    
+
     /**
      * Gets the value of the any property.
      * (unmodifiable)

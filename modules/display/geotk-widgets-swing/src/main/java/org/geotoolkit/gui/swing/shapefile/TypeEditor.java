@@ -29,27 +29,27 @@ import javax.swing.table.TableCellEditor;
 
 /**
  * Cell editor for ShapeFile creation field table.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  */
 class TypeEditor implements TableCellEditor{
 
     private final EventListenerList listeners = new EventListenerList();
     private final JComboBox box = new JComboBox();
-    
-    TypeEditor(){        
+
+    TypeEditor(){
         box.addItem(FieldType.INTEGER);
         box.addItem(FieldType.LONG);
         box.addItem(FieldType.DOUBLE);
         box.addItem(FieldType.STRING);
         box.addItem(FieldType.DATE);
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected, final int row, final int column) {        
+    public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected, final int row, final int column) {
         box.setSelectedItem(value);
         return box;
     }
@@ -84,11 +84,11 @@ class TypeEditor implements TableCellEditor{
     @Override
     public boolean stopCellEditing() {
         final CellEditorListener[] lst = listeners.getListeners(CellEditorListener.class);
-        
+
         for(final CellEditorListener l : lst){
             l.editingStopped(new ChangeEvent(this));
         }
-        
+
         return true;
     }
 
@@ -98,7 +98,7 @@ class TypeEditor implements TableCellEditor{
     @Override
     public void cancelCellEditing() {
         final CellEditorListener[] lst = listeners.getListeners(CellEditorListener.class);
-        
+
         for(final CellEditorListener l : lst){
             l.editingCanceled(new ChangeEvent(this));
         }

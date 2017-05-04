@@ -27,12 +27,12 @@ import org.geotoolkit.ows.xml.AbstractKeywords;
 
 
 /**
- * For OWS use, the optional thesaurusName element was omitted as being complex information that could be referenced by the codeSpace attribute of the Type element. 
- * 
+ * For OWS use, the optional thesaurusName element was omitted as being complex information that could be referenced by the codeSpace attribute of the Type element.
+ *
  * <p>Java class for KeywordsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="KeywordsType">
  *   &lt;complexContent>
@@ -45,7 +45,7 @@ import org.geotoolkit.ows.xml.AbstractKeywords;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -86,10 +86,10 @@ public class KeywordsType implements AbstractKeywords {
         this.keyword = keyword;
         this.type    = type;
     }
-    
+
     /**
      * Build a simple list of keywords without type.
-     * all the element of the list are in the parameters. 
+     * all the element of the list are in the parameters.
      */
     public KeywordsType(final LanguageStringType... keywords){
         this.keyword = new ArrayList<LanguageStringType>();
@@ -97,10 +97,10 @@ public class KeywordsType implements AbstractKeywords {
             keyword.add(element);
         }
     }
-    
+
     /**
      * Build a simple list of keywords without type.
-     * all the element of the list are in the parameters. 
+     * all the element of the list are in the parameters.
      */
     public KeywordsType(final String... keywords){
         this.keyword = new ArrayList<LanguageStringType>();
@@ -108,7 +108,7 @@ public class KeywordsType implements AbstractKeywords {
             keyword.add(new LanguageStringType(element));
         }
     }
-    
+
     /**
      * Gets the value of the keyword property.
      */
@@ -142,7 +142,7 @@ public class KeywordsType implements AbstractKeywords {
     public void setType(final CodeType code) {
         this.type = code;
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -166,7 +166,7 @@ public class KeywordsType implements AbstractKeywords {
         hash = 43 * hash + (this.type != null ? this.type.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();

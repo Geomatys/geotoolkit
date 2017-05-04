@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@ import org.opengis.feature.FeatureType;
  * of features.
  * <br/>
  * A FeatureWriter can be created on any FeatureStore which support writing operations.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -33,9 +33,9 @@ public interface FeatureWriter extends FeatureIterator{
 
     /**
      * Get the writer FeatureType.
-     * This type may be abstract to reflect possible variations in the returned 
+     * This type may be abstract to reflect possible variations in the returned
      * features.
-     * 
+     *
      * @return the featuretype of all feature returned by this iterator.
      */
     FeatureType getFeatureType();
@@ -47,7 +47,7 @@ public interface FeatureWriter extends FeatureIterator{
      * Behavior is similar to JDBC modifiable ResultSet.
      * <br/>
      * To save the modified feature call the 'write' method.
-     * 
+     *
      * @return Feature
      * @throws FeatureStoreRuntimeException if error occured while reading the next feature.
      */
@@ -56,7 +56,7 @@ public interface FeatureWriter extends FeatureIterator{
 
     /**
      * Delete the current feature.
-     * 
+     *
      * @throws FeatureStoreRuntimeException if error occured while removing feature.
      */
     @Override
@@ -64,7 +64,7 @@ public interface FeatureWriter extends FeatureIterator{
 
     /**
      * Save the current modified feature or create a new record if in append mode.
-     * 
+     *
      * @throws FeatureStoreRuntimeException if error occured while saving feature.
      */
     void write() throws FeatureStoreRuntimeException;

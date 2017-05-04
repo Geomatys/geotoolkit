@@ -28,9 +28,9 @@ import org.geotoolkit.wms.xml.WMSResponse;
 
 /**
  * <p>Java class for DescribeLayerResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DescribeLayerResponseType">
  *   &lt;complexContent>
@@ -43,7 +43,7 @@ import org.geotoolkit.wms.xml.WMSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -64,10 +64,10 @@ public class DescribeLayerResponseType implements WMSResponse {
      * An empty constructor used by JAXB
      */
     DescribeLayerResponseType() {}
-    
+
     /**
      * Build a new response to a DescribeLayer request.
-     * 
+     *
      * @param version the version of sld specification.
      * @param layerDescriptions a list of layer description.
      */
@@ -77,10 +77,10 @@ public class DescribeLayerResponseType implements WMSResponse {
             this.layerDescription.add(element);
         }
     }
-    
+
     /**
      * Build a new response to a DescribeLayer request.
-     * 
+     *
      * @param version the version of sld specification.
      * @param layerDescriptions a list of layer description.
      */
@@ -88,7 +88,7 @@ public class DescribeLayerResponseType implements WMSResponse {
         this.version          = version;
         this.layerDescription = layerDescriptions;
     }
-        
+
     /**
      * Gets the value of the version property.
      */

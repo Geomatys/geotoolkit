@@ -30,35 +30,35 @@ import org.opengis.metadata.citation.Citation;
  * a {@code userObject} Map that will contain others additional parameters.
  * Add also a new constructor that take parameter name and remarks and others parameters like
  * validValues, minimum, maximum and units.
- * 
+ *
  * @author Quentin Boileau (Geomatys).
- * 
+ *
  * @see org.apache.sis.parameter.DefaultParameterDescriptor
- * 
+ *
  * @module
  */
 public class ExtendedParameterDescriptor<T> extends org.apache.sis.parameter.DefaultParameterDescriptor<T> {
 
     private Map<String, Object> userObject;
-    
+
     /**
      * {@inheritDoc}
      */
     public ExtendedParameterDescriptor(final ExtendedParameterDescriptor<T> descriptor) {
-        
+
         super(descriptor);
         this.userObject = descriptor.getUserObject();
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @param userObject map that contain additional value for the parameter.
      */
-    public ExtendedParameterDescriptor(final String name, 
-                                       final Class<T> valueClass, 
-                                       final T[] validValues, 
-                                       final T defaultValue, 
+    public ExtendedParameterDescriptor(final String name,
+                                       final Class<T> valueClass,
+                                       final T[] validValues,
+                                       final T defaultValue,
                                        final Map<String, Object> userObject) {
 
         super(properties(name, null), 1, 1, valueClass, null, validValues, defaultValue);
@@ -67,14 +67,14 @@ public class ExtendedParameterDescriptor<T> extends org.apache.sis.parameter.Def
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @param userObject map that contain additional value for the parameter.
      */
-    public ExtendedParameterDescriptor(final String name, 
-                                       final CharSequence remarks, 
-                                       final Class<T> valueClass, 
-                                       final T defaultValue, 
-                                       final boolean required, 
+    public ExtendedParameterDescriptor(final String name,
+                                       final CharSequence remarks,
+                                       final Class<T> valueClass,
+                                       final T defaultValue,
+                                       final boolean required,
                                        final Map<String, Object> userObject) {
         super(properties(name, remarks), (required ? 1 : 0), 1, valueClass, null, null, defaultValue);
         this.userObject = userObject;
@@ -108,14 +108,14 @@ public class ExtendedParameterDescriptor<T> extends org.apache.sis.parameter.Def
      * @param unit not used since ExtendedParameter extend SIS DefaultParameterDescriptor.
      * @param userObject map that contain additional value for the parameter.
      */
-    public ExtendedParameterDescriptor(final Map<String, ?> properties, 
-                                       final Class<T> valueClass, 
-                                       final T[] validValues, 
-                                       final T defaultValue, 
-                                       final Comparable<T> minimum, 
-                                       final Comparable<T> maximum, 
-                                       final Unit<?> unit, 
-                                       final boolean required, 
+    public ExtendedParameterDescriptor(final Map<String, ?> properties,
+                                       final Class<T> valueClass,
+                                       final T[] validValues,
+                                       final T defaultValue,
+                                       final Comparable<T> minimum,
+                                       final Comparable<T> maximum,
+                                       final Unit<?> unit,
+                                       final boolean required,
                                        final Map<String, Object> userObject) {
 
         super(properties, (required ? 1 : 0), 1, valueClass, toRange(valueClass, minimum, maximum, unit), validValues, defaultValue);
@@ -128,15 +128,15 @@ public class ExtendedParameterDescriptor<T> extends org.apache.sis.parameter.Def
      * @param unit not used since ExtendedParameter extend SIS DefaultParameterDescriptor.
      * @param userObject map that contain additional value for the parameter.
      */
-    public ExtendedParameterDescriptor(final String name, 
-                                       final CharSequence remarks,  
-                                       final Class<T> valueClass, 
-                                       final T[] validValues, 
-                                       final T defaultValue, 
-                                       final Comparable<T> minimum, 
-                                       final Comparable<T> maximum, 
-                                       final Unit<?> unit, 
-                                       final boolean required, 
+    public ExtendedParameterDescriptor(final String name,
+                                       final CharSequence remarks,
+                                       final Class<T> valueClass,
+                                       final T[] validValues,
+                                       final T defaultValue,
+                                       final Comparable<T> minimum,
+                                       final Comparable<T> maximum,
+                                       final Unit<?> unit,
+                                       final boolean required,
                                        final Map<String, Object> userObject) {
 
         super(properties(name, remarks), (required ? 1 : 0), 1, valueClass, toRange(valueClass, minimum, maximum, unit), validValues, defaultValue);
@@ -149,15 +149,15 @@ public class ExtendedParameterDescriptor<T> extends org.apache.sis.parameter.Def
      * @param authority not used since ExtendedParameter extend SIS DefaultParameterDescriptor.
      * @param userObject map that contain additional value for the parameter.
      */
-    public ExtendedParameterDescriptor(final Citation authority, 
-                                       final String name, 
-                                       final Class<T> valueClass, 
-                                       final T[] validValues, 
-                                       final T defaultValue, 
-                                       final Comparable<T> minimum, 
-                                       final Comparable<T> maximum, 
-                                       final Unit<?> unit, 
-                                       final boolean required, 
+    public ExtendedParameterDescriptor(final Citation authority,
+                                       final String name,
+                                       final Class<T> valueClass,
+                                       final T[] validValues,
+                                       final T defaultValue,
+                                       final Comparable<T> minimum,
+                                       final Comparable<T> maximum,
+                                       final Unit<?> unit,
+                                       final boolean required,
                                        final Map<String, Object> userObject) {
 
         super(properties(name, null), (required ? 1 : 0), 1, valueClass, toRange(valueClass, minimum, maximum, unit), validValues, defaultValue);
@@ -207,5 +207,5 @@ public class ExtendedParameterDescriptor<T> extends org.apache.sis.parameter.Def
             return null;
         }
     }
-    
+
 }

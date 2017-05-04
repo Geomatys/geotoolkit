@@ -114,7 +114,7 @@ public class OSMXMLReader extends StaxStreamReader{
     /**
      * Iterate in the file until we reach a entity with an id
      * that match the given one.
-     * 
+     *
      * @param id : identifier to move to
      */
     public void moveTo(final Long id) throws XMLStreamException{
@@ -166,10 +166,10 @@ public class OSMXMLReader extends StaxStreamReader{
             }else{
                 type = reader.next();
             }
-            
+
             if(type == START_ELEMENT) {
                 final String localName = reader.getLocalName();
-                
+
                 if(localName.equalsIgnoreCase(TAG_NODE)){
                     current = parseNode();
                 }else if(localName.equalsIgnoreCase(TAG_WAY)){
@@ -224,7 +224,7 @@ public class OSMXMLReader extends StaxStreamReader{
      * @param reader
      * @return true if this entity Id matches the one searched (if there is one).
      * false otherwise.
-     * 
+     *
      * @throws XMLStreamException
      */
     private boolean parseIdentifiedAttributs() throws XMLStreamException{
@@ -580,7 +580,7 @@ public class OSMXMLReader extends StaxStreamReader{
         final String pending = reader.getAttributeValue(null, ATT_GPX_PENDING);
         toTagEnd(TAG_GPX);
 
-        return new GPXFileMetadata(Long.parseLong(id),name, user, 
+        return new GPXFileMetadata(Long.parseLong(id),name, user,
                 Boolean.parseBoolean(publik), Boolean.parseBoolean(pending),
                 TemporalUtilities.parseDateSafe(time,false),
                 Double.parseDouble(lat),

@@ -36,12 +36,12 @@ import org.opengis.style.Mark;
 
 /**
  * Mark panel
- * 
+ *
  * @author Johann Sorel
  * @module
  */
 public class JMarkPane extends StyleElementEditor<Mark> {
-    
+
     private MapLayer layer = null;
 
     public JMarkPane() {
@@ -91,8 +91,8 @@ public class JMarkPane extends StyleElementEditor<Mark> {
     @Override
     public Mark create() {
         return getStyleFactory().mark(
-                guiWKN.create(), 
-                guiStroke.create(), 
+                guiWKN.create(),
+                guiStroke.create(),
                 guiFill.create());
     }
 
@@ -100,7 +100,7 @@ public class JMarkPane extends StyleElementEditor<Mark> {
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiStroke,guiFill};
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

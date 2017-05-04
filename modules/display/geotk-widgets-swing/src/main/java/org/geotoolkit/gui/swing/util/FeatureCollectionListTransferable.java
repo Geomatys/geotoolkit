@@ -56,5 +56,5 @@ public class FeatureCollectionListTransferable implements Transferable{
     public List<FeatureCollection> getSelections() {
         return selections;
     }
-    
+
 }

@@ -46,7 +46,7 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
     public ParameterValueGroup getConfiguration() {
         return parameters;
     }
-    
+
     /**
      * {@inheritDoc }
      */

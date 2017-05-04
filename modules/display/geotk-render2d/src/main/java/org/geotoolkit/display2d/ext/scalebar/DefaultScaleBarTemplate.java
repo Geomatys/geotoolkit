@@ -50,7 +50,7 @@ public class DefaultScaleBarTemplate implements ScaleBarTemplate{
 
 
     public DefaultScaleBarTemplate(final BackgroundTemplate background, final Dimension size, final int thickness, final boolean geodesic,
-                        final int subdivisions, NumberFormat format, Paint foreground, 
+                        final int subdivisions, NumberFormat format, Paint foreground,
                         Paint firstRect, Paint secondRect, final int tikHeight,
                         final boolean scaleVisible, final boolean useAbreviation,
                         final Font font, final boolean textAboveBar, final Unit unit){

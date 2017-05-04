@@ -38,9 +38,9 @@ import org.geotoolkit.swe.xml.v100.SimpleDataRecordType;
 
 /**
  * <p>Java class for LayerPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LayerPropertyType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.swe.xml.v100.SimpleDataRecordType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -122,7 +122,7 @@ public class LayerPropertyType implements AbstractLayerProperty {
             this.type         = la.getType();
         }
     }
-    
+
     /**
      * Gets the value of the abstractDataRecord property.
      */
@@ -187,7 +187,7 @@ public class LayerPropertyType implements AbstractLayerProperty {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      */
     public String getActuate() {
         return actuate;
@@ -343,7 +343,7 @@ public class LayerPropertyType implements AbstractLayerProperty {
             } else if (this.abstractDataRecord == null & that.abstractDataRecord == null) {
                 dataRec = true;
             }
-            
+
             return Objects.equals(this.actuate, that.actuate)           &&
                    Objects.equals(this.href, that.href)                 &&
                    Objects.equals(this.nilReason, that.nilReason)       &&

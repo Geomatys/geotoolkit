@@ -71,7 +71,7 @@ public interface ThoroughfareNumber extends GenericTypedGrPostal {
     AfterBeforeTypeNameEnum getNumberOccurence();
 
     /**
-     * 
+     *
      * @param numberType
      */
     void setNumberType(SingleRangeEnum numberType);
@@ -89,7 +89,7 @@ public interface ThoroughfareNumber extends GenericTypedGrPostal {
     void setIndicatorOccurrence(AfterBeforeEnum indicatorOccurrence);
 
     /**
-     * 
+     *
      * @param numberOccurrence
      */
     void setNumberOccurrence(AfterBeforeTypeNameEnum numberOccurrence);

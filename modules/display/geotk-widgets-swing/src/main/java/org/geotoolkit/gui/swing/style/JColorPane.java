@@ -117,7 +117,7 @@ public class JColorPane extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
-        
+
     }//GEN-LAST:event_propertyChange
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

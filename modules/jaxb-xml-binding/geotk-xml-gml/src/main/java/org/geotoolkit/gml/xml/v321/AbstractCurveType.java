@@ -27,11 +27,11 @@ import org.geotoolkit.gml.xml.AbstractCurve;
 
 /**
  * gml:AbstractCurveType is an abstraction of a curve to support the different levels of complexity. The curve may always be viewed as a geometric primitive, i.e. is continuous.
- * 
+ *
  * <p>Java class for AbstractCurveType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractCurveType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import org.geotoolkit.gml.xml.AbstractCurve;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractCurveType")

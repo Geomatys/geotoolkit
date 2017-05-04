@@ -30,11 +30,11 @@ public final class MemoryBasicGeo2DTest extends MemoryBasicRTreeTest {
 
     /**
      * Create a memory BasicRTree Test suite in a Geographic 2D space.
-     * 
+     *
      * @throws StoreIndexException should never thrown.
      * @throws IOException should never thrown.
      */
     public MemoryBasicGeo2DTest() throws StoreIndexException, IOException {
         super(CommonCRS.WGS84.normalizedGeographic());
-    }    
+    }
 }

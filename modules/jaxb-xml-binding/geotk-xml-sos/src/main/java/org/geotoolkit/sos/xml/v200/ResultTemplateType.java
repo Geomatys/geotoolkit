@@ -30,9 +30,9 @@ import org.geotoolkit.swes.xml.v200.AbstractSWESType;
 
 /**
  * <p>Java class for ResultTemplateType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ResultTemplateType">
  *   &lt;complexContent>
@@ -77,8 +77,8 @@ import org.geotoolkit.swes.xml.v200.AbstractSWESType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ResultTemplateType", propOrder = {
@@ -100,9 +100,9 @@ public class ResultTemplateType extends AbstractSWESType implements ResultTempla
     private ResultEncoding resultEncoding;
 
     public ResultTemplateType() {
-        
+
     }
-    
+
     public ResultTemplateType(final String offering, final OMObservationType template,  final AbstractDataComponentType resultStructure,
             final AbstractEncodingType encoding) {
         this.offering = offering;
@@ -116,14 +116,14 @@ public class ResultTemplateType extends AbstractSWESType implements ResultTempla
             this.resultEncoding = new ResultEncoding(encoding);
         }
     }
-    
+
     /**
      * Gets the value of the offering property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getOffering() {
@@ -132,11 +132,11 @@ public class ResultTemplateType extends AbstractSWESType implements ResultTempla
 
     /**
      * Sets the value of the offering property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOffering(String value) {
         this.offering = value;
@@ -144,11 +144,11 @@ public class ResultTemplateType extends AbstractSWESType implements ResultTempla
 
     /**
      * Gets the value of the observationTemplate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ResultTemplateType.ObservationTemplate }
-     *     
+     *
      */
     @Override
     public OMObservationType getObservationTemplate() {
@@ -160,11 +160,11 @@ public class ResultTemplateType extends AbstractSWESType implements ResultTempla
 
     /**
      * Sets the value of the observationTemplate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ResultTemplateType.ObservationTemplate }
-     *     
+     *
      */
     public void setObservationTemplate(final OMObservationType value) {
         this.observationTemplate = new ObservationTemplate(value);
@@ -172,11 +172,11 @@ public class ResultTemplateType extends AbstractSWESType implements ResultTempla
 
     /**
      * Gets the value of the resultStructure property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ResultTemplateType.ResultStructure }
-     *     
+     *
      */
     @Override
     public AbstractDataComponentType getResultStructure() {
@@ -188,11 +188,11 @@ public class ResultTemplateType extends AbstractSWESType implements ResultTempla
 
     /**
      * Sets the value of the resultStructure property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ResultTemplateType.ResultStructure }
-     *     
+     *
      */
     public void setResultStructure(final AbstractDataComponentType value) {
         this.resultStructure = new ResultStructure(value);
@@ -200,11 +200,11 @@ public class ResultTemplateType extends AbstractSWESType implements ResultTempla
 
     /**
      * Gets the value of the resultEncoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ResultTemplateType.ResultEncoding }
-     *     
+     *
      */
     @Override
     public AbstractEncodingType getResultEncoding() {
@@ -216,11 +216,11 @@ public class ResultTemplateType extends AbstractSWESType implements ResultTempla
 
     /**
      * Sets the value of the resultEncoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ResultTemplateType.ResultEncoding }
-     *     
+     *
      */
     public void setResultEncoding(final AbstractEncodingType value) {
         this.resultEncoding = new ResultEncoding(value);
@@ -229,9 +229,9 @@ public class ResultTemplateType extends AbstractSWESType implements ResultTempla
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -243,8 +243,8 @@ public class ResultTemplateType extends AbstractSWESType implements ResultTempla
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -254,21 +254,21 @@ public class ResultTemplateType extends AbstractSWESType implements ResultTempla
 
         @XmlElement(name = "OM_Observation", namespace = "http://www.opengis.net/om/2.0", required = true)
         private OMObservationType omObservation;
-        
+
         public ObservationTemplate() {
         }
-        
+
         public ObservationTemplate(final OMObservationType omObservation) {
             this.omObservation = omObservation;
         }
 
         /**
          * Gets the value of the omObservation property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link OMObservationType }
-         *     
+         *
          */
         public OMObservationType getOMObservation() {
             return omObservation;
@@ -276,11 +276,11 @@ public class ResultTemplateType extends AbstractSWESType implements ResultTempla
 
         /**
          * Sets the value of the omObservation property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link OMObservationType }
-         *     
+         *
          */
         public void setOMObservation(OMObservationType value) {
             this.omObservation = value;

@@ -41,13 +41,13 @@ import org.opengis.style.PolygonSymbolizer;
 
 /**
  * Polygon symbolizer edition panel
- * 
+ *
  * @author  Johann Sorel
  * @module
  */
 public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbolizer> {
 
-    
+
     private MapLayer layer = null;
     private PolygonSymbolizer oldSymbolizer = null;
 
@@ -56,10 +56,10 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
     public JPolygonSymbolizerAdvanced() {
         super(PolygonSymbolizer.class);
         initComponents();
-        
+
         //align labels
         alignLabelColumnWidth(this);
-        
+
         //configure panel with a default symbolizer
         parse(getStyleFactory().polygonSymbolizer());
     }
@@ -113,15 +113,15 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
             name = oldSymbolizer.getName();
             desc = oldSymbolizer.getDescription();
         }
-        
+
         return getStyleFactory().polygonSymbolizer(
                 name,
                 guiGeom.create(),
                 desc,
                 guiUOM.create(),
-                guiStroke.create(), 
-                guiFill.create(), 
-                guiDisp.create(), 
+                guiStroke.create(),
+                guiFill.create(),
+                guiDisp.create(),
                 guiOffset.create() );
     }
 
@@ -129,7 +129,7 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiGeom,guiUOM,guiFill,guiStroke,guiOffset,guiDisp};
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -302,7 +302,7 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
-        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());
         }
     }//GEN-LAST:event_propertyChange

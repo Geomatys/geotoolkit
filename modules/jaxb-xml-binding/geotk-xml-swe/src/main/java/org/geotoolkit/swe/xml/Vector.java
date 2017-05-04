@@ -38,6 +38,6 @@ public interface Vector extends AbstractVector {
      * Returns the coordinate having the {@code "urn:ogc:def:phenomenon:longitude"} definition, or {@code null} if none.
      */
     public Coordinate getLongitude();
-    
+
     AbstractGeometry getGeometry(final URI crs);
 }

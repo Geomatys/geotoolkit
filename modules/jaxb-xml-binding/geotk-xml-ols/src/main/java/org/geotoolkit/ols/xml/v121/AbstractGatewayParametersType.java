@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AbstractGatewayParametersType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractGatewayParametersType">
  *   &lt;complexContent>
@@ -60,8 +60,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractGatewayParametersType", propOrder = {
@@ -85,11 +85,11 @@ public abstract class AbstractGatewayParametersType {
 
     /**
      * Gets the value of the requestedQoP property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QualityOfPositionType }
-     *     
+     *
      */
     public QualityOfPositionType getRequestedQoP() {
         return requestedQoP;
@@ -97,11 +97,11 @@ public abstract class AbstractGatewayParametersType {
 
     /**
      * Sets the value of the requestedQoP property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QualityOfPositionType }
-     *     
+     *
      */
     public void setRequestedQoP(QualityOfPositionType value) {
         this.requestedQoP = value;
@@ -109,11 +109,11 @@ public abstract class AbstractGatewayParametersType {
 
     /**
      * Gets the value of the locationType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLocationType() {
         if (locationType == null) {
@@ -125,11 +125,11 @@ public abstract class AbstractGatewayParametersType {
 
     /**
      * Sets the value of the locationType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLocationType(String value) {
         this.locationType = value;
@@ -137,11 +137,11 @@ public abstract class AbstractGatewayParametersType {
 
     /**
      * Gets the value of the requestedsrsName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRequestedsrsName() {
         return requestedsrsName;
@@ -149,11 +149,11 @@ public abstract class AbstractGatewayParametersType {
 
     /**
      * Sets the value of the requestedsrsName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRequestedsrsName(String value) {
         this.requestedsrsName = value;
@@ -161,11 +161,11 @@ public abstract class AbstractGatewayParametersType {
 
     /**
      * Gets the value of the priority property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPriority() {
         if (priority == null) {
@@ -177,11 +177,11 @@ public abstract class AbstractGatewayParametersType {
 
     /**
      * Sets the value of the priority property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPriority(String value) {
         this.priority = value;

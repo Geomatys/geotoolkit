@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for CompositeSurfaceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CompositeSurfaceType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CompositeSurfaceType", propOrder = {
@@ -62,11 +62,11 @@ public class CompositeSurfaceType extends AbstractSurfaceType {
 
     /**
      * Gets the value of the surfaceMember property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link SurfacePropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<SurfacePropertyType> getSurfaceMember() {
         if (surfaceMember == null) {
@@ -77,11 +77,11 @@ public class CompositeSurfaceType extends AbstractSurfaceType {
 
     /**
      * Gets the value of the aggregationType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public AggregationType getAggregationType() {
         return aggregationType;
@@ -89,11 +89,11 @@ public class CompositeSurfaceType extends AbstractSurfaceType {
 
     /**
      * Sets the value of the aggregationType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public void setAggregationType(AggregationType value) {
         this.aggregationType = value;

@@ -57,7 +57,7 @@ public class BackgroundUtilities {
         }
 
         //the border------------------------------------------------------------
-        
+
         paint = template.getBackgroundStrokePaint();
 
         if(stroke != null && paint != null){

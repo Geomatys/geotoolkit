@@ -35,9 +35,9 @@ import org.geotoolkit.wps.xml.WPSResponse;
 
 /**
  * <p>Java class for WPSCapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="WPSCapabilitiesType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.geotoolkit.wps.xml.WPSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -79,13 +79,13 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
     private String lang;
 
     public WPSCapabilitiesType() {
-        
+
     }
-    
+
     public WPSCapabilitiesType(final String version, final String updateSequence) {
         super(version, updateSequence);
     }
-    
+
     public WPSCapabilitiesType(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
             final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final ProcessOfferings processOfferings,
             final Languages languages, final WSDL wsdl) {
@@ -96,14 +96,14 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
         this.lang             = "en-EN";
         this.wsdl             = wsdl;
     }
-    
+
     /**
      * Gets the value of the processOfferings property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ProcessOfferings }
-     *     
+     *
      */
     public ProcessOfferings getProcessOfferings() {
         return processOfferings;
@@ -111,35 +111,35 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
 
     /**
      * Sets the value of the processOfferings property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ProcessOfferings }
-     *     
+     *
      */
     public void setProcessOfferings(final ProcessOfferings value) {
         this.processOfferings = value;
     }
 
     /**
-     * List of the default and other languages supported by this service. 
-     * 
+     * List of the default and other languages supported by this service.
+     *
      * @return
      *     possible object is
      *     {@link Languages }
-     *     
+     *
      */
     public Languages getLanguages() {
         return languages;
     }
 
     /**
-     * List of the default and other languages supported by this service. 
-     * 
+     * List of the default and other languages supported by this service.
+     *
      * @param value
      *     allowed object is
      *     {@link Languages }
-     *     
+     *
      */
     public void setLanguages(final Languages value) {
         this.languages = value;
@@ -147,11 +147,11 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
 
     /**
      * Location of a WSDL document which describes the entire service.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link WSDL }
-     *     
+     *
      */
     public WSDL getWSDL() {
         return wsdl;
@@ -159,11 +159,11 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
 
     /**
      * Location of a WSDL document which describes the entire service.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link WSDL }
-     *     
+     *
      */
     public void setWSDL(final WSDL value) {
         this.wsdl = value;
@@ -171,11 +171,11 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getService() {
         if (service == null) {
@@ -187,11 +187,11 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setService(final String value) {
         this.service = value;
@@ -199,11 +199,11 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
 
     /**
      * Gets the value of the lang property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLang() {
         return lang;
@@ -211,11 +211,11 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
 
     /**
      * Sets the value of the lang property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLang(final String value) {
         this.lang = value;
@@ -231,7 +231,7 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
         OperationsMetadata    om = null;
         ProcessOfferings      po = null;
         WSDL                  ws = null;
-        
+
         //we enter the information for service identification.
         if (sections.containsSection("ServiceIdentification") || sections.containsSection("All")) {
             si = getServiceIdentification();

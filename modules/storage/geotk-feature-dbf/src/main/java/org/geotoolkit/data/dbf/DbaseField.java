@@ -151,7 +151,7 @@ abstract class DbaseField {
 
         @Override
         public Object read(final CharBuffer charBuffer) throws IOException {
-                        
+
             switch (charBuffer.charAt(0)) {
                 case 't':
                 case 'T':

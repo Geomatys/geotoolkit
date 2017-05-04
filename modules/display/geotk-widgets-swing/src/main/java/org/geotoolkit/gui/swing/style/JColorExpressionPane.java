@@ -149,7 +149,7 @@ private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRS
             guiColor.setBackground(Color.RED);
             guiColor.setOpaque(true);
         }
-        
+
         guiColor.setEnabled(guiSpecial.get()==null);
         guiColor.setToolTipText(guiSpecial.getToolTipText());
     }
@@ -168,5 +168,5 @@ private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRS
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
 }

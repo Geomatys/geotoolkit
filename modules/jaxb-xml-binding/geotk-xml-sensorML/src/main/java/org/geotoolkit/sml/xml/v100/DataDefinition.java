@@ -101,7 +101,7 @@ public class DataDefinition implements AbstractDataDefinition {
             }
         }
     }
-    
+
     /**
      * Gets the value of the dataBlockDefinition property.
      *

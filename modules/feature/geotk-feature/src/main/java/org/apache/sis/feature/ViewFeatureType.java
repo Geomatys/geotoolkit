@@ -41,7 +41,7 @@ import org.opengis.util.ScopedName;
 /**
  * FeatureType implementation which define a filtered view of a reference
  * feature type.
- * 
+ *
  *
  * @author Johann Sorel (Geomatys)
  * @module
@@ -66,14 +66,14 @@ public class ViewFeatureType implements DecoratedFeatureType {
     }
     /**
      * Filter feature type properties.
-     * 
+     *
      * @param base reference feature type
      * @param propertyNames properties to include in the feature type view
      */
     public ViewFeatureType(FeatureType base, Set<String> propertyNames) {
         ArgumentChecks.ensureNonNull("type", base);
         this.base = base;
-        
+
         //NOTE : copied and modified from DefaultFeatureType.computeTransientFields
         isSimple = true;
         for (String pname : propertyNames) {
@@ -126,7 +126,7 @@ public class ViewFeatureType implements DecoratedFeatureType {
     public FeatureType getDecoratedType() {
         return base;
     }
-    
+
     /**
      * Redirect to wrapped feature type.
      *
@@ -219,7 +219,7 @@ public class ViewFeatureType implements DecoratedFeatureType {
      *
      * Returns {@code true} if this type is same or a super-type of the given type.
      * The check is based mainly on the feature type {@linkplain #getName() name}, which should be unique.
-     * 
+     *
      * <div class="note"><b>Analogy:</b>
      * if we compare {@code FeatureType} to {@link Class} in the Java language, then this method is equivalent
      * to {@link Class#isAssignableFrom(Class)}.</div>

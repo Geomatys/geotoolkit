@@ -49,7 +49,7 @@ public abstract class AbstractChangeElement extends AbstractRequest implements C
     public Type getType() {
         return type;
     }
-    
+
     @Override
     public Feature getElement() {
         return element;

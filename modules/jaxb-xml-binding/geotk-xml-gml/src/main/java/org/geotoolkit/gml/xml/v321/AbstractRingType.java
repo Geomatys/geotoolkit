@@ -28,9 +28,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for AbstractRingType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractRingType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractRingType")
@@ -53,13 +53,13 @@ import org.opengis.filter.expression.ExpressionVisitor;
 public abstract class AbstractRingType extends AbstractGeometryType implements AbstractRing {
 
     public AbstractRingType() {
-        
+
     }
-    
+
     public AbstractRingType(final String srsName) {
         super(srsName);
     }
-    
+
     public Object evaluate(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

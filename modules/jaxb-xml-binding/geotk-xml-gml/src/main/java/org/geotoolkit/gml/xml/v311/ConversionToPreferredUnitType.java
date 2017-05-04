@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Relation of a unit to the preferred unit for this quantity type, specified by an arithmetic conversion (scaling and/or offset). A preferred unit is either a base unit or a derived unit selected for all units of one quantity type. The mandatory attribute "uom" shall reference the preferred unit that this conversion applies to. The conversion is specified by one of two alternative elements: "factor" or "formula".
- * 
+ *
  * <p>Java class for ConversionToPreferredUnitType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ConversionToPreferredUnitType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,11 +58,11 @@ public class ConversionToPreferredUnitType
 
     /**
      * Gets the value of the factor property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getFactor() {
         return factor;
@@ -70,11 +70,11 @@ public class ConversionToPreferredUnitType
 
     /**
      * Sets the value of the factor property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setFactor(final Double value) {
         this.factor = value;
@@ -82,11 +82,11 @@ public class ConversionToPreferredUnitType
 
     /**
      * Gets the value of the formula property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FormulaType }
-     *     
+     *
      */
     public FormulaType getFormula() {
         return formula;
@@ -94,11 +94,11 @@ public class ConversionToPreferredUnitType
 
     /**
      * Sets the value of the formula property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FormulaType }
-     *     
+     *
      */
     public void setFormula(final FormulaType value) {
         this.formula = value;

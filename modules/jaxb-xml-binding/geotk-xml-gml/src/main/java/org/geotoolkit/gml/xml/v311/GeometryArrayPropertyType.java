@@ -28,13 +28,13 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * A container for an array of geometry elements. The elements are always contained in the array property, 
- * 			referencing geometry elements or arrays of geometry elements is not supported.
- * 
+ * A container for an array of geometry elements. The elements are always contained in the array property,
+ *          referencing geometry elements or arrays of geometry elements is not supported.
+ *
  * <p>Java class for GeometryArrayPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeometryArrayPropertyType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,7 +61,7 @@ public class GeometryArrayPropertyType {
 
     /**
      * Gets the value of the abstractGeometry property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link OrientableSurfaceType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractSolidType }{@code >}
@@ -90,8 +90,8 @@ public class GeometryArrayPropertyType {
      * {@link JAXBElement }{@code <}{@link AbstractGeometricPrimitiveType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointType }{@code >}
      * {@link JAXBElement }{@code <}{@link MultiSolidType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends AbstractGeometryType>> getJbAbstractGeometry() {
         if (abstractGeometry == null) {

@@ -359,7 +359,7 @@ public class JChainEditor extends JPanel{
         //        ChainProcess process = new ChainProcess(null, null)
             }
         };
-        
+
         /*
          * Button to change view mode.
          */
@@ -427,7 +427,7 @@ public class JChainEditor extends JPanel{
             for(ProcessingRegistry factory : chain.getFactories()){
                 processTreeModel.addRegistry(factory);
             }
-            
+
             this.guiProcessTree.setModel(processTreeModel);
             //this.guiDataTree.setModel(new JDataTreeModel(session));
             this.guiOtherTree.setModel(new JOtherTreeModel());

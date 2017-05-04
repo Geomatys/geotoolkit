@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for getConceptsMatchingKeyword complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="getConceptsMatchingKeyword">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getConceptsMatchingKeyword", propOrder = {
@@ -77,7 +77,7 @@ public class GetConceptsMatchingKeyword {
 
     }
 
-    public GetConceptsMatchingKeyword(final String keyword, final int searchMode, final List<String> thesaurus, 
+    public GetConceptsMatchingKeyword(final String keyword, final int searchMode, final List<String> thesaurus,
             final String language, final String outputFormat, final boolean geometric, final List<String> ignoreThesaurus, final List<String> themes,
             final Boolean showDeactivated) {
         this.keyword         = keyword;
@@ -112,11 +112,11 @@ public class GetConceptsMatchingKeyword {
 
     /**
      * Gets the value of the keyword property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getKeyword() {
         return keyword;
@@ -124,11 +124,11 @@ public class GetConceptsMatchingKeyword {
 
     /**
      * Sets the value of the keyword property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setKeyword(String value) {
         this.keyword = value;
@@ -136,7 +136,7 @@ public class GetConceptsMatchingKeyword {
 
     /**
      * Gets the value of the searchMode property.
-     * 
+     *
      */
     public int getSearchMode() {
         return searchMode;
@@ -144,7 +144,7 @@ public class GetConceptsMatchingKeyword {
 
     /**
      * Sets the value of the searchMode property.
-     * 
+     *
      */
     public void setSearchMode(int value) {
         this.searchMode = value;
@@ -152,11 +152,11 @@ public class GetConceptsMatchingKeyword {
 
     /**
      * Gets the value of the thesaurus property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public List<String> getThesaurus() {
         return thesaurus;
@@ -164,11 +164,11 @@ public class GetConceptsMatchingKeyword {
 
     /**
      * Sets the value of the thesaurus property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setThesaurus(List<String> value) {
         this.thesaurus = value;
@@ -176,11 +176,11 @@ public class GetConceptsMatchingKeyword {
 
     /**
      * Gets the value of the language property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLanguage() {
         return language;
@@ -188,11 +188,11 @@ public class GetConceptsMatchingKeyword {
 
     /**
      * Sets the value of the language property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLanguage(String value) {
         this.language = value;

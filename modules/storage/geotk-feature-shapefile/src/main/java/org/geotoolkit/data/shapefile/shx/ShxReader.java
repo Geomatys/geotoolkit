@@ -37,7 +37,7 @@ import org.geotoolkit.data.dbf.Closeable;
  * <a href="http://www.esri.com/library/whitepapers/pdfs/shapefile.pdf"><b>"ESRI(r)
  * Shapefile - A Technical Description"</b><br> * <i>'An ESRI White Paper .
  * May 1997'</i></a>
- * 
+ *
  * @author Ian Schneider
  * @author Johann Sorel (Geomatys)
  * @module
@@ -71,16 +71,16 @@ public final class ShxReader implements Closeable{
      */
     public ShxReader(final ReadableByteChannel shxChannel, final boolean useMemoryMappedBuffer)
             throws IOException {
-        
+
         // init the tracer if we need to debug a connection leak
         assert (creationStack = new IllegalStateException().fillInStackTrace()) != null;
-        
+
         this.useMemoryMappedBuffer = useMemoryMappedBuffer;
         final ReadableByteChannel byteChannel = shxChannel;
 
         try {
             header = readHeader(byteChannel);
-            
+
             //windows do not handle memory mapped buffer correctly
             //the buffer is released by the GC very late, which causes some file locks to remain.
 //            if (byteChannel instanceof FileChannel) {
@@ -115,7 +115,7 @@ public final class ShxReader implements Closeable{
 
     /**
      * Get the header of this index file.
-     * 
+     *
      * @return The header of the index file.
      */
     public ShapefileHeader getHeader() {
@@ -180,7 +180,7 @@ public final class ShxReader implements Closeable{
         closed = true;
         if (channel != null && channel.isOpen()) {
             channel.close();
-        }        
+        }
         this.content = null;
     }
 
@@ -188,7 +188,7 @@ public final class ShxReader implements Closeable{
     public boolean isClosed() {
         return closed;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -203,13 +203,13 @@ public final class ShxReader implements Closeable{
                         "The unclosed shx reader originated on this stack trace", creationStack);
             }
             this.close();
-        }        
+        }
         super.finalize();
     }
 
     /**
      * Get the number of records in this index.
-     * 
+     *
      * @return The number of records.
      */
     public int getRecordCount() {
@@ -218,7 +218,7 @@ public final class ShxReader implements Closeable{
 
     /**
      * Get the offset of the record (in 16-bit words).
-     * 
+     *
      * @param index The index, from 0 to getRecordCount - 1
      * @return The offset in 16-bit words.
      * @throws IOException
@@ -237,7 +237,7 @@ public final class ShxReader implements Closeable{
 
     /**
      * Get the offset of the record (in real bytes, not 16-bit words).
-     * 
+     *
      * @param index The index, from 0 to getRecordCount - 1
      * @return The offset in bytes.
      * @throws IOException
@@ -248,7 +248,7 @@ public final class ShxReader implements Closeable{
 
     /**
      * Get the content length of the given record in bytes, not 16 bit words.
-     * 
+     *
      * @param index The index, from 0 to getRecordCount - 1
      * @return The lengh in bytes of the record.
      * @throws IOException

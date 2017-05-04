@@ -32,7 +32,7 @@ public class DefaultSchema implements Schema {
     private List<Object> schemaExtensions;
 
     /**
-     * 
+     *
      */
     public DefaultSchema() {
         this.simpleFields = EMPTY_LIST;
@@ -40,7 +40,7 @@ public class DefaultSchema implements Schema {
     }
 
     /**
-     * 
+     *
      * @param simpleFields
      * @param name
      * @param id

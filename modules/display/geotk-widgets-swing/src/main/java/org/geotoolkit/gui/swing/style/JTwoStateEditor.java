@@ -55,7 +55,7 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> implements Propert
     private final StyleElementEditor<T> simple;
     private final StyleElementEditor<T> advanced;
     private StyleElementEditor<T> current;
-    
+
     private final JLayeredPane layeredpane = new JLayeredPane();
     private final JButton typeselect;
     private final JPanel typeSelectPane = new JPanel(new FlowLayout(FlowLayout.RIGHT,0,0)){
@@ -63,7 +63,7 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> implements Propert
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            
+
             final Graphics2D g2d = (Graphics2D) g;
             g2d.setColor(Color.WHITE);
 
@@ -92,7 +92,7 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> implements Propert
         current.addPropertyChangeListener(this);
 
         typeselect = new JButton(DEFAULT_SIMPLE ? ICON_SIMPLE : ICON_ADVANCED);
-        typeselect.setToolTipText(MessageBundle.format(DEFAULT_SIMPLE ? 
+        typeselect.setToolTipText(MessageBundle.format(DEFAULT_SIMPLE ?
                 "style_twostate_simple" : "style_twostate_advanced"));
         typeselect.addActionListener(new ActionListener() {
             @Override
@@ -106,14 +106,14 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> implements Propert
                 current.addPropertyChangeListener(JTwoStateEditor.this);
                 DEFAULT_SIMPLE = current == simple;
                 typeselect.setIcon(DEFAULT_SIMPLE ? ICON_SIMPLE : ICON_ADVANCED);
-                typeselect.setToolTipText(MessageBundle.format(DEFAULT_SIMPLE ? 
+                typeselect.setToolTipText(MessageBundle.format(DEFAULT_SIMPLE ?
                         "style_twostate_simple" : "style_twostate_advanced"));
-                
+
                 //copy the style between editors
                 current.parse(ele);
             }
         });
-        
+
         typeselect.setBorderPainted(false);
         typeselect.setContentAreaFilled(false);
         typeselect.setMargin(new Insets(0, 0, 0, 0));
@@ -164,7 +164,7 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> implements Propert
         final Dimension dim2 = advanced.getMaximumSize();
         return new Dimension(Math.max(dim1.width, dim2.width), Math.max(dim1.height, dim2.height));
     }
-    
+
     @Override
     public void setLayer(MapLayer layer) {
         super.setLayer(layer);
@@ -187,7 +187,7 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> implements Propert
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
     public void propertyChange(PropertyChangeEvent evt) {
         if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());

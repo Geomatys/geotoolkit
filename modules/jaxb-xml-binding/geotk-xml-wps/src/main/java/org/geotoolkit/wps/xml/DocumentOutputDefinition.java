@@ -24,10 +24,10 @@ import org.geotoolkit.ows.xml.LanguageString;
  * @author guilhem
  */
 public interface DocumentOutputDefinition extends OutputDefinition {
-    
+
     LanguageString getTitle();
-    
+
     LanguageString getAbstract();
-    
+
     void setAsReference(final Boolean value);
 }

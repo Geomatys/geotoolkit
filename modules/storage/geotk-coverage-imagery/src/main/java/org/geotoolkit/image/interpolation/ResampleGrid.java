@@ -18,41 +18,41 @@ package org.geotoolkit.image.interpolation;
 
 /**
  * A grid which represent source positions use during resampling.
- * 
+ *
  * @author Remi Marechal (Geomatys).
  */
 public class ResampleGrid {
-    
+
     /**
      * Minimum grid coordinate (usually pixel unity) in X direction.
      */
     private final int minGridX;
-    
+
     /**
      * Minimum grid coordinate (usually pixel unity) in Y direction.
      */
     private final int minGridY;
-    
+
     /**
      * Grid cells number in X direction.
      */
     private final int gridWidth;
-    
+
     /**
      * Grid cells number in Y direction.
      */
     private final int gridHeight;
-    
+
     /**
      * Step in X direction.
      */
     private final int stepX;
-    
+
     /**
      * Step in Y direction.
      */
     private final int stepY;
-    
+
     /**
      * The grid use to transform destination coordinate to source coordinate.
      */
@@ -60,7 +60,7 @@ public class ResampleGrid {
 
     /**
      * Create a grid adapted to transform destination coordinate to source coordinate.
-     * 
+     *
      * @param startX minimum grid position in X direction.
      * @param startY minimum grid position in Y direction.
      * @param stepX grid step in X direction.
@@ -69,7 +69,7 @@ public class ResampleGrid {
      * @param nbCellY cell number in Y direction.
      * @param positions all cells grid source positions.
      */
-    ResampleGrid(final int startX, final int startY,final int stepX, final int stepY, 
+    ResampleGrid(final int startX, final int startY,final int stepX, final int stepY,
                         final int nbCellX, final int nbCellY, final double[] positions) {
         minGridX   = startX;
         minGridY   = startY;
@@ -82,25 +82,25 @@ public class ResampleGrid {
 
     /**
      * Returns minimum grid coordinate in X direction.
-     * 
+     *
      * @return minimum grid coordinate in X direction.
      */
     int getMinGridX() {
         return minGridX;
     }
-    
+
     /**
      * Returns minimum grid coordinate in Y direction.
-     * 
+     *
      * @return minimum grid coordinate in Y direction.
      */
     int getMinGridY() {
         return minGridY;
     }
-    
+
     /**
      * Returns step in X direction.
-     * 
+     *
      * @return step in X direction.
      */
     int getStepX() {
@@ -109,52 +109,52 @@ public class ResampleGrid {
 
     /**
      * Returns step in Y direction.
-     * 
+     *
      * @return step in Y direction.
      */
     int getStepY() {
         return stepY;
     }
-    
+
     /**
      * Returns grid which contain source positions coordinates.
-     * 
+     *
      * @return grid which contain source positions coordinates.
      */
     double[] getGrid() {
         return grid;
     }
-    
+
     /**
      * Returns cells number in X direction.
-     * 
+     *
      * @return cells number in X direction.
      */
     int getGridWidth() {
         return gridWidth;
     }
-    
+
     /**
      * Returns cells number in Y direction.
-     * 
+     *
      * @return cells number in Y direction.
      */
     int getGridHeight() {
         return gridHeight;
     }
-    
+
     /**
      * Returns index of first grid cell in X direction.
-     * 
+     *
      * @return index of first grid cell in X direction.
      */
     int getMinGridXIndex() {
         return 0;
     }
-    
+
     /**
      * Returns index of first grid cell in Y direction.
-     * 
+     *
      * @return index of first grid cell in Y direction.
      */
     int getMinGridYIndex() {

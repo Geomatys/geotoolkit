@@ -49,9 +49,9 @@ import org.geotoolkit.swe.xml.v100.SimpleDataRecordType;
 
 /**
  * <p>Java class for IoComponentPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="IoComponentPropertyType">
  *   &lt;complexContent>
@@ -66,8 +66,8 @@ import org.geotoolkit.swe.xml.v100.SimpleDataRecordType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -207,7 +207,7 @@ public class IoComponentPropertyType implements IoComponent {
             abstractDataRecord = factory.createDataRecord((DataRecordType) obj);
         } else if (obj instanceof DataArrayType) {
             abstractDataArray = factory.createDataArray((DataArrayType) obj);
-            
+
         } else {
             System.out.println("UNINPLEMENTED CASE:" + obj.getClass().getName());
         }

@@ -26,7 +26,7 @@ import static org.geotoolkit.index.quadtree.fs.FileSystemIndexStore.*;
 
 /**
  * DOCUMENT ME!
- * 
+ *
  * @author Tommaso Nolli
  * @author Johann Sorel (Geomatys)
  * @module

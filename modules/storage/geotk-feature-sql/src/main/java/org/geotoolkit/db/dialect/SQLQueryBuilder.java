@@ -143,7 +143,7 @@ public class SQLQueryBuilder {
 
     /**
      * Generates a 'INSERT INFO' sql statement.
-     * 
+     *
      * @param featureType
      * @param feature
      * @param keyValues
@@ -345,7 +345,7 @@ public class SQLQueryBuilder {
             sql.append('=');
 
             final Class valueClass = attribute.getValueClass();
-            
+
             if (Geometry.class.isAssignableFrom(valueClass)) {
                     final Geometry g = (Geometry) value;
                     final int srid = getGeometrySRID(g, attribute);

@@ -36,7 +36,7 @@ package org.geotoolkit.data.kml.model;
  * &lt;element name="AbstractSubStyleSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
  * &lt;element name="AbstractSubStyleObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
  * </pre>
- * 
+ *
  * @author Samuel Andrés
  * @module
  */

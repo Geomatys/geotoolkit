@@ -61,7 +61,7 @@ public interface AnimatedUpdate extends AbstractTourPrimitive {
     void setDuration(double duration);
 
     /**
-     * 
+     *
      * @param update
      */
     void setUpdate(Update update);

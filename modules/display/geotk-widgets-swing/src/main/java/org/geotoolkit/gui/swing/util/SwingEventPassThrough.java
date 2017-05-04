@@ -32,7 +32,7 @@ import javax.swing.event.MouseInputListener;
 public class SwingEventPassThrough implements MouseInputListener,MouseWheelListener{
 
     private final Component source;
-    
+
     public SwingEventPassThrough(final Component source){
         org.apache.sis.util.ArgumentChecks.ensureNonNull("source", source);
         this.source = source;
@@ -40,14 +40,14 @@ public class SwingEventPassThrough implements MouseInputListener,MouseWheelListe
         source.addMouseMotionListener(this);
         source.addMouseWheelListener(this);
     }
-    
+
     private void forwardMouseEvent(final MouseEvent event){
         final Component destination = source.getParent();
         if (destination != null) {
             destination.dispatchEvent(SwingUtilities.convertMouseEvent((Component)event.getSource(), event, destination));
         }
     }
-    
+
     @Override
     public void mouseClicked(MouseEvent e) {
         forwardMouseEvent(e);
@@ -87,5 +87,5 @@ public class SwingEventPassThrough implements MouseInputListener,MouseWheelListe
     public void mouseWheelMoved(MouseWheelEvent e) {
         forwardMouseEvent(e);
     }
-    
+
 }

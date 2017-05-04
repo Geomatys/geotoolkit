@@ -48,7 +48,7 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
     private static final int HEADER_SIZE = 16;
     private static final Font HEADER_FONT = new Font("monospaced", Font.PLAIN, 11);
     private static final FontMetrics FM = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).createGraphics().getFontMetrics(HEADER_FONT);
-    
+
     @Override
     public boolean isGroupSymbolizer() {
         return true;
@@ -76,25 +76,25 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
 
     @Override
     public Rectangle2D glyphPreferredSize(CachedCellSymbolizer symbol, MapLayer layer) {
-        
+
         //fake layer
         final FeatureMapLayer fakelayer = mimicCellLayer(layer);
-        
+
         final Rule rule = symbol.getSource().getRule();
-        
-        
+
+
 //        if(symbol.getSource().getPointSymbolizer() != null){
 //            //generate 4 arrows base on an approximate size
 //            final PointSymbolizer ps = symbol.getSource().getPointSymbolizer();
 //            final Expression exp = ps.getGraphic().getSize();
 //            String text = getTitle(ps);
-//            
+//
 //            int width = FM.stringWidth(text);
 //            width = Math.max(100, width);
-//            
+//
 //            Dimension dim = new Dimension(width,32*3+HEADER_SIZE);
 //            return new Rectangle2D.Double(0, 0, dim.width, dim.height);
-//            
+//
 //        }else{
             Dimension dim = new Dimension(5,5);
             final CachedRule r = symbol.getCachedRule();
@@ -104,49 +104,49 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
             dim.height = dim.height*2;
             return new Rectangle2D.Double(0, 0, dim.width, dim.height);
 //        }
-        
+
     }
-    
+
     @Override
     public void glyph(Graphics2D g, Rectangle2D rect, CachedCellSymbolizer symbol, MapLayer layer) {
         final double halfwidth = rect.getWidth()/2;
         final double halfheight = rect.getHeight()/2;
-        
+
         //fake layer
         final FeatureMapLayer fakelayer = mimicCellLayer(layer);
-                
+
 //        if(fakelayer != null && symbol.getSource().getPointSymbolizer() != null){
 //            //generate 4 arrows base on an approximate size
 //            final PointSymbolizer ps = symbol.getSource().getPointSymbolizer();
 //            final String text = getTitle(ps);
-//            
+//
 //            g.setColor(Color.BLACK);
 //            g.setFont(HEADER_FONT);
 //            g.drawString(text, (int)rect.getX()+2, HEADER_SIZE-5);
-//            
+//
 //            final double best = (rect.getHeight() - HEADER_SIZE)/3 ;
-//            
+//
 //            final DefaultPointSymbolizerRendererService srs = new DefaultPointSymbolizerRendererService();
 //            final CachedPointSymbolizer cps = symbol.getCachedPointSymbolizer();
-//            
+//
 //            //first symbol at 1/1 size
 //            Rectangle.Double rectA = new Rectangle.Double(rect.getX(), rect.getY()+HEADER_SIZE, best, best);
 //            srs.glyph(g, rectA, cps, fakelayer, (float)best);
 //            g.setColor(Color.BLACK);
 //            g.drawString(NumberFormat.getNumberInstance().format(best), (int)rectA.getMaxX(), (int)rectA.getCenterY());
-//            
+//
 //            //second symbol at 1/2 size
 //            rectA = new Rectangle.Double(rect.getX(), rect.getY()+HEADER_SIZE+best, best, best);
 //            srs.glyph(g, rectA, cps, fakelayer, (float)best*0.6f);
 //            g.setColor(Color.BLACK);
 //            g.drawString(NumberFormat.getNumberInstance().format(best*0.6), (int)rectA.getMaxX(), (int)rectA.getCenterY());
-//            
+//
 //            //thrid symbol at 1/10 size
 //            rectA = new Rectangle.Double(rect.getX(), rect.getY()+HEADER_SIZE+best*2, best, best);
 //            srs.glyph(g, rectA, cps, fakelayer, (float)best*0.2f);
 //            g.setColor(Color.BLACK);
 //            g.drawString(NumberFormat.getNumberInstance().format(best*0.2), (int)rectA.getMaxX(), (int)rectA.getCenterY());
-//            
+//
 //        }else{
             glyphBlock(g, new Rectangle.Double(rect.getX(),           rect.getY(),            halfwidth, halfheight), symbol, fakelayer);
             glyphBlock(g, new Rectangle.Double(rect.getX(),           rect.getY()+halfheight, halfwidth, halfheight), symbol, fakelayer);
@@ -154,12 +154,12 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
             glyphBlock(g, new Rectangle.Double(rect.getX()+halfwidth, rect.getY()+halfheight, halfwidth, halfheight), symbol, fakelayer);
 //        }
     }
-    
+
     private void glyphBlock(Graphics2D g, Rectangle2D rect, CachedCellSymbolizer symbol, MapLayer layer){
         final CachedRule r = symbol.getCachedRule();
         DefaultGlyphService.render(r.getSource(), rect, g, layer);
     }
-    
+
     private static FeatureMapLayer mimicCellLayer(MapLayer layer){
         //fake layer
         if(layer instanceof CoverageMapLayer){
@@ -177,7 +177,7 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
         }
         return (FeatureMapLayer) layer;
     }
-    
+
     private static String getTitle(PointSymbolizer ps){
         final StringBuilder sb = new StringBuilder();
         String title = ps.getDescription().getTitle().toString();
@@ -193,5 +193,5 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
         }
         return sb.toString();
     }
-    
+
 }

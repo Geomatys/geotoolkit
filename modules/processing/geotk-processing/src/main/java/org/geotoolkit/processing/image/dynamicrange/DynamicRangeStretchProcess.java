@@ -41,7 +41,7 @@ public class DynamicRangeStretchProcess extends AbstractProcess {
     public DynamicRangeStretchProcess(RenderedImage input, int[] bands, double[][] ranges) {
         super(INSTANCE, asParameters(input,bands,ranges));
     }
-    
+
     private static ParameterValueGroup asParameters(RenderedImage input, int[] bands, double[][] ranges){
         final ParameterValueGroup params = DynamicRangeStretchDescriptor.INPUT_DESC.createValue();
         ParametersExt.getOrCreateValue(params, IN_IMAGE.getName().getCode()).setValue(input);
@@ -49,7 +49,7 @@ public class DynamicRangeStretchProcess extends AbstractProcess {
         ParametersExt.getOrCreateValue(params, IN_RANGES.getName().getCode()).setValue(ranges);
         return params;
     }
-    
+
     public DynamicRangeStretchProcess(ParameterValueGroup input) {
         super(INSTANCE, input);
     }
@@ -58,7 +58,7 @@ public class DynamicRangeStretchProcess extends AbstractProcess {
         execute();
         return (BufferedImage) outputParameters.parameter(OUT_IMAGE.getName().getCode()).getValue();
     }
-    
+
     @Override
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
@@ -66,11 +66,11 @@ public class DynamicRangeStretchProcess extends AbstractProcess {
         final RenderedImage inputImage = (RenderedImage) Parameters.getOrCreate(IN_IMAGE, inputParameters).getValue();
         final int[] bands = (int[]) Parameters.getOrCreate(IN_BANDS, inputParameters).getValue();
         final double[][] ranges = (double[][]) Parameters.getOrCreate(IN_RANGES, inputParameters).getValue();
-        
+
         if(bands.length!=4 || ranges.length!=4){
-            throw new ProcessException("Bands and Ranges parameters must be of size 4.", this);            
+            throw new ProcessException("Bands and Ranges parameters must be of size 4.", this);
         }
-                
+
         final SampleModel inputSampleModel = inputImage.getSampleModel();
         final int inputNbBand = inputSampleModel.getNumBands();
         final BufferedImage resultImage = new BufferedImage(inputImage.getWidth(), inputImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -81,13 +81,13 @@ public class DynamicRangeStretchProcess extends AbstractProcess {
                 throw new ProcessException("Unvalid configuration, band "+bands[i]+" do not exist.", this);
             }
         }
-        
+
         //copy datas
         final PixelIterator readIte = PixelIteratorFactory.createDefaultIterator(inputImage);
         final PixelIterator writeIte = PixelIteratorFactory.createDefaultWriteableIterator(raster, raster);
         final double[] pixel = new double[inputNbBand];
         final int[] rgba = new int[4];
-        
+
         int srcBandIdx;
         int trgBandIdx;
         while (readIte.next() && writeIte.next()) {
@@ -117,11 +117,11 @@ public class DynamicRangeStretchProcess extends AbstractProcess {
                     rgba[i] = XMath.clamp((int)v, 0, 255);
                 }
             }
-            
+
             if(hasNan){
                 rgba[0]=0;rgba[1]=0;rgba[2]=0;rgba[3]=0;
             }
-            
+
             //write target pixels
             writeIte.setSampleDouble(rgba[trgBandIdx]);
             while (++trgBandIdx != bands.length) {
@@ -132,5 +132,5 @@ public class DynamicRangeStretchProcess extends AbstractProcess {
 
         Parameters.getOrCreate(OUT_IMAGE, outputParameters).setValue(resultImage);
     }
-    
+
 }

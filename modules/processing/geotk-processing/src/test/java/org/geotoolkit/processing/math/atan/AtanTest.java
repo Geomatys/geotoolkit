@@ -58,5 +58,5 @@ public class AtanTest extends AbstractProcessTest {
 
         assertEquals(0.5693, result.doubleValue(), 0.0001);
     }
-    
+
 }

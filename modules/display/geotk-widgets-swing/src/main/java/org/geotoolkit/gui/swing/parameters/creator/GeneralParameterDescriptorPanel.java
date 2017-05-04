@@ -29,20 +29,20 @@ import org.opengis.parameter.GeneralParameterDescriptor;
  * @author Quentin Boileau (Geomatys)
  */
 public abstract class GeneralParameterDescriptorPanel extends JPanel implements PropertyChangeListener, MouseListener, Comparable<GeneralParameterDescriptorPanel> {
-    
+
     /*
      * Common parameters properties.
      */
     protected String code;
     protected String remarks;
-    
+
     protected boolean selected = false;
-    
+
     /*
      * Parent parameter group.
      */
     private JParameterDescriptorGroupPanel parent;
-    
+
     protected GeneralParameterDescriptorPanel(final GeneralParameterDescriptor desc, final JParameterDescriptorGroupPanel parent) {
         this.code = desc.getName().getCode();
         this.remarks = (desc.getRemarks() != null) ? desc.getRemarks().toString() : null;
@@ -51,7 +51,7 @@ public abstract class GeneralParameterDescriptorPanel extends JPanel implements 
 
     /**
      * Get parameter <code>code</code>
-     * @return 
+     * @return
      */
     public String getCode() {
         return code;
@@ -59,7 +59,7 @@ public abstract class GeneralParameterDescriptorPanel extends JPanel implements 
 
     /**
      * Set parameter <code>code</code>
-     * @param code 
+     * @param code
      */
     public void setCode(String code) {
         this.code = code;
@@ -67,7 +67,7 @@ public abstract class GeneralParameterDescriptorPanel extends JPanel implements 
 
     /**
      * Get parameter <code>remarks</code>
-     * @return 
+     * @return
      */
     public String getRemarks() {
         return remarks;
@@ -75,7 +75,7 @@ public abstract class GeneralParameterDescriptorPanel extends JPanel implements 
 
     /**
      * Set parameter <code>remarks</code>
-     * @param remarks 
+     * @param remarks
      */
     public void setRemarks(String remarks) {
         this.remarks = remarks;
@@ -83,10 +83,10 @@ public abstract class GeneralParameterDescriptorPanel extends JPanel implements 
 
     /**
      * Set if a GeneralParameterDescriptorPanel is selected.
-     * This method also firePropertyChange event {@link JParameterDescriptorsEditor.PARAMETER_SELECTED_EVENT} 
+     * This method also firePropertyChange event {@link JParameterDescriptorsEditor.PARAMETER_SELECTED_EVENT}
      * and change panel background color.
-     * 
-     * @param selected 
+     *
+     * @param selected
      */
     public void setSelected(boolean selected) {
         this.selected = selected;
@@ -97,48 +97,48 @@ public abstract class GeneralParameterDescriptorPanel extends JPanel implements 
             this.setBackgroundColor(UIManager.getColor("Label.background"));
         }
     }
-    
+
     /**
      * Return parent JParameterDescriptorGroupPanel of current GeneralParameterDescriptorPanel.
      * Can return null in case of current parameter is the root JParameterDescriptorGroupPanel.
-     * 
+     *
      * @return JParameterDescriptorGroupPanel parent or null if root.
      */
     public JParameterDescriptorGroupPanel getParentPanel(){
         return parent;
     }
-    
+
     /**
      * Compute and return current panel ParameterDescriptor.
-     * 
+     *
      * @return GeneralParameterDescriptor
      */
     public abstract GeneralParameterDescriptor getDescriptor();
-    
+
     /**
      * Return if a parameter is editable or not.
-     * 
+     *
      * @return boolean
      */
     public abstract boolean isEditable();
-    
+
     /**
      * Method called to update parameter component panel.
      */
     public abstract void updateContent();
-    
+
     /**
      * Set GeneralParameterDescriptorPanel background color.
-     * 
-     * @param color 
+     *
+     * @param color
      */
     public abstract void setBackgroundColor(final Color color);
-    
-    
+
+
     /**
      * Mouse events when a parameter is clicked.
      */
-    
+
     @Override
     public void mouseClicked(MouseEvent e) {
         setSelected(true);
@@ -163,9 +163,9 @@ public abstract class GeneralParameterDescriptorPanel extends JPanel implements 
     /**
      * Use to sort Parameter in a JParameterDescriptorGroupPanel.
      * This sort parameters in alphabetical order using there code attribute.
-     * 
+     *
      * @param o
-     * @return 
+     * @return
      */
     @Override
     public int compareTo(final GeneralParameterDescriptorPanel o) {

@@ -27,9 +27,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for FunctionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FunctionType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -67,11 +67,11 @@ public abstract class FunctionType
 
     /**
      * Gets the value of the fallbackValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFallbackValue() {
         return fallbackValue;
@@ -79,11 +79,11 @@ public abstract class FunctionType
 
     /**
      * Sets the value of the fallbackValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFallbackValue(final String value) {
         this.fallbackValue = value;

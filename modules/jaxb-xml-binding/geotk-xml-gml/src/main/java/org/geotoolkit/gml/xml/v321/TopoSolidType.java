@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TopoSolidType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TopoSolidType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TopoSolidType", propOrder = {
@@ -71,25 +71,25 @@ public class TopoSolidType
 
     /**
      * Gets the value of the isolated property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the isolated property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIsolated().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link NodeOrEdgePropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<NodeOrEdgePropertyType> getIsolated() {
         if (isolated == null) {
@@ -100,25 +100,25 @@ public class TopoSolidType
 
     /**
      * Gets the value of the directedFace property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the directedFace property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDirectedFace().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DirectedFacePropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<DirectedFacePropertyType> getDirectedFace() {
         if (directedFace == null) {
@@ -129,11 +129,11 @@ public class TopoSolidType
 
     /**
      * Gets the value of the solidProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SolidPropertyType }
-     *     
+     *
      */
     public SolidPropertyType getSolidProperty() {
         return solidProperty;
@@ -141,11 +141,11 @@ public class TopoSolidType
 
     /**
      * Sets the value of the solidProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SolidPropertyType }
-     *     
+     *
      */
     public void setSolidProperty(SolidPropertyType value) {
         this.solidProperty = value;
@@ -153,11 +153,11 @@ public class TopoSolidType
 
     /**
      * Gets the value of the universal property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public boolean isUniversal() {
         if (universal == null) {
@@ -169,11 +169,11 @@ public class TopoSolidType
 
     /**
      * Sets the value of the universal property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public void setUniversal(java.lang.Boolean value) {
         this.universal = value;
@@ -181,11 +181,11 @@ public class TopoSolidType
 
     /**
      * Gets the value of the aggregationType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public AggregationType getAggregationType() {
         return aggregationType;
@@ -193,11 +193,11 @@ public class TopoSolidType
 
     /**
      * Sets the value of the aggregationType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public void setAggregationType(AggregationType value) {
         this.aggregationType = value;

@@ -30,11 +30,11 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * A container for an array of curve segments.
- * 
+ *
  * <p>Java class for CurveSegmentArrayPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CurveSegmentArrayPropertyType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,7 +73,7 @@ public class CurveSegmentArrayPropertyType implements CurveSegmentArrayProperty{
 
     /**
      * Gets the value of the curveSegment property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link LineStringSegmentType }{@code >}
      * {@link JAXBElement }{@code <}{@link ArcByBulgeType }{@code >}
@@ -91,8 +91,8 @@ public class CurveSegmentArrayPropertyType implements CurveSegmentArrayProperty{
      * {@link JAXBElement }{@code <}{@link AbstractCurveSegmentType }{@code >}
      * {@link JAXBElement }{@code <}{@link BSplineType }{@code >}
      * {@link JAXBElement }{@code <}{@link GeodesicStringType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends AbstractCurveSegmentType>> getJbAbstractCurveSegment() {
         if (abstractCurveSegment == null) {

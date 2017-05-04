@@ -27,17 +27,17 @@ import org.geotoolkit.wrs.xml.v090.ApplicationModuleType;
 
 
 /**
- * 
+ *
  * RegistryPackage is the mapping of the same named interface in ebRIM.
  * It extends RegistryEntry.
- * 
+ *
  * A RegistryPackage is a named collection of objects.
- * 			
- * 
+ *
+ *
  * <p>Java class for RegistryPackageType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RegistryPackageType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.wrs.xml.v090.ApplicationModuleType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,7 +60,7 @@ import org.geotoolkit.wrs.xml.v090.ApplicationModuleType;
 @XmlSeeAlso({
     ApplicationModuleType.class
 })
-@XmlRootElement( name = "RegistryPackage")        
+@XmlRootElement( name = "RegistryPackage")
 public class RegistryPackageType extends RegistryEntryType {
 
     @XmlElement(name = "RegistryObjectList")

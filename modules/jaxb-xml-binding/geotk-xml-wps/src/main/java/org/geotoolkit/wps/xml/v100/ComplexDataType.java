@@ -74,19 +74,19 @@ public class ComplexDataType implements org.geotoolkit.wps.xml.ComplexDataType {
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<>();
 
-    
+
     public ComplexDataType() {
-        
+
     }
-    
+
     public ComplexDataType(String encoding, final String mimeType, final String schema) {
         this.encoding = encoding;
         this.mimeType = mimeType;
         this.schema   = schema;
     }
-    
+
     /**
-     * Complex data (such as an image), including a definition of the complex value data structure (i.e., schema, format, and encoding). 
+     * Complex data (such as an image), including a definition of the complex value data structure (i.e., schema, format, and encoding).
      * May be an ows:Manifest data structure.Gets the value of the content property.
      *
      *  @return Objects of the following type(s) are allowed in the list
@@ -187,7 +187,7 @@ public class ComplexDataType implements org.geotoolkit.wps.xml.ComplexDataType {
     public Map<QName, String> getOtherAttributes() {
         return otherAttributes;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
@@ -214,7 +214,7 @@ public class ComplexDataType implements org.geotoolkit.wps.xml.ComplexDataType {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

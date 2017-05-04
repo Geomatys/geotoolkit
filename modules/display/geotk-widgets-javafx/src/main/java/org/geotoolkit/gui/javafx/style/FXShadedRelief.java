@@ -36,7 +36,7 @@ public class FXShadedRelief extends FXStyleElementController<ShadedRelief>{
     private FXNumberExpression uiFactor;
     @FXML
     private CheckBox uiBrightness;
-        
+
     @Override
     public Class<ShadedRelief> getEditedClass() {
         return ShadedRelief.class;
@@ -46,29 +46,29 @@ public class FXShadedRelief extends FXStyleElementController<ShadedRelief>{
     public ShadedRelief newValue() {
         return StyleConstants.DEFAULT_SHADED_RELIEF;
     }
-    
+
     @Override
     public void initialize() {
-        super.initialize();        
+        super.initialize();
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             value.set(getStyleFactory().shadedRelief(uiFactor.valueProperty().get(), uiBrightness.isSelected()));
         };
-        
+
         uiFactor.valueProperty().addListener(changeListener);
         uiBrightness.selectedProperty().addListener(changeListener);
     }
-    
+
     @Override
     public void setLayer(MapLayer layer) {
         super.setLayer(layer);
         uiFactor.setLayer(layer);
     }
-    
+
     @Override
     protected void updateEditor(ShadedRelief styleElement) {
         uiFactor.valueProperty().setValue(styleElement.getReliefFactor());
         uiBrightness.selectedProperty().setValue(styleElement.isBrightnessOnly());
     }
-    
+
 }

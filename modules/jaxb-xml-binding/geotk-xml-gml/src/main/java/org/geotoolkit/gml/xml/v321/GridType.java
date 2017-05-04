@@ -37,9 +37,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * <p>Java class for GridType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GridType">
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GridType", propOrder = {
@@ -80,17 +80,17 @@ public class GridType extends AbstractGeometryType {
     private Integer dimension;
 
     public GridType() {
-        
+
     }
-    
+
     public GridType(final Grid grid) {
         this(grid, null);
     }
-    
+
     /**
-     * 
-     * @param grid 
-     * @param crs 
+     *
+     * @param grid
+     * @param crs
      */
     public GridType(final Grid grid, final CoordinateReferenceSystem crs) {
         final ObjectFactory factory = new ObjectFactory();
@@ -110,40 +110,40 @@ public class GridType extends AbstractGeometryType {
             }
         }
     }
-    
+
     /**
-     * Gets the rest of the content model. 
-     * 
+     * Gets the rest of the content model.
+     *
      * <p>
-     * You are getting this "catch-all" property because of the following reason: 
-     * The field name "AxisLabels" is used by two different parts of a schema. See: 
+     * You are getting this "catch-all" property because of the following reason:
+     * The field name "AxisLabels" is used by two different parts of a schema. See:
      * line 28 of file:/home/guilhem/xsd/gml/3.2.1/grids.xsd
      * line 46 of file:/home/guilhem/xsd/gml/3.2.1/geometryBasic0d1d.xsd
      * <p>
-     * To get rid of this property, apply a property customization to one 
-     * of both of the following declarations to change their names: 
+     * To get rid of this property, apply a property customization to one
+     * of both of the following declarations to change their names:
      * Gets the value of the rest property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the rest property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRest().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link List }{@code <}{@link String }{@code >}{@code >}
      * {@link JAXBElement }{@code <}{@link String }{@code >}
      * {@link JAXBElement }{@code <}{@link GridLimitsType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<?>> getRest() {
         if (rest == null) {
@@ -154,11 +154,11 @@ public class GridType extends AbstractGeometryType {
 
     /**
      * Gets the value of the dimension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getDimension() {
         return dimension;
@@ -166,11 +166,11 @@ public class GridType extends AbstractGeometryType {
 
     /**
      * Sets the value of the dimension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setDimension(Integer value) {
         this.dimension = value;

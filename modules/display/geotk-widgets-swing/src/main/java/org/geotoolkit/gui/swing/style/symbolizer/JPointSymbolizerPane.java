@@ -21,16 +21,16 @@ import org.opengis.style.PointSymbolizer;
 
 /**
  * Simple and complet point symbolizer editor.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class JPointSymbolizerPane extends JTwoStateEditor<PointSymbolizer>{
 
     public JPointSymbolizerPane() {
         super(new JPointSymbolizerSimple(), new JPointSymbolizerAdvanced());
-        
+
         //configure panel with a default symbolizer
         parse(getStyleFactory().pointSymbolizer());
     }
-    
+
 }

@@ -110,7 +110,7 @@ public class DouglasPeuckerProcess extends AbstractProcess {
         FeatureExt.setId(resultFeature, FeatureExt.getId(oldFeature));
         for (PropertyType property : oldFeature.getType().getProperties(true)) {
             if(!(property instanceof AttributeType)) continue;
-            
+
             final String name = property.getName().toString();
             final Object value = oldFeature.getPropertyValue(name);
             if (AttributeConvention.isGeometryAttribute(property)) {

@@ -99,5 +99,5 @@ public class MapItemVisibleColumn extends TreeTableColumn{
             }
         }
     }
-    
+
 }

@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for SamplingFeatureRelationPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SamplingFeatureRelationPropertyType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -54,11 +54,11 @@ public class SamplingFeatureRelationPropertyType {
 
     /**
      * Gets the value of the samplingFeatureRelation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SamplingFeatureRelationType }
-     *     
+     *
      */
     public SamplingFeatureRelationType getSamplingFeatureRelation() {
         return samplingFeatureRelation;
@@ -66,11 +66,11 @@ public class SamplingFeatureRelationPropertyType {
 
     /**
      * Sets the value of the samplingFeatureRelation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SamplingFeatureRelationType }
-     *     
+     *
      */
     public void setSamplingFeatureRelation(final SamplingFeatureRelationType value) {
         this.samplingFeatureRelation = value;

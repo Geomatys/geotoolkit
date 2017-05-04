@@ -29,15 +29,15 @@ public interface MutableUserLayer extends MutableLayer, UserLayer{
 
     public static final String SOURCE_PROPERTY = "source";
     public static final String CONSTRAINTS_PROPERTY = "constraints";
-    
+
     void setSource(Source source);
 
     @Override
     MutableConstraints getConstraints();
-    
+
     void setConstraints(MutableConstraints constraints);
 
     @Override
     List<MutableStyle> styles();
-    
+
 }

@@ -116,7 +116,7 @@ public class CollectionDataSource implements JRDataSource {
             }catch(PropertyNotFoundException ex){
                 return null;
             }
-            
+
             //No field that match this name, looks like the feature type
             //used is not the exact one returned by the JasperReportservice.
             //This is not necessarly an error if for exemple someone ignore

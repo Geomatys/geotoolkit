@@ -102,7 +102,7 @@ public class CategoryStyleBuilder extends Factory {
         }else{
             ff = filterFactory;
         }
-        
+
         fts = sf.featureTypeStyle();
 
     }
@@ -136,7 +136,7 @@ public class CategoryStyleBuilder extends Factory {
             if(geoClass==null){
                 return;
             }
-            
+
             if(Polygon.class.isAssignableFrom(geoClass) || MultiPolygon.class.isAssignableFrom(geoClass)){
                 Stroke stroke = sf.stroke(Color.BLACK, 1);
                 Fill fill = sf.fill(Color.BLUE);

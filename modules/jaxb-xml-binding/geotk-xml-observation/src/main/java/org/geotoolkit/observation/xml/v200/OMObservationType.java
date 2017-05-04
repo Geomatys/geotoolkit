@@ -63,7 +63,7 @@ import org.opengis.temporal.TemporalObject;
 
 /**
  *  Generic observation, whose result is anyType The following properties
- * 				are inherited from AbstractFeatureType:
+ *              are inherited from AbstractFeatureType:
  *
  *
  *
@@ -147,7 +147,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Build a clone of an observation
-     * 
+     *
      * @param observation observation to clone.
      */
     public OMObservationType(final OMObservationType observation) {
@@ -469,7 +469,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         return null;
     }
 
-    
+
     /**
      * Gets the value of the featureOfInterest property.
      *
@@ -583,7 +583,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         }
         return fields;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(super.toString());
@@ -720,12 +720,12 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
             return hash;
         }
     }
-    
+
     @XmlRootElement
     public static class InternalCompositePhenomenon implements org.geotoolkit.swe.xml.CompositePhenomenon {
 
         private final String name;
-        
+
         private final List<InternalPhenomenon> phenomenons;
 
         public InternalCompositePhenomenon() {
@@ -742,7 +742,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         public Identifier getName() {
             return new DefaultIdentifier(name);
         }
-        
+
         @Override
         public List<? extends PhenomenonProperty> getRealComponent() {
             final List<InternalPhenomenonProperty> phenProps = new ArrayList<>();
@@ -788,12 +788,12 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
             return hash;
         }
     }
-    
+
     @XmlRootElement
     public static class InternalPhenomenonProperty implements org.geotoolkit.swe.xml.PhenomenonProperty {
 
         private final String href;
-        
+
         private final org.geotoolkit.swe.xml.Phenomenon phenomenon;
 
         public InternalPhenomenonProperty() {
@@ -810,7 +810,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         public String getHref() {
             return href;
         }
-        
+
         @Override
         public void setToHref() {
             // already in href mode

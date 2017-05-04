@@ -31,9 +31,9 @@ import org.opengis.filter.FilterVisitor;
 
 /**
  * <p>Java class for PropertyIsNilType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PropertyIsNilType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.opengis.filter.FilterVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsNilType", propOrder = {
@@ -61,9 +61,9 @@ public class PropertyIsNilType extends ComparisonOpsType {
     private String nilReason;
 
     public PropertyIsNilType() {
-        
+
     }
-    
+
     public PropertyIsNilType(final PropertyIsNilType that) {
         if (that != null) {
             if (that.expression != null) {
@@ -81,21 +81,21 @@ public class PropertyIsNilType extends ComparisonOpsType {
                     throw new IllegalArgumentException("Unexpected type for expression in PropertyIsNilType:" + expression.getClass().getName());
                 }
             }
-            
+
             this.nilReason = that.nilReason;
         }
     }
-    
+
     /**
      * Gets the value of the expression property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link LiteralType }{@code >}
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *     
+     *
      */
     public JAXBElement<?> getExpression() {
         return expression;
@@ -103,14 +103,14 @@ public class PropertyIsNilType extends ComparisonOpsType {
 
     /**
      * Sets the value of the expression property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link LiteralType }{@code >}
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *     
+     *
      */
     public void setExpression(JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);
@@ -118,11 +118,11 @@ public class PropertyIsNilType extends ComparisonOpsType {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getNilReason() {
         return nilReason;
@@ -130,11 +130,11 @@ public class PropertyIsNilType extends ComparisonOpsType {
 
     /**
      * Sets the value of the nilReason property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setNilReason(String value) {
         this.nilReason = value;
@@ -144,7 +144,7 @@ public class PropertyIsNilType extends ComparisonOpsType {
     public ComparisonOpsType getClone() {
         return new PropertyIsNilType(this);
     }
-    
+
     @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -154,7 +154,7 @@ public class PropertyIsNilType extends ComparisonOpsType {
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder(super.toString());
@@ -172,7 +172,7 @@ public class PropertyIsNilType extends ComparisonOpsType {
         hash = 67 * hash + (this.nilReason != null ? this.nilReason.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) {

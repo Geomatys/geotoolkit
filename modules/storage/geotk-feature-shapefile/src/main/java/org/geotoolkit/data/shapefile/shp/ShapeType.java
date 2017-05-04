@@ -4,7 +4,7 @@
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2010, Geomatys
- * 
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -31,7 +31,7 @@ import org.apache.sis.storage.DataStoreException;
  * Not much but a type safe enumeration of file types as ints and names. The
  * descriptions can easily be tied to a ResourceBundle if someone wants to do
  * that.
- * 
+ *
  * @author Ian Schneider
  */
 public enum ShapeType {
@@ -75,7 +75,7 @@ public enum ShapeType {
 
     /**
      * Creates a new instance of ShapeType. Hidden on purpose.
-     * 
+     *
      * @param id The id.
      * @param name The name.
      */
@@ -86,7 +86,7 @@ public enum ShapeType {
 
     /**
      * Get the name of this ShapeType.
-     * 
+     *
      * @return The name.
      */
     @Override
@@ -97,7 +97,7 @@ public enum ShapeType {
     /**
      * Is this a multipoint shape? Hint- all shapes are multipoint except NULL,
      * UNDEFINED, and the POINTs.
-     * 
+     *
      * @return true if multipoint, false otherwise.
      */
     public boolean isMultiPoint() {
@@ -139,7 +139,7 @@ public enum ShapeType {
 
     /**
      * Determine the ShapeType for the id.
-     * 
+     *
      * @param id
      *                The id to search for.
      * @return The ShapeType for the id.
@@ -166,7 +166,7 @@ public enum ShapeType {
     /**
      * Each ShapeType corresponds to a handler. In the future this should
      * probably go else where to allow different handlers, or something...
-     * 
+     *
      * @throws ShapefileException If the ShapeType is bogus.
      * @return The correct handler for this ShapeType. Returns a new one.
      */

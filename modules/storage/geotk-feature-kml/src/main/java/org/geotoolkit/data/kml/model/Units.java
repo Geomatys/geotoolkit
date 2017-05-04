@@ -26,11 +26,11 @@ public enum Units {
     FRACTION("fraction"),
     PIXELS("pixels"),
     INSET_PIXELS("insetPixels");
-    
+
     private final String unit;
 
     /**
-     * 
+     *
      * @param unit
      */
     private Units(String unit){

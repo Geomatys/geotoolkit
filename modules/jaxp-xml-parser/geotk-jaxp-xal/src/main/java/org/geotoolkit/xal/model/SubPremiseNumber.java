@@ -52,7 +52,7 @@ public interface SubPremiseNumber extends GenericTypedGrPostal {
 
     /**
      * <p>"TH" in 12TH which is a floor number, "NO." in NO.1, "#" in APT #12, etc.</p>
-     * 
+     *
      * @return
      */
     String getIndicator();
@@ -73,7 +73,7 @@ public interface SubPremiseNumber extends GenericTypedGrPostal {
 
     /**
      * <p>"/" in 12/14 Archer Street where 12 is sub-premise number and 14 is premise number.</p>
-     * 
+     *
      * @return
      */
     String getPremiseNumberSeparator();
@@ -97,7 +97,7 @@ public interface SubPremiseNumber extends GenericTypedGrPostal {
     void setNumberTypeOccurrence(AfterBeforeEnum numberTypeOccurrence);
 
     /**
-     * 
+     *
      * @param premiseNumberSeparator
      */
     void setPremiseNumberSeparator(String premiseNumberSeparator);

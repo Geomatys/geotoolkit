@@ -26,11 +26,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * A property with the content model of gml:RingPropertyType encapsulates a ring to represent a component of a surface boundary.
- * 
+ *
  * <p>Java class for RingPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RingPropertyType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RingPropertyType", propOrder = {
@@ -56,11 +56,11 @@ public class RingPropertyType {
 
     /**
      * Gets the value of the ring property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RingType }
-     *     
+     *
      */
     public RingType getRing() {
         return ring;
@@ -68,11 +68,11 @@ public class RingPropertyType {
 
     /**
      * Sets the value of the ring property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RingType }
-     *     
+     *
      */
     public void setRing(RingType value) {
         this.ring = value;

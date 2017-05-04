@@ -29,9 +29,9 @@ import org.opengis.feature.PropertyType;
  * @author Guilhem Legal (Geomatys)
  */
 public class DateEditor extends PropertyValueEditor implements ActionListener{
-    
+
     private JXDatePicker datePicker = new JXDatePicker();
-    
+
     public DateEditor() {
         super(new BorderLayout());
         add(BorderLayout.CENTER, datePicker);

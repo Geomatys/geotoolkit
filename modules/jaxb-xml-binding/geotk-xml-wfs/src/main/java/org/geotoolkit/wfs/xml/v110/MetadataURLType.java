@@ -30,15 +30,15 @@ import javax.xml.bind.annotation.XmlValue;
  * The type attribute indicates the standard to which the metadata complies;
  * the format attribute indicates how the metadata is structured.
  * Two types are defined at present:
- *             'TC211' or 'ISO19115' = ISO TC211 19115; 
+ *             'TC211' or 'ISO19115' = ISO TC211 19115;
  *             'FGDC'                = FGDC CSDGM.
  *             'ISO19139'            = ISO 19139
- *          
- * 
+ *
+ *
  * <p>Java class for MetadataURLType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MetadataURLType">
  *   &lt;simpleContent>
@@ -67,8 +67,8 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -93,14 +93,14 @@ public class MetadataURLType {
         this.value  = value;
         this.type   = type;
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValue() {
         return value;
@@ -108,11 +108,11 @@ public class MetadataURLType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(final String value) {
         this.value = value;
@@ -120,11 +120,11 @@ public class MetadataURLType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -132,11 +132,11 @@ public class MetadataURLType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -144,11 +144,11 @@ public class MetadataURLType {
 
     /**
      * Gets the value of the format property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFormat() {
         return format;
@@ -156,11 +156,11 @@ public class MetadataURLType {
 
     /**
      * Sets the value of the format property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFormat(final String value) {
         this.format = value;

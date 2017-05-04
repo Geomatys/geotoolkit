@@ -58,8 +58,8 @@ public class MultiPointCreationDelegate extends AbstractFeatureEditionDelegate {
             subGeometries.add(candidate);
             geometry = EditionHelper.createMultiPoint(subGeometries);
             decoration.setGeometries(Collections.singleton(geometry));
-                    
-        }else if(button == MouseEvent.BUTTON3){            
+
+        }else if(button == MouseEvent.BUTTON3){
             if (subGeometries.size() > 0) {
                 MultiPoint geo = EditionHelper.createMultiPoint(subGeometries);
                 helper.sourceAddGeometry(geo);

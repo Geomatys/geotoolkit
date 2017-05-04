@@ -38,7 +38,7 @@ public class XmlThesaurus {
      */
     public String version;
     /**
-     * 	A description of the thesaurus
+     *  A description of the thesaurus
      */
     public String description;
 

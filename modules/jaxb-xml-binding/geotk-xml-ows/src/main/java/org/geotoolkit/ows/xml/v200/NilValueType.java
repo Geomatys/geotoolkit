@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * The value used (e.g. -255) to represent a nil value with
  *       optional nilReason and codeSpace attributes.
- * 
+ *
  * <p>Java class for NilValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="NilValueType">
  *   &lt;simpleContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "NilValueType")
@@ -54,11 +54,11 @@ public class NilValueType extends CodeType {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getNilReason() {
         return nilReason;
@@ -66,11 +66,11 @@ public class NilValueType extends CodeType {
 
     /**
      * Sets the value of the nilReason property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setNilReason(String value) {
         this.nilReason = value;

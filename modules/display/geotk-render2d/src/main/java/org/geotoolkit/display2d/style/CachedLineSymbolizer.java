@@ -23,7 +23,7 @@ import org.opengis.style.LineSymbolizer;
 
 /**
  * Cached line symbolizer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -31,10 +31,10 @@ public class CachedLineSymbolizer extends CachedSymbolizer<LineSymbolizer>{
 
     //Cached values
     private float cachedOffset = Float.NaN;
-    
+
     private final LineSymbolizer line;
     private final CachedStroke cachedStroke;
-    
+
     public CachedLineSymbolizer(final LineSymbolizer line,
             final SymbolizerRendererService<LineSymbolizer, ? extends CachedSymbolizer<LineSymbolizer>> renderer){
         super(line,renderer);
@@ -51,7 +51,7 @@ public class CachedLineSymbolizer extends CachedSymbolizer<LineSymbolizer>{
         evaluateOffset();
         isNotEvaluated = false;
     }
-    
+
     private void evaluateOffset(){
         final Expression offset = line.getPerpendicularOffset();
 
@@ -63,9 +63,9 @@ public class CachedLineSymbolizer extends CachedSymbolizer<LineSymbolizer>{
         }
 
     }
-    
+
     /**
-     * 
+     *
      * @return offset of the given feature.
      */
     public float getOffset(final Object candidate, final float coeff){
@@ -99,5 +99,5 @@ public class CachedLineSymbolizer extends CachedSymbolizer<LineSymbolizer>{
     public boolean isVisible(final Object candidate) {
         return cachedStroke.isVisible(candidate);
     }
-    
+
 }

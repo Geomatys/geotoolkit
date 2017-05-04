@@ -88,5 +88,5 @@ public final class FXEditAction extends FXMapAction {
             }
         }
     }
-    
+
 }

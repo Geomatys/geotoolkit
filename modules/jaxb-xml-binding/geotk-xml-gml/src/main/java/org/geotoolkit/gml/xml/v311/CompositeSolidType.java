@@ -26,13 +26,13 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * A composite solid is a geometry type with all the geometric properties of a (primitive) solid. 
- * 				Essentially, a composite solid is a collection of solids that join in pairs on common boundary surfaces and which, when considered as a whole, form a single solid.
- * 
+ * A composite solid is a geometry type with all the geometric properties of a (primitive) solid.
+ *              Essentially, a composite solid is a collection of solids that join in pairs on common boundary surfaces and which, when considered as a whole, form a single solid.
+ *
  * <p>Java class for CompositeSolidType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CompositeSolidType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,12 +61,12 @@ public class CompositeSolidType extends AbstractSolidType {
     /**
      * This element references or contains one solid in the composite solid. The solids are contiguous.
      * NOTE: This definition allows for a nested structure, i.e. a CompositeSolid may use, for example, another CompositeSolid as a member.Gets the value of the solidMember property.
-     * 
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link SolidPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<SolidPropertyType> getSolidMember() {
         if (solidMember == null) {

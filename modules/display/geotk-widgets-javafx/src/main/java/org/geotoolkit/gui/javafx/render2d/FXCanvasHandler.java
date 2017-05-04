@@ -33,12 +33,12 @@ public interface FXCanvasHandler {
      * @param component source map
      */
     void install(FXMap component);
-    
+
     /**
-     * 
+     *
      * @param component source map
      * @return true if the handler can be removed, false if the handle has raised a veto
      */
     boolean uninstall(FXMap component);
-        
+
 }

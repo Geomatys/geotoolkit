@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ContactPersonPrimaryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ContactPersonPrimaryType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,11 +57,11 @@ public class ContactPersonPrimaryType {
 
     /**
      * Gets the value of the contactPerson property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getContactPerson() {
         return contactPerson;
@@ -69,11 +69,11 @@ public class ContactPersonPrimaryType {
 
     /**
      * Sets the value of the contactPerson property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setContactPerson(final String value) {
         this.contactPerson = value;
@@ -81,11 +81,11 @@ public class ContactPersonPrimaryType {
 
     /**
      * Gets the value of the contactOrganization property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getContactOrganization() {
         return contactOrganization;
@@ -93,11 +93,11 @@ public class ContactPersonPrimaryType {
 
     /**
      * Sets the value of the contactOrganization property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setContactOrganization(final String value) {
         this.contactOrganization = value;

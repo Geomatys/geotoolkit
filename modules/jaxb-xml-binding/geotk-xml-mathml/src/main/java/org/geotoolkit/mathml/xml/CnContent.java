@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Classe Java pour cn.content complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="cn.content">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "cn.content", propOrder = {
@@ -68,20 +68,20 @@ public class CnContent {
 
     /**
      * Gets the value of the content property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the content property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getContent().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link Mstack }{@code >}
@@ -119,8 +119,8 @@ public class CnContent {
      * {@link JAXBElement }{@code <}{@link Menclose }{@code >}
      * {@link JAXBElement }{@code <}{@link Msqrt }{@code >}
      * {@link JAXBElement }{@code <}{@link Mo }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getContent() {
         if (content == null) {

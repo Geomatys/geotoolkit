@@ -36,17 +36,17 @@ import org.opengis.util.GenericName;
 /**
  * Simplified GridCoverageReader which ensures the given GridCoverageReadParam
  * is not null and in the coverage CoordinateReferenceSystem.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public abstract class AbstractGridCoverageReader extends GridCoverageReader {
 
     protected final CoverageReference ref;
-    
+
     protected AbstractGridCoverageReader(CoverageReference ref){
         this.ref = ref;
     }
-    
+
     @Override
     public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
         return Collections.singletonList(ref.getName());
@@ -54,15 +54,15 @@ public abstract class AbstractGridCoverageReader extends GridCoverageReader {
 
     /**
      * {@inheritDoc }
-     * 
+     *
      * Checks params envelope, CRS and resolution and create or fix them to match
      * this coverage CRS.
-     * 
+     *
      * @param index
      * @param param
      * @return
      * @throws CoverageStoreException
-     * @throws CancellationException 
+     * @throws CancellationException
      */
     @Override
     public final GridCoverage read(int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
@@ -71,7 +71,7 @@ public abstract class AbstractGridCoverageReader extends GridCoverageReader {
         try {
             final GeneralGridGeometry gridGeometry = getGridGeometry(index);
             final CoordinateReferenceSystem coverageCrs = gridGeometry.getCoordinateReferenceSystem();
-            
+
             //find requested envelope
             Envelope queryEnv = param == null ? null : param.getEnvelope();
             if(queryEnv == null && param != null && param.getCoordinateReferenceSystem()!= null){
@@ -94,7 +94,7 @@ public abstract class AbstractGridCoverageReader extends GridCoverageReader {
                 //clip to coverage envelope
                 genv.intersect(gridGeometry.getEnvelope());
                 coverageEnv = genv;
-                
+
                 //check for disjoint envelopes
                 int dimension = 0;
                 for (int i=genv.getDimension(); --i>=0;) {
@@ -106,8 +106,8 @@ public abstract class AbstractGridCoverageReader extends GridCoverageReader {
                     throw new DisjointCoverageDomainException("No coverage matched parameters");
                 }
             }
-            
-            
+
+
             final GridCoverageReadParam cparam = new GridCoverageReadParam();
             cparam.setCoordinateReferenceSystem(coverageEnv.getCoordinateReferenceSystem());
             cparam.setEnvelope(coverageEnv);
@@ -115,7 +115,7 @@ public abstract class AbstractGridCoverageReader extends GridCoverageReader {
             cparam.setDestinationBands((param == null) ? null : param.getDestinationBands());
             cparam.setSourceBands((param == null) ? null : param.getSourceBands());
             cparam.setDeferred((param == null) ? false : param.isDeferred());
-            
+
             return read(cparam);
         } catch (TransformException ex) {
             throw new CoverageStoreException(ex.getMessage(), ex);
@@ -123,13 +123,13 @@ public abstract class AbstractGridCoverageReader extends GridCoverageReader {
     }
 
     /**
-     * Read coverage, 
-     * 
+     * Read coverage,
+     *
      * @param param Parameters are guarantee to be in coverage CRS.
      * @return
      * @throws TransformException
-     * @throws CoverageStoreException 
+     * @throws CoverageStoreException
      */
     protected abstract GridCoverage read(GridCoverageReadParam param) throws TransformException, CoverageStoreException;
-    
+
 }

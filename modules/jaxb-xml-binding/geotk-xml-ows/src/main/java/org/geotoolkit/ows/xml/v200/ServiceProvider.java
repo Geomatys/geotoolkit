@@ -27,9 +27,9 @@ import org.geotoolkit.ows.xml.AbstractServiceProvider;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.ows.xml.AbstractServiceProvider;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -76,14 +76,14 @@ public class ServiceProvider implements AbstractServiceProvider {
         this.providerSite   = providerSite;
         this.serviceContact = serviceContact;
     }
-    
+
     /**
      * Gets the value of the providerName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getProviderName() {
@@ -92,11 +92,11 @@ public class ServiceProvider implements AbstractServiceProvider {
 
     /**
      * Sets the value of the providerName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setProviderName(String value) {
         this.providerName = value;
@@ -104,11 +104,11 @@ public class ServiceProvider implements AbstractServiceProvider {
 
     /**
      * Gets the value of the providerSite property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OnlineResourceType }
-     *     
+     *
      */
     @Override
     public OnlineResourceType getProviderSite() {
@@ -117,11 +117,11 @@ public class ServiceProvider implements AbstractServiceProvider {
 
     /**
      * Sets the value of the providerSite property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OnlineResourceType }
-     *     
+     *
      */
     public void setProviderSite(OnlineResourceType value) {
         this.providerSite = value;
@@ -129,11 +129,11 @@ public class ServiceProvider implements AbstractServiceProvider {
 
     /**
      * Gets the value of the serviceContact property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ResponsiblePartySubsetType }
-     *     
+     *
      */
     @Override
     public ResponsiblePartySubsetType getServiceContact() {
@@ -142,11 +142,11 @@ public class ServiceProvider implements AbstractServiceProvider {
 
     /**
      * Sets the value of the serviceContact property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ResponsiblePartySubsetType }
-     *     
+     *
      */
     public void setServiceContact(ResponsiblePartySubsetType value) {
         this.serviceContact = value;

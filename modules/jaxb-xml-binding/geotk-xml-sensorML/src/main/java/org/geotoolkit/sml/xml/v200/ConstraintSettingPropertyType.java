@@ -30,9 +30,9 @@ import org.geotoolkit.swe.xml.v200.AllowedValuesType;
 
 /**
  * <p>Java class for ConstraintSettingPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ConstraintSettingPropertyType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.swe.xml.v200.AllowedValuesType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ConstraintSettingPropertyType", propOrder = {
@@ -68,11 +68,11 @@ public class ConstraintSettingPropertyType {
 
     /**
      * Gets the value of the allowedTimes property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedTimesType }
-     *     
+     *
      */
     public AllowedTimesType getAllowedTimes() {
         return allowedTimes;
@@ -80,11 +80,11 @@ public class ConstraintSettingPropertyType {
 
     /**
      * Sets the value of the allowedTimes property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedTimesType }
-     *     
+     *
      */
     public void setAllowedTimes(AllowedTimesType value) {
         this.allowedTimes = value;
@@ -92,11 +92,11 @@ public class ConstraintSettingPropertyType {
 
     /**
      * Gets the value of the allowedTokens property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedTokensType }
-     *     
+     *
      */
     public AllowedTokensType getAllowedTokens() {
         return allowedTokens;
@@ -104,11 +104,11 @@ public class ConstraintSettingPropertyType {
 
     /**
      * Sets the value of the allowedTokens property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedTokensType }
-     *     
+     *
      */
     public void setAllowedTokens(AllowedTokensType value) {
         this.allowedTokens = value;
@@ -116,11 +116,11 @@ public class ConstraintSettingPropertyType {
 
     /**
      * Gets the value of the allowedValues property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedValuesType }
-     *     
+     *
      */
     public AllowedValuesType getAllowedValues() {
         return allowedValues;
@@ -128,11 +128,11 @@ public class ConstraintSettingPropertyType {
 
     /**
      * Sets the value of the allowedValues property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedValuesType }
-     *     
+     *
      */
     public void setAllowedValues(AllowedValuesType value) {
         this.allowedValues = value;
@@ -140,11 +140,11 @@ public class ConstraintSettingPropertyType {
 
     /**
      * Gets the value of the ref property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRef() {
         return ref;
@@ -152,11 +152,11 @@ public class ConstraintSettingPropertyType {
 
     /**
      * Sets the value of the ref property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRef(String value) {
         this.ref = value;

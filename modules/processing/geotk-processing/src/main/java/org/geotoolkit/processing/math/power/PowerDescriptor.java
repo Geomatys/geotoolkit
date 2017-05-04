@@ -32,10 +32,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class PowerDescriptor extends AbstractProcessDescriptor {
-        
+
     /**Process name : power */
     public static final String NAME = "math:power";
-    
+
     /**
      * Input parameters
      */
@@ -51,7 +51,7 @@ public class PowerDescriptor extends AbstractProcessDescriptor {
             .create(Double.class, null);
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(FIRST_NUMBER,SECOND_NUMBER);
-    
+
     /**
      * OutputParameters
      */
@@ -76,5 +76,5 @@ public class PowerDescriptor extends AbstractProcessDescriptor {
     public Process createProcess(final ParameterValueGroup input) {
         return new PowerProcess(input);
     }
-    
+
 }

@@ -75,7 +75,7 @@ public class CoverageReaderDemo {
 
 //        final File input = new File(CoverageReaderDemo.class.getResource("/data/coverage/clouds.jpg").toURI());
 //        final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
-                
+
 //        //print the iso 19115 metadata
 //        final Metadata metadata = reader.getMetadata();
 //        System.out.println(metadata);

@@ -47,9 +47,9 @@ import org.geotoolkit.swe.xml.v200.VectorType;
 
 /**
  * <p>Java class for DataComponentOrObservablePropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataComponentOrObservablePropertyType">
  *   &lt;complexContent>
@@ -62,8 +62,8 @@ import org.geotoolkit.swe.xml.v200.VectorType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataComponentOrObservablePropertyType", propOrder = {
@@ -104,7 +104,7 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * A single digital number (DN) or aggregate of DNs that represent the value of some property. Single data components can be of type Quantity, Count, Category, Boolean, Text, or Time; these can be aggregated in records, arrays, vector, and matrices.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link TimeType }{@code >}
@@ -124,7 +124,7 @@ public class DataComponentOrObservablePropertyType {
      *     {@link JAXBElement }{@code <}{@link TimeRangeType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CategoryRangeType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CountType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractDataComponentType> getAbstractDataComponent() {
         return abstractDataComponent;
@@ -132,7 +132,7 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * Sets the value of the abstractDataComponent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link TimeType }{@code >}
@@ -152,7 +152,7 @@ public class DataComponentOrObservablePropertyType {
      *     {@link JAXBElement }{@code <}{@link TimeRangeType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CategoryRangeType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CountType }{@code >}
-     *     
+     *
      */
     public void setAbstractDataComponent(JAXBElement<? extends AbstractDataComponentType> value) {
         this.abstractDataComponent = value;
@@ -160,11 +160,11 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * A physical property of the environment that can be observed by an appropriate detector (e.g. temperature, pressure, etc.); Typically,an ObservableProperty serves as the input of a detector and the output of an actuator.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ObservablePropertyType }
-     *     
+     *
      */
     public ObservablePropertyType getObservableProperty() {
         return observableProperty;
@@ -172,11 +172,11 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * Sets the value of the observableProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ObservablePropertyType }
-     *     
+     *
      */
     public void setObservableProperty(ObservablePropertyType value) {
         this.observableProperty = value;
@@ -184,11 +184,11 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * A data interface serves as an intermediary between the pure digital domain and the physical domain where DN are encoded into a format and perhaps transmitted through physical connections using some well-defined protocol. The DataInterface element allows one to define the components, semantics, encoding, connections, and protocol at an input, output, or parameter port.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataInterfaceType }
-     *     
+     *
      */
     public DataInterfaceType getDataInterface() {
         return dataInterface;
@@ -196,11 +196,11 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * Sets the value of the dataInterface property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataInterfaceType }
-     *     
+     *
      */
     public void setDataInterface(DataInterfaceType value) {
         this.dataInterface = value;
@@ -208,11 +208,11 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -224,11 +224,11 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -236,11 +236,11 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -248,11 +248,11 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -260,11 +260,11 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -272,11 +272,11 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -284,11 +284,11 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -296,11 +296,11 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -308,11 +308,11 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -320,11 +320,11 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -332,11 +332,11 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -344,11 +344,11 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(String value) {
         this.show = value;
@@ -356,11 +356,11 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -368,11 +368,11 @@ public class DataComponentOrObservablePropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(String value) {
         this.actuate = value;

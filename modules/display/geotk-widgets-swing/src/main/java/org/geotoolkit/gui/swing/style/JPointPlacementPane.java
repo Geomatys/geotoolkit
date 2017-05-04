@@ -32,25 +32,25 @@ import org.opengis.style.PointPlacement;
 
 /**
  * Point placement panel
- * 
+ *
  * @author Johann Sorel
  * @module
  */
 public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
-    
+
     private MapLayer layer = null;
-    
+
     /** Creates new form JPointPlacementPanel */
     public JPointPlacementPane() {
         super(PointPlacement.class);
         initComponents();
         init();
     }
-    
+
     private void init(){
         guiRotation.setModel(0, 0d, 360d, 1);
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -131,7 +131,7 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
         // TODO add your handling code here:
-        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());
             parse(create());
         }
@@ -166,12 +166,12 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
                 guiDisplacement.create(),
                 guiRotation.create());
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiLabelRotation,guiAnchor,guiDisplacement};
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JAnchorPointPane guiAnchor;
     private JDisplacementPane guiDisplacement;
@@ -180,5 +180,5 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
     private JLabel jLabel1;
     private JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
-    
+
 }

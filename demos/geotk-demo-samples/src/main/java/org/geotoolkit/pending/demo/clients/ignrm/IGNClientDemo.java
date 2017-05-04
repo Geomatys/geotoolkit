@@ -21,45 +21,45 @@ import org.geotoolkit.wmsc.map.WMSCMapLayer;
 import org.opengis.util.GenericName;
 
 public class IGNClientDemo {
- 
+
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
-    
+
     public static void main(String[] args) throws Exception {
         Demos.init();
-        
+
         // THIS DEMO REQUIERE ADDITIONAL CRS DEFINITIONS
-        // those have been added in the module in path : 
+        // those have been added in the module in path :
         // src/main/resources/org/geotoolkit/referencing/factory/epsg/epsg.properties
-        
-        
-        
+
+
+
         final String key = JOptionPane.showInputDialog("Enter your IGN contract key "
                 + "(this demo is for a free inspire contract, code must be adapted for others) :");
-                
+
         if(key == null || key.isEmpty()){
             return;
         }
-        
-        
+
+
         final MapContext context = createIGNContext(key);
-        
+
         JMap2DFrame.show(context);
-        
+
     }
- 
+
     public static MapContext createIGNContext(final String key) throws Exception{
         final MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
 
         final ClientSecurity refererInfo = new RefererClientSecurity("http://localhost/");
-        
+
         final IGNRMClient geodrmServer = new IGNRMClient(new URL("http://jeton-api.ign.fr"),refererInfo);
         final Token token = geodrmServer.getToken(key);
         final ClientSecurity tokenInfo = new TokenClientSecurity(token);
         final ClientSecurity tokenAndReferer = ClientSecurityStack.wrap(refererInfo,tokenInfo);
-        
+
         final WebMapClientCached server = new WebMapClientCached(
                 new URL("http://wxs.ign.fr/inspire/wmsc?"), tokenAndReferer,true);
-        
+
         for(GenericName name : server.getNames()){
             if(name.tip().toString().contains("ELEVATION.SLOPES") || name.tip().toString().contains("ORTHOIMAGERY.ORTHOPHOTOS")){
                 final WMSCMapLayer sloplayer = new WMSCMapLayer(server, name);
@@ -67,9 +67,9 @@ public class IGNClientDemo {
                 context.layers().add(sloplayer);
             }
         }
-        
+
         return context;
     }
-    
-    
+
+
 }

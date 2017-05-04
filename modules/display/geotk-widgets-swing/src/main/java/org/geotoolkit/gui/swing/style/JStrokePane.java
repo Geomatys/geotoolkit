@@ -41,7 +41,7 @@ import org.opengis.style.Stroke;
 
 /**
  * Stroke panel
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -52,8 +52,8 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
     private GraphicFill graphicFill = null;
     private GraphicStroke graphicStroke = null;
 
-    /** 
-     * Creates new form JStrokePanel 
+    /**
+     * Creates new form JStrokePanel
      */
     public JStrokePane() {
         super(Stroke.class);
@@ -161,7 +161,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiLabelAlpha,guiLabelCap,guiLabelDashes,guiLabelJoin,guiLabelWidth};
     }
-    
+
     private void showGraphicStrokeDialog() {
         //TODO
 //        final JGraphicFillPane pane = new JGraphicFillPane();
@@ -407,7 +407,7 @@ private void guiGraphicStrokeActionPerformed(final ActionEvent evt) {//GEN-FIRST
 }//GEN-LAST:event_guiGraphicStrokeActionPerformed
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
-        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());
         }
     }//GEN-LAST:event_propertyChange

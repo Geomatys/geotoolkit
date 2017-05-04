@@ -30,12 +30,12 @@ import javax.xml.bind.annotation.XmlType;
  * New features are created using the Insert action and the list of idetifiers must be
  * presented in the same order as the Insert actions were encountered in the transaction request.
  * Features may optionally be correlated with identifiers using the handle attribute (if it was specified on the Insert element).
- *          
- * 
+ *
+ *
  * <p>Java class for InsertResultsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InsertResultsType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -32,7 +32,7 @@ import org.opengis.style.Graphic;
 
 /**
  * Graphic panel
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -83,11 +83,11 @@ public class JGraphicPane extends StyleElementEditor<Graphic> {
     @Override
     public Graphic create() {
         return getStyleFactory().graphic(
-                guiGraphics.create(), 
-                guiAlpha.create(), 
-                guiSize.create(), 
+                guiGraphics.create(),
+                guiAlpha.create(),
+                guiSize.create(),
                 guiRotation.create(),
-                null, 
+                null,
                 guiDisplacement.create());
     }
 
@@ -222,7 +222,7 @@ public class JGraphicPane extends StyleElementEditor<Graphic> {
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
         // TODO add your handling code here:
-        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());
             parse(create());
         }

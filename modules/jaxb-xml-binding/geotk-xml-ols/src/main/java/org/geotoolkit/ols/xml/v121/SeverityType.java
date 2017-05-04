@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for SeverityType.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "SeverityType")
 @XmlEnum
@@ -45,21 +45,21 @@ public enum SeverityType {
 
     /**
      * This indicates that although there is an error, other parts of the request will still be processed in the normal way.
-     * 
+     *
      */
     @XmlEnumValue("Warning")
     WARNING("Warning"),
 
     /**
      * This indicates that although there is an error, other parts of the request will still be processed in the normal way.
-     * 
+     *
      */
     @XmlEnumValue("Info/ Status")
     INFO_STATUS("Info/ Status"),
 
     /**
      * This indicates that there is an unrecoverable error in the request and no part of the request will processed.
-     * 
+     *
      */
     @XmlEnumValue("Error")
     ERROR("Error");

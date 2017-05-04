@@ -38,9 +38,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Classe Java pour anonymous complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -123,27 +123,27 @@ public class Ms {
 
     /**
      * Gets the value of the content property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the content property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getContent().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link Malignmark }{@code >}
      * {@link String }
      * {@link Mglyph }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getContent() {
         if (content == null) {
@@ -154,11 +154,11 @@ public class Ms {
 
     /**
      * Obtient la valeur de la propriété lquote.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLquote() {
         return lquote;
@@ -166,11 +166,11 @@ public class Ms {
 
     /**
      * Définit la valeur de la propriété lquote.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLquote(String value) {
         this.lquote = value;
@@ -178,11 +178,11 @@ public class Ms {
 
     /**
      * Obtient la valeur de la propriété rquote.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRquote() {
         return rquote;
@@ -190,11 +190,11 @@ public class Ms {
 
     /**
      * Définit la valeur de la propriété rquote.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRquote(String value) {
         this.rquote = value;
@@ -202,11 +202,11 @@ public class Ms {
 
     /**
      * Obtient la valeur de la propriété id.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -214,11 +214,11 @@ public class Ms {
 
     /**
      * Définit la valeur de la propriété id.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(String value) {
         this.id = value;
@@ -226,11 +226,11 @@ public class Ms {
 
     /**
      * Obtient la valeur de la propriété xref.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getXref() {
         return xref;
@@ -238,11 +238,11 @@ public class Ms {
 
     /**
      * Définit la valeur de la propriété xref.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setXref(String value) {
         this.xref = value;
@@ -250,25 +250,25 @@ public class Ms {
 
     /**
      * Gets the value of the clazz property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the clazz property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getClazz().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getClazz() {
         if (clazz == null) {
@@ -279,11 +279,11 @@ public class Ms {
 
     /**
      * Obtient la valeur de la propriété style.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStyle() {
         return style;
@@ -291,11 +291,11 @@ public class Ms {
 
     /**
      * Définit la valeur de la propriété style.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStyle(String value) {
         this.style = value;
@@ -303,11 +303,11 @@ public class Ms {
 
     /**
      * Obtient la valeur de la propriété href.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -315,11 +315,11 @@ public class Ms {
 
     /**
      * Définit la valeur de la propriété href.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -327,11 +327,11 @@ public class Ms {
 
     /**
      * Obtient la valeur de la propriété other.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOther() {
         return other;
@@ -339,11 +339,11 @@ public class Ms {
 
     /**
      * Définit la valeur de la propriété other.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOther(String value) {
         this.other = value;
@@ -351,11 +351,11 @@ public class Ms {
 
     /**
      * Obtient la valeur de la propriété mathcolor.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMathcolor() {
         return mathcolor;
@@ -363,11 +363,11 @@ public class Ms {
 
     /**
      * Définit la valeur de la propriété mathcolor.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMathcolor(String value) {
         this.mathcolor = value;
@@ -375,11 +375,11 @@ public class Ms {
 
     /**
      * Obtient la valeur de la propriété mathbackground.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMathbackground() {
         return mathbackground;
@@ -387,11 +387,11 @@ public class Ms {
 
     /**
      * Définit la valeur de la propriété mathbackground.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMathbackground(String value) {
         this.mathbackground = value;
@@ -399,11 +399,11 @@ public class Ms {
 
     /**
      * Obtient la valeur de la propriété mathvariant.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMathvariant() {
         return mathvariant;
@@ -411,11 +411,11 @@ public class Ms {
 
     /**
      * Définit la valeur de la propriété mathvariant.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMathvariant(String value) {
         this.mathvariant = value;
@@ -423,11 +423,11 @@ public class Ms {
 
     /**
      * Obtient la valeur de la propriété mathsize.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMathsize() {
         return mathsize;
@@ -435,11 +435,11 @@ public class Ms {
 
     /**
      * Définit la valeur de la propriété mathsize.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMathsize(String value) {
         this.mathsize = value;
@@ -447,11 +447,11 @@ public class Ms {
 
     /**
      * Obtient la valeur de la propriété dir.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDir() {
         return dir;
@@ -459,11 +459,11 @@ public class Ms {
 
     /**
      * Définit la valeur de la propriété dir.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDir(String value) {
         this.dir = value;
@@ -471,11 +471,11 @@ public class Ms {
 
     /**
      * Obtient la valeur de la propriété fontfamily.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFontfamily() {
         return fontfamily;
@@ -483,11 +483,11 @@ public class Ms {
 
     /**
      * Définit la valeur de la propriété fontfamily.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFontfamily(String value) {
         this.fontfamily = value;
@@ -495,11 +495,11 @@ public class Ms {
 
     /**
      * Obtient la valeur de la propriété fontweight.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFontweight() {
         return fontweight;
@@ -507,11 +507,11 @@ public class Ms {
 
     /**
      * Définit la valeur de la propriété fontweight.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFontweight(String value) {
         this.fontweight = value;
@@ -519,11 +519,11 @@ public class Ms {
 
     /**
      * Obtient la valeur de la propriété fontstyle.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFontstyle() {
         return fontstyle;
@@ -531,11 +531,11 @@ public class Ms {
 
     /**
      * Définit la valeur de la propriété fontstyle.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFontstyle(String value) {
         this.fontstyle = value;
@@ -543,11 +543,11 @@ public class Ms {
 
     /**
      * Obtient la valeur de la propriété fontsize.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFontsize() {
         return fontsize;
@@ -555,11 +555,11 @@ public class Ms {
 
     /**
      * Définit la valeur de la propriété fontsize.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFontsize(String value) {
         this.fontsize = value;
@@ -567,11 +567,11 @@ public class Ms {
 
     /**
      * Obtient la valeur de la propriété color.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getColor() {
         return color;
@@ -579,11 +579,11 @@ public class Ms {
 
     /**
      * Définit la valeur de la propriété color.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setColor(String value) {
         this.color = value;
@@ -591,11 +591,11 @@ public class Ms {
 
     /**
      * Obtient la valeur de la propriété background.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getBackground() {
         return background;
@@ -603,11 +603,11 @@ public class Ms {
 
     /**
      * Définit la valeur de la propriété background.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setBackground(String value) {
         this.background = value;
@@ -615,15 +615,15 @@ public class Ms {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * <p>
-     * the map is keyed by the name of the attribute and 
+     * the map is keyed by the name of the attribute and
      * the value is the string value of the attribute.
-     * 
+     *
      * the map returned by this method is live, and you can add new attribute
      * by updating the map directly. Because of this design, there's no setter.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */

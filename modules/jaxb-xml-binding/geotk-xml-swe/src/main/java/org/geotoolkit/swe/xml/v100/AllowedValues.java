@@ -36,9 +36,9 @@ import org.geotoolkit.swe.xml.AbstractAllowedValues;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -58,8 +58,8 @@ import org.geotoolkit.swe.xml.AbstractAllowedValues;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -102,7 +102,7 @@ public class AllowedValues implements AbstractAllowedValues {
         for (JAXBElement<List<Double>> jb : getIntervalOrValueList()) {
             if (jb.getName().getLocalPart().equals("interval")) {
                 return jb.getValue();
-            } 
+            }
         }
         return null;
     }
@@ -141,10 +141,10 @@ public class AllowedValues implements AbstractAllowedValues {
 
             if (!found) {
                 this.intervalOrValueList.add(factory.createAllowedValuesInterval(Arrays.asList(interval)));
-            } 
+            }
         }
     }
-    
+
     public List<Double> getValueList() {
         for (JAXBElement<List<Double>> jb : getIntervalOrValueList()) {
             if (jb.getName().getLocalPart().equals("valueList")) {
@@ -194,11 +194,11 @@ public class AllowedValues implements AbstractAllowedValues {
 
     /**
      * Gets the value of the min property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMin() {
         return min;
@@ -206,11 +206,11 @@ public class AllowedValues implements AbstractAllowedValues {
 
     /**
      * Sets the value of the min property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMin(final Double value) {
         this.min = value;
@@ -218,11 +218,11 @@ public class AllowedValues implements AbstractAllowedValues {
 
     /**
      * Gets the value of the max property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMax() {
         return max;
@@ -230,11 +230,11 @@ public class AllowedValues implements AbstractAllowedValues {
 
     /**
      * Sets the value of the max property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMax(final Double value) {
         this.max = value;
@@ -253,11 +253,11 @@ public class AllowedValues implements AbstractAllowedValues {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -265,11 +265,11 @@ public class AllowedValues implements AbstractAllowedValues {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(final String value) {
         this.id = value;

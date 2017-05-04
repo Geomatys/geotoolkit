@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for RoutePreferenceType.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "RoutePreferenceType")
 @XmlEnum
@@ -45,21 +45,21 @@ public enum RoutePreferenceType {
 
     /**
      * Minimize the travel time by vehicle.
-     * 
+     *
      */
     @XmlEnumValue("Fastest")
     FASTEST("Fastest"),
 
     /**
      * Minimize the travel distance by vehicle.
-     * 
+     *
      */
     @XmlEnumValue("Shortest")
     SHORTEST("Shortest"),
 
     /**
      * Best route by foot.
-     * 
+     *
      */
     @XmlEnumValue("Pedestrian")
     PEDESTRIAN("Pedestrian");

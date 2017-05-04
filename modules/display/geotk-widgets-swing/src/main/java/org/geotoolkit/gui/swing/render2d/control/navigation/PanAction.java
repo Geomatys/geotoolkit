@@ -34,11 +34,11 @@ public class PanAction extends AbstractMapAction {
     public static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_ARROWS, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     private final boolean infoOnClick;
-    
+
     public PanAction() {
         this(false);
     }
-    
+
     public PanAction(boolean infoOnClick) {
         this.infoOnClick = infoOnClick;
         putValue(SMALL_ICON, ICON);

@@ -29,9 +29,9 @@ import org.opengis.filter.capability.ScalarCapabilities;
 
 /**
  * <p>Java class for Scalar_CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Scalar_CapabilitiesType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.opengis.filter.capability.ScalarCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Scalar_CapabilitiesType", propOrder = {
@@ -64,7 +64,7 @@ public class ScalarCapabilitiesType implements ScalarCapabilities{
      */
     public ScalarCapabilitiesType() {
     }
-    
+
      /**
      *Build a new Scalar Capabilities
      */
@@ -74,14 +74,14 @@ public class ScalarCapabilitiesType implements ScalarCapabilities{
         }
         this.comparisonOperators = (ComparisonOperatorsType) comparison;
     }
-    
+
     /**
      * Gets the value of the logicalOperators property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LogicalOperators }
-     *     
+     *
      */
     public LogicalOperators getLogicalOperators() {
         return logicalOperators;
@@ -89,11 +89,11 @@ public class ScalarCapabilitiesType implements ScalarCapabilities{
 
     /**
      * Sets the value of the logicalOperators property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LogicalOperators }
-     *     
+     *
      */
     public void setLogicalOperators(LogicalOperators value) {
         this.logicalOperators = value;
@@ -101,11 +101,11 @@ public class ScalarCapabilitiesType implements ScalarCapabilities{
 
     /**
      * Gets the value of the comparisonOperators property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ComparisonOperatorsType }
-     *     
+     *
      */
     @Override
     public ComparisonOperatorsType getComparisonOperators() {
@@ -114,11 +114,11 @@ public class ScalarCapabilitiesType implements ScalarCapabilities{
 
     /**
      * Sets the value of the comparisonOperators property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ComparisonOperatorsType }
-     *     
+     *
      */
     public void setComparisonOperators(ComparisonOperatorsType value) {
         this.comparisonOperators = value;
@@ -131,7 +131,7 @@ public class ScalarCapabilitiesType implements ScalarCapabilities{
     public ArithmeticOperators getArithmeticOperators() {
         return null;
     }
-    
+
     @Override
     public boolean hasLogicalOperators() {
         return logicalOperators != null;

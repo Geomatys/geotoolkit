@@ -37,7 +37,7 @@ public class WMTSClientDemo {
         final WebMapTileClient server = new WebMapTileClient(
                 new URL("http://localhost:8080/constellation/WS/wmts/test"),
                 WMTSVersion.v100);
-        
+
         for(final GenericName n : server.getNames()){
             System.out.println(n);
 

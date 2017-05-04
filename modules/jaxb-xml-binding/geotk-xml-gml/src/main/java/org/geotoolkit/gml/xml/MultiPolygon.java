@@ -23,6 +23,6 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  */
 public interface MultiPolygon extends AbstractGeometricAggregate {
-    
+
     List<? extends PolygonProperty> getPolygonMember();
 }

@@ -31,9 +31,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for DataChoiceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataChoiceType">
  *   &lt;complexContent>
@@ -64,8 +64,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataChoiceType", propOrder = {
@@ -80,11 +80,11 @@ public class DataChoiceType extends AbstractDataComponentType {
 
     /**
      * Gets the value of the choiceValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataChoiceType.ChoiceValue }
-     *     
+     *
      */
     public DataChoiceType.ChoiceValue getChoiceValue() {
         return choiceValue;
@@ -92,11 +92,11 @@ public class DataChoiceType extends AbstractDataComponentType {
 
     /**
      * Sets the value of the choiceValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataChoiceType.ChoiceValue }
-     *     
+     *
      */
     public void setChoiceValue(DataChoiceType.ChoiceValue value) {
         this.choiceValue = value;
@@ -104,10 +104,10 @@ public class DataChoiceType extends AbstractDataComponentType {
 
     /**
      * Gets the value of the item property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link DataChoiceType.Item }
-     * 
+     *
      */
     public List<DataChoiceType.Item> getItem() {
         if (item == null) {
@@ -119,9 +119,9 @@ public class DataChoiceType extends AbstractDataComponentType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -133,8 +133,8 @@ public class DataChoiceType extends AbstractDataComponentType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -147,11 +147,11 @@ public class DataChoiceType extends AbstractDataComponentType {
 
         /**
          * Gets the value of the category property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link CategoryType }
-         *     
+         *
          */
         public CategoryType getCategory() {
             return category;
@@ -159,11 +159,11 @@ public class DataChoiceType extends AbstractDataComponentType {
 
         /**
          * Sets the value of the category property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link CategoryType }
-         *     
+         *
          */
         public void setCategory(CategoryType value) {
             this.category = value;
@@ -174,9 +174,9 @@ public class DataChoiceType extends AbstractDataComponentType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -186,8 +186,8 @@ public class DataChoiceType extends AbstractDataComponentType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -202,11 +202,11 @@ public class DataChoiceType extends AbstractDataComponentType {
 
         /**
          * Gets the value of the name property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getName() {
             return name;
@@ -214,11 +214,11 @@ public class DataChoiceType extends AbstractDataComponentType {
 
         /**
          * Sets the value of the name property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setName(String value) {
             this.name = value;

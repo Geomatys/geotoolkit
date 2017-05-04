@@ -23,16 +23,16 @@ import javafx.scene.layout.Pane;
 
 /**
  * Color Decoration
- * 
+ *
  * @author Johann Sorel
  */
 public class FXColorDecoration extends Pane implements FXMapDecoration{
 
     public FXColorDecoration(){
         super();
-        setBackground(new Background(new BackgroundFill(new javafx.scene.paint.Color(0, 0, 0, 0), null,null)));        
+        setBackground(new Background(new BackgroundFill(new javafx.scene.paint.Color(0, 0, 0, 0), null,null)));
     }
-    
+
     @Override
     public void refresh() {
     }
@@ -44,7 +44,7 @@ public class FXColorDecoration extends Pane implements FXMapDecoration{
 
     @Override
     public void setMap2D(final FXMap map) {
-        
+
     }
 
     @Override

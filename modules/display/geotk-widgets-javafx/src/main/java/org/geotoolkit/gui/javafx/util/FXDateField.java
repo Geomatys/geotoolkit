@@ -23,16 +23,16 @@ import jidefx.scene.control.field.LocalDateTimeField;
 
 /**
  * TODO improve control to support all Date type objects.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class FXDateField extends DecorationPane{
-    
+
     private final LocalDateTimeField field;
-    
-    public FXDateField() { 
+
+    public FXDateField() {
         super(new DateTimeField("yyyy-MM-dd HH:mm:ss"));
-        
+
         field = (LocalDateTimeField) getContent();
         //bug with the literal value 'T'
         //field.setDateTimeFormatter(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
@@ -41,11 +41,11 @@ public class FXDateField extends DecorationPane{
         field.setAutoSelectAll(true);
         field.setPopupButtonVisible(true);
     }
-        
+
     public LocalDateTime getValue(){
         return field.getValue();
     }
-    
+
     public void setValue(LocalDateTime date){
         field.setValue(date);
     }
@@ -53,11 +53,11 @@ public class FXDateField extends DecorationPane{
     public LocalDateTimeField getField() {
         return field;
     }
-    
+
     public ObjectProperty<LocalDateTime> valueProperty(){
         return field.valueProperty();
     }
-    
+
     private static class DateTimeField extends LocalDateTimeField{
 
         public DateTimeField() {
@@ -69,14 +69,14 @@ public class FXDateField extends DecorationPane{
 
         /**
          * Overriden to support null values.
-         * @return 
+         * @return
          */
         @Override
         public LocalDateTime getValue() {
-            
+
             String text = getText();
             LocalDateTime value = super.getValue();
-            
+
             if("-- ::".equals(text)){
                 if(value == null) {
                     super.setValue(LocalDateTime.now());
@@ -85,7 +85,7 @@ public class FXDateField extends DecorationPane{
                     super.setValue(null);
                 }
             }
-            
+
             return super.getValue();
         }
 
@@ -103,6 +103,6 @@ public class FXDateField extends DecorationPane{
             super.replaceText(start, end, text);
         }
     }
-    
-    
+
+
 }

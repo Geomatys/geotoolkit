@@ -31,9 +31,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * <p>Java class for RectifiedGridType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RectifiedGridType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RectifiedGridType", propOrder = {
@@ -69,13 +69,13 @@ public class RectifiedGridType extends GridType {
     public RectifiedGridType(final RectifiedGrid grid) {
         this(grid, null);
     }
-    
+
     public RectifiedGridType(final RectifiedGrid grid, final CoordinateReferenceSystem crs) {
        super(grid, crs);
        if (grid != null) {
            origin       = new PointType(grid.getOrigin(), false);
            offsetVector = new ArrayList<>();
-           
+
            final List<double[]> vectors = grid.getOffsetVectors();
            for (double[] vector : vectors) {
                 offsetVector.add(new VectorType(vector));

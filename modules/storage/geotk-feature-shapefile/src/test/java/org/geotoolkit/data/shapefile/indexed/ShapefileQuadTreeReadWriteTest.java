@@ -191,7 +191,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
 
     /**
      * Test optimized getBounds(). Testing when filter is a bbox filter and a fidfilter
-     * 
+     *
      * @throws Exception
      */
     @Test

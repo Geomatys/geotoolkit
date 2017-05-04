@@ -294,12 +294,12 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         for(final PropertyType desc : type.getProperties(true)){
             if(AttributeConvention.contains(desc.getName())) continue;
             if(!isAttributeProperty(desc.getName())) continue;
-            
+
             if(desc.getName().tip().toString().equals("@id")) {
                 //gml id has already been written
                 continue;
             }
-            
+
             Object value = feature.getPropertyValue(desc.getName().toString());
             final GenericName nameA = desc.getName();
             String nameProperty = nameA.tip().toString();
@@ -328,7 +328,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
     /**
      * Test if the feature is nill.
-     * 
+     *
      * @return null if the object is not nill
      *         Boolean.TRUE if the object is nill without reason
      *         String if the object is nill with a reason
@@ -486,7 +486,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 writeComplexProperties(ca, getId(ca, id));
             }
 
-            
+
 
             writer.writeEndElement();
 

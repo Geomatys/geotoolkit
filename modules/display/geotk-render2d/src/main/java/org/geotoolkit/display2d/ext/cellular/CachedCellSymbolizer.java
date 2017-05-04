@@ -31,7 +31,7 @@ import org.opengis.style.Rule;
 public class CachedCellSymbolizer extends CachedSymbolizer<CellSymbolizer>{
 
     private CachedRule cr = null;
-    
+
     public CachedCellSymbolizer(final CellSymbolizer symbol,
             final SymbolizerRendererService<CellSymbolizer,? extends CachedSymbolizer<CellSymbolizer>> renderer){
         super(symbol,renderer);
@@ -51,7 +51,7 @@ public class CachedCellSymbolizer extends CachedSymbolizer<CellSymbolizer>{
     @Override
     protected void evaluate() {
         if(!isNotEvaluated) return;
-        
+
         final Rule r = styleElement.getRule();
         if(r != null){
             cr = new CachedRule(r, null);
@@ -66,7 +66,7 @@ public class CachedCellSymbolizer extends CachedSymbolizer<CellSymbolizer>{
                 }
             }
         }
-        
+
         isNotEvaluated = false;
     }
 

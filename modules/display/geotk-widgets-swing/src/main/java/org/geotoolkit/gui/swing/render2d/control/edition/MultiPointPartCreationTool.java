@@ -29,7 +29,7 @@ import org.opengis.feature.FeatureType;
 
 /**
  * Edition tool to create multi point parts.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -37,7 +37,7 @@ public class MultiPointPartCreationTool extends AbstractEditionTool {
 
     public MultiPointPartCreationTool() {
         super(1150,"multipointPartCreation", MessageBundle.formatInternational(MessageBundle.Keys.createPart),
-             new SimpleInternationalString("Tool to create part of a MultiPoint."), 
+             new SimpleInternationalString("Tool to create part of a MultiPoint."),
              IconBundle.getIcon("16_add_subpolygon"), FeatureMapLayer.class);
     }
 

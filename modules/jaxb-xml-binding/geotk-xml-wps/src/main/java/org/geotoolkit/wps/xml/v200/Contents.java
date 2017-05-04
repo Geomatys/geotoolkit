@@ -28,9 +28,9 @@ import org.geotoolkit.wps.xml.ProcessOffering;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.wps.xml.ProcessOffering;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -55,22 +55,22 @@ public class Contents implements org.geotoolkit.wps.xml.ProcessOfferings {
     @XmlElement(name = "ProcessSummary", required = true)
     protected List<ProcessSummaryType> processSummary;
 
-    
+
     public Contents() {
-        
+
     }
-    
+
     public Contents(List<ProcessSummaryType> processSummary) {
         this.processSummary = processSummary;
     }
-    
+
     /**
      * Gets the value of the processSummary property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ProcessSummaryType }
-     * 
-     * 
+     *
+     *
      */
     public List<ProcessSummaryType> getProcessSummary() {
         if (processSummary == null) {

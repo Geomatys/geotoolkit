@@ -23,14 +23,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
+ *
  *         Bounding shapes--a Box or a null element are currently allowed.
- *       
- * 
+ *
+ *
  * <p>Java class for BoundingShapeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BoundingShapeType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,11 +63,11 @@ public class BoundingShapeType {
 
     /**
      * Gets the value of the box property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BoxType }
-     *     
+     *
      */
     public BoxType getBox() {
         return box;
@@ -75,11 +75,11 @@ public class BoundingShapeType {
 
     /**
      * Sets the value of the box property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BoxType }
-     *     
+     *
      */
     public void setBox(final BoxType value) {
         this.box = value;
@@ -87,11 +87,11 @@ public class BoundingShapeType {
 
     /**
      * Gets the value of the null property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link NullType }
-     *     
+     *
      */
     public NullType getNull() {
         return _null;
@@ -99,11 +99,11 @@ public class BoundingShapeType {
 
     /**
      * Sets the value of the null property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link NullType }
-     *     
+     *
      */
     public void setNull(final NullType value) {
         this._null = value;

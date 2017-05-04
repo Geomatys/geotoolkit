@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
  package org.geotoolkit.sld;
- 
+
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.sld.SLDLibrary;
 import org.opengis.sld.SLDVisitor;
@@ -25,7 +25,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Default immutable implementation of SLD library. thread safe.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -33,19 +33,19 @@ class DefaultSLDLibrary implements SLDLibrary{
 
     private final OnlineResource online;
     private StyledLayerDescriptor sld = null;
-    
-    
+
+
     DefaultSLDLibrary(final OnlineResource online){
         ensureNonNull("online resource", online);
         this.online = online;
     }
-        
+
     /**
      * {@inheritDoc }
      */
     @Override
     public OnlineResource getOnlineResource() {
-        return online;        
+        return online;
     }
 
     /**
@@ -104,5 +104,5 @@ class DefaultSLDLibrary implements SLDLibrary{
         builder.append(']');
         return builder.toString();
     }
-    
+
 }

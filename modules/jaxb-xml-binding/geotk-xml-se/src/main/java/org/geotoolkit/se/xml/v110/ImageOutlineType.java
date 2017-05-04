@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ImageOutlineType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ImageOutlineType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,11 +57,11 @@ public class ImageOutlineType {
 
     /**
      * Gets the value of the lineSymbolizer property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LineSymbolizerType }
-     *     
+     *
      */
     public LineSymbolizerType getLineSymbolizer() {
         return lineSymbolizer;
@@ -69,11 +69,11 @@ public class ImageOutlineType {
 
     /**
      * Sets the value of the lineSymbolizer property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LineSymbolizerType }
-     *     
+     *
      */
     public void setLineSymbolizer(final LineSymbolizerType value) {
         this.lineSymbolizer = value;
@@ -81,11 +81,11 @@ public class ImageOutlineType {
 
     /**
      * Gets the value of the polygonSymbolizer property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PolygonSymbolizerType }
-     *     
+     *
      */
     public PolygonSymbolizerType getPolygonSymbolizer() {
         return polygonSymbolizer;
@@ -93,11 +93,11 @@ public class ImageOutlineType {
 
     /**
      * Sets the value of the polygonSymbolizer property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PolygonSymbolizerType }
-     *     
+     *
      */
     public void setPolygonSymbolizer(final PolygonSymbolizerType value) {
         this.polygonSymbolizer = value;

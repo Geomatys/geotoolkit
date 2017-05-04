@@ -28,9 +28,9 @@ import org.opengis.filter.capability.FunctionName;
 
 /**
  * <p>Java class for Function_NameType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Function_NameType">
  *   &lt;simpleContent>
@@ -40,8 +40,8 @@ import org.opengis.filter.capability.FunctionName;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Function_NameType", propOrder = {
@@ -56,11 +56,11 @@ public class FunctionNameType implements FunctionName {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValue() {
         return value;
@@ -68,11 +68,11 @@ public class FunctionNameType implements FunctionName {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(String value) {
         this.value = value;
@@ -80,11 +80,11 @@ public class FunctionNameType implements FunctionName {
 
     /**
      * Gets the value of the nArgs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getNArgs() {
         return nArgs;
@@ -92,11 +92,11 @@ public class FunctionNameType implements FunctionName {
 
     /**
      * Sets the value of the nArgs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setNArgs(String value) {
         this.nArgs = value;

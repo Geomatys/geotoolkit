@@ -22,11 +22,11 @@ package org.geotoolkit.csw.xml;
  * @module
  */
 public interface Record extends DCMIRecord {
-    
+
     /**
      * Gets the value of the boundingBox property.
-     * 
+     *
      */
     public Object getBoundingBox();
-    
+
 }

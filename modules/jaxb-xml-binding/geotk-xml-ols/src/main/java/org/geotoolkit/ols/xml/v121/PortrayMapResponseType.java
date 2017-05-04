@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for PortrayMapResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PortrayMapResponseType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PortrayMapResponseType", propOrder = {
@@ -55,7 +55,7 @@ public class PortrayMapResponseType extends AbstractResponseParametersType {
 
     /**
      * Gets the value of the map property.
-     * 
+     *
      */
     public List<MapType> getMap() {
         if (map == null) {

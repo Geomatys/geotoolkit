@@ -46,7 +46,7 @@ public abstract class PositionedGraphic2D extends GraphicJ2D{
 
     /**
      * Position the graphic, NORTH, EAST, etc...
-     * 
+     *
      * @param position, one value in SwingConstants.*
      */
     public void setPosition(final int position) {

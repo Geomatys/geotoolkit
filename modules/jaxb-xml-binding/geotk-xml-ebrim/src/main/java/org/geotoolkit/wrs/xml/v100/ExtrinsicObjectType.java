@@ -28,14 +28,14 @@ import javax.xml.bind.annotation.XmlType;
  * Extends rim:ExtrinsicObjectType to add the following:
  *  1. MTOM/XOP based attachment support.
  *  2. XLink based reference to a part in a multipart/related message structure.
- * 
+ *
  * NOTE: This content model is planned for RegRep 4.0.
- *       
- * 
+ *
+ *
  * <p>Java class for ExtrinsicObjectType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ExtrinsicObjectType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

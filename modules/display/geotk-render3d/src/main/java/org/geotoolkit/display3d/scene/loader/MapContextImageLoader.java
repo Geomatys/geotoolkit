@@ -43,7 +43,7 @@ public class MapContextImageLoader implements ImageLoader {
     public MapContext getContext() {
         return context;
     }
-    
+
     @Override
     public void setOutputCRS(CoordinateReferenceSystem outputCrs) throws PortrayalException {
         this.outputCRS = outputCrs;

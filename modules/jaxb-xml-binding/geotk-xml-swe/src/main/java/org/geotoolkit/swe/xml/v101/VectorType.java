@@ -127,7 +127,7 @@ public class VectorType extends AbstractVectorType implements Vector {
         }
         return null;
     }
-    
+
     private CoordinateType getCoordinateByName(final String name) {
         if (coordinate != null) {
             for (final CoordinateType c : coordinate) {
@@ -154,7 +154,7 @@ public class VectorType extends AbstractVectorType implements Vector {
         }
         coordinate.add(coord);
     }
-    
+
     @Override
     public AbstractGeometry getGeometry(final URI crs) {
         final CoordinateType lat = getLatitude();
@@ -169,7 +169,7 @@ public class VectorType extends AbstractVectorType implements Vector {
         }
         return null;
     }
-    
+
     private boolean isComplete(final CoordinateType c) {
         return c != null && c.getQuantity() != null && c.getQuantity().getValue() != null;
     }

@@ -110,5 +110,5 @@ public final class CommitAction extends Action implements Consumer<ActionEvent>,
     public Button createButton(ActionUtils.ActionTextBehavior behavior){
         return ActionUtils.createButton(this, behavior);
     }
-    
+
 }

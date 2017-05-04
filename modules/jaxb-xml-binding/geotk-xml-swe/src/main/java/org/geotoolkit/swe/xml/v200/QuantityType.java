@@ -26,9 +26,9 @@ import org.geotoolkit.swe.xml.Quantity;
 
 /**
  * <p>Java class for QuantityType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="QuantityType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.swe.xml.Quantity;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "QuantityType", propOrder = {
@@ -59,9 +59,9 @@ public class QuantityType extends AbstractSimpleComponentType implements Quantit
     private Double value;
 
     public QuantityType() {
-        
+
     }
-    
+
     public QuantityType(final String definition, final String uomCode, final Double value) {
         super(null, definition, null);
         if (uomCode != null) {
@@ -69,20 +69,20 @@ public class QuantityType extends AbstractSimpleComponentType implements Quantit
         }
         this.value = value;
     }
-    
+
     public QuantityType(final String axisId, final String definition, final UnitReference uom, final Double value) {
         super(null, definition, axisId);
         this.uom = uom;
         this.value = value;
     }
-    
+
     /**
      * Gets the value of the uom property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link UnitReference }
-     *     
+     *
      */
     @Override
     public UnitReference getUom() {
@@ -91,11 +91,11 @@ public class QuantityType extends AbstractSimpleComponentType implements Quantit
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link UnitReference }
-     *     
+     *
      */
     public void setUom(UnitReference value) {
         this.uom = value;
@@ -103,11 +103,11 @@ public class QuantityType extends AbstractSimpleComponentType implements Quantit
 
     /**
      * Gets the value of the constraint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedValuesPropertyType }
-     *     
+     *
      */
     @Override
     public AllowedValuesPropertyType getConstraint() {
@@ -116,11 +116,11 @@ public class QuantityType extends AbstractSimpleComponentType implements Quantit
 
     /**
      * Sets the value of the constraint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedValuesPropertyType }
-     *     
+     *
      */
     public void setConstraint(AllowedValuesPropertyType value) {
         this.constraint = value;
@@ -128,11 +128,11 @@ public class QuantityType extends AbstractSimpleComponentType implements Quantit
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     @Override
     public Double getValue() {
@@ -141,11 +141,11 @@ public class QuantityType extends AbstractSimpleComponentType implements Quantit
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setValue(Double value) {
         this.value = value;

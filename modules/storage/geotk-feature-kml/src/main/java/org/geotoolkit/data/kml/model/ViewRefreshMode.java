@@ -42,7 +42,7 @@ public enum ViewRefreshMode {
     private final String viewRefreshMode;
 
     /**
-     * 
+     *
      * @param viewRefreshMode
      */
     private ViewRefreshMode(String viewRefreshMode){

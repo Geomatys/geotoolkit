@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AttributionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AttributionType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AttributionType", propOrder = {
@@ -56,11 +56,11 @@ public class AttributionType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -68,11 +68,11 @@ public class AttributionType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -80,11 +80,11 @@ public class AttributionType {
 
     /**
      * Gets the value of the logo property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LogoType }
-     *     
+     *
      */
     public LogoType getLogo() {
         return logo;
@@ -92,11 +92,11 @@ public class AttributionType {
 
     /**
      * Sets the value of the logo property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LogoType }
-     *     
+     *
      */
     public void setLogo(LogoType value) {
         this.logo = value;

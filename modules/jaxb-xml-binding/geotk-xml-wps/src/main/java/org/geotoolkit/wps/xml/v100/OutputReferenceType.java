@@ -26,12 +26,12 @@ import org.geotoolkit.wps.xml.Reference;
 
 
 /**
- * Reference to an output value that is a web accessible resource. 
- * 
+ * Reference to an output value that is a web accessible resource.
+ *
  * <p>Java class for OutputReferenceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OutputReferenceType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.wps.xml.Reference;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,22 +63,22 @@ public class OutputReferenceType implements Reference {
     protected String schema;
 
     public OutputReferenceType() {
-        
+
     }
-    
+
     public OutputReferenceType(String href, String mimeType, String encoding) {
         this.href = href;
         this.mimeType = mimeType;
         this.encoding = encoding;
     }
-    
+
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getHref() {
@@ -87,11 +87,11 @@ public class OutputReferenceType implements Reference {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setHref(final String value) {
@@ -100,11 +100,11 @@ public class OutputReferenceType implements Reference {
 
     /**
      * Gets the value of the mimeType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getMimeType() {
@@ -113,11 +113,11 @@ public class OutputReferenceType implements Reference {
 
     /**
      * Sets the value of the mimeType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setMimeType(final String value) {
@@ -126,11 +126,11 @@ public class OutputReferenceType implements Reference {
 
     /**
      * Gets the value of the encoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getEncoding() {
@@ -139,11 +139,11 @@ public class OutputReferenceType implements Reference {
 
     /**
      * Sets the value of the encoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setEncoding(final String value) {
@@ -152,11 +152,11 @@ public class OutputReferenceType implements Reference {
 
     /**
      * Gets the value of the schema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getSchema() {
@@ -165,11 +165,11 @@ public class OutputReferenceType implements Reference {
 
     /**
      * Sets the value of the schema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setSchema(final String value) {
@@ -198,7 +198,7 @@ public class OutputReferenceType implements Reference {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TopoPointType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TopoPointType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TopoPointType", propOrder = {
@@ -56,11 +56,11 @@ public class TopoPointType
 
     /**
      * Gets the value of the directedNode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectedNodePropertyType }
-     *     
+     *
      */
     public DirectedNodePropertyType getDirectedNode() {
         return directedNode;
@@ -68,11 +68,11 @@ public class TopoPointType
 
     /**
      * Sets the value of the directedNode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectedNodePropertyType }
-     *     
+     *
      */
     public void setDirectedNode(DirectedNodePropertyType value) {
         this.directedNode = value;

@@ -26,11 +26,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * gml:KnotPropertyType encapsulates a knot to use it in a geometric type.
- * 
+ *
  * <p>Java class for KnotPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="KnotPropertyType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "KnotPropertyType", propOrder = {
@@ -56,11 +56,11 @@ public class KnotPropertyType {
 
     /**
      * Gets the value of the knot property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link KnotType }
-     *     
+     *
      */
     public KnotType getKnot() {
         return knot;
@@ -68,11 +68,11 @@ public class KnotPropertyType {
 
     /**
      * Sets the value of the knot property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link KnotType }
-     *     
+     *
      */
     public void setKnot(KnotType value) {
         this.knot = value;

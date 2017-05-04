@@ -26,9 +26,9 @@ import org.geotoolkit.gml.xml.v311.LineStringType;
 
 /**
  * <p>Java class for LineCorridorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LineCorridorType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.gml.xml.v311.LineStringType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LineCorridorType", propOrder = {
@@ -58,11 +58,11 @@ public class LineCorridorType {
 
     /**
      * Gets the value of the lineString property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LineStringType }
-     *     
+     *
      */
     public LineStringType getLineString() {
         return lineString;
@@ -70,11 +70,11 @@ public class LineCorridorType {
 
     /**
      * Sets the value of the lineString property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LineStringType }
-     *     
+     *
      */
     public void setLineString(LineStringType value) {
         this.lineString = value;
@@ -82,11 +82,11 @@ public class LineCorridorType {
 
     /**
      * Gets the value of the distance property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DistanceType }
-     *     
+     *
      */
     public DistanceType getDistance() {
         return distance;
@@ -94,11 +94,11 @@ public class LineCorridorType {
 
     /**
      * Sets the value of the distance property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DistanceType }
-     *     
+     *
      */
     public void setDistance(DistanceType value) {
         this.distance = value;

@@ -47,7 +47,7 @@ public interface LargeMailUserName {
     String getType();
 
     /**
-     * 
+     *
      * @return
      */
     String getCode();
@@ -65,7 +65,7 @@ public interface LargeMailUserName {
     void setType(String type);
 
     /**
-     * 
+     *
      * @param code
      */
     void setCode(String code);

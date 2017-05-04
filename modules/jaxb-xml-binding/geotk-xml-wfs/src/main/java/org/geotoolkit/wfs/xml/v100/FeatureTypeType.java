@@ -30,9 +30,9 @@ import org.geotoolkit.wfs.xml.FeatureType;
 
 /**
  * <p>Java class for FeatureTypeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FeatureTypeType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.wfs.xml.FeatureType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureTypeType", propOrder = {
@@ -94,14 +94,14 @@ public class FeatureTypeType implements FeatureType {
         this.srs        = defaultSRS;
         this.latLongBoundingBox = wgs84BoundingBox;
     }
-    
+
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     @Override
     public QName getName() {
@@ -110,11 +110,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     @Override
     public void setName(final QName value) {
@@ -123,11 +123,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -135,11 +135,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -147,11 +147,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Gets the value of the abstract property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAbstract() {
         return _abstract;
@@ -159,11 +159,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Sets the value of the abstract property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setAbstract(String value) {
@@ -172,11 +172,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Gets the value of the keywords property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getKeywords() {
         return keywords;
@@ -184,16 +184,16 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Sets the value of the keywords property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setKeywords(final String value) {
         this.keywords = value;
     }
-    
+
     @Override
     public void addKeywords(final List<String> values) {
         if (values != null && !values.isEmpty()) {
@@ -203,11 +203,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Gets the value of the srs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getDefaultCRS() {
@@ -216,11 +216,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Sets the value of the srs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setDefaultCRS(String value) {
@@ -233,11 +233,11 @@ public class FeatureTypeType implements FeatureType {
     }
     /**
      * Gets the value of the operations property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OperationsType }
-     *     
+     *
      */
     public OperationsType getOperations() {
         return operations;
@@ -245,11 +245,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Sets the value of the operations property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OperationsType }
-     *     
+     *
      */
     public void setOperations(OperationsType value) {
         this.operations = value;
@@ -257,7 +257,7 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Gets the value of the latLongBoundingBox property.
-     * 
+     *
      */
     @Override
     public List<LatLongBoundingBoxType> getBoundingBox() {
@@ -269,7 +269,7 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Gets the value of the metadataURL property.
-     * 
+     *
      */
     public List<MetadataURLType> getMetadataURL() {
         if (metadataURL == null) {
@@ -277,12 +277,12 @@ public class FeatureTypeType implements FeatureType {
         }
         return this.metadataURL;
     }
-    
+
     @Override
     public void addMetadataURL(final String value, final String type, final String format) {
         getMetadataURL().add(new MetadataURLType(value, type, format));
     }
-    
+
     /**
      * Verify if this entry is identical to specified object.
      */

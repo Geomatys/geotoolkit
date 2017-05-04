@@ -31,11 +31,11 @@ import javax.xml.bind.annotation.XmlType;
  *       metadata (Capabilities) document. This type shall be extended and/or
  *       restricted if needed for specific OWS use to include the specific
  *       metadata needed.
- * 
+ *
  * <p>Java class for ContentsBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ContentsBaseType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ContentsBaseType", propOrder = {
@@ -71,7 +71,7 @@ public class ContentsBaseType {
      *           datasets available from this OWS server. This set shall be included
      *           unless another source is referenced and all this metadata is
      *           available from that source.Gets the value of the datasetDescriptionSummary property.
-     * 
+     *
      */
     public List<DatasetDescriptionSummaryBaseType> getDatasetDescriptionSummary() {
         if (datasetDescriptionSummary == null) {
@@ -84,7 +84,7 @@ public class ContentsBaseType {
      * Unordered set of references to other sources of
      *           metadata describing the coverage offerings available from this
      *           server.Gets the value of the otherSource property.
-     * 
+     *
      */
     public List<MetadataType> getOtherSource() {
         if (otherSource == null) {

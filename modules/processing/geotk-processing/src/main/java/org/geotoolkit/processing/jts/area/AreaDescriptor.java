@@ -33,10 +33,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class AreaDescriptor extends AbstractProcessDescriptor {
-        
+
     /**Process name : area */
     public static final String NAME = "jts:area";
-    
+
     /**
      * Input parameters
      */
@@ -45,10 +45,10 @@ public class AreaDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Geometry JTS")
             .setRequired(true)
             .create(Geometry.class, null);
-    
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(GEOM);
-    
+
     /**
      * OutputParameters
      */
@@ -57,7 +57,7 @@ public class AreaDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Area result")
             .setRequired(true)
             .create(Double.class, 0.0);
-    
+
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT);
 
@@ -74,5 +74,5 @@ public class AreaDescriptor extends AbstractProcessDescriptor {
     public Process createProcess(final ParameterValueGroup input) {
         return new AreaProcess(input);
     }
-    
+
 }

@@ -30,14 +30,14 @@ import org.geotoolkit.internal.Loggers;
  * @author Johann Sorel (Geomatys)
  */
 public class FXStyleElementEditor {
-    
+
     /**
      * The service loader. This loader and its iterator are not synchronized;
      * when doing an iteration, the iterator must be used inside synchronized blocks.
      */
     private static final ServiceLoader<FXStyleElementController> LOADER = ServiceLoader.load(FXStyleElementController.class);
-    
-    
+
+
     /**
      * Search the registered StyleElementEditor for one which support the given
      * object.
@@ -84,5 +84,5 @@ public class FXStyleElementEditor {
         });
         return editors;
     }
-    
+
 }

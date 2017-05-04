@@ -137,7 +137,7 @@ public abstract class Element extends Annotated {
         this.name = name;
         this.type = type;
     }
-    
+
     public Element(final String name, final QName type, final QName substitutionGroup) {
         this.name              = name;
         this.type              = type;

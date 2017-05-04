@@ -30,13 +30,13 @@ public class DefaultTimeStamp extends DefaultAbstractTimePrimitive implements Ti
     private Calendar when;
 
     /**
-     * 
+     *
      */
     public DefaultTimeStamp() {
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractTimePrimitiveSimpleExtensions

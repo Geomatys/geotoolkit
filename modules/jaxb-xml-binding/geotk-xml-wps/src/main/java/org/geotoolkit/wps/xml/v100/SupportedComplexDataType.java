@@ -27,12 +27,12 @@ import org.geotoolkit.wps.xml.ComplexDataTypeDescription;
 
 
 /**
- * Formats, encodings, and schemas supported by a process input or output. 
- * 
+ * Formats, encodings, and schemas supported by a process input or output.
+ *
  * <p>Java class for SupportedComplexDataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SupportedComplexDataType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.wps.xml.ComplexDataTypeDescription;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,9 +65,9 @@ public class SupportedComplexDataType implements ComplexDataTypeDescription {
     protected ComplexDataCombinationsType supported;
 
     public SupportedComplexDataType() {
-        
+
     }
-    
+
     public SupportedComplexDataType(ComplexDataDescriptionType defaultFormat, List<ComplexDataDescriptionType> supported) {
         if (defaultFormat != null) {
             this._default = new ComplexDataCombinationType(defaultFormat);
@@ -76,14 +76,14 @@ public class SupportedComplexDataType implements ComplexDataTypeDescription {
             this.supported = new ComplexDataCombinationsType(supported);
         }
     }
-    
+
     /**
      * Gets the value of the default property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ComplexDataCombinationType }
-     *     
+     *
      */
     public ComplexDataCombinationType getDefault() {
         return _default;
@@ -91,11 +91,11 @@ public class SupportedComplexDataType implements ComplexDataTypeDescription {
 
     /**
      * Sets the value of the default property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ComplexDataCombinationType }
-     *     
+     *
      */
     public void setDefault(final ComplexDataCombinationType value) {
         this._default = value;
@@ -103,11 +103,11 @@ public class SupportedComplexDataType implements ComplexDataTypeDescription {
 
     /**
      * Gets the value of the supported property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ComplexDataCombinationsType }
-     *     
+     *
      */
     public ComplexDataCombinationsType getSupported() {
         return supported;
@@ -115,11 +115,11 @@ public class SupportedComplexDataType implements ComplexDataTypeDescription {
 
     /**
      * Sets the value of the supported property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ComplexDataCombinationsType }
-     *     
+     *
      */
     public void setSupported(final ComplexDataCombinationsType value) {
         this.supported = value;
@@ -136,7 +136,7 @@ public class SupportedComplexDataType implements ComplexDataTypeDescription {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

@@ -35,7 +35,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * NMEA feature store.
- * 
+ *
  * @author Alexis Manin (Geomatys)
  */
 public class NMEAFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
@@ -85,5 +85,5 @@ public class NMEAFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, false, false, false, GEOMS_ALL);
     }
-    
+
 }

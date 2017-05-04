@@ -26,12 +26,12 @@ import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
 
 
 /**
- * XML encoded GetCapabilities operation response. This document provides clients with service metadata about a specific service instance, usually including metadata about the tightly-coupled data served. If the server does not implement the updateSequence parameter, the server shall always return the complete Capabilities document, without the updateSequence parameter. When the server implements the updateSequence parameter and the GetCapabilities operation request included the updateSequence parameter with the current value, the server shall return this element with only the "version" and "updateSequence" attributes. Otherwise, all optional elements shall be included or not depending on the actual value of the Contents parameter in the GetCapabilities operation request. This base type shall be extended by each specific OWS to include the additional contents needed. 
- * 
+ * XML encoded GetCapabilities operation response. This document provides clients with service metadata about a specific service instance, usually including metadata about the tightly-coupled data served. If the server does not implement the updateSequence parameter, the server shall always return the complete Capabilities document, without the updateSequence parameter. When the server implements the updateSequence parameter and the GetCapabilities operation request included the updateSequence parameter with the current value, the server shall return this element with only the "version" and "updateSequence" attributes. Otherwise, all optional elements shall be included or not depending on the actual value of the Contents parameter in the GetCapabilities operation request. This base type shall be extended by each specific OWS to include the additional contents needed.
+ *
  * <p>Java class for CapabilitiesBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CapabilitiesBaseType">
  *   &lt;complexContent>
@@ -47,7 +47,7 @@ import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -74,15 +74,15 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
      * Empty constructor used by JAXB.
      */
     protected CapabilitiesBaseType() {
-    }   
-    
+    }
+
     /**
      * Build the base of a Capabilities document.
      */
     public CapabilitiesBaseType(final String version, final String updateSequence) {
         this(null, null, null, version, updateSequence);
     }
-    
+
     /**
      * Build the base of a Capabilities document.
      */
@@ -93,31 +93,31 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
         this.serviceProvider       = serviceProvider;
         this.updateSequence        = updateSequence;
         this.version               = version;
-    }   
-    
+    }
+
     /**
      * Gets the value of the serviceIdentification property.
-     * 
+     *
      */
     @Override
     public ServiceIdentification getServiceIdentification() {
         return serviceIdentification;
     }
-    
+
     public void setServiceIdentification(final ServiceIdentification SI) {
         serviceIdentification = SI;
     }
-            
+
 
     /**
      * Gets the value of the serviceProvider property.
-     * 
+     *
      */
     @Override
     public ServiceProvider getServiceProvider() {
         return serviceProvider;
     }
-    
+
     public void setServiceProvider(final ServiceProvider SP) {
         serviceProvider = SP;
     }
@@ -133,17 +133,17 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
     public void setOperationsMetadata(final OperationsMetadata operationsMetadata) {
         this.operationsMetadata = operationsMetadata;
     }
-    
+
     @Override
     public void updateURL(String url) {
         if (this.operationsMetadata != null) {
             this.operationsMetadata.updateURL(url);
         }
     }
-    
+
     /**
      * Gets the value of the version property.
-     * 
+     *
      */
     @Override
     public String getVersion() {
@@ -152,13 +152,13 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
 
     /**
      * Gets the value of the updateSequence property.
-     * 
+     *
      */
     @Override
     public String getUpdateSequence() {
         return updateSequence;
     }
-    
+
     public void setUpdateSequence(final String updateSequence) {
         this.updateSequence = updateSequence;
     }
@@ -193,7 +193,7 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
         hash = 83 * hash + (this.version != null ? this.version.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
@@ -224,4 +224,4 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
         }
         return s.toString();
     }
-}    
+}

@@ -26,7 +26,7 @@ import javafx.scene.control.PasswordField;
  * @author Samuel Andrés (Geomatys)
  */
 public class FXPasswordStringCell<S> extends FXStringCell<S>{
-    
+
     private final PasswordField field = new PasswordField();
     private final MessageDigest messageDigest;
 
@@ -40,7 +40,7 @@ public class FXPasswordStringCell<S> extends FXStringCell<S>{
         setContentDisplay(ContentDisplay.CENTER);
         this.messageDigest=messageDigest;
     }
-    
+
     private String digest(final String toEncrypt){
         if(messageDigest==null) return toEncrypt;
         else {

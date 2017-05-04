@@ -26,12 +26,12 @@ import org.geotoolkit.wps.xml.Format;
 
 
 /**
- * A combination of format, encoding, and/or schema supported by a process input or output. 
- * 
+ * A combination of format, encoding, and/or schema supported by a process input or output.
+ *
  * <p>Java class for ComplexDataDescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ComplexDataDescriptionType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.wps.xml.Format;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -67,22 +67,22 @@ public class ComplexDataDescriptionType implements Format{
     protected String schema;
 
     public ComplexDataDescriptionType() {
-        
+
     }
-    
+
     public ComplexDataDescriptionType( String encoding, String mimetype, String schema) {
         this.encoding = encoding;
         this.mimeType = mimetype;
         this.schema = schema;
     }
-    
+
     /**
      * Gets the value of the mimeType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getMimeType() {
@@ -91,11 +91,11 @@ public class ComplexDataDescriptionType implements Format{
 
     /**
      * Sets the value of the mimeType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setMimeType(final String value) {
@@ -104,11 +104,11 @@ public class ComplexDataDescriptionType implements Format{
 
     /**
      * Gets the value of the encoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getEncoding() {
@@ -117,11 +117,11 @@ public class ComplexDataDescriptionType implements Format{
 
     /**
      * Sets the value of the encoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setEncoding(final String value) {
@@ -130,11 +130,11 @@ public class ComplexDataDescriptionType implements Format{
 
     /**
      * Gets the value of the schema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getSchema() {
@@ -143,11 +143,11 @@ public class ComplexDataDescriptionType implements Format{
 
     /**
      * Sets the value of the schema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setSchema(final String value) {
@@ -168,7 +168,7 @@ public class ComplexDataDescriptionType implements Format{
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare
@@ -180,8 +180,8 @@ public class ComplexDataDescriptionType implements Format{
         }
         if (object instanceof ComplexDataDescriptionType) {
             final ComplexDataDescriptionType that = (ComplexDataDescriptionType) object;
-            return Objects.equals(this.encoding, that.encoding) && 
-                   Objects.equals(this.mimeType, that.mimeType) && 
+            return Objects.equals(this.encoding, that.encoding) &&
+                   Objects.equals(this.mimeType, that.mimeType) &&
                    Objects.equals(this.schema, that.schema);
         }
         return false;

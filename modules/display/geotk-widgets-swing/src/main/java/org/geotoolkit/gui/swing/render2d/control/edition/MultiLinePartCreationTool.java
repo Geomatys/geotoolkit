@@ -29,7 +29,7 @@ import org.opengis.feature.AttributeType;
 
 /**
  * Edition tool to create multi line parts.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -37,7 +37,7 @@ public class MultiLinePartCreationTool extends AbstractEditionTool {
 
     public MultiLinePartCreationTool() {
         super(1050,"multilinePartCreation", MessageBundle.formatInternational(MessageBundle.Keys.createPart),
-             new SimpleInternationalString("Tool to create part of a MultiLine."), 
+             new SimpleInternationalString("Tool to create part of a MultiLine."),
              IconBundle.getIcon("16_add_subpolygon"), FeatureMapLayer.class);
     }
 

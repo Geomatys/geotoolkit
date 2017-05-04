@@ -25,12 +25,12 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
 /**
  * Denotes the relation of TransportationComplex to its parts, which are auxiliary traffic areas. The
  *                 TrafficAreaPropertyType element must either carry a reference to a TrafficArea object or contain a TrafficArea
- *                 object inline, but neither both nor none. 
- * 
+ *                 object inline, but neither both nor none.
+ *
  * <p>Java class for AuxiliaryTrafficAreaPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AuxiliaryTrafficAreaPropertyType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

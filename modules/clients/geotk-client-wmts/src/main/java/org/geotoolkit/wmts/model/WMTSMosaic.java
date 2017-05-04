@@ -42,7 +42,7 @@ import org.opengis.geometry.Envelope;
  * @module
  */
 public class WMTSMosaic implements GridMosaic{
-    
+
     private final String id = UUID.randomUUID().toString();
     private final WMTSPyramid pyramid;
     private final TileMatrix matrix;
@@ -55,7 +55,7 @@ public class WMTSMosaic implements GridMosaic{
         this.limit = limits;
         this.scale = WMTSUtilities.unitsByPixel(pyramid.getMatrixset(), pyramid.getCoordinateReferenceSystem(), matrix);
     }
-    
+
     public TileMatrix getMatrix() {
         return matrix;
     }
@@ -64,7 +64,7 @@ public class WMTSMosaic implements GridMosaic{
     public String getId() {
         return id;
     }
-    
+
     @Override
     public WMTSPyramid getPyramid() {
         return pyramid;
@@ -96,7 +96,7 @@ public class WMTSMosaic implements GridMosaic{
                 matrix.getTileWidth(),
                 matrix.getTileHeight());
     }
-    
+
     @Override
     public Envelope getEnvelope(int row, int col) {
         final DirectPosition ul = getUpperLeftCorner();
@@ -106,15 +106,15 @@ public class WMTSMosaic implements GridMosaic{
         final double scale = getScale();
         final double spanX = tileSize.width * scale;
         final double spanY = tileSize.height * scale;
-        
+
         final GeneralEnvelope envelope = new GeneralEnvelope(
                 getPyramid().getCoordinateReferenceSystem());
         envelope.setRange(0, minX + col*spanX, minX + (col+1)*spanX);
         envelope.setRange(1, maxY - (row+1)*spanY, maxY - row*spanY);
-        
+
         return envelope;
     }
-    
+
     @Override
     public Envelope getEnvelope() {
         final DirectPosition ul = getUpperLeftCorner();
@@ -122,24 +122,24 @@ public class WMTSMosaic implements GridMosaic{
         final double maxY = ul.getOrdinate(1);
         final double spanX = getTileSize().width * getGridSize().width * getScale();
         final double spanY = getTileSize().height* getGridSize().height* getScale();
-        
+
         final GeneralEnvelope envelope = new GeneralEnvelope(
                 getPyramid().getCoordinateReferenceSystem());
         envelope.setRange(0, minX, minX + spanX);
         envelope.setRange(1, maxY - spanY, maxY );
-        
+
         return envelope;
     }
-    
+
     @Override
     public boolean isMissing(int col, int row) throws PointOutsideCoverageException {
         if (col < 0 || row < 0 || col > matrix.getMatrixWidth() || row > matrix.getMatrixHeight()) {
             throw new PointOutsideCoverageException("Queried tile position is outside matrix dimension.", new GeneralDirectPosition(col, row));
         }
         if(limit == null) return false;
-        
+
         //limits are exclusive
-        return  col < limit.getMinTileCol() 
+        return  col < limit.getMinTileCol()
              || col > limit.getMaxTileCol()
              || row < limit.getMinTileRow()
              || row > limit.getMaxTileRow();
@@ -149,10 +149,10 @@ public class WMTSMosaic implements GridMosaic{
     public TileReference getTile(int col, int row, Map hints) throws DataStoreException {
         if(hints==null) hints = new HashMap();
         if(!hints.containsKey(PyramidSet.HINT_FORMAT)) hints.put(PyramidSet.HINT_FORMAT,"image/png");
-        
+
         return ((WMTSPyramidSet)getPyramid().getPyramidSet()).getTile(this, col, row, hints);
     }
- 
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));

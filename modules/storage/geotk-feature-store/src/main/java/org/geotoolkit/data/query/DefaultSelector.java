@@ -23,7 +23,7 @@ import org.opengis.util.GenericName;
 
 /**
  * Default selector implementation.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */

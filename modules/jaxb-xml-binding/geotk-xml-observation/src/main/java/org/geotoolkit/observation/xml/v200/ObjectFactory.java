@@ -24,18 +24,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.om._2 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.om._2 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -47,14 +47,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.om._2
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link OMObservationType }
-     * 
+     *
      */
     public OMObservationType createOMObservationType() {
         return new OMObservationType();
@@ -62,7 +62,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TimeObjectPropertyType }
-     * 
+     *
      */
     public TimeObjectPropertyType createTimeObjectPropertyType() {
         return new TimeObjectPropertyType();
@@ -70,7 +70,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ObservationContextType }
-     * 
+     *
      */
     public ObservationContextType createObservationContextType() {
         return new ObservationContextType();
@@ -78,7 +78,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NamedValueType }
-     * 
+     *
      */
     public NamedValueType createNamedValueType() {
         return new NamedValueType();
@@ -86,7 +86,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NamedValuePropertyType }
-     * 
+     *
      */
     public NamedValuePropertyType createNamedValuePropertyType() {
         return new NamedValuePropertyType();
@@ -94,7 +94,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OMObservationPropertyType }
-     * 
+     *
      */
     public OMObservationPropertyType createOMObservationPropertyType() {
         return new OMObservationPropertyType();
@@ -102,7 +102,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ObservationContextPropertyType }
-     * 
+     *
      */
     public ObservationContextPropertyType createObservationContextPropertyType() {
         return new ObservationContextPropertyType();
@@ -110,7 +110,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OMProcessPropertyType }
-     * 
+     *
      */
     public OMProcessPropertyType createOMProcessPropertyType() {
         return new OMProcessPropertyType();
@@ -118,7 +118,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NamedValueType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/om/2.0", name = "NamedValue")
     public JAXBElement<NamedValueType> createNamedValue(NamedValueType value) {
@@ -127,7 +127,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/om/2.0", name = "result")
     public JAXBElement<Object> createResult(Object value) {
@@ -136,7 +136,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ObservationContextType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/om/2.0", name = "ObservationContext")
     public JAXBElement<ObservationContextType> createObservationContext(ObservationContextType value) {
@@ -145,7 +145,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OMObservationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/om/2.0", name = "OM_Observation", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractFeature")
     public JAXBElement<OMObservationType> createOMObservation(OMObservationType value) {

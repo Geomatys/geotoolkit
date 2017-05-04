@@ -29,14 +29,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
+ *
  * Mapping of the same named interface in ebRIM.
- * 			
- * 
+ *
+ *
  * <p>Java class for UserType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UserType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -87,7 +87,7 @@ public class UserType extends RegistryObjectType {
         }
         return this.address;
     }
-    
+
     /**
      * Sets the value of the address property.
      */
@@ -97,7 +97,7 @@ public class UserType extends RegistryObjectType {
         }
         this.address.add(address);
     }
-    
+
     /**
      * Sets the value of the address property.
      */
@@ -128,7 +128,7 @@ public class UserType extends RegistryObjectType {
         }
         return this.telephoneNumber;
     }
-    
+
     /**
      * Sets the value of the telephoneNumber property.
      */
@@ -138,7 +138,7 @@ public class UserType extends RegistryObjectType {
         }
         this.telephoneNumber.add(number);
     }
-    
+
     /**
      * Sets the value of the telephoneNumber property.
      */
@@ -155,7 +155,7 @@ public class UserType extends RegistryObjectType {
         }
         return this.emailAddress;
     }
-    
+
     /**
      * Sets the value of the emailAddress property.
      */
@@ -165,7 +165,7 @@ public class UserType extends RegistryObjectType {
         }
         this.emailAddress.add(email);
     }
-    
+
     /**
      * Sets the value of the emailAddress property.
      */

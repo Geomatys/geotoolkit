@@ -30,7 +30,7 @@ public class ComplexAttributeArrayBinding extends AbstractBinding<Feature>{
     public ComplexAttributeArrayBinding() {
         super(Feature.class, 21);
     }
-    
+
     private int toIndex(final String xpath){
         String num = xpath.substring(2, xpath.length()-1);
 
@@ -40,7 +40,7 @@ public class ComplexAttributeArrayBinding extends AbstractBinding<Feature>{
 
         return Integer.valueOf(num);
     }
-    
+
     @Override
     public boolean support(String xpath) {
         return xpath.startsWith("*[") && xpath.endsWith("]");
@@ -78,5 +78,5 @@ public class ComplexAttributeArrayBinding extends AbstractBinding<Feature>{
             i++;
         }
     }
-    
+
 }

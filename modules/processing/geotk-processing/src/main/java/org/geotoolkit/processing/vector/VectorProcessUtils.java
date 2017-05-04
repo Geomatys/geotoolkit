@@ -131,7 +131,7 @@ public final class VectorProcessUtils extends Static {
                 }
             }
         }
-        
+
         return ftb.build();
     }
 

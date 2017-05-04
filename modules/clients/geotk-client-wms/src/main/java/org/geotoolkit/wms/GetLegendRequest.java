@@ -28,7 +28,7 @@ import org.geotoolkit.client.Request;
  * @module
  */
 public interface GetLegendRequest extends Request {
-        
+
     /**
      * Returns the layer concerned, never {@code null}.
      */
@@ -130,8 +130,8 @@ public interface GetLegendRequest extends Request {
     /**
      * Sets a sld body to apply.
      */
-    void setSldBody(String sldBody);       
-    
+    void setSldBody(String sldBody);
+
     /**
      * Returns additional dimensions.
      */

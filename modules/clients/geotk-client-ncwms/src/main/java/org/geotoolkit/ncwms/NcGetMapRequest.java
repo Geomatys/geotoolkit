@@ -21,7 +21,7 @@ import org.geotoolkit.wms.GetMapRequest;
 
 /**
  * Interface for GetMap requests
- * 
+ *
  * @author Olivier Terral (Geomatys)
  * @module
  */

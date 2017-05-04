@@ -25,9 +25,9 @@ import org.geotoolkit.gml.xml.v321.GridType;
 
 /**
  * <p>Java class for AbstractReferenceableGridType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractReferenceableGridType">
  *   &lt;complexContent>
@@ -36,8 +36,8 @@ import org.geotoolkit.gml.xml.v321.GridType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractReferenceableGridType")

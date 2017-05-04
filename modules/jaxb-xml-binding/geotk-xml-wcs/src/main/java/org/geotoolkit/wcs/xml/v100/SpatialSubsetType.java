@@ -25,12 +25,12 @@ import org.geotoolkit.gml.xml.v311.GridType;
 
 /**
  * Definition of a subset of a coverage spatial domain.
- * Currently, only a grid subset of a coverage domain. 
- * 
+ * Currently, only a grid subset of a coverage domain.
+ *
  * <p>Java class for SpatialSubsetType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SpatialSubsetType">
  *   &lt;complexContent>
@@ -43,27 +43,27 @@ import org.geotoolkit.gml.xml.v311.GridType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * @author Guilhem Legal 
+ *
+ * @author Guilhem Legal
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SpatialSubsetType")
 public class SpatialSubsetType extends SpatialDomainType {
-    
+
     /**
      * An empty constructor used by JAXB
      */
     SpatialSubsetType(){
     }
-    
+
     /**
      * Build a new Spatial subset.
      */
     public SpatialSubsetType(final EnvelopeType envelope, final GridType grid){
         super(envelope, grid);
     }
-    
-    
+
+
 
 }

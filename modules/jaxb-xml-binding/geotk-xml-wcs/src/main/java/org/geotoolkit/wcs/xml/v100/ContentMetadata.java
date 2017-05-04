@@ -31,9 +31,9 @@ import org.geotoolkit.wcs.xml.CoverageInfo;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -48,7 +48,7 @@ import org.geotoolkit.wcs.xml.CoverageInfo;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -98,7 +98,7 @@ public class ContentMetadata implements Content{
     public ContentMetadata(final List<CoverageOfferingBriefType> coverageOfferingBrief) {
         this(null, coverageOfferingBrief);
     }
-    
+
     /**
      * Build a new content metaData.
      */
@@ -106,10 +106,10 @@ public class ContentMetadata implements Content{
         this.version               = version;
         this.coverageOfferingBrief = coverageOfferingBrief;
     }
-    
+
     /**
      * Gets the value of the coverageOfferingBrief property.
-     * 
+     *
      */
     public List<CoverageOfferingBriefType> getCoverageOfferingBrief() {
         if (coverageOfferingBrief == null) {
@@ -120,7 +120,7 @@ public class ContentMetadata implements Content{
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      */
     public String getVersion() {
         return version;
@@ -142,7 +142,7 @@ public class ContentMetadata implements Content{
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      */
     public String getType() {
         if (type == null) {
@@ -182,7 +182,7 @@ public class ContentMetadata implements Content{
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      */
     public String getShow() {
         return show;

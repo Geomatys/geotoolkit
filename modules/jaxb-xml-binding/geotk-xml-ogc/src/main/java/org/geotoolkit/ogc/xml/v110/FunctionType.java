@@ -34,9 +34,9 @@ import org.opengis.filter.expression.Function;
 
 /**
  * <p>Java class for FunctionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FunctionType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.opengis.filter.expression.Function;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -70,7 +70,7 @@ public class FunctionType extends ExpressionType implements Function {
         @XmlElementRef(name = "Mul", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     })
     private List<JAXBElement<?>> expression;
-   
+
     @XmlAttribute(required = true)
     private String name;
 
@@ -79,14 +79,14 @@ public class FunctionType extends ExpressionType implements Function {
      */
     @XmlTransient
     ObjectFactory factory = new ObjectFactory();
-    
+
     /**
-     * An empty constructor used by JAXB 
+     * An empty constructor used by JAXB
      */
      public FunctionType() {
-         
+
      }
-     
+
     /**
      * Build a new Function  TODO
      */
@@ -94,24 +94,24 @@ public class FunctionType extends ExpressionType implements Function {
          this.expression = new ArrayList<>();
          StringBuilder report = new StringBuilder();
          for (Expression e:expression)  {
-             report.append(e.getClass().getSimpleName()); 
+             report.append(e.getClass().getSimpleName());
          }
          throw new UnsupportedOperationException("TODO Not supported yet real type of arg1:" + report.toString());
      }
-     
+
      /**
      * Build a new Function  TODO
      */
      public FunctionType(final Functions functions) {
          this.expression = new ArrayList<>();
-         
+
          throw new UnsupportedOperationException("Operation Not supported yet");
      }
-     
+
      public FunctionType(final FunctionType that) {
         if (that != null) {
             this.name = that.name;
-            
+
             if (that.expression != null) {
                 this.expression = new ArrayList<>();
                 for (JAXBElement<?> jb : that.expression) {
@@ -131,7 +131,7 @@ public class FunctionType extends ExpressionType implements Function {
             }
         }
     }
-     
+
     /**
      * Gets the value of the expression property.
      */

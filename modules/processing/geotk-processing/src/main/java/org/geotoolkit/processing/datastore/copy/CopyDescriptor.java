@@ -70,7 +70,7 @@ public final class CopyDescriptor extends VectorDescriptor {
             .create(FeatureStore.class, null);
 
     /**
-     * Optional - Target datastore. 
+     * Optional - Target datastore.
      */
     public static final ParameterDescriptor<FeatureStore> TARGET_STORE = new ParameterBuilder()
             .addName("target_datastore")
@@ -86,7 +86,7 @@ public final class CopyDescriptor extends VectorDescriptor {
             .setRemarks("The target session of a datastore")
             .setRequired(false)
             .create(Session.class, null);
-    
+
     /**
      * Mandatory - drop before insertion or not.
      */
@@ -104,7 +104,7 @@ public final class CopyDescriptor extends VectorDescriptor {
             .setRemarks("Create a new version or append to last version.")
             .setRequired(true)
             .create(Boolean.class, false);
-    
+
     /**
      * Mandatory - Feature type names to  copy. several names can be passed separated by commas.
      */
@@ -141,7 +141,7 @@ public final class CopyDescriptor extends VectorDescriptor {
                 + "during copy if supported.")
             .setRequired(false)
             .create(Date.class, null);
-    
+
     /**
      * Output Parameters
      */

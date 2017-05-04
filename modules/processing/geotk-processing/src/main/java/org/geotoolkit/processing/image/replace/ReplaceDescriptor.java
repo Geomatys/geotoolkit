@@ -37,7 +37,7 @@ public class ReplaceDescriptor extends AbstractProcessDescriptor {
 
     public static final String NAME = "image:replace";
 
-    
+
     /**
      * Mandatory - Image where to replace samples.
      */
@@ -47,7 +47,7 @@ public class ReplaceDescriptor extends AbstractProcessDescriptor {
             .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.image_replace_inImageDesc))
             .setRequired(true)
             .create(BufferedImage.class, null);
-    
+
     /**
      * Mandatory - samples to replace.
      * double[0] : original sample values
@@ -62,7 +62,7 @@ public class ReplaceDescriptor extends AbstractProcessDescriptor {
 
     public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder()
             .addName(NAME + "InputParameters").createGroup(IN_IMAGE, IN_REPLACEMENTS);
-    
+
     /**
      * Mandatory - Resulting image.
      */
@@ -75,12 +75,12 @@ public class ReplaceDescriptor extends AbstractProcessDescriptor {
 
     public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder()
             .addName(NAME + "OutputParameters").createGroup(OUT_IMAGE);
-    
+
     public static final ProcessDescriptor INSTANCE = new ReplaceDescriptor();
-    
+
     public ReplaceDescriptor() {
         super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
-                new SimpleInternationalString("Replace sample values in image"), 
+                new SimpleInternationalString("Replace sample values in image"),
                 INPUT_DESC, OUTPUT_DESC);
     }
 
@@ -88,5 +88,5 @@ public class ReplaceDescriptor extends AbstractProcessDescriptor {
     public Process createProcess(ParameterValueGroup input) {
         return new ReplaceProcess(input);
     }
-    
+
 }

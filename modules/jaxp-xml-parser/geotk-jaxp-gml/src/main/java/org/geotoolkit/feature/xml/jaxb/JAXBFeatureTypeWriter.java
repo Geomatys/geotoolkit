@@ -239,7 +239,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
             }
             writeProperty(pdesc, sequence, schema, attributes, alreadyWritten);
         }
-        
+
         if (addTopElement && ar) {
             final ComplexContent content      = getComplexContent(sequence);
             final TopLevelComplexType tlcType = new TopLevelComplexType(typeName, content);
@@ -349,7 +349,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
             writeComplexType(role.getValueType(), schema, alreadyWritten);
         }
     }
-    
+
     private ComplexContent getComplexContent(final ExplicitGroup sequence) {
         final ExtensionType extension;
         if ("3.2.1".equals(gmlVersion)) {

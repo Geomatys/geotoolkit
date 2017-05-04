@@ -25,11 +25,11 @@ import org.geotoolkit.xal.xml.v20.AddressDetails;
 
 /**
  * Denotes the relation of an Address feature to the xAL address element.
- * 
+ *
  * <p>Java class for xalAddressPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="xalAddressPropertyType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.xal.xml.v20.AddressDetails;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,11 +56,11 @@ public class XalAddressPropertyType {
 
     /**
      * Gets the value of the addressDetails property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AddressDetails }
-     *     
+     *
      */
     public AddressDetails getAddressDetails() {
         return addressDetails;
@@ -68,11 +68,11 @@ public class XalAddressPropertyType {
 
     /**
      * Sets the value of the addressDetails property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AddressDetails }
-     *     
+     *
      */
     public void setAddressDetails(final AddressDetails value) {
         this.addressDetails = value;

@@ -23,7 +23,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Default immutable range axis, thread safe.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -31,7 +31,7 @@ class DefaultRangeAxis implements RangeAxis {
 
     private final String name;
     private final String value;
-    
+
     /**
      * Default constructor.
      */
@@ -41,7 +41,7 @@ class DefaultRangeAxis implements RangeAxis {
         this.name = name;
         this.value = value;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -105,5 +105,5 @@ class DefaultRangeAxis implements RangeAxis {
         builder.append(']');
         return builder.toString();
     }
-    
+
 }

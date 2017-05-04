@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for OfferingChangedType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OfferingChangedType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OfferingChangedType", propOrder = {
@@ -55,11 +55,11 @@ public class OfferingChangedType extends SWESEventType {
 
     /**
      * Gets the value of the offering property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOffering() {
         return offering;
@@ -67,11 +67,11 @@ public class OfferingChangedType extends SWESEventType {
 
     /**
      * Sets the value of the offering property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOffering(String value) {
         this.offering = value;

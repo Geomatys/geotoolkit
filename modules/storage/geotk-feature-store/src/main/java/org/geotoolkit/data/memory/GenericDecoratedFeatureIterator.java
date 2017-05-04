@@ -29,7 +29,7 @@ import org.opengis.feature.FeatureType;
 
 /**
  * Supports on the fly feature decoration of FeatureIterator contents.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @param <R>
  */

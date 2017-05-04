@@ -30,9 +30,9 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for AbstractVectorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractVectorType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,7 +75,7 @@ public abstract class AbstractVectorType extends AbstractDataRecordType implemen
             this.referenceFrame = av.getReferenceFrame();
         }
     }
-    
+
     public AbstractVectorType(final String definition) {
         super(definition);
     }

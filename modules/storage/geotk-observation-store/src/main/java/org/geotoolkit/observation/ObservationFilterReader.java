@@ -33,7 +33,7 @@ public interface ObservationFilterReader extends ObservationFilter {
      * Return a list of Observation templates matching the builded filter.
      *
      * @param version the sosversion for the xml object returned.
-     * 
+     *
      * @return A list of Observation templates matching the builded filter.
      * @throws org.apache.sis.storage.DataStoreException
      */
@@ -41,20 +41,20 @@ public interface ObservationFilterReader extends ObservationFilter {
 
      /**
      * Return a list of Observation matching the builded filter.
-     * 
+     *
      * @param version the sosversion for the xml object returned.
      *
      * @return A list of Observation matching the builded filter.
      * @throws org.apache.sis.storage.DataStoreException
      */
     List<Observation> getObservations(final String version) throws DataStoreException;
-    
+
     /**
-     * 
+     *
      * @param version the sosversion for the xml object returned.
-     * 
+     *
      * @return
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     List<SamplingFeature> getFeatureOfInterests(final String version) throws DataStoreException;
 
@@ -66,7 +66,7 @@ public interface ObservationFilterReader extends ObservationFilter {
      * @throws org.apache.sis.storage.DataStoreException
      */
     String getResults() throws DataStoreException;
-    
+
     String getDecimatedResults(final int width) throws DataStoreException;
 
     /**
@@ -87,18 +87,18 @@ public interface ObservationFilterReader extends ObservationFilter {
      * @param responseFormat the MIME type of the response.
      */
     void setResponseFormat(String responseFormat);
-    
+
     /**
      * return true if the filter reader take in charge the calculation of the collection bounding shape.
-     * 
-     * @return True if the filter compute itself the bounding shape of the collection. 
+     *
+     * @return True if the filter compute itself the bounding shape of the collection.
      */
     boolean computeCollectionBound();
-    
+
     /**
      * If the filter reader caompute itself the bounding shape of the obervation collection.
      * this methode return the current shape.
-     * @return 
+     * @return
      */
     Envelope getCollectionBoundingShape();
 }

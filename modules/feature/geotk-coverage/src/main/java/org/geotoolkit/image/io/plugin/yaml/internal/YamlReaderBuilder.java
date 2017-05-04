@@ -26,10 +26,10 @@ import org.opengis.coverage.SampleDimension;
  * @since 4.0
  */
 public interface YamlReaderBuilder {
-    
+
     /**
      * Returns all {@link SampleDimension} which just have been read from yaml file.
-     * 
+     *
      * @return read {@link SampleDimension}.
      */
     public List<SampleDimension> getSampleDimensions();

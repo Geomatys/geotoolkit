@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for PlacemarkType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PlacemarkType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -67,7 +67,7 @@ public class PlacemarkType extends AbstractFeatureType {
 
     /**
      * Gets the value of the abstractGeometryGroup property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link LinearRingType }{@code >}
@@ -77,7 +77,7 @@ public class PlacemarkType extends AbstractFeatureType {
      *     {@link JAXBElement }{@code <}{@link AbstractGeometryType }{@code >}
      *     {@link JAXBElement }{@code <}{@link LineStringType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ModelType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractGeometryType> getAbstractGeometryGroup() {
         return abstractGeometryGroup;
@@ -85,7 +85,7 @@ public class PlacemarkType extends AbstractFeatureType {
 
     /**
      * Sets the value of the abstractGeometryGroup property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link LinearRingType }{@code >}
@@ -95,7 +95,7 @@ public class PlacemarkType extends AbstractFeatureType {
      *     {@link JAXBElement }{@code <}{@link AbstractGeometryType }{@code >}
      *     {@link JAXBElement }{@code <}{@link LineStringType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ModelType }{@code >}
-     *     
+     *
      */
     public void setAbstractGeometryGroup(final JAXBElement<? extends AbstractGeometryType> value) {
         this.abstractGeometryGroup = ((JAXBElement<? extends AbstractGeometryType> ) value);
@@ -103,25 +103,25 @@ public class PlacemarkType extends AbstractFeatureType {
 
     /**
      * Gets the value of the placemarkSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the placemarkSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPlacemarkSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getPlacemarkSimpleExtensionGroup() {
         if (placemarkSimpleExtensionGroup == null) {
@@ -132,25 +132,25 @@ public class PlacemarkType extends AbstractFeatureType {
 
     /**
      * Gets the value of the placemarkObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the placemarkObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPlacemarkObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getPlacemarkObjectExtensionGroup() {
         if (placemarkObjectExtensionGroup == null) {

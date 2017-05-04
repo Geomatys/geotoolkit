@@ -37,7 +37,7 @@ import org.opengis.geometry.coordinate.Position;
  * {@code PointArray} is similar to {@code {@link List}&lt;{@link DirectPosition}&gt;}
  * from the <A HREF="http://java.sun.com/j2se/1.5.0/docs/guide/collections/index.html">collection
  * framework</A>. Implementations are free to implement directly the {@link List} interface.
- *  
+ *
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
@@ -48,9 +48,9 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
 
     //*************************************************************************
     //  Fields
-    //*************************************************************************    
+    //*************************************************************************
     //private List pointList;
-    
+
     private CoordinateReferenceSystem crs;
 
     // When we are a component part of a larger geometry, we need to be able
@@ -74,7 +74,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
         super( parent );
         this.crs = crs;
     }
-    
+
     //*************************************************************************
     //  implement the PointArray interface
     //*************************************************************************
@@ -95,7 +95,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
 
     /**
      * Returns the dimensionality of the coordinates in this array.
-     * This may be less than or equal to the dimensionality of the 
+     * This may be less than or equal to the dimensionality of the
      * {@linkplain #getCoordinateReferenceSystem() coordinate reference system}
      * for these coordinates.
      *
@@ -141,7 +141,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
     }
 
     /**
-     * Gets the {@code DirectPosition} at the particular location in this 
+     * Gets the {@code DirectPosition} at the particular location in this
      * {@code PointArray}. If the {@code dest} argument is non-null,
      * that object will be populated with the value from the list.
      *
@@ -168,7 +168,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
         }
         return dest;
     }
-    
+
     /**
      * Set the point at the given index.
      *
@@ -191,7 +191,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
         }
         invalidateCachedJTSPeer();
     }
-    
+
     /**
      * Returns the elements of this {@code PointArray} as an array of
      * {@code DirectPosition}s.

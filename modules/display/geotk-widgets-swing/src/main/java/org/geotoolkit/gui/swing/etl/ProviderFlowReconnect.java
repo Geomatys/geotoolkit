@@ -67,7 +67,7 @@ public class ProviderFlowReconnect implements ReconnectProvider{
         if (replacementWidget instanceof WChainParametersFull) {
             final WChainParametersFull receiver = (WChainParametersFull) replacementWidget;
             newTargetId = receiver.getId();
-            
+
         } else if (replacementWidget instanceof WElementProcess) {
             final WElementProcess receiver = (WElementProcess) replacementWidget;
             newTargetId = receiver.getId();
@@ -75,12 +75,12 @@ public class ProviderFlowReconnect implements ReconnectProvider{
         } else if (replacementWidget instanceof WElementManuel) {
             final WElementManuel receiver = (WElementManuel) replacementWidget;
             newTargetId = receiver.getId();
-            
+
         } else if (replacementWidget instanceof WElementCondition) {
             final WElementCondition receiver = (WElementCondition) replacementWidget;
             newTargetId = receiver.getId();
-        } 
-        
+        }
+
         if (newTargetId != -1) {
             //check the link is valid
             final FlowLink lk = new FlowLink(link);
@@ -124,7 +124,7 @@ public class ProviderFlowReconnect implements ReconnectProvider{
         if (widget instanceof WChainParametersFull) {
             final WChainParametersFull receiver = (WChainParametersFull) widget;
             newTargetId = receiver.getId();
-            
+
         } else if (widget instanceof WElementProcess) {
             final WElementProcess receiver = (WElementProcess) widget;
             newTargetId = receiver.getId();
@@ -132,7 +132,7 @@ public class ProviderFlowReconnect implements ReconnectProvider{
         } else if (widget instanceof WElementManuel) {
             final WElementManuel receiver = (WElementManuel) widget;
             newTargetId = receiver.getId();
-            
+
         } else if (widget instanceof WElementCondition) {
             final WElementCondition receiver = (WElementCondition) widget;
             newTargetId = receiver.getId();
@@ -141,7 +141,7 @@ public class ProviderFlowReconnect implements ReconnectProvider{
             //leave the events do the job
             scene.getChain().getFlowLinks().remove(link);
         }
-        
+
         if (newTargetId != -1) {
             //check the link is valid
             final FlowLink lk = new FlowLink(link);

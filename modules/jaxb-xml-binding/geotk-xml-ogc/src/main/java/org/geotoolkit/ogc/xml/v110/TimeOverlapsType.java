@@ -45,7 +45,7 @@ public class TimeOverlapsType extends BinaryTemporalOpType implements TOverlaps 
     public TemporalOpsType getClone() {
         return new TimeOverlapsType(this);
     }
-    
+
     @Override
     public boolean evaluate(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");

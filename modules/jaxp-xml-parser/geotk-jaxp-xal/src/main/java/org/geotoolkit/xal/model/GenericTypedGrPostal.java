@@ -25,7 +25,7 @@ package org.geotoolkit.xal.model;
 public interface GenericTypedGrPostal {
 
     /**
-     * 
+     *
      * @return
      */
     String getContent();
@@ -55,7 +55,7 @@ public interface GenericTypedGrPostal {
     void setType(String type);
 
     /**
-     * 
+     *
      * @param grPostal
      */
     void setGrPostal(GrPostal grPostal);

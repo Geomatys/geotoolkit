@@ -31,7 +31,7 @@ import org.opengis.filter.FilterFactory;
 
 /**
  * Extends SQLQueryBuilder, support versioning.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class PostgresQueryBuilder extends SQLQueryBuilder{
@@ -48,7 +48,7 @@ public class PostgresQueryBuilder extends SQLQueryBuilder{
             //no versioning, fallback on default method
             return super.selectSQL(featureType, query);
         }
-        
+
         //search version date
         final PostgresVersionControl versionControl;
         try{
@@ -59,13 +59,13 @@ public class PostgresQueryBuilder extends SQLQueryBuilder{
         }catch(VersioningException ex){
             throw new DataStoreException(ex.getMessage(), ex);
         }
-        
-        
+
+
         final StringBuilder sql = new StringBuilder("SELECT ");
 
         final PrimaryKey key = store.getDatabaseModel().getPrimaryKey(featureType.getName().toString());
 
-        // column names        
+        // column names
         encodeSelectColumnNames(sql, featureType, query.getHints());
 
         sql.append(" FROM ");
@@ -74,7 +74,7 @@ public class PostgresQueryBuilder extends SQLQueryBuilder{
         // filtering and version/time filter
         Filter filter = query.getFilter();
         final FilterFactory ff = store.getFilterFactory();
-        Filter tempFilter = 
+        Filter tempFilter =
             ff.and(
                     ff.lessOrEqual(ff.property("HS_Begin"),ff.literal(vdate)),
                     ff.or(
@@ -84,7 +84,7 @@ public class PostgresQueryBuilder extends SQLQueryBuilder{
                   );
         filter = ff.and(filter, tempFilter);
         filter = (Filter)filter.accept(new SimplifyingFilterVisitor(),null);
-        
+
         if (!Filter.INCLUDE.equals(filter)) {
             //encode filter
             sql.append(" WHERE ");
@@ -99,5 +99,5 @@ public class PostgresQueryBuilder extends SQLQueryBuilder{
 
         return sql.toString();
     }
-    
+
 }

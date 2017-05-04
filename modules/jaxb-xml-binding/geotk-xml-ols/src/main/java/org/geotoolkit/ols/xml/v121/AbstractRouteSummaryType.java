@@ -28,11 +28,11 @@ import org.geotoolkit.gml.xml.v311.EnvelopeType;
 
 /**
  * Abstract type which specifies a route's overall characteristics.
- * 
+ *
  * <p>Java class for AbstractRouteSummaryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractRouteSummaryType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.gml.xml.v311.EnvelopeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractRouteSummaryType", propOrder = {
@@ -69,11 +69,11 @@ public abstract class AbstractRouteSummaryType extends AbstractDataType {
 
     /**
      * Gets the value of the totalTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Duration }
-     *     
+     *
      */
     public Duration getTotalTime() {
         return totalTime;
@@ -81,11 +81,11 @@ public abstract class AbstractRouteSummaryType extends AbstractDataType {
 
     /**
      * Sets the value of the totalTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Duration }
-     *     
+     *
      */
     public void setTotalTime(Duration value) {
         this.totalTime = value;
@@ -93,11 +93,11 @@ public abstract class AbstractRouteSummaryType extends AbstractDataType {
 
     /**
      * Gets the value of the totalDistance property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DistanceType }
-     *     
+     *
      */
     public DistanceType getTotalDistance() {
         return totalDistance;
@@ -105,11 +105,11 @@ public abstract class AbstractRouteSummaryType extends AbstractDataType {
 
     /**
      * Sets the value of the totalDistance property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DistanceType }
-     *     
+     *
      */
     public void setTotalDistance(DistanceType value) {
         this.totalDistance = value;
@@ -117,11 +117,11 @@ public abstract class AbstractRouteSummaryType extends AbstractDataType {
 
     /**
      * Rectangular area bounding the complete route.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EnvelopeType }
-     *     
+     *
      */
     public EnvelopeType getBoundingBox() {
         return boundingBox;
@@ -129,11 +129,11 @@ public abstract class AbstractRouteSummaryType extends AbstractDataType {
 
     /**
      * Sets the value of the boundingBox property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EnvelopeType }
-     *     
+     *
      */
     public void setBoundingBox(EnvelopeType value) {
         this.boundingBox = value;

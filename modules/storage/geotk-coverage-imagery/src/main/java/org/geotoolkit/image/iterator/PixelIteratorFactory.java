@@ -83,7 +83,7 @@ public final class PixelIteratorFactory {
         if(isSingleRaster(renderedImage)){
             return createDefaultIterator(renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()), subReadArea);
         }
-        
+
         final SampleModel sampleM = renderedImage.getSampleModel();
         if (sampleM instanceof ComponentSampleModel ) {
             if (checkBankIndices(((ComponentSampleModel)sampleM).getBankIndices())) {

@@ -23,12 +23,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Basic encoding for coordinate system axis objects, simplifying and restricting the DefinitionType as needed. 
- * 
+ * Basic encoding for coordinate system axis objects, simplifying and restricting the DefinitionType as needed.
+ *
  * <p>Java class for CoordinateSystemAxisBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoordinateSystemAxisBaseType">
  *   &lt;complexContent>
@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */

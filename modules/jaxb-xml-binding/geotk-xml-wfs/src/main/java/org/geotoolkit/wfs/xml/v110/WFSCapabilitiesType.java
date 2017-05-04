@@ -44,12 +44,12 @@ import org.geotoolkit.wfs.xml.WFSResponse;
  * "updateSequence" attributes.
  * Otherwise, all optional elements shall be included or not depending on the actual value of the
  * Contents parameter in the GetCapabilities operation request.
- *          
- * 
+ *
+ *
  * <p>Java class for WFS_CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="WFS_CapabilitiesType">
  *   &lt;complexContent>
@@ -64,8 +64,8 @@ import org.geotoolkit.wfs.xml.WFSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -95,7 +95,7 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
         super(version, updateSequence);
     }
 
-    public WFSCapabilitiesType(final String version, final ServiceIdentification si, final ServiceProvider sp, final OperationsMetadata om, 
+    public WFSCapabilitiesType(final String version, final ServiceIdentification si, final ServiceProvider sp, final OperationsMetadata om,
             final FeatureTypeListType ft, final FilterCapabilities fc) {
         super(si, sp, om, version, null);
         this.featureTypeList = ft;
@@ -104,11 +104,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
     /**
      * Gets the value of the featureTypeList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FeatureTypeListType }
-     *     
+     *
      */
     public FeatureTypeListType getFeatureTypeList() {
         return featureTypeList;
@@ -116,11 +116,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
     /**
      * Sets the value of the featureTypeList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FeatureTypeListType }
-     *     
+     *
      */
     public void setFeatureTypeList(final FeatureTypeListType value) {
         this.featureTypeList = value;
@@ -128,11 +128,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
     /**
      * Gets the value of the servesGMLObjectTypeList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GMLObjectTypeListType }
-     *     
+     *
      */
     public GMLObjectTypeListType getServesGMLObjectTypeList() {
         return servesGMLObjectTypeList;
@@ -140,11 +140,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
     /**
      * Sets the value of the servesGMLObjectTypeList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GMLObjectTypeListType }
-     *     
+     *
      */
     public void setServesGMLObjectTypeList(final GMLObjectTypeListType value) {
         this.servesGMLObjectTypeList = value;
@@ -152,11 +152,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
     /**
      * Gets the value of the supportsGMLObjectTypeList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GMLObjectTypeListType }
-     *     
+     *
      */
     public GMLObjectTypeListType getSupportsGMLObjectTypeList() {
         return supportsGMLObjectTypeList;
@@ -164,11 +164,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
     /**
      * Sets the value of the supportsGMLObjectTypeList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GMLObjectTypeListType }
-     *     
+     *
      */
     public void setSupportsGMLObjectTypeList(final GMLObjectTypeListType value) {
         this.supportsGMLObjectTypeList = value;
@@ -176,11 +176,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
     /**
      * Gets the value of the filterCapabilities property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FilterCapabilities }
-     *     
+     *
      */
     public FilterCapabilities getFilterCapabilities() {
         return filterCapabilities;
@@ -188,11 +188,11 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
     /**
      * Sets the value of the filterCapabilities property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FilterCapabilities }
-     *     
+     *
      */
     public void setFilterCapabilities(final FilterCapabilities value) {
         this.filterCapabilities = value;

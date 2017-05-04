@@ -27,16 +27,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * A geometry collection must include one or more geometries, 
- * referenced through geometryMember elements. 
- * User-defined geometry collections that accept GML geometry classes as members must 
+ * A geometry collection must include one or more geometries,
+ * referenced through geometryMember elements.
+ * User-defined geometry collections that accept GML geometry classes as members must
  * instantiate--or derive from--this type.
- *       
- * 
+ *
+ *
  * <p>Java class for GeometryCollectionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeometryCollectionType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -67,9 +67,9 @@ public class GeometryCollectionType extends AbstractGeometryCollectionBaseType {
     private List<JAXBElement<? extends GeometryAssociationType>> geometryMember;
 
     public GeometryCollectionType() {
-        
+
     }
-    
+
     public GeometryCollectionType(final GeometryCollectionType that) {
         super(that);
         if (that != null && that.geometryMember != null) {
@@ -80,17 +80,17 @@ public class GeometryCollectionType extends AbstractGeometryCollectionBaseType {
             }
         }
     }
-    
+
     /**
      * Gets the value of the geometryMember property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link PointMemberType }{@code >}
      * {@link JAXBElement }{@code <}{@link PolygonMemberType }{@code >}
      * {@link JAXBElement }{@code <}{@link GeometryAssociationType }{@code >}
      * {@link JAXBElement }{@code <}{@link LineStringMemberType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends GeometryAssociationType>> getGeometryMember() {
         if (geometryMember == null) {

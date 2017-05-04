@@ -32,7 +32,7 @@ import org.jdesktop.swingx.painter.BusyPainter;
 
 /**
  * Simple lock ui with effects. eye candys.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */

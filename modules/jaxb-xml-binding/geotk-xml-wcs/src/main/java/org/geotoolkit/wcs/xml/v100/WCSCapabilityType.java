@@ -30,16 +30,16 @@ import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 
 
 /**
- * 
- * XML encoded WCS GetCapabilities operation response. 
+ *
+ * XML encoded WCS GetCapabilities operation response.
  * The Capabilities document provides clients with service metadata about a specific service instance,
- * including metadata about the coverages served. 
- *       
+ * including metadata about the coverages served.
+ *
  * WCS version 1.0.0
  * <p>Java class for WCSCapabilityType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="WCSCapabilityType">
  *   &lt;complexContent>
@@ -117,8 +117,8 @@ import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -142,15 +142,15 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
     private String updateSequence;
 
     public WCSCapabilityType() {
-        
+
     }
-    
+
     public WCSCapabilityType(final Request request, final Exception exption) {
         this.exception = exption;
         this.request = request;
     }
-    
-    public WCSCapabilityType(final Request request, final Exception exption, 
+
+    public WCSCapabilityType(final Request request, final Exception exption,
             final VendorSpecificCapabilities vCapa, final String version, final String upseq) {
         this.exception = exption;
         this.request = request;
@@ -158,7 +158,7 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
         this.version = version;
         this.updateSequence = upseq;
     }
-    
+
     /**
      * Gets the value of the request property.
      */
@@ -172,7 +172,7 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
 
     /**
      * Gets the value of the exception property.
-     * 
+     *
      */
     public WCSCapabilityType.Exception getException() {
         return exception;
@@ -180,7 +180,7 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
 
     /**
      * Gets the value of the vendorSpecificCapabilities property.
-     * 
+     *
     */
     public WCSCapabilityType.VendorSpecificCapabilities getVendorSpecificCapabilities() {
         return vendorSpecificCapabilities;
@@ -284,11 +284,11 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
 
     @Override
     public AbstractOperationsMetadata clone() {
-        Request r = null; 
+        Request r = null;
         if (this.request != null) {
             r = this.request.clone();
         }
-        Exception e = null; 
+        Exception e = null;
         if (this.exception != null) {
             e = new Exception(new ArrayList<>(this.exception.getFormat()));
         }
@@ -301,9 +301,9 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -315,8 +315,8 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -328,16 +328,16 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
         private List<String> format;
 
         public Exception() {
-            
+
         }
-        
+
         public Exception(final List<String> format) {
             this.format = format;
         }
-        
+
         /**
          * Gets the value of the format property.
-         * 
+         *
          */
         public List<String> getFormat() {
             if (format == null) {
@@ -350,9 +350,9 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -364,8 +364,8 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -377,20 +377,20 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
         private Object any;
 
         public VendorSpecificCapabilities() {
-        
+
         }
-        
+
         public VendorSpecificCapabilities(final Object any) {
             this.any = any;
         }
-        
+
         /**
          * Gets the value of the any property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Object }
-         *     
+         *
          */
         public Object getAny() {
             return any;
@@ -398,11 +398,11 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
 
         /**
          * Sets the value of the any property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Object }
-         *     
+         *
          */
         public void setAny(final Object value) {
             this.any = value;

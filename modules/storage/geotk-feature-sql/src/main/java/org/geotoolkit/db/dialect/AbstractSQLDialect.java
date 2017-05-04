@@ -52,13 +52,13 @@ public abstract class AbstractSQLDialect implements SQLDialect {
     public void encodeColumnName(StringBuilder sql, String name) {
         sql.append(getTableEscape()).append(name).append(getTableEscape());
     }
-    
+
     @Override
     public void encodeColumnAlias(StringBuilder sql, String name) {
         sql.append(" as ");
         encodeColumnName(sql, name);
     }
-    
+
     @Override
     public void encodeSchemaName(StringBuilder sql, String name) {
         sql.append(getTableEscape()).append(name).append(getTableEscape());
@@ -71,7 +71,7 @@ public abstract class AbstractSQLDialect implements SQLDialect {
         name = name.replaceAll(tableEscape,tableEscape+tableEscape);
         sql.append(tableEscape).append(name).append(tableEscape);
     }
-    
+
     @Override
     public void encodeSchemaAndTableName(StringBuilder sql, String databaseSchema, String tableName) {
         if (databaseSchema != null && !databaseSchema.isEmpty()) {
@@ -80,20 +80,20 @@ public abstract class AbstractSQLDialect implements SQLDialect {
         }
         encodeTableName(sql, tableName);
     }
-    
+
     @Override
     public void encodePostColumnCreateTable(StringBuilder sql, AttributeType att) {
     }
-    
+
     @Override
     public void postCreateTable(String schemaName, FeatureType featureType,
                                 Connection cx) throws SQLException {
     }
-    
+
     @Override
     public void encodePostCreateTable(StringBuilder sql, String tableName) {
     }
-    
+
     @Override
     public void decodeColumnType(final SingleAttributeTypeBuilder atb, final Connection cx,
             final String typeName, final int datatype, final String schemaName,
@@ -104,5 +104,5 @@ public abstract class AbstractSQLDialect implements SQLDialect {
         atb.setValueClass(binding);
     }
 
-    
+
 }

@@ -24,25 +24,25 @@ import org.opengis.filter.spatial.Equals;
  * @module
  */
 public class EqualsType extends BinarySpatialOpType implements Equals {
-    
+
     /**
      * An empty constructor used by JAXB
      */
     public EqualsType() {
-        
+
     }
-    
+
     /**
      * Build a new Equals (spatial) Type
      */
     public EqualsType(final String propertyName, final Object geometry) {
         super(propertyName, geometry);
     }
-    
+
     public EqualsType(final EqualsType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new EqualsType(this);

@@ -23,16 +23,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
+ *
  *         A "SymbolizerType" is an abstract type for encoding the graphical
  *         properties used to portray geographic information.  Concrete symbol
  *         types are derived from this base type.
- *       
- * 
+ *
+ *
  * <p>Java class for SymbolizerType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SymbolizerType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

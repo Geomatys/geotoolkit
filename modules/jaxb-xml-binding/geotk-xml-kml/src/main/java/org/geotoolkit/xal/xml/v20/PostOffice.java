@@ -37,9 +37,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -87,8 +87,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -129,25 +129,25 @@ public class PostOffice {
 
     /**
      * Gets the value of the addressLine property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the addressLine property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAddressLine().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AddressLine }
-     * 
-     * 
+     *
+     *
      */
     public List<AddressLine> getAddressLine() {
         if (addressLine == null) {
@@ -158,25 +158,25 @@ public class PostOffice {
 
     /**
      * Gets the value of the postOfficeName property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the postOfficeName property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPostOfficeName().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link PostOffice.PostOfficeName }
-     * 
-     * 
+     *
+     *
      */
     public List<PostOffice.PostOfficeName> getPostOfficeName() {
         if (postOfficeName == null) {
@@ -187,11 +187,11 @@ public class PostOffice {
 
     /**
      * Gets the value of the postOfficeNumber property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PostOffice.PostOfficeNumber }
-     *     
+     *
      */
     public PostOffice.PostOfficeNumber getPostOfficeNumber() {
         return postOfficeNumber;
@@ -199,11 +199,11 @@ public class PostOffice {
 
     /**
      * Sets the value of the postOfficeNumber property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PostOffice.PostOfficeNumber }
-     *     
+     *
      */
     public void setPostOfficeNumber(final PostOffice.PostOfficeNumber value) {
         this.postOfficeNumber = value;
@@ -211,11 +211,11 @@ public class PostOffice {
 
     /**
      * Gets the value of the postalRoute property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PostalRouteType }
-     *     
+     *
      */
     public PostalRouteType getPostalRoute() {
         return postalRoute;
@@ -223,11 +223,11 @@ public class PostOffice {
 
     /**
      * Sets the value of the postalRoute property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PostalRouteType }
-     *     
+     *
      */
     public void setPostalRoute(final PostalRouteType value) {
         this.postalRoute = value;
@@ -235,11 +235,11 @@ public class PostOffice {
 
     /**
      * Gets the value of the postBox property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PostBox }
-     *     
+     *
      */
     public PostBox getPostBox() {
         return postBox;
@@ -247,11 +247,11 @@ public class PostOffice {
 
     /**
      * Sets the value of the postBox property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PostBox }
-     *     
+     *
      */
     public void setPostBox(final PostBox value) {
         this.postBox = value;
@@ -259,11 +259,11 @@ public class PostOffice {
 
     /**
      * Gets the value of the postalCode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PostalCode }
-     *     
+     *
      */
     public PostalCode getPostalCode() {
         return postalCode;
@@ -271,11 +271,11 @@ public class PostOffice {
 
     /**
      * Sets the value of the postalCode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PostalCode }
-     *     
+     *
      */
     public void setPostalCode(final PostalCode value) {
         this.postalCode = value;
@@ -283,25 +283,25 @@ public class PostOffice {
 
     /**
      * Gets the value of the any property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the any property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAny().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getAny() {
         if (any == null) {
@@ -312,11 +312,11 @@ public class PostOffice {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -324,11 +324,11 @@ public class PostOffice {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -336,11 +336,11 @@ public class PostOffice {
 
     /**
      * Gets the value of the indicator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIndicator() {
         return indicator;
@@ -348,11 +348,11 @@ public class PostOffice {
 
     /**
      * Sets the value of the indicator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIndicator(final String value) {
         this.indicator = value;
@@ -360,15 +360,15 @@ public class PostOffice {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * <p>
-     * the map is keyed by the name of the attribute and 
+     * the map is keyed by the name of the attribute and
      * the value is the string value of the attribute.
-     * 
+     *
      * the map returned by this method is live, and you can add new attribute
      * by updating the map directly. Because of this design, there's no setter.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */
@@ -379,9 +379,9 @@ public class PostOffice {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -392,8 +392,8 @@ public class PostOffice {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -414,11 +414,11 @@ public class PostOffice {
 
         /**
          * Gets the value of the content property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getContent() {
             return content;
@@ -426,11 +426,11 @@ public class PostOffice {
 
         /**
          * Sets the value of the content property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setContent(final String value) {
             this.content = value;
@@ -438,11 +438,11 @@ public class PostOffice {
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
             return type;
@@ -450,11 +450,11 @@ public class PostOffice {
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -462,11 +462,11 @@ public class PostOffice {
 
         /**
          * Gets the value of the code property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getCode() {
             return code;
@@ -474,11 +474,11 @@ public class PostOffice {
 
         /**
          * Sets the value of the code property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setCode(final String value) {
             this.code = value;
@@ -486,15 +486,15 @@ public class PostOffice {
 
         /**
          * Gets a map that contains attributes that aren't bound to any typed property on this class.
-         * 
+         *
          * <p>
-         * the map is keyed by the name of the attribute and 
+         * the map is keyed by the name of the attribute and
          * the value is the string value of the attribute.
-         * 
+         *
          * the map returned by this method is live, and you can add new attribute
          * by updating the map directly. Because of this design, there's no setter.
-         * 
-         * 
+         *
+         *
          * @return
          *     always non-null
          */
@@ -507,9 +507,9 @@ public class PostOffice {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -528,8 +528,8 @@ public class PostOffice {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -553,11 +553,11 @@ public class PostOffice {
 
         /**
          * Gets the value of the content property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getContent() {
             return content;
@@ -565,11 +565,11 @@ public class PostOffice {
 
         /**
          * Sets the value of the content property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setContent(final String value) {
             this.content = value;
@@ -577,11 +577,11 @@ public class PostOffice {
 
         /**
          * Gets the value of the indicator property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getIndicator() {
             return indicator;
@@ -589,11 +589,11 @@ public class PostOffice {
 
         /**
          * Sets the value of the indicator property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setIndicator(final String value) {
             this.indicator = value;
@@ -601,11 +601,11 @@ public class PostOffice {
 
         /**
          * Gets the value of the indicatorOccurrence property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getIndicatorOccurrence() {
             return indicatorOccurrence;
@@ -613,11 +613,11 @@ public class PostOffice {
 
         /**
          * Sets the value of the indicatorOccurrence property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setIndicatorOccurrence(final String value) {
             this.indicatorOccurrence = value;
@@ -625,11 +625,11 @@ public class PostOffice {
 
         /**
          * Gets the value of the code property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getCode() {
             return code;
@@ -637,11 +637,11 @@ public class PostOffice {
 
         /**
          * Sets the value of the code property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setCode(final String value) {
             this.code = value;
@@ -649,15 +649,15 @@ public class PostOffice {
 
         /**
          * Gets a map that contains attributes that aren't bound to any typed property on this class.
-         * 
+         *
          * <p>
-         * the map is keyed by the name of the attribute and 
+         * the map is keyed by the name of the attribute and
          * the value is the string value of the attribute.
-         * 
+         *
          * the map returned by this method is live, and you can add new attribute
          * by updating the map directly. Because of this design, there's no setter.
-         * 
-         * 
+         *
+         *
          * @return
          *     always non-null
          */

@@ -42,8 +42,8 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  */
 @XmlType(name="CompositeSurfaceType", namespace="http://www.opengis.net/gml")
 public class JTSCompositeSurface extends AbstractJTSComposite implements CompositeSurface {//, OrientableSurface {
-    
-    
+
+
     /**
      * Returns the list of orientable surfaces in this composite.
      *
@@ -58,11 +58,11 @@ public class JTSCompositeSurface extends AbstractJTSComposite implements Composi
     public Set<OrientableSurface> getGenerators() {
         return null;
     }
-    
+
     //*************************************************************************
     //  implement the OrientableSurface
     //*************************************************************************
-    
+
     /**
      * Returns the set of circular sequences of {@linkplain OrientableCurve orientable curve} that
      * limit the extent of this {@code OrientableSurface}. These curves shall be organized
@@ -97,11 +97,11 @@ public class JTSCompositeSurface extends AbstractJTSComposite implements Composi
     public CompositeSurface getComposite() {
         return null;
     }
-    
+
     //*************************************************************************
     //  implement the OrientablePrimitive
     //*************************************************************************
-    
+
     /**
      * Determines which of the two possible orientations this object represents.
      *
@@ -130,13 +130,13 @@ public class JTSCompositeSurface extends AbstractJTSComposite implements Composi
     public Surface getPrimitive() {
         return null;
     }
-    
+
     //*************************************************************************
     //  implement the Primitive interface
     //*************************************************************************
-    
+
     /**
-     * Returns the boundary of a {@code Primitive} as a set of 
+     * Returns the boundary of a {@code Primitive} as a set of
      * {@code Primitive}s. This is a specialization of the operation at
      * {@link Geometry}, which does not restrict the class of the returned collection.
      * The organization of the boundary set of a {@code Primitive} depends on the
@@ -227,6 +227,6 @@ public class JTSCompositeSurface extends AbstractJTSComposite implements Composi
     public OrientablePrimitive[] getProxy() {
         return null;
     }
-    
-    
+
+
 }

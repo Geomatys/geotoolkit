@@ -114,12 +114,12 @@ public class WPSConvertersUtils {
      * GML VERSION.
      */
     private static final Map<String, String> GML_VERSION = new HashMap<>();
-    
+
     static {
         GML_VERSION.put("1.0.0", "3.1.1");
         GML_VERSION.put("2.0.0", "3.2.1");
     }
-    
+
     /**
      * Fix the CRS problem for a Feature or a FeatureCollection
      *
@@ -173,7 +173,7 @@ public class WPSConvertersUtils {
                 ((AttributeTypeBuilder)pt).setCRS(extractCRS);
             }
         }
-        
+
         return ftb.build();
     }
 
@@ -674,7 +674,7 @@ public class WPSConvertersUtils {
      *
      * This function will try to convert objects if their types doesn't match between feature and parameter.
      * Then fill a ParameterValueGroup which contains data of the feature in parameter.
-     * 
+     *
      * @param version WPS version
      * @param toConvert The feature to transform.
      * @param toFill The descriptor of the ParameterValueGroup which will be created.
@@ -721,12 +721,12 @@ public class WPSConvertersUtils {
 
     /**
      * Convert an URI into a wps reference.
-     * 
+     *
      * @param version WPS version
      * @param toConvert The source URI.
      * @param type The type of reference (input or output), can be null.
      * @param mimeType Mime type of the data pointed by the URI, can be null.
-     * 
+     *
      * @return A reference equivalent to the input URI.
      */
     public static Reference UriToReference(String version, URI toConvert, WPSIO.IOType type, String mimeType) {

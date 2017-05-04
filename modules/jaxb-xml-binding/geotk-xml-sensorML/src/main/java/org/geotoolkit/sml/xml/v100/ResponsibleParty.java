@@ -30,9 +30,9 @@ import org.geotoolkit.sml.xml.AbstractResponsibleParty;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.sml.xml.AbstractResponsibleParty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -97,7 +97,7 @@ public class ResponsibleParty implements AbstractResponsibleParty {
             }
         }
     }
-    
+
     /**
      * Gets the value of the individualName property.
      */
@@ -107,7 +107,7 @@ public class ResponsibleParty implements AbstractResponsibleParty {
 
     /**
      * Sets the value of the individualName property.
-     *     
+     *
      */
     public void setIndividualName(final String value) {
         this.individualName = value;

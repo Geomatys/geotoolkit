@@ -23,18 +23,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.wms package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.wms package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -75,22 +75,22 @@ public class ObjectFactory {
     private static final QName _DescribeLayer_QNAME = new QName("http://www.opengis.net/sld", "DescribeLayer");
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.wms
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link EXGeographicBoundingBox }
-     * 
+     *
      */
     public EXGeographicBoundingBox createEXGeographicBoundingBox() {
         return new EXGeographicBoundingBox();
     }
-    
+
     /**
      * Create an instance of {@link LogoURL }
-     * 
+     *
      */
     public LogoURL createLogoURL() {
         return new LogoURL();
@@ -98,7 +98,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Get }
-     * 
+     *
      */
     public Get createGet() {
         return new Get();
@@ -106,7 +106,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OperationType }
-     * 
+     *
      */
     public OperationType createOperationType() {
         return new OperationType();
@@ -114,7 +114,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LegendURL }
-     * 
+     *
      */
     public LegendURL createLegendURL() {
         return new LegendURL();
@@ -122,15 +122,15 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WMSCapabilities }
-     * 
+     *
      */
     public WMSCapabilities createWMSCapabilities() {
         return new WMSCapabilities();
     }
-    
+
     /**
      * Create an instance of {@link FeatureListURL }
-     * 
+     *
      */
     public FeatureListURL createFeatureListURL() {
         return new FeatureListURL();
@@ -138,7 +138,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OnlineResource }
-     * 
+     *
      */
     public OnlineResource createOnlineResource() {
         return new OnlineResource();
@@ -146,7 +146,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContactAddress }
-     * 
+     *
      */
     public ContactAddress createContactAddress() {
         return new ContactAddress();
@@ -154,7 +154,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link HTTP }
-     * 
+     *
      */
     public HTTP createHTTP() {
         return new HTTP();
@@ -162,7 +162,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataURL }
-     * 
+     *
      */
     public DataURL createDataURL() {
         return new DataURL();
@@ -170,7 +170,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContactInformation }
-     * 
+     *
      */
     public ContactInformation createContactInformation() {
         return new ContactInformation();
@@ -178,7 +178,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Dimension }
-     * 
+     *
      */
     public Dimension createDimension() {
         return new Dimension();
@@ -186,7 +186,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Request }
-     * 
+     *
      */
     public Request createRequest() {
         return new Request();
@@ -194,7 +194,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContactPersonPrimary }
-     * 
+     *
      */
     public ContactPersonPrimary createContactPersonPrimary() {
         return new ContactPersonPrimary();
@@ -202,7 +202,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StyleSheetURL }
-     * 
+     *
      */
     public StyleSheetURL createStyleSheetURL() {
         return new StyleSheetURL();
@@ -210,7 +210,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Layer }
-     * 
+     *
      */
     public Layer createLayer() {
         return new Layer();
@@ -218,7 +218,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link KeywordList }
-     * 
+     *
      */
     public KeywordList createKeywordList() {
         return new KeywordList();
@@ -226,7 +226,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Service }
-     * 
+     *
      */
     public Service createService() {
         return new Service();
@@ -234,7 +234,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MetadataURL }
-     * 
+     *
      */
     public MetadataURL createMetadataURL() {
         return new MetadataURL();
@@ -242,7 +242,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Post }
-     * 
+     *
      */
     public Post createPost() {
         return new Post();
@@ -250,7 +250,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BoundingBox }
-     * 
+     *
      */
     public BoundingBox createBoundingBox() {
         return new BoundingBox();
@@ -258,7 +258,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StyleURL }
-     * 
+     *
      */
     public StyleURL createStyleURL() {
         return new StyleURL();
@@ -266,7 +266,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Exception }
-     * 
+     *
      */
     public Exception createException() {
         return new Exception();
@@ -274,7 +274,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Keyword }
-     * 
+     *
      */
     public Keyword createKeyword() {
         return new Keyword();
@@ -282,7 +282,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Identifier }
-     * 
+     *
      */
     public Identifier createIdentifier() {
         return new Identifier();
@@ -290,7 +290,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Attribution }
-     * 
+     *
      */
     public Attribution createAttribution() {
         return new Attribution();
@@ -298,7 +298,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Style }
-     * 
+     *
      */
     public Style createStyle() {
         return new Style();
@@ -306,7 +306,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DCPType }
-     * 
+     *
      */
     public DCPType createDCPType() {
         return new DCPType();
@@ -314,7 +314,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AuthorityURL }
-     * 
+     *
      */
     public AuthorityURL createAuthorityURL() {
         return new AuthorityURL();
@@ -322,7 +322,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Capability }
-     * 
+     *
      */
     public Capability createCapability() {
         return new Capability();
@@ -330,7 +330,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "Name")
     public JAXBElement<String> createName(final String value) {
@@ -339,7 +339,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Double }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "MinScaleDenominator")
     public JAXBElement<Double> createMinScaleDenominator(final Double value) {
@@ -348,7 +348,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "PostCode")
     public JAXBElement<String> createPostCode(final String value) {
@@ -357,7 +357,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "MaxHeight")
     public JAXBElement<Integer> createMaxHeight(final Integer value) {
@@ -366,7 +366,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "Address")
     public JAXBElement<String> createAddress(final String value) {
@@ -375,7 +375,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "ContactFacsimileTelephone")
     public JAXBElement<String> createContactFacsimileTelephone(final String value) {
@@ -384,7 +384,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "AddressType")
     public JAXBElement<String> createAddressType(final String value) {
@@ -393,7 +393,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "ContactVoiceTelephone")
     public JAXBElement<String> createContactVoiceTelephone(final String value) {
@@ -402,7 +402,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "Abstract")
     public JAXBElement<String> createAbstract(final String value) {
@@ -411,7 +411,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "MaxWidth")
     public JAXBElement<Integer> createMaxWidth(final Integer value) {
@@ -420,7 +420,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "AccessConstraints")
     public JAXBElement<String> createAccessConstraints(final String value) {
@@ -429,7 +429,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "_ExtendedCapabilities")
     public JAXBElement<Object> createExtendedCapabilities(final Object value) {
@@ -438,7 +438,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "ContactPerson")
     public JAXBElement<String> createContactPerson(final String value) {
@@ -447,7 +447,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OperationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "GetCapabilities")
     public JAXBElement<OperationType> createGetCapabilities(final OperationType value) {
@@ -456,7 +456,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "LayerLimit")
     public JAXBElement<Integer> createLayerLimit(final Integer value) {
@@ -465,7 +465,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "ContactOrganization")
     public JAXBElement<String> createContactOrganization(final String value) {
@@ -474,7 +474,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OperationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "_ExtendedOperation")
     public JAXBElement<OperationType> createExtendedOperation(final OperationType value) {
@@ -483,7 +483,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "Country")
     public JAXBElement<String> createCountry(final String value) {
@@ -492,7 +492,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "City")
     public JAXBElement<String> createCity(final String value) {
@@ -501,7 +501,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "Title")
     public JAXBElement<String> createTitle(final String value) {
@@ -510,7 +510,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "Fees")
     public JAXBElement<String> createFees(final String value) {
@@ -519,7 +519,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OperationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "GetMap")
     public JAXBElement<OperationType> createGetMap(final OperationType value) {
@@ -528,7 +528,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OperationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "GetFeatureInfo")
     public JAXBElement<OperationType> createGetFeatureInfo(final OperationType value) {
@@ -537,7 +537,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "StateOrProvince")
     public JAXBElement<String> createStateOrProvince(final String value) {
@@ -546,7 +546,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "Format")
     public JAXBElement<String> createFormat(final String value) {
@@ -555,7 +555,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "CRS")
     public JAXBElement<String> createCRS(final String value) {
@@ -564,7 +564,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Double }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "MaxScaleDenominator")
     public JAXBElement<Double> createMaxScaleDenominator(final Double value) {
@@ -573,7 +573,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "ContactElectronicMailAddress")
     public JAXBElement<String> createContactElectronicMailAddress(final String value) {
@@ -582,7 +582,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "ContactPosition")
     public JAXBElement<String> createContactPosition(final String value) {

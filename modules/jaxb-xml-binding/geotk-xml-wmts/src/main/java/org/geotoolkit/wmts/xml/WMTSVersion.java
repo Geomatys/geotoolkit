@@ -47,11 +47,11 @@ public enum WMTSVersion {
                 return vers;
             }
         }
-        
+
         try{
             return WMTSVersion.valueOf(version);
         }catch(IllegalArgumentException ex){}
-        
+
         throw new IllegalArgumentException("The given string \""+ version +"\" is not " +
                 "a known version.");
     }

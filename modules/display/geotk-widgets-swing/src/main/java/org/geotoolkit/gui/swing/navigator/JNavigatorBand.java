@@ -49,5 +49,5 @@ public abstract class JNavigatorBand extends JComponent {
     public void setNavigator(JNavigator navigator) {
         this.navigator = navigator;
     }
-    
+
 }

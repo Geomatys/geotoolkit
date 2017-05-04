@@ -28,17 +28,17 @@ import javax.xml.bind.annotation.XmlType;
  *    NOTE! A 5-point ellipse with all defining positions identical
  *    is a point. Thus, a truncated elliptical cone can be given as a
  *    2x5 set of control points
- *    ((P1, P1, P1, P1, P1), (P2, P3, P4, P5, P6)). P1 is the apex 
+ *    ((P1, P1, P1, P1, P1), (P2, P3, P4, P5, P6)). P1 is the apex
  *    of the cone. P2, P3,P4, P5 and P6 are any five distinct points
  *    around the base ellipse of the cone. If the horizontal curves
  *    are circles as opposed to ellipses, the a circular cone can
- *    be constructed using ((P1, P1, P1),(P2, P3, P4)). The apex most     
+ *    be constructed using ((P1, P1, P1),(P2, P3, P4)). The apex most
  *    not coinside with the other plane.
- * 
+ *
  * <p>Java class for ConeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ConeType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -66,11 +66,11 @@ public class ConeType
 
     /**
      * Gets the value of the horizontalCurveType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public CurveInterpolationType getHorizontalCurveType() {
         if (horizontalCurveType == null) {
@@ -82,11 +82,11 @@ public class ConeType
 
     /**
      * Sets the value of the horizontalCurveType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public void setHorizontalCurveType(final CurveInterpolationType value) {
         this.horizontalCurveType = value;
@@ -94,11 +94,11 @@ public class ConeType
 
     /**
      * Gets the value of the verticalCurveType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public CurveInterpolationType getVerticalCurveType() {
         if (verticalCurveType == null) {
@@ -110,11 +110,11 @@ public class ConeType
 
     /**
      * Sets the value of the verticalCurveType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public void setVerticalCurveType(final CurveInterpolationType value) {
         this.verticalCurveType = value;

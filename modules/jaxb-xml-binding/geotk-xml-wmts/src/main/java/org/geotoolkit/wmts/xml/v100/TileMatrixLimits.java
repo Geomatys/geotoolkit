@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -77,11 +77,11 @@ public class TileMatrixLimits {
 
     /**
      * Gets the value of the tileMatrix property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTileMatrix() {
         return tileMatrix;
@@ -89,11 +89,11 @@ public class TileMatrixLimits {
 
     /**
      * Sets the value of the tileMatrix property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTileMatrix(final String value) {
         this.tileMatrix = value;
@@ -101,11 +101,11 @@ public class TileMatrixLimits {
 
     /**
      * Gets the value of the minTileRow property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMinTileRow() {
         return minTileRow;
@@ -113,11 +113,11 @@ public class TileMatrixLimits {
 
     /**
      * Sets the value of the minTileRow property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMinTileRow(final Integer value) {
         this.minTileRow = value;
@@ -125,11 +125,11 @@ public class TileMatrixLimits {
 
     /**
      * Gets the value of the maxTileRow property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMaxTileRow() {
         return maxTileRow;
@@ -137,11 +137,11 @@ public class TileMatrixLimits {
 
     /**
      * Sets the value of the maxTileRow property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMaxTileRow(final Integer value) {
         this.maxTileRow = value;
@@ -149,11 +149,11 @@ public class TileMatrixLimits {
 
     /**
      * Gets the value of the minTileCol property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMinTileCol() {
         return minTileCol;
@@ -161,11 +161,11 @@ public class TileMatrixLimits {
 
     /**
      * Sets the value of the minTileCol property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMinTileCol(final Integer value) {
         this.minTileCol = value;
@@ -173,11 +173,11 @@ public class TileMatrixLimits {
 
     /**
      * Gets the value of the maxTileCol property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMaxTileCol() {
         return maxTileCol;
@@ -185,11 +185,11 @@ public class TileMatrixLimits {
 
     /**
      * Sets the value of the maxTileCol property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMaxTileCol(final Integer value) {
         this.maxTileCol = value;

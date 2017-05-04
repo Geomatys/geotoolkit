@@ -26,7 +26,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
- * 
+ *
  * @author Quentin Boileau (Geomatys).
  */
 public class JParameterDescriptorsEditor extends javax.swing.JPanel implements PropertyChangeListener {
@@ -38,64 +38,64 @@ public class JParameterDescriptorsEditor extends javax.swing.JPanel implements P
     public static final String PARAMETER_REMOVED_EVENT = "parameterRemoved";
     public static final String PARAMETER_CHANGE_EVENT = "parameterChange";
     public static final String DESCIPTOR_CHANGE_EVENT = "descriptorChange";
-    
+
     private EditableParameterFilter filter;
     private JParameterDescriptorGroupPanel groupPanel;
     private JParameterDescriptorEditorPanel creatorPanel = null;
-    
+
     /*
      * Current selected parameter.
      */
     private GeneralParameterDescriptorPanel selected = null;
-    
+
     /**
      * Create new JParameterEditor.
-     * 
+     *
      * @param descGroup ParameterDescriptorGroup to edit.
      * @param availableEditors list of {@link PropertyValueEditor} used for default value editing in creation panel.
      * Can be null. In this case, default editors will be used.
      */
-    public JParameterDescriptorsEditor(final ParameterDescriptorGroup descGroup, 
+    public JParameterDescriptorsEditor(final ParameterDescriptorGroup descGroup,
             final EditableParameterFilter filter, final List<PropertyValueEditor> availableEditors) {
         this.filter = filter;
-        
+
         initComponents();
-        
+
         groupPanel = new JParameterDescriptorGroupPanel(descGroup, filter, null, this);
         groupPanel.addPropertyChangeListener((PropertyChangeListener)this);
         leftPanel.add(groupPanel, BorderLayout.CENTER);
-        
+
         creatorPanel = new JParameterDescriptorEditorPanel(availableEditors);
         creatorPanel.setVisible(true);
         creatorPanel.addPropertyChangeListener(this); //check for parameter changes
         rightPanel.add(creatorPanel, BorderLayout.CENTER);
-        
+
         groupPanel.setSelected(true);
         updateDividerPosition();
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        
-        //Event launched by parameters panel click event 
+
+        //Event launched by parameters panel click event
         if (PARAMETER_SELECTED_EVENT.equals(evt.getPropertyName())) {
             updateRightPanel((GeneralParameterDescriptorPanel) evt.getNewValue());
         }
-        
-        //Event launched when a parameter is removed 
+
+        //Event launched when a parameter is removed
         if (PARAMETER_REMOVED_EVENT.equals(evt.getPropertyName())) {
             if (selected != null && selected.equals(evt.getOldValue()) && ((Boolean)evt.getNewValue()) ) {
                 selected.setSelected(false);
                 selected = null;
             }
         }
-        
+
         //forward event
         if (DESCIPTOR_CHANGE_EVENT.equals(evt.getPropertyName())) {
             firePropertyChange(DESCIPTOR_CHANGE_EVENT, null, this);
         }
     }
-    
+
     /**
      * Build current <code>GeneralParameterDescriptor</code>.
      * @return GeneralParameterDescriptor
@@ -103,20 +103,20 @@ public class JParameterDescriptorsEditor extends javax.swing.JPanel implements P
     public GeneralParameterDescriptor getDescriptor() {
         return groupPanel.getDescriptor();
     }
-    
+
     public void setDescriptor(ParameterDescriptorGroup descGroup) {
         //clean
         SwingUtilities.removeAllPropertyChangeListeners(groupPanel);
         SwingUtilities.removeAllPropertyChangeListeners(creatorPanel);
         leftPanel.removeAll();
-        
+
         //new
         groupPanel = new JParameterDescriptorGroupPanel(descGroup, filter, null, this);
         groupPanel.addPropertyChangeListener((PropertyChangeListener)this);
         creatorPanel.addPropertyChangeListener(this);
         leftPanel.add(groupPanel, BorderLayout.CENTER);
     }
-    
+
     /**
      * Update creatorPanel on the right side of splitpane.
      * @param panel parameterPanel
@@ -125,7 +125,7 @@ public class JParameterDescriptorsEditor extends javax.swing.JPanel implements P
         if (panel != null) {
             if (selected != null && !selected.equals(panel)) {
                 selected.setSelected(false);
-                
+
             }
             selected = (GeneralParameterDescriptorPanel) panel;
             creatorPanel.setVisible(true);
@@ -138,7 +138,7 @@ public class JParameterDescriptorsEditor extends javax.swing.JPanel implements P
             SwingUtilities.setDividerLocation(jSplitPane2, 1.0d);
         }
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -180,12 +180,12 @@ public class JParameterDescriptorsEditor extends javax.swing.JPanel implements P
      * Set dividier position depending on the size of creator panel.
      */
     private void updateDividerPosition() {
-        
+
         int total = jSplitPane2.getSize().width;
         int paddingRight = jSplitPane2.getInsets().right;
         int divider = jSplitPane2.getDividerSize();
         //int rightCompSize = creatorPanel.getPreferredSize().width;
-        
+
         jSplitPane2.setDividerLocation(total - paddingRight - divider - 370);
     }
 

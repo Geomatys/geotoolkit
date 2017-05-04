@@ -29,36 +29,36 @@ import java.util.logging.Level;
  * @author Guilhem Legal (Geomatys)
  */
 public interface MetadataReader {
-    
+
     /**
      * Return a metadata object from the specified identifier.
-     * 
+     *
      * @param identifier The metadata identifier.
      * @param mode An output schema mode: EBRIM, ISO_19115, DUBLINCORE and SENSORML supported.
-     * 
+     *
      * @return A marshallable metadata object.
      * @throws MetadataIoException
      */
     Node getMetadata(final String identifier, final MetadataType mode) throws MetadataIoException;
-    
+
     /**
      * Return true if the metadata exist.
-     * 
+     *
      * @param identifier The metadata identifier.
-     * 
+     *
      * @return true if the metadata exist
-     * @throws MetadataIoException 
+     * @throws MetadataIoException
      */
     boolean existMetadata(final String identifier) throws MetadataIoException;
-    
+
     /**
      * Return the number of metadata in the datasource.
-     * 
+     *
      * @return the number of metadata in the datasource.
-     * @throws MetadataIoException 
+     * @throws MetadataIoException
      */
     int getEntryCount() throws MetadataIoException;
-    
+
     /**
      * @return all the entries from the database
      * @throws MetadataIoException
@@ -67,7 +67,7 @@ public interface MetadataReader {
 
      /**
      * @return all the entries identifiers from the database
-     * 
+     *
      * @throws org.geotoolkit.metadata.MetadataIoException
      */
     List<String> getAllIdentifiers() throws MetadataIoException;
@@ -77,7 +77,7 @@ public interface MetadataReader {
     Iterator<? extends Object> getEntryIterator() throws MetadataIoException;
 
     boolean useEntryIterator();
-    
+
     /**
      * Destroy all the resource used by this reader.
      */
@@ -85,17 +85,17 @@ public interface MetadataReader {
 
     /**
      * Remove a metadata from the cache.
-     * 
+     *
      * @param identifier The metadata identifier.
      */
     void removeFromCache(final String identifier);
-    
+
     /**
      * Remove all metadata from the cache.
      */
     void clearCache();
-    
-    
+
+
     /**
      * @return true is the cache mecanism is enabled.
      */

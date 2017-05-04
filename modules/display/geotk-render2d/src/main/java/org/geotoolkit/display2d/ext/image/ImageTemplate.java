@@ -36,5 +36,5 @@ public interface ImageTemplate {
      * Image
      */
     BufferedImage getImage();
-    
+
 }

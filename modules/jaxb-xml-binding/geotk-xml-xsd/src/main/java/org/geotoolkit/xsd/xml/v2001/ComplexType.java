@@ -75,7 +75,7 @@ public abstract class ComplexType extends Annotated {
 
     private static final QName FEATURE = new QName("http://www.opengis.net/gml", "_Feature");
     private static final QName FEATURE_TYPE = new QName("http://www.opengis.net/gml", "AbstractFeatureType");
-    
+
     private SimpleContent simpleContent;
     private ComplexContent complexContent;
     private GroupRef group;
