@@ -435,4 +435,3 @@ nextPixel:          do {
         return (gsD.isEmpty()) ? null : gsD;
     }
 }
- 
