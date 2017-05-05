@@ -24,14 +24,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * This type encapsulates various dynamic properties of moving objects        
- *              (points, lines, regions). It is useful for dealing with features whose        
+ * This type encapsulates various dynamic properties of moving objects
+ *              (points, lines, regions). It is useful for dealing with features whose
  *              geometry or topology changes over time.
- * 
+ *
  * <p>Java class for MovingObjectStatusType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MovingObjectStatusType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,12 +73,12 @@ public class MovingObjectStatusType extends AbstractTimeSliceType {
 
     /**
      * Gets the value of the location property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link PriorityLocationPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link LocationPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends LocationPropertyType> getLocation() {
         return location;
@@ -86,12 +86,12 @@ public class MovingObjectStatusType extends AbstractTimeSliceType {
 
     /**
      * Sets the value of the location property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link PriorityLocationPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link LocationPropertyType }{@code >}
-     *     
+     *
      */
     public void setLocation(final JAXBElement<? extends LocationPropertyType> value) {
         this.location = ((JAXBElement<? extends LocationPropertyType> ) value);
@@ -99,11 +99,11 @@ public class MovingObjectStatusType extends AbstractTimeSliceType {
 
     /**
      * Gets the value of the speed property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public MeasureType getSpeed() {
         return speed;
@@ -111,11 +111,11 @@ public class MovingObjectStatusType extends AbstractTimeSliceType {
 
     /**
      * Sets the value of the speed property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public void setSpeed(final MeasureType value) {
         this.speed = value;
@@ -123,11 +123,11 @@ public class MovingObjectStatusType extends AbstractTimeSliceType {
 
     /**
      * Gets the value of the bearing property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectionPropertyType }
-     *     
+     *
      */
     public DirectionPropertyType getBearing() {
         return bearing;
@@ -135,11 +135,11 @@ public class MovingObjectStatusType extends AbstractTimeSliceType {
 
     /**
      * Sets the value of the bearing property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectionPropertyType }
-     *     
+     *
      */
     public void setBearing(final DirectionPropertyType value) {
         this.bearing = value;
@@ -147,11 +147,11 @@ public class MovingObjectStatusType extends AbstractTimeSliceType {
 
     /**
      * Gets the value of the acceleration property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public MeasureType getAcceleration() {
         return acceleration;
@@ -159,11 +159,11 @@ public class MovingObjectStatusType extends AbstractTimeSliceType {
 
     /**
      * Sets the value of the acceleration property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public void setAcceleration(final MeasureType value) {
         this.acceleration = value;
@@ -171,11 +171,11 @@ public class MovingObjectStatusType extends AbstractTimeSliceType {
 
     /**
      * Gets the value of the elevation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public MeasureType getElevation() {
         return elevation;
@@ -183,11 +183,11 @@ public class MovingObjectStatusType extends AbstractTimeSliceType {
 
     /**
      * Sets the value of the elevation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public void setElevation(final MeasureType value) {
         this.elevation = value;
@@ -195,11 +195,11 @@ public class MovingObjectStatusType extends AbstractTimeSliceType {
 
     /**
      * Gets the value of the status property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public StringOrRefType getStatus() {
         return status;
@@ -207,11 +207,11 @@ public class MovingObjectStatusType extends AbstractTimeSliceType {
 
     /**
      * Sets the value of the status property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public void setStatus(final StringOrRefType value) {
         this.status = value;

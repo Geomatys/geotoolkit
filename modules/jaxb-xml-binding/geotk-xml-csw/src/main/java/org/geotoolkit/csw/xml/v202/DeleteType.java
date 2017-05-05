@@ -31,12 +31,12 @@ import org.geotoolkit.csw.xml.Delete;
 
 /**
  *  Deletes one or more catalogue items that satisfy some set of conditions.
- *          
- * 
+ *
+ *
  * <p>Java class for DeleteType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DeleteType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.csw.xml.Delete;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

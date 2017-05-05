@@ -93,7 +93,7 @@ public class AtomReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      */

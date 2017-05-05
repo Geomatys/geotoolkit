@@ -21,7 +21,7 @@ package org.geotoolkit.xal.model;
  * @author Samuel Andrés
  * @module
  */
-public class DefaultSubPremiseNumber 
+public class DefaultSubPremiseNumber
         extends DefaultGenericTypedGrPostal
         implements SubPremiseNumber {
 
@@ -54,7 +54,7 @@ public class DefaultSubPremiseNumber
     }
 
     /**
-     * 
+     *
      * @{@inheritDoc }
      */
     @Override

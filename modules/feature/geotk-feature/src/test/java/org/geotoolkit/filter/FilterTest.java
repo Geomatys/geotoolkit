@@ -87,7 +87,7 @@ public class FilterTest extends org.geotoolkit.test.TestBase {
         final Feature feat1 = ftb.build().newInstance();
         feat1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "13");
         assertTrue(id.evaluate(feat1));
-        
+
         //test against long identifier
         ftb = new FeatureTypeBuilder();
         ftb.setName("LongFT");
@@ -96,7 +96,7 @@ public class FilterTest extends org.geotoolkit.test.TestBase {
         feat2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), 42l);
         assertTrue(id.evaluate(feat2));
     }
-    
+
     @Test
     public void testLiteral(){
         Literal literal;

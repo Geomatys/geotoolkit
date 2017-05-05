@@ -109,7 +109,7 @@ public class OSMMemoryFeatureStoreFactory extends AbstractFileFeatureStoreFactor
     public String[] getFileExtensions() {
         return new String[] {".osm"};
     }
-    
+
     @Override
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, false, true, false, GEOMS_ALL);

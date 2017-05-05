@@ -28,9 +28,9 @@ import org.opengis.filter.FilterVisitor;
 
 /**
  * <p>Java class for UnaryLogicOpType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UnaryLogicOpType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.opengis.filter.FilterVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,27 +69,27 @@ public class UnaryLogicOpType extends LogicOpsType {
      * An empty constructor used by JAXB
      */
      public UnaryLogicOpType() {
-         
+
      }
-     
+
      /**
-      * Build a new Binary logic operator 
+      * Build a new Binary logic operator
       */
      public UnaryLogicOpType(final Object obj) {
-         
+
          // comparison operator
          if (obj instanceof ComparisonOpsType) {
              this.comparisonOps = FilterType.createComparisonOps((ComparisonOpsType) obj);
 
-         // logical operator    
+         // logical operator
          } else if (obj instanceof LogicOpsType) {
              this.logicOps = FilterType.createLogicOps((LogicOpsType) obj);
 
-         // spatial operator    
+         // spatial operator
          } else if (obj instanceof SpatialOpsType) {
              this.spatialOps = FilterType.createSpatialOps((SpatialOpsType) obj);
 
-         // clone    
+         // clone
          } else if (obj instanceof UnaryLogicOpType) {
              final UnaryLogicOpType that = (UnaryLogicOpType) obj;
              if (that.comparisonOps != null) {
@@ -108,9 +108,9 @@ public class UnaryLogicOpType extends LogicOpsType {
          } else {
              throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
          }
-         
+
      }
-     
+
     /**
      * Gets the value of the comparisonOps property.
      */
@@ -124,28 +124,28 @@ public class UnaryLogicOpType extends LogicOpsType {
     public void setComparisonOps(final JAXBElement<? extends ComparisonOpsType> comparisonOps) {
         this.comparisonOps = comparisonOps;
     }
-    
+
     /**
      * Sets the value of the comparisonOps property.
      */
     public void setComparisonOps(final ComparisonOpsType comparisonOps) {
         this.comparisonOps = FilterType.createComparisonOps(comparisonOps);
     }
-    
+
     /**
      * Gets the value of the spatialOps property.
      */
     public JAXBElement<? extends SpatialOpsType> getSpatialOps() {
         return spatialOps;
     }
-    
+
     /**
      * Sets the value of the spatialOps property.
      */
     public void setSpatialOps(final JAXBElement<? extends SpatialOpsType> spatialOps) {
         this.spatialOps = spatialOps;
     }
-    
+
     /**
      * Sets the value of the spatialOps property.
      */
@@ -153,32 +153,32 @@ public class UnaryLogicOpType extends LogicOpsType {
         this.spatialOps = FilterType.createSpatialOps(spatialOps);
     }
 
-    
+
     /**
      * Gets the value of the logicOps property.
      */
     public JAXBElement<? extends LogicOpsType> getLogicOps() {
         return logicOps;
     }
-    
+
         /**
      * Sets the value of the logicOps property.
      */
     public void setLogicOps(final JAXBElement<? extends LogicOpsType> logicOps) {
         this.logicOps = logicOps;
     }
-    
+
     /**
      * Sets the value of the logicOps property.
      */
     public void setLogicOps(final LogicOpsType logicOps) {
         this.logicOps = FilterType.createLogicOps(logicOps);
     }
-    
+
     /**
      * implements geoAPI interface
-     * 
-     * @return 
+     *
+     * @return
      */
     public Filter getFilter() {
         if (comparisonOps != null) {
@@ -239,7 +239,7 @@ public class UnaryLogicOpType extends LogicOpsType {
         hash = 97 * hash + (this.logicOps != null ? this.logicOps.hashCode() : 0);
         return hash;
     }
-    
+
      @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString()).append('\n');

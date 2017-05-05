@@ -49,55 +49,55 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
 
     private static final ImageIcon ACTIVATE_ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_UNLOCK, 18, Color.BLACK);
     private static final ImageIcon UNACTIVATE_ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_LOCK, 18, Color.BLACK);
-    
+
     /*
      * Simple parameter properties. (mandatory, type and defaultValue)
      */
     private final boolean mandatory;
     private final Class type;
     private final Object defaultValue;
-    
+
     /*
      * Enable state of the parameter editor.
      */
     private boolean activated;
-    
+
     /*
      * Label with the parameter name.
      */
     private JLabel guiParameterNameLbl;
-    
+
     /*
      * Button to toggle activate/unactivate state of the editor.
      */
     private JButton guitoggleParamBtn;
-    
+
     /*
      * Parameter editor.
      */
     private JAttributeEditor guiEditor;
-    
+
     /**
-     * Keep default label color in order to restore if a 
+     * Keep default label color in order to restore if a
      * validation error occurs and turn it in red.
      */
     private Color defaultLabelColor;
-    
+
     /**
      * Create new JParameterValuePanel
      * @param paramValue ParameterDescritor to edit.
      * @param parent parent JParameterValueGroupPanel.
      */
-    public JParameterValuePanel(final ParameterValue paramValue, final JParameterValueGroupPanel parent, 
+    public JParameterValuePanel(final ParameterValue paramValue, final JParameterValueGroupPanel parent,
             final List<PropertyValueEditor> availableEditors, final CustomParameterEditor customEditor) {
         super(paramValue.getDescriptor(), parent);
-        
+
         this.mandatory      = paramDesc.getMinimumOccurs() > 0;
         this.type           = ((ParameterDescriptor)paramDesc).getValueClass();
         this.defaultValue   = ((ParameterDescriptor)paramDesc).getDefaultValue();
-        
+
         initComponents();
-        
+
         //Parameter label
         guiParameterNameLbl = new JLabel(code);
         guiParameterNameLbl.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -108,8 +108,8 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
         }
         SwingUtilities.bold(guiParameterNameLbl);
         defaultLabelColor = guiParameterNameLbl.getForeground();
-        
-        //Parameter editor. use custom editor if not null. Otherwise, use all 
+
+        //Parameter editor. use custom editor if not null. Otherwise, use all
         //found editors
         if (customEditor != null && customEditor.getCustomEditor(paramValue) != null) {
             guiEditor = new JAttributeEditor(customEditor.getCustomEditor(paramValue));
@@ -125,12 +125,12 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
         guiEditor.addPropertyChangeListener(this);
         guiEditor.addFocusListener(this);
         guiEditor.setOpaque(false);
-        
+
         //Parameter toggle button
         guitoggleParamBtn = new FontIconJButton(FontAwesomeIcons.ICON_CIRCLE, 18, Color.BLACK);
         guitoggleParamBtn.setOpaque(false);
         //enable only if an editor is found and is not mandatory parameter
-        guitoggleParamBtn.setEnabled(guiEditor.isEditorFound() && !mandatory); 
+        guitoggleParamBtn.setEnabled(guiEditor.isEditorFound() && !mandatory);
         guitoggleParamBtn.addActionListener(new ActionListener() {
 
             @Override
@@ -138,8 +138,8 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
                 setActivated(!activated);
             }
         });
-        
-        
+
+
         //parameter is activated if he is mandatory or if parameter default value or parameter value is not null.
         boolean active = mandatory;
         if (!mandatory) {
@@ -149,7 +149,7 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
                 active = false;
             }
         }
-        
+
         setActivated(active);
         addToContainer(this, 0); // default use with current panel
     }
@@ -159,37 +159,37 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
         guiParameterNameLbl.setText(code);
         this.revalidate();
     }
-    
+
     @Override
     public void setBackgroundColor(final Color color) {
         guiParameterNameLbl.setOpaque(true);
         guiEditor.setOpaque(true);
-        
+
         guiParameterNameLbl.setBackground(color);
         guiEditor.setBackground(color);
         guitoggleParamBtn.setBackground(color);
     }
-    
+
     public ParameterValue getParameterValue() {
-        
+
         if (mandatory) {
             final ParameterValue paramValue = ((ParameterDescriptor)paramDesc).createValue();
             paramValue.setValue(getValue());
             return paramValue;
-            
+
         } else {
             //optional parameter
             if (activated) {
                 final ParameterValue paramValue = ((ParameterDescriptor)paramDesc).createValue();
                 paramValue.setValue(getValue());
                 return paramValue;
-                
+
             } else {
                 return null;
             }
         }
     }
-    
+
     /**
      * Check if Parameter value is valid (not null or empty if mandatory)
      * @return true if value is valid, false otherwise.
@@ -197,7 +197,7 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
     public boolean validateValue() {
         final ParameterDescriptor desc = (ParameterDescriptor) paramDesc;
         final ParameterValue paramValue = getParameterValue();
-        
+
         if (mandatory) {
             if (paramValue.getValue() == null) {
                 validationError = MessageBundle.format("parameters_errorNullEmptyParameterValue"+ paramDesc.getName().getCode());
@@ -222,12 +222,12 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
 //                }
             }
         }
-        
+
         validationError = null;
         guiParameterNameLbl.setForeground(defaultLabelColor);
         return true;
     }
-    
+
     /**
      * Add components to a container. The container MUST use a GridBagLayout.
      * @param container GridBag container
@@ -236,7 +236,7 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
     public void addToContainer(JPanel container, int gridY) {
         //first remove component from current panel
         this.removeAll();
-        
+
         GridBagConstraints constraint;
 
         //label
@@ -248,7 +248,7 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
         constraint.fill = GridBagConstraints.BOTH;
         guiParameterNameLbl.setBorder(new EmptyBorder(0, 10, 0, 10));
         container.add(guiParameterNameLbl, constraint);
-        
+
         //editor
         constraint = new GridBagConstraints();
         constraint.gridx = 1;
@@ -257,7 +257,7 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
         constraint.weighty = 0.0;
         constraint.fill = GridBagConstraints.HORIZONTAL;
         container.add(guiEditor, constraint);
-        
+
         //toggle
         constraint = new GridBagConstraints();
         constraint.gridx = 2;
@@ -267,14 +267,14 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
         constraint.fill = GridBagConstraints.HORIZONTAL;
         guitoggleParamBtn.setBorder(new EmptyBorder(0, 5, 0, 5));
         container.add(guitoggleParamBtn, constraint);
-        
+
         container.revalidate();
     }
-    
+
     public Object getValue() {
         return guiEditor.getProperty().getValue();
     }
-    
+
     public boolean isMandatory() {
         return mandatory;
     }
@@ -286,7 +286,7 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
     public Object getDefaultValue() {
         return defaultValue;
     }
-    
+
     private void setActivated(boolean activated) {
         this.activated = activated;
         if (activated) {
@@ -299,7 +299,7 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
             guiEditor.setEnabled(false);
         }
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -311,7 +311,7 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
 
         setLayout(new java.awt.GridBagLayout());
     }// </editor-fold>//GEN-END:initComponents
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 
@@ -323,7 +323,7 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
             validateValue();
         }
     }
-    
+
     @Override
     public void focusGained(FocusEvent e) {
         setSelected(true);

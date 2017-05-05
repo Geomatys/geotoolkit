@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ModelType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ModelType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -87,12 +87,12 @@ public class ModelType extends AbstractGeometryType {
 
     /**
      * Gets the value of the altitudeModeGroup property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link AltitudeModeEnumType }{@code >}
-     *     
+     *
      */
     public JAXBElement<?> getAltitudeModeGroup() {
         return altitudeModeGroup;
@@ -100,12 +100,12 @@ public class ModelType extends AbstractGeometryType {
 
     /**
      * Sets the value of the altitudeModeGroup property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link AltitudeModeEnumType }{@code >}
-     *     
+     *
      */
     public void setAltitudeModeGroup(final JAXBElement<?> value) {
         this.altitudeModeGroup = ((JAXBElement<?> ) value);
@@ -113,11 +113,11 @@ public class ModelType extends AbstractGeometryType {
 
     /**
      * Gets the value of the location property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LocationType }
-     *     
+     *
      */
     public LocationType getLocation() {
         return location;
@@ -125,11 +125,11 @@ public class ModelType extends AbstractGeometryType {
 
     /**
      * Sets the value of the location property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LocationType }
-     *     
+     *
      */
     public void setLocation(final LocationType value) {
         this.location = value;
@@ -137,11 +137,11 @@ public class ModelType extends AbstractGeometryType {
 
     /**
      * Gets the value of the orientation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OrientationType }
-     *     
+     *
      */
     public OrientationType getOrientation() {
         return orientation;
@@ -149,11 +149,11 @@ public class ModelType extends AbstractGeometryType {
 
     /**
      * Sets the value of the orientation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OrientationType }
-     *     
+     *
      */
     public void setOrientation(final OrientationType value) {
         this.orientation = value;
@@ -161,11 +161,11 @@ public class ModelType extends AbstractGeometryType {
 
     /**
      * Gets the value of the scale property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ScaleType }
-     *     
+     *
      */
     public ScaleType getScale() {
         return scale;
@@ -173,11 +173,11 @@ public class ModelType extends AbstractGeometryType {
 
     /**
      * Sets the value of the scale property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ScaleType }
-     *     
+     *
      */
     public void setScale(final ScaleType value) {
         this.scale = value;
@@ -185,11 +185,11 @@ public class ModelType extends AbstractGeometryType {
 
     /**
      * Gets the value of the link property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LinkType }
-     *     
+     *
      */
     public LinkType getLink() {
         return link;
@@ -197,11 +197,11 @@ public class ModelType extends AbstractGeometryType {
 
     /**
      * Sets the value of the link property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LinkType }
-     *     
+     *
      */
     public void setLink(final LinkType value) {
         this.link = value;
@@ -209,11 +209,11 @@ public class ModelType extends AbstractGeometryType {
 
     /**
      * Gets the value of the resourceMap property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ResourceMapType }
-     *     
+     *
      */
     public ResourceMapType getResourceMap() {
         return resourceMap;
@@ -221,11 +221,11 @@ public class ModelType extends AbstractGeometryType {
 
     /**
      * Sets the value of the resourceMap property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ResourceMapType }
-     *     
+     *
      */
     public void setResourceMap(final ResourceMapType value) {
         this.resourceMap = value;
@@ -233,25 +233,25 @@ public class ModelType extends AbstractGeometryType {
 
     /**
      * Gets the value of the modelSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the modelSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getModelSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getModelSimpleExtensionGroup() {
         if (modelSimpleExtensionGroup == null) {
@@ -262,25 +262,25 @@ public class ModelType extends AbstractGeometryType {
 
     /**
      * Gets the value of the modelObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the modelObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getModelObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getModelObjectExtensionGroup() {
         if (modelObjectExtensionGroup == null) {

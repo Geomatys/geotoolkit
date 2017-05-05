@@ -21,12 +21,12 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 /**
  * Interface with one method used by ParameterDescriptor creator panels to know
  * if a parameter is editable or not.
- * 
+ *
  * @author Quentin Boileau (Geomatys)
  */
 public interface EditableParameterFilter {
-    
+
     public boolean isEditable(GeneralParameterDescriptor descriptor);
-    
+
     public boolean isRemovable(GeneralParameterDescriptor descriptor);
 }

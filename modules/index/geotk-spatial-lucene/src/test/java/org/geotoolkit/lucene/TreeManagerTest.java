@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
 public class TreeManagerTest extends org.geotoolkit.test.TestBase {
 
     public static Path directory = Paths.get("TreeManagerTest");
-    
+
     @BeforeClass
     public static void setUpMethod() throws Exception {
         if (Files.isDirectory(directory)) {

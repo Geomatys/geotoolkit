@@ -28,12 +28,12 @@ import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
 
 /**
  *  Named container for all surface data (texture/material). All appearances of the same name ("theme")
- *                 within a CityGML file are considered a group. 
- * 
+ *                 within a CityGML file are considered a group.
+ *
  * <p>Java class for AppearanceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AppearanceType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AppearanceType", propOrder = {
@@ -65,11 +65,11 @@ public class AppearanceType extends AbstractFeatureType {
 
     /**
      * Gets the value of the theme property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTheme() {
         return theme;
@@ -77,11 +77,11 @@ public class AppearanceType extends AbstractFeatureType {
 
     /**
      * Sets the value of the theme property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTheme(String value) {
         this.theme = value;
@@ -89,7 +89,7 @@ public class AppearanceType extends AbstractFeatureType {
 
     /**
      * Gets the value of the surfaceDataMember property.
-     * 
+     *
      */
     public List<SurfaceDataPropertyType> getSurfaceDataMember() {
         if (surfaceDataMember == null) {
@@ -100,7 +100,7 @@ public class AppearanceType extends AbstractFeatureType {
 
     /**
      * Gets the value of the genericApplicationPropertyOfAppearance property.
-     * 
+     *
      */
     public List<Object> getGenericApplicationPropertyOfAppearance() {
         if (genericApplicationPropertyOfAppearance == null) {

@@ -29,16 +29,16 @@ import org.geotoolkit.wfs.xml.GetCapabilities;
 /**
  * Request to a WFS to perform the GetCapabilities operation.
  * This operation allows a client to retrieve a Capabilities XML document providing metadata for the specific WFS server.
- * 
+ *
  * The GetCapapbilities element is used to request that a Web Feature Service generate an XML document describing the organization
  * providing the service, the WFS operations that the service supports, a list of feature types that the service can operate on and
  * list of filtering capabilities that the service support. Such an XML document is called a capabilities document.
- *        
- * 
+ *
+ *
  * <p>Java class for GetCapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetCapabilitiesType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.wfs.xml.GetCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

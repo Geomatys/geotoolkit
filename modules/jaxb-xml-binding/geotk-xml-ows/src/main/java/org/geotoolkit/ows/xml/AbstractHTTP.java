@@ -24,7 +24,7 @@ import java.util.List;
  * @module
  */
 public interface AbstractHTTP {
-    
+
     List<? extends AbstractOnlineResourceType> getGetOrPost();
 
 }

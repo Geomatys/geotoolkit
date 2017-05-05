@@ -28,7 +28,7 @@ import org.geotoolkit.gui.javafx.render2d.navigation.AbstractMouseHandler;
 /**
  * Mouse handler which allows to move on map using drag and drop.
  * Also contains processes for zoom on mouse wheel.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @author Alexis Manin (Geomatys)
  */
@@ -40,7 +40,7 @@ public class FXPanMouseListen extends AbstractMouseHandler {
     private double startY;
     private double lastX;
     private double lastY;
-    
+
     protected MouseButton mousebutton = null;
 
     protected final AbstractNavigationHandler owner;
@@ -99,12 +99,12 @@ public class FXPanMouseListen extends AbstractMouseHandler {
 
         if (!owner.isStateFull()) {
 
-            if ((lastX != 0 || lastY != 0) && 
+            if ((lastX != 0 || lastY != 0) &&
                     (mousebutton == MouseButton.PRIMARY || mousebutton == MouseButton.SECONDARY)) {
                 owner.processDrag(startX, startY, endX, endY);
             }
-            
-            // Release decoration only when drag is finished, so user will still 
+
+            // Release decoration only when drag is finished, so user will still
             // see part of the map during repaint.
             owner.decorationPane.setFill(false);
             owner.decorationPane.setCoord(-10, -10, -10, -10, false);
@@ -127,7 +127,7 @@ public class FXPanMouseListen extends AbstractMouseHandler {
         double y = e.getY();
 
         if ((lastX != 0) || (lastY != 0)) {
-            
+
             double dx = lastX - startX;
             double dy = lastY - startY;
 
@@ -138,7 +138,7 @@ public class FXPanMouseListen extends AbstractMouseHandler {
             } else {
                 if (owner.decorationPane.getBuffer() == null) {
                     owner.decorationPane.setBuffer(owner.map.getCanvas().getSnapShot());
-                }                
+                }
                 owner.decorationPane.setFill(true);
                 owner.decorationPane.setCoord(dx, dy, owner.map.getWidth() + dx, owner.map.getHeight() + dy, true);
             }

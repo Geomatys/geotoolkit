@@ -125,7 +125,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
             this.matchCase   = that.matchCase;
         }
     }
-    
+
     /**
      * Gets the value of the expression property.
      *
@@ -279,7 +279,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
     public MatchAction getMatchAction() {
         return MatchAction.ANY;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());

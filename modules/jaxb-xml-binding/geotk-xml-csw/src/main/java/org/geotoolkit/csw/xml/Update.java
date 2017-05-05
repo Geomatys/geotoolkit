@@ -24,15 +24,15 @@ import java.util.Map;
  * @author Guilhem Legal (Geomatys)
  */
 public interface Update {
-   
+
     QueryConstraint getConstraint();
-    
+
     String getHandle();
-    
+
     Object getAny();
-    
+
     List<? extends RecordProperty> getRecordProperty();
 
     Map<String, Object> getRecordPropertyMap();
-    
+
 }

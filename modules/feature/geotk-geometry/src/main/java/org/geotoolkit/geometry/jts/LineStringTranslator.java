@@ -30,19 +30,19 @@ import org.apache.sis.util.NullArgumentException;
  * @author Remi Marechal (Geomatys).
  */
 public class LineStringTranslator {
-    
+
     /**
      * Accepted tolerance.
-     * @see #intersectionRightLine(com.vividsolutions.jts.geom.Coordinate, com.vividsolutions.jts.geom.Coordinate, com.vividsolutions.jts.geom.Coordinate, com.vividsolutions.jts.geom.Coordinate) 
+     * @see #intersectionRightLine(com.vividsolutions.jts.geom.Coordinate, com.vividsolutions.jts.geom.Coordinate, com.vividsolutions.jts.geom.Coordinate, com.vividsolutions.jts.geom.Coordinate)
      */
     private static final double TOLERANCE = 1E-9;
-    
+
     /**
      * {@link IllegalArgumentException} use to stipulate that impossible to translate current {@link LineString}.
-     * @see #intersectionRightLine(com.vividsolutions.jts.geom.Coordinate, com.vividsolutions.jts.geom.Coordinate, com.vividsolutions.jts.geom.Coordinate, com.vividsolutions.jts.geom.Coordinate) 
+     * @see #intersectionRightLine(com.vividsolutions.jts.geom.Coordinate, com.vividsolutions.jts.geom.Coordinate, com.vividsolutions.jts.geom.Coordinate, com.vividsolutions.jts.geom.Coordinate)
      */
     private static final IllegalArgumentException NO_INTERSECTION_EXCEPTION = new IllegalArgumentException("no intersection between lines.");
-    
+
     public static MultiLineString translateLineString(final MultiLineString line, final double offset) {
         ArgumentChecks.ensureNonNull("MultiLineString", line);
         if (offset == 0) return line;
@@ -56,7 +56,7 @@ public class LineStringTranslator {
         mls.setUserData(line.getUserData());
         return mls;
     }
-    
+
     /**
      * <p>Translate {@code LineString} in function of offset value.<br/>
      * If offset is positive, translation is on the right of the {@link LineString}
@@ -64,12 +64,12 @@ public class LineStringTranslator {
      * Moreover the distance between the two generates {@link LineString}s is equal
      * to {@link StrictMath#abs(double) } of the offset.<br/>
      * In other word is the standard normal length of each {@link LineString} segments.</p>
-     * 
+     *
      * <p>For example : (generate {@link LineString} own letter with ' character).</p>
      * <p>
      * With a positive offset : </p><br/>
      * <pre>
-     *                    B___________ C        
+     *                    B___________ C
      *                    |  _______  \
      *                    | |B'   C'\  \
      *                    | |        \  \
@@ -80,14 +80,14 @@ public class LineStringTranslator {
      * And with a negative offset : </p><br/>
      * <pre>
      *                 B'________________C'
-     *                 |  B___________ C \       
+     *                 |  B___________ C \
      *                 |  |           \   \
      *                 |  |            \   \
      *                 |  |             \   \
      *                 |  |              D   D'
-     *                 A' A 
+     *                 A' A
      * </pre>
-     * 
+     *
      * @param line {@link LineString} which will be translate.
      * @param offset define length and sens of translation (+ for right and - for left).
      * @return the translated {@link LineString}.
@@ -102,25 +102,25 @@ public class LineStringTranslator {
         final Coordinate[] dstCoords = new Coordinate[coordsLength];
         Coordinate dstPtn0 = new Coordinate();
         Coordinate dstPtn1 = new Coordinate();
-        
+
         translateVector(coords[0], coords[1], dstPtn0, dstPtn1, offset);
         dstCoords[0] = dstPtn0;
         if (coordsLength == 2) {
-            dstCoords[1] = dstPtn1;            
+            dstCoords[1] = dstPtn1;
             return geomFact.createLineString(dstCoords);
         }
-        
+
         final int segmentNumber = coordsLength - 1;
         for (int c = 1; c <  segmentNumber; c++) {
             Coordinate dstc0 = new Coordinate();
             Coordinate dstc1 = new Coordinate();
             translateVector(coords[c], coords[c+1], dstc0, dstc1, offset);
-            
+
             //-- intersection between current translated segment and precedently generated segment.
              final Coordinate i = intersectionRightLine(dstPtn0, dstPtn1, dstc0, dstc1);
-            //-- store generated intersection point 
+            //-- store generated intersection point
             dstCoords[c] = i;
-            
+
             dstPtn0 = dstc0;
             dstPtn1 = dstc1;
             if (c == segmentNumber - 1) {
@@ -130,53 +130,53 @@ public class LineStringTranslator {
                     dstCoords[0]   = iend;
                     dstCoords[++c] = new Coordinate(iend);
                 } else {
-                    dstCoords[++c] = dstc1; 
+                    dstCoords[++c] = dstc1;
                 }
             }
         }
-        
+
         final LineString ls = geomFact.createLineString(dstCoords);
         ls.setSRID(line.getSRID());
         ls.setUserData(line.getUserData());
         return ls;
     }
-    
+
     /**
      * Translate a single segment from {@link LineString}.
-     * 
+     *
      * @param srcPt0 begin point of the segment which will be translate.
      * @param srcPt1 ending point of the segment which will be translated.
      * @param destPt0 the destination begin point of the translated segment.
      * @param destPt1 the destination ending point of the translated segment.
      * @param offset define length and sens of translation (+ for right and - for left).
      */
-    private static void translateVector(final Coordinate srcPt0,  final Coordinate srcPt1, 
+    private static void translateVector(final Coordinate srcPt0,  final Coordinate srcPt1,
                                        final Coordinate destPt0, final Coordinate destPt1, final double offset) {
-        
+
         final double vx = srcPt1.x - srcPt0.x;
         final double vy = srcPt1.y - srcPt0.y;
-        
+
         //-- orthogonal vector coordinates.
         double ox = vy;
         double oy = - vx;
-            
+
         final double normO = hypot(ox, oy);
         ox /= normO;
         oy /= normO;
-        
+
         ox *= offset;
         oy *= offset;
-        
+
         destPt0.x = srcPt0.x + ox;
         destPt0.y = srcPt0.y + oy;
-        
+
         destPt1.x = srcPt1.x + ox;
         destPt1.y = srcPt1.y + oy;
     }
-    
+
     /**
      * Found intersection point between two lines (AB) (CD).
-     * 
+     *
      * @param A begin point of the vector AB.
      * @param B ending point of the vector AB.
      * @param C begin point of the vector CD.
@@ -185,33 +185,33 @@ public class LineStringTranslator {
      * @throws IllegalArgumentException if the two right line don't intersect.
      */
     private static Coordinate intersectionRightLine(final Coordinate A, final Coordinate B, final Coordinate C, final Coordinate D) {
-        
+
         /*
          * That u director vector of (AB) line.
          */
          final double ux = B.x - A.x;
          final double uy = B.y - A.y;
-         
+
         /*
          * That v director vector of (CD) line.
          */
          final double vx = D.x - C.x;
          final double vy = D.y - C.y;
-        
-         
+
+
          //-- particularity cases.
-         
+
         /*
          * pB = pC
          */
         if (abs(B.x - C.x) < TOLERANCE && abs(B.y - C.y) < TOLERANCE) return new Coordinate(B.x, B.y);
-        
+
         /*
          * pA = pD
          * if lineString sens is respected, normaly should never append.
          */
         if (abs(A.x - D.x) < TOLERANCE && abs(A.y - D.y) < TOLERANCE) return new Coordinate(A.x, A.y);
-        
+
         /*
          * pA = pB
          * Should never append.
@@ -224,12 +224,12 @@ public class LineStringTranslator {
             final double wy = A.y - C.y;
             /*
              * Compute scalar product of vector CA and CD.
-             * If equal zero means colinear vector and AB € CD. 
+             * If equal zero means colinear vector and AB € CD.
              */
             if (abs(wx * vy - wy * vx) < TOLERANCE) return new Coordinate(A.x, A.y);
             throw NO_INTERSECTION_EXCEPTION;
         }
-        
+
         /*
          * pC = pD
          * Should never append.
@@ -242,12 +242,12 @@ public class LineStringTranslator {
             final double wy = C.y - A.y;
             /*
              * Compute scalar product of vector AC and AB.
-             * If equal zero means colinear vector and CD € AB. 
+             * If equal zero means colinear vector and CD € AB.
              */
             if (abs(ux * wy - uy * wx) < TOLERANCE) return new Coordinate(C.x, C.y);
             throw NO_INTERSECTION_EXCEPTION;
         }
-        
+
         if (abs(vy) < TOLERANCE && abs(ux) < TOLERANCE) {
               /*
                *     B
@@ -258,7 +258,7 @@ public class LineStringTranslator {
                */
                 return new Coordinate(A.x, C.y);
         }
-        
+
         if (abs(vx) < TOLERANCE && abs(uy) < TOLERANCE) {
               /*
                *     D
@@ -269,9 +269,9 @@ public class LineStringTranslator {
                */
                 return new Coordinate(C.x, A.y);
         }
-        
+
          if (abs(ux) < TOLERANCE && abs(vx) < TOLERANCE) {
-            /* 
+            /*
              * B
              * |  D
              * A  |
@@ -280,16 +280,16 @@ public class LineStringTranslator {
             if (abs(A.x - C.x) > TOLERANCE) throw NO_INTERSECTION_EXCEPTION;
             return new Coordinate(A.x, getIntersectionOnOneDimension(A.y, B.y, C.y, D.y));
         }
-             
+
          if (abs(uy) < TOLERANCE && abs(vy) < TOLERANCE) {
-            /* 
+            /*
              * A_____B
              *    C_____D
              */
             if (abs(A.y - C.y) > TOLERANCE) throw NO_INTERSECTION_EXCEPTION;
             return new Coordinate(getIntersectionOnOneDimension(A.x, B.x, C.x, D.x), A.y);
          }
-         
+
          if (abs(ux) <= TOLERANCE) {
             /*
              *     B  D
@@ -302,7 +302,7 @@ public class LineStringTranslator {
              final double yv = (A.x - C.x) * (vy / vx) + C.y;
              return new Coordinate(A.x, yv);
          }
-         
+
          if (abs(uy) <= TOLERANCE) {
             /*
              *       D
@@ -314,7 +314,7 @@ public class LineStringTranslator {
              final double xv = (A.y - C.y) * (vx / vy) + C.x;
              return new Coordinate(xv, A.y);
          }
-         
+
          if (abs(vx) <= TOLERANCE) {
             /*
              *     D  B
@@ -327,7 +327,7 @@ public class LineStringTranslator {
              final double yu = (C.x - A.x) * (uy / ux) + A.y;
              return new Coordinate(C.x, yu);
          }
-         
+
          if (abs(vy) <= TOLERANCE) {
             /*
              *       B
@@ -339,9 +339,9 @@ public class LineStringTranslator {
              final double xu = (C.y - A.y) * (ux / uy) + A.x;
              return new Coordinate(xu, C.y);
          }
-         
+
          final double vx_vy = vx / vy;
-         
+
          /*
           * (AB) Cartesian equation.
           * {X(t) = t * ux + A.x
@@ -350,19 +350,19 @@ public class LineStringTranslator {
          final double t = ((A.y - C.y) * vx_vy + C.x - A.x) / (ux - uy * vx_vy);
          final double x = t * ux + A.x;
          final double y = t * uy + A.y;
-         
+
          /*
           * That x tq : y = ax + b cartesian line expression.
           */
          final double y2 = (x - C.x) / vx_vy + C.y; // y2 = (x - pC.x) * (vy / vx) + pC.y
-         
-         assert abs(y - y2) <= TOLERANCE : "Error computing y from lines should be equal : y(AB) = "+y+" y(CD) = "+y2; 
+
+         assert abs(y - y2) <= TOLERANCE : "Error computing y from lines should be equal : y(AB) = "+y+" y(CD) = "+y2;
          return new Coordinate(x, y);
-    } 
-    
+    }
+
     /**
      * Returns intersection point between 2 spans.
-     * 
+     *
      * @param a begin coordinate of the ab span.
      * @param b ending coordinate of the ab span.
      * @param c begin coordinate of the cd span.
@@ -378,7 +378,7 @@ public class LineStringTranslator {
        final double imaxx = min(b, d);
 
        if (imaxx + TOLERANCE < iminx - TOLERANCE) {
-         /* 
+         /*
           * A_____B    C____D
           */
            throw NO_INTERSECTION_EXCEPTION;

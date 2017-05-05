@@ -46,7 +46,7 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
     public JTSSurfacePatch() {
         this(null, null);
     }
-    
+
     public JTSSurfacePatch(final SurfaceInterpolation interpolation, final SurfaceBoundary boundary) {
         this.interpolation = interpolation;
         this.boundary = boundary;

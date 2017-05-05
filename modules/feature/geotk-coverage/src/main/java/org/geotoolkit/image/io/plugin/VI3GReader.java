@@ -94,19 +94,19 @@ import org.opengis.referencing.datum.PixelInCell;
  *    Each NDVI data set (ndvi3g) is an INT16 file saved with ieee-big_endian
  *    it ranges from -10000->(10000->10004)
  *    with the flagW file added to the ndvi values as follows:
- *	ndvi3g = round(ndvi*10000) + flagW - 1;
- *	flagW ranges from 1->7
+ *  ndvi3g = round(ndvi*10000) + flagW - 1;
+ *  flagW ranges from 1->7
  *    to retrieve the original ndvi  and flagW values
- * 	flagW = ndvi3g-floor(ndvi3g/10)*10 + 1;
- * 	ndvi = floor(ndvi3g/10)/1000
+ *  flagW = ndvi3g-floor(ndvi3g/10)*10 + 1;
+ *  ndvi = floor(ndvi3g/10)/1000
  *    The meaning of the FLAG:
- *	FLAG = 7 (missing data)
- *	FLAG = 6 (NDVI retrieved from average seasonal profile, possibly snow)
- *	FLAG = 5 (NDVI retrieved from average seasonal profile)
- *	FLAG = 4 (NDVI retrieved from spline interpolation, possibly snow)
- *	FLAG = 3 (NDVI retrieved from spline interpolation)
- *	FLAG = 2 (Good value)
- *	FLAG = 1 (Good value)
+ *  FLAG = 7 (missing data)
+ *  FLAG = 6 (NDVI retrieved from average seasonal profile, possibly snow)
+ *  FLAG = 5 (NDVI retrieved from average seasonal profile)
+ *  FLAG = 4 (NDVI retrieved from spline interpolation, possibly snow)
+ *  FLAG = 3 (NDVI retrieved from spline interpolation)
+ *  FLAG = 2 (Good value)
+ *  FLAG = 1 (Good value)
  * END
  *
  * @author Alexis Manin (Geomatys)

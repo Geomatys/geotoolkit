@@ -18,35 +18,35 @@ package org.geotoolkit.wms.xml;
 
 /**
  * Abstract main class for capabilities service part.
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
 public interface AbstractService {
-    
+
     AbstractOnlineResource getOnlineResource();
-    
+
     String getName();
-    
+
     void setName(String name);
-    
+
     String getTitle();
-    
+
     void setTitle(String title);
-    
+
     String getAbstract();
-    
+
     void setAbstract(String _abstract);
-    
+
     String getFees();
-    
+
     void setFees(String fees);
 
     String getAccessConstraints();
 
     void setAccessConstraints(final String constraint);
-    
+
     AbstractKeywordList getKeywordList();
-    
+
     AbstractContactInformation getContactInformation();
 }

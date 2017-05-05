@@ -30,9 +30,9 @@ import org.geotoolkit.csw.xml.DomainValues;
 
 /**
  * <p>Java class for DomainValuesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DomainValuesType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.csw.xml.DomainValues;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -90,16 +90,16 @@ public class DomainValuesType implements DomainValues {
      * An empty constructor used by JAXB
      */
     public DomainValuesType() {
-        
+
     }
-    
+
     /**
      * Build a new Domain values type with the specified list Of Values.
      * One of parameterName or propertyName must be null.
-     * 
+     *
      */
     public DomainValuesType(final String parameterName, final String propertyName, final ListOfValuesType listOfValues, final QName type) {
-        
+
         if (propertyName != null && parameterName != null) {
             throw new IllegalArgumentException("One of propertyName or parameterName must be null");
         } else if (propertyName == null && parameterName == null) {
@@ -107,8 +107,8 @@ public class DomainValuesType implements DomainValues {
         }
         this.propertyName  = propertyName;
         this.parameterName = parameterName;
-        this.listOfValues  = listOfValues; 
-        this.type          = type; 
+        this.listOfValues  = listOfValues;
+        this.type          = type;
     }
 
     /**
@@ -128,7 +128,7 @@ public class DomainValuesType implements DomainValues {
         this.listOfValues  = new ListOfValuesType(listOfValues);
         this.type          = type;
     }
-    
+
     /**
      * Gets the value of the propertyName property.
      */
@@ -239,5 +239,5 @@ public class DomainValuesType implements DomainValues {
         hash = 97 * hash + (this.uom != null ? this.uom.hashCode() : 0);
         return hash;
     }
-    
+
 }

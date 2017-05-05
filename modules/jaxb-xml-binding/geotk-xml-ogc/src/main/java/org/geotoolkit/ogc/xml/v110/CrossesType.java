@@ -21,7 +21,7 @@ import org.opengis.filter.spatial.Crosses;
 
 /**
  *
- * @author Guilhem Legal 
+ * @author Guilhem Legal
  * @module
  */
 public class CrossesType extends BinarySpatialOpType implements Crosses {
@@ -30,27 +30,27 @@ public class CrossesType extends BinarySpatialOpType implements Crosses {
      * An empty constructor used by JAXB
      */
     public CrossesType() {
-        
+
     }
-    
+
     /**
      * Build a new Crosses Type
      */
     public CrossesType(final String propertyName, final AbstractGeometryType geometry) {
         super(propertyName, geometry);
     }
-    
+
     /**
      * Build a new Crosses Type
      */
     public CrossesType(final PropertyNameType propertyName, final Object geometry) {
         super(propertyName, geometry);
     }
-    
+
     public CrossesType(final CrossesType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new CrossesType(this);

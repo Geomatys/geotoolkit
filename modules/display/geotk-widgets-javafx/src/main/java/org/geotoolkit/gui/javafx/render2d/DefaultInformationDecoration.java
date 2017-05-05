@@ -47,18 +47,18 @@ public class DefaultInformationDecoration extends BorderPane implements FXInform
     private static final Image ICO_INFO = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_EXCLAMATION_TRIANGLE, 16, Color.BLUE),null);
 
     private FXMap map = null;
-    
+
     private final VBox messagesPanel = new VBox();
     private final ProgressIndicator guiPainting = new ProgressIndicator();
     private boolean lowlevel = true;
 
     public DefaultInformationDecoration() {
-        setBackground(new Background(new BackgroundFill(null,null,null)));        
-        messagesPanel.setBackground(new Background(new BackgroundFill(new javafx.scene.paint.Color(0, 0, 0, 0.5), CornerRadii.EMPTY, Insets.EMPTY)));        
-        guiPainting.setVisible(true);  
+        setBackground(new Background(new BackgroundFill(null,null,null)));
+        messagesPanel.setBackground(new Background(new BackgroundFill(new javafx.scene.paint.Color(0, 0, 0, 0.5), CornerRadii.EMPTY, Insets.EMPTY)));
+        guiPainting.setVisible(true);
         guiPainting.setMaxWidth(60);
         guiPainting.setMaxHeight(60);
-        guiPainting.setBackground(new Background(new BackgroundFill(new javafx.scene.paint.Color(0, 0, 0, 0), CornerRadii.EMPTY, Insets.EMPTY))); 
+        guiPainting.setBackground(new Background(new BackgroundFill(new javafx.scene.paint.Color(0, 0, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
         setCenter(guiPainting);
         setBottom(messagesPanel);
     }
@@ -95,13 +95,13 @@ public class DefaultInformationDecoration extends BorderPane implements FXInform
 
     @Override
     public void displayMessage(final String text, final int time, final FXInformationDecoration.LEVEL level) {
-        
+
         if(!lowlevel){
             if (level != FXInformationDecoration.LEVEL.ERROR && level != FXInformationDecoration.LEVEL.WARNING) {
                 return;
             }
         }
-        
+
         final Label label = new Label();
         label.setTextFill(javafx.scene.paint.Color.WHITE);
         switch(level){
@@ -136,5 +136,5 @@ public class DefaultInformationDecoration extends BorderPane implements FXInform
     @Override
     public void dispose() {
     }
-    
+
 }

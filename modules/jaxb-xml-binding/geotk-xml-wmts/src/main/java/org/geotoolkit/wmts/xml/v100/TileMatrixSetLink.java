@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -58,20 +58,20 @@ public class TileMatrixSetLink {
     private TileMatrixSetLimits tileMatrixSetLimits;
 
     public TileMatrixSetLink() {
-        
+
     }
-    
+
     public TileMatrixSetLink(final String tileMatrixSet) {
         this.tileMatrixSet = tileMatrixSet;
     }
-    
+
     /**
      * Gets the value of the tileMatrixSet property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTileMatrixSet() {
         return tileMatrixSet;
@@ -79,25 +79,25 @@ public class TileMatrixSetLink {
 
     /**
      * Sets the value of the tileMatrixSet property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTileMatrixSet(final String value) {
         this.tileMatrixSet = value;
     }
 
     /**
-     * Indices limits for this tileMatrixSet. 
+     * Indices limits for this tileMatrixSet.
      * The absence of this element means that tile row and tile col indices are only limited by 0
      * and the corresponding tileMatrixSet maximum definitions.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TileMatrixSetLimits }
-     *     
+     *
      */
     public TileMatrixSetLimits getTileMatrixSetLimits() {
         return tileMatrixSetLimits;
@@ -105,11 +105,11 @@ public class TileMatrixSetLink {
 
     /**
      * Sets the value of the tileMatrixSetLimits property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TileMatrixSetLimits }
-     *     
+     *
      */
     public void setTileMatrixSetLimits(final TileMatrixSetLimits value) {
         this.tileMatrixSetLimits = value;

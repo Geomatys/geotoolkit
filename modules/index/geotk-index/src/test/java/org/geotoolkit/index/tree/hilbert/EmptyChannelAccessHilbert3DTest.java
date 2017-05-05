@@ -30,5 +30,5 @@ public final class EmptyChannelAccessHilbert3DTest extends ReadChannelAccessHilb
     public EmptyChannelAccessHilbert3DTest() throws IOException, StoreIndexException, ClassNotFoundException {
         super(PredefinedCRS.CARTESIAN_3D, false);
     }
-    
+
 }

@@ -22,17 +22,17 @@ import org.apache.sis.util.iso.ResourceInternationalString;
 
 /**
  * Subclass of ResourceInternationalString with a configurable ClassLoader.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class ClassLoaderInternationalString extends ResourceInternationalString{
 
     private final ClassLoader classLoader;
-    
+
     public ClassLoaderInternationalString(Class clazz, String resources, String key) {
         this(clazz.getClassLoader(), resources, key);
     }
-    
+
     public ClassLoaderInternationalString(ClassLoader classloder, String resources, String key) {
         super(resources, key);
         this.classLoader = classloder;

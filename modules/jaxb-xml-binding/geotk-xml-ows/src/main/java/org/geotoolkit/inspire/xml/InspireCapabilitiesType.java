@@ -26,11 +26,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Additional capabilities for INSPIRE
- * 
+ *
  * <p>Java class for InspireCapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InspireCapabilitiesType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,7 +73,7 @@ public class InspireCapabilitiesType {
             }
         }
     }
-    
+
     public InspireCapabilitiesType(final List<String> languages) {
         this.languages = new LanguagesType(languages);
         this.translatedCapabilities = null;
@@ -136,7 +136,7 @@ public class InspireCapabilitiesType {
         return hash;
     }
 
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[InspireCapabilitiesType]\n");

@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for RegionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RegionType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,11 +69,11 @@ public class RegionType extends AbstractObjectType {
 
     /**
      * Gets the value of the latLonAltBox property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LatLonAltBoxType }
-     *     
+     *
      */
     public LatLonAltBoxType getLatLonAltBox() {
         return latLonAltBox;
@@ -81,11 +81,11 @@ public class RegionType extends AbstractObjectType {
 
     /**
      * Sets the value of the latLonAltBox property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LatLonAltBoxType }
-     *     
+     *
      */
     public void setLatLonAltBox(final LatLonAltBoxType value) {
         this.latLonAltBox = value;
@@ -93,11 +93,11 @@ public class RegionType extends AbstractObjectType {
 
     /**
      * Gets the value of the lod property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LodType }
-     *     
+     *
      */
     public LodType getLod() {
         return lod;
@@ -105,11 +105,11 @@ public class RegionType extends AbstractObjectType {
 
     /**
      * Sets the value of the lod property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LodType }
-     *     
+     *
      */
     public void setLod(final LodType value) {
         this.lod = value;
@@ -117,25 +117,25 @@ public class RegionType extends AbstractObjectType {
 
     /**
      * Gets the value of the regionSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the regionSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRegionSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getRegionSimpleExtensionGroup() {
         if (regionSimpleExtensionGroup == null) {
@@ -146,25 +146,25 @@ public class RegionType extends AbstractObjectType {
 
     /**
      * Gets the value of the regionObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the regionObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRegionObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getRegionObjectExtensionGroup() {
         if (regionObjectExtensionGroup == null) {

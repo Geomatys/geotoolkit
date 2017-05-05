@@ -29,17 +29,17 @@ import org.geotoolkit.ows.xml.AbstractServiceProvider;
 public interface GetCapabilitiesResponse extends AbstractCapabilitiesCore {
 
     AbstractOperationsMetadata getOperationsMetadata();
-    
+
     AbstractServiceIdentification getServiceIdentification();
-    
+
     AbstractServiceProvider getServiceProvider();
-    
+
     Content getContents();
-    
+
     String getUpdateSequence();
-    
+
     String getVersion();
-    
+
     void setUpdateSequence(final String updateSequence);
 
 }

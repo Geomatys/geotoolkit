@@ -29,15 +29,15 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- *  
- * 
+ *
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class ReformatDescriptor extends AbstractProcessDescriptor {
 
     public static final String NAME = "coverage:reformat";
 
-    
+
     /**
      * Mandatory - Coverage to reformat
      */
@@ -47,7 +47,7 @@ public class ReformatDescriptor extends AbstractProcessDescriptor {
             .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_reformat_inCoverageDesc))
             .setRequired(true)
             .create(Coverage.class, null);
-    
+
     /**
      * Mandatory - new data type
      */
@@ -60,7 +60,7 @@ public class ReformatDescriptor extends AbstractProcessDescriptor {
 
     public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder()
             .addName(NAME + "InputParameters").createGroup(IN_COVERAGE, IN_DATATYPE);
-    
+
     /**
      * Mandatory - Resulting coverage.
      */
@@ -73,12 +73,12 @@ public class ReformatDescriptor extends AbstractProcessDescriptor {
 
     public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder()
             .addName(NAME + "OutputParameters").createGroup(OUT_COVERAGE);
-    
+
     public static final ProcessDescriptor INSTANCE = new ReformatDescriptor();
 
     private ReformatDescriptor() {
         super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
-                new SimpleInternationalString("Change the sample type of a coverage."), 
+                new SimpleInternationalString("Change the sample type of a coverage."),
                 INPUT_DESC, OUTPUT_DESC);
     }
 
@@ -86,6 +86,6 @@ public class ReformatDescriptor extends AbstractProcessDescriptor {
     public Process createProcess(ParameterValueGroup input) {
         return new ReformatProcess(input);
     }
-    
-    
+
+
 }

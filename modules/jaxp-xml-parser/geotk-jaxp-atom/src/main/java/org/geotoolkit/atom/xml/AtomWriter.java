@@ -110,7 +110,7 @@ public class AtomWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param email
      * @throws XMLStreamException
      */

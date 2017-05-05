@@ -27,9 +27,9 @@ import org.opengis.filter.capability.Operator;
 
 /**
  * <p>Java class for ComparisonOperatorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ComparisonOperatorType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import org.opengis.filter.capability.Operator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ComparisonOperatorType")
@@ -50,20 +50,20 @@ public class ComparisonOperatorType implements Operator{
     private String name;
 
     public ComparisonOperatorType() {
-        
+
     }
-    
+
     public ComparisonOperatorType(final String name) {
         this.name = name;
     }
-    
+
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -71,11 +71,11 @@ public class ComparisonOperatorType implements Operator{
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;

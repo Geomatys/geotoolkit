@@ -36,7 +36,7 @@ package org.geotoolkit.xal.model;
 public interface PostBoxNumberPrefix {
 
     /**
-     * 
+     *
      * @return
      */
     String getContent();
@@ -67,7 +67,7 @@ public interface PostBoxNumberPrefix {
     void setNumberPrefixSeparator(String numberPrefixSeparator);
 
     /**
-     * 
+     *
      * @param grPostal
      */
     void setGrPostal(GrPostal grPostal);

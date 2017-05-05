@@ -30,7 +30,7 @@ public class DefaultResourceMap extends DefaultAbstractObject implements Resourc
     private List<Alias> aliases;
 
     /**
-     * 
+     *
      */
     public DefaultResourceMap() {
         this.aliases = EMPTY_LIST;

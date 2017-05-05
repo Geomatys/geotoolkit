@@ -85,4 +85,14 @@ public final class JDK8 {
         CALENDAR.set(calendar); // Recycle for future usage.
         return text;
     }
+
+    /**
+     * Returns true if the argument is a finite floating-point value; returns false otherwise (for NaN and infinity arguments).
+     *
+     * @param value the {@code double} value to be tested.
+     * @return true if the argument is a finite floating-point value, false otherwise.
+     */
+    public static boolean isFinite(final double value) {
+        return !(Double.isNaN(value) || Double.isInfinite(value));
+    }
 }

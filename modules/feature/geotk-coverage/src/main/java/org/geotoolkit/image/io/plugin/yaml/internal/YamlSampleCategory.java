@@ -22,25 +22,25 @@ import org.opengis.referencing.operation.MathTransform1D;
 
 /**
  * Equivalent class of {@link Category} adapted for sample data use during Yaml binding.
- * 
+ *
  * @author Remi Marechal (Geomatys)
  * @since 4.0
  */
 public class YamlSampleCategory extends YamlCategory {
-    
+
     /**
      * Scale value use to build internaly {@link MathTransform1D} sample to geophysic.
-     * 
-     * @see Category#Category(java.lang.CharSequence, java.awt.Color[], int, int, double, double) 
-     * @see Category#createLinearTransform(double, double) 
+     *
+     * @see Category#Category(java.lang.CharSequence, java.awt.Color[], int, int, double, double)
+     * @see Category#createLinearTransform(double, double)
      */
     private double scale;
-    
+
     /**
      * Offset value use to build internaly {@link MathTransform1D} sample to geophysic.
-     * 
-     * @see Category#Category(java.lang.CharSequence, java.awt.Color[], int, int, double, double) 
-     * @see Category#createLinearTransform(double, double) 
+     *
+     * @see Category#Category(java.lang.CharSequence, java.awt.Color[], int, int, double, double)
+     * @see Category#createLinearTransform(double, double)
      */
     private double offset;
 
@@ -49,15 +49,15 @@ public class YamlSampleCategory extends YamlCategory {
      */
     public YamlSampleCategory() {
     }
-    
+
     /**
      * Build a {@link YamlCategory} from geotk {@link Category}.
-     * 
+     *
      * @param category {@link Category} which will be serialized into Yaml format.
      */
     YamlSampleCategory(final Category category) {
         super(category);
-        
+
         final MathTransform1D mtSToGeo = category.getSampleToGeophysics();
         //-- peut etre mettre un log si la function de transformation est null .
         if (mtSToGeo != null) {
@@ -71,7 +71,7 @@ public class YamlSampleCategory extends YamlCategory {
 
     /**
      * Returns needed scale value to build sample to geophysic mathematic functions.
-     * 
+     *
      * @return scale
      * @see #scale
      */
@@ -81,18 +81,18 @@ public class YamlSampleCategory extends YamlCategory {
 
     /**
      * Returns needed offset value to build sample to geophysic mathematic functions.
-     * 
+     *
      * @return offset
      * @see #offset
      */
     public double getOffset() {
         return offset;
     }
-    
+
     /**
      * Set needed scale value to build sample to geophysic mathematic functions.
-     * 
-     * @param offsetZ 
+     *
+     * @param offsetZ
      * @see #scale
      */
     public void setOffset(double offsetZ) {
@@ -101,8 +101,8 @@ public class YamlSampleCategory extends YamlCategory {
 
     /**
      * Set needed offset value to build sample to geophysic mathematic functions.
-     * 
-     * @param scaleZ 
+     *
+     * @param scaleZ
      * @see #offset
      */
     public void setScale(double scaleZ) {

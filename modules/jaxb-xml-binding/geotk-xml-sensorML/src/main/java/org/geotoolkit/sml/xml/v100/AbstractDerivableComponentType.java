@@ -30,11 +30,11 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * Complex Type to allow creation of component profiles by extension
- * 
+ *
  * <p>Java class for AbstractDerivableComponentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractDerivableComponentType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -67,7 +67,7 @@ import org.apache.sis.util.ComparisonMode;
     "interfaces"
 
 })
-@XmlSeeAlso({AbstractComponentType.class, ComponentArrayType.class}) 
+@XmlSeeAlso({AbstractComponentType.class, ComponentArrayType.class})
 public abstract class AbstractDerivableComponentType extends AbstractProcessType implements AbstractDerivableComponent {
 
     @XmlElement(name = "spatialReferenceFrame",  namespace = "http://www.opengis.net/sensorML/1.0", type = SpatialReferenceFrame.class)
@@ -115,7 +115,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
             }
         }
     }
-    
+
 
     @Override
     public Location getSMLLocation() {
@@ -161,7 +161,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
             this.position = (Position) position;
         else throw new IllegalArgumentException("Bad version of the position object");
     }
-    
+
     /**
      * Verify if this entry is identical to specified object.
      */
@@ -195,7 +195,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
         return hash;
     }
 
-    
+
 
     @Override
     public String toString() {

@@ -27,9 +27,9 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for SystemType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SystemType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,7 +61,7 @@ public class SystemType extends AbstractComponentType implements System {
     public SystemType() {
 
     }
-    
+
     public SystemType(final System sy) {
         super(sy);
         if (sy != null) {
@@ -76,7 +76,7 @@ public class SystemType extends AbstractComponentType implements System {
             }
         }
     }
-     
+
     /**
      * @return the components
      */
@@ -98,7 +98,7 @@ public class SystemType extends AbstractComponentType implements System {
     public void setComponents(final ComponentList components) {
         this.components = new Components(components);
     }
-    
+
     /**
      * @return the positions
      */

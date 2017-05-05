@@ -24,7 +24,7 @@ package org.geotoolkit.data.kml.model;
 public class DefaultIcon extends DefaultLink implements Icon {
 
     /**
-     * 
+     *
      * @param link
      */
     public DefaultIcon(Link link){

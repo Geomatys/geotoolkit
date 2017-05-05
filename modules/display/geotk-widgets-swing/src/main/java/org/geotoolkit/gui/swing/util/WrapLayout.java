@@ -26,22 +26,22 @@ import javax.swing.SwingUtilities;
  */
 
 public class WrapLayout extends FlowLayout {
-    
+
     public WrapLayout() {
         super();
     }
 
-    
+
     public WrapLayout(int align) {
         super(align);
     }
 
-    
+
     public WrapLayout(int align, int hgap, int vgap) {
         super(align, hgap, vgap);
     }
 
-   
+
     @Override
     public Dimension preferredLayoutSize(Container target) {
         return layoutSize(target, true);
@@ -54,7 +54,7 @@ public class WrapLayout extends FlowLayout {
         return minimum;
     }
 
-    
+
     private Dimension layoutSize(Container target, boolean preferred) {
         synchronized (target.getTreeLock()) {
             //  Each row must fit with the width allocated to the containter.
@@ -110,7 +110,7 @@ public class WrapLayout extends FlowLayout {
 
             dim.width += horizontalInsetsAndGap;
             dim.height += insets.top + insets.bottom + vgap * 2;
-           
+
 
             Container scrollPane = SwingUtilities.getAncestorOfClass(JScrollPane.class, target);
 
@@ -122,7 +122,7 @@ public class WrapLayout extends FlowLayout {
         }
     }
 
-  
+
     private void addRow(Dimension dim, int rowWidth, int rowHeight) {
         dim.width = Math.max(dim.width, rowWidth);
 

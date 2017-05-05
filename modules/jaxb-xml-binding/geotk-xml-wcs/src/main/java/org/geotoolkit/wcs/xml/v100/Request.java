@@ -172,7 +172,7 @@ public class Request {
             getCoverage.updateURL(url);
         }
     }
-    
+
     @Override
     public Request clone() {
         return new Request(this);

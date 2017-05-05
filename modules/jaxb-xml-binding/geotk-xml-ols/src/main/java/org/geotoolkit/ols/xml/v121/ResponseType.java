@@ -29,11 +29,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines the response information returned from a service response.
- * 
+ *
  * <p>Java class for ResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ResponseType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ResponseType", propOrder = {
@@ -73,11 +73,11 @@ public class ResponseType extends AbstractBodyType {
 
     /**
      * Gets the value of the errorList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ErrorListType }
-     *     
+     *
      */
     public ErrorListType getErrorList() {
         return errorList;
@@ -85,11 +85,11 @@ public class ResponseType extends AbstractBodyType {
 
     /**
      * Sets the value of the errorList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ErrorListType }
-     *     
+     *
      */
     public void setErrorList(ErrorListType value) {
         this.errorList = value;
@@ -97,7 +97,7 @@ public class ResponseType extends AbstractBodyType {
 
     /**
      * Gets the value of the responseParameters property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractResponseParametersType }{@code >}
@@ -108,7 +108,7 @@ public class ResponseType extends AbstractBodyType {
      *     {@link JAXBElement }{@code <}{@link GeocodeResponseType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DirectoryResponseType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PortrayMapResponseType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractResponseParametersType> getResponseParameters() {
         return responseParameters;
@@ -116,7 +116,7 @@ public class ResponseType extends AbstractBodyType {
 
     /**
      * Sets the value of the responseParameters property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractResponseParametersType }{@code >}
@@ -127,7 +127,7 @@ public class ResponseType extends AbstractBodyType {
      *     {@link JAXBElement }{@code <}{@link GeocodeResponseType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DirectoryResponseType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PortrayMapResponseType }{@code >}
-     *     
+     *
      */
     public void setResponseParameters(JAXBElement<? extends AbstractResponseParametersType> value) {
         this.responseParameters = ((JAXBElement<? extends AbstractResponseParametersType> ) value);
@@ -135,11 +135,11 @@ public class ResponseType extends AbstractBodyType {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         return version;
@@ -147,11 +147,11 @@ public class ResponseType extends AbstractBodyType {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(String value) {
         this.version = value;
@@ -159,11 +159,11 @@ public class ResponseType extends AbstractBodyType {
 
     /**
      * Gets the value of the requestID property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRequestID() {
         return requestID;
@@ -171,11 +171,11 @@ public class ResponseType extends AbstractBodyType {
 
     /**
      * Sets the value of the requestID property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRequestID(String value) {
         this.requestID = value;
@@ -183,11 +183,11 @@ public class ResponseType extends AbstractBodyType {
 
     /**
      * Gets the value of the numberOfResponses property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getNumberOfResponses() {
         return numberOfResponses;
@@ -195,11 +195,11 @@ public class ResponseType extends AbstractBodyType {
 
     /**
      * Sets the value of the numberOfResponses property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setNumberOfResponses(Integer value) {
         this.numberOfResponses = value;

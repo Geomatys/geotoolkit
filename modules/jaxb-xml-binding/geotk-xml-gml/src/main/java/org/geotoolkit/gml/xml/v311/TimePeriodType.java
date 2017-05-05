@@ -90,14 +90,14 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
     public TimePeriodType(final AbstractTimePosition beginPosition, final AbstractTimePosition endPosition) {
         this(null, beginPosition, endPosition);
     }
-    
+
     /**
      * Build a new Time period bounded by the begin and end time specified.
      */
     public TimePeriodType(final Instant beginPosition, final Instant endPosition) {
         this(null, beginPosition, endPosition);
     }
-            
+
     /**
      * Build a new Time period bounded by the begin and end time specified.
      */

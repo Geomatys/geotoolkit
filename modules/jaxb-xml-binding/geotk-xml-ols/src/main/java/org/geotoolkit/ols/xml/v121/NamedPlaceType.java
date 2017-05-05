@@ -25,15 +25,15 @@ import javax.xml.bind.annotation.XmlValue;
 
 
 /**
- * 
- * 	The NamedPlaceType defines a named place within an AddressType.
- * 	A named place has a classification (such as country, country subdivision, or municipality).
- * 		
- * 
+ *
+ *  The NamedPlaceType defines a named place within an AddressType.
+ *  A named place has a classification (such as country, country subdivision, or municipality).
+ *
+ *
  * <p>Java class for NamedPlaceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="NamedPlaceType">
  *   &lt;simpleContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "NamedPlaceType", propOrder = {
@@ -59,11 +59,11 @@ public class NamedPlaceType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValue() {
         return value;
@@ -71,11 +71,11 @@ public class NamedPlaceType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(String value) {
         this.value = value;
@@ -83,11 +83,11 @@ public class NamedPlaceType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link NamedPlaceClassification }
-     *     
+     *
      */
     public NamedPlaceClassification getType() {
         return type;
@@ -95,11 +95,11 @@ public class NamedPlaceType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link NamedPlaceClassification }
-     *     
+     *
      */
     public void setType(NamedPlaceClassification value) {
         this.type = value;

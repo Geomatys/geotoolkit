@@ -42,7 +42,7 @@ import org.geotoolkit.swe.xml.DataBlockDefinition;
     "components",
     "encoding"})
     public class DataBlockDefinitionType implements DataBlockDefinition, Entry {
-    
+
     /**
      * L'identifiant du resultat.
      */
@@ -50,18 +50,18 @@ import org.geotoolkit.swe.xml.DataBlockDefinition;
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     private String id;
-    
+
     /**
      * Liste de composant Data record.
      */
     @XmlElementRef(name = "AbstractDataComponent", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
     private List<JAXBElement<? extends AbstractDataComponentType>> components;
-    
+
     /**
      * Decrit l'encodage des données.
      */
     private AbstractEncodingPropertyType encoding;
-    
+
     /**
      * constructeur utilisé par jaxB
      */
@@ -108,12 +108,12 @@ import org.geotoolkit.swe.xml.DataBlockDefinition;
                     } else {
                         throw new IllegalArgumentException("unexpected type for component:" + c.getClass().getName());
                     }
-                    
+
                 }
             }
         }
     }
-    
+
     /**
      * créé un nouveau resultat d'observation.
      * Liste de valeur decrite dans swe:DatablockDefinition de type simple,
@@ -166,7 +166,7 @@ import org.geotoolkit.swe.xml.DataBlockDefinition;
         }
         this.encoding   = new AbstractEncodingPropertyType(encoding);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -181,7 +181,7 @@ import org.geotoolkit.swe.xml.DataBlockDefinition;
     public String getName() {
         return id;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -193,14 +193,14 @@ import org.geotoolkit.swe.xml.DataBlockDefinition;
         final List<? extends AbstractDataComponentType> response = r;
         return response;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public AbstractEncodingPropertyType getEncoding() {
         return encoding;
     }
-    
+
     /**
      * Retourne un code représentant ce dataBlock.
      */
@@ -208,7 +208,7 @@ import org.geotoolkit.swe.xml.DataBlockDefinition;
     public final int hashCode() {
         return id.hashCode();
     }
-    
+
     /**
      * Vérifie si cette entré est identique à l'objet spécifié.
      */
@@ -217,13 +217,13 @@ import org.geotoolkit.swe.xml.DataBlockDefinition;
         if (object == this) {
             return true;
         }
-        
+
         final DataBlockDefinitionType that = (DataBlockDefinitionType) object;
         if (this.components != null && that.components != null) {
             if (this.components.size() != that.components.size()) {
                 return false;
             }
-        
+
             final Iterator<? extends JAXBElement<? extends AbstractDataComponentType>> i  = this.components.iterator();
             final Iterator<? extends JAXBElement<? extends AbstractDataComponentType>> i2 = that.components.iterator();
             while (i.hasNext() && i2.hasNext()) {
@@ -237,7 +237,7 @@ import org.geotoolkit.swe.xml.DataBlockDefinition;
         return Objects.equals(this.id,         that.id) &&
                Objects.equals(this.encoding,   that.encoding) ;
     }
-    
+
     /**
      * Retourne une representation de l'objet (debug).
      */
@@ -250,7 +250,7 @@ import org.geotoolkit.swe.xml.DataBlockDefinition;
         appendTo(buffer, "", lineSeparator);
         return buffer.toString();
     }
-    
+
     /**
      * Ajoute la description des composants du dataBlock definition.
      */
@@ -263,5 +263,5 @@ import org.geotoolkit.swe.xml.DataBlockDefinition;
             }
         }
     }
-    
+
 }

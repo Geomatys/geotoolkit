@@ -26,16 +26,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
+ *
  *         A "SymbolizerType" is an abstract type for encoding the graphical
  *         properties used to portray geographic information.  Concrete Symbolizer
  *         types are derived from this base type.
- *       
- * 
+ *
+ *
  * <p>Java class for SymbolizerType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SymbolizerType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,11 +84,11 @@ public abstract class SymbolizerType {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -96,11 +96,11 @@ public abstract class SymbolizerType {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -108,11 +108,11 @@ public abstract class SymbolizerType {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DescriptionType }
-     *     
+     *
      */
     public DescriptionType getDescription() {
         return description;
@@ -120,11 +120,11 @@ public abstract class SymbolizerType {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DescriptionType }
-     *     
+     *
      */
     public void setDescription(final DescriptionType value) {
         this.description = value;
@@ -132,11 +132,11 @@ public abstract class SymbolizerType {
 
     /**
      * Gets the value of the baseSymbolizer property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BaseSymbolizerType }
-     *     
+     *
      */
     public BaseSymbolizerType getBaseSymbolizer() {
         return baseSymbolizer;
@@ -144,11 +144,11 @@ public abstract class SymbolizerType {
 
     /**
      * Sets the value of the baseSymbolizer property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BaseSymbolizerType }
-     *     
+     *
      */
     public void setBaseSymbolizer(final BaseSymbolizerType value) {
         this.baseSymbolizer = value;
@@ -156,11 +156,11 @@ public abstract class SymbolizerType {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         return version;
@@ -168,11 +168,11 @@ public abstract class SymbolizerType {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(final String value) {
         this.version = value;
@@ -180,11 +180,11 @@ public abstract class SymbolizerType {
 
     /**
      * Gets the value of the uom property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUom() {
         return uom;
@@ -192,11 +192,11 @@ public abstract class SymbolizerType {
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUom(final String value) {
         this.uom = value;

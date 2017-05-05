@@ -29,9 +29,9 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
 
 /**
  * <p>Java class for ComponentOrBlockPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ComponentOrBlockPropertyType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ComponentOrBlockPropertyType", propOrder = {
@@ -75,11 +75,11 @@ public class ComponentOrBlockPropertyType {
 
     /**
      * Gets the value of the component property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ComponentType }
-     *     
+     *
      */
     public ComponentType getComponent() {
         return component;
@@ -87,11 +87,11 @@ public class ComponentOrBlockPropertyType {
 
     /**
      * Sets the value of the component property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ComponentType }
-     *     
+     *
      */
     public void setComponent(ComponentType value) {
         this.component = value;
@@ -99,11 +99,11 @@ public class ComponentOrBlockPropertyType {
 
     /**
      * Gets the value of the block property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BlockType }
-     *     
+     *
      */
     public BlockType getBlock() {
         return block;
@@ -111,11 +111,11 @@ public class ComponentOrBlockPropertyType {
 
     /**
      * Sets the value of the block property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BlockType }
-     *     
+     *
      */
     public void setBlock(BlockType value) {
         this.block = value;
@@ -123,11 +123,11 @@ public class ComponentOrBlockPropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TypeType }
-     *     
+     *
      */
     public TypeType getType() {
         if (type == null) {
@@ -139,11 +139,11 @@ public class ComponentOrBlockPropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TypeType }
-     *     
+     *
      */
     public void setType(TypeType value) {
         this.type = value;
@@ -151,11 +151,11 @@ public class ComponentOrBlockPropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -163,11 +163,11 @@ public class ComponentOrBlockPropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -175,11 +175,11 @@ public class ComponentOrBlockPropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -187,11 +187,11 @@ public class ComponentOrBlockPropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -199,11 +199,11 @@ public class ComponentOrBlockPropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -211,11 +211,11 @@ public class ComponentOrBlockPropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -223,11 +223,11 @@ public class ComponentOrBlockPropertyType {
 
     /**
      * Gets the value of the titleTemp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitleTemp() {
         return titleTemp;
@@ -235,11 +235,11 @@ public class ComponentOrBlockPropertyType {
 
     /**
      * Sets the value of the titleTemp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitleTemp(String value) {
         this.titleTemp = value;
@@ -247,11 +247,11 @@ public class ComponentOrBlockPropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShowType }
-     *     
+     *
      */
     public ShowType getShow() {
         return show;
@@ -259,11 +259,11 @@ public class ComponentOrBlockPropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShowType }
-     *     
+     *
      */
     public void setShow(ShowType value) {
         this.show = value;
@@ -271,11 +271,11 @@ public class ComponentOrBlockPropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public ActuateType getActuate() {
         return actuate;
@@ -283,11 +283,11 @@ public class ComponentOrBlockPropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public void setActuate(ActuateType value) {
         this.actuate = value;

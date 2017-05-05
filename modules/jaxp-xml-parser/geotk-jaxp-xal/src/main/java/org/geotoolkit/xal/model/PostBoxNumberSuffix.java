@@ -67,7 +67,7 @@ public interface PostBoxNumberSuffix {
     void setNumberSuffixSeparator(String numberSuffixSeparator);
 
     /**
-     * 
+     *
      * @param grPostal
      */
     void setGrPostal(GrPostal grPostal);

@@ -28,14 +28,14 @@ import org.geotoolkit.wps.xml.OutputDescription;
 
 
 /**
- * Description of a process Output. 
- * 
- * In this use, the DescriptionType shall describe this process output. 
- * 
+ * Description of a process Output.
+ *
+ * In this use, the DescriptionType shall describe this process output.
+ *
  * <p>Java class for OutputDescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OutputDescriptionType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.wps.xml.OutputDescription;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,10 +65,10 @@ public class OutputDescriptionType extends DescriptionType implements OutputDesc
     protected SupportedCRSsType boundingBoxOutput;
 
     public OutputDescriptionType() {
-        
+
     }
-    
-    public OutputDescriptionType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, 
+
+    public OutputDescriptionType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract,
             DataDescription dataDescription) {
         super(identifier, title, _abstract);
         if (dataDescription instanceof SupportedComplexDataInputType) {
@@ -81,14 +81,14 @@ public class OutputDescriptionType extends DescriptionType implements OutputDesc
             throw new IllegalArgumentException("unecpected data description type:" + dataDescription.getClass().getName());
         }
     }
-    
+
     /**
      * Gets the value of the complexOutput property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SupportedComplexDataType }
-     *     
+     *
      */
     public SupportedComplexDataType getComplexOutput() {
         return complexOutput;
@@ -96,11 +96,11 @@ public class OutputDescriptionType extends DescriptionType implements OutputDesc
 
     /**
      * Sets the value of the complexOutput property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SupportedComplexDataType }
-     *     
+     *
      */
     public void setComplexOutput(final SupportedComplexDataInputType value) {
         this.complexOutput = value;
@@ -108,11 +108,11 @@ public class OutputDescriptionType extends DescriptionType implements OutputDesc
 
     /**
      * Gets the value of the literalOutput property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LiteralOutputType }
-     *     
+     *
      */
     public LiteralOutputType getLiteralOutput() {
         return literalOutput;
@@ -120,11 +120,11 @@ public class OutputDescriptionType extends DescriptionType implements OutputDesc
 
     /**
      * Sets the value of the literalOutput property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LiteralOutputType }
-     *     
+     *
      */
     public void setLiteralOutput(final LiteralOutputType value) {
         this.literalOutput = value;
@@ -132,11 +132,11 @@ public class OutputDescriptionType extends DescriptionType implements OutputDesc
 
     /**
      * Gets the value of the boundingBoxOutput property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SupportedCRSsType }
-     *     
+     *
      */
     public SupportedCRSsType getBoundingBoxOutput() {
         return boundingBoxOutput;
@@ -144,16 +144,16 @@ public class OutputDescriptionType extends DescriptionType implements OutputDesc
 
     /**
      * Sets the value of the boundingBoxOutput property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SupportedCRSsType }
-     *     
+     *
      */
     public void setBoundingBoxOutput(final SupportedCRSsType value) {
         this.boundingBoxOutput = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString()).append("\n");
@@ -168,7 +168,7 @@ public class OutputDescriptionType extends DescriptionType implements OutputDesc
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

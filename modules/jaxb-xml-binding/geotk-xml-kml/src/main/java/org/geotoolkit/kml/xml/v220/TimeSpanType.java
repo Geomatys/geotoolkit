@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TimeSpanType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeSpanType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -67,11 +67,11 @@ public class TimeSpanType extends AbstractTimePrimitiveType {
 
     /**
      * Gets the value of the begin property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getBegin() {
         return begin;
@@ -79,11 +79,11 @@ public class TimeSpanType extends AbstractTimePrimitiveType {
 
     /**
      * Sets the value of the begin property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setBegin(final String value) {
         this.begin = value;
@@ -91,11 +91,11 @@ public class TimeSpanType extends AbstractTimePrimitiveType {
 
     /**
      * Gets the value of the end property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getEnd() {
         return end;
@@ -103,11 +103,11 @@ public class TimeSpanType extends AbstractTimePrimitiveType {
 
     /**
      * Sets the value of the end property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setEnd(final String value) {
         this.end = value;
@@ -115,25 +115,25 @@ public class TimeSpanType extends AbstractTimePrimitiveType {
 
     /**
      * Gets the value of the timeSpanSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the timeSpanSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTimeSpanSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getTimeSpanSimpleExtensionGroup() {
         if (timeSpanSimpleExtensionGroup == null) {
@@ -144,25 +144,25 @@ public class TimeSpanType extends AbstractTimePrimitiveType {
 
     /**
      * Gets the value of the timeSpanObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the timeSpanObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTimeSpanObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getTimeSpanObjectExtensionGroup() {
         if (timeSpanObjectExtensionGroup == null) {

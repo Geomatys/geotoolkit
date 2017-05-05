@@ -27,9 +27,9 @@ import org.opengis.filter.capability.TemporalCapabilities;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.opengis.filter.capability.TemporalCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -69,11 +69,11 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
     /**
      * Gets the value of the spatialCapabilities property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SpatialCapabilitiesType }
-     *     
+     *
      */
     @Override
     public SpatialCapabilitiesType getSpatialCapabilities() {
@@ -82,11 +82,11 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
     /**
      * Sets the value of the spatialCapabilities property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SpatialCapabilitiesType }
-     *     
+     *
      */
     public void setSpatialCapabilities(SpatialCapabilitiesType value) {
         this.spatialCapabilities = value;
@@ -94,11 +94,11 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
     /**
      * Gets the value of the scalarCapabilities property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ScalarCapabilitiesType }
-     *     
+     *
      */
     @Override
     public ScalarCapabilitiesType getScalarCapabilities() {
@@ -107,11 +107,11 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
     /**
      * Sets the value of the scalarCapabilities property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ScalarCapabilitiesType }
-     *     
+     *
      */
     public void setScalarCapabilities(ScalarCapabilitiesType value) {
         this.scalarCapabilities = value;

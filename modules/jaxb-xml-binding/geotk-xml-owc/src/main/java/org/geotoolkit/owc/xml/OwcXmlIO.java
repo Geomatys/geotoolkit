@@ -75,16 +75,16 @@ import org.xml.sax.InputSource;
 
 /**
  * Read and write MapContext objects.
- * 
+ *
  * @author Samuel Andrés (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
 public class OwcXmlIO {
-    
+
     private static final ObjectFactory GEOTK_FACTORY = new ObjectFactory();
-    
+
     private static final OwcExtension[] EXTENSIONS;
-    
+
     static {
         final ServiceLoader<OwcExtension> loader = ServiceLoader.load(OwcExtension.class);
         final Iterator<OwcExtension> ite = loader.iterator();
@@ -94,7 +94,7 @@ public class OwcXmlIO {
         Collections.sort(lst,Collections.reverseOrder());
         EXTENSIONS = lst.toArray(new OwcExtension[0]);
     }
-    
+
     public static OwcExtension[] getExtensions() {
         return EXTENSIONS.clone();
     }
@@ -102,7 +102,7 @@ public class OwcXmlIO {
     public static void write(final Object output, final MapContext context) throws PropertyException, JAXBException, FactoryException{
         final FeedType feed = write(context);
         final MarshallerPool pool = OwcMarshallerPool.getPool();
-        
+
         final Marshaller marshaller = pool.acquireMarshaller();
         try{
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -121,47 +121,47 @@ public class OwcXmlIO {
             pool.recycle(marshaller);
         }
     }
-    
+
     private static FeedType write(final MapContext context) throws FactoryException{
         final FeedType feed = ATOM_FACTORY.createFeedType();
-        
+
         final LinkType link = ATOM_FACTORY.createLinkType();
         link.setRel("profile");
         link.setHref("http://www.opengis.net/spec/owc-atom/1.0/req/core");
         link.setTitle(context.getName()==null ? "" : context.getName());
         feed.getAuthorOrCategoryOrContributor().add(ATOM_FACTORY.createFeedTypeLink(link));
-        
+
         final TextType title = ATOM_FACTORY.createTextType();
         title.getContent().add(context.getName()==null ? "" : context.getName());
         feed.getAuthorOrCategoryOrContributor().add(ATOM_FACTORY.createFeedTypeTitle(title));
-        
+
         final Envelope aoi = context.getAreaOfInterest();
         if(aoi!=null){
             final String ogc = IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, aoi.getCoordinateReferenceSystem(), true);
             final WhereType where = GEORSS_FACTORY.createWhereType();
             final DirectPositionType lowerCorner = new DirectPositionType(aoi.getLowerCorner());
             final DirectPositionType upperCorner = new DirectPositionType(aoi.getUpperCorner());
-            final EnvelopeType envelopeType = new EnvelopeType(null, 
+            final EnvelopeType envelopeType = new EnvelopeType(null,
                     lowerCorner, upperCorner, ogc);
             envelopeType.setSrsDimension(2);
             where.setEnvelope(envelopeType);
             feed.getAuthorOrCategoryOrContributor().add(GEORSS_FACTORY.createWhere(where));
         }
-        
+
         for(final MapItem mapItem : context.items()){
             toEntry(null, mapItem, feed.getAuthorOrCategoryOrContributor());
         }
         return feed;
     }
-        
+
     private static void toEntry(String parentPath, final MapItem item, List entries){
         final EntryType entry = ATOM_FACTORY.createEntryType();
         entries.add(ATOM_FACTORY.createFeedTypeEntry(entry));
-        
+
         //store other informations
         final String name = ((parentPath!=null)?parentPath:"") + item.getName();
         final Description description = item.getDescription();
-        
+
         if(name!=null){
             final IdType atom = new IdType();
             atom.setValue(name);
@@ -181,15 +181,15 @@ public class OwcXmlIO {
             atom.getContent().add(description.getAbstract().toString());
             entry.getAuthorOrCategoryOrContent().add(ATOM_FACTORY.createEntryTypeSummary(atom));
         }
-        
-            
+
+
         if(item instanceof MapLayer){
             final MapLayer layer = (MapLayer) item;
-            
+
             entry.getAuthorOrCategoryOrContent().add(GEOTK_FACTORY.createVisible(layer.isVisible()));
-            entry.getAuthorOrCategoryOrContent().add(GEOTK_FACTORY.createSelectable(layer.isSelectable()));       
-            entry.getAuthorOrCategoryOrContent().add(GEOTK_FACTORY.createOpacity(layer.getOpacity()));               
-            
+            entry.getAuthorOrCategoryOrContent().add(GEOTK_FACTORY.createSelectable(layer.isSelectable()));
+            entry.getAuthorOrCategoryOrContent().add(GEOTK_FACTORY.createOpacity(layer.getOpacity()));
+
             OfferingType offering = null;
             for(OwcExtension ext : getExtensions()){
                 if(ext.canHandle(layer)){
@@ -198,7 +198,7 @@ public class OwcXmlIO {
                     break;
                 }
             }
-            
+
             //store styles
             if(offering!=null){
                 if(layer.getStyle()!=null){
@@ -210,7 +210,7 @@ public class OwcXmlIO {
                     offering.getOperationOrContentOrStyleSet().add(OWC_FACTORY.createOfferingTypeStyleSet(styleSelection));
                 }
             }
-            
+
         }else{
             final ContentType content = OWC_FACTORY.createContentType();
             content.setType(item.getName());
@@ -220,27 +220,27 @@ public class OwcXmlIO {
             }
             entry.getAuthorOrCategoryOrContent().add(OWC_FACTORY.createOfferingTypeContent(content));
         }
-        
+
     }
-    
+
     private static StyleSetType toStyleSet(MutableStyle style, boolean def){
         final StyleSetType styleSet = OWC_FACTORY.createStyleSetType();
         styleSet.setDefault(def);
-        
+
         final ContentType content = OWC_FACTORY.createContentType();
         final StyleXmlIO io = new StyleXmlIO();
         final UserStyle jaxbStyle = io.getTransformerXMLv110().visit(style, null);
         content.getContent().add(jaxbStyle);
-        
+
         styleSet.getNameOrTitleOrAbstract().add(OWC_FACTORY.createStyleSetTypeContent(content));
-        
+
         return styleSet;
     }
-    
+
     public static MapContext read(final Object input) throws JAXBException, FactoryException, DataStoreException{
         final MarshallerPool pool = OwcMarshallerPool.getPool();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-        
+
         final FeedType feed;
         try{
             final Object jax;
@@ -255,22 +255,22 @@ public class OwcXmlIO {
             else{
                 throw new JAXBException("Unsupported input type : "+input);
             }
-            
+
             feed = (FeedType) ((JAXBElement)jax).getValue();
         }finally{
             pool.recycle(unmarshaller);
         }
         return read(feed);
     }
-    
+
     private static MapContext read(final FeedType feed) throws JAXBException, FactoryException, DataStoreException{
         final MapContext context = MapBuilder.createContext();
-        
+
         for(Object o : feed.getAuthorOrCategoryOrContributor()){
             if(o instanceof JAXBElement){
                 o = ((JAXBElement)o).getValue();
             }
-            
+
             if(o instanceof TextType){
                 final TextType title = (TextType) o;
                 title.getContent();
@@ -291,10 +291,10 @@ public class OwcXmlIO {
                 parent.items().add(item);
             }
         }
-        
+
         return context;
     }
-        
+
     private static MapItem findItem(MapItem parent, String name){
         for(MapItem mi : parent.items()){
             if(mi.getName().equals(name)){
@@ -306,10 +306,10 @@ public class OwcXmlIO {
         parent.items().add(np);
         return np;
     }
-    
+
     private static MapItem readEntry(final EntryType entry) throws JAXBException, FactoryException, DataStoreException{
         final List<Object> entryContent = entry.getAuthorOrCategoryOrContent();
-        
+
         String layerName = "";
         String layerTitle = "";
         String layerAbstract = "";
@@ -320,14 +320,14 @@ public class OwcXmlIO {
         MutableStyle baseStyle = null;
         MutableStyle selectionStyle = null;
         final List<MapItem> children = new ArrayList<>();
-        
+
         for(Object o : entryContent){
             QName name = null;
             if(o instanceof JAXBElement){
                 final JAXBElement jax = (JAXBElement) o;
                 name = jax.getName();
                 o = jax.getValue();
-                
+
                 if(GEOTK_FACTORY._Visible_QNAME.equals(name)){
                     visible = (Boolean)o;
                 }else if(GEOTK_FACTORY._Selectable_QNAME.equals(name)){
@@ -336,7 +336,7 @@ public class OwcXmlIO {
                     layerOpacity = (Double)o;
                 }
             }
-            
+
             if(o instanceof OfferingType){
                 final OfferingType offering = (OfferingType) o;
                 for(OwcExtension ext : getExtensions()){
@@ -345,11 +345,11 @@ public class OwcXmlIO {
                         break;
                     }
                 }
-                
+
                 //search for styles
                 baseStyle = readStyle(offering,true);
                 selectionStyle = readStyle(offering,false);
-                
+
             }else if(o instanceof ContentType){
                 //decode children
                 final ContentType content = (ContentType) o;
@@ -378,9 +378,9 @@ public class OwcXmlIO {
                     }
                 }
             }
-            
+
         }
-        
+
         if(mapItem==null){
             mapItem = MapBuilder.createItem();
         }else if(mapItem instanceof MapLayer){
@@ -395,43 +395,43 @@ public class OwcXmlIO {
         }
         mapItem.setName(layerName);
         mapItem.setDescription(new DefaultDescription(
-                new SimpleInternationalString(layerTitle), 
+                new SimpleInternationalString(layerTitle),
                 new SimpleInternationalString(layerAbstract)));
         mapItem.setName(layerName);
         mapItem.setVisible(visible);
-        
+
         mapItem.items().addAll(children);
-        
+
         return mapItem;
     }
-    
+
     private static MutableStyle readStyle(OfferingType offering, boolean def) throws JAXBException, FactoryException{
         final List<Object> content = offering.getOperationOrContentOrStyleSet();
         for(Object co : content){
             if(co instanceof JAXBElement) co = ((JAXBElement)co).getValue();
             if(!(co instanceof StyleSetType)) continue;
-            
+
             final StyleSetType sst = (StyleSetType)co;
             if(sst.isDefault() != def) continue;
-            
+
             final List<Object> ssc = sst.getNameOrTitleOrAbstract();
-            
+
             for(Object ss : ssc){
                 if(ss instanceof JAXBElement) ss = ((JAXBElement)ss).getValue();
                 if(!(ss instanceof ContentType)) continue;
-                
+
                 final ContentType ct = (ContentType) ss;
                 final List<Object> subcs = ct.getContent();
                 for(Object subc : subcs){
                     if(subc instanceof JAXBElement) subc = ((JAXBElement)subc).getValue();
                     if(!(subc instanceof UserStyle)) continue;
-                    
+
                     final StyleXmlIO io = new StyleXmlIO();
                     return io.readStyle(subc, Specification.SymbologyEncoding.V_1_1_0);
                 }
             }
         }
         return null;
-    } 
-    
+    }
+
 }

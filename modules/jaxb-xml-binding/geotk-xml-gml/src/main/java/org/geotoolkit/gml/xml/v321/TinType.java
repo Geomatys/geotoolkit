@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TinType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TinType">
  *   &lt;complexContent>
@@ -58,8 +58,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TinType", propOrder = {
@@ -80,11 +80,11 @@ public class TinType extends SurfaceType {
 
     /**
      * Gets the value of the stopLines property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link LineStringSegmentArrayPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<LineStringSegmentArrayPropertyType> getStopLines() {
         if (stopLines == null) {
@@ -95,11 +95,11 @@ public class TinType extends SurfaceType {
 
     /**
      * Gets the value of the breakLines property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link LineStringSegmentArrayPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<LineStringSegmentArrayPropertyType> getBreakLines() {
         if (breakLines == null) {
@@ -110,11 +110,11 @@ public class TinType extends SurfaceType {
 
     /**
      * Gets the value of the maxLength property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LengthType }
-     *     
+     *
      */
     public LengthType getMaxLength() {
         return maxLength;
@@ -122,11 +122,11 @@ public class TinType extends SurfaceType {
 
     /**
      * Sets the value of the maxLength property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LengthType }
-     *     
+     *
      */
     public void setMaxLength(LengthType value) {
         this.maxLength = value;
@@ -134,11 +134,11 @@ public class TinType extends SurfaceType {
 
     /**
      * Gets the value of the controlPoint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TinType.ControlPoint }
-     *     
+     *
      */
     public TinType.ControlPoint getControlPoint() {
         return controlPoint;
@@ -146,11 +146,11 @@ public class TinType extends SurfaceType {
 
     /**
      * Sets the value of the controlPoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TinType.ControlPoint }
-     *     
+     *
      */
     public void setControlPoint(TinType.ControlPoint value) {
         this.controlPoint = value;
@@ -159,9 +159,9 @@ public class TinType extends SurfaceType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -174,8 +174,8 @@ public class TinType extends SurfaceType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -193,11 +193,11 @@ public class TinType extends SurfaceType {
 
         /**
          * Gets the value of the posList property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link DirectPositionListType }
-         *     
+         *
          */
         public DirectPositionListType getPosList() {
             return posList;
@@ -205,11 +205,11 @@ public class TinType extends SurfaceType {
 
         /**
          * Sets the value of the posList property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link DirectPositionListType }
-         *     
+         *
          */
         public void setPosList(DirectPositionListType value) {
             this.posList = value;
@@ -217,12 +217,12 @@ public class TinType extends SurfaceType {
 
         /**
          * Gets the value of the geometricPositionGroup property.
-         * 
+         *
          * Objects of the following type(s) are allowed in the list
          * {@link PointPropertyType }
          * {@link DirectPositionType }
-         * 
-         * 
+         *
+         *
          */
         public List<Object> getGeometricPositionGroup() {
             if (geometricPositionGroup == null) {

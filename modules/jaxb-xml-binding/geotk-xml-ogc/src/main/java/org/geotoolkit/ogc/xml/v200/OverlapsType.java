@@ -31,20 +31,20 @@ public class OverlapsType extends BinarySpatialOpType implements Overlaps {
      * An empty constructor used by JAXB
      */
     public OverlapsType() {
-        
+
     }
-    
+
     /**
      * Build a new Overlaps Type
      */
     public OverlapsType(final String propertyName, final Object geometry) {
         super(propertyName, geometry);
     }
-    
+
     public OverlapsType(final OverlapsType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new OverlapsType(this);

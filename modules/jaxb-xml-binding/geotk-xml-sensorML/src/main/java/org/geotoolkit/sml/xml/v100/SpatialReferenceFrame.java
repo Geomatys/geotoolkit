@@ -28,9 +28,9 @@ import org.geotoolkit.sml.xml.AbstractSpatialReferenceFrame;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.sml.xml.AbstractSpatialReferenceFrame;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,11 +72,11 @@ public class SpatialReferenceFrame implements AbstractSpatialReferenceFrame {
 
     /**
      * Gets the value of the engineeringCRS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EngineeringCRSType }
-     *     
+     *
      */
     public EngineeringCRSType getEngineeringCRS() {
         return engineeringCRS;
@@ -84,11 +84,11 @@ public class SpatialReferenceFrame implements AbstractSpatialReferenceFrame {
 
     /**
      * Sets the value of the engineeringCRS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EngineeringCRSType }
-     *     
+     *
      */
     public void setEngineeringCRS(final EngineeringCRSType value) {
         this.engineeringCRS = value;

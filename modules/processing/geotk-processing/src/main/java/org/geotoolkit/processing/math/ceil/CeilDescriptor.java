@@ -32,10 +32,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class CeilDescriptor extends AbstractProcessDescriptor {
-        
+
     /**Process name : ceil */
     public static final String NAME = "math:ceil";
-    
+
     /**
      * Input parameters
      */
@@ -44,10 +44,10 @@ public class CeilDescriptor extends AbstractProcessDescriptor {
             .setRemarks("first number")
             .setRequired(true)
             .create(Double.class, null);
-    
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(FIRST_NUMBER);
-    
+
     /**
      * OutputParameters
      */
@@ -72,5 +72,5 @@ public class CeilDescriptor extends AbstractProcessDescriptor {
     public Process createProcess(final ParameterValueGroup input) {
         return new CeilProcess(input);
     }
-    
+
 }

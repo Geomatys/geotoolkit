@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,11 +55,11 @@ public class GraphicFill {
 
     /**
      * Gets the value of the graphic property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Graphic }
-     *     
+     *
      */
     public Graphic getGraphic() {
         return graphic;
@@ -67,11 +67,11 @@ public class GraphicFill {
 
     /**
      * Sets the value of the graphic property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Graphic }
-     *     
+     *
      */
     public void setGraphic(final Graphic value) {
         this.graphic = value;

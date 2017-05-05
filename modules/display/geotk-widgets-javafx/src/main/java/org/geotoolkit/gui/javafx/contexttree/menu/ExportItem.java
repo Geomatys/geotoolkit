@@ -57,22 +57,22 @@ import org.opengis.geometry.Geometry;
 
 /**
  * Export selected layer in the context tree.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class ExportItem extends TreeMenuItem {
 
     private static final Image ICON = SwingFXUtils.toFXImage(
             IconBuilder.createImage(FontAwesomeIcons.ICON_DOWNLOAD, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
-    
+
     private final Map<FileChooser.ExtensionFilter,FileFeatureStoreFactory> index = new HashMap<>();
     private WeakReference<TreeItem> itemRef;
-    
+
     public ExportItem() {
-        
+
         menuItem = new Menu(GeotkFX.getString(this,"export"));
         menuItem.setGraphic(new ImageView(ICON));
-        
+
         //select file factories which support writing
         final Set<FileFeatureStoreFactory> factories = DataStores.getAvailableFactories(FileFeatureStoreFactory.class);
         for(FileFeatureStoreFactory ff : factories){
@@ -82,11 +82,11 @@ public class ExportItem extends TreeMenuItem {
                 final String name = ff.getDisplayName().toString();
                 final FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(name, exts);
                 index.put(filter, ff);
-                
+
                 ((Menu)menuItem).getItems().add(new ExportSub(ff));
             }
         }
-        
+
     }
 
     @Override
@@ -99,20 +99,20 @@ public class ExportItem extends TreeMenuItem {
         }
         return null;
     }
-    
+
     private class ExportSub extends MenuItem{
-        
+
         private final FileFeatureStoreFactory factory;
 
         public ExportSub(FileFeatureStoreFactory factory) {
             super(factory.getDisplayName().toString());
             this.factory = factory;
-            
-            
+
+
             setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
                 public void handle(javafx.event.ActionEvent event) {
-                    if(itemRef == null) return;                
+                    if(itemRef == null) return;
                     final TreeItem ti = itemRef.get();
                     if(ti == null) return;
                     final FeatureMapLayer layer = (FeatureMapLayer) ti.getValue();
@@ -121,7 +121,7 @@ public class ExportItem extends TreeMenuItem {
                     chooser.setTitle(GeotkFX.getString(ExportItem.class, "folder"));
                     File folder = chooser.showDialog(null);
 
-                    if(folder!=null){                    
+                    if(folder!=null){
                         try {
                             final FeatureCollection baseCol = layer.getCollection();
                             final FeatureType baseType = baseCol.getFeatureType();
@@ -144,7 +144,7 @@ public class ExportItem extends TreeMenuItem {
 
                                 final FeatureType inType = col.getFeatureType();
                                 final String inTypeName = inType.getName().tip().toString();
-                                
+
                                 //output file path
                                 final File file= new File(folder, inTypeName+factory.getFileExtensions()[0]);
 
@@ -173,13 +173,13 @@ public class ExportItem extends TreeMenuItem {
                     }
                 }
             });
-            
-            
+
+
         }
-        
-        
-        
-        
+
+
+
+
     }
-    
+
 }

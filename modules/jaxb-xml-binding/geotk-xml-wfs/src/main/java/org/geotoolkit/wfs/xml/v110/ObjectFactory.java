@@ -23,18 +23,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.wfs package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.wfs package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  * @module
  */
 @XmlRegistry
@@ -64,14 +64,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.wfs
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link NativeType }
-     * 
+     *
      */
     public NativeType createNativeType() {
         return new NativeType();
@@ -79,7 +79,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GMLObjectTypeListType }
-     * 
+     *
      */
     public GMLObjectTypeListType createGMLObjectTypeListType() {
         return new GMLObjectTypeListType();
@@ -87,7 +87,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TransactionResultsType }
-     * 
+     *
      */
     public TransactionResultsType createTransactionResultsType() {
         return new TransactionResultsType();
@@ -95,7 +95,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LockFeatureResponseType }
-     * 
+     *
      */
     public LockFeatureResponseType createLockFeatureResponseType() {
         return new LockFeatureResponseType();
@@ -103,7 +103,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TransactionResponseType }
-     * 
+     *
      */
     public TransactionResponseType createTransactionResponseType() {
         return new TransactionResponseType();
@@ -111,7 +111,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetCapabilitiesType }
-     * 
+     *
      */
     public GetCapabilitiesType createGetCapabilitiesType() {
         return new GetCapabilitiesType();
@@ -119,7 +119,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertedFeatureType }
-     * 
+     *
      */
     public InsertedFeatureType createInsertedFeatureType() {
         return new InsertedFeatureType();
@@ -127,7 +127,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeatureTypeListType }
-     * 
+     *
      */
     public FeatureTypeListType createFeatureTypeListType() {
         return new FeatureTypeListType();
@@ -135,7 +135,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QueryType }
-     * 
+     *
      */
     public QueryType createQueryType() {
         return new QueryType();
@@ -143,7 +143,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetFeatureWithLockType }
-     * 
+     *
      */
     public GetFeatureWithLockType createGetFeatureWithLockType() {
         return new GetFeatureWithLockType();
@@ -151,7 +151,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeatureCollectionType }
-     * 
+     *
      */
     public FeatureCollectionType createFeatureCollectionType() {
         return new FeatureCollectionType();
@@ -159,7 +159,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DeleteElementType }
-     * 
+     *
      */
     public DeleteElementType createDeleteElementType() {
         return new DeleteElementType();
@@ -167,7 +167,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UpdateElementType }
-     * 
+     *
      */
     public UpdateElementType createUpdateElementType() {
         return new UpdateElementType();
@@ -175,7 +175,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OutputFormatListType }
-     * 
+     *
      */
     public OutputFormatListType createOutputFormatListType() {
         return new OutputFormatListType();
@@ -183,7 +183,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetFeatureType }
-     * 
+     *
      */
     public GetFeatureType createGetFeatureType() {
         return new GetFeatureType();
@@ -191,7 +191,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TransactionSummaryType }
-     * 
+     *
      */
     public TransactionSummaryType createTransactionSummaryType() {
         return new TransactionSummaryType();
@@ -199,7 +199,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PropertyType }
-     * 
+     *
      */
     public PropertyType createPropertyType() {
         return new PropertyType();
@@ -207,7 +207,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertElementType }
-     * 
+     *
      */
     public InsertElementType createInsertElementType() {
         return new InsertElementType();
@@ -215,7 +215,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GMLObjectTypeType }
-     * 
+     *
      */
     public GMLObjectTypeType createGMLObjectTypeType() {
         return new GMLObjectTypeType();
@@ -223,7 +223,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetGmlObjectType }
-     * 
+     *
      */
     public GetGmlObjectType createGetGmlObjectType() {
         return new GetGmlObjectType();
@@ -231,7 +231,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link XlinkPropertyName }
-     * 
+     *
      */
     public XlinkPropertyName createXlinkPropertyName() {
         return new XlinkPropertyName();
@@ -239,7 +239,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeaturesNotLockedType }
-     * 
+     *
      */
     public FeaturesNotLockedType createFeaturesNotLockedType() {
         return new FeaturesNotLockedType();
@@ -247,7 +247,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LockFeatureType }
-     * 
+     *
      */
     public LockFeatureType createLockFeatureType() {
         return new LockFeatureType();
@@ -255,7 +255,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertResultsType }
-     * 
+     *
      */
     public InsertResultsType createInsertResultsType() {
         return new InsertResultsType();
@@ -263,7 +263,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribeFeatureTypeType }
-     * 
+     *
      */
     public DescribeFeatureTypeType createDescribeFeatureTypeType() {
         return new DescribeFeatureTypeType();
@@ -271,7 +271,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MetadataURLType }
-     * 
+     *
      */
     public MetadataURLType createMetadataURLType() {
         return new MetadataURLType();
@@ -279,7 +279,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OperationsType }
-     * 
+     *
      */
     public OperationsType createOperationsType() {
         return new OperationsType();
@@ -287,7 +287,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TransactionType }
-     * 
+     *
      */
     public TransactionType createTransactionType() {
         return new TransactionType();
@@ -295,7 +295,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ActionType }
-     * 
+     *
      */
     public ActionType createActionType() {
         return new ActionType();
@@ -303,7 +303,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WFSCapabilitiesType }
-     * 
+     *
      */
     public WFSCapabilitiesType createWFSCapabilitiesType() {
         return new WFSCapabilitiesType();
@@ -311,7 +311,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeatureTypeType.NoSRS }
-     * 
+     *
      */
     public FeatureTypeType.NoSRS createFeatureTypeTypeNoSRS() {
         return new FeatureTypeType.NoSRS();
@@ -319,7 +319,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeatureTypeType }
-     * 
+     *
      */
     public FeatureTypeType createFeatureTypeType() {
         return new FeatureTypeType();
@@ -327,7 +327,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeaturesLockedType }
-     * 
+     *
      */
     public FeaturesLockedType createFeaturesLockedType() {
         return new FeaturesLockedType();
@@ -335,7 +335,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LockType }
-     * 
+     *
      */
     public LockType createLockType() {
         return new LockType();
@@ -343,7 +343,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Property")
     public JAXBElement<PropertyType> createProperty(final PropertyType value) {
@@ -352,7 +352,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DescribeFeatureTypeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "DescribeFeatureType")
     public JAXBElement<DescribeFeatureTypeType> createDescribeFeatureType(final DescribeFeatureTypeType value) {
@@ -361,7 +361,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FeatureTypeListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "FeatureTypeList")
     public JAXBElement<FeatureTypeListType> createFeatureTypeList(final FeatureTypeListType value) {
@@ -370,7 +370,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LockFeatureType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "LockFeature")
     public JAXBElement<LockFeatureType> createLockFeature(final LockFeatureType value) {
@@ -379,7 +379,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GMLObjectTypeListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "ServesGMLObjectTypeList")
     public JAXBElement<GMLObjectTypeListType> createServesGMLObjectTypeList(final GMLObjectTypeListType value) {
@@ -388,7 +388,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UpdateElementType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Update")
     public JAXBElement<UpdateElementType> createUpdate(final UpdateElementType value) {
@@ -397,7 +397,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "PropertyName")
     public JAXBElement<String> createPropertyName(final String value) {
@@ -406,7 +406,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TransactionResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "TransactionResponse")
     public JAXBElement<TransactionResponseType> createTransactionResponse(final TransactionResponseType value) {
@@ -415,7 +415,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetGmlObjectType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "GetGmlObject")
     public JAXBElement<GetGmlObjectType> createGetGmlObject(final GetGmlObjectType value) {
@@ -424,7 +424,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetCapabilitiesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "GetCapabilities")
     public JAXBElement<GetCapabilitiesType> createGetCapabilities(final GetCapabilitiesType value) {
@@ -433,7 +433,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NativeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Native")
     public JAXBElement<NativeType> createNative(final NativeType value) {
@@ -442,7 +442,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WFSCapabilitiesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "WFS_Capabilities")
     public JAXBElement<WFSCapabilitiesType> createWFSCapabilities(final WFSCapabilitiesType value) {
@@ -451,7 +451,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LockFeatureResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "LockFeatureResponse")
     public JAXBElement<LockFeatureResponseType> createLockFeatureResponse(final LockFeatureResponseType value) {
@@ -460,7 +460,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "LockId")
     public JAXBElement<String> createLockId(final String value) {
@@ -469,7 +469,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GMLObjectTypeListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "SupportsGMLObjectTypeList")
     public JAXBElement<GMLObjectTypeListType> createSupportsGMLObjectTypeList(final GMLObjectTypeListType value) {
@@ -478,7 +478,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InsertElementType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Insert")
     public JAXBElement<InsertElementType> createInsert(final InsertElementType value) {
@@ -487,7 +487,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link QueryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Query")
     public JAXBElement<QueryType> createQuery(final QueryType value) {
@@ -496,7 +496,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetFeatureWithLockType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "GetFeatureWithLock")
     public JAXBElement<GetFeatureWithLockType> createGetFeatureWithLock(final GetFeatureWithLockType value) {
@@ -523,7 +523,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FeatureCollectionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "FeatureCollection", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeatureCollection")
     public JAXBElement<FeatureCollectionType> createFeatureCollection(final FeatureCollectionType value) {

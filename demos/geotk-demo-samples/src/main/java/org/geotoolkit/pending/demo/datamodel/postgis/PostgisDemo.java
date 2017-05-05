@@ -19,7 +19,7 @@ public class PostgisDemo {
 
     public static void main(String[] args) throws DataStoreException {
         Demos.init();
-        
+
         System.out.println(PostgresFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
 
         final ParameterValueGroup parameters = PostgresFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
@@ -28,21 +28,21 @@ public class PostgisDemo {
         Parameters.getOrCreate(PostgresFeatureStoreFactory.DATABASE, parameters).setValue("base");
         Parameters.getOrCreate(PostgresFeatureStoreFactory.USER, parameters).setValue("user");
         Parameters.getOrCreate(PostgresFeatureStoreFactory.PASSWORD, parameters).setValue("secret");
-        
+
         final FeatureStore store = (FeatureStore) DataStores.open(parameters);
-        
+
         final MapContext context = MapBuilder.createContext();
-        
+
         for(GenericName n : store.getNames()){
             System.out.println(store.getFeatureType(n.toString()));
-            
+
             final FeatureCollection col = store.createSession(true).getFeatureCollection(QueryBuilder.all(n.toString()));
             context.layers().add(MapBuilder.createFeatureLayer(col, RandomStyleBuilder.createRandomVectorStyle(col.getFeatureType())));
         }
-        
-        
+
+
         JMap2DFrame.show(context);
-        
+
     }
 
 }

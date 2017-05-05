@@ -74,7 +74,7 @@ public interface LineString extends AbstractGeometry {
     AltitudeMode getAltitudeMode();
 
     /**
-     * 
+     *
      * @param extrude
      */
     void setExtrude(boolean extrude);

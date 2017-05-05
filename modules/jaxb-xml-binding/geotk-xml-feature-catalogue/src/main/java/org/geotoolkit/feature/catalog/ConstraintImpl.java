@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -23,16 +23,19 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.metadata.AbstractMetadata;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.Constraint;
 
 
 /**
  * A class for defining constraints for types.
- * 
+ *
  * <p>Java class for FC_Constraint_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FC_Constraint_Type">
  *   &lt;complexContent>
@@ -44,8 +47,8 @@ import org.opengis.feature.catalog.Constraint;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -53,7 +56,7 @@ import org.opengis.feature.catalog.Constraint;
     "description"
 })
 @XmlRootElement(name = "FC_Constraint")
-public class ConstraintImpl implements Constraint {
+public class ConstraintImpl extends AbstractMetadata implements Constraint {
 
     @XmlElement(required = true)
     private String description;
@@ -62,9 +65,9 @@ public class ConstraintImpl implements Constraint {
      * An empty constructor used by JAXB
      */
     public ConstraintImpl() {
-        
+
     }
-    
+
     /**
      * Clone a Constraint
      */
@@ -72,19 +75,19 @@ public class ConstraintImpl implements Constraint {
         if (feature != null) {
             this.description = feature.getDescription();
         }
-        
+
     }
-    
+
     /**
      * Build a new Constraint with the specified description
      */
     public ConstraintImpl(final String description) {
         this.description = description;
     }
-    
+
     /**
      * Gets the value of the description property.
-     * 
+     *
      */
     public String getDescription() {
         return description;
@@ -92,28 +95,28 @@ public class ConstraintImpl implements Constraint {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      */
     public void setDescription(final String value) {
         this.description = value;
     }
-    
+
     @Override
     public String toString() {
-        return "[Constraint]: description: " + description;  
+        return "[Constraint]: description: " + description;
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
         if (object instanceof ConstraintImpl) {
             final ConstraintImpl that = (ConstraintImpl) object;
-            
+
             return Objects.equals(this.description, that.description);
         }
         return false;
@@ -124,6 +127,11 @@ public class ConstraintImpl implements Constraint {
         int hash = 3;
         hash = 73 * hash + (this.description != null ? this.description.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public MetadataStandard getStandard() {
+        return FeatureCatalogueStandard.ISO_19110;
     }
 
 }

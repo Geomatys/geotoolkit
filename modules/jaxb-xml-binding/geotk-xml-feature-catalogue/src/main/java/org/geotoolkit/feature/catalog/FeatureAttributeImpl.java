@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -28,22 +28,23 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.sis.internal.jaxb.gco.GO_GenericName;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.Constraint;
 import org.opengis.feature.catalog.FeatureAttribute;
 import org.opengis.feature.catalog.FeatureType;
 import org.opengis.feature.catalog.ListedValue;
 import org.opengis.util.LocalName;
-import org.geotoolkit.feature.catalog.util.Multiplicity;
+import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
 import org.opengis.util.TypeName;
 
 
 /**
  * Characteristic of a feature type.
- * 
+ *
  * <p>Java class for FC_FeatureAttribute_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FC_FeatureAttribute_Type">
  *   &lt;complexContent>
@@ -58,8 +59,8 @@ import org.opengis.util.TypeName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,9 +85,9 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
      * An empty constructor used by JAXB
      */
     public FeatureAttributeImpl() {
-        
+
     }
-    
+
     /**
      * Clone a FeatureAttribute
      */
@@ -98,11 +99,11 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
             this.valueType   = feature.getValueType();
         }
     }
-    
+
     /**
      * Build a new Feature Attribute
      */
-    public FeatureAttributeImpl(final String id, final LocalName memberName, final String definition, final Multiplicity cardinality, final FeatureType featureType, 
+    public FeatureAttributeImpl(final String id, final LocalName memberName, final String definition, final MultiplicityImpl cardinality, final FeatureType featureType,
             final List<Constraint> constrainedBy, final String code, final List<ListedValue> listedValue, final TypeName valueType) {
         super(id, memberName, definition, cardinality, featureType, constrainedBy, null);
         this.code        = code;
@@ -112,13 +113,14 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
     /**
      * Gets the value of the code property.
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
      * Sets the value of the code property.
-     * 
+     *
      */
     public void setCode(final String value) {
         this.code = value;
@@ -126,15 +128,15 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
 
     /**
      * Gets the value of the valueMeasurementUnit property.
-     * 
-   
+     *
+
     public UnitOfMeasurePropertyType getValueMeasurementUnit() {
         return valueMeasurementUnit;
     }
 
     /**
      * Sets the value of the valueMeasurementUnit property.
-     
+
     public void setValueMeasurementUnit(UnitOfMeasurePropertyType value) {
         this.valueMeasurementUnit = value;
     }
@@ -142,34 +144,36 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
     /**
      * Gets the value of the listedValue property.
      */
+    @Override
     public List<ListedValue> getListedValue() {
         if (listedValue == null) {
-            listedValue = new ArrayList<ListedValue>();
+            listedValue = new ArrayList<>();
         }
         return this.listedValue;
     }
-    
+
      /**
      * Gets the value of the listedValue property.
      */
     public void setListedValue(final List<ListedValue> listedValue) {
         this.listedValue = listedValue;
     }
-    
+
     /**
      * Gets the value of the listedValue property.
      */
     public void setListedValue(final ListedValue listedValue) {
         if (this.listedValue == null) {
-            this.listedValue = new ArrayList<ListedValue>();
+            this.listedValue = new ArrayList<>();
         }
         this.listedValue.add(listedValue);
     }
 
     /**
      * Gets the value of the valueType property.
-     * 
+     *
      */
+    @Override
     public TypeName getValueType() {
         return valueType;
     }
@@ -180,14 +184,14 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
     public void setValueType(final TypeName value) {
         this.valueType = value;
     }
-    
+
     @Override
-    public FeatureAttributeImpl getReference() {
+    public FeatureAttributeImpl getReferenceableObject() {
         FeatureAttributeImpl result = new FeatureAttributeImpl(this);
         result.setReference(true);
         return result;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
@@ -203,18 +207,18 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
         }
         return s.toString();
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
         if (super.equals(object) && object instanceof FeatureAttributeImpl) {
             final FeatureAttributeImpl that = (FeatureAttributeImpl) object;
-            
+
             return Objects.equals(this.code,        that.code)        &&
                    Objects.equals(this.listedValue, that.listedValue) &&
                    Objects.equals(this.valueType,   that.valueType);

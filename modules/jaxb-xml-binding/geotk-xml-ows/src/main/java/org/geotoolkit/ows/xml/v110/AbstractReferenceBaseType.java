@@ -26,12 +26,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * This type contains only a restricted and annotated set of the attributes from the xlink:simpleLink attributeGroup. 
- * 
+ * This type contains only a restricted and annotated set of the attributes from the xlink:simpleLink attributeGroup.
+ *
  * <p>Java class for AbstractReferenceBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractReferenceBaseType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -78,7 +78,7 @@ public class AbstractReferenceBaseType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      */
     public String getType() {
         if (type == null) {
@@ -90,16 +90,16 @@ public class AbstractReferenceBaseType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
     */
     public void setType(final String value) {
         this.type = value;
     }
 
     /**
-     * Reference to a remote resource or local payload. A remote resource is typically addressed by a URL. 
-     * For a local payload (such as a multipart mime message), the xlink:href must start with the prefix cid:. 
-     * 
+     * Reference to a remote resource or local payload. A remote resource is typically addressed by a URL.
+     * For a local payload (such as a multipart mime message), the xlink:href must start with the prefix cid:.
+     *
      */
     public String getHref() {
         return href;
@@ -107,7 +107,7 @@ public class AbstractReferenceBaseType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -115,8 +115,8 @@ public class AbstractReferenceBaseType {
 
     /**
      * Reference to a resource that describes the role of this reference.
-     * When no value is supplied, no particular role value is to be inferred. 
-     * 
+     * When no value is supplied, no particular role value is to be inferred.
+     *
      */
     public String getRole() {
         return role;
@@ -124,15 +124,15 @@ public class AbstractReferenceBaseType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      */
     public void setRole(final String value) {
         this.role = value;
     }
 
     /**
-     * Although allowed, this attribute is not expected to be useful in this application of xlink:simpleLink. 
-     * 
+     * Although allowed, this attribute is not expected to be useful in this application of xlink:simpleLink.
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -140,15 +140,15 @@ public class AbstractReferenceBaseType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
     /**
-     * Describes the meaning of the referenced resource in a human-readable fashion. 
-     * 
+     * Describes the meaning of the referenced resource in a human-readable fashion.
+     *
      */
     public String getTitle() {
         return title;
@@ -156,15 +156,15 @@ public class AbstractReferenceBaseType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
     }
 
     /**
-     * Although allowed, this attribute is not expected to be useful in this application of xlink:simpleLink. 
-     * 
+     * Although allowed, this attribute is not expected to be useful in this application of xlink:simpleLink.
+     *
      */
     public String getShow() {
         return show;
@@ -172,15 +172,15 @@ public class AbstractReferenceBaseType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      */
     public void setShow(final String value) {
         this.show = value;
     }
 
     /**
-     * Although allowed, this attribute is not expected to be useful in this application of xlink:simpleLink. 
-     * 
+     * Although allowed, this attribute is not expected to be useful in this application of xlink:simpleLink.
+     *
      */
     public String getActuate() {
         return actuate;
@@ -188,7 +188,7 @@ public class AbstractReferenceBaseType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;

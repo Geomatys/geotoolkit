@@ -29,11 +29,11 @@ import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
 
 /**
  * Base class for textures and material. Contains only isFront-flag.
- * 
+ *
  * <p>Java class for AbstractSurfaceDataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractSurfaceDataType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractSurfaceDataType", propOrder = {
@@ -67,11 +67,11 @@ public class AbstractSurfaceDataType extends AbstractFeatureType {
 
     /**
      * Gets the value of the isFront property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isIsFront() {
         return isFront;
@@ -79,11 +79,11 @@ public class AbstractSurfaceDataType extends AbstractFeatureType {
 
     /**
      * Sets the value of the isFront property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setIsFront(Boolean value) {
         this.isFront = value;
@@ -98,7 +98,7 @@ public class AbstractSurfaceDataType extends AbstractFeatureType {
         }
         return this.genericApplicationPropertyOfSurfaceData;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder(super.toString());

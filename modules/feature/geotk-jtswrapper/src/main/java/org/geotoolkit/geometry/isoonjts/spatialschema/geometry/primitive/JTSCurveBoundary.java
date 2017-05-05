@@ -25,18 +25,18 @@ import org.opengis.geometry.primitive.Point;
  * @module
  */
 public class JTSCurveBoundary extends JTSPrimitiveBoundary implements CurveBoundary {
-        
+
     private Point startPoint;
-    
+
     private Point endPoint;
-    
+
     private Set pointSet;
-    
+
     public JTSCurveBoundary(
-            final CoordinateReferenceSystem crs, 
-            final Point startPoint, 
+            final CoordinateReferenceSystem crs,
+            final Point startPoint,
             final Point endPoint) {
-        
+
         super(crs);
         this.startPoint = startPoint;
         this.endPoint = endPoint;
@@ -44,7 +44,7 @@ public class JTSCurveBoundary extends JTSPrimitiveBoundary implements CurveBound
         if (startPoint != null) {
             tempSet.add(startPoint);
         }
-        if (endPoint != null) { 
+        if (endPoint != null) {
             tempSet.add(endPoint);
         }
         this.pointSet = Collections.unmodifiableSet(tempSet);

@@ -54,7 +54,7 @@ public class GeoJSONType {
     public String getContent() {
         return content;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
@@ -63,7 +63,7 @@ public class GeoJSONType {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -28,25 +28,25 @@ import org.opengis.temporal.TemporalPrimitive;
 
 /**
  * An abstract class that represents a non-decomposed element of geometry or topology of time.
- * 
+ *
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */
 public abstract class DefaultTemporalPrimitive extends AbstractIdentifiedObject implements TemporalPrimitive, TemporalOrder {
 
     /**
-     * 
+     *
      * @param properties
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      */
     public DefaultTemporalPrimitive(Map<String, ?> properties) throws IllegalArgumentException {
         super(properties);
     }
-    
+
     protected DefaultTemporalPrimitive() {
         super(org.apache.sis.internal.referencing.NilReferencingObject.INSTANCE);
     }
-    
+
     /**
      * Constructs a new instance initialized with the values from the specified metadata object.
      * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
@@ -61,7 +61,7 @@ public abstract class DefaultTemporalPrimitive extends AbstractIdentifiedObject 
     }
 
     /**
-     * Returns a value for relative position which are provided by the enumerated data type TM_RelativePosition 
+     * Returns a value for relative position which are provided by the enumerated data type TM_RelativePosition
      * and are based on the 13 temporal relationships identified by Allen (1983).
      * @param other TemporalPrimitive
      */
@@ -94,7 +94,7 @@ public abstract class DefaultTemporalPrimitive extends AbstractIdentifiedObject 
                 } else {
                      return (timeobject.getBeginning().getDate().compareTo(instantarg.getDate()) == 0) ? RelativePosition.BEGUN_BY : RelativePosition.AFTER;
                 }
-                
+
             } else {
                 if (this instanceof Instant && other instanceof Period) {
                     Instant timeobject = (Instant) this;

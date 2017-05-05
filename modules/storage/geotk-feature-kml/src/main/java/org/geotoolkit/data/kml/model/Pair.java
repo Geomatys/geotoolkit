@@ -78,7 +78,7 @@ public interface Pair extends AbstractObject {
     void setStyleUrl(URI styleUrl);
 
     /**
-     * 
+     *
      * @param styleSelector
      */
     void setAbstractStyleSelector(AbstractStyleSelector styleSelector);

@@ -22,15 +22,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *         A MultiPoint is defined by one or more Points, referenced through 
+ *
+ *         A MultiPoint is defined by one or more Points, referenced through
  *         pointMember elements.
- *       
- * 
+ *
+ *
  * <p>Java class for MultiPointType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MultiPointType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

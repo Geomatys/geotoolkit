@@ -33,7 +33,7 @@ public class DefaultAtomEmail implements AtomEmail {
     }
 
     /**
-     * 
+     *
      * @param address
      */
     public DefaultAtomEmail(String address) {

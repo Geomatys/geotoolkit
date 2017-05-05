@@ -30,9 +30,9 @@ import org.geotoolkit.wfs.xml.ExecutionStatus;
 
 /**
  * <p>Java class for ExecutionStatusType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ExecutionStatusType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.wfs.xml.ExecutionStatus;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ExecutionStatusType")
@@ -57,20 +57,20 @@ public class ExecutionStatusType implements ExecutionStatus {
     private String status;
 
     public ExecutionStatusType() {
-        
+
     }
-    
+
     public ExecutionStatusType(final String status) {
         this.status = status;
     }
-    
+
     /**
      * Gets the value of the status property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStatus() {
         if (status == null) {
@@ -82,11 +82,11 @@ public class ExecutionStatusType implements ExecutionStatus {
 
     /**
      * Sets the value of the status property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStatus(String value) {
         this.status = value;
@@ -98,7 +98,7 @@ public class ExecutionStatusType implements ExecutionStatus {
         sb.append("status=").append(status);
         return sb.toString();
     }
-    
+
     /**
      * Verify if this entry is identical to specified object.
      */

@@ -21,7 +21,7 @@ package org.geotoolkit.xal.model;
  * @author Samuel Andrés
  * @module
  */
-public class DefaultSubPremiseNumberSuffix 
+public class DefaultSubPremiseNumberSuffix
         extends DefaultGenericTypedGrPostal
         implements SubPremiseNumberSuffix {
 

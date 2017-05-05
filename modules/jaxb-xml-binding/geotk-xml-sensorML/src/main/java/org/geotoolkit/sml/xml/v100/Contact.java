@@ -30,9 +30,9 @@ import org.geotoolkit.sml.xml.AbstractContact;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.sml.xml.AbstractContact;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -118,7 +118,7 @@ public class Contact implements AbstractContact {
             this.type = contact.getType();
         }
     }
-    
+
     /**
      * Gets the value of the person property.
      */

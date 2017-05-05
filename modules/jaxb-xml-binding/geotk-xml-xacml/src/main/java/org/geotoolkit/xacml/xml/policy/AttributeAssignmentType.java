@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AttributeAssignmentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AttributeAssignmentType">
  *   &lt;complexContent>
@@ -36,8 +36,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -50,7 +50,7 @@ public class AttributeAssignmentType extends AttributeValueType {
 
    /**
     * Gets the value of the attributeId property.
-    * 
+    *
     */
    public String getAttributeId() {
       return attributeId;
@@ -58,7 +58,7 @@ public class AttributeAssignmentType extends AttributeValueType {
 
    /**
     * Sets the value of the attributeId property.
-    * 
+    *
     */
    public void setAttributeId(final String value) {
       this.attributeId = value;

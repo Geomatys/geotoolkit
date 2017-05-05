@@ -36,7 +36,7 @@ import static org.geotoolkit.index.quadtree.fs.IndexHeader.*;
 
 /**
  * DOCUMENT ME!
- * 
+ *
  * @author Tommaso Nolli
  * @author Johann Sorel (Geomatys)
  * @module
@@ -48,7 +48,7 @@ public class FileSystemIndexStore implements IndexStore {
 
     /**
      * Constructor. The byte order defaults to NEW_MSB_ORDER
-     * 
+     *
      * @param file
      */
     @Deprecated
@@ -62,7 +62,7 @@ public class FileSystemIndexStore implements IndexStore {
 
     /**
      * Constructor
-     * 
+     *
      * @param file
      * @param byteOrder
      */
@@ -121,14 +121,14 @@ public class FileSystemIndexStore implements IndexStore {
 
     /**
      * Wites a tree node to the qix file
-     * 
+     *
      * @param node
      *                The node
      * @param channel
      *                DOCUMENT ME!
      * @param order
      *                byte order
-     * 
+     *
      * @throws IOException
      * @throws StoreException
      *                 DOCUMENT ME!
@@ -168,10 +168,10 @@ public class FileSystemIndexStore implements IndexStore {
 
     /**
      * Calculates the offset
-     * 
+     *
      * @param node
-     * 
-     * 
+     *
+     *
      * @throws StoreException
      *                 DOCUMENT ME!
      */
@@ -192,7 +192,7 @@ public class FileSystemIndexStore implements IndexStore {
      * Loads a quadtree stored in a '.qix' file. <b>WARNING:</b> The resulting
      * quadtree will be immutable; if you perform an insert, an
      * <code>UnsupportedOperationException</code> will be thrown.
-     * 
+     *
      * @see IndexStore#load(org.geotoolkit.data.shapefile.shp.IndexFile)
      */
     @Override

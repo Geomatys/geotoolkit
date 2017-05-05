@@ -38,7 +38,7 @@ public enum WCSVersion {
 
     /**
      * Returns {@link WCSVersion} that matches from the code.
-     * 
+     *
      * @param v code value to resolve.
      * @return {@link WCSVersion} from code value.
      * @throws IllegalArgumentException if the code does not correspond to any existing code in this enum
@@ -49,12 +49,12 @@ public enum WCSVersion {
                 return candidat;
             }
         }
-        
+
         try{
             return WCSVersion.valueOf(v);
         }catch(IllegalArgumentException ex){/*we tryed*/}
-        
+
         throw new IllegalArgumentException(v);
     }
-    
+
 }

@@ -30,9 +30,9 @@ import org.opengis.style.Displacement;
  */
 public class FXDisplacement extends FXStyleElementController<Displacement>{
 
-    @FXML protected FXNumberExpression uiX;    
+    @FXML protected FXNumberExpression uiX;
     @FXML protected FXNumberExpression uiY;
-        
+
     @Override
     public Class<Displacement> getEditedClass() {
         return Displacement.class;
@@ -42,30 +42,30 @@ public class FXDisplacement extends FXStyleElementController<Displacement>{
     public Displacement newValue() {
         return getStyleFactory().displacement();
     }
-    
+
     @Override
     public void initialize() {
-        super.initialize();        
+        super.initialize();
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             value.set(getStyleFactory().displacement(uiX.valueProperty().get(), uiY.valueProperty().get()));
         };
-        
+
         uiX.valueProperty().addListener(changeListener);
         uiY.valueProperty().addListener(changeListener);
     }
-    
+
     @Override
     public void setLayer(MapLayer layer) {
         super.setLayer(layer);
         uiX.setLayer(layer);
         uiY.setLayer(layer);
     }
-    
+
     @Override
     protected void updateEditor(Displacement styleElement) {
         uiX.valueProperty().setValue(styleElement.getDisplacementX());
         uiY.valueProperty().setValue(styleElement.getDisplacementY());
     }
-    
+
 }

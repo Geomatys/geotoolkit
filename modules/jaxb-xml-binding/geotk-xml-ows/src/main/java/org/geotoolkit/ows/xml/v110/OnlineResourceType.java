@@ -27,12 +27,12 @@ import org.geotoolkit.ows.xml.AbstractOnlineResourceType;
 
 
 /**
- * For OWS use in the service metadata document, the CI_OnlineResource class was XML encoded as the attributeGroup "xlink:simpleLink", as used in GML. 
- * 
+ * For OWS use in the service metadata document, the CI_OnlineResource class was XML encoded as the attributeGroup "xlink:simpleLink", as used in GML.
+ *
  * <p>Java class for OnlineResourceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OnlineResourceType">
  *   &lt;complexContent>
@@ -42,7 +42,7 @@ import org.geotoolkit.ows.xml.AbstractOnlineResourceType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -76,7 +76,7 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
      */
     public OnlineResourceType(){
     }
-    
+
     public OnlineResourceType(final OnlineResourceType that) {
         if (that != null) {
             this.href    = that.href;
@@ -88,14 +88,14 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
             this.title   = that.title;
         }
     }
-    
+
     /**
      * Build a new Online resource with only the href property (most of the case).
      */
     public OnlineResourceType(final String href){
         this.href = href;
     }
-    
+
     /**
      * Gets the value of the type property.
      */
@@ -113,7 +113,7 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
     public String getHref() {
         return href;
     }
-    
+
     /**
      * Sets the value of the href property.
      */
@@ -191,14 +191,14 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
         hash = 37 * hash + (this.type != null ? this.type.hashCode() : 0);
         return hash;
     }
-    
+
      /**
      * Retourne une representation de l'objet.
      */
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-       
+
         if(actuate != null) {
             s.append("actuate=").append(actuate).append('\n');
         }

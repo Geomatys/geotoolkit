@@ -26,18 +26,18 @@ import org.opengis.referencing.operation.MathTransform;
  * @module
  */
 public final class QueryTileReference {
-    
+
     public final CoordinateReferenceSystem crs;
     public final MathTransform gridToCRS;
     public final String id;
     public final Request query;
 
-    public QueryTileReference(final String id, final CoordinateReferenceSystem crs, 
+    public QueryTileReference(final String id, final CoordinateReferenceSystem crs,
             final MathTransform gridToCRS, final Request query) {
         this.crs = crs;
         this.gridToCRS = gridToCRS;
         this.id = id;
         this.query = query;
     }
-    
+
 }

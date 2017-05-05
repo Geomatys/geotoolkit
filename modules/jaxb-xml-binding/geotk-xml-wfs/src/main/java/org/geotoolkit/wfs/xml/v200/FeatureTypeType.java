@@ -35,9 +35,9 @@ import org.geotoolkit.wfs.xml.FeatureType;
 
 /**
  * <p>Java class for FeatureTypeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FeatureTypeType">
  *   &lt;complexContent>
@@ -70,8 +70,8 @@ import org.geotoolkit.wfs.xml.FeatureType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureTypeType", propOrder = {
@@ -113,7 +113,7 @@ public class FeatureTypeType implements FeatureType {
     private List<MetadataURLType> metadataURL;
     @XmlElement(name = "ExtendedDescription")
     private ExtendedDescriptionType extendedDescription;
-    
+
     public FeatureTypeType() {
 
     }
@@ -131,11 +131,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     @Override
     public QName getName() {
@@ -144,11 +144,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     @Override
     public void setName(QName value) {
@@ -157,7 +157,7 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      */
     public List<Title> getTitle() {
         if (title == null) {
@@ -175,7 +175,7 @@ public class FeatureTypeType implements FeatureType {
         }
         return this._abstract;
     }
-    
+
     @Override
     public void setAbstract(final String value) {
         if (value != null) {
@@ -201,14 +201,14 @@ public class FeatureTypeType implements FeatureType {
             }
         }
     }
-    
+
     /**
      * Gets the value of the defaultCRS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getDefaultCRS() {
@@ -217,11 +217,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Sets the value of the defaultCRS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setDefaultCRS(String value) {
@@ -237,7 +237,7 @@ public class FeatureTypeType implements FeatureType {
         }
         return this.otherCRS;
     }
-    
+
     @Override
     public void setOtherCRS(final List<String> otherCRS) {
         this.otherCRS = otherCRS;
@@ -245,11 +245,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Gets the value of the noCRS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FeatureTypeType.NoCRS }
-     *     
+     *
      */
     public FeatureTypeType.NoCRS getNoCRS() {
         return noCRS;
@@ -257,11 +257,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Sets the value of the noCRS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FeatureTypeType.NoCRS }
-     *     
+     *
      */
     public void setNoCRS(FeatureTypeType.NoCRS value) {
         this.noCRS = value;
@@ -269,11 +269,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Gets the value of the outputFormats property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OutputFormatListType }
-     *     
+     *
      */
     public OutputFormatListType getOutputFormats() {
         return outputFormats;
@@ -281,11 +281,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Sets the value of the outputFormats property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OutputFormatListType }
-     *     
+     *
      */
     public void setOutputFormats(OutputFormatListType value) {
         this.outputFormats = value;
@@ -316,14 +316,14 @@ public class FeatureTypeType implements FeatureType {
     public void addMetadataURL(final String value, final String type, final String format) {
         getMetadataURL().add(new MetadataURLType(value, type, format));
     }
-    
+
     /**
      * Gets the value of the extendedDescription property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExtendedDescriptionType }
-     *     
+     *
      */
     public ExtendedDescriptionType getExtendedDescription() {
         return extendedDescription;
@@ -331,11 +331,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Sets the value of the extendedDescription property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExtendedDescriptionType }
-     *     
+     *
      */
     public void setExtendedDescription(ExtendedDescriptionType value) {
         this.extendedDescription = value;
@@ -435,12 +435,12 @@ public class FeatureTypeType implements FeatureType {
         }
         return s.toString();
     }
-    
+
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -449,8 +449,8 @@ public class FeatureTypeType implements FeatureType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")

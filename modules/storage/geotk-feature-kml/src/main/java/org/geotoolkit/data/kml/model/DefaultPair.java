@@ -33,7 +33,7 @@ public class DefaultPair extends DefaultAbstractObject implements Pair {
     private AbstractStyleSelector styleSelector;
 
     /**
-     * 
+     *
      */
     public DefaultPair() {
         this.key = DEF_STYLE_STATE;

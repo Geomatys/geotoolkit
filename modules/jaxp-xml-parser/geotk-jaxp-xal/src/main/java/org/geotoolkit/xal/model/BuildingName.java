@@ -37,13 +37,13 @@ public interface BuildingName extends GenericTypedGrPostal {
     /**
      * <p>Occurrence of the building name before/after the type.
      * eg. EGIS BUILDING where name appears before type.</p>
-     * 
+     *
      * @return
      */
     AfterBeforeEnum getTypeOccurrence();
 
     /**
-     * 
+     *
      * @param typeOccurrence
      */
     void setTypeOccurrence(AfterBeforeEnum typeOccurrence);

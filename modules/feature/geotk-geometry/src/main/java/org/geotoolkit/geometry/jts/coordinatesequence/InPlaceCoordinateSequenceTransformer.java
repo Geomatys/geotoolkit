@@ -1,9 +1,9 @@
 /*
  *    GeotoolKit - An Open source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
- *    
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -74,26 +74,26 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
     }
 
     FlyWeightDirectPosition start=new FlyWeightDirectPosition(2);
-    private CoordinateSequence transformInternal( final PackedCoordinateSequence sequence, final MathTransform transform ) 
+    private CoordinateSequence transformInternal( final PackedCoordinateSequence sequence, final MathTransform transform )
     throws TransformException{
-        
-        start.setSequence(sequence);   
+
+        start.setSequence(sequence);
         for(int i=0; i<sequence.size();i++ ){
             start.setOffset(i);
             try {
                 transform.transform(start, start);
             } catch (MismatchedDimensionException e) {
                 throw new TransformException( "", e);
-            } 
+            }
         }
         return sequence;
     }
-    
+
     private class FlyWeightDirectPosition implements DirectPosition {
         PackedCoordinateSequence sequence;
         int offset=0;
         private int dimension;
-        
+
         /**
          * Construct <code>InPlaceCoordinateSequenceTransformer.FlyWeightDirectPosition</code>.
          *
@@ -101,21 +101,21 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
         public FlyWeightDirectPosition(final int dim) {
             dimension=dim;
         }
-        
+
         /**
          * @param offset The offset to set.
          */
         public void setOffset( final int offset ) {
             this.offset = offset;
         }
-        
+
         /**
          * @param sequence The sequence to set.
          */
         public void setSequence( final PackedCoordinateSequence sequence ) {
             this.sequence = sequence;
         }
-        
+
         /**
          * {@inheritDoc }
          */
@@ -184,7 +184,7 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
         public DirectPosition getDirectPosition() {
             return this;
         }
-        
+
     }
 
 }

@@ -26,9 +26,9 @@ import org.geotoolkit.csw.xml.AbstractRecord;
 
 /**
  * <p>Java class for AbstractRecordType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractRecordType">
  *   &lt;complexContent>
@@ -37,8 +37,8 @@ import org.geotoolkit.csw.xml.AbstractRecord;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -49,13 +49,13 @@ import org.geotoolkit.csw.xml.AbstractRecord;
     DCMIRecordType.class
 })
 public abstract class AbstractRecordType implements AbstractRecord {
-    
+
     @XmlTransient
     protected static org.geotoolkit.ows.xml.v100.ObjectFactory owsFactory = new org.geotoolkit.ows.xml.v100.ObjectFactory();
-    
+
     @XmlTransient
     protected static org.geotoolkit.dublincore.xml.v1.elements.ObjectFactory dublinFactory = new org.geotoolkit.dublincore.xml.v1.elements.ObjectFactory();
-    
+
     @XmlTransient
     protected static org.geotoolkit.dublincore.xml.v1.terms.ObjectFactory dublinTermFactory = new org.geotoolkit.dublincore.xml.v1.terms.ObjectFactory();
 

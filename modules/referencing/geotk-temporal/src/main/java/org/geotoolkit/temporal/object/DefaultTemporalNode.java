@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2014, Geomatys
  *
@@ -14,7 +14,7 @@
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
- */ 
+ */
 package org.geotoolkit.temporal.object;
 
 import java.util.Map;
@@ -41,27 +41,27 @@ import org.opengis.util.InternationalString;
 })
 @XmlRootElement(name = "TimeNode")
 public class DefaultTemporalNode extends DefaultTemporalTopologicalPrimitive implements TemporalNode {
- 
+
     /**
      * Association that may link this {@link TemporalNode} to its corresponding {@link Instant}.
      */
     private Instant realization;
-    
+
     /**
      * {@link TemporalEdge} for which it is the {@link TemporalNode} start.
      */
     private TemporalEdge previousEdge;
-    
+
     /**
      * {@link TemporalEdge} for which it is the {@link TemporalNode} end.
      */
     private TemporalEdge nextEdge;
-    
+
     /**
      * Creates a default {@link TemporalNode} implementation from the given properties and {@link Instant}.
      * The properties given in argument follow the same rules than for the
      * {@linkplain DefaultTemporalGeometricPrimitive#DefaultTemporalGeometricPrimitive(java.util.Map) )  super-class constructor}.
-     * 
+     *
      * <table class="referencingTemporal">
      *   <caption>Recognized properties (non exhaustive list)</caption>
      *   <tr>
@@ -88,12 +88,12 @@ public class DefaultTemporalNode extends DefaultTemporalTopologicalPrimitive imp
      *     <td>{@link #getRemarks() }</td>
      *   </tr>
      * </table>
-     * 
+     *
      * @param properties The properties to be given to this object.
      * @param realization association that may link this {@link TemporalNode} to its corresponding {@link Instant}, should be {@code null}.
      * @param previousEdge {@link TemporalEdge} for which it is the {@link TemporalNode} start, should be {@code null}.
      * @param nextEdge {@link TemporalEdge} for which it is the {@link TemporalNode} end, should be {@code null}.
-     * @throws NullArgumentException if properties, start or end are {@code null}. 
+     * @throws NullArgumentException if properties, start or end are {@code null}.
      */
     public DefaultTemporalNode(final Map<String, ?> properties, final Instant realization, final TemporalEdge previousEdge, final TemporalEdge nextEdge) throws NullArgumentException {
         super(properties);
@@ -101,7 +101,7 @@ public class DefaultTemporalNode extends DefaultTemporalTopologicalPrimitive imp
         this.previousEdge = previousEdge;
         this.nextEdge     = nextEdge;
     }
-    
+
     /**
      * Constructs a new instance initialized with the values from the specified metadata object.
      * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
@@ -144,7 +144,7 @@ public class DefaultTemporalNode extends DefaultTemporalTopologicalPrimitive imp
         }
         return new DefaultTemporalNode(object);
     }
-    
+
     /**
      * Empty constructor only use for XML binding.
      */
@@ -154,12 +154,12 @@ public class DefaultTemporalNode extends DefaultTemporalTopologicalPrimitive imp
         previousEdge = null;
         nextEdge     = null;
     }
-    
+
     /**
      * Returns optional association that may link this {@link TemporalNode} to its corresponding {@link Instant}, or {@code null} if none.
-     * Only one {@link TemporalNode} may be associated with a {@link Instant}, 
+     * Only one {@link TemporalNode} may be associated with a {@link Instant},
      * and only one {@link Instant} may be associated with this object.
-     * 
+     *
      * @return association that may link this {@link TemporalNode} to its corresponding {@link Instant}, or {@code null} if none.
      */
     @Override
@@ -170,7 +170,7 @@ public class DefaultTemporalNode extends DefaultTemporalTopologicalPrimitive imp
 
     /**
      * Returns {@link TemporalEdge} for which it is the {@link TemporalNode} start.
-     * 
+     *
      * @return {@link TemporalEdge} for which it is the {@link TemporalNode} start.
      */
     @Override
@@ -181,7 +181,7 @@ public class DefaultTemporalNode extends DefaultTemporalTopologicalPrimitive imp
 
     /**
      * Returns {@link TemporalEdge} for which it is the {@link TemporalNode} end.
-     * 
+     *
      * @return {@link TemporalEdge} for which it is the {@link TemporalNode} end .
      */
     @Override

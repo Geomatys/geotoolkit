@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for LabelPlacementType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LabelPlacementType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,11 +57,11 @@ public class LabelPlacementType {
 
     /**
      * Gets the value of the pointPlacement property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PointPlacementType }
-     *     
+     *
      */
     public PointPlacementType getPointPlacement() {
         return pointPlacement;
@@ -69,11 +69,11 @@ public class LabelPlacementType {
 
     /**
      * Sets the value of the pointPlacement property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PointPlacementType }
-     *     
+     *
      */
     public void setPointPlacement(final PointPlacementType value) {
         this.pointPlacement = value;
@@ -81,11 +81,11 @@ public class LabelPlacementType {
 
     /**
      * Gets the value of the linePlacement property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LinePlacementType }
-     *     
+     *
      */
     public LinePlacementType getLinePlacement() {
         return linePlacement;
@@ -93,11 +93,11 @@ public class LabelPlacementType {
 
     /**
      * Sets the value of the linePlacement property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LinePlacementType }
-     *     
+     *
      */
     public void setLinePlacement(final LinePlacementType value) {
         this.linePlacement = value;

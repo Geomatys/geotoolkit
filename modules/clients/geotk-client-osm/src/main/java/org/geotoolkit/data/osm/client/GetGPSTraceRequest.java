@@ -51,5 +51,5 @@ public interface GetGPSTraceRequest extends Request{
      * @param page : requested page number
      */
     void setPage(int page);
-    
+
 }

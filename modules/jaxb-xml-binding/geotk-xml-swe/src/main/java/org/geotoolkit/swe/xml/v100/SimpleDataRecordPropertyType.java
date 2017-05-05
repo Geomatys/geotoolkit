@@ -25,11 +25,11 @@ import org.geotoolkit.swe.xml.SimpleDataRecordProperty;
 
 /**
  * SimpleDataRecord is a data-type so usually appears "by value" rather than by reference.
- * 
+ *
  * <p>Java class for SimpleDataRecordPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SimpleDataRecordPropertyType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.swe.xml.SimpleDataRecordProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

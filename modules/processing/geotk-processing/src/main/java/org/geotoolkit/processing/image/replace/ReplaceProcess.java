@@ -36,13 +36,13 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  */
 public class ReplaceProcess extends AbstractProcess {
-    
+
     private double[][][] replacements;
-    
+
     public ReplaceProcess(BufferedImage image, double[][][] replacements){
         this(toParameters(image,replacements));
     }
-    
+
     public ReplaceProcess(ParameterValueGroup input) {
         super(ReplaceDescriptor.INSTANCE, input);
     }
@@ -53,7 +53,7 @@ public class ReplaceProcess extends AbstractProcess {
         ParametersExt.getOrCreateValue(params, ReplaceDescriptor.IN_REPLACEMENTS.getName().getCode()).setValue(replacements);
         return params;
     }
-    
+
     @Override
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
@@ -61,7 +61,7 @@ public class ReplaceProcess extends AbstractProcess {
         final BufferedImage inputImage = (BufferedImage) Parameters.getOrCreate(IN_IMAGE, inputParameters).getValue();
         replacements = (double[][][]) Parameters.getOrCreate(IN_REPLACEMENTS, inputParameters).getValue();
         replacements = replacements.clone();
-        
+
         //copy datas
         final int nbBand = inputImage.getSampleModel().getNumBands();
         final WritableRaster raster = inputImage.getRaster();
@@ -78,10 +78,10 @@ public class ReplaceProcess extends AbstractProcess {
                 writeIte.setSampleDouble(replace(readIte.getSampleDouble(),band));
             }
         }
-        
+
         Parameters.getOrCreate(OUT_IMAGE, outputParameters).setValue(inputImage);
     }
-    
+
     private double replace(double value, int band){
         for(int i=0;i<replacements[band][0].length;i++){
             if(replacements[band][0][i]==value){
@@ -90,5 +90,5 @@ public class ReplaceProcess extends AbstractProcess {
         }
         return value;
     }
-    
+
 }

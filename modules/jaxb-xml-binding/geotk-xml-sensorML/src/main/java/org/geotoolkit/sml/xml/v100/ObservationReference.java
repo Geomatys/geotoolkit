@@ -81,7 +81,7 @@ public class ObservationReference implements AbstractObservationReference {
             this.type    = or.getType();
         }
     }
-    
+
     /**
      * Gets the value of the nilReason property.
      */

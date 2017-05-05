@@ -20,18 +20,18 @@ import javax.xml.bind.annotation.XmlRegistry;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the generated package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the generated package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -39,14 +39,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: generated
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link Services }
-     * 
+     *
      */
     public Services createServices() {
         return new Services();
@@ -54,7 +54,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TileMapService }
-     * 
+     *
      */
     public TileMapService createTileMapService() {
         return new TileMapService();
@@ -62,7 +62,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContactInformationType }
-     * 
+     *
      */
     public ContactInformationType createContactInformationType() {
         return new ContactInformationType();
@@ -70,7 +70,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TileMapsType }
-     * 
+     *
      */
     public TileMapsType createTileMapsType() {
         return new TileMapsType();
@@ -78,7 +78,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TileMap }
-     * 
+     *
      */
     public TileMap createTileMap() {
         return new TileMap();
@@ -86,7 +86,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MetadataType }
-     * 
+     *
      */
     public MetadataType createMetadataType() {
         return new MetadataType();
@@ -94,7 +94,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AttributionType }
-     * 
+     *
      */
     public AttributionType createAttributionType() {
         return new AttributionType();
@@ -102,7 +102,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WebMapContextType }
-     * 
+     *
      */
     public WebMapContextType createWebMapContextType() {
         return new WebMapContextType();
@@ -110,7 +110,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BoundingBoxType }
-     * 
+     *
      */
     public BoundingBoxType createBoundingBoxType() {
         return new BoundingBoxType();
@@ -118,7 +118,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OriginType }
-     * 
+     *
      */
     public OriginType createOriginType() {
         return new OriginType();
@@ -126,7 +126,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TileFormatType }
-     * 
+     *
      */
     public TileFormatType createTileFormatType() {
         return new TileFormatType();
@@ -134,7 +134,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TileSetsType }
-     * 
+     *
      */
     public TileSetsType createTileSetsType() {
         return new TileSetsType();
@@ -142,7 +142,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TileSetType }
-     * 
+     *
      */
     public TileSetType createTileSetType() {
         return new TileSetType();
@@ -150,7 +150,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LogoType }
-     * 
+     *
      */
     public LogoType createLogoType() {
         return new LogoType();
@@ -158,7 +158,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContactPersonPrimaryType }
-     * 
+     *
      */
     public ContactPersonPrimaryType createContactPersonPrimaryType() {
         return new ContactPersonPrimaryType();
@@ -166,7 +166,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContactAddressType }
-     * 
+     *
      */
     public ContactAddressType createContactAddressType() {
         return new ContactAddressType();

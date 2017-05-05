@@ -26,19 +26,19 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Extends WRSExtrinsicObjectType to include the basic properties of a geometry 
+ * Extends WRSExtrinsicObjectType to include the basic properties of a geometry
  * instance as defined in the OGC simple features model (99-049).
  * The repositoryItem property references an encoding of the geometry instance.
- * 
+ *
  *  dimension    - inherent dimension of the geometry instance
  *  geometryType - any concrete GML 3 geometry type
  *  srid         - id of the spatial reference system for this instance
- *       
- * 
+ *
+ *
  * <p>Java class for GeometryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeometryType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

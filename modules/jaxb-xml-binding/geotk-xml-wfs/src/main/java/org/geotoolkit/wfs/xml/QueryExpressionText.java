@@ -24,12 +24,12 @@ import javax.xml.namespace.QName;
  * @author Guilhem Legal
  */
 public interface QueryExpressionText {
- 
+
     String getLanguage();
-            
+
     List<Object> getContent();
-    
+
     List<QName> getReturnFeatureTypes();
-    
+
     boolean isIsPrivate();
 }

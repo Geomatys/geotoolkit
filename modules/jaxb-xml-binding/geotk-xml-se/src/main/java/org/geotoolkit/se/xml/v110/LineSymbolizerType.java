@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for LineSymbolizerType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LineSymbolizerType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,11 +64,11 @@ public class LineSymbolizerType
 
     /**
      * Gets the value of the geometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeometryType }
-     *     
+     *
      */
     public ParameterValueType getGeometry() {
         return geometry;
@@ -76,11 +76,11 @@ public class LineSymbolizerType
 
     /**
      * Sets the value of the geometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeometryType }
-     *     
+     *
      */
     public void setGeometry(final ParameterValueType value) {
         this.geometry = value;
@@ -88,11 +88,11 @@ public class LineSymbolizerType
 
     /**
      * Gets the value of the stroke property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StrokeType }
-     *     
+     *
      */
     public StrokeType getStroke() {
         return stroke;
@@ -100,11 +100,11 @@ public class LineSymbolizerType
 
     /**
      * Sets the value of the stroke property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StrokeType }
-     *     
+     *
      */
     public void setStroke(final StrokeType value) {
         this.stroke = value;
@@ -112,11 +112,11 @@ public class LineSymbolizerType
 
     /**
      * Gets the value of the perpendicularOffset property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getPerpendicularOffset() {
         return perpendicularOffset;
@@ -124,11 +124,11 @@ public class LineSymbolizerType
 
     /**
      * Sets the value of the perpendicularOffset property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setPerpendicularOffset(final ParameterValueType value) {
         this.perpendicularOffset = value;

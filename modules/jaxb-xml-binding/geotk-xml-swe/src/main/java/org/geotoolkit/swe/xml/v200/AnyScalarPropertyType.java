@@ -29,9 +29,9 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
 
 /**
  * <p>Java class for AnyScalarPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AnyScalarPropertyType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AnyScalarPropertyType", propOrder = {
@@ -87,11 +87,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Gets the value of the boolean property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BooleanType }
-     *     
+     *
      */
     public BooleanType getBoolean() {
         return _boolean;
@@ -99,11 +99,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Sets the value of the boolean property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BooleanType }
-     *     
+     *
      */
     public void setBoolean(BooleanType value) {
         this._boolean = value;
@@ -111,11 +111,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Gets the value of the count property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CountType }
-     *     
+     *
      */
     public CountType getCount() {
         return count;
@@ -123,11 +123,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Sets the value of the count property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CountType }
-     *     
+     *
      */
     public void setCount(CountType value) {
         this.count = value;
@@ -135,11 +135,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Gets the value of the quantity property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QuantityType }
-     *     
+     *
      */
     public QuantityType getQuantity() {
         return quantity;
@@ -147,11 +147,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Sets the value of the quantity property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QuantityType }
-     *     
+     *
      */
     public void setQuantity(QuantityType value) {
         this.quantity = value;
@@ -159,11 +159,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Gets the value of the time property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimeType }
-     *     
+     *
      */
     public TimeType getTime() {
         return time;
@@ -171,11 +171,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Sets the value of the time property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimeType }
-     *     
+     *
      */
     public void setTime(TimeType value) {
         this.time = value;
@@ -183,11 +183,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Gets the value of the category property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CategoryType }
-     *     
+     *
      */
     public CategoryType getCategory() {
         return category;
@@ -195,11 +195,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Sets the value of the category property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CategoryType }
-     *     
+     *
      */
     public void setCategory(CategoryType value) {
         this.category = value;
@@ -207,11 +207,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Gets the value of the text property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TextType }
-     *     
+     *
      */
     public TextType getText() {
         return text;
@@ -219,11 +219,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Sets the value of the text property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TextType }
-     *     
+     *
      */
     public void setText(TextType value) {
         this.text = value;
@@ -231,11 +231,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TypeType }
-     *     
+     *
      */
     public TypeType getType() {
         if (type == null) {
@@ -247,11 +247,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TypeType }
-     *     
+     *
      */
     public void setType(TypeType value) {
         this.type = value;
@@ -259,11 +259,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -271,11 +271,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -283,11 +283,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -295,11 +295,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -307,11 +307,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -319,11 +319,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -331,11 +331,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Gets the value of the titleTemp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitleTemp() {
         return titleTemp;
@@ -343,11 +343,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Sets the value of the titleTemp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitleTemp(String value) {
         this.titleTemp = value;
@@ -355,11 +355,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShowType }
-     *     
+     *
      */
     public ShowType getShow() {
         return show;
@@ -367,11 +367,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShowType }
-     *     
+     *
      */
     public void setShow(ShowType value) {
         this.show = value;
@@ -379,11 +379,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public ActuateType getActuate() {
         return actuate;
@@ -391,11 +391,11 @@ public class AnyScalarPropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public void setActuate(ActuateType value) {
         this.actuate = value;

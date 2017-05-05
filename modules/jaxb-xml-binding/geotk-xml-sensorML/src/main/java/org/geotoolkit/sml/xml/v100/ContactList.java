@@ -35,9 +35,9 @@ import org.geotoolkit.sml.xml.AbstractContactListMember;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -60,8 +60,8 @@ import org.geotoolkit.sml.xml.AbstractContactListMember;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -171,9 +171,9 @@ public class ContactList implements AbstractContactList {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -184,8 +184,8 @@ public class ContactList implements AbstractContactList {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -247,7 +247,7 @@ public class ContactList implements AbstractContactList {
                 this.type = member.getType();
             }
         }
-        
+
         /**
          * Gets the value of the person property.
          */
@@ -278,7 +278,7 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Gets the value of the nilReason property.
-         * 
+         *
          */
         public List<String> getNilReason() {
             if (nilReason == null) {

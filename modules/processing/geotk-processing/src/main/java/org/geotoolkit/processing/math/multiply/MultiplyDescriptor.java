@@ -32,10 +32,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class MultiplyDescriptor extends AbstractProcessDescriptor {
-        
+
     /**Process name : multiply */
     public static final String NAME = "math:multiply";
-    
+
     /**
      * Input parameters
      */
@@ -51,7 +51,7 @@ public class MultiplyDescriptor extends AbstractProcessDescriptor {
             .create(Double.class, null);
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(FIRST_NUMBER,SECOND_NUMBER);
-    
+
     /**
      * OutputParameters
      */
@@ -76,5 +76,5 @@ public class MultiplyDescriptor extends AbstractProcessDescriptor {
     public Process createProcess(final ParameterValueGroup input) {
         return new MultiplyProcess(input);
     }
-    
+
 }

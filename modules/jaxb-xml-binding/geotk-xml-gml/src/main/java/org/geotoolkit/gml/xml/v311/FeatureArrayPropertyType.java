@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Container for features - follow gml:ArrayAssociationType pattern.
- * 
+ *
  * <p>Java class for FeatureArrayPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FeatureArrayPropertyType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,14 +58,14 @@ public class FeatureArrayPropertyType {
 
     /**
      * Gets the value of the abstractFeature property.
-     * 
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractFeatureType }{@code >}
      * {@link JAXBElement }{@code <}{@link FeatureCollectionType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractFeatureCollectionType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends AbstractFeatureType>> getAbstractFeature() {
         if (abstractFeature == null) {

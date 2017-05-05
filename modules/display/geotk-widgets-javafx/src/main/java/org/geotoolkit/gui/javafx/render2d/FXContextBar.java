@@ -30,14 +30,14 @@ import org.geotoolkit.gui.javafx.render2d.data.FXSaveContextAction;
  * @author Johann Sorel (Geomatys)
  */
 public class FXContextBar extends ToolBar {
-    
+
     private static final String LEFT   = "buttongroup-left";
     private static final String CENTER = "buttongroup-center";
     private static final String RIGHT  = "buttongroup-right";
-    
+
     public FXContextBar(FXMap map) {
         getStylesheets().add("/org/geotoolkit/gui/javafx/buttonbar.css");
-        
+
         final Button butOpen = new FXOpenContextAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
         final Button butSave = new FXSaveContextAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
         final Button butPrint = new FXQuickPrintContextAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
@@ -47,6 +47,6 @@ public class FXContextBar extends ToolBar {
         final HBox hboxAction = new HBox(butOpen,butSave,butPrint);
         getItems().add(hboxAction);
     }
-    
-    
+
+
 }

@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -19,7 +19,6 @@ package org.geotoolkit.resources.jaxb.feature.catalog;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.geotoolkit.feature.catalog.util.XmlUnlimitedInteger;
-import org.geotoolkit.util.UnlimitedInteger;
 
 /**
  * JAXB adapter in order to map implementing class with the Types String. See
@@ -29,9 +28,9 @@ import org.geotoolkit.util.UnlimitedInteger;
  * @since 3.03
  * @author Guilhem Legal
  */
-public class UnlimitedIntegerAdapter extends XmlAdapter<UnlimitedIntegerAdapter, UnlimitedInteger> {
+public class UnlimitedIntegerAdapter extends XmlAdapter<UnlimitedIntegerAdapter, Integer> {
 
-    private UnlimitedInteger multiplicity;
+    private Integer multiplicity;
 
     /**
      * Empty constructor for JAXB only.
@@ -44,7 +43,7 @@ public class UnlimitedIntegerAdapter extends XmlAdapter<UnlimitedIntegerAdapter,
      *
      * @param multiplicity The String value to marshall.
      */
-    protected UnlimitedIntegerAdapter(final UnlimitedInteger multiplicity) {
+    protected UnlimitedIntegerAdapter(final Integer multiplicity) {
         this.multiplicity = multiplicity;
     }
 
@@ -54,7 +53,7 @@ public class UnlimitedIntegerAdapter extends XmlAdapter<UnlimitedIntegerAdapter,
      * @param value The value to marshall.
      * @return The adapter which covers the String value.
      */
-    protected UnlimitedIntegerAdapter wrap(final UnlimitedInteger value) {
+    protected UnlimitedIntegerAdapter wrap(final Integer value) {
         return new UnlimitedIntegerAdapter(value);
     }
 
@@ -71,13 +70,8 @@ public class UnlimitedIntegerAdapter extends XmlAdapter<UnlimitedIntegerAdapter,
      * Sets the value for the {@link StringImpl}. This method is systematically
      * called at unmarshalling-time by JAXB.
      */
-    public void setMultiplicity(final XmlUnlimitedInteger multiplicity) {
-        if (multiplicity != null) {
-            if (multiplicity.isInfinite() != null && multiplicity.isInfinite())
-                this.multiplicity = new UnlimitedInteger(Integer.MAX_VALUE);
-            else
-                this.multiplicity = new UnlimitedInteger(multiplicity.getValue());
-        }
+    public void setMultiplicity(final Integer multiplicity) {
+        this.multiplicity = multiplicity;
     }
 
     /**
@@ -88,7 +82,7 @@ public class UnlimitedIntegerAdapter extends XmlAdapter<UnlimitedIntegerAdapter,
      * @return A java object which represents the metadata value.
      */
     @Override
-    public UnlimitedInteger unmarshal(final UnlimitedIntegerAdapter value) throws Exception {
+    public Integer unmarshal(final UnlimitedIntegerAdapter value) throws Exception {
         if (value == null) {
             return null;
         }
@@ -103,7 +97,7 @@ public class UnlimitedIntegerAdapter extends XmlAdapter<UnlimitedIntegerAdapter,
      * @return The adapter for this String.
      */
     @Override
-    public UnlimitedIntegerAdapter marshal(final UnlimitedInteger value) throws Exception {
+    public UnlimitedIntegerAdapter marshal(final Integer value) throws Exception {
         return new UnlimitedIntegerAdapter(value);
     }
 

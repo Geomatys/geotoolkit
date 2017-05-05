@@ -155,7 +155,7 @@ public class GenericStartIndexFeatureIterator<R extends FeatureIterator> impleme
         public FeatureType getFeatureType() {
             return iterator.getFeatureType();
         }
-        
+
         @Override
         public void write() throws FeatureStoreRuntimeException {
             iterator.write();

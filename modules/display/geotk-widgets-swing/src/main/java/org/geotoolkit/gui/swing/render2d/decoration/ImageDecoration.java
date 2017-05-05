@@ -24,15 +24,15 @@ import org.jdesktop.swingx.JXImagePanel;
 
 /**
  * Image Decoration
- * 
+ *
  * @author Johann Sorel
  * @module
  */
 public class ImageDecoration extends JXImagePanel implements MapDecoration{
 
-    
+
     public ImageDecoration(){}
-    
+
     @Override
     public void refresh() {
         revalidate();
@@ -43,10 +43,10 @@ public class ImageDecoration extends JXImagePanel implements MapDecoration{
     public JComponent getComponent() {
         return this;
     }
-    
+
     @Override
     public void setMap2D(final JMap2D map) {
-        
+
     }
 
     @Override

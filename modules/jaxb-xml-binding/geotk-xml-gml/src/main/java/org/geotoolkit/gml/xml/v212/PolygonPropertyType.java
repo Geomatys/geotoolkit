@@ -22,13 +22,13 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
+ *
  * Encapsulates a single polygon to represent coverage or extentOf properties.
- * 
+ *
  * <p>Java class for PolygonPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PolygonPropertyType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -51,13 +51,13 @@ import javax.xml.bind.annotation.XmlType;
 public class PolygonPropertyType extends GeometryAssociationType {
 
     public PolygonPropertyType() {
-        
+
     }
-    
+
     public PolygonPropertyType(PolygonPropertyType that) {
         super(that);
     }
-    
+
     @Override
     public GeometryAssociationType getClone() {
         return new PolygonPropertyType(this);

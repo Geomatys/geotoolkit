@@ -21,7 +21,7 @@ package org.geotoolkit.wps.xml;
  * @author guilhem
  */
 public interface ExecuteResponse extends WPSResponse {
-    
+
     void setStatusLocation(String location);
- 
+
 }

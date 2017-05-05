@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlValue;
 
 /**
  * <p>Java class for MeasureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MeasureType">
  *   &lt;simpleContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MeasureType", propOrder = {
@@ -57,17 +57,17 @@ public class MeasureType {
      * An empty constructor used by JAXB
      */
     public MeasureType() {
-        
+
     }
-    
+
     public MeasureType(final double value, final String units) {
         this.value = value;
         this.uom = units;
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      */
     public double getValue() {
         return value;
@@ -75,7 +75,7 @@ public class MeasureType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      */
     public void setValue(double value) {
         this.value = value;
@@ -83,11 +83,11 @@ public class MeasureType {
 
     /**
      * Gets the value of the uom property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUom() {
         return uom;
@@ -95,11 +95,11 @@ public class MeasureType {
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUom(String value) {
         this.uom = value;

@@ -26,12 +26,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Defines the fields (categories, measures, or values) in the range records available for each location in the coverage domain. Each such field may be a scalar (numeric or text) value, such as population density, or a vector (compound or tensor) of many similar values, such as incomes by race, or radiances by wavelength. Each range field is typically an observable whose meaning and reference system are referenced by URIs. 
- * 
+ * Defines the fields (categories, measures, or values) in the range records available for each location in the coverage domain. Each such field may be a scalar (numeric or text) value, such as population density, or a vector (compound or tensor) of many similar values, such as incomes by race, or radiances by wavelength. Each range field is typically an observable whose meaning and reference system are referenced by URIs.
+ *
  * <p>Java class for RangeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RangeType">
  *   &lt;complexContent>
@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -61,14 +61,14 @@ public class RangeType {
      */
     RangeType() {
     }
-    
+
     /**
      * build a new range.
      */
     public RangeType(final List<FieldType> field) {
         this.field = field;
     }
-    
+
     /**
      * build a new range.
      * The List element are in the parameters.
@@ -79,8 +79,8 @@ public class RangeType {
             field.add(element);
         }
     }
-    
-    
+
+
     /**
      * Gets the value of the field property.
      */

@@ -32,15 +32,15 @@ import org.w3c.dom.Element;
 
 
 /**
- *  The purpose of an observation process is to generate an observation result. 
- * An instance is often an instrument or sensor, but may be a human observer, a simulator, 
- * or a process or algorithm applied to more primitive results used as inputs. 
- * The model for OM_Process is abstract, and has no attributes, operations, or associations. 
- * NOTE ISO 19115-2:2008 provides MI_Instrument, LE_Processing and LE_Algorithm, 
- * which could all be modelled as specializations of OM_Process. 
+ *  The purpose of an observation process is to generate an observation result.
+ * An instance is often an instrument or sensor, but may be a human observer, a simulator,
+ * or a process or algorithm applied to more primitive results used as inputs.
+ * The model for OM_Process is abstract, and has no attributes, operations, or associations.
+ * NOTE ISO 19115-2:2008 provides MI_Instrument, LE_Processing and LE_Algorithm,
+ * which could all be modelled as specializations of OM_Process.
  * Any suitable XML may be used to describe the observation process in line,
- * provided that it is contained in a single XML element. 
- * If reference to a schema is provided it must also be valid. 
+ * provided that it is contained in a single XML element.
+ * If reference to a schema is provided it must also be valid.
  * OGC SensorML provides a model which is suitable for many observation procedures.
  *
  * <p>Java class for OM_ProcessPropertyType complex type.
@@ -364,7 +364,7 @@ public class OMProcessPropertyType implements org.geotoolkit.observation.xml.Pro
         }
         return s.toString();
     }
-    
+
     @Override
     public boolean equals(final Object object) {
         if (object == this) {

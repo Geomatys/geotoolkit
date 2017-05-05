@@ -26,12 +26,12 @@ import org.geotoolkit.gml.xml.v311.TimePositionType;
 
 
 /**
- * (Arliss) What does this mean? What do the TimeResolution and "frame" mean? 
- * 
+ * (Arliss) What does this mean? What do the TimeResolution and "frame" mean?
+ *
  * <p>Java class for TimePeriodType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimePeriodType">
  *   &lt;complexContent>
@@ -46,7 +46,7 @@ import org.geotoolkit.gml.xml.v311.TimePositionType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -73,18 +73,18 @@ public class TimePeriodType {
      */
     TimePeriodType(){
     }
-    
+
      /**
      * an empty constructor used by JAXB
      */
-    public TimePeriodType(final TimePositionType beginPosition, final TimePositionType endPosition, 
+    public TimePeriodType(final TimePositionType beginPosition, final TimePositionType endPosition,
             final String timeResolution, final String frame){
         this.beginPosition  = beginPosition;
         this.endPosition    = endPosition;
         this.frame          = frame;
         this.timeResolution = timeResolution;
     }
-    
+
     /**
      * Gets the value of the beginPosition property.
      */
@@ -101,7 +101,7 @@ public class TimePeriodType {
 
     /**
      * Gets the value of the timeResolution property.
-     * 
+     *
      */
     public String getTimeResolution() {
         return timeResolution;

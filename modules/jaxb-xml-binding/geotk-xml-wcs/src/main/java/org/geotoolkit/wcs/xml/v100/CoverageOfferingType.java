@@ -82,7 +82,7 @@ public class CoverageOfferingType extends CoverageOfferingBriefType {
         this.supportedInterpolations = supportedInterpolations;
 
     }
-    
+
     /**
      * build a new CoverageOffering type used in describeCoverage response.
      */

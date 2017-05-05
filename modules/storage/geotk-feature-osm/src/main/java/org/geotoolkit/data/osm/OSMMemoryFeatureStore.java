@@ -54,7 +54,7 @@ import org.opengis.feature.FeatureType;
  * - Node
  * - Way
  * - relation
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -62,7 +62,7 @@ public class OSMMemoryFeatureStore extends AbstractFeatureStore{
 
     private final MemoryFeatureStore memoryStore;
 
-    public OSMMemoryFeatureStore(final ParameterValueGroup params, 
+    public OSMMemoryFeatureStore(final ParameterValueGroup params,
             final Object input) throws IOException, XMLStreamException, DataStoreException{
         super(params);
         memoryStore = new MemoryFeatureStore();
@@ -97,7 +97,7 @@ public class OSMMemoryFeatureStore extends AbstractFeatureStore{
     public FeatureStoreFactory getFactory() {
         return (FeatureStoreFactory) DataStores.getFactoryById(OSMMemoryFeatureStoreFactory.NAME);
     }
-    
+
     @Override
     public Set<GenericName> getNames() throws DataStoreException {
         return memoryStore.getNames();

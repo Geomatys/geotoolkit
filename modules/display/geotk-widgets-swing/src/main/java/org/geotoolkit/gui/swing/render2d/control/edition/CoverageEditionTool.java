@@ -35,7 +35,7 @@ public class CoverageEditionTool extends AbstractEditionTool{
         super(2000, "coverageEditor",
                 MessageBundle.formatInternational(MessageBundle.Keys.editor),
                 MessageBundle.formatInternational(MessageBundle.Keys.editor),
-                null, 
+                null,
                 CoverageMapLayer.class);
     }
 

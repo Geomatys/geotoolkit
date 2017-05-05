@@ -133,5 +133,5 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
             Point.class, MultiPoint.class, MultiLineString.class, MultiPolygon.class
         });
     }
-    
+
 }

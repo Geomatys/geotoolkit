@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for SLIAType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SLIAType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SLIAType", propOrder = {
@@ -57,11 +57,11 @@ public class SLIAType extends AbstractResponseParametersType {
 
     /**
      * Gets the value of the outputGatewayParameters property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OutputGatewayParametersType }
-     *     
+     *
      */
     public OutputGatewayParametersType getOutputGatewayParameters() {
         return outputGatewayParameters;
@@ -69,11 +69,11 @@ public class SLIAType extends AbstractResponseParametersType {
 
     /**
      * Sets the value of the outputGatewayParameters property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OutputGatewayParametersType }
-     *     
+     *
      */
     public void setOutputGatewayParameters(OutputGatewayParametersType value) {
         this.outputGatewayParameters = value;
@@ -81,11 +81,11 @@ public class SLIAType extends AbstractResponseParametersType {
 
     /**
      * Gets the value of the requestID property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRequestID() {
         return requestID;
@@ -93,11 +93,11 @@ public class SLIAType extends AbstractResponseParametersType {
 
     /**
      * Sets the value of the requestID property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRequestID(String value) {
         this.requestID = value;

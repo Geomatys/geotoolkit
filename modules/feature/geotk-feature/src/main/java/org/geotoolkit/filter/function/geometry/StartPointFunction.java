@@ -26,11 +26,11 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * Extract first geometry point.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class StartPointFunction extends AbstractFunction {
-    
+
     public StartPointFunction(final Expression expr1) {
         super(GeometryFunctionFactory.STARTPOINT, new Expression[] {expr1}, null);
     }
@@ -44,7 +44,7 @@ public class StartPointFunction extends AbstractFunction {
         } catch (Exception e){
             throw new IllegalArgumentException("Invalid function parameter."+parameters.get(0));
         }
-        
+
         if(geom==null) return null;
         final Point pt = getPoint(geom);
         if(pt==null) return null;
@@ -52,7 +52,7 @@ public class StartPointFunction extends AbstractFunction {
         pt.setUserData(geom.getUserData());
         return pt;
     }
-    
+
     private static Point getPoint(Geometry geom){
         if(geom instanceof LineString){
             return ((LineString)geom).getStartPoint();
@@ -71,5 +71,5 @@ public class StartPointFunction extends AbstractFunction {
             return null;
         }
     }
-    
+
 }

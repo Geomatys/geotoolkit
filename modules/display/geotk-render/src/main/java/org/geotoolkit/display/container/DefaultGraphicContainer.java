@@ -26,7 +26,7 @@ import org.geotoolkit.display.primitive.SceneNode;
  * @author Johann Sorel (Geomatys)
  */
 public class DefaultGraphicContainer extends GraphicContainer{
-    
+
     private final Canvas canvas;
     private SceneNode root;
 
@@ -57,5 +57,5 @@ public class DefaultGraphicContainer extends GraphicContainer{
         this.root = root;
         firePropertyChange(ROOT_KEY, old, root);
     }
-    
+
 }

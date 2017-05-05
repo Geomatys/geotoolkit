@@ -23,14 +23,14 @@ import org.geotoolkit.lang.Static;
 
 /**
  * Palette utility methods.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class Palettes extends Static{
-    
+
     /**
      * Regular interpolation of colors between start and end colors.
-     * 
+     *
      * @param start range start color, not null
      * @param end range end color, not null
      * @param divisions number of colors to generate, minimum 2
@@ -38,7 +38,7 @@ public final class Palettes extends Static{
      */
     public static Color[] interpolate(Color start, Color end, int divisions){
         ArgumentChecks.ensureBetween("Divisions", 2, Integer.MAX_VALUE, divisions);
-                
+
         final int argb1 = start.getRGB();
         final int argb2 = end.getRGB();
         final int sa = (argb1>>>24) & 0xFF;
@@ -49,7 +49,7 @@ public final class Palettes extends Static{
         final int ir = ((argb2>>>16) & 0xFF) - sr;
         final int ig = ((argb2>>> 8) & 0xFF) - sg;
         final int ib = ((argb2     ) & 0xFF) - sb;
-        
+
         final Color[] colors = new Color[divisions];
         for(int i=0; i<divisions; i++){
             final float ratio = (float)i/(divisions-1);
@@ -59,13 +59,13 @@ public final class Palettes extends Static{
             final int b = sb + (int)(ratio*ib);
             colors[i] = new Color(r, g, b, a);
         }
-        
+
         return colors;
     }
-    
+
     /**
      * Interpolate a color between two other using a [0...1] ratio.
-     * 
+     *
      * @param start range start color, not null
      * @param end range end color, not null
      * @param ratio between 0 and 1. 0 will return start color, 1 will return end color.
@@ -91,5 +91,5 @@ public final class Palettes extends Static{
         final int b = sb + (int)(ratio*ib);
         return new Color(r, g, b, a);
     }
-    
+
 }

@@ -30,9 +30,9 @@ import org.geotoolkit.ows.xml.v110.CodeType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.ows.xml.v110.CodeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,11 +57,11 @@ public class DescribeProcess extends RequestBaseType implements org.geotoolkit.w
 
     @XmlElement(name = "Identifier", namespace = "http://www.opengis.net/ows/1.1", required = true)
     protected List<CodeType> identifier;
-    
+
     public DescribeProcess() {
-        
+
     }
-    
+
     public DescribeProcess(String service, String language, List<CodeType> identifiers) {
         super(service, language);
         this.identifier = identifiers;
@@ -71,8 +71,8 @@ public class DescribeProcess extends RequestBaseType implements org.geotoolkit.w
      * Unordered list of one or more identifiers of the processes for which the client is requesting detailed descriptions. This element shall be repeated for each process for which a description is requested. These Identifiers are unordered, but the WPS shall return the process descriptions in the order in which they were requested.Gets the value of the identifier property.
      * @return Objects of the following type(s) are allowed in the list
      * {@link CodeType }
-     * 
-     * 
+     *
+     *
      */
     @Override
     public List<CodeType> getIdentifier() {

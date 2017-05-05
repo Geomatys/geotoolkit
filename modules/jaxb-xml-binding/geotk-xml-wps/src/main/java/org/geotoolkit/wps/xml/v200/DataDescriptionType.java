@@ -31,11 +31,11 @@ import org.geotoolkit.wps.xml.DataDescription;
 
 /**
  * Description type for process or input/output data items.
- * 
+ *
  * <p>Java class for DataDescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataDescriptionType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.wps.xml.DataDescription;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataDescriptionType", propOrder = {
@@ -65,20 +65,20 @@ public abstract class DataDescriptionType implements DataDescription {
     protected List<Format> format;
 
     public DataDescriptionType() {
-        
+
     }
-    
+
     public DataDescriptionType(List<Format> format) {
         this.format = format;
     }
-    
+
     /**
      * Gets the value of the format property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Format }
-     * 
-     * 
+     *
+     *
      */
     public List<Format> getFormat() {
         if (format == null) {
@@ -86,7 +86,7 @@ public abstract class DataDescriptionType implements DataDescription {
         }
         return this.format;
     }
-    
+
     /**
      * @return the default mime type
      */
@@ -101,7 +101,7 @@ public abstract class DataDescriptionType implements DataDescription {
         }
         return null;
     }
-    
+
     /**
      * @return the default encoding
      */
@@ -116,7 +116,7 @@ public abstract class DataDescriptionType implements DataDescription {
         }
         return null;
     }
-    
+
     /**
      * @return the default schema
      */
@@ -131,7 +131,7 @@ public abstract class DataDescriptionType implements DataDescription {
         }
         return null;
     }
-    
+
     public void setSchema(String schema) {
         if (getSchema().isEmpty()) {
             // add a new default format
@@ -147,7 +147,7 @@ public abstract class DataDescriptionType implements DataDescription {
             this.format.get(0).setSchema(schema);
         }
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
@@ -159,7 +159,7 @@ public abstract class DataDescriptionType implements DataDescription {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

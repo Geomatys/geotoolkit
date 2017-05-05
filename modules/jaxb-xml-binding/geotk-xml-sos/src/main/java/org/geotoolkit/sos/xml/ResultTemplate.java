@@ -25,12 +25,12 @@ import org.opengis.observation.Observation;
  * @author Guilhem Legal (Geomatys)
  */
 public interface ResultTemplate {
-    
+
     String getOffering();
-    
+
     Observation getObservationTemplate();
-    
+
     AbstractDataComponent getResultStructure();
-    
+
     AbstractEncoding getResultEncoding();
 }

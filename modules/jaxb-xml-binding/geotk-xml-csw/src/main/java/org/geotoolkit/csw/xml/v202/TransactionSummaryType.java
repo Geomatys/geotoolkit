@@ -26,15 +26,15 @@ import org.geotoolkit.csw.xml.TransactionSummary;
 
 
 /**
- * Reports the total number of catalogue items modified by a transaction 
- * request (i.e, inserted, updated, deleted). 
+ * Reports the total number of catalogue items modified by a transaction
+ * request (i.e, inserted, updated, deleted).
  * If the client did not specify a requestId, the server may assign one (a URI value).
- *          
- * 
+ *
+ *
  * <p>Java class for TransactionSummaryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TransactionSummaryType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.csw.xml.TransactionSummary;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,9 +75,9 @@ public class TransactionSummaryType implements TransactionSummary {
      * An empty constructor used by JAXB
      */
     TransactionSummaryType() {
-        
+
     }
-    
+
     /**
      * Build a new Transation summary.
      */
@@ -87,7 +87,7 @@ public class TransactionSummaryType implements TransactionSummary {
         this.totalInserted = totalInserted;
         this.totalUpdated  = totalUpdated;
     }
-    
+
     /**
      * Gets the value of the totalInserted property.
      */
@@ -147,7 +147,7 @@ public class TransactionSummaryType implements TransactionSummary {
         hash = 29 * hash + (this.requestId != null ? this.requestId.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[TransactionResponseType]\n");

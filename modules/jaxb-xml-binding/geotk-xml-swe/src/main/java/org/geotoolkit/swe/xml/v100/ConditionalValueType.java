@@ -43,9 +43,9 @@ import org.geotoolkit.swe.xml.Vector;
 
 /**
  * <p>Java class for ConditionalValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ConditionalValueType">
  *   &lt;complexContent>
@@ -66,8 +66,8 @@ import org.geotoolkit.swe.xml.Vector;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -80,7 +80,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
     private ConditionalValueType.Data data;
 
     public ConditionalValueType() {
-        
+
     }
 
     public ConditionalValueType(final AbstractConditionalValue cv) {
@@ -92,11 +92,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
     /**
      * Gets the value of the data property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ConditionalValueType.Data }
-     *     
+     *
      */
     public ConditionalValueType.Data getData() {
         return data;
@@ -104,11 +104,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
     /**
      * Sets the value of the data property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ConditionalValueType.Data }
-     *     
+     *
      */
     public void setData(final ConditionalValueType.Data value) {
         this.data = value;
@@ -117,9 +117,9 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -130,8 +130,8 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -290,11 +290,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
         }
         /**
          * Gets the value of the count property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Count }
-         *     
+         *
          */
         public Count getCount() {
             return count;
@@ -302,11 +302,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the count property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Count }
-         *     
+         *
          */
         public void setCount(final Count value) {
             this.count = value;
@@ -314,11 +314,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the quantity property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Quantity }
-         *     
+         *
          */
         public QuantityType getQuantity() {
             return quantity;
@@ -326,11 +326,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the quantity property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Quantity }
-         *     
+         *
          */
         public void setQuantity(final QuantityType value) {
             this.quantity = value;
@@ -338,11 +338,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the time property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Time }
-         *     
+         *
          */
         public TimeType getTime() {
             return time;
@@ -350,11 +350,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the time property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Time }
-         *     
+         *
          */
         public void setTime(final TimeType value) {
             this.time = value;
@@ -362,11 +362,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the boolean property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Boolean }
-         *     
+         *
          */
         public BooleanType getBoolean() {
             return _boolean;
@@ -374,11 +374,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the boolean property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Boolean }
-         *     
+         *
          */
         public void setBoolean(final BooleanType value) {
             this._boolean = value;
@@ -386,11 +386,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the category property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Category }
-         *     
+         *
          */
         public Category getCategory() {
             return category;
@@ -398,11 +398,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the category property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Category }
-         *     
+         *
          */
         public void setCategory(final Category value) {
             this.category = value;
@@ -410,11 +410,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the text property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Text }
-         *     
+         *
          */
         public Text getText() {
             return text;
@@ -422,11 +422,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the text property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Text }
-         *     
+         *
          */
         public void setText(final Text value) {
             this.text = value;
@@ -434,11 +434,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the quantityRange property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link QuantityRange }
-         *     
+         *
          */
         public QuantityRange getQuantityRange() {
             return quantityRange;
@@ -446,11 +446,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the quantityRange property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link QuantityRange }
-         *     
+         *
          */
         public void setQuantityRange(final QuantityRange value) {
             this.quantityRange = value;
@@ -458,11 +458,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the countRange property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link CountRange }
-         *     
+         *
          */
         public CountRange getCountRange() {
             return countRange;
@@ -470,11 +470,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the countRange property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link CountRange }
-         *     
+         *
          */
         public void setCountRange(final CountRange value) {
             this.countRange = value;
@@ -482,11 +482,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the timeRange property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TimeRange }
-         *     
+         *
          */
         public TimeRange getTimeRange() {
             return timeRange;
@@ -494,11 +494,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the timeRange property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TimeRange }
-         *     
+         *
          */
         public void setTimeRange(final TimeRange value) {
             this.timeRange = value;
@@ -506,7 +506,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the abstractDataRecord property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link JAXBElement }{@code <}{@link EnvelopeType }{@code >}
@@ -519,7 +519,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
          *     {@link JAXBElement }{@code <}{@link ConditionalValueType }{@code >}
          *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
          *     {@link JAXBElement }{@code <}{@link VectorType }{@code >}
-         *     
+         *
          */
         public JAXBElement<? extends AbstractDataRecordType> getJbAbstractDataRecord() {
             return abstractDataRecord;
@@ -534,7 +534,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the abstractDataRecord property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link JAXBElement }{@code <}{@link EnvelopeType }{@code >}
@@ -547,7 +547,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
          *     {@link JAXBElement }{@code <}{@link ConditionalValueType }{@code >}
          *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
          *     {@link JAXBElement }{@code <}{@link VectorType }{@code >}
-         *     
+         *
          */
         public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordType> value) {
             this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordType> ) value);
@@ -555,14 +555,14 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the abstractDataArray property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link JAXBElement }{@code <}{@link AbstractDataArrayType }{@code >}
          *     {@link JAXBElement }{@code <}{@link CurveType }{@code >}
          *     {@link JAXBElement }{@code <}{@link DataArrayType }{@code >}
          *     {@link JAXBElement }{@code <}{@link SquareMatrixType }{@code >}
-         *     
+         *
          */
         public JAXBElement<? extends AbstractDataArrayType> getJbAbstractDataArray() {
             return abstractDataArray;
@@ -577,14 +577,14 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the abstractDataArray property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link JAXBElement }{@code <}{@link AbstractDataArrayType }{@code >}
          *     {@link JAXBElement }{@code <}{@link CurveType }{@code >}
          *     {@link JAXBElement }{@code <}{@link DataArrayType }{@code >}
          *     {@link JAXBElement }{@code <}{@link SquareMatrixType }{@code >}
-         *     
+         *
          */
         public void setAbstractDataArray(final JAXBElement<? extends AbstractDataArrayType> value) {
             this.abstractDataArray = ((JAXBElement<? extends AbstractDataArrayType> ) value);
@@ -592,11 +592,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the remoteSchema property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getRemoteSchema() {
             return remoteSchema;
@@ -604,11 +604,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the remoteSchema property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setRemoteSchema(final String value) {
             this.remoteSchema = value;
@@ -616,11 +616,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
             return type;
@@ -628,11 +628,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -640,11 +640,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the href property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getHref() {
             return href;
@@ -652,11 +652,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the href property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setHref(final String value) {
             this.href = value;
@@ -664,11 +664,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the role property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getRole() {
             return role;
@@ -676,11 +676,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the role property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setRole(final String value) {
             this.role = value;
@@ -688,11 +688,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the arcrole property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getArcrole() {
             return arcrole;
@@ -700,11 +700,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the arcrole property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setArcrole(final String value) {
             this.arcrole = value;
@@ -712,11 +712,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the title property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getTitle() {
             return title;
@@ -724,11 +724,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the title property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setTitle(final String value) {
             this.title = value;
@@ -736,11 +736,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the show property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getShow() {
             return show;
@@ -748,11 +748,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the show property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setShow(final String value) {
             this.show = value;
@@ -760,11 +760,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the actuate property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getActuate() {
             return actuate;
@@ -772,11 +772,11 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the actuate property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setActuate(final String value) {
             this.actuate = value;

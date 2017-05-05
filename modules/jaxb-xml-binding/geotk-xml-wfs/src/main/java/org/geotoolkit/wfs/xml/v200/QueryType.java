@@ -102,7 +102,7 @@ public class QueryType extends AbstractAdhocQueryExpressionType implements Query
             }
         }
     }
-    
+
     @Override
     protected  List<JAXBElement<?>> cloneProjectionClause(final List<JAXBElement<?>> toClone) {
         final List<JAXBElement<?>> result = new ArrayList<JAXBElement<?>>();
@@ -118,7 +118,7 @@ public class QueryType extends AbstractAdhocQueryExpressionType implements Query
         }
         return result;
     }
-    
+
     /**
      * Gets the value of the srsName property.
      *

@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Notification of registry events.
- * 
+ *
  * <p>Java class for NotificationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="NotificationType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,7 +69,7 @@ public class NotificationType extends RegistryObjectType {
 
     /**
      * Sets the value of the registryObjectList property.
-     * 
+     *
      */
     public void setRegistryObjectList(final RegistryObjectListType value) {
         this.registryObjectList = value;

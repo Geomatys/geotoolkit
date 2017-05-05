@@ -22,7 +22,7 @@ package org.geotoolkit.swe.xml;
  * @module
  */
 public interface Position extends AbstractVector {
-    
+
     public AbstractTimeProperty getTime();
 
     public AbstractVectorProperty getLocation();

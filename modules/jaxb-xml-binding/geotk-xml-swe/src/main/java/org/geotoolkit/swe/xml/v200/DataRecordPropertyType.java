@@ -29,9 +29,9 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
 
 /**
  * <p>Java class for DataRecordPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataRecordPropertyType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataRecordPropertyType", propOrder = {
@@ -71,20 +71,20 @@ public class DataRecordPropertyType {
     private ActuateType actuate;
 
     public DataRecordPropertyType() {
-        
+
     }
-    
+
     public DataRecordPropertyType(final DataRecordType dataRecord) {
         this.dataRecord = dataRecord;
     }
-    
+
     /**
      * Gets the value of the dataRecord property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataRecordType }
-     *     
+     *
      */
     public DataRecordType getDataRecord() {
         return dataRecord;
@@ -92,11 +92,11 @@ public class DataRecordPropertyType {
 
     /**
      * Sets the value of the dataRecord property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataRecordType }
-     *     
+     *
      */
     public void setDataRecord(DataRecordType value) {
         this.dataRecord = value;
@@ -104,11 +104,11 @@ public class DataRecordPropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TypeType }
-     *     
+     *
      */
     public TypeType getType() {
         if (type == null) {
@@ -120,11 +120,11 @@ public class DataRecordPropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TypeType }
-     *     
+     *
      */
     public void setType(TypeType value) {
         this.type = value;
@@ -132,11 +132,11 @@ public class DataRecordPropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -144,11 +144,11 @@ public class DataRecordPropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -156,11 +156,11 @@ public class DataRecordPropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -168,11 +168,11 @@ public class DataRecordPropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -180,11 +180,11 @@ public class DataRecordPropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -192,11 +192,11 @@ public class DataRecordPropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -204,11 +204,11 @@ public class DataRecordPropertyType {
 
     /**
      * Gets the value of the titleTemp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitleTemp() {
         return titleTemp;
@@ -216,11 +216,11 @@ public class DataRecordPropertyType {
 
     /**
      * Sets the value of the titleTemp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitleTemp(String value) {
         this.titleTemp = value;
@@ -228,11 +228,11 @@ public class DataRecordPropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShowType }
-     *     
+     *
      */
     public ShowType getShow() {
         return show;
@@ -240,11 +240,11 @@ public class DataRecordPropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShowType }
-     *     
+     *
      */
     public void setShow(ShowType value) {
         this.show = value;
@@ -252,11 +252,11 @@ public class DataRecordPropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public ActuateType getActuate() {
         return actuate;
@@ -264,11 +264,11 @@ public class DataRecordPropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public void setActuate(ActuateType value) {
         this.actuate = value;

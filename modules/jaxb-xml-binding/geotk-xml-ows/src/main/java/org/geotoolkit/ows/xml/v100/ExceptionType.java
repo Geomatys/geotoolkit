@@ -28,12 +28,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * An Exception element describes one detected error that a server chooses to convey to the client. 
- * 
+ * An Exception element describes one detected error that a server chooses to convey to the client.
+ *
  * <p>Java class for ExceptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ExceptionType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,10 +68,10 @@ public class ExceptionType implements org.geotoolkit.ows.xml.ExceptionType {
      * Empty constructor used by JAXB.
      */
     public ExceptionType() {}
-    
+
     /**
      *  build a new Exception code.
-     * 
+     *
      * @param exceptionText
      * @param exceptionCode
      */
@@ -81,7 +81,7 @@ public class ExceptionType implements org.geotoolkit.ows.xml.ExceptionType {
         this.exceptionCode = exceptionCode;
         this.locator       = locator;
     }
-    
+
     /**
      * Gets the value of the exceptionText property.
      */
@@ -136,7 +136,7 @@ public class ExceptionType implements org.geotoolkit.ows.xml.ExceptionType {
 
     /**
      * Return a String representation of the exception.
-     * 
+     *
      * @return A String representation of the exception.
      */
     @Override

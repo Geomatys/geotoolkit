@@ -35,7 +35,7 @@ public interface ChangeElementRequest extends Request{
     };
 
     /**
-     * 
+     *
      * @return the request type : Create/Update/Delete
      */
     Type getType();

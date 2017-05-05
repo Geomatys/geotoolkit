@@ -32,10 +32,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class FloorDescriptor extends AbstractProcessDescriptor{
-        
+
     /**Process name : floor */
     public static final String NAME = "math:floor";
-    
+
     /**
      * Input parameters
      */
@@ -44,10 +44,10 @@ public class FloorDescriptor extends AbstractProcessDescriptor{
             .setRemarks("first number")
             .setRequired(true)
             .create(Double.class, null);
-    
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(FIRST_NUMBER);
-    
+
     /**
      * OutputParameters
      */
@@ -72,5 +72,5 @@ public class FloorDescriptor extends AbstractProcessDescriptor{
     public Process createProcess(final ParameterValueGroup input) {
         return new FloorProcess(input);
     }
-    
+
 }

@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Represents a triangle as a surface with an outer boundary consisting of a linear ring. Note that this is a polygon (subtype) with no inner boundaries. The number of points in the linear ring must be four.
- * 
+ *
  * <p>Java class for TriangleType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TriangleType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,12 +61,12 @@ public class TriangleType extends AbstractSurfacePatchType {
 
     /**
      * Constraint: The Ring shall be a LinearRing and must form a triangle, the first and the last position must be co-incident.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<AbstractRingPropertyType> geJbtExterior() {
         return exterior;
@@ -74,12 +74,12 @@ public class TriangleType extends AbstractSurfacePatchType {
 
     /**
      * Constraint: The Ring shall be a LinearRing and must form a triangle, the first and the last position must be co-incident.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
-     *     
+     *
      */
     public void setJbExterior(final JAXBElement<AbstractRingPropertyType> value) {
         this.exterior = ((JAXBElement<AbstractRingPropertyType> ) value);
@@ -117,11 +117,11 @@ public class TriangleType extends AbstractSurfacePatchType {
 
     /**
      * Gets the value of the interpolation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SurfaceInterpolationType }
-     *     
+     *
      */
     public SurfaceInterpolationType getInterpolation() {
         if (interpolation == null) {
@@ -133,11 +133,11 @@ public class TriangleType extends AbstractSurfacePatchType {
 
     /**
      * Sets the value of the interpolation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SurfaceInterpolationType }
-     *     
+     *
      */
     public void setInterpolation(final SurfaceInterpolationType value) {
         this.interpolation = value;

@@ -27,12 +27,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Basic metadata identifying and describing a set of data. 
- * 
+ * Basic metadata identifying and describing a set of data.
+ *
  * <p>Java class for BasicIdentificationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BasicIdentificationType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -67,7 +67,7 @@ public class BasicIdentificationType extends DescriptionType {
     private List<MetadataType> metadata;
 
     /**
-     * Optional unique identifier or name of this dataset. 
+     * Optional unique identifier or name of this dataset.
      */
     public CodeType getIdentifier() {
         return identifier;

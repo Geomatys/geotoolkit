@@ -32,9 +32,9 @@ import org.w3c.dom.Element;
 
 /**
  * <p>Java class for SensorDescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SensorDescriptionType">
  *   &lt;complexContent>
@@ -67,8 +67,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SensorDescriptionType", propOrder = {
@@ -83,11 +83,11 @@ public class SensorDescriptionType {
 
     /**
      * Gets the value of the validTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SensorDescriptionType.ValidTime }
-     *     
+     *
      */
     public SensorDescriptionType.ValidTime getValidTime() {
         return validTime;
@@ -95,11 +95,11 @@ public class SensorDescriptionType {
 
     /**
      * Sets the value of the validTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SensorDescriptionType.ValidTime }
-     *     
+     *
      */
     public void setValidTime(SensorDescriptionType.ValidTime value) {
         this.validTime = value;
@@ -107,11 +107,11 @@ public class SensorDescriptionType {
 
     /**
      * Gets the value of the data property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SensorDescriptionType.Data }
-     *     
+     *
      */
     public SensorDescriptionType.Data getData() {
         return data;
@@ -119,11 +119,11 @@ public class SensorDescriptionType {
 
     /**
      * Sets the value of the data property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SensorDescriptionType.Data }
-     *     
+     *
      */
     public void setData(SensorDescriptionType.Data value) {
         this.data = value;
@@ -132,9 +132,9 @@ public class SensorDescriptionType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -146,8 +146,8 @@ public class SensorDescriptionType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -160,12 +160,12 @@ public class SensorDescriptionType {
 
         /**
          * Gets the value of the any property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Element }
          *     {@link Object }
-         *     
+         *
          */
         public Object getAny() {
             return any;
@@ -173,12 +173,12 @@ public class SensorDescriptionType {
 
         /**
          * Sets the value of the any property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Element }
          *     {@link Object }
-         *     
+         *
          */
         public void setAny(Object value) {
             this.any = value;
@@ -189,9 +189,9 @@ public class SensorDescriptionType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -203,8 +203,8 @@ public class SensorDescriptionType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -217,13 +217,13 @@ public class SensorDescriptionType {
 
         /**
          * Gets the value of the abstractTimeGeometricPrimitive property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link JAXBElement }{@code <}{@link TimePeriodType }{@code >}
          *     {@link JAXBElement }{@code <}{@link TimeInstantType }{@code >}
          *     {@link JAXBElement }{@code <}{@link AbstractTimeGeometricPrimitiveType }{@code >}
-         *     
+         *
          */
         public JAXBElement<? extends AbstractTimeGeometricPrimitiveType> getAbstractTimeGeometricPrimitive() {
             return abstractTimeGeometricPrimitive;
@@ -231,13 +231,13 @@ public class SensorDescriptionType {
 
         /**
          * Sets the value of the abstractTimeGeometricPrimitive property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link JAXBElement }{@code <}{@link TimePeriodType }{@code >}
          *     {@link JAXBElement }{@code <}{@link TimeInstantType }{@code >}
          *     {@link JAXBElement }{@code <}{@link AbstractTimeGeometricPrimitiveType }{@code >}
-         *     
+         *
          */
         public void setAbstractTimeGeometricPrimitive(JAXBElement<? extends AbstractTimeGeometricPrimitiveType> value) {
             this.abstractTimeGeometricPrimitive = ((JAXBElement<? extends AbstractTimeGeometricPrimitiveType> ) value);

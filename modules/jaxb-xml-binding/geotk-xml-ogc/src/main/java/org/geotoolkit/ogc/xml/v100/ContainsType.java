@@ -30,13 +30,13 @@ import javax.xml.bind.annotation.XmlType;
 public class ContainsType extends BinarySpatialOpType {
 
     public ContainsType() {
-        
+
     }
-    
+
     public ContainsType(final ContainsType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new ContainsType(this);

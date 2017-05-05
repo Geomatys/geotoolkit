@@ -22,11 +22,11 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * JTS geometry type name.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class GeometryTypeFunction extends AbstractFunction {
-    
+
     public GeometryTypeFunction(final Expression expr1) {
         super(GeometryFunctionFactory.GEOMETRYTYPE, new Expression[] {expr1}, null);
     }
@@ -34,13 +34,13 @@ public class GeometryTypeFunction extends AbstractFunction {
     @Override
     public Object evaluate(final Object feature) {
         final Geometry geom;
-        
+
         try {
             geom = parameters.get(0).evaluate(feature,Geometry.class);
         } catch (Exception e){
             throw new IllegalArgumentException("Invalid function parameter."+parameters.get(0));
         }
-        
+
         return geom!=null ? geom.getGeometryType() : null;
     }
 }

@@ -42,5 +42,5 @@ public class Rescaler extends PipeLineInterpolation {
         double tmp = super.interpolate(x, y, band);
         return (tmp + translation[band]) * scale[band];
     }
-    
+
 }

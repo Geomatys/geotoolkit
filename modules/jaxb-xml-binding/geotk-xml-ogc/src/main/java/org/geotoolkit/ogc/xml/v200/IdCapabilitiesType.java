@@ -29,9 +29,9 @@ import org.opengis.filter.capability.IdCapabilities;
 
 /**
  * <p>Java class for Id_CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Id_CapabilitiesType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.opengis.filter.capability.IdCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Id_CapabilitiesType", propOrder = {
@@ -56,22 +56,22 @@ public class IdCapabilitiesType implements IdCapabilities {
     private List<ResourceIdentifierType> resourceIdentifier;
 
     public IdCapabilitiesType() {
-        
+
     }
-    
+
     public IdCapabilitiesType(ResourceIdentifierType resourceIdentifier) {
         if (resourceIdentifier != null) {
             this.resourceIdentifier = new ArrayList<ResourceIdentifierType>();
             this.resourceIdentifier.add(resourceIdentifier);
         }
     }
-    
+
     public IdCapabilitiesType(final List<ResourceIdentifierType> resourceIdentifier) {
         this.resourceIdentifier = resourceIdentifier;
     }
     /**
      * Gets the value of the resourceIdentifier property.
-     * 
+     *
      */
     public List<ResourceIdentifierType> getResourceIdentifier() {
         if (resourceIdentifier == null) {

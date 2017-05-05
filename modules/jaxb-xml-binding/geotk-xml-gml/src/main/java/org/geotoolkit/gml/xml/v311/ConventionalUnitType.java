@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Definition of a unit of measure which is related to a preferred unit for this quantity type through a conversion formula.  A method for deriving this unit by algebraic combination of more primitive units, may also be provided.
- * 
+ *
  * <p>Java class for ConventionalUnitType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ConventionalUnitType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,11 +65,11 @@ public class ConventionalUnitType
 
     /**
      * Gets the value of the conversionToPreferredUnit property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ConversionToPreferredUnitType }
-     *     
+     *
      */
     public ConversionToPreferredUnitType getConversionToPreferredUnit() {
         return conversionToPreferredUnit;
@@ -77,11 +77,11 @@ public class ConventionalUnitType
 
     /**
      * Sets the value of the conversionToPreferredUnit property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ConversionToPreferredUnitType }
-     *     
+     *
      */
     public void setConversionToPreferredUnit(final ConversionToPreferredUnitType value) {
         this.conversionToPreferredUnit = value;
@@ -89,11 +89,11 @@ public class ConventionalUnitType
 
     /**
      * Gets the value of the roughConversionToPreferredUnit property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ConversionToPreferredUnitType }
-     *     
+     *
      */
     public ConversionToPreferredUnitType getRoughConversionToPreferredUnit() {
         return roughConversionToPreferredUnit;
@@ -101,11 +101,11 @@ public class ConventionalUnitType
 
     /**
      * Sets the value of the roughConversionToPreferredUnit property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ConversionToPreferredUnitType }
-     *     
+     *
      */
     public void setRoughConversionToPreferredUnit(final ConversionToPreferredUnitType value) {
         this.roughConversionToPreferredUnit = value;
@@ -113,25 +113,25 @@ public class ConventionalUnitType
 
     /**
      * Gets the value of the derivationUnitTerm property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the derivationUnitTerm property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDerivationUnitTerm().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DerivationUnitTermType }
-     * 
-     * 
+     *
+     *
      */
     public List<DerivationUnitTermType> getDerivationUnitTerm() {
         if (derivationUnitTerm == null) {

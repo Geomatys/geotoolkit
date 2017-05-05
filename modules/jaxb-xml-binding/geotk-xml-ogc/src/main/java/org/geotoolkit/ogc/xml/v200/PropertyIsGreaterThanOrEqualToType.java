@@ -29,21 +29,21 @@ import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsGreaterThanOrEqualTo")
 public class PropertyIsGreaterThanOrEqualToType extends BinaryComparisonOpType implements PropertyIsGreaterThanOrEqualTo {
-    
+
     /**
      * Empty constructor used by JAXB
      */
     public PropertyIsGreaterThanOrEqualToType() {
-        
+
     }
-    
+
     /**
      * Build a new Binary comparison operator
      */
     public PropertyIsGreaterThanOrEqualToType(final LiteralType literal, final String propertyName, final Boolean matchCase) {
         super(literal, propertyName, matchCase);
     }
-    
+
     public PropertyIsGreaterThanOrEqualToType(final PropertyIsGreaterThanOrEqualToType that) {
         super(that);
     }

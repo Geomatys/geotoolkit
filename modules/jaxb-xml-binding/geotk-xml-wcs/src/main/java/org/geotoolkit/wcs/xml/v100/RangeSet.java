@@ -29,24 +29,24 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RangeSet")
 public class RangeSet {
-    
+
     @XmlElement(name="RangeSet")
     private RangeSetType rangeSet;
-    
+
     /**
      * An empty constructor used by JAXB.
      */
     RangeSet(){
-        
+
     }
-    
+
     /**
      * Build a new RangeSet.
      */
     public RangeSet(final RangeSetType rangeSet){
         this.rangeSet = rangeSet;
     }
-    
+
     /**
      * Return the rangeSet property
      */

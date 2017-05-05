@@ -22,7 +22,7 @@ import org.opengis.sld.LayerCoverageConstraints;
 
 /**
  * Mutable layer coverage constraints
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  * @since Types 2.2
@@ -30,9 +30,9 @@ import org.opengis.sld.LayerCoverageConstraints;
 public interface MutableLayerCoverageConstraints extends MutableConstraints, LayerCoverageConstraints {
 
     public List<CoverageConstraint> constraints();
-    
+
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
-        
+
 }

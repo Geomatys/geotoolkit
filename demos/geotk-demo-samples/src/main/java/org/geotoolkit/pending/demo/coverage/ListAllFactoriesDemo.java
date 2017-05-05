@@ -9,28 +9,28 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 
 
 public class ListAllFactoriesDemo {
-    
+
     public static void main(String[] args) {
         Demos.init();
-        
-        // Listing or creating new coveragestores are made through the CoverageStoreFinder utility class        
+
+        // Listing or creating new coveragestores are made through the CoverageStoreFinder utility class
         final Iterator<CoverageStoreFactory> ite = DataStores.getAllFactories(CoverageStoreFactory.class).iterator();
-        
+
         while(ite.hasNext()){
-            
+
             final CoverageStoreFactory factory = ite.next();
-            
+
             //display general informations about this factory
             System.out.println(factory.getDisplayName());
             System.out.println(factory.getDescription());
-            
+
             //display the parameter requiered to create a new instance
             //of coveragestore of this type
             final ParameterDescriptorGroup description = factory.getParametersDescriptor();
             System.out.println(description);
             System.out.println("\n\n");
-            
-            
+
+
             //if we wanted to created a new coveragestore of this type we would proceed
             //like this :
             /*
@@ -41,8 +41,8 @@ public class ListAllFactoriesDemo {
             final Server server = factory.create(params);
             */
         }
-        
-        
+
+
     }
-    
+
 }

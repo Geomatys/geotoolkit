@@ -56,7 +56,7 @@ import org.openide.util.Exceptions;
  */
 public class ChainSceneBasic extends ChainScene {
 
-    
+
     protected EventChain chain = null;
     protected final boolean editable;
 
@@ -64,7 +64,7 @@ public class ChainSceneBasic extends ChainScene {
         ArgumentChecks.ensureNonNull("chain", chain);
         this.editable = editable;
         setBackground(Color.WHITE);
-        
+
         addChild(getMainLayer());
         addChild(getActionLayer());
         addChild(getConnectionLayer());
@@ -181,7 +181,7 @@ public class ChainSceneBasic extends ChainScene {
     protected void createElementProcess(final ElementProcess desc){
         final WElementProcess widget = new WElementProcess(this,desc, false, editable);
         widget.setPreferredLocation(new Point(desc.getX(), desc.getY()));
-        
+
         getMapping().put(desc, widget);
         addWigetToMainLayer(widget);
         validate();
@@ -248,7 +248,7 @@ public class ChainSceneBasic extends ChainScene {
         getMainLayer().removeChild(widget);
         getScene().validate();
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -272,7 +272,7 @@ public class ChainSceneBasic extends ChainScene {
             w_source = pw.getExecutionWidget();
         } else if (w_source instanceof WElementCondition) {
             final WElementCondition pw = (WElementCondition) w_source;
-            
+
             //if link already exist, find if it's a success or failed output.
             if (pw.getSuccessLinks().contains(link)) {
                 w_source = pw.getWExecutionSuccess();
@@ -602,5 +602,5 @@ public class ChainSceneBasic extends ChainScene {
             }
         }
     }
-    
+
 }

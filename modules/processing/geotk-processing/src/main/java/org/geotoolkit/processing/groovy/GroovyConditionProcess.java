@@ -46,7 +46,7 @@ public class GroovyConditionProcess extends AbstractProcess {
         final Map variables = value(GroovyDescriptor.VARIABLES, inputParameters);
         final String expression = value(GroovyDescriptor.SCRIPT,inputParameters);
         final String behavior = value(GroovyDescriptor.BEHAVIOR,inputParameters);
-        
+
         final Binding binding = new Binding();
         final GroovyShell shell = new GroovyShell(binding);
         final Set<String> keys = variables.keySet();
@@ -60,8 +60,8 @@ public class GroovyConditionProcess extends AbstractProcess {
                 throw new ProcessException("Groovy expression failed."+expression, this, null);
             }
         }
-        
-        
+
+
         getOrCreate(GroovyDescriptor.RESULT, outputParameters).setValue(result);
     }
 

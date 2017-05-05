@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for PropertyIsBetweenType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PropertyIsBetweenType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,9 +62,9 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
     private UpperBoundaryType upperBoundary;
 
     public PropertyIsBetweenType() {
-        
+
     }
-    
+
     public PropertyIsBetweenType(final PropertyIsBetweenType that) {
         if (that != null) {
             if (that.expression != null) {
@@ -82,7 +82,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
                     throw new IllegalArgumentException("Unexpected type for expression in PropertyIsBetweenType:" + expression.getClass().getName());
                 }
             }
-            
+
             if (that.lowerBoundary != null) {
                 this.lowerBoundary = new LowerBoundaryType(that.lowerBoundary);
             }
@@ -91,10 +91,10 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
             }
         }
     }
-    
+
     /**
      * Gets the value of the expression property.
-     * 
+     *
      */
     public JAXBElement<?> getExpression() {
         return expression;
@@ -102,7 +102,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
 
     /**
      * Sets the value of the expression property.
-     * 
+     *
      */
     public void setExpression(final JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);
@@ -110,7 +110,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
 
     /**
      * Gets the value of the lowerBoundary property.
-     * 
+     *
      */
     public LowerBoundaryType getLowerBoundary() {
         return lowerBoundary;
@@ -118,7 +118,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
 
     /**
      * Sets the value of the lowerBoundary property.
-     *     
+     *
      */
     public void setLowerBoundary(final LowerBoundaryType value) {
         this.lowerBoundary = value;
@@ -126,7 +126,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
 
     /**
      * Gets the value of the upperBoundary property.
-     * 
+     *
      */
     public UpperBoundaryType getUpperBoundary() {
         return upperBoundary;
@@ -134,7 +134,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
 
     /**
      * Sets the value of the upperBoundary property.
-     * 
+     *
      */
     public void setUpperBoundary(final UpperBoundaryType value) {
         this.upperBoundary = value;

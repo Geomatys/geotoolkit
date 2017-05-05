@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for CoverageStyleType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoverageStyleType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -82,11 +82,11 @@ public class CoverageStyleType {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -94,11 +94,11 @@ public class CoverageStyleType {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -106,11 +106,11 @@ public class CoverageStyleType {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DescriptionType }
-     *     
+     *
      */
     public DescriptionType getDescription() {
         return description;
@@ -118,11 +118,11 @@ public class CoverageStyleType {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DescriptionType }
-     *     
+     *
      */
     public void setDescription(final DescriptionType value) {
         this.description = value;
@@ -130,11 +130,11 @@ public class CoverageStyleType {
 
     /**
      * Gets the value of the coverageName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCoverageName() {
         return coverageName;
@@ -142,11 +142,11 @@ public class CoverageStyleType {
 
     /**
      * Sets the value of the coverageName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCoverageName(final String value) {
         this.coverageName = value;
@@ -154,25 +154,25 @@ public class CoverageStyleType {
 
     /**
      * Gets the value of the semanticTypeIdentifier property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the semanticTypeIdentifier property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSemanticTypeIdentifier().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getSemanticTypeIdentifier() {
         if (semanticTypeIdentifier == null) {
@@ -183,26 +183,26 @@ public class CoverageStyleType {
 
     /**
      * Gets the value of the ruleOrOnlineResource property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the ruleOrOnlineResource property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRuleOrOnlineResource().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link OnlineResourceType }
      * {@link RuleType }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getRuleOrOnlineResource() {
         if (ruleOrOnlineResource == null) {
@@ -213,11 +213,11 @@ public class CoverageStyleType {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         return version;
@@ -225,11 +225,11 @@ public class CoverageStyleType {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(final String value) {
         this.version = value;

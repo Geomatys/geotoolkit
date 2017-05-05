@@ -31,9 +31,9 @@ import org.geotoolkit.swe.xml.v200.AbstractDataComponentPropertyType;
 
 /**
  * <p>Java class for CharacteristicListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CharacteristicListType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.geotoolkit.swe.xml.v200.AbstractDataComponentPropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CharacteristicListType", propOrder = {
@@ -69,25 +69,25 @@ public class CharacteristicListType
 
     /**
      * Gets the value of the characteristic property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the characteristic property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCharacteristic().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link CharacteristicListType.Characteristic }
-     * 
-     * 
+     *
+     *
      */
     public List<CharacteristicListType.Characteristic> getCharacteristic() {
         if (characteristic == null) {
@@ -99,9 +99,9 @@ public class CharacteristicListType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -111,8 +111,8 @@ public class CharacteristicListType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -127,11 +127,11 @@ public class CharacteristicListType
 
         /**
          * Gets the value of the name property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getName() {
             return name;
@@ -139,11 +139,11 @@ public class CharacteristicListType
 
         /**
          * Sets the value of the name property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setName(String value) {
             this.name = value;

@@ -39,7 +39,7 @@ public class DefaultMetaData implements Metadata {
     }
 
     /**
-     * 
+     *
      * @param content
      * @deprecated
      */

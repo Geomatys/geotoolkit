@@ -121,7 +121,7 @@ public class BinarySpatialOpType extends SpatialOpsType implements BinarySpatial
         }
 
     }
-    
+
     public BinarySpatialOpType(final BinarySpatialOpType that) {
         if (that != null) {
             if (that.propertyName != null) {

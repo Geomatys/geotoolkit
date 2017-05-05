@@ -27,15 +27,15 @@ import javax.xml.namespace.QName;
 
 
 /**
- * 
+ *
  *           memberTypes attribute must be non-empty or there must be
  *           at least one simpleType child
- *         
- * 
+ *
+ *
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,7 +69,7 @@ public class Union extends Annotated {
 
     /**
      * Gets the value of the simpleType property.
-     * 
+     *
      */
     public List<LocalSimpleType> getSimpleType() {
         if (simpleType == null) {
@@ -80,7 +80,7 @@ public class Union extends Annotated {
 
     /**
      * Gets the value of the memberTypes property.
-     * 
+     *
      */
     public List<QName> getMemberTypes() {
         if (memberTypes == null) {

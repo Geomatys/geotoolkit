@@ -30,12 +30,12 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
  *  A query constraint that adheres to one of the following syntaxes:
  *      Filter   - OGC filter expression
  *      CqlText  - OGC CQL predicate
- *          
- * 
+ *
+ *
  * <p>Java class for QueryConstraintType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="QueryConstraintType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -71,9 +71,9 @@ public class QueryConstraintType implements QueryConstraint {
      * Empty constructor used by JAXB
      */
     QueryConstraintType(){
-        
+
     }
-    
+
     /**
      * Build a new Query constraint with a filter.
      */
@@ -81,7 +81,7 @@ public class QueryConstraintType implements QueryConstraint {
         this.filter  = filter;
         this.version = version;
     }
-    
+
     /**
      * Build a new Query constraint with a CQL text.
      */
@@ -99,10 +99,10 @@ public class QueryConstraintType implements QueryConstraint {
             }
         }
     }
-    
+
     /**
      * Gets the value of the filter property.
-     * 
+     *
      */
     @Override
     public FilterType getFilter() {
@@ -111,7 +111,7 @@ public class QueryConstraintType implements QueryConstraint {
 
     /**
      * Sets the value of the filter property.
-     * 
+     *
      */
     public void setFilter(final FilterType value) {
         this.filter = value;
@@ -119,7 +119,7 @@ public class QueryConstraintType implements QueryConstraint {
 
     /**
      * Gets the value of the cqlText property.
-     * 
+     *
      */
     @Override
     public String getCqlText() {
@@ -128,7 +128,7 @@ public class QueryConstraintType implements QueryConstraint {
 
     /**
      * Sets the value of the cqlText property.
-     * 
+     *
      */
     public void setCqlText(final String value) {
         this.cqlText = value;
@@ -136,7 +136,7 @@ public class QueryConstraintType implements QueryConstraint {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      */
     public String getVersion() {
         return version;
@@ -144,7 +144,7 @@ public class QueryConstraintType implements QueryConstraint {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      */
     public void setVersion(final String value) {
         this.version = value;

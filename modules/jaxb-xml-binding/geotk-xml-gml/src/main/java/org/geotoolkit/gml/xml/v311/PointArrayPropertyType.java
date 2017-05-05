@@ -26,13 +26,13 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * A container for an array of points. The elements are always contained in the array property, referencing geometry 
- * 			elements or arrays of geometry elements is not supported.
- * 
+ * A container for an array of points. The elements are always contained in the array property, referencing geometry
+ *          elements or arrays of geometry elements is not supported.
+ *
  * <p>Java class for PointArrayPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PointArrayPropertyType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,7 +59,7 @@ public class PointArrayPropertyType {
 
     /**
      * Gets the value of the point property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link PointType }
      */

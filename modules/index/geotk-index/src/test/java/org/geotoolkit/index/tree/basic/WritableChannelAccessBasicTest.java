@@ -32,14 +32,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @see TreeAccessByteArray
  */
 abstract class WritableChannelAccessBasicTest extends AbstractTreeTest {
-    
+
     /**
      * Create a generic BasicRTree Test suite where Tree is stored into byte array.
      *
      * @author Remi Marechal (Geomatys).
      * @param crs
      * @throws StoreIndexException
-     * @throws IOException 
+     * @throws IOException
      */
     WritableChannelAccessBasicTest(final CoordinateReferenceSystem crs) throws IOException, StoreIndexException{
          super(crs);

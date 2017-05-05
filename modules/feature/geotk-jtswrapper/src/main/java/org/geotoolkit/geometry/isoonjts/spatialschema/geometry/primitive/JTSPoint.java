@@ -64,7 +64,7 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
      * Creates a new {@code PointImpl}.
      */
     public JTSPoint() {
-    	this( null, CommonCRS.WGS84.normalizedGeographic() );
+        this( null, CommonCRS.WGS84.normalizedGeographic() );
     }
 
     /**

@@ -49,7 +49,7 @@ public class ShadedReliefDescriptor extends AbstractProcessDescriptor {
             .setRemarks(IN_COVERAGE_PARAM_REMARKS)
             .setRequired(true)
             .create(GridCoverage2D.class, null);
-    
+
     /*
      * Coverage elevation
      */
@@ -60,7 +60,7 @@ public class ShadedReliefDescriptor extends AbstractProcessDescriptor {
             .setRemarks(IN_ELEVATION_PARAM_REMARKS)
             .setRequired(true)
             .create(GridCoverage2D.class, null);
-    
+
     /*
      * Coverage elevation value to meters
      */

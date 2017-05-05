@@ -27,9 +27,9 @@ import org.geotoolkit.csw.xml.AbstractQuery;
 
 /**
  * <p>Java class for AbstractQueryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractQueryType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import org.geotoolkit.csw.xml.AbstractQuery;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

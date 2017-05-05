@@ -39,7 +39,7 @@ public abstract class AbstractPropertyPane extends JPanel implements PropertyPan
         this.preview = preview;
         this.tooltip = tooltip;
     }
-    
+
     @Override
     public final String getTitle() {
         return title;
@@ -64,5 +64,5 @@ public abstract class AbstractPropertyPane extends JPanel implements PropertyPan
     public final Component getComponent() {
         return this;
     }
-    
+
 }

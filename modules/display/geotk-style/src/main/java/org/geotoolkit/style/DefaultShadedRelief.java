@@ -25,19 +25,19 @@ import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types shaded relief.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class DefaultShadedRelief implements ShadedRelief{
 
     private final boolean bright;
-    
+
     private final Expression relief;
-    
+
     /**
      * Create a default immutable shaded relief.
-     * 
+     *
      * @param bright : can be null
      * @param relief : if null or Expression.NIL will be replaced by default description.
      */
@@ -45,7 +45,7 @@ public class DefaultShadedRelief implements ShadedRelief{
         this.bright = bright;
         this.relief = (relief == null || relief == NIL) ? DEFAULT_SHADED_RELIEF_FACTOR : relief;
     }
-    
+
     /**
      * {@inheritDoc }
      */

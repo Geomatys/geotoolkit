@@ -49,7 +49,7 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
             .setRemarks("GridCoverageReader which contain Digital Elevation model to compute bulk.")
             .setRequired(true)
             .create(GridCoverageReader.class, null);
-    
+
     public static final String INPUT_JTS_GEOMETRY_NAME = "Geometry";
     /**
      * Geometry which represent area where compute volume.
@@ -59,7 +59,7 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Geomatry which represent area where compute bulk.")
             .setRequired(true)
             .create(Geometry.class, null);
-    
+
     public static final String INPUT_GEOMETRY_CRS_NAME = "Geometry CRS";
     /**
      * Geometry Coordinate Reference System.
@@ -69,7 +69,7 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Define in which CRS geometry is defined.")
             .setRequired(false)
             .create(CoordinateReferenceSystem.class, null);
-    
+
     public static final String INPUT_BAND_INDEX_NAME = "D E M band index.";
     /**
      * DEM band index where volume is computed.
@@ -79,7 +79,7 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
             .setRemarks("D E M band index which will be use to compute volume.")
             .setRequired(false)
             .create(Integer.class, 0);
-    
+
     public static final String INPUT_GEOMETRY_ALTITUDE_NAME = "Minimum Altitude ceiling value.";
     /**
      * Altitude ceiling value.<br/>
@@ -90,7 +90,7 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Minimal altitude value. Volume is computed between ground formed by geometry at this value and Maximum altitude value.")
             .setRequired(false)
             .create(Double.class, 0.00);
-    
+
     public static final String INPUT_MAX_CEILING_NAME = "Maximum Altitude ceiling value.";
     /**
      * Altitude ceiling value.<br/>
@@ -102,7 +102,7 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
             .setRequired(true)
             .create(Double.class, 0.00);
     /**************************************************************************/
-    
+
                                     /*Output*/
     /**************************************************************************/
     public static final String OUTPUT_VOLUME_NAME = "computed volume result.";
@@ -116,7 +116,7 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
             .setRequired(true)
             .create(Double.class, 0.00);
     /**************************************************************************/
-    
+
                                       /*GROUP*/
     /**************************************************************************/
     //Input group
@@ -127,16 +127,16 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(OUT_VOLUME_RESULT);
     /**************************************************************************/
-    
+
     public static final ProcessDescriptor INSTANCE = new ComputeVolumeDescriptor();
-    
+
     private ComputeVolumeDescriptor() {
         super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Create a pyramid / mosaic from the given"
                 + "coverage. Created tiles are stored in the given Coverage store."),
                 INPUT_DESC, OUTPUT_DESC);
     }
-    
+
     /**
      * {@inheritDoc }.
      */

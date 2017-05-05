@@ -29,13 +29,13 @@ import org.geotoolkit.wcs.xml.DomainSubset;
 
 
 /**
- * Defines the desired subset of the domain set of the coverage. 
- * Is a GML property containing either or both spatialSubset and temporalSubset GML objects. 
- * 
+ * Defines the desired subset of the domain set of the coverage.
+ * Is a GML property containing either or both spatialSubset and temporalSubset GML objects.
+ *
  * <p>Java class for DomainSubsetType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DomainSubsetType">
  *   &lt;complexContent>
@@ -51,7 +51,7 @@ import org.geotoolkit.wcs.xml.DomainSubset;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -71,7 +71,7 @@ public class DomainSubsetType implements DomainSubset {
      * An empty constructor used by JAXB
      */
     DomainSubsetType() {}
-    
+
     /**
      * Build a new Domain subset with the specified spatial
      * and temporal subset
@@ -86,18 +86,18 @@ public class DomainSubsetType implements DomainSubset {
             content.add(factory.createSpatialSubset(spatialSubset));
         }
     }
-    
+
     /**
      * Build a new Domain subset with a list of JAXB element
      */
     public DomainSubsetType(final List<JAXBElement<?>> content) {
         this.content = content;
-        
+
     }
-    
+
     /**
      * Gets the rest of the content model.
-     * (unmodifiable) 
+     * (unmodifiable)
      */
     public List<JAXBElement<?>> getContent() {
         if (content == null) {
@@ -105,9 +105,9 @@ public class DomainSubsetType implements DomainSubset {
         }
         return Collections.unmodifiableList(content);
     }
-    
+
     /**
-     * Return the temporal subSet. 
+     * Return the temporal subSet.
      */
     public TimeSequenceType getTemporalSubSet() {
         for (JAXBElement<?> element: content) {
@@ -117,9 +117,9 @@ public class DomainSubsetType implements DomainSubset {
         }
         return null;
     }
-    
+
     /**
-     * Return the spatial subSet. 
+     * Return the spatial subSet.
      */
     public SpatialSubsetType getSpatialSubSet() {
         for (JAXBElement<?> element: content) {

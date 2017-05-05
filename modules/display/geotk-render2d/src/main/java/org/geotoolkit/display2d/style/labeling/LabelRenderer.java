@@ -22,7 +22,7 @@ import org.opengis.referencing.operation.TransformException;
 
 /**
  * A Label renderer is used to render labels on top of the image.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -43,12 +43,12 @@ public interface LabelRenderer {
      * Get the renderingContext associated to this label renderer.
      */
     RenderingContext2D getRenderingContext();
-    
+
     /**
      * Add a new label to render.
      */
     void append(LabelLayer layer);
-    
+
     /**
      * Portray all labels in the rendering context.
      * This method shall be called by the renderer when after all graphics

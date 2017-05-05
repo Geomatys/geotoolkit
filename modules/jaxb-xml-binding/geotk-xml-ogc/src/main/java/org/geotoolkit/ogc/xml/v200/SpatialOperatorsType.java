@@ -32,9 +32,9 @@ import org.opengis.filter.capability.SpatialOperators;
 
 /**
  * <p>Java class for SpatialOperatorsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SpatialOperatorsType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.opengis.filter.capability.SpatialOperators;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SpatialOperatorsType", propOrder = {
@@ -62,12 +62,12 @@ public class SpatialOperatorsType implements SpatialOperators {
      * An empty constructor used by JAXB
      */
     public SpatialOperatorsType() {
-        
+
     }
-    
+
     /**
-     * Build a new comparison operators with the specified array of operator 
-     * 
+     * Build a new comparison operators with the specified array of operator
+     *
      * @param operators an array of comparison operator
      */
     public SpatialOperatorsType( SpatialOperator[] operators ) {
@@ -76,7 +76,7 @@ public class SpatialOperatorsType implements SpatialOperators {
         }
         this.spatialOperator = new ArrayList(Arrays.asList(operators));
     }
-    
+
     /**
      * Gets the value of the spatialOperator property.
      */
@@ -86,7 +86,7 @@ public class SpatialOperatorsType implements SpatialOperators {
         }
         return this.spatialOperator;
     }
-    
+
     /**
      * Gets the value of the spatialOperator property.
      */
@@ -103,17 +103,17 @@ public class SpatialOperatorsType implements SpatialOperators {
         }
         return result;
     }
-    
+
     @Override
     public SpatialOperator getOperator(final String name) {
         if ( name == null || spatialOperator == null) {
             return null;
-        }        
-        for (SpatialOperator operator : spatialOperator ) {            
+        }
+        for (SpatialOperator operator : spatialOperator ) {
             if ( name.equals( operator.getName() ) ) {
                 return operator;
             }
-        }        
+        }
         return null;
     }
 

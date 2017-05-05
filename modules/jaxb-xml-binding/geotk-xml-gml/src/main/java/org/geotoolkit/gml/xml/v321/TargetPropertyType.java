@@ -31,9 +31,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TargetPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TargetPropertyType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TargetPropertyType", propOrder = {
@@ -89,7 +89,7 @@ public class TargetPropertyType {
 
     /**
      * Gets the value of the abstractFeature property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractFeatureCollectionType }{@code >}
@@ -109,7 +109,7 @@ public class TargetPropertyType {
      *     {@link JAXBElement }{@code <}{@link DynamicFeatureType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DirectedObservationAtDistanceType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DiscreteCoverageType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractFeatureType> getAbstractFeature() {
         return abstractFeature;
@@ -117,7 +117,7 @@ public class TargetPropertyType {
 
     /**
      * Sets the value of the abstractFeature property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractFeatureCollectionType }{@code >}
@@ -137,7 +137,7 @@ public class TargetPropertyType {
      *     {@link JAXBElement }{@code <}{@link DynamicFeatureType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DirectedObservationAtDistanceType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DiscreteCoverageType }{@code >}
-     *     
+     *
      */
     public void setAbstractFeature(JAXBElement<? extends AbstractFeatureType> value) {
         this.abstractFeature = ((JAXBElement<? extends AbstractFeatureType> ) value);
@@ -145,7 +145,7 @@ public class TargetPropertyType {
 
     /**
      * Gets the value of the abstractGeometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link MultiSurfaceType }{@code >}
@@ -177,7 +177,7 @@ public class TargetPropertyType {
      *     {@link JAXBElement }{@code <}{@link SurfaceType }{@code >}
      *     {@link JAXBElement }{@code <}{@link MultiSolidType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PointType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractGeometryType> getAbstractGeometry() {
         return abstractGeometry;
@@ -185,7 +185,7 @@ public class TargetPropertyType {
 
     /**
      * Sets the value of the abstractGeometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link MultiSurfaceType }{@code >}
@@ -217,7 +217,7 @@ public class TargetPropertyType {
      *     {@link JAXBElement }{@code <}{@link SurfaceType }{@code >}
      *     {@link JAXBElement }{@code <}{@link MultiSolidType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PointType }{@code >}
-     *     
+     *
      */
     public void setAbstractGeometry(JAXBElement<? extends AbstractGeometryType> value) {
         this.abstractGeometry = ((JAXBElement<? extends AbstractGeometryType> ) value);
@@ -225,11 +225,11 @@ public class TargetPropertyType {
 
     /**
      * Gets the value of the owns property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public boolean isOwns() {
         if (owns == null) {
@@ -241,11 +241,11 @@ public class TargetPropertyType {
 
     /**
      * Sets the value of the owns property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public void setOwns(java.lang.Boolean value) {
         this.owns = value;
@@ -253,25 +253,25 @@ public class TargetPropertyType {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the nilReason property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNilReason().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
@@ -282,11 +282,11 @@ public class TargetPropertyType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -294,11 +294,11 @@ public class TargetPropertyType {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(String value) {
         this.remoteSchema = value;
@@ -306,11 +306,11 @@ public class TargetPropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -322,11 +322,11 @@ public class TargetPropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -334,11 +334,11 @@ public class TargetPropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -346,11 +346,11 @@ public class TargetPropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -358,11 +358,11 @@ public class TargetPropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -370,11 +370,11 @@ public class TargetPropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -382,11 +382,11 @@ public class TargetPropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -394,11 +394,11 @@ public class TargetPropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -406,11 +406,11 @@ public class TargetPropertyType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -418,11 +418,11 @@ public class TargetPropertyType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -430,11 +430,11 @@ public class TargetPropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -442,11 +442,11 @@ public class TargetPropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(String value) {
         this.show = value;
@@ -454,11 +454,11 @@ public class TargetPropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -466,11 +466,11 @@ public class TargetPropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(String value) {
         this.actuate = value;

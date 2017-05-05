@@ -66,7 +66,7 @@ import org.geotoolkit.style.interval.Palette;
  */
 public final class FXUtilities {
 
-    
+
     public static final PaletteFactory PF = PaletteFactory.getDefault();
     public static final List<Object> PALETTES = new ArrayList<>();
     public static final List<Object> PALETTES_NAMED = new ArrayList<>();
@@ -103,15 +103,15 @@ public final class FXUtilities {
         };
         PALETTES.add(new DefaultIntervalPalette(fractions,colors));
     }
-    
+
     public static final Font FONTAWESOME;
-    
+
     static {
         FONTAWESOME = Font.loadFont(FXUtilities.class.getResource("/org/geotoolkit/font/fontawesome-webfont.ttf").toExternalForm(), 16);
     }
-    
+
     private FXUtilities() {}
-    
+
     public static <T> JavaBeanProperty<T> beanProperty(Object candidate, String propertyName, Class<T> dataType){
         try {
             if(Boolean.class.equals(dataType)){
@@ -133,10 +133,10 @@ public final class FXUtilities {
             throw new IllegalArgumentException(ex.getMessage(),ex);
         }
     }
-    
+
     /**
      * Recursive loop on node and it's children, calling the consumer for each node.
-     * 
+     *
      * @param node visited node
      * @param consumer called for each scene node
      */
@@ -149,7 +149,7 @@ public final class FXUtilities {
             }
         }
     }
-    
+
     public static java.awt.Color toSwingColor(Color fxColor){
         final float r = (float) fxColor.getRed();
         final float g = (float) fxColor.getGreen();
@@ -157,7 +157,7 @@ public final class FXUtilities {
         final float a = (float) fxColor.getOpacity();
         return new java.awt.Color(r,g,b,a);
     }
-    
+
     public static Color toFxColor(java.awt.Color swingColor){
         final double r = (double)swingColor.getRed() / 255.0;
         final double g = (double)swingColor.getGreen() / 255.0;
@@ -165,7 +165,7 @@ public final class FXUtilities {
         final double a = (double)swingColor.getAlpha() / 255.0;
         return new Color(r, g, b, a);
     }
-        
+
     /**
      * Expand all nodes from root to given node
      * @param candidate node to expand including all it's parents
@@ -178,7 +178,7 @@ public final class FXUtilities {
             }
         }
     }
-    
+
     /**
      * Expand all nodes child node recursively
      * @param candidate candidate node to expand including all it's children
@@ -191,10 +191,10 @@ public final class FXUtilities {
             }
         }
     }
-    
+
     /**
      * Test if a TreeItem is a parent of another TreeItem.
-     * 
+     *
      * @param parent candidate parent
      * @param child candidate child
      * @return true if parent is a parent of child
@@ -209,7 +209,7 @@ public final class FXUtilities {
         }
         return false;
     }
-    
+
     public static Image createPalettePreview(Object paletteValue, Dimension size){
         return createPalettePreview(paletteValue, size, true);
     }
@@ -239,17 +239,17 @@ public final class FXUtilities {
 
         return SwingFXUtils.toFXImage(image, null);
     }
-    
+
     /**
      * Hide table or treetable header.
-     * 
+     *
      * @param view Table or TreeTable view
      */
     public static void hideTableHeader(final Control view){
         if( !(view instanceof TreeTableView || view instanceof TableView)){
             throw new IllegalArgumentException("Control must be a TreeTableView or TableView but was : "+view.getClass());
         }
-        
+
         //hide the header
         view.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -265,7 +265,7 @@ public final class FXUtilities {
             }
         });
     }
-    
+
     /**
      * Bug in javafx ?
      *

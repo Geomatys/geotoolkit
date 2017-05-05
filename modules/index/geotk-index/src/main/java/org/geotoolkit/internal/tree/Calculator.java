@@ -29,7 +29,7 @@ import org.geotoolkit.index.tree.Node;
  * @author Martin Desruisseaux (Geomatys).
  */
 public abstract class Calculator {
-    
+
     /**
      * @param envelop
      * @return envelop bulk or area.
@@ -64,7 +64,7 @@ public abstract class Calculator {
     public abstract double getOverlaps(final double[] envelopeA, final double[] envelopeB);
 
     /**
-     * <blockquote><font size=-1> <strong>NOTE : In case of narrowing, value between 0 and 1 
+     * <blockquote><font size=-1> <strong>NOTE : In case of narrowing, value between 0 and 1
      * is returned.</strong> </font></blockquote>
      *
      * @param envMin
@@ -72,10 +72,10 @@ public abstract class Calculator {
      * @return enlargement from envMin to envMax.
      */
     public abstract double getEnlargement(final double[] envelopeMin, final double[] envelopeMax);
-    
+
     /**
      * Sort elements list.
-     * 
+     *
      * @param index : ordinate choosen to compare.
      * @param lowerOrUpper : true to sort from "lower boundary", false from "upper boundary"
      * @param list : elements which will be sorted.
@@ -108,10 +108,10 @@ public abstract class Calculator {
             if (alreadySort) break;
         }
     }
-    
+
     /**
      * Sort elements list.
-     * 
+     *
      * @param index : ordinate choosen to compare.
      * @param lowerOrUpper : true to sort from "lower boundary", false from "upper boundary"
      * @param list : elements which will be sorted.
@@ -144,10 +144,10 @@ public abstract class Calculator {
             if (alreadySort) break;
         }
     }
-    
+
     /**
      * Sort elements list.
-     * 
+     *
      * @param index : ordinate choosen to compare.
      * @param lowerOrUpper : true to sort from "lower boundary", false from "upper boundary"
      * @param list : elements which will be sorted.

@@ -22,7 +22,7 @@ import org.opengis.style.Description;
 
 /**
  * Common mutable interface for MutableNamedLayer and MutableUserLayer
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -30,13 +30,13 @@ public interface MutableLayer extends Layer{
 
     public static final String NAME_PROPERTY = "name";
     public static final String DESCRIPTION_PROPERTY = "description";
-    
+
     /**
      * Set the name of the sld.
      * @param name : new name
      */
     void setName(String name);
-    
+
     /**
      * Set the description of the sld.
      * @param description : new description
@@ -44,13 +44,13 @@ public interface MutableLayer extends Layer{
     void setDescription(Description description);
 
     List styles();
-    
+
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
-    
+
     void addListener(LayerListener listener);
-    
+
     void removeListener(LayerListener listener);
-    
+
 }

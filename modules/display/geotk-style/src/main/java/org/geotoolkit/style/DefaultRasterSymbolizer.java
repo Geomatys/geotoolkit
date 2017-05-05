@@ -36,29 +36,29 @@ import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types raster symbolizer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class DefaultRasterSymbolizer extends AbstractSymbolizer implements RasterSymbolizer{
 
     private final Expression opacity;
-    
+
     private final ChannelSelection selection;
-    
+
     private final OverlapBehavior overlap;
-    
+
     private final ColorMap colorMap;
-    
+
     private final ContrastEnhancement enhance;
-    
+
     private final ShadedRelief relief;
-    
+
     private final Symbolizer outline;
-        
+
     /**
      * Create a default immutable Line symbolizer.
-     * 
+     *
      * @param opacity : if null will be replaced by default value.
      * @param selection : can be null
      * @param overlap : if null will be replaced by default value.
@@ -72,9 +72,9 @@ public class DefaultRasterSymbolizer extends AbstractSymbolizer implements Raste
      * @param desc : if null will be replaced by default description.
      */
     public DefaultRasterSymbolizer(final Expression opacity,
-            final ChannelSelection selection, 
-            final OverlapBehavior overlap, 
-            final ColorMap colorMap, 
+            final ChannelSelection selection,
+            final OverlapBehavior overlap,
+            final ColorMap colorMap,
             final ContrastEnhancement enhance,
             final ShadedRelief relief,
             final Symbolizer outline,
@@ -91,7 +91,7 @@ public class DefaultRasterSymbolizer extends AbstractSymbolizer implements Raste
         this.relief = (relief == null) ? DEFAULT_SHADED_RELIEF : relief;
         this.outline = outline;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -155,7 +155,7 @@ public class DefaultRasterSymbolizer extends AbstractSymbolizer implements Raste
     public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -184,7 +184,7 @@ public class DefaultRasterSymbolizer extends AbstractSymbolizer implements Raste
                 && Objects.equals(this.relief,other.relief)
                 && Objects.equals(this.selection,other.selection)
                 && this.uom.equals(other.uom);
-                        
+
 
     }
 

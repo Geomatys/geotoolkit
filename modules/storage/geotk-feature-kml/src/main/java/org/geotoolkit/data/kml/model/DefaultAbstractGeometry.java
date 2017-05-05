@@ -27,7 +27,7 @@ import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 public abstract class DefaultAbstractGeometry extends DefaultAbstractObject implements AbstractGeometry {
 
     /**
-     * 
+     *
      */
     protected DefaultAbstractGeometry() {
     }

@@ -26,10 +26,10 @@ import java.util.List;
 public interface Range {
 
     Value getMinimumValue();
-    
+
     Value getMaximumValue();
-    
+
     Value getSpacing();
-    
+
     List<String> getRangeClosure();
 }

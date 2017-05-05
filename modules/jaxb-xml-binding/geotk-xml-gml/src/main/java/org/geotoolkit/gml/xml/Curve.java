@@ -21,6 +21,6 @@ package org.geotoolkit.gml.xml;
  * @author Guilhem Legal (Geomatys)
  */
 public interface Curve extends AbstractGeometry {
-    
+
     CurveSegmentArrayProperty getSegments();
 }

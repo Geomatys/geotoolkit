@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -22,6 +22,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.metadata.AbstractMetadata;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.Binding;
 
 /**
@@ -32,49 +35,49 @@ import org.opengis.feature.catalog.Binding;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FC_Binding_Type")
 @XmlRootElement(name = "FC_Binding")
-public class BindingImpl implements Binding {
+public class BindingImpl extends AbstractMetadata implements Binding {
 
     private String description;
-    
+
     /**
      * An empty constructor used by JAXB
      */
     public BindingImpl() {
-        
+
     }
-    
+
     /**
      * Clone a Binding
      */
     public BindingImpl(final Binding feature) {
         if (feature != null)
             this.description = feature.getDescription();
-        
+
     }
     public String getDescription() {
         return description;
     }
-    
+
     public void setDescription(final String description) {
         this.description = description;
     }
-    
+
     @Override
     public String toString() {
-        return "[Binding]: description: " + description;  
+        return "[Binding]: description: " + description;
     }
-    
+
      /**
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
         if (object instanceof BindingImpl) {
             final BindingImpl that = (BindingImpl) object;
-            
+
             return Objects.equals(this.description, that.description);
         }
         return false;
@@ -85,6 +88,11 @@ public class BindingImpl implements Binding {
         int hash = 7;
         hash = 97 * hash + (this.description != null ? this.description.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public MetadataStandard getStandard() {
+        return FeatureCatalogueStandard.ISO_19110;
     }
 
 }

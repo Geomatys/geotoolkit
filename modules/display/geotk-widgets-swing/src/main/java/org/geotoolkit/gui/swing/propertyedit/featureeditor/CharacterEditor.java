@@ -111,5 +111,5 @@ public class CharacterEditor extends PropertyValueEditor implements DocumentList
             super.remove(offs, len);
         }
     }
-    
+
 }

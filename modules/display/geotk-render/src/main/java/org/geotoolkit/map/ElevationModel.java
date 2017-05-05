@@ -39,23 +39,23 @@ public class ElevationModel {
      * {@link GridCoverageReader} which contain DEM altitude values.
      */
     private final GridCoverageReader coverage;
-    
+
     /**
-     * Coefficient (or factor) in per cent to controle shadow length spread 
+     * Coefficient (or factor) in per cent to controle shadow length spread
      * in function of maximum DEM amplitude value.
      */
     private final double scale;
-    
+
     /**
      * Angle in degrees between Origin to North axis and light source.
      */
     private final double azimuth;
-    
+
     /**
      * Angle in degrees between Digital Elevation Model ground and light source.
      */
     private final double altitude;
-    
+
     /**
      * Define positive altitude value sens.<br/>
      * {@link AxisDirection} should be instance of following type: <br/>
@@ -65,9 +65,9 @@ public class ElevationModel {
 
     /**
      * Build {@link ElevationModel} object which contain some elevation information need to build shadow relief. <br/><br/>
-     * 
+     *
      * Note : The default value of {@linkplain #axisDirection} is {@link AxisDirection#UP}.
-     * 
+     *
      * @param ref {@link CoverageReference} where we can read DEM.
      * @param azimuth Light angle in degree from  {@link CoordinateReferenceSystem} North {@link CoordinateSystemAxis} from {@link GridCoverage}.
      * @param altitude Light angle in degree of the light from the ground.
@@ -75,16 +75,16 @@ public class ElevationModel {
      */
     public ElevationModel(final CoverageReference ref, final double azimuth, final double altitude, final double scale) throws CoverageStoreException {
         this(ref, azimuth, altitude, scale, AxisDirection.UP);
-    }    
-    
+    }
+
     /**
      * Build {@link ElevationModel} object which contain some elevation information need to build shadow relief.
-     * 
+     *
      * @param ref {@link CoverageReference} where we can read DEM.
      * @param azimuth Light angle in degree from  {@link CoordinateReferenceSystem} North {@link CoordinateSystemAxis} from {@link GridCoverage}.
      * @param altitude Light angle in degree of the light from the ground.
      * @param scale Coefficient (or factor) in per cent to controle shadow length spread in function of maximum DEM amplitude value.
-     * @param axisDirection 
+     * @param axisDirection
      * @throws IllegalArgumentException if axis direction is not instance of {@link AxisDirection#DOWN} or {@link AxisDirection#UP}.
      */
     public ElevationModel(final CoverageReference ref, final double azimuth, final double altitude,
@@ -104,17 +104,17 @@ public class ElevationModel {
     /**
      * Return angle in degrees between Origin to North axis and light source.<br/>
      * Moreother angle is defined positive in clockwise.
-     * 
-     * @return angle between Origin to North axis and light source. 
+     *
+     * @return angle between Origin to North axis and light source.
      */
     public GridCoverageReader getCoverageReader() {
         return coverage;
     }
 
     /**
-     * Return coefficient (or factor) in per cent to controle shadow length spread 
+     * Return coefficient (or factor) in per cent to controle shadow length spread
      * in function of maximum DEM amplitude value.
-     * 
+     *
      * @return coefficient (or factor) in per cent to controle shadow length spread.
      */
     public double getAmplitudeScale() {
@@ -124,8 +124,8 @@ public class ElevationModel {
     /**
      * Return angle in degrees between Origin to North axis and light source.<br/>
      * Moreother angle is defined positive in clockwise.
-     * 
-     * @return angle between Origin to North axis and light source. 
+     *
+     * @return angle between Origin to North axis and light source.
      */
     public double getAzimuth() {
         return azimuth;
@@ -133,18 +133,18 @@ public class ElevationModel {
 
     /**
      * Return angle in degrees between Digital Elevation Model ground and light source.
-     * 
+     *
      * @return angle in degrees between Digital Elevation Model ground and light source.
      */
     public double getAltitude() {
         return altitude;
     }
-    
+
     /**
      * Return altitude positive value sens.<br/>
      * {@link AxisDirection} is instance of following type: <br/>
      * {@link AxisDirection#DOWN} or {@link AxisDirection#UP}.
-     * 
+     *
      * @return {@link AxisDirection} which define altitude positive value sens.
      */
     public AxisDirection getAltitudeDirection() {

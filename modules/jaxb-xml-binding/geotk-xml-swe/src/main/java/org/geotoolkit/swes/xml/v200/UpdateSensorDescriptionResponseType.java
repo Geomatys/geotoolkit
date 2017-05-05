@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for UpdateSensorDescriptionResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UpdateSensorDescriptionResponseType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UpdateSensorDescriptionResponseType", propOrder = {
@@ -55,11 +55,11 @@ public class UpdateSensorDescriptionResponseType extends ExtensibleResponseType 
 
     /**
      * Gets the value of the updatedProcedure property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUpdatedProcedure() {
         return updatedProcedure;
@@ -67,11 +67,11 @@ public class UpdateSensorDescriptionResponseType extends ExtensibleResponseType 
 
     /**
      * Sets the value of the updatedProcedure property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUpdatedProcedure(String value) {
         this.updatedProcedure = value;

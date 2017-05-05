@@ -34,9 +34,9 @@ import org.geotoolkit.wfs.xml.InsertElement;
 
 /**
  * <p>Java class for InsertElementType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InsertElementType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.wfs.xml.InsertElement;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InsertElementType", propOrder = {
@@ -65,13 +65,13 @@ public class InsertElementType implements InsertElement {
 
     /**
      * Gets the value of the feature property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractFeatureType }{@code >}
      * {@link JAXBElement }{@code <}{@link FeatureCollectionType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractFeatureCollectionType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends AbstractFeatureType>> getFeature() {
         if (feature == null) {
@@ -79,14 +79,14 @@ public class InsertElementType implements InsertElement {
         }
         return this.feature;
     }
-    
+
     /**
      * Gets the value of the handle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHandle() {
         return handle;
@@ -94,11 +94,11 @@ public class InsertElementType implements InsertElement {
 
     /**
      * Sets the value of the handle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHandle(String value) {
         this.handle = value;
@@ -124,7 +124,7 @@ public class InsertElementType implements InsertElement {
         if (this == obj) {
             return true;
         }
-        
+
         if (obj instanceof InsertElementType) {
             InsertElementType that = (InsertElementType) obj;
             return Objects.equals(this.feature, that.feature) &&

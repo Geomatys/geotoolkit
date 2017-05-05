@@ -68,7 +68,7 @@ public interface Polygon extends AbstractGeometry {
     AltitudeMode getAltitudeMode();
 
     /**
-     * 
+     *
      * @return
      */
     Boundary getOuterBoundary();

@@ -18,18 +18,18 @@ package org.geotoolkit.filter.binding;
 
 /**
  * Bindings are used by expressions to match propertynames.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public interface Binding<C> {
-    
+
     /**
      * The priority is used to determinate in which order the bindings are tested.
      * Bindings with higher values will be tested first.
      * @return priority, higher value for higher priority.
      */
     int getPriority();
-    
+
     /**
      * Binding expected object class.
      * An error will be raised by the get/set methods if an inappropriate object
@@ -37,14 +37,14 @@ public interface Binding<C> {
      * @return Class, expected binded class, never null.
      */
     Class<C> getBindingClass();
-    
+
     /**
      * Test if this binding support the given path.
      * @param xpath path to test
      * @return true if given path is supported.
      */
     boolean support(String xpath);
-    
+
     /**
      * Get value of given object for given path.
      * @param <T> , wanted return class
@@ -55,7 +55,7 @@ public interface Binding<C> {
      * @throws IllegalArgumentException, if class or path is not supported.
      */
     <T> T get(C candidate, String xpath, Class<T> target) throws IllegalArgumentException;
-    
+
     /**
      * Set value of given object for given path.
      * @param candidate , object to evaluate
@@ -64,5 +64,5 @@ public interface Binding<C> {
      * @throws IllegalArgumentException, if class or path is not supported.
      */
     void set(C candidate, String xpath, Object value) throws IllegalArgumentException;
-    
+
 }

@@ -31,9 +31,9 @@ import org.opengis.observation.ObservationCollection;
 
 /**
  * <p>Java class for GetObservationByIdResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetObservationByIdResponseType">
  *   &lt;complexContent>
@@ -55,8 +55,8 @@ import org.opengis.observation.ObservationCollection;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetObservationByIdResponseType", propOrder = {
@@ -68,9 +68,9 @@ public class GetObservationByIdResponseType extends ExtensibleResponseType imple
     private List<GetObservationByIdResponseType.Observation> observation;
 
     public GetObservationByIdResponseType() {
-        
+
     }
-    
+
     public GetObservationByIdResponseType(final List<OMObservationType> observations) {
         if (observations != null) {
             this.observation = new ArrayList<>();
@@ -81,10 +81,10 @@ public class GetObservationByIdResponseType extends ExtensibleResponseType imple
     }
     /**
      * Gets the value of the observation property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link GetObservationByIdResponseType.Observation }
-     * 
+     *
      */
     public List<GetObservationByIdResponseType.Observation> getObservation() {
         if (observation == null) {
@@ -100,16 +100,16 @@ public class GetObservationByIdResponseType extends ExtensibleResponseType imple
             for (Observation data : observation) {
                 observations.add(data.omObservation);
             }
-        } 
+        }
         return observations;
     }
 
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -121,8 +121,8 @@ public class GetObservationByIdResponseType extends ExtensibleResponseType imple
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -134,20 +134,20 @@ public class GetObservationByIdResponseType extends ExtensibleResponseType imple
         private OMObservationType omObservation;
 
         public Observation() {
-            
+
         }
-        
+
         public Observation(final OMObservationType omObservation) {
             this.omObservation = omObservation;
         }
-        
+
         /**
          * Gets the value of the omObservation property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link OMObservationType }
-         *     
+         *
          */
         public OMObservationType getOMObservation() {
             return omObservation;
@@ -155,11 +155,11 @@ public class GetObservationByIdResponseType extends ExtensibleResponseType imple
 
         /**
          * Sets the value of the omObservation property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link OMObservationType }
-         *     
+         *
          */
         public void setOMObservation(OMObservationType value) {
             this.omObservation = value;

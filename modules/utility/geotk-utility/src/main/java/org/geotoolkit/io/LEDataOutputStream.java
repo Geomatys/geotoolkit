@@ -41,7 +41,7 @@ public class LEDataOutputStream extends FilterOutputStream implements DataOutput
     public long getPosition() {
         return position;
     }
-    
+
     @Override
     public void write(int b) throws IOException {
         out.write(b);

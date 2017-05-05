@@ -32,9 +32,9 @@ import org.apache.sis.util.Version;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.apache.sis.util.Version;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,10 +69,10 @@ public class DescribeCoverageType implements DescribeCoverage {
      */
     DescribeCoverageType(){
     }
-    
+
     /**
      * Build a new DescribeCoverage request.
-     * 
+     *
      * @param listOfCoverage a string containing many coverage name separated by a colon.
      */
     public DescribeCoverageType(final String listOfCoverage){
@@ -85,10 +85,10 @@ public class DescribeCoverageType implements DescribeCoverage {
             identifier.add(token);
         }
     }
-    
+
     /**
      * Build a new DescribeCoverage request.
-     * 
+     *
      * @param coverages A list  of coverage name.
      */
     public DescribeCoverageType(final List<String> coverages){
@@ -96,7 +96,7 @@ public class DescribeCoverageType implements DescribeCoverage {
         this.version = "1.1.1";
         this.identifier = coverages;
     }
-    
+
     /**
      * Unordered list of identifiers of desired coverages. A client can obtain identifiers by a prior GetCapabilities request, or from a third-party source. Gets the value of the identifier property.
      */
@@ -107,7 +107,7 @@ public class DescribeCoverageType implements DescribeCoverage {
         }
         return Collections.unmodifiableList(identifier);
     }
-    
+
      /**
      * Gets the value of the service property.
      */
@@ -115,7 +115,7 @@ public class DescribeCoverageType implements DescribeCoverage {
     public String getService() {
         return this.service;
     }
-    
+
     @Override
     public void setService(final String value) {
         this.service = value;
@@ -131,7 +131,7 @@ public class DescribeCoverageType implements DescribeCoverage {
         }
         return null;
     }
-    
+
     @Override
     public void setVersion(final String value) {
         this.version = value;

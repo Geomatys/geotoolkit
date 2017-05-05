@@ -31,9 +31,9 @@ import org.geotoolkit.swe.xml.BlockEncodingProperty;
 
 /**
  * <p>Java class for BlockEncodingPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BlockEncodingPropertyType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.swe.xml.BlockEncodingProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -123,7 +123,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
             }
         }
     }
-    
+
     public BlockEncodingPropertyType(final AbstractEncodingType enc) {
         if (enc instanceof BinaryBlock) {
             this.binaryBlock = (BinaryBlock) enc;
@@ -258,7 +258,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      */
     @Override
@@ -300,7 +300,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      */
     @Override
     public String getRole() {

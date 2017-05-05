@@ -141,13 +141,13 @@ public interface LargeMailUser {
     PostalCode getPostalCode();
 
     /**
-     * 
+     *
      * @param postalCode
      */
     void setPostalCode(PostalCode postalCode);
 
     /**
-     * 
+     *
      * @return
      */
     String getType();

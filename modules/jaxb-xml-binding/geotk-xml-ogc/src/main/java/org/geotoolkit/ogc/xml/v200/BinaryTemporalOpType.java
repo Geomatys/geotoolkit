@@ -96,7 +96,7 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
         }
 
     }
-    
+
     public BinaryTemporalOpType(final BinaryTemporalOpType that) {
         if (that != null) {
             final ObjectFactory factory = new ObjectFactory();
@@ -114,7 +114,7 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
                     throw new IllegalArgumentException("Unexpected type for expression in BinaryTemporalOpType:" + expression.getClass().getName());
                 }
             }
-            
+
             if (that.any != null) {
                 this.any = new ArrayList<Object>();
                 for (Object obj : that.any) {
@@ -126,7 +126,7 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
                     }
                 }
             }
-            
+
             this.valueReference = that.valueReference;
         }
     }
@@ -287,12 +287,12 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
         }
         return null;
     }
-    
+
     @Override
     public TemporalOpsType getClone() {
         throw new UnsupportedOperationException("Must be overriden in sub-class.");
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */

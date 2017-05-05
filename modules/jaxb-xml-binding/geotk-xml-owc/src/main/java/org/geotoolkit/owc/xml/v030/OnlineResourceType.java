@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for OnlineResourceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OnlineResourceType">
  *   &lt;complexContent>
@@ -35,8 +35,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -49,11 +49,11 @@ public class OnlineResourceType
     protected MethodType method;
    /*
      * Gets the value of the method property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MethodType }
-     *     
+     *
      */
     public MethodType getMethod() {
         return method;
@@ -61,11 +61,11 @@ public class OnlineResourceType
 
     /**
      * Sets the value of the method property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MethodType }
-     *     
+     *
      */
     public void setMethod(final MethodType value) {
         this.method = value;

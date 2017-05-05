@@ -23,18 +23,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.cat.wrs package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.cat.wrs package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  * @module
  */
 @XmlRegistry
@@ -46,14 +46,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.cat.wrs
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link SimpleLinkType }
-     * 
+     *
      */
     public SimpleLinkType createSimpleLinkType() {
         return new SimpleLinkType();
@@ -61,7 +61,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WRSExtrinsicObjectType }
-     * 
+     *
      */
     public WRSExtrinsicObjectType createWRSExtrinsicObjectType() {
         return new WRSExtrinsicObjectType();
@@ -69,7 +69,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ApplicationModuleType }
-     * 
+     *
      */
     public ApplicationModuleType createApplicationModuleType() {
         return new ApplicationModuleType();
@@ -77,7 +77,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GeometryType }
-     * 
+     *
      */
     public GeometryType createGeometryType() {
         return new GeometryType();
@@ -85,7 +85,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GeometryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/wrs", name = "Geometry", substitutionHeadNamespace = "http://www.opengis.net/cat/wrs", substitutionHeadName = "WRSExtrinsicObject")
     public JAXBElement<GeometryType> createGeometry(final GeometryType value) {
@@ -94,7 +94,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ApplicationModuleType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/wrs", name = "ApplicationModule", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:rim:xsd:2.5", substitutionHeadName = "RegistryPackage")
     public JAXBElement<ApplicationModuleType> createApplicationModule(final ApplicationModuleType value) {
@@ -103,7 +103,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WRSExtrinsicObjectType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/wrs", name = "WRSExtrinsicObject", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:rim:xsd:2.5", substitutionHeadName = "ExtrinsicObject")
     public JAXBElement<WRSExtrinsicObjectType> createWRSExtrinsicObject(final WRSExtrinsicObjectType value) {

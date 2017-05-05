@@ -24,7 +24,7 @@ import org.opengis.feature.Feature;
  *
  * <pre>
  * &lt;element name="Delete" type="kml:DeleteType"/>
- * 
+ *
  * &lt;complexType name="DeleteType">
  *  &lt;sequence>
  *      &lt;element ref="kml:AbstractFeatureGroup" minOccurs="0" maxOccurs="unbounded"/>
@@ -44,7 +44,7 @@ public interface Delete {
     List<Feature> getFeatures();
 
     /**
-     * 
+     *
      * @param features
      */
     void setFeatures(List<Feature> features);

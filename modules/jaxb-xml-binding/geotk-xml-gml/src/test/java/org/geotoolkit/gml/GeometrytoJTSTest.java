@@ -42,7 +42,7 @@ import org.junit.Test;
  * @author Guilhem Legal (Geomatys)
  */
 public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
-    
+
     @Test
     public void gmlPolygonToJTSTest2D() throws Exception {
         GeometryFactory fact = new GeometryFactory();
@@ -64,16 +64,16 @@ public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
         coords.add(1.0); coords.add(1.0);
         coords.add(1.0); coords.add(0.0);
         coords.add(0.0); coords.add(0.0);
-        
+
         exterior.setPosList(new DirectPositionListType(coords));
         PolygonType gml = new PolygonType(exterior, null);
-        
+
         final Geometry result = GeometrytoJTS.toJTS((org.geotoolkit.gml.xml.Polygon)gml);
 
         Assert.assertEquals(expected, result);
 
     }
-    
+
     @Test
     public void gmlPolygonToJTSTest3D() throws Exception {
         GeometryFactory fact = new GeometryFactory();
@@ -95,12 +95,12 @@ public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
         coords.add(1.0); coords.add(1.0); coords.add(1.0);
         coords.add(1.0); coords.add(0.0); coords.add(1.0);
         coords.add(0.0); coords.add(0.0); coords.add(1.0);
-        
+
         exterior.setPosList(new DirectPositionListType(coords));
         exterior.setSrsDimension(3);
         PolygonType gml = new PolygonType(exterior, null);
-        
-        
+
+
         final Geometry result = GeometrytoJTS.toJTS((org.geotoolkit.gml.xml.Polygon)gml);
 
         Assert.assertEquals(expected, result);
@@ -109,7 +109,7 @@ public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void gmlLineStringToJTSTest2D() throws Exception {
-        
+
         final Coordinate[] coordinates = new Coordinate[5];
         coordinates[0] = new Coordinate(0, 0);
         coordinates[1] = new Coordinate(0, 1);
@@ -121,7 +121,7 @@ public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
         expected.setSRID(2154);
 
 
-        
+
         List<DirectPositionType> coords = new ArrayList<>();
         coords.add(new DirectPositionType(0.0, 0.0));
         coords.add(new DirectPositionType(0.0, 1.0));
@@ -130,15 +130,15 @@ public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
         coords.add(new DirectPositionType(0.0, 0.0));
         LineStringType gml = new LineStringType("", coords);
         gml.setSrsName("EPSG:2154");
-        
+
         final Geometry result = GeometrytoJTS.toJTS(gml);
 
         Assert.assertEquals(expected, result);
     }
-    
+
     @Test
     public void gmlLineStringToJTSTest3D() throws Exception {
-        
+
         final Coordinate[] coordinates = new Coordinate[5];
         coordinates[0] = new Coordinate(0, 0, 1);
         coordinates[1] = new Coordinate(0, 1, 1);
@@ -150,7 +150,7 @@ public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
         expected.setSRID(2154);
 
 
-        
+
         List<DirectPositionType> coords = new ArrayList<>();
         coords.add(new DirectPositionType(0.0, 0.0, 1.0));
         coords.add(new DirectPositionType(0.0, 1.0, 1.0));
@@ -159,33 +159,33 @@ public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
         coords.add(new DirectPositionType(0.0, 0.0, 1.0));
         LineStringType gml = new LineStringType("", coords);
         gml.setSrsName("EPSG:2154");
-        
+
         final Geometry result = GeometrytoJTS.toJTS(gml);
 
         Assert.assertEquals(expected, result);
     }
-    
+
     @Test
     public void gmlPointToJTSTest2D() throws Exception {
-        
+
         Point expected = new GeometryFactory().createPoint(new Coordinate(0, 1));
         expected.setSRID(2154);
-        
+
         PointType gml = new PointType(new DirectPositionType(0.0, 1.0));
-        
+
         final Geometry result = GeometrytoJTS.toJTS(gml);
 
         Assert.assertEquals(expected, result);
     }
-    
+
     @Test
     public void gmlPointToJTSTest3D() throws Exception {
-        
+
         Point expected = new GeometryFactory().createPoint(new Coordinate(0, 1, 1));
         expected.setSRID(2154);
-        
+
         PointType gml = new PointType(new DirectPositionType(0.0, 1.0, 1.0));
-        
+
         final Geometry result = GeometrytoJTS.toJTS(gml);
 
         Assert.assertEquals(expected, result);

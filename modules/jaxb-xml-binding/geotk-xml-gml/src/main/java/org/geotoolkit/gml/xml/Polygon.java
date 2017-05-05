@@ -23,8 +23,8 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  */
 public interface Polygon extends AbstractGeometry {
- 
+
     AbstractRingProperty getExterior();
-    
+
     List<? extends AbstractRingProperty> getInterior();
 }

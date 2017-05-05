@@ -68,7 +68,7 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
     @Override
     protected void prepareParameters() {
         super.prepareParameters();
-        
+
         requestParameters.put("SERVICE",    "WMTS");
         requestParameters.put("REQUEST",    "GetCapabilities");
         requestParameters.put("VERSION",    version);

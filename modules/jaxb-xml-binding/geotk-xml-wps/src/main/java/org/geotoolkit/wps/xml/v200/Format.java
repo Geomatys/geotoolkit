@@ -28,12 +28,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * References the XML schema, format, and encoding of a complex value. 
- * 
+ * References the XML schema, format, and encoding of a complex value.
+ *
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
@@ -70,16 +70,16 @@ public class Format implements org.geotoolkit.wps.xml.Format{
     protected Boolean _default;
 
     public Format() {
-        
+
     }
-    
+
     public Format(final String encoding, final String mimeType, final String schema, final Integer maximumMegabytes) {
         this.encoding = encoding;
         this.mimeType = mimeType;
         this.schema   = schema;
         this.maximumMegabytes = maximumMegabytes;
     }
-    
+
     public Format(final String encoding, final String mimeType, final String schema, final Integer maximumMegabytes, final boolean _default) {
         this.encoding = encoding;
         this.mimeType = mimeType;
@@ -87,14 +87,14 @@ public class Format implements org.geotoolkit.wps.xml.Format{
         this.maximumMegabytes = maximumMegabytes;
         this._default = _default;
     }
-    
+
     /**
      * Gets the value of the mimeType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getMimeType() {
@@ -103,11 +103,11 @@ public class Format implements org.geotoolkit.wps.xml.Format{
 
     /**
      * Sets the value of the mimeType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setMimeType(String value) {
@@ -116,11 +116,11 @@ public class Format implements org.geotoolkit.wps.xml.Format{
 
     /**
      * Gets the value of the encoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getEncoding() {
@@ -129,11 +129,11 @@ public class Format implements org.geotoolkit.wps.xml.Format{
 
     /**
      * Sets the value of the encoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setEncoding(String value) {
@@ -142,11 +142,11 @@ public class Format implements org.geotoolkit.wps.xml.Format{
 
     /**
      * Gets the value of the schema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getSchema() {
@@ -155,11 +155,11 @@ public class Format implements org.geotoolkit.wps.xml.Format{
 
     /**
      * Sets the value of the schema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setSchema(String value) {
@@ -168,11 +168,11 @@ public class Format implements org.geotoolkit.wps.xml.Format{
 
     /**
      * Gets the value of the maximumMegabytes property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public Integer getMaximumMegabytes() {
         return maximumMegabytes;
@@ -180,11 +180,11 @@ public class Format implements org.geotoolkit.wps.xml.Format{
 
     /**
      * Sets the value of the maximumMegabytes property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setMaximumMegabytes(Integer value) {
         this.maximumMegabytes = value;
@@ -192,11 +192,11 @@ public class Format implements org.geotoolkit.wps.xml.Format{
 
     /**
      * Gets the value of the default property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isDefault() {
         if (_default == null) {
@@ -207,11 +207,11 @@ public class Format implements org.geotoolkit.wps.xml.Format{
 
     /**
      * Sets the value of the default property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setDefault(Boolean value) {
         this._default = value;
@@ -237,7 +237,7 @@ public class Format implements org.geotoolkit.wps.xml.Format{
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare
@@ -249,10 +249,10 @@ public class Format implements org.geotoolkit.wps.xml.Format{
         }
         if (object instanceof Format) {
             final Format that = (Format) object;
-            return Objects.equals(this.encoding, that.encoding) && 
-                   Objects.equals(this.mimeType, that.mimeType) && 
-                   Objects.equals(this._default, that._default) && 
-                   Objects.equals(this.maximumMegabytes, that.maximumMegabytes) && 
+            return Objects.equals(this.encoding, that.encoding) &&
+                   Objects.equals(this.mimeType, that.mimeType) &&
+                   Objects.equals(this._default, that._default) &&
+                   Objects.equals(this.maximumMegabytes, that.maximumMegabytes) &&
                    Objects.equals(this.schema, that.schema);
         }
         return false;

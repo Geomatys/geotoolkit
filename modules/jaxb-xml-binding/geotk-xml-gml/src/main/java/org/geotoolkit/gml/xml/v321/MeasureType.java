@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.XmlValue;
 
 /**
  * gml:MeasureType supports recording an amount encoded as a value of XML Schema double, together with a units of measure indicated by an attribute uom, short for "units Of measure". The value of the uom attribute identifies a reference system for the amount, usually a ratio or interval scale.
- * 
+ *
  * <p>Java class for MeasureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MeasureType">
  *   &lt;simpleContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
@@ -68,17 +68,17 @@ public class MeasureType {
     private String uom;
 
     public MeasureType() {
-        
+
     }
-    
+
     public MeasureType(final String uom, final double value) {
         this.uom = uom;
         this.value = value;
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      */
     public double getValue() {
         return value;
@@ -86,7 +86,7 @@ public class MeasureType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      */
     public void setValue(double value) {
         this.value = value;
@@ -94,11 +94,11 @@ public class MeasureType {
 
     /**
      * Gets the value of the uom property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUom() {
         return uom;
@@ -106,11 +106,11 @@ public class MeasureType {
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUom(String value) {
         this.uom = value;

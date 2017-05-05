@@ -9,7 +9,7 @@ import org.junit.Test;
  * @author Guilhem Legal
  */
 public class XmlBindingTest {
-    
+
     @Test
     public void contextCreationTest() throws JAXBException {
 

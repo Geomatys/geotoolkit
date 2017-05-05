@@ -44,7 +44,7 @@ public class IndexedShapefileAttributeReader <T extends Iterator<ShpData>> exten
 
     /**
      * Create the shape reader
-     * 
+     *
      * @param locker - to aquiere different readers and writers.
      * @param atts - the attributes that we are going to read.
      * @param read3D - for shp reader, read 3d coordinate or not.
@@ -52,14 +52,14 @@ public class IndexedShapefileAttributeReader <T extends Iterator<ShpData>> exten
      * @param resample - for shp reader, decimate coordinates while reading
      * @param readDBF - true to open a dbf reader
      * @param charset - for dbf reader
-     * @param estimateRes - avoid reading geometry if under this resolution, 
+     * @param estimateRes - avoid reading geometry if under this resolution,
      *                      while return an approximate geometry
      * @param goodRecs Collection of good indexes that match the query.
      */
-    public IndexedShapefileAttributeReader(final AccessManager locker,            
+    public IndexedShapefileAttributeReader(final AccessManager locker,
             final AttributeType[] atts, final boolean read3D, final boolean memoryMapped,
             final double[] resample, final boolean readDBF, final Charset charset,
-            final double[] estimateRes, final CloseableCollection<ShpData> col, final T goodRecs) 
+            final double[] estimateRes, final CloseableCollection<ShpData> col, final T goodRecs)
             throws IOException, DataStoreException {
         super(locker,atts,read3D,memoryMapped,resample,readDBF,charset,estimateRes);
         this.goodRecs = goodRecs;

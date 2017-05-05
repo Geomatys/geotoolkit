@@ -26,9 +26,9 @@ import org.geotoolkit.swe.xml.AbstractEncoding;
 
 /**
  * <p>Java class for AbstractEncodingType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractEncodingType">
  *   &lt;complexContent>
@@ -37,8 +37,8 @@ import org.geotoolkit.swe.xml.AbstractEncoding;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractEncodingType")
@@ -50,9 +50,9 @@ import org.geotoolkit.swe.xml.AbstractEncoding;
 public abstract class AbstractEncodingType extends AbstractSWEType implements AbstractEncoding{
 
     public AbstractEncodingType() {
-        
+
     }
-    
+
     public AbstractEncodingType(final String id) {
         super(id);
     }

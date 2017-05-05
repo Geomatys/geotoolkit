@@ -60,5 +60,5 @@ public class DivideTest extends AbstractProcessTest {
 
         assertEquals(2.123, result.doubleValue(),0.001);
     }
-    
+
 }

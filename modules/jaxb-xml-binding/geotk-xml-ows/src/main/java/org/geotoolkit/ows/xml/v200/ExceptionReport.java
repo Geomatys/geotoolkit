@@ -30,9 +30,9 @@ import org.geotoolkit.ows.xml.ExceptionResponse;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.ows.xml.ExceptionResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -73,11 +73,11 @@ public class ExceptionReport implements ExceptionResponse{
      * Empty constructor used by JAXB.
      */
     ExceptionReport() {}
-    
+
     /**
      * Build a new full exception with the specified text, code and locator.
-     * 
-     * @param exceptionText 
+     *
+     * @param exceptionText
      * @param exceptionCode
      */
     public ExceptionReport(final String exceptionText, final String exceptionCode, final String locator, final String version) {
@@ -85,13 +85,13 @@ public class ExceptionReport implements ExceptionResponse{
         this.exception.add(new ExceptionType(exceptionText, exceptionCode, locator));
         this.version = version;
     }
-    
+
     /**
      * Unordered list of one or more Exception elements
      *             that each describes an error. These Exception elements shall be
      *             interpreted by clients as being independent of one another (not
      *             hierarchical).Gets the value of the exception property.
-     * 
+     *
      */
     public List<ExceptionType> getException() {
         if (exception == null) {
@@ -102,11 +102,11 @@ public class ExceptionReport implements ExceptionResponse{
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         return version;
@@ -114,11 +114,11 @@ public class ExceptionReport implements ExceptionResponse{
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(String value) {
         this.version = value;
@@ -129,11 +129,11 @@ public class ExceptionReport implements ExceptionResponse{
      *           exception text values. These language identifiers shall be as
      *           specified in IETF RFC 4646. When this attribute is omitted, the
      *           language used is not identified.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLang() {
         return lang;
@@ -141,11 +141,11 @@ public class ExceptionReport implements ExceptionResponse{
 
     /**
      * Sets the value of the lang property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLang(String value) {
         this.lang = value;

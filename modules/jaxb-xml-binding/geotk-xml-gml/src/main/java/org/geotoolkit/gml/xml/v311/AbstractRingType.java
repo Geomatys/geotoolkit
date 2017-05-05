@@ -25,11 +25,11 @@ import org.geotoolkit.gml.xml.AbstractRing;
 
 /**
  * An abstraction of a ring to support surface boundaries of different complexity.
- * 
+ *
  * <p>Java class for AbstractRingType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractRingType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import org.geotoolkit.gml.xml.AbstractRing;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -51,9 +51,9 @@ import org.geotoolkit.gml.xml.AbstractRing;
 public abstract class AbstractRingType extends AbstractGeometryType implements AbstractRing {
 
     public AbstractRingType() {
-        
+
     }
-    
+
     public AbstractRingType(final String srsName) {
         super(srsName);
     }

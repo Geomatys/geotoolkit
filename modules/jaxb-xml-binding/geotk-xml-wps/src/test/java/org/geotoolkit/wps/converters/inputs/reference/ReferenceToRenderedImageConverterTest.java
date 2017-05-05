@@ -40,50 +40,50 @@ import org.junit.Test;
  */
 public class ReferenceToRenderedImageConverterTest extends AbstractWPSConverterTest {
 
-    
+
     @Test
     public void testConversion() throws UnconvertibleObjectException, IOException  {
         final WPSObjectConverter<Reference, RenderedImage> converter = WPSConverterRegistry.getInstance().getConverter(Reference.class, RenderedImage.class);
-        
+
         final URL image = ReferenceToRenderedImageConverterTest.class.getResource("/inputs/image.tiff");
         assertNotNull(image);
-        
+
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put(AbstractReferenceInputConverter.IOTYPE, WPSIO.IOType.INPUT);
-        
+
         final Reference reference = WPSXmlFactory.buildInOutReference("1.0.0", WPSIO.IOType.INPUT);
         reference.setHref(image.toString());
         reference.setMimeType("image/tiff");
         reference.setEncoding(null);
-        
+
         final RenderedImage convertedImage = converter.convert(reference, parameters);
         assertNotNull(convertedImage);
-        
+
         final RenderedImage expectedImage = ConvertersTestUtils.makeRendredImage();
         assertRasterEquals(expectedImage, convertedImage);
     }
-    
+
     @Test
     public void testConversionBase64() throws UnconvertibleObjectException, IOException  {
         final WPSObjectConverter<Reference, RenderedImage> converter = WPSConverterRegistry.getInstance().getConverter(Reference.class, RenderedImage.class);
-        
+
         final URL imageBase64 = ReferenceToRenderedImageConverterTest.class.getResource("/inputs/image_tiff_base64");
         assertNotNull(imageBase64);
-        
+
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put(AbstractReferenceInputConverter.IOTYPE, WPSIO.IOType.INPUT);
         parameters.put(AbstractReferenceInputConverter.ENCODING, "base64");
-        
+
         final Reference reference = WPSXmlFactory.buildInOutReference("1.0.0", WPSIO.IOType.INPUT);
         reference.setHref(imageBase64.toString());
         reference.setMimeType("image/tiff");
         reference.setEncoding("base64");
-        
+
         final RenderedImage convertedImage = converter.convert(reference, parameters);
         assertNotNull(convertedImage);
-        
+
         final RenderedImage expectedImage = ConvertersTestUtils.makeRendredImage();
         assertRasterEquals(expectedImage, convertedImage);
     }
-    
+
 }

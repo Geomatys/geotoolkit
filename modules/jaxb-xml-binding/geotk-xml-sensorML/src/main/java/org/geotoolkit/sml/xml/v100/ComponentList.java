@@ -130,7 +130,7 @@ public class ComponentList implements AbstractComponentList {
             this.component.add(new ComponentPropertyType(component));
         }
     }
-    
+
     @Override
     public void removeComponent(final String href) {
         for (ComponentPropertyType compo : component) {

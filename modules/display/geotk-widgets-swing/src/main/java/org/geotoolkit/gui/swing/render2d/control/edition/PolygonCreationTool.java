@@ -37,7 +37,7 @@ public class PolygonCreationTool extends AbstractEditionTool {
 
     public PolygonCreationTool() {
         super(1500,"polygonCreation",MessageBundle.formatInternational(MessageBundle.Keys.createPolygon),
-             new SimpleInternationalString("Tool for creating polygons."), 
+             new SimpleInternationalString("Tool for creating polygons."),
              IconBundle.getIcon("16_newgeometry"), FeatureMapLayer.class);
     }
 

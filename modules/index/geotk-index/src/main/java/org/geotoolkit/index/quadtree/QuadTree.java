@@ -36,9 +36,9 @@ import com.vividsolutions.jts.geom.Envelope;
  * <br>
  * Note that this implementation is <b>not thread safe</b>, so don't share the
  * same instance across two or more threads.
- * 
+ *
  * TODO: example of typical use...
- * 
+ *
  * @author Tommaso Nolli
  * @module
  */
@@ -57,7 +57,7 @@ public class QuadTree {
 
     /**
      * Constructor. The maxDepth will be calculated.
-     * 
+     *
      * @param numShapes
      *                The total number of shapes to index
      * @param maxBounds
@@ -82,7 +82,7 @@ public class QuadTree {
 
     /**
      * Constructor.
-     * 
+     *
      * @param numShapes
      *                The total number of shapes to index
      * @param maxDepth
@@ -133,7 +133,7 @@ public class QuadTree {
 
     /**
      * Inserts a shape record id in the quadtree
-     * 
+     *
      * @param recno
      *                The record number
      * @param bounds
@@ -145,7 +145,7 @@ public class QuadTree {
 
     /**
      * Inserts a shape record id in the quadtree
-     * 
+     *
      * @param node
      * @param recno
      * @param bounds
@@ -197,7 +197,7 @@ public class QuadTree {
     }
 
     /**
-     * 
+     *
      * @param bounds
      * @return A List of Integer
      */
@@ -230,7 +230,7 @@ public class QuadTree {
 
     /**
      * Closes this QuadTree after use...
-     * 
+     *
      * @throws StoreException
      */
     public void close(final Iterator iter) throws StoreException {
@@ -241,7 +241,7 @@ public class QuadTree {
     }
 
     /**
-     * 
+     *
      */
     public boolean trim() throws StoreException {
         LOGGER.fine("Trimming the tree...");
@@ -250,7 +250,7 @@ public class QuadTree {
 
     /**
      * Trim subtrees, and free subnodes that come back empty.
-     * 
+     *
      * @param node The node to trim
      * @return true if this node has been trimmed
      */
@@ -290,7 +290,7 @@ public class QuadTree {
 
     /**
      * Splits the specified Envelope
-     * 
+     *
      * @param in an Envelope to split
      * @return an array of 4 Envelopes
      * +---+---+

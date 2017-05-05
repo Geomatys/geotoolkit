@@ -28,13 +28,13 @@ import org.geotoolkit.gml.xml.v321.AbstractFeatureType;
 
 /**
  *  The class SF_SamplingFeatureCollection (Figure 9) is an instance of the
- * 				«metaclass» GF_FeatureType (ISO 19109:2005), which therefore represents a feature
- * 				type. SF_SamplingFeatureCollection shall support one association. 
- * 
+ *              «metaclass» GF_FeatureType (ISO 19109:2005), which therefore represents a feature
+ *              type. SF_SamplingFeatureCollection shall support one association.
+ *
  * <p>Java class for SF_SamplingFeatureCollectionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SF_SamplingFeatureCollectionType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.gml.xml.v321.AbstractFeatureType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SF_SamplingFeatureCollectionType", propOrder = {
@@ -60,11 +60,11 @@ public class SFSamplingFeatureCollectionType extends AbstractFeatureType {
 
     /**
      * Gets the value of the member property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link SFSamplingFeaturePropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<SFSamplingFeaturePropertyType> getMember() {
         if (member == null) {

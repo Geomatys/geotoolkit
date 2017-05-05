@@ -22,7 +22,7 @@ package org.geotoolkit.wms.xml;
  * @module
  */
 public interface AbstractDCP {
-    
+
     AbstractHTTP getHTTP();
 
 }

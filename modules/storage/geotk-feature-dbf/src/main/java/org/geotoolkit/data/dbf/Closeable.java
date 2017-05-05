@@ -20,15 +20,15 @@ package org.geotoolkit.data.dbf;
 /**
  * Extend java.io.Closeable with method isClosed.
  * This allows to log messages when objects are not properly disposed.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public interface Closeable extends java.io.Closeable{
-    
+
     /**
      * @return true if object has already been closed.
      */
     public boolean isClosed();
-    
+
 }

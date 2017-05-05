@@ -29,7 +29,7 @@ import org.w3c.dom.Node;
 
 /**
  * Metadata store.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public abstract class MetadataStore extends DataStore{
@@ -44,47 +44,47 @@ public abstract class MetadataStore extends DataStore{
     public ParameterValueGroup getConfiguration() {
         return params;
     }
-    
+
     public abstract MetadataReader getReader();
-    
+
     public abstract MetadataWriter getWriter();
-    
+
     public abstract void setLogLevel(Level level);
-    
+
     public abstract List<MetadataType> getSupportedDataTypes();
-    
+
     public abstract Map<String, URI> getConceptMap();
-    
+
     public abstract List<QName> getAdditionalQueryableQName();
-    
+
     public abstract String[] executeEbrimSQLQuery(final String sqlQuery) throws MetadataIoException;
-    
+
     public abstract Node getMetadata(final String identifier, final MetadataType mode) throws MetadataIoException;
-    
+
     public abstract Node getMetadata(final String identifier, final MetadataType mode, final ElementSetType type, final List<QName> elementName) throws MetadataIoException;
-    
+
     public abstract List<DomainValues> getFieldDomainofValues(final String propertyNames) throws MetadataIoException;
-    
+
     public abstract boolean storeMetadata(final Node obj) throws MetadataIoException;
-    
+
     public abstract boolean deleteMetadata(final String metadataID) throws MetadataIoException;
-    
+
     public abstract boolean replaceMetadata(String metadataID, Node any) throws MetadataIoException;
-    
+
     public abstract boolean updateMetadata(String metadataID, Map<String, Object> properties) throws MetadataIoException;
-    
+
     public abstract boolean updateSupported();
-    
+
     public abstract boolean deleteSupported();
-    
+
     public abstract boolean existMetadata(final String identifier) throws MetadataIoException;
-    
+
     public abstract List<? extends Object> getAllEntries() throws MetadataIoException;
-    
+
     public abstract List<String> getAllIdentifiers() throws MetadataIoException;
-    
+
     public abstract Iterator<String> getIdentifierIterator() throws MetadataIoException;
-    
+
     public abstract int getEntryCount() throws MetadataIoException;
 
 }

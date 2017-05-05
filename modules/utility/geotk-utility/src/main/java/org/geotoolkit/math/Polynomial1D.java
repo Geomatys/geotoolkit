@@ -63,11 +63,11 @@ public class Polynomial1D extends Search1D {
      * Renvoie la donnée <var>y</var> interpolée au <var>xi</var> spécifié. Les index
      * {@link #klo} et {@link #khi} doivent avoir été trouvés avant l'appel de cette méthode.
      *
-     * @param xi			valeur de <var>x</var> pour laquelle on désire une
-     *						valeur <var>y</var> interpolée.
-     * @param reUseIndex	<code>true</code> s'il faut réutiliser les même
-     *						index que ceux de la dernière interpolation.
-     * @return				Valeur <var>y</var> interpolée.
+     * @param xi            valeur de <var>x</var> pour laquelle on désire une
+     *                      valeur <var>y</var> interpolée.
+     * @param reUseIndex    <code>true</code> s'il faut réutiliser les même
+     *                      index que ceux de la dernière interpolation.
+     * @return              Valeur <var>y</var> interpolée.
      */
     @Override
     protected double interpolate(final double xi, final boolean reUseIndex) throws ExtrapolationException {
@@ -79,13 +79,13 @@ public class Polynomial1D extends Search1D {
         }
 
         /*~**************************************************************************************
-         *																						*
-         *	NUMERICAL RECIPES - polint (section 3.1)											*
-         *																						*
-         *	Given arrays xa[0..n-1] and ya[0..n-1], and given value x, this	routine returns		*
-         *	a value y and an error estimate dy. If P(x) is the polynomial of degree N-1 such	*
-         *	that P(xa_i)=ya_i, i=1,...,n, then the returned value y=P(x).						*
-         *																						*
+         *                                                                                      *
+         *  NUMERICAL RECIPES - polint (section 3.1)                                            *
+         *                                                                                      *
+         *  Given arrays xa[0..n-1] and ya[0..n-1], and given value x, this routine returns     *
+         *  a value y and an error estimate dy. If P(x) is the polynomial of degree N-1 such    *
+         *  that P(xa_i)=ya_i, i=1,...,n, then the returned value y=P(x).                       *
+         *                                                                                      *
          ****************************************************************************************/
         int ns = 0;
         int vi = index[0];
@@ -110,7 +110,7 @@ public class Polynomial1D extends Search1D {
                 final double deny = w / den;
                 /*~*****************************************************
                  * WARNING: division par 0 dans la ligne précédente    *
-                 *			si deux valeurs de x sont trop semblables. *
+                 *          si deux valeurs de x sont trop semblables. *
                  *******************************************************/
                 d[i] = hp * deny;
                 c[i] = ho * deny;
@@ -173,9 +173,9 @@ public class Polynomial1D extends Search1D {
      * dans le vecteur des <var>y</var> si possible. Voyez la description de la méthode de la
      * classe de base pour plus de détails.
      *
-     * @param dxStart	Plage minimal des <var>x</var> qu'il doit y avoir de chaque côté d'un NaN pour l'interpoler.
-     * @param dxStop	Plage maximal des <var>x</var> couvert par les données manquantes pour qu'elles puissent être interpolées.
-     * @return			Le tableau des <var>y</var>.
+     * @param dxStart   Plage minimal des <var>x</var> qu'il doit y avoir de chaque côté d'un NaN pour l'interpoler.
+     * @param dxStop    Plage maximal des <var>x</var> couvert par les données manquantes pour qu'elles puissent être interpolées.
+     * @return          Le tableau des <var>y</var>.
      */
     @Override
     public double[] interpolateNaN(final double dxStart, final double dxStop) {

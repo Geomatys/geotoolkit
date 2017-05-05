@@ -52,7 +52,7 @@ public interface TimeStamp extends AbstractTimePrimitive{
     Calendar getWhen();
 
     /**
-     * 
+     *
      * @param when
      */
     void setWhen(Calendar when);

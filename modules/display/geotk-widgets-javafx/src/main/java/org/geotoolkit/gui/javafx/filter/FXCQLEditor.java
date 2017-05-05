@@ -67,7 +67,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
  * CQL editor
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class FXCQLEditor extends BorderPane {
@@ -81,12 +81,12 @@ public class FXCQLEditor extends BorderPane {
     private static final Collection STYLE_BINARY = Collections.singleton("binary");
     private static final Collection STYLE_PROPERTY = Collections.singleton("property");
     private static final Collection STYLE_ERROR = Collections.singleton("error");
-    
-    
+
+
     @FXML private ListView<String> uiProperties;
     @FXML private TreeView<Object> uiFunctions;
     @FXML private TextArea uiDetail;
-    
+
     private final CodeArea codeArea = new CodeArea();
     private final boolean filterMode;
 
@@ -100,7 +100,7 @@ public class FXCQLEditor extends BorderPane {
         setCenter(codeArea);
         codeArea.setWrapText(true);
         codeArea.getStylesheets().add(FXCQLEditor.class.getResource("cql.css").toExternalForm());
-        
+
         codeArea.textProperty().addListener((obs, oldText, newText) -> {
             updateHightLight();
             //codeArea.setStyleSpans(0, computeHighlight(newText));
@@ -151,14 +151,14 @@ public class FXCQLEditor extends BorderPane {
         uiFunctions.setRoot(root);
 
     }
-    
+
     @FXML
     private void putShortcut(ActionEvent event) {
         final Button button = (Button) event.getSource();
         final String text = button.getText();
         codeArea.appendText(" "+text);
     }
-    
+
     public void setTarget(Object candidate){
         FeatureType ft = null;
         if(candidate instanceof FeatureType){
@@ -168,43 +168,43 @@ public class FXCQLEditor extends BorderPane {
         }else if(candidate instanceof FeatureMapLayer){
             ft = ((FeatureMapLayer)candidate).getCollection().getFeatureType();
         }
-        
+
         final ObservableList properties = FXCollections.observableArrayList();
         if(ft!=null){
             for(PropertyType desc : ft.getProperties(true)){
                 properties.add(desc.getName().tip().toString());
             }
         }
-        
+
         uiProperties.setItems(properties);
     }
-    
+
     public void setExpression(Expression candidate){
         codeArea.replaceText(CQL.write(candidate));
     }
-    
+
     public void setFilter(Filter candidate){
         codeArea.replaceText(CQL.write(candidate));
     }
-    
+
     public Expression getExpression() throws CQLException{
         return CQL.parseExpression(codeArea.getText());
     }
-    
+
     public Filter getFilter() throws CQLException{
         return CQL.parseFilter(codeArea.getText());
     }
-    
+
     private void updateHightLight(){
         final String txt = codeArea.getText();
-        
+
         final ParseTree tree = CQL.compile(txt);
         syntaxHighLight(tree);
-        
+
     }
-    
+
     private void syntaxHighLight(ParseTree tree){
-        
+
         if(tree instanceof ParserRuleContext){
             final ParserRuleContext prc = (ParserRuleContext) tree;
             if(prc.exception!=null){
@@ -219,12 +219,12 @@ public class FXCQLEditor extends BorderPane {
                 }
                 return;
             }
-            
+
             //special case for functions
             if(prc instanceof CQLParser.ExpressionTermContext){
                 final CQLParser.ExpressionTermContext ctx = (CQLParser.ExpressionTermContext) prc;
                 if(ctx.NAME()!=null && ctx.LPAREN()!=null){
-                    final int nbChild = tree.getChildCount();        
+                    final int nbChild = tree.getChildCount();
                     for(int i=0;i<nbChild;i++){
                         final ParseTree pt = tree.getChild(i);
                         if(pt instanceof TerminalNode && ((TerminalNode)pt).getSymbol().getType() == CQLLexer.NAME){
@@ -243,37 +243,37 @@ public class FXCQLEditor extends BorderPane {
                     return;
                 }
             }
-            
+
         }
-        
+
         if(tree instanceof TerminalNode){
             final TerminalNode tn = (TerminalNode) tree;
             // if index<0 = missing token
             final Token token = tn.getSymbol();
             final int offset = token.getStartIndex();
             final int end = token.getStopIndex()+1;
-            
+
             switch(token.getType()){
-                
-                case CQLLexer.COMMA : 
-                case CQLLexer.UNARY : 
-                case CQLLexer.MULT : 
+
+                case CQLLexer.COMMA :
+                case CQLLexer.UNARY :
+                case CQLLexer.MULT :
                     codeArea.setStyle(offset, end, STYLE_DEFAULT);
                     break;
-                    
+
                 // EXpressions -------------------------------------------------
-                case CQLLexer.TEXT : 
-                case CQLLexer.INT : 
-                case CQLLexer.FLOAT : 
-                case CQLLexer.DATE : 
-                case CQLLexer.DURATION_P : 
-                case CQLLexer.DURATION_T : 
-                case CQLLexer.POINT : 
-                case CQLLexer.LINESTRING : 
-                case CQLLexer.POLYGON : 
-                case CQLLexer.MPOINT : 
-                case CQLLexer.MLINESTRING : 
-                case CQLLexer.MPOLYGON : 
+                case CQLLexer.TEXT :
+                case CQLLexer.INT :
+                case CQLLexer.FLOAT :
+                case CQLLexer.DATE :
+                case CQLLexer.DURATION_P :
+                case CQLLexer.DURATION_T :
+                case CQLLexer.POINT :
+                case CQLLexer.LINESTRING :
+                case CQLLexer.POLYGON :
+                case CQLLexer.MPOINT :
+                case CQLLexer.MLINESTRING :
+                case CQLLexer.MPOLYGON :
                     codeArea.setStyle(offset, end, STYLE_LITERAL);
                     break;
                 case CQLLexer.PROPERTY_NAME :
@@ -288,11 +288,11 @@ public class FXCQLEditor extends BorderPane {
                     codeArea.setStyle(offset, end, STYLE_FUNCTION);
                     }
                     break;
-                case CQLLexer.RPAREN : 
-                case CQLLexer.LPAREN : 
+                case CQLLexer.RPAREN :
+                case CQLLexer.LPAREN :
                     codeArea.setStyle(offset, end, STYLE_PARENTHESE);
-                    break;                    
-                    
+                    break;
+
                 case CQLLexer.COMPARE :
                 case CQLLexer.LIKE :
                 case CQLLexer.IS :
@@ -318,18 +318,18 @@ public class FXCQLEditor extends BorderPane {
                 case CQLLexer.WITHIN :
                     codeArea.setStyle(offset, end, STYLE_BINARY);
                     break;
-                default : 
+                default :
                     codeArea.setStyle(offset, end, STYLE_ERROR);
                     break;
             }
         }
-        
-        final int nbChild = tree.getChildCount();        
+
+        final int nbChild = tree.getChildCount();
         for(int i=0;i<nbChild;i++){
             syntaxHighLight(tree.getChild(i));
         }
     }
-    
+
     public static Expression showDialog(Node parent, MapLayer layer, Expression candidate) throws CQLException {
         final FXCQLEditor editor = new FXCQLEditor(false);
         editor.setExpression(candidate);
@@ -340,7 +340,7 @@ public class FXCQLEditor extends BorderPane {
             return null;
         }
     }
-    
+
     public static Filter showFilterDialog(Node parent, MapLayer layer, Filter candidate) throws CQLException {
         final FXCQLEditor editor = new FXCQLEditor(true);
         editor.setFilter(candidate);
@@ -421,7 +421,7 @@ public class FXCQLEditor extends BorderPane {
                             }
                             sbDesc.append("\n\n");
                         }
-                        
+
                         uiDetail.setText(sbDesc.toString());
                     }else{
                         uiDetail.setText("");
@@ -433,7 +433,7 @@ public class FXCQLEditor extends BorderPane {
         @Override
         protected void updateItem(Object item, boolean empty) {
             super.updateItem(item, empty);
-            
+
             if(item instanceof String){
                 setText((String)item);
             }else if(item instanceof ParameterDescriptorGroup){

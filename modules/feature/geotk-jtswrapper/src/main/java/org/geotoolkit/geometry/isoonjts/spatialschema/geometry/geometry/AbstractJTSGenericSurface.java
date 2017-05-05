@@ -30,8 +30,8 @@ import org.opengis.geometry.coordinate.GenericSurface;
  * @module
  */
 public abstract class AbstractJTSGenericSurface extends AbstractJTSGeometry implements GenericSurface {
-    
-    
+
+
     /**
      * Returns a vector perpendicular to the {@code GenericSurface} at the
      * {@linkplain DirectPosition direct position} passed, which must be on this

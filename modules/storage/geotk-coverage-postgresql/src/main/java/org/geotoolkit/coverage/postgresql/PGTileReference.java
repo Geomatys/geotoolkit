@@ -37,7 +37,7 @@ import org.geotoolkit.coverage.wkb.WKBRasterImageReader;
 public class PGTileReference implements TileReference{
 
     private static final WKBRasterImageReader.Spi SPI = new WKBRasterImageReader.Spi();
-    
+
     private final PGGridMosaic mosaic;
     private final Point position;
     private SoftReference<byte[]> data = null;
@@ -74,21 +74,21 @@ public class PGTileReference implements TileReference{
                 store.getLogger().log(Level.WARNING, ex.getMessage(),ex);
             }
         }
-        
+
         return buffer;
     }
 
     private byte[] download() throws SQLException{
         final PGCoverageStore store = mosaic.getCoverageReference().getStore();
-            
+
         Connection cnx = null;
         Statement stmt = null;
         ResultSet rs = null;
         try{
-            
+
             cnx = store.getDataSource().getConnection();
             stmt = cnx.createStatement();
-            
+
             final long mosaicId = mosaic.getDatabaseId();
 
             final StringBuilder query = new StringBuilder();
@@ -97,9 +97,9 @@ public class PGTileReference implements TileReference{
             query.append(" WHERE \"mosaicId\"=").append(mosaicId);
             query.append(" AND \"positionX\"=").append(position.x);
             query.append(" AND \"positionY\"=").append(position.y);
-            
+
             rs = stmt.executeQuery(query.toString());
-            
+
             if(rs.next()){
                 byte[] data = rs.getBytes(1);
                 try {
@@ -109,14 +109,14 @@ public class PGTileReference implements TileReference{
                 }
                 return data;
             }
-            
+
             throw new SQLException("No tile found for mosaic "+mosaicId +" and position "+position.x+"/"+position.y);
         }finally{
             store.closeSafe(cnx, stmt, rs);
         }
-        
+
     }
-    
+
     @Override
     public int getImageIndex() {
         return 0;
@@ -126,5 +126,5 @@ public class PGTileReference implements TileReference{
     public Point getPosition() {
         return position;
     }
-    
+
 }

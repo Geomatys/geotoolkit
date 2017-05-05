@@ -29,11 +29,11 @@ import org.opengis.util.GenericName;
  * @module
  */
 public class WMSCMapLayer extends WMSMapLayer{
-    
+
     private static WMSCCoverageReference toReference(final WebMapClientCached server, final GenericName name) throws CapabilitiesException{
         return new WMSCCoverageReference(server, name);
     }
-    
+
     /**
      * @param server
      * @param layer : only one layer possible in wms-c
@@ -42,5 +42,5 @@ public class WMSCMapLayer extends WMSMapLayer{
         super(toReference(server, name));
         graphicBuilders().add(WMSGraphicBuilder.INSTANCE);
     }
-    
+
 }

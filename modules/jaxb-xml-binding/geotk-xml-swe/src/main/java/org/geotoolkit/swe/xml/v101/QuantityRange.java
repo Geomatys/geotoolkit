@@ -36,9 +36,9 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -137,7 +137,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
         this.quality = quality;
     }
 
-    
+
     /**
      * Gets the value of the uom property.
      */
@@ -233,11 +233,11 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
         hash = 53 * hash + (this.axisID != null ? this.axisID.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder(super.toString());
-       
+
         if (uom != null) {
             s.append(" uom = ").append(uom).append('\n');
         }

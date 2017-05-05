@@ -31,9 +31,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -63,24 +63,24 @@ public class AllowedValues implements org.geotoolkit.ows.xml.AllowedValues {
     private List<Object> valueOrRange;
 
     public AllowedValues() {
-        
+
     }
-    
+
     public AllowedValues(final List<Object> valueOrRange){
         this.valueOrRange = valueOrRange;
     }
-    
+
     /**
      *  Build an allowed value with the specified list of value.
      */
     public AllowedValues(final Collection<String> values){
-        
+
         this.valueOrRange = new ArrayList<>();
         for (String value: values){
             valueOrRange.add(new ValueType(value));
         }
     }
-    
+
     public AllowedValues(final AllowedValues that){
         if (that != null && that.valueOrRange != null) {
             this.valueOrRange = new ArrayList<>();
@@ -96,19 +96,19 @@ public class AllowedValues implements org.geotoolkit.ows.xml.AllowedValues {
             }
         }
     }
-    
+
     /**
      *  Build an allowed value with the specified range
      */
     public AllowedValues(final RangeType range){
-        
+
         valueOrRange = new ArrayList<>();
         valueOrRange.add(range);
     }
-    
+
     /**
      * Gets the value of the valueOrRange property.
-     * 
+     *
      */
     public List<Object> getValueOrRange() {
         if (valueOrRange == null) {
@@ -128,7 +128,7 @@ public class AllowedValues implements org.geotoolkit.ows.xml.AllowedValues {
         }
         return values;
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */

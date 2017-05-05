@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for CompoundCRSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CompoundCRSType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
@@ -61,12 +61,12 @@ public class CompoundCRSType extends AbstractCRSType {
 
     /**
      * Gets the value of the componentReferenceSystem property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link SingleCRSPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link SingleCRSPropertyType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<SingleCRSPropertyType>> getComponentReferenceSystem() {
         if (componentReferenceSystem == null) {
@@ -77,11 +77,11 @@ public class CompoundCRSType extends AbstractCRSType {
 
     /**
      * Gets the value of the aggregationType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public AggregationType getAggregationType() {
         return aggregationType;
@@ -89,11 +89,11 @@ public class CompoundCRSType extends AbstractCRSType {
 
     /**
      * Sets the value of the aggregationType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public void setAggregationType(AggregationType value) {
         this.aggregationType = value;

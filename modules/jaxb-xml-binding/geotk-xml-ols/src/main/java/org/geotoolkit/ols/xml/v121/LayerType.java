@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for LayerType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LayerType">
  *   &lt;complexContent>
@@ -60,8 +60,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LayerType", propOrder = {
@@ -76,7 +76,7 @@ public class LayerType {
 
     /**
      * Gets the value of the layer property.
-     * 
+     *
      */
     public List<LayerType.Layer> getLayer() {
         if (layer == null) {
@@ -87,11 +87,11 @@ public class LayerType {
 
     /**
      * Gets the value of the filter property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFilter() {
         return filter;
@@ -99,11 +99,11 @@ public class LayerType {
 
     /**
      * Sets the value of the filter property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFilter(String value) {
         this.filter = value;
@@ -112,9 +112,9 @@ public class LayerType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -127,8 +127,8 @@ public class LayerType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -143,11 +143,11 @@ public class LayerType {
 
         /**
          * Gets the value of the style property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link StyleType }
-         *     
+         *
          */
         public StyleType getStyle() {
             return style;
@@ -155,11 +155,11 @@ public class LayerType {
 
         /**
          * Sets the value of the style property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link StyleType }
-         *     
+         *
          */
         public void setStyle(StyleType value) {
             this.style = value;
@@ -167,11 +167,11 @@ public class LayerType {
 
         /**
          * Gets the value of the name property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getName() {
             return name;
@@ -179,11 +179,11 @@ public class LayerType {
 
         /**
          * Sets the value of the name property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setName(String value) {
             this.name = value;

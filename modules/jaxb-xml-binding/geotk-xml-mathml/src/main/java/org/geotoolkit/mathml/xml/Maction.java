@@ -37,9 +37,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Classe Java pour anonymous complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -155,20 +155,20 @@ public class Maction {
 
     /**
      * Gets the value of the mathExpression property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the mathExpression property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMathExpression().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link Neq }{@code >}
@@ -346,8 +346,8 @@ public class Maction {
      * {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}
      * {@link JAXBElement }{@code <}{@link Mo }{@code >}
      * {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<Object> getMathExpression() {
         if (mathExpression == null) {
@@ -358,11 +358,11 @@ public class Maction {
 
     /**
      * Obtient la valeur de la propriété actiontype.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActiontype() {
         return actiontype;
@@ -370,11 +370,11 @@ public class Maction {
 
     /**
      * Définit la valeur de la propriété actiontype.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActiontype(String value) {
         this.actiontype = value;
@@ -382,11 +382,11 @@ public class Maction {
 
     /**
      * Obtient la valeur de la propriété selection.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getSelection() {
         return selection;
@@ -394,11 +394,11 @@ public class Maction {
 
     /**
      * Définit la valeur de la propriété selection.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setSelection(BigInteger value) {
         this.selection = value;
@@ -406,11 +406,11 @@ public class Maction {
 
     /**
      * Obtient la valeur de la propriété mathcolor.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMathcolor() {
         return mathcolor;
@@ -418,11 +418,11 @@ public class Maction {
 
     /**
      * Définit la valeur de la propriété mathcolor.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMathcolor(String value) {
         this.mathcolor = value;
@@ -430,11 +430,11 @@ public class Maction {
 
     /**
      * Obtient la valeur de la propriété mathbackground.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMathbackground() {
         return mathbackground;
@@ -442,11 +442,11 @@ public class Maction {
 
     /**
      * Définit la valeur de la propriété mathbackground.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMathbackground(String value) {
         this.mathbackground = value;
@@ -454,11 +454,11 @@ public class Maction {
 
     /**
      * Obtient la valeur de la propriété id.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -466,11 +466,11 @@ public class Maction {
 
     /**
      * Définit la valeur de la propriété id.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(String value) {
         this.id = value;
@@ -478,11 +478,11 @@ public class Maction {
 
     /**
      * Obtient la valeur de la propriété xref.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getXref() {
         return xref;
@@ -490,11 +490,11 @@ public class Maction {
 
     /**
      * Définit la valeur de la propriété xref.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setXref(String value) {
         this.xref = value;
@@ -502,25 +502,25 @@ public class Maction {
 
     /**
      * Gets the value of the clazz property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the clazz property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getClazz().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<String> getClazz() {
         if (clazz == null) {
@@ -531,11 +531,11 @@ public class Maction {
 
     /**
      * Obtient la valeur de la propriété style.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStyle() {
         return style;
@@ -543,11 +543,11 @@ public class Maction {
 
     /**
      * Définit la valeur de la propriété style.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStyle(String value) {
         this.style = value;
@@ -555,11 +555,11 @@ public class Maction {
 
     /**
      * Obtient la valeur de la propriété href.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -567,11 +567,11 @@ public class Maction {
 
     /**
      * Définit la valeur de la propriété href.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -579,11 +579,11 @@ public class Maction {
 
     /**
      * Obtient la valeur de la propriété other.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOther() {
         return other;
@@ -591,11 +591,11 @@ public class Maction {
 
     /**
      * Définit la valeur de la propriété other.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOther(String value) {
         this.other = value;
@@ -603,15 +603,15 @@ public class Maction {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * <p>
-     * the map is keyed by the name of the attribute and 
+     * the map is keyed by the name of the attribute and
      * the value is the string value of the attribute.
-     * 
+     *
      * the map returned by this method is live, and you can add new attribute
      * by updating the map directly. Because of this design, there's no setter.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */

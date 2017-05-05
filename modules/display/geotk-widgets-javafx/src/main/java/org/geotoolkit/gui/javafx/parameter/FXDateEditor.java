@@ -34,17 +34,17 @@ import org.geotoolkit.gui.javafx.util.FXDateField;
 public class FXDateEditor extends FXValueEditor {
 
     static final Class[] SUPPORTED_CLASSES = new Class[]{Date.class, LocalDate.class, LocalDateTime.class};
-    
+
     private final SimpleObjectProperty dateProperty = new SimpleObjectProperty();
     private final FXDateField editor = new FXDateField();
-    
+
     public FXDateEditor(final Spi spi) {
         super(spi);
-        
+
         dateProperty.addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
             if (editor.valueProperty().isBound())
                 return; // Do not throw exception, because user has set editor property as a target for one of his own property.
-            
+
             if (newValue == null)
                 editor.valueProperty().set(null);
             else if (newValue instanceof LocalDateTime)
@@ -55,11 +55,11 @@ public class FXDateEditor extends FXValueEditor {
                 editor.valueProperty().set(new Timestamp(((Date)newValue).getTime()).toLocalDateTime());
             } else throw new UnconvertibleObjectException("Cannot convert from "+newValue.getClass() + " to "+LocalDateTime.class);
         });
-        
+
         editor.valueProperty().addListener((ObservableValue<? extends LocalDateTime> observable, LocalDateTime oldValue, LocalDateTime newValue) -> {
             if (dateProperty.isBound())
                 return; // Do not throw exception, because user has set exposed property as a target for one of his own property.
-            
+
             if (newValue == null) {
                 dateProperty.set(null);
             } else {
@@ -70,7 +70,7 @@ public class FXDateEditor extends FXValueEditor {
                     dateProperty.set(newValue);
                 else if (LocalDate.class.isAssignableFrom(valueClass))
                     dateProperty.set(newValue.toLocalDate());
-                else if (Date.class.isAssignableFrom(valueClass)) 
+                else if (Date.class.isAssignableFrom(valueClass))
                     dateProperty.set(Timestamp.valueOf(newValue));
             }
         });

@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Intersects")
 public class IntersectsType extends BinarySpatialOpType {
-    
+
     public IntersectsType() {
-        
+
     }
-    
+
     public IntersectsType(final IntersectsType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new IntersectsType(this);

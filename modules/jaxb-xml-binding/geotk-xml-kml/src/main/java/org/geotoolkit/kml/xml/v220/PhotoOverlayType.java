@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for PhotoOverlayType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PhotoOverlayType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,11 +81,11 @@ public class PhotoOverlayType extends AbstractOverlayType {
 
     /**
      * Gets the value of the rotation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getRotation() {
         return rotation;
@@ -93,11 +93,11 @@ public class PhotoOverlayType extends AbstractOverlayType {
 
     /**
      * Sets the value of the rotation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setRotation(final Double value) {
         this.rotation = value;
@@ -105,11 +105,11 @@ public class PhotoOverlayType extends AbstractOverlayType {
 
     /**
      * Gets the value of the viewVolume property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ViewVolumeType }
-     *     
+     *
      */
     public ViewVolumeType getViewVolume() {
         return viewVolume;
@@ -117,11 +117,11 @@ public class PhotoOverlayType extends AbstractOverlayType {
 
     /**
      * Sets the value of the viewVolume property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ViewVolumeType }
-     *     
+     *
      */
     public void setViewVolume(final ViewVolumeType value) {
         this.viewVolume = value;
@@ -129,11 +129,11 @@ public class PhotoOverlayType extends AbstractOverlayType {
 
     /**
      * Gets the value of the imagePyramid property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ImagePyramidType }
-     *     
+     *
      */
     public ImagePyramidType getImagePyramid() {
         return imagePyramid;
@@ -141,11 +141,11 @@ public class PhotoOverlayType extends AbstractOverlayType {
 
     /**
      * Sets the value of the imagePyramid property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ImagePyramidType }
-     *     
+     *
      */
     public void setImagePyramid(final ImagePyramidType value) {
         this.imagePyramid = value;
@@ -153,11 +153,11 @@ public class PhotoOverlayType extends AbstractOverlayType {
 
     /**
      * Gets the value of the point property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PointType }
-     *     
+     *
      */
     public PointType getPoint() {
         return point;
@@ -165,11 +165,11 @@ public class PhotoOverlayType extends AbstractOverlayType {
 
     /**
      * Sets the value of the point property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PointType }
-     *     
+     *
      */
     public void setPoint(final PointType value) {
         this.point = value;
@@ -177,11 +177,11 @@ public class PhotoOverlayType extends AbstractOverlayType {
 
     /**
      * Gets the value of the shape property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShapeEnumType }
-     *     
+     *
      */
     public ShapeEnumType getShape() {
         return shape;
@@ -189,11 +189,11 @@ public class PhotoOverlayType extends AbstractOverlayType {
 
     /**
      * Sets the value of the shape property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShapeEnumType }
-     *     
+     *
      */
     public void setShape(final ShapeEnumType value) {
         this.shape = value;
@@ -201,25 +201,25 @@ public class PhotoOverlayType extends AbstractOverlayType {
 
     /**
      * Gets the value of the photoOverlaySimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the photoOverlaySimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPhotoOverlaySimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getPhotoOverlaySimpleExtensionGroup() {
         if (photoOverlaySimpleExtensionGroup == null) {
@@ -230,25 +230,25 @@ public class PhotoOverlayType extends AbstractOverlayType {
 
     /**
      * Gets the value of the photoOverlayObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the photoOverlayObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPhotoOverlayObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getPhotoOverlayObjectExtensionGroup() {
         if (photoOverlayObjectExtensionGroup == null) {

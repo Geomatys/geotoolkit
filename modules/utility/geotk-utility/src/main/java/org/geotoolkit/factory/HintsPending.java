@@ -67,20 +67,20 @@ public final class HintsPending extends Hints {
      * the datastore, that is, they are updatable without altering the backing store (makes sense
      * only if features are kept in memory or if there is some transparent persistent mechanism in
      * place, such as the Hibernate one).
-     * 
+     *
      * Default behavior is true on datastores.
      *
      * @since 2.4
      */
     public static final Key FEATURE_DETACHED = new Key(Boolean.class);
-    
+
     /**
-     * When adding features in a datastore, it is not always necessary to have 
+     * When adding features in a datastore, it is not always necessary to have
      * the returned id of the inserted feature.
      * JDBC featurestore for exemple are much more efficient when inserting datas
      * in batch mode. setting this value to false may bring a huge performance
      * gain.
-     * 
+     *
      * Default value is true.
      */
     public static final Key UPDATE_ID_ON_INSERT = new Key(Boolean.class);

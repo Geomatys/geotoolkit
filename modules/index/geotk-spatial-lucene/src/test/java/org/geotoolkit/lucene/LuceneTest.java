@@ -1675,7 +1675,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 4);
-	assertTrue(results.contains("box 2"));
+    assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("line 1"));
         assertTrue(results.contains("line 1 projected"));
@@ -2624,10 +2624,10 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
 //        assertEquals(nbResults, 6);
 //        assertTrue(results.contains("point 1"));
 //        assertTrue(results.contains("point 1 projected"));
-//    	assertTrue(results.contains("point 4"));
+//      assertTrue(results.contains("point 4"));
 //        assertTrue(results.contains("point 5"));
 //        assertTrue(results.contains("box 2"));
-//    	assertTrue(results.contains("box 2 projected"));
+//      assertTrue(results.contains("box 2 projected"));
 //
 //        /*
 //         * case 13: a line distance 6000km
@@ -2652,7 +2652,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
 //
 //        //we verify that we obtain the correct results.
 //        assertEquals(nbResults, 1);
-//	assertTrue(results.contains("point 5"));
+//  assertTrue(results.contains("point 5"));
 
 
     }
@@ -2718,7 +2718,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         assertEquals(nbResults, 3);
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 2"));
-	assertTrue(results.contains("box 2 projected"));
+    assertTrue(results.contains("box 2 projected"));
 
     }
 

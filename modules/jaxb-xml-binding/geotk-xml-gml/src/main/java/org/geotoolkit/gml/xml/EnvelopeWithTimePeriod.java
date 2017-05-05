@@ -24,10 +24,10 @@ package org.geotoolkit.gml.xml;
  * @module
  */
 public interface EnvelopeWithTimePeriod extends Envelope {
- 
+
     AbstractTimePosition getBeginPosition();
-    
+
     AbstractTimePosition getEndPosition();
-    
+
     String getFrame();
 }

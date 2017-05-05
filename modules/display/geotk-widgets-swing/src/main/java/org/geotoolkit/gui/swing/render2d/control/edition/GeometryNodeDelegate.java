@@ -33,7 +33,7 @@ import org.opengis.feature.Feature;
 
 /**
  * Geometry moving tool.
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -60,7 +60,7 @@ public class GeometryNodeDelegate extends AbstractFeatureEditionDelegate {
         decoration.setGeometries(Collections.singleton(this.selection.geometry));
         decoration.setNodeSelection(this.selection);
     }
-    
+
     public void setCurrentFeature(final Feature feature){
         this.feature = feature;
         if(feature != null){
@@ -138,7 +138,7 @@ public class GeometryNodeDelegate extends AbstractFeatureEditionDelegate {
             modified = true;
             return;
         }
-        
+
         super.mouseDragged(e);
     }
 

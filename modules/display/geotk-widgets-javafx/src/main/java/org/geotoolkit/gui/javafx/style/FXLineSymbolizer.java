@@ -42,17 +42,17 @@ public class FXLineSymbolizer extends FXStyleElementController<LineSymbolizer> {
     protected FXStroke uiStroke;
     @FXML
     private FXNumberExpression uiOffset;
-    
+
     @Override
     public Class<LineSymbolizer> getEditedClass() {
         return LineSymbolizer.class;
     }
-    
+
     @Override
     public LineSymbolizer newValue() {
         return getStyleFactory().lineSymbolizer(StyleConstants.DEFAULT_STROKE, null);
     }
-    
+
     @Override
     public void initialize() {
         super.initialize();
@@ -72,7 +72,7 @@ public class FXLineSymbolizer extends FXStyleElementController<LineSymbolizer> {
         uiInfo.valueProperty().addListener(changeListener);
         uiOffset.valueProperty().addListener(changeListener);
     }
-        
+
     @Override
     public void setLayer(MapLayer layer) {
         super.setLayer(layer);
@@ -80,7 +80,7 @@ public class FXLineSymbolizer extends FXStyleElementController<LineSymbolizer> {
         uiInfo.setLayer(layer);
         uiOffset.setLayer(layer);
     }
-    
+
     @Override
     protected void updateEditor(LineSymbolizer styleElement) {
         uiStroke.valueProperty().setValue(styleElement.getStroke());

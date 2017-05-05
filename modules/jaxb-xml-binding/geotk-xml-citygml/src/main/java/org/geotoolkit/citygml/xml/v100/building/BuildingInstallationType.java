@@ -30,12 +30,12 @@ import org.geotoolkit.gml.xml.v311.GeometryPropertyType;
  * A BuildingInstallation is a part of a Building which has not the significance of a BuildingPart.
  * Examples are stairs, antennas, balconies or small roofs. As subclass of _CityObject, a BuildingInstallation
  * inherits all attributes and relations, in particular an id, names, external references, and generalization
- * relations. 
- * 
+ * relations.
+ *
  * <p>Java class for BuildingInstallationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BuildingInstallationType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.geotoolkit.gml.xml.v311.GeometryPropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,11 +81,11 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the clazz property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getClazz() {
         return clazz;
@@ -93,11 +93,11 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the clazz property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setClazz(final String value) {
         this.clazz = value;
@@ -105,25 +105,25 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the function property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the function property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFunction().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getFunction() {
         if (function == null) {
@@ -134,25 +134,25 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the usage property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the usage property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getUsage().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getUsage() {
         if (usage == null) {
@@ -163,11 +163,11 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod2Geometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeometryPropertyType }
-     *     
+     *
      */
     public GeometryPropertyType getLod2Geometry() {
         return lod2Geometry;
@@ -175,11 +175,11 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod2Geometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeometryPropertyType }
-     *     
+     *
      */
     public void setLod2Geometry(final GeometryPropertyType value) {
         this.lod2Geometry = value;
@@ -187,11 +187,11 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod3Geometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeometryPropertyType }
-     *     
+     *
      */
     public GeometryPropertyType getLod3Geometry() {
         return lod3Geometry;
@@ -199,11 +199,11 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod3Geometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeometryPropertyType }
-     *     
+     *
      */
     public void setLod3Geometry(final GeometryPropertyType value) {
         this.lod3Geometry = value;
@@ -211,11 +211,11 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod4Geometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeometryPropertyType }
-     *     
+     *
      */
     public GeometryPropertyType getLod4Geometry() {
         return lod4Geometry;
@@ -223,11 +223,11 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod4Geometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeometryPropertyType }
-     *     
+     *
      */
     public void setLod4Geometry(final GeometryPropertyType value) {
         this.lod4Geometry = value;
@@ -235,25 +235,25 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the genericApplicationPropertyOfBuildingInstallation property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the genericApplicationPropertyOfBuildingInstallation property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getGenericApplicationPropertyOfBuildingInstallation().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getGenericApplicationPropertyOfBuildingInstallation() {
         if (genericApplicationPropertyOfBuildingInstallation == null) {

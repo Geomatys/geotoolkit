@@ -36,9 +36,9 @@ import org.opengis.metadata.identification.Keywords;
 
 /**
  * <p>Java class for EventType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="EventType">
  *   &lt;complexContent>
@@ -78,8 +78,8 @@ import org.opengis.metadata.identification.Keywords;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EventType", propOrder = {
@@ -111,25 +111,25 @@ public class EventType
 
     /**
      * Gets the value of the keywords property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the keywords property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getKeywords().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link MDKeywordsPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<Keywords> getKeywords() {
         if (keywords == null) {
@@ -140,25 +140,25 @@ public class EventType
 
     /**
      * Gets the value of the identification property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the identification property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIdentification().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link IdentifierListPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<IdentifierListPropertyType> getIdentification() {
         if (identification == null) {
@@ -169,25 +169,25 @@ public class EventType
 
     /**
      * Gets the value of the classification property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the classification property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getClassification().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ClassifierListPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<ClassifierListPropertyType> getClassification() {
         if (classification == null) {
@@ -198,25 +198,25 @@ public class EventType
 
     /**
      * Gets the value of the contacts property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the contacts property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getContacts().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ContactListPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<ContactListPropertyType> getContacts() {
         if (contacts == null) {
@@ -227,25 +227,25 @@ public class EventType
 
     /**
      * Gets the value of the documentation property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the documentation property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDocumentation().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DocumentListPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<DocumentListPropertyType> getDocumentation() {
         if (documentation == null) {
@@ -256,11 +256,11 @@ public class EventType
 
     /**
      * Gets the value of the time property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EventType.Time }
-     *     
+     *
      */
     public EventType.Time getTime() {
         return time;
@@ -268,11 +268,11 @@ public class EventType
 
     /**
      * Sets the value of the time property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EventType.Time }
-     *     
+     *
      */
     public void setTime(EventType.Time value) {
         this.time = value;
@@ -280,25 +280,25 @@ public class EventType
 
     /**
      * Gets the value of the property property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the property property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getProperty().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractDataComponentPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractDataComponentPropertyType> getProperty() {
         if (property == null) {
@@ -309,11 +309,11 @@ public class EventType
 
     /**
      * Gets the value of the configuration property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EventType.Configuration }
-     *     
+     *
      */
     public EventType.Configuration getConfiguration() {
         return configuration;
@@ -321,11 +321,11 @@ public class EventType
 
     /**
      * Sets the value of the configuration property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EventType.Configuration }
-     *     
+     *
      */
     public void setConfiguration(EventType.Configuration value) {
         this.configuration = value;
@@ -333,11 +333,11 @@ public class EventType
 
     /**
      * Gets the value of the definition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDefinition() {
         return definition;
@@ -345,11 +345,11 @@ public class EventType
 
     /**
      * Sets the value of the definition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDefinition(String value) {
         this.definition = value;
@@ -358,9 +358,9 @@ public class EventType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -372,8 +372,8 @@ public class EventType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -386,12 +386,12 @@ public class EventType
 
         /**
          * Gets the value of the abstractSettings property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link JAXBElement }{@code <}{@link SettingsType }{@code >}
          *     {@link JAXBElement }{@code <}{@link AbstractSettingsType }{@code >}
-         *     
+         *
          */
         public JAXBElement<? extends AbstractSettingsType> getAbstractSettings() {
             return abstractSettings;
@@ -399,12 +399,12 @@ public class EventType
 
         /**
          * Sets the value of the abstractSettings property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link JAXBElement }{@code <}{@link SettingsType }{@code >}
          *     {@link JAXBElement }{@code <}{@link AbstractSettingsType }{@code >}
-         *     
+         *
          */
         public void setAbstractSettings(JAXBElement<? extends AbstractSettingsType> value) {
             this.abstractSettings = value;
@@ -415,9 +415,9 @@ public class EventType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -429,8 +429,8 @@ public class EventType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -446,11 +446,11 @@ public class EventType
 
         /**
          * Gets the value of the timePeriod property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TimePeriodType }
-         *     
+         *
          */
         public TimePeriodType getTimePeriod() {
             return timePeriod;
@@ -458,11 +458,11 @@ public class EventType
 
         /**
          * Sets the value of the timePeriod property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TimePeriodType }
-         *     
+         *
          */
         public void setTimePeriod(TimePeriodType value) {
             this.timePeriod = value;
@@ -470,11 +470,11 @@ public class EventType
 
         /**
          * Gets the value of the timeInstant property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TimeInstantType }
-         *     
+         *
          */
         public TimeInstantType getTimeInstant() {
             return timeInstant;
@@ -482,11 +482,11 @@ public class EventType
 
         /**
          * Sets the value of the timeInstant property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TimeInstantType }
-         *     
+         *
          */
         public void setTimeInstant(TimeInstantType value) {
             this.timeInstant = value;

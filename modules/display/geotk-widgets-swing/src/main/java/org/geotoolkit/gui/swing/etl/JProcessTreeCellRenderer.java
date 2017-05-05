@@ -47,7 +47,7 @@ public class JProcessTreeCellRenderer extends DefaultTreeCellRenderer{
 
         setIcon(null);
         setToolTipText(null);
-        
+
         if(value instanceof ProcessingRegistry){
             final ProcessingRegistry registry = (ProcessingRegistry) value;
             final String name = registry.getIdentification().getCitation().getTitle().toString();

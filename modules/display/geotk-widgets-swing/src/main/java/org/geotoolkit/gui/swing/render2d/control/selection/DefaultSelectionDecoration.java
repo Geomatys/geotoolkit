@@ -33,7 +33,7 @@ import org.geotoolkit.gui.swing.render2d.decoration.MapDecoration;
 
 /**
  * Selection decoration
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -42,19 +42,19 @@ public class DefaultSelectionDecoration extends JComponent implements MapDecorat
     private static final Color MAIN_COLOR = Color.GREEN;
     private static final Color SHADOW_COLOR = new Color(0f, 0f, 0f, 0.5f);
     private static final int SHADOW_STEP = 2;
-    
+
     List<Point> points = null;
-    
-    
+
+
     public DefaultSelectionDecoration(){}
-    
-    
-    
+
+
+
     public void setPoints(final List<Point> points){
         this.points = points;
         repaint();
     }
-    
+
     @Override
     public void paintComponent(final Graphics g) {
         if(points != null && points.size() > 1){
@@ -65,7 +65,7 @@ public class DefaultSelectionDecoration extends JComponent implements MapDecorat
             GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
             path.moveTo(points.get(0).x, points.get(0).y);
 
-            
+
             for(int i=1;i<points.size();i++){
                 Point p = points.get(i);
                 path.lineTo(p.x, p.y);
@@ -92,7 +92,7 @@ public class DefaultSelectionDecoration extends JComponent implements MapDecorat
             //draw end cross
             paintCross(g2, points.get(points.size()-1));
 
-            
+
         }
     }
 
@@ -122,10 +122,10 @@ public class DefaultSelectionDecoration extends JComponent implements MapDecorat
     public JComponent getComponent() {
         return this;
     }
-    
+
     @Override
     public void setMap2D(final JMap2D map) {
-        
+
     }
 
     @Override

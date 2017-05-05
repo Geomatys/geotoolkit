@@ -36,18 +36,18 @@ import org.geotoolkit.internal.GeotkFX;
 public final class FXPanAction extends FXMapAction {
     private final boolean infoOnClick;
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_ARROWS, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
-    
+
     public FXPanAction(FXMap map, boolean infoOnClick) {
         super(map,GeotkFX.getString(FXPanAction.class,"pan"),GeotkFX.getString(FXPanAction.class,"pan"),ICON);
         this.infoOnClick = infoOnClick;
-        
+
         map.getHandlerProperty().addListener(new ChangeListener<FXCanvasHandler>() {
             @Override
             public void changed(ObservableValue<? extends FXCanvasHandler> observable, FXCanvasHandler oldValue, FXCanvasHandler newValue) {
                 selectedProperty().set(newValue instanceof FXPanHandler);
             }
         });
-        
+
     }
 
     @Override
@@ -56,5 +56,5 @@ public final class FXPanAction extends FXMapAction {
             map.setHandler(new FXPanHandler(infoOnClick));
         }
     }
-    
+
 }

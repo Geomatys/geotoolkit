@@ -32,15 +32,15 @@ import org.geotoolkit.ows.xml.AbstractResponsiblePartySubset;
 
 
 /**
- * 
+ *
  * Identification of, and means of communication with,
- * person(s) and organizations associated with the server. 
- *       
- * 
+ * person(s) and organizations associated with the server.
+ *
+ *
  * <p>Java class for ResponsiblePartyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ResponsiblePartyType">
  *   &lt;complexContent>
@@ -60,8 +60,8 @@ import org.geotoolkit.ows.xml.AbstractResponsiblePartySubset;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -80,14 +80,14 @@ public class ResponsiblePartyType  implements AbstractResponsiblePartySubset  {
 
     @XmlTransient
     private ObjectFactory factory = new ObjectFactory();
-    
+
     /**
      * empty construtor used by JAXB
      */
     ResponsiblePartyType() {
-        
+
     }
-    
+
     /**
      * Build a new Responsible Party
      */
@@ -100,7 +100,7 @@ public class ResponsiblePartyType  implements AbstractResponsiblePartySubset  {
     }
     /**
      * Gets the rest of the content model.
-     * (unModifiable) 
+     * (unModifiable)
      */
     public List<JAXBElement<?>> getContent() {
         if (content == null) {

@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TimeCoordinateSystemType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeCoordinateSystemType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeCoordinateSystemType", propOrder = {
@@ -65,11 +65,11 @@ public class TimeCoordinateSystemType
 
     /**
      * Gets the value of the originPosition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimePositionType }
-     *     
+     *
      */
     public TimePositionType getOriginPosition() {
         return originPosition;
@@ -77,11 +77,11 @@ public class TimeCoordinateSystemType
 
     /**
      * Sets the value of the originPosition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimePositionType }
-     *     
+     *
      */
     public void setOriginPosition(TimePositionType value) {
         this.originPosition = value;
@@ -89,11 +89,11 @@ public class TimeCoordinateSystemType
 
     /**
      * Gets the value of the origin property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimeInstantPropertyType }
-     *     
+     *
      */
     public TimeInstantPropertyType getOrigin() {
         return origin;
@@ -101,11 +101,11 @@ public class TimeCoordinateSystemType
 
     /**
      * Sets the value of the origin property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimeInstantPropertyType }
-     *     
+     *
      */
     public void setOrigin(TimeInstantPropertyType value) {
         this.origin = value;
@@ -113,11 +113,11 @@ public class TimeCoordinateSystemType
 
     /**
      * Gets the value of the interval property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimeIntervalLengthType }
-     *     
+     *
      */
     public TimeIntervalLengthType getInterval() {
         return interval;
@@ -125,11 +125,11 @@ public class TimeCoordinateSystemType
 
     /**
      * Sets the value of the interval property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimeIntervalLengthType }
-     *     
+     *
      */
     public void setInterval(TimeIntervalLengthType value) {
         this.interval = value;

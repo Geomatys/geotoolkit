@@ -99,7 +99,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
         }
     });
     private JDialog dimensionDialog = null;
-    
+
     public JCoordinateBar() {
         this(null);
     }
@@ -336,7 +336,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
         verticalSplit.setDividerSize(2);
         verticalSplit.setTopComponent(new JLabel());
         verticalSplit.setBottomComponent(paneTemp);
-        
+
         setMap(candidate);
     }
 
@@ -403,25 +403,25 @@ public class JCoordinateBar extends AbstractMapControlBar {
             dimensionDialog.dispose();
         }
         paneTemp.remove(guiAdditional);
-        
-        if(frameAction.isSelected()){            
+
+        if(frameAction.isSelected()){
             paneTemp.setVisible(false);
             dimensionDialog = new JDialog();
             dimensionDialog.setContentPane(guiAdditional);
             dimensionDialog.setSize(guiAdditional.getSize().width, guiAdditional.getSize().height);
             dimensionDialog.setLocationRelativeTo(null);
             dimensionDialog.setVisible(true);
-            
+
         }else{
             paneTemp.add(BorderLayout.CENTER,guiAdditional);
             paneTemp.setVisible(true);
             verticalSplit.setDividerLocation(baseMapContainer.getHeight()-paneTemp.getPreferredSize().height);
         }
-        
+
         paneTemp.revalidate();
         paneTemp.repaint();
     }
-    
+
     private class myListener extends MouseMotionAdapter implements PropertyChangeListener{
 
         @Override

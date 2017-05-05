@@ -50,11 +50,11 @@ public class ProcessJob implements InterruptableJob {
     private Process process = null;
 
     private final List<ProcessListener> listeners = new ArrayList<>();
-    
+
     public void addListener(ProcessListener listener){
         listeners.add(listener);
     }
-    
+
     @Override
     public void execute(final JobExecutionContext jec) throws JobExecutionException {
         final JobDataMap parameters = jec.getJobDetail().getJobDataMap();

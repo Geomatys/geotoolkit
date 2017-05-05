@@ -31,7 +31,7 @@ import java.util.List;
 public class XMLCoverageStoreNDTest extends PyramidalModelStoreNDTest {
 
     private final List<File> folders = new ArrayList<File>();
-    
+
     @Override
     protected CoverageStore createStore() throws Exception{
 

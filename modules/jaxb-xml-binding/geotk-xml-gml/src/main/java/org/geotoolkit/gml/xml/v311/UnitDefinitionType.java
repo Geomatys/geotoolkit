@@ -27,11 +27,11 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * Definition of a unit of measure (or uom). The definition includes a quantityType property, which indicates the phenomenon to which the units apply, and a catalogSymbol, which gives the short symbol used for this unit. This element is used when the relationship of this unit to other units or units systems is unknown.
- * 
+ *
  * <p>Java class for UnitDefinitionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UnitDefinitionType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,11 +68,11 @@ public class UnitDefinitionType extends DefinitionType {
 
     /**
      * Gets the value of the quantityType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public StringOrRefType getQuantityType() {
         return quantityType;
@@ -80,11 +80,11 @@ public class UnitDefinitionType extends DefinitionType {
 
     /**
      * Sets the value of the quantityType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public void setQuantityType(final StringOrRefType value) {
         this.quantityType = value;
@@ -106,11 +106,11 @@ public class UnitDefinitionType extends DefinitionType {
 
     /**
      * Gets the value of the catalogSymbol property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getCatalogSymbol() {
         return catalogSymbol;
@@ -118,11 +118,11 @@ public class UnitDefinitionType extends DefinitionType {
 
     /**
      * Sets the value of the catalogSymbol property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setCatalogSymbol(final CodeType value) {
         this.catalogSymbol = value;

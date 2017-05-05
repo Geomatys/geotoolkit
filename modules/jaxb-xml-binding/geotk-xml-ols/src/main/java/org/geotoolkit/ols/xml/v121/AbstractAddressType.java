@@ -28,20 +28,20 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 	The AddressType is the Address_ADT for OpenLS and it supports the concepts of the OGC Geocoder document 01-026r1
- * 	with some modifications which resulted in both simplifications and improved handling capability.  The definition is also
- * 	broad enough to handle some of the more obscure occurrences of street addressing as well as handling the
- * 	case of when all you have is an un-parsed string representing the complete address.  We could generalize this even
- * 	further to handle non-street addressing schemes found in other industries, such as the Municipal Survey Addressing
- * 	schemes that are used by Municipalities to address the lots on which a building may be placed but that is probably a
- * 	future requirement outside the scope of OLS1.
- * 		
- * 
+ *
+ *  The AddressType is the Address_ADT for OpenLS and it supports the concepts of the OGC Geocoder document 01-026r1
+ *  with some modifications which resulted in both simplifications and improved handling capability.  The definition is also
+ *  broad enough to handle some of the more obscure occurrences of street addressing as well as handling the
+ *  case of when all you have is an un-parsed string representing the complete address.  We could generalize this even
+ *  further to handle non-street addressing schemes found in other industries, such as the Municipal Survey Addressing
+ *  schemes that are used by Municipalities to address the lots on which a building may be placed but that is probably a
+ *  future requirement outside the scope of OLS1.
+ *
+ *
  * <p>Java class for AbstractAddressType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractAddressType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractAddressType")
@@ -74,11 +74,11 @@ public abstract class AbstractAddressType extends AbstractLocationType {
 
     /**
      * Gets the value of the addressee property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAddressee() {
         return addressee;
@@ -86,11 +86,11 @@ public abstract class AbstractAddressType extends AbstractLocationType {
 
     /**
      * Sets the value of the addressee property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAddressee(String value) {
         this.addressee = value;
@@ -98,11 +98,11 @@ public abstract class AbstractAddressType extends AbstractLocationType {
 
     /**
      * Gets the value of the countryCode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCountryCode() {
         return countryCode;
@@ -110,11 +110,11 @@ public abstract class AbstractAddressType extends AbstractLocationType {
 
     /**
      * Sets the value of the countryCode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCountryCode(String value) {
         this.countryCode = value;
@@ -122,11 +122,11 @@ public abstract class AbstractAddressType extends AbstractLocationType {
 
     /**
      * Gets the value of the language property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLanguage() {
         return language;
@@ -134,11 +134,11 @@ public abstract class AbstractAddressType extends AbstractLocationType {
 
     /**
      * Sets the value of the language property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLanguage(String value) {
         this.language = value;

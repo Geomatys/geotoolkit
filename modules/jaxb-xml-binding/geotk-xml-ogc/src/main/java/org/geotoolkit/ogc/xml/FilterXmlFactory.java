@@ -51,13 +51,13 @@ public class FilterXmlFactory {
     public static XMLFilter buildFeatureIDFilter(final String currentVersion, final String featureId) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.FilterType(new org.geotoolkit.ogc.xml.v200.ResourceIdType(featureId));
-            
+
         } else if ("1.1.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v110.FilterType(new org.geotoolkit.ogc.xml.v110.FeatureIdType(featureId));
-            
+
         } else if ("1.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v100.FilterType(new org.geotoolkit.ogc.xml.v100.FeatureIdType(featureId));
-            
+
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
@@ -77,7 +77,7 @@ public class FilterXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static After buildTimeAfter(final String currentVersion, final String propertyName, final Object temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeAfterType(propertyName, temporal);
@@ -89,21 +89,21 @@ public class FilterXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static During buildTimeDuring(final String currentVersion, final String propertyName, final Object temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeDuringType(propertyName, temporal);
-            
+
         } else if ("1.1.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v110.TimeDuringType(propertyName, temporal);
-            
+
         } else if ("1.0.0".equals(currentVersion)) {
             throw new IllegalArgumentException("Time During is not implemented in 1.0.0 filter.");
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static Before buildTimeBefore(final String currentVersion, final String propertyName, final Object temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeBeforeType(propertyName, temporal);
@@ -115,7 +115,7 @@ public class FilterXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static TEquals buildTimeEquals(final String currentVersion, final String propertyName, final Object temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeEqualsType(propertyName, temporal);
@@ -127,7 +127,7 @@ public class FilterXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static PropertyIsNotEqualTo buildPropertyIsNotEquals(final String currentVersion, final String propertyName, final Literal lit, final boolean matchCase) {
         if ("2.0.0".equals(currentVersion)) {
             if (!(lit instanceof org.geotoolkit.ogc.xml.v200.LiteralType)) {
@@ -152,7 +152,7 @@ public class FilterXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static PropertyIsEqualTo buildPropertyIsEquals(final String currentVersion, final String propertyName, final Literal lit, final boolean matchCase) {
         if ("2.0.0".equals(currentVersion)) {
             if (!(lit instanceof org.geotoolkit.ogc.xml.v200.LiteralType)) {
@@ -177,7 +177,7 @@ public class FilterXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static PropertyIsLessThan buildPropertyIsLessThan(final String currentVersion, final String propertyName, final Literal lit, final boolean matchCase) {
         if ("2.0.0".equals(currentVersion)) {
             if (!(lit instanceof org.geotoolkit.ogc.xml.v200.LiteralType)) {
@@ -202,7 +202,7 @@ public class FilterXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static PropertyIsLessThanOrEqualTo buildPropertyIsLessThanOrEqualTo(final String currentVersion, final String propertyName, final Literal lit, final boolean matchCase) {
         if ("2.0.0".equals(currentVersion)) {
             if (!(lit instanceof org.geotoolkit.ogc.xml.v200.LiteralType)) {
@@ -227,7 +227,7 @@ public class FilterXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static PropertyIsGreaterThan buildPropertyIsGreaterThan(final String currentVersion, final String propertyName, final Literal lit, final boolean matchCase) {
         if ("2.0.0".equals(currentVersion)) {
             if (!(lit instanceof org.geotoolkit.ogc.xml.v200.LiteralType)) {
@@ -252,7 +252,7 @@ public class FilterXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static PropertyIsGreaterThanOrEqualTo buildPropertyIsGreaterThanOrEqualTo(final String currentVersion, final String propertyName, final Literal lit, final boolean matchCase) {
         if ("2.0.0".equals(currentVersion)) {
             if (lit != null && !(lit instanceof org.geotoolkit.ogc.xml.v200.LiteralType)) {

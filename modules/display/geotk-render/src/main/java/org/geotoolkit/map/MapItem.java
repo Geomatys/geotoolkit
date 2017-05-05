@@ -34,7 +34,7 @@ public interface MapItem {
     public static final String NAME_PROPERTY = "name";
     public static final String DESCRIPTION_PROPERTY = "description";
     public static final String VISIBILITY_PROPERTY = "visible";
-    
+
     /**
      * Set the item name, this should be used as an
      * identifier. Use getdescription for UI needs.
@@ -87,7 +87,7 @@ public interface MapItem {
     /**
      * Store a value for this maplayer in a hashmap using the given key.
      * @param key
-     * @param value  
+     * @param value
      */
     void setUserProperty(String key,Object value);
 
@@ -103,7 +103,7 @@ public interface MapItem {
      *          This is the live map.
      */
     Map<String,Object> getUserProperties();
-    
+
     /**
      * Register an item listener.
      * @param listener item listener to register

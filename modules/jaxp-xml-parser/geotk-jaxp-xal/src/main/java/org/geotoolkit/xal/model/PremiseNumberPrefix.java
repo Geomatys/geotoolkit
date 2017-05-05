@@ -51,7 +51,7 @@ public interface PremiseNumberPrefix extends GenericTypedGrPostal {
     String getNumberPrefixSeparator();
 
     /**
-     * 
+     *
      * @param numberPrefixSeparator
      */
     void setNumberPrefixSeparator(String numberPrefixSeparator);

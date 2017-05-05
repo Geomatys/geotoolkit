@@ -29,7 +29,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 /**
- * 
+ *
  */
 class NetcdfFeatureReader implements FeatureReader {
 

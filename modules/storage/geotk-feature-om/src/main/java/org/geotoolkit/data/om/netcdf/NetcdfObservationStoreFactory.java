@@ -54,10 +54,10 @@ public class NetcdfObservationStoreFactory extends AbstractObservationStoreFacto
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
-    
+
+
     /**
      * url to the file.
      */
@@ -67,11 +67,11 @@ public class NetcdfObservationStoreFactory extends AbstractObservationStoreFacto
             .setRemarks(Bundle.formatInternational(Bundle.Keys.paramURLRemarks))
             .setRequired(true)
             .create(URI.class, null);
-    
+
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("ObservationFileParameters").createGroup(
                 IDENTIFIER,NAMESPACE,FILE_PATH);
-    
+
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
@@ -96,5 +96,5 @@ public class NetcdfObservationStoreFactory extends AbstractObservationStoreFacto
     public NetcdfObservationStore create(ParameterValueGroup params) throws DataStoreException {
         return new NetcdfObservationStore(params);
     }
-    
+
 }

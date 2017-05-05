@@ -59,7 +59,7 @@ public class LogoURL implements AbstractLogoURL {
     /**
      * Build a new LogoURL object.
      */
-    public LogoURL(final String format, final OnlineResource onlineResource, 
+    public LogoURL(final String format, final OnlineResource onlineResource,
             final Integer width, final Integer height ) {
         this.format         = format;
         this.height         = height;
@@ -77,7 +77,7 @@ public class LogoURL implements AbstractLogoURL {
         this.onlineResource = new OnlineResource(href);
         this.width          = width;
     }
-    
+
     public LogoURL(final AbstractLogoURL that) {
         if (that != null) {
             this.format         = that.getFormat();
@@ -88,10 +88,10 @@ public class LogoURL implements AbstractLogoURL {
             }
         }
     }
-    
+
     /**
      * Gets the value of the format property.
-     * 
+     *
      */
     @Override
     public String getFormat() {

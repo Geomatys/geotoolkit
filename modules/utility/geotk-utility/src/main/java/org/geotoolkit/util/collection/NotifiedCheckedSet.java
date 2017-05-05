@@ -22,26 +22,26 @@ import org.apache.sis.measure.NumberRange;
 /**
  * Abstract synchronized set that define notify methods called when
  * objects are added or removed.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public abstract class NotifiedCheckedSet<E> extends CheckedHashSet<E>{
-    
+
     public NotifiedCheckedSet(final Class<E> type) {
         super(type);
     }
-    
+
     public NotifiedCheckedSet(final Class<E> type, final int capacity) {
         super(type,capacity);
     }
 
     protected abstract void notifyAdd(final E item, NumberRange<Integer> range);
-    
+
     protected abstract void notifyAdd(final Collection<? extends E> item, NumberRange<Integer> range);
-    
+
     protected abstract void notifyRemove(final E item, NumberRange<Integer> range);
-    
+
     @Override
     public boolean add(final E element) throws IllegalArgumentException, UnsupportedOperationException {
         if(element == null) return false;
@@ -80,7 +80,7 @@ public abstract class NotifiedCheckedSet<E> extends CheckedHashSet<E>{
             if(val) valid = val;
         }
         return valid;
-    }   
-        
-        
+    }
+
+
 }

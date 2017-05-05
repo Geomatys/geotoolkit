@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for PolicyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PolicyType">
  *   &lt;complexContent>
@@ -55,15 +55,15 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PolicyType", propOrder =
 {"description", "policyDefaults", "target", "combinerParametersOrRuleCombinerParametersOrVariableDefinition",
       "obligations"})
-@XmlRootElement( name= "Policy")      
+@XmlRootElement( name= "Policy")
 public class PolicyType {
 
    @XmlElement(name = "Description")
@@ -112,7 +112,7 @@ public class PolicyType {
 
    /**
     * Gets the value of the policyDefaults property.
-    * 
+    *
     */
    public DefaultsType getPolicyDefaults() {
       return policyDefaults;
@@ -141,7 +141,7 @@ public class PolicyType {
 
    /**
     * Gets the value of the combinerParametersOrRuleCombinerParametersOrVariableDefinition property.
-    * 
+    *
     */
    public List<Object> getCombinerParametersOrRuleCombinerParametersOrVariableDefinition() {
       if (combinerParametersOrRuleCombinerParametersOrVariableDefinition == null) {
@@ -198,7 +198,7 @@ public class PolicyType {
 
    /**
     * Gets the value of the ruleCombiningAlgId property.
-    * 
+    *
     */
    public String getRuleCombiningAlgId() {
       return ruleCombiningAlgId;

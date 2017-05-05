@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ArrayType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ArrayType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ArrayType", propOrder = {
@@ -54,11 +54,11 @@ public class ArrayType
 
     /**
      * Gets the value of the members property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ArrayAssociationType }
-     *     
+     *
      */
     public ArrayAssociationType getMembers() {
         return members;
@@ -66,11 +66,11 @@ public class ArrayType
 
     /**
      * Sets the value of the members property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ArrayAssociationType }
-     *     
+     *
      */
     public void setMembers(ArrayAssociationType value) {
         this.members = value;

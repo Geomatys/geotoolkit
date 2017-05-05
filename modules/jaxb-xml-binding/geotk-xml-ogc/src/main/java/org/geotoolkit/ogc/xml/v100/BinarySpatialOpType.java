@@ -28,9 +28,9 @@ import org.geotoolkit.gml.xml.v212.BoxType;
 
 /**
  * <p>Java class for BinarySpatialOpType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BinarySpatialOpType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.gml.xml.v212.BoxType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -66,9 +66,9 @@ public class BinarySpatialOpType extends SpatialOpsType {
     private BoxType box;
 
     public BinarySpatialOpType() {
-        
+
     }
-    
+
     public BinarySpatialOpType(final BinarySpatialOpType that) {
         if (that != null) {
             if (that.box != null) {
@@ -83,10 +83,10 @@ public class BinarySpatialOpType extends SpatialOpsType {
             }
         }
     }
-    
+
     /**
      * Gets the value of the propertyName property.
-     * 
+     *
      */
     public PropertyNameType getPropertyName() {
         return propertyName;
@@ -94,7 +94,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
 
     /**
      * Sets the value of the propertyName property.
-     * 
+     *
      */
     public void setPropertyName(final PropertyNameType value) {
         this.propertyName = value;
@@ -102,7 +102,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
 
     /**
      * Gets the value of the geometry property.
-     * 
+     *
      */
     public JAXBElement<? extends AbstractGeometryType> getGeometry() {
         return geometry;
@@ -110,7 +110,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
 
     /**
      * Sets the value of the geometry property.
-     * 
+     *
      */
     public void setGeometry(final JAXBElement<? extends AbstractGeometryType> value) {
         this.geometry = ((JAXBElement<? extends AbstractGeometryType> ) value);
@@ -118,7 +118,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
 
     /**
      * Gets the value of the box property.
-     * 
+     *
      */
     public BoxType getBox() {
         return box;
@@ -126,7 +126,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
 
     /**
      * Sets the value of the box property.
-     * 
+     *
      */
     public void setBox(final BoxType value) {
         this.box = value;

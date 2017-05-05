@@ -62,13 +62,13 @@ public class FXMapFrame {
     private final FXGeoToolBar geotoolBar;
     private final FXCoordinateBar coordBar;
     private final FXMapContextTree tree;
-    
+
     public FXMapFrame(MapContext context){
         this(context, new Hints());
     }
-    
+
     public FXMapFrame(MapContext context, Hints hints){
-        
+
         map = new FXMap(false,hints);
         map.getContainer().setContext(context);
         tree = new FXMapContextTree();
@@ -87,7 +87,7 @@ public class FXMapFrame {
         tree.getTreetable().getColumns().add(3,new MapItemSelectableColumn());
         final Property<MapContext> prop = FXUtilities.beanProperty(map.getContainer(),ContextContainer2D.CONTEXT_PROPERTY, MapContext.class);
         tree.mapItemProperty().bind(prop);
-        
+
         contextBar = new FXContextBar(map);
         dataBar = new FXAddDataBar(map,true);
         navBar = new FXNavigationBar(map);
@@ -97,7 +97,7 @@ public class FXMapFrame {
 
 
         map.addDecoration(new FXScaleBarDecoration());
-        
+
         final GridPane topgrid = new GridPane();
         contextBar.setMaxHeight(Double.MAX_VALUE);
         dataBar.setMaxHeight(Double.MAX_VALUE);
@@ -109,7 +109,7 @@ public class FXMapFrame {
         topgrid.add(navBar,  2, 0);
         topgrid.add(editBar,  3, 0);
         topgrid.add(geotoolBar, 4, 0);
-        
+
         final ColumnConstraints col0 = new ColumnConstraints();
         final ColumnConstraints col1 = new ColumnConstraints();
         final ColumnConstraints col2 = new ColumnConstraints();
@@ -120,19 +120,19 @@ public class FXMapFrame {
         row0.setVgrow(Priority.ALWAYS);
         topgrid.getColumnConstraints().addAll(col0,col1,col2,col3,col4);
         topgrid.getRowConstraints().addAll(row0);
-        
-        
+
+
         final BorderPane border = new BorderPane();
         border.setTop(topgrid);
         border.setCenter(map);
-        
+
         final SplitPane split = new SplitPane();
         split.getItems().add(tree);
         split.getItems().add(border);
         tree.setMinWidth(200);
         tree.setMaxWidth(400);
-        
-        
+
+
         //mainf frame with menu bar
         final MenuBar menuBar = new MenuBar();
         final Menu menu = new Menu("File");
@@ -140,19 +140,19 @@ public class FXMapFrame {
         exit.setOnAction((ActionEvent event) -> {System.exit(0);});
         menu.getItems().add(exit);
         menuBar.getMenus().add(menu);
-        
+
         final BorderPane framePane = new BorderPane(split,menuBar,null,coordBar,null);
-        
+
         final Scene scene = new Scene(framePane);
         final Stage stage = new Stage();
         stage.setScene(scene);
         stage.setWidth(1024);
         stage.setHeight(768);
-        
+
         stage.show();
-        
+
     }
-        
+
     public static void show(final MapContext context){
         show(context,null);
     }
@@ -164,16 +164,16 @@ public class FXMapFrame {
     public static void show(MapContext context, final boolean statefull, final Hints hints){
         if(context == null) context = MapBuilder.createContext();
         final MapContext mc = context;
-        
+
         //Init JavaFX, ugly, but we only have 2 choices, extent Application or create this.
-        new JFXPanel(); 
-        
+        new JFXPanel();
+
         Platform.runLater(() -> new FXMapFrame(mc,hints));
-        
+
     }
-    
+
     public static void main(String[] args) {
         FXMapFrame.show(null);
     }
-    
+
 }

@@ -26,19 +26,19 @@ import org.geotoolkit.ogc.xml.v100.FilterType;
 
 
 /**
- * This type defines the Lock element. 
- * The Lock element defines a locking operation on feature instances of 
- * a single type. 
+ * This type defines the Lock element.
+ * The Lock element defines a locking operation on feature instances of
+ * a single type.
  * An OGC Filter is used to constrain the scope of the operation.
  * Features to be locked can be identified individually by using their feature identifier
- * or they can be locked by satisfying the spatial and 
+ * or they can be locked by satisfying the spatial and
  * non-spatial constraints defined in the filter.
- *          
- * 
+ *
+ *
  * <p>Java class for LockType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LockType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.ogc.xml.v100.FilterType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LockType", propOrder = {
@@ -77,14 +77,14 @@ public class LockType {
         this.handle   = handle;
         this.typeName = typeName;
     }
-    
+
     /**
      * Gets the value of the filter property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FilterType }
-     *     
+     *
      */
     public FilterType getFilter() {
         return filter;
@@ -92,11 +92,11 @@ public class LockType {
 
     /**
      * Sets the value of the filter property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FilterType }
-     *     
+     *
      */
     public void setFilter(FilterType value) {
         this.filter = value;
@@ -104,11 +104,11 @@ public class LockType {
 
     /**
      * Gets the value of the handle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHandle() {
         return handle;
@@ -116,11 +116,11 @@ public class LockType {
 
     /**
      * Sets the value of the handle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHandle(String value) {
         this.handle = value;
@@ -128,11 +128,11 @@ public class LockType {
 
     /**
      * Gets the value of the typeName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getTypeName() {
         return typeName;
@@ -140,11 +140,11 @@ public class LockType {
 
     /**
      * Sets the value of the typeName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setTypeName(QName value) {
         this.typeName = value;

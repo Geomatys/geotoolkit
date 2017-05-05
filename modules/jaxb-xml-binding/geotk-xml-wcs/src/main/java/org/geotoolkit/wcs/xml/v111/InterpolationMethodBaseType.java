@@ -24,12 +24,12 @@ import org.geotoolkit.ows.xml.v110.CodeType;
 
 
 /**
- * Adapts gml:CodeWithAuthorityType from GML 3.2 for this WCS purpose, allowing the codeSpace to be omitted but providing a default value for the standard interpolation methods defined in Annex C of ISO 19123: Geographic information - Schema for coverage geometry and functions. 
- * 
+ * Adapts gml:CodeWithAuthorityType from GML 3.2 for this WCS purpose, allowing the codeSpace to be omitted but providing a default value for the standard interpolation methods defined in Annex C of ISO 19123: Geographic information - Schema for coverage geometry and functions.
+ *
  * <p>Java class for InterpolationMethodBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InterpolationMethodBaseType">
  *   &lt;simpleContent>
@@ -39,7 +39,7 @@ import org.geotoolkit.ows.xml.v110.CodeType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -49,13 +49,13 @@ import org.geotoolkit.ows.xml.v110.CodeType;
     InterpolationMethodType.class
 })
 public class InterpolationMethodBaseType extends CodeType {
-    
+
     /**
      * Empty constructor used by JAXB
      */
     InterpolationMethodBaseType(){
     }
-    
+
     /**
      * Build a simple interpolation method
      */

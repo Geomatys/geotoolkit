@@ -32,9 +32,9 @@ import org.geotoolkit.wfs.xml.DescribeFeatureType;
 
 /**
  * <p>Java class for DescribeFeatureTypeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DescribeFeatureTypeType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.wfs.xml.DescribeFeatureType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DescribeFeatureTypeType", propOrder = {
@@ -71,10 +71,10 @@ public class DescribeFeatureTypeType extends BaseRequestType implements Describe
         this.outputFormat = outputFormat;
         this.typeName     = typeName;
     }
-    
+
     /**
      * Gets the value of the typeName property.
-     * 
+     *
      */
     @Override
     public List<QName> getTypeName() {
@@ -86,11 +86,11 @@ public class DescribeFeatureTypeType extends BaseRequestType implements Describe
 
     /**
      * Gets the value of the outputFormat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getOutputFormat() {
@@ -103,11 +103,11 @@ public class DescribeFeatureTypeType extends BaseRequestType implements Describe
 
     /**
      * Sets the value of the outputFormat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOutputFormat(final String value) {
         this.outputFormat = value;

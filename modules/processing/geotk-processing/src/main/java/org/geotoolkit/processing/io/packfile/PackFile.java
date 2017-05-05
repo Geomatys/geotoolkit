@@ -41,11 +41,11 @@ import org.opengis.parameter.ParameterValueGroup;
 public class PackFile extends AbstractProcess {
 
     static final int BUFFER = 2048;
-    
+
     public PackFile(final ParameterValueGroup input) {
         super(PackFileDescriptor.INSTANCE,input);
     }
-    
+
     /**
      *  {@inheritDoc }
      */
@@ -54,7 +54,7 @@ public class PackFile extends AbstractProcess {
         fireProcessStarted("Start pack");
         final File[] source = (File[]) getOrCreate(PackFileDescriptor.SOURCE_IN, inputParameters).getValue();
         final File target   = (File) getOrCreate(PackFileDescriptor.TARGET_IN, inputParameters).getValue();
-        
+
         //Prepare compression
         try {
             final FileOutputStream fileOS = new FileOutputStream(target);
@@ -71,24 +71,24 @@ public class PackFile extends AbstractProcess {
             zipOS.close();
             buffOS.close();
             checksumOS.close();
-            fileOS.close();   
+            fileOS.close();
         } catch (IOException ex) {
             throw new ProcessException("IO exception while packing files", this, ex);
         }
-        
+
         getOrCreate(PackFileDescriptor.RESULT_OUT, outputParameters).setValue(target);
-        
+
         fireProcessCompleted("Pack done.");
     }
-    
-    private static void compressAllDirectoryFiles(final ZipOutputStream zipOS, final byte data[], 
+
+    private static void compressAllDirectoryFiles(final ZipOutputStream zipOS, final byte data[],
             final File[] files, final String treePath) throws FileNotFoundException, IOException {
-        
+
         for (int i = 0; i < files.length; i++) {
             //Restore file tree
             final String fileName = files[i].getName();
             final String filePath = (treePath != null) ? treePath + File.separator + fileName : fileName;
-            
+
             if (files[i].isDirectory()) {
                 //Recursive call for directories
                 compressAllDirectoryFiles(zipOS, data, files[i].listFiles(), filePath);
@@ -98,7 +98,7 @@ public class PackFile extends AbstractProcess {
                 final BufferedInputStream buffIS = new BufferedInputStream(fileIS, BUFFER);
                 final ZipEntry entry = new ZipEntry(filePath);
                 zipOS.putNextEntry(entry);
-                
+
                 //Compress file
                 int count;
                 while ((count = buffIS.read(data, 0, BUFFER)) != -1) {

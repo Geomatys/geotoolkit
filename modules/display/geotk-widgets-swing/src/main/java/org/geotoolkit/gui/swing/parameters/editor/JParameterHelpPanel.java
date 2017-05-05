@@ -31,22 +31,22 @@ import org.openide.util.NbBundle;
 
 /**
  * Help Panel for parameter.
- * 
+ *
  * @author Quentin Boileau (Geomatys)
  */
 public class JParameterHelpPanel extends JTextPane {
-    
-    
+
+
     private GeneralParameterDescriptor paramDesc;
     private String validationError = null;
 
     public JParameterHelpPanel(GeneralParameterDescriptor paramDesc) {
         this.paramDesc = paramDesc;
-        
+
         setEditable(false);
         setContentType("text/html"); // NOI18N
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        
+
         //CSS
         final StyleSheet styles = new StyleSheet();
         styles.addRule("body {padding:10px; width:250px; background-color:#ffffff;}");
@@ -57,7 +57,7 @@ public class JParameterHelpPanel extends JTextPane {
         styles.addRule(".data {text-align:right;}");
         styles.addRule("#error {color:red;}");
         setStyledDocument(new HTMLDocument(styles));
-        
+
         updateHelpContent();
     }
 
@@ -69,22 +69,22 @@ public class JParameterHelpPanel extends JTextPane {
         this.paramDesc = paramDesc;
         updateHelpContent();
     }
-    
+
     public void setParameter(GeneralParameterValuePanel selected) {
         validationError = selected.getValidationError();
         setParamDesc(selected.getDescriptor());
     }
-    
+
     private void updateHelpContent() {
         if (paramDesc != null) {
-            
+
             ParameterType parameterType = null;
             if (paramDesc instanceof ParameterDescriptor) {
                 parameterType = ParameterType.SIMPLE;
             } else {
                 parameterType = ParameterType.GROUP;
             }
-            
+
             String title = null;
             String description = null;
             String mandatory = null;
@@ -99,7 +99,7 @@ public class JParameterHelpPanel extends JTextPane {
             description = paramDesc.getRemarks() != null ? paramDesc.getRemarks().toString() : null;
             minOccurs = paramDesc.getMinimumOccurs();
             maxOccurs = paramDesc.getMaximumOccurs();
-            
+
             // get parameter class, default value and unit
             if (parameterType.equals(ParameterType.SIMPLE)) {
                 if (minOccurs == 1 && maxOccurs == 1) {
@@ -119,7 +119,7 @@ public class JParameterHelpPanel extends JTextPane {
                 }
                 dataUnits = ((ParameterDescriptor)paramDesc).getUnit() != null ? ((ParameterDescriptor)paramDesc).getUnit().toString() : null;
             }
-            
+
             //create html string
             final StringBuilder sb = new StringBuilder();
             sb.append("<html>");
@@ -135,7 +135,7 @@ public class JParameterHelpPanel extends JTextPane {
                     sb.append("<td class=\"data\">").append(mandatory).append("</td>");
                 sb.append("</tr>");
             }
-            
+
             if (parameterType.equals(ParameterType.SIMPLE)) {
                 if (dataType != null) {
                     sb.append("<tr>");
@@ -143,21 +143,21 @@ public class JParameterHelpPanel extends JTextPane {
                         sb.append("<td class=\"data\">").append(dataType).append("</td>");
                     sb.append("</tr>");
                 }
-                
+
                 if (defaultValue != null) {
                     sb.append("<tr>");
                         sb.append("<td>").append(MessageBundle.format("parameters_editorHelpDefaultLabel")).append("</td>");
                         sb.append("<td class=\"data\">").append(defaultValue).append("</td>");
                     sb.append("</tr>");
                 }
-                
+
                 if (validValues != null) {
                     sb.append("<tr>");
                         sb.append("<td>").append(MessageBundle.format("parameters_editorHelpValidLabel")).append("</td>");
                         sb.append("<td class=\"data\">").append(validValues).append("</td>");
                     sb.append("</tr>");
                 }
-                
+
                 if (dataUnits != null) {
                     sb.append("<tr>");
                         sb.append("<td>").append(MessageBundle.format("parameters_editorHelpUnitLabel")).append("</td>");
@@ -174,16 +174,16 @@ public class JParameterHelpPanel extends JTextPane {
                     sb.append("<td class=\"data\">").append(maxOccurs).append("</td>");
                 sb.append("</tr>");
             }
-            
+
             sb.append("</tbody>");
             sb.append("</table>");
             sb.append("<br/>");
-            
+
             if (description != null) {
                 sb.append("<h3>").append(MessageBundle.format("parameters_editorHelpDescriptionLabel")).append(" : ").append("</h3>");
                 sb.append("<p>").append(description).append("</p>");
             }
-            
+
             sb.append("<br/>");
             sb.append("<br/>");
             if (validationError != null) {
@@ -192,12 +192,12 @@ public class JParameterHelpPanel extends JTextPane {
                     sb.append("<p>").append(validationError).append("</p>");
                 sb.append("</div>");
             }
-            
+
             sb.append("</body>");
             sb.append("</html>");
             setText(sb.toString());
             this.revalidate();
         }
     }
-    
+
 }

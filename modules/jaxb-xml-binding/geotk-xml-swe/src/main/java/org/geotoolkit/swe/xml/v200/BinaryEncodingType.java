@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for BinaryEncodingType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BinaryEncodingType">
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinaryEncodingType", propOrder = {
@@ -78,10 +78,10 @@ public class BinaryEncodingType
 
     /**
      * Gets the value of the member property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link BinaryEncodingType.Member }
-     * 
+     *
      */
     public List<BinaryEncodingType.Member> getMember() {
         if (member == null) {
@@ -92,11 +92,11 @@ public class BinaryEncodingType
 
     /**
      * Gets the value of the byteOrder property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ByteOrderType }
-     *     
+     *
      */
     public ByteOrderType getByteOrder() {
         return byteOrder;
@@ -104,11 +104,11 @@ public class BinaryEncodingType
 
     /**
      * Sets the value of the byteOrder property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ByteOrderType }
-     *     
+     *
      */
     public void setByteOrder(ByteOrderType value) {
         this.byteOrder = value;
@@ -116,11 +116,11 @@ public class BinaryEncodingType
 
     /**
      * Gets the value of the byteEncoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ByteEncodingType }
-     *     
+     *
      */
     public ByteEncodingType getByteEncoding() {
         return byteEncoding;
@@ -128,11 +128,11 @@ public class BinaryEncodingType
 
     /**
      * Sets the value of the byteEncoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ByteEncodingType }
-     *     
+     *
      */
     public void setByteEncoding(ByteEncodingType value) {
         this.byteEncoding = value;
@@ -140,11 +140,11 @@ public class BinaryEncodingType
 
     /**
      * Gets the value of the byteLength property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getByteLength() {
         return byteLength;
@@ -152,11 +152,11 @@ public class BinaryEncodingType
 
     /**
      * Sets the value of the byteLength property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setByteLength(BigInteger value) {
         this.byteLength = value;
@@ -165,9 +165,9 @@ public class BinaryEncodingType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -179,8 +179,8 @@ public class BinaryEncodingType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -196,11 +196,11 @@ public class BinaryEncodingType
 
         /**
          * Gets the value of the component property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link ComponentType }
-         *     
+         *
          */
         public ComponentType getComponent() {
             return component;
@@ -208,11 +208,11 @@ public class BinaryEncodingType
 
         /**
          * Sets the value of the component property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link ComponentType }
-         *     
+         *
          */
         public void setComponent(ComponentType value) {
             this.component = value;
@@ -220,11 +220,11 @@ public class BinaryEncodingType
 
         /**
          * Gets the value of the block property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link BlockType }
-         *     
+         *
          */
         public BlockType getBlock() {
             return block;
@@ -232,11 +232,11 @@ public class BinaryEncodingType
 
         /**
          * Sets the value of the block property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link BlockType }
-         *     
+         *
          */
         public void setBlock(BlockType value) {
             this.block = value;

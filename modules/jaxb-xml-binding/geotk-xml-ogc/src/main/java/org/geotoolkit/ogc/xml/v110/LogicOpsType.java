@@ -25,9 +25,9 @@ import org.opengis.filter.Filter;
 
 /**
  * <p>Java class for LogicOpsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LogicOpsType">
  *   &lt;complexContent>
@@ -36,8 +36,8 @@ import org.opengis.filter.Filter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -52,6 +52,6 @@ public abstract class LogicOpsType implements Filter {
     public String toString() {
         return "class: " + this.getClass().getSimpleName() + '\n';
     }
-    
+
     public abstract LogicOpsType getClone();
 }

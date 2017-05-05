@@ -32,26 +32,26 @@ public class TreeUtilities {
      * See {@link Node#isLeaf()}.
      */
     public final static byte IS_LEAF  = 1;
-    
+
     /**
      * Properties which define if a {@link Node} is a data, which mean its child id represent tree identifier of a data.<br/>
      * See {@link Node#isData()}.
      */
     public final static byte IS_DATA  = 2;
-    
+
     /**
      * Properties which define if a {@link Node} is a Hilbert Cell.<br/>
      * See {@link HilbertNode}.<br/>
      * See {@link HilbertNode#isCell() }.
      */
     public final static byte IS_CELL  = 4;
-    
+
     /**
-     * Properties which define if a {@link Node} is a "tree branch" 
+     * Properties which define if a {@link Node} is a "tree branch"
      * which mean Node with no particularity properties.
      */
     public final static byte IS_OTHER = 8;
-    
+
     /**
      * Numbers to identify tree type in file.
      */
@@ -59,7 +59,7 @@ public class TreeUtilities {
     public final static int HILBERT_NUMBER    = 69669745;
     public final static int STAR_NUMBER       = 23107209;
     public final static double VERSION_NUMBER = 0.1;
-    
+
     private TreeUtilities() {
     }
 
@@ -79,7 +79,7 @@ public class TreeUtilities {
         for (int i = 0; i < dim; i++) bulk *= getSpan(envelope, i);
         return bulk;
     }
-    
+
     /**
      * Compute "Envelope" perimeter from its double coordinates table.
      *
@@ -96,7 +96,7 @@ public class TreeUtilities {
         for (int i = 0, l = dim; i < l; i++) perim += getSpan(envelope, i);
         return 2 * perim;
     }
-    
+
     /**
      * Compute overlaps between two {@code Envelop}.
      *
@@ -113,12 +113,12 @@ public class TreeUtilities {
     public static double getOverlapValue(final double[] envelopA, final double[] envelopB) {
         ArgumentChecks.ensureNonNull("getOverlapValue : envelopA", envelopA);
         ArgumentChecks.ensureNonNull("getOverlapValue : envelopB", envelopB);
-        if (!intersects(envelopA, envelopB, true)) return 0; 
+        if (!intersects(envelopA, envelopB, true)) return 0;
         final double[] intersectionGN = intersect(envelopA, envelopB);
         return ((intersectionGN.length >> 1) == 2) ? getArea(intersectionGN) : getBulk(intersectionGN);
     }
-    
-    /** 
+
+    /**
      * Compute Euclidean distance between two {@code double[]} in dimension n.
      *
      * @param positionA : coordinate double table of point A.
@@ -139,7 +139,7 @@ public class TreeUtilities {
         }
         return MathFunctions.magnitude(tab);
     }
-    
+
     /**
      * Compute Euclidean distance between two {@code Envelope} in dimension n.
      *
@@ -157,7 +157,7 @@ public class TreeUtilities {
         assert (envelopA.length % 2 == 0) :"envelope coordinates length should be modulo 2";
         return getDistanceBetween2Positions(getMedian(envelopA), getMedian(envelopB));
     }
-    
+
     /**
      * Compute general boundary of all {@code Envelope} passed in parameter.
      *
@@ -171,14 +171,14 @@ public class TreeUtilities {
         if(coordinates == null || coordinates.length == 0){
             throw new IllegalArgumentException("impossible to get Envelope min from null or empty table.");
         }
-        
+
         final double[] envelope = coordinates[0].clone();
         for (int i = 1, s = coordinates.length; i < s; i++) {
             add(envelope, coordinates[i]);
         }
         return envelope;
     }
-    
+
     public static boolean arrayEquals(final double[] expected, final double[] value, final double epsilon) {
         ArgumentChecks.ensureNonNull("arrayEquals : expected : ", expected);
         ArgumentChecks.ensureNonNull("arrayEquals : value : ", value);
@@ -188,12 +188,12 @@ public class TreeUtilities {
         for (int i = 0; i < l; i++) if (Math.abs(expected[i] - value[i]) > epsilon) return false;
         return true;
     }
-    
+
     /**
      * Return double coordinate table which contain Envelope coordinate.
      * Table result length is 2*envelope dimension.
      * First table part contain envelope lower corner coordinates and second part, upper corner coordinates.
-     * 
+     *
      * @param envelope
      * @param coords table where is store coordinate. if null a new table is create.
      * @return double coordinate table which contain Envelope coordinate.
@@ -208,11 +208,11 @@ public class TreeUtilities {
         }
         return coords;
     }
-    
+
     /**
      * Compute union between two "envelope" coordinate double tables.
      * Result is set in envelopeA.
-     * 
+     *
      * @return envelopeA which contain result of union.
      */
     public static double[] add(final double[] envelopeA, final double[] envelopeB) {
@@ -226,10 +226,10 @@ public class TreeUtilities {
         }
         return envelopeA;
     }
-    
+
     /**
      * Compute intersection between two "envelope" coordinate double tables.
-     * 
+     *
      * @return double table which contain result of intersection or null if none.
      */
     public static double[] intersect(final double[] envelopeA, final double[] envelopeB) {
@@ -241,14 +241,14 @@ public class TreeUtilities {
         for (int i = 0, d = dim; i < dim; i++, d++) {
             intersect[i] = Math.max(intersect[i], envelopeB[i]);
             intersect[d] = Math.min(intersect[d], envelopeB[d]);
-            if (intersect[i] > intersect[d]) return null; 
+            if (intersect[i] > intersect[d]) return null;
         }
         return intersect;
     }
-    
+
     /**
      * Return true if there is intersection between two "envelope" coordinate double tables.
-     * 
+     *
      * @param envelopeA first envelope coordinates.
      * @param envelopeB second envelope coordinates.
      * @param edgeInclusive if true return true if the 2 "envelope" just touches else false.
@@ -263,14 +263,14 @@ public class TreeUtilities {
         for (int i = 0, d = dim; i < dim; i++, d++) {
             low = Math.max(envelopeA[i], envelopeB[i]);
             upp = Math.min(envelopeA[d], envelopeB[d]);
-            if (edgeInclusive && low > upp || !edgeInclusive && low >= upp) return false; 
+            if (edgeInclusive && low > upp || !edgeInclusive && low >= upp) return false;
         }
         return true;
     }
-    
+
     /**
      * Return true if the 2 "envelopes" touches them else false.
-     * 
+     *
      * @param envelopeA first envelope coordinates.
      * @param envelopeB second envelope coordinates.
      * @return true if the 2 "envelopes" touches them else false.
@@ -296,13 +296,13 @@ public class TreeUtilities {
         }
         return false;
     }
-    
+
     /**
      * Return true if envelopeA contain envelopeB or envelope is within envelopeA.
-     * 
+     *
      * @param envelopeA first envelope coordinates.
      * @param envelopeB second envelope coordinates.
-     * @param edgeInclusive 
+     * @param edgeInclusive
      * @return true if envelopeA contain envelopeB or envelope is within envelopeA.
      */
     public static boolean contains(final double[] envelopeA, final double[] envelopeB, final boolean edgeInclusive) {
@@ -311,18 +311,18 @@ public class TreeUtilities {
         assert (envelopeA.length == envelopeB.length) :"contains : envelope should have same dimension number.";
         final int dim = envelopeA.length >> 1;//decalbit
         for (int i = 0, d = dim; i < dim; i++, d++) {
-            if ((edgeInclusive && (envelopeB[i] < envelopeA[i] || envelopeB[d] > envelopeA[d])) 
-            || (!edgeInclusive && (envelopeB[i] <= envelopeA[i] || envelopeB[d] >= envelopeA[d]))) return false; 
+            if ((edgeInclusive && (envelopeB[i] < envelopeA[i] || envelopeB[d] > envelopeA[d]))
+            || (!edgeInclusive && (envelopeB[i] <= envelopeA[i] || envelopeB[d] >= envelopeA[d]))) return false;
         }
         return true;
     }
-    
+
     /**
      * Return true if envelopeA contain envelopeB or envelope is within envelopeA.
-     * 
+     *
      * @param envelopeA first envelope coordinates.
      * @param envelopeB second envelope coordinates.
-     * @param edgeInclusive 
+     * @param edgeInclusive
      * @return true if envelopeA contain envelopeB or envelope is within envelopeA.
      */
     public static boolean contains(final double[] envelope, final double[] point) {
@@ -331,11 +331,11 @@ public class TreeUtilities {
         final int dim = envelope.length >> 1;
         assert (dim == point.length) :"contains : envelope should have same dimension number.";
         for (int i = 0, d = dim; i < dim; i++, d++) {
-            if (point[i] < envelope[i] || point[i] > envelope[d]) return false; 
+            if (point[i] < envelope[i] || point[i] > envelope[d]) return false;
         }
         return true;
     }
-    
+
     /**Compute {@code Envelope} area in euclidean cartesian space.
      *
      * @param envelope
@@ -352,7 +352,7 @@ public class TreeUtilities {
         }
         return (dim-1) * (area);
     }
-    
+
     /**
      * Return span value at index i from envelope table coordinates.
      *
@@ -367,7 +367,7 @@ public class TreeUtilities {
         ArgumentChecks.ensureBetween("dimension : envelop", 0, dim, i);
         return envelope[dim + i] - envelope[i];//maybe math.abs
     }
-    
+
     /**
      * Return minimum value at index i from envelope table coordinates.
      *
@@ -382,7 +382,7 @@ public class TreeUtilities {
         ArgumentChecks.ensureBetween("dimension : envelop", 0, dim, i);
         return envelope[i];
     }
-    
+
     /**
      * Return maximum value at index i from envelope table coordinates.
      *
@@ -397,7 +397,7 @@ public class TreeUtilities {
         ArgumentChecks.ensureBetween("dimension : envelop", 0, dim, i);
         return envelope[dim + i];
     }
-    
+
     /**
      * A coordinate position consisting of all the {@linkplain #getMedian(int) middle ordinates}
      * for each dimension for all points within the {@code Envelope}.
@@ -415,7 +415,7 @@ public class TreeUtilities {
         }
         return median;
     }
-    
+
     /**
      * A coordinate position consisting of all the {@linkplain #getMinimum(double[], int) minimum ordinates}
      * for each dimension from the {@code Envelope}.
@@ -433,7 +433,7 @@ public class TreeUtilities {
         System.arraycopy(envelope, 0, lowerCorner, 0, dim);
         return lowerCorner;
     }
-    
+
     /**
      * A coordinate position consisting of all the {@linkplain #getMaximum(double[],int) maximum ordinates}
      * for each dimension from the {@code Envelope}.

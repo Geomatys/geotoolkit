@@ -24,7 +24,7 @@ import java.util.List;
  * @author Guilhem Legal (geomatys)
  */
 public interface AbstractAddress {
-    
+
     List<String> getDeliveryPoint();
 
     String getCity();

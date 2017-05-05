@@ -23,11 +23,11 @@ import javax.xml.namespace.QName;
 
 /**
  * This object contains factory methods for each Java content interface and Java element interface generated in the org.geotoolkit.xacml.xml.policy.package.
- * An ObjectFactory allows you to programatically construct new instances of the Java representation for XML content. 
- * The Java representation of XML content can consist of schema derived interfaces and classes representing the binding of schema type definitions, 
- * element declarations and model groups. 
+ * An ObjectFactory allows you to programatically construct new instances of the Java representation for XML content.
+ * The Java representation of XML content can consist of schema derived interfaces and classes representing the binding of schema type definitions,
+ * element declarations and model groups.
  * Factory methods for each of these are provided in this class.
- * 
+ *
  * @module
  */
 @XmlRegistry
@@ -79,14 +79,14 @@ public class ObjectFactory
 
    /**
     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.geotoolkit.xacml.xml.policy.
-    * 
+    *
     */
    public ObjectFactory() {
    }
 
    /**
     * Create an instance of {@link EnvironmentMatchType }
-    * 
+    *
     */
    public EnvironmentMatchType createEnvironmentMatchType() {
       return new EnvironmentMatchType();
@@ -94,7 +94,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link AttributeDesignatorType }
-    * 
+    *
     */
    public AttributeDesignatorType createAttributeDesignatorType() {
       return new AttributeDesignatorType();
@@ -102,7 +102,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link AttributeAssignmentType }
-    * 
+    *
     */
    public AttributeAssignmentType createAttributeAssignmentType() {
       return new AttributeAssignmentType();
@@ -110,7 +110,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link PolicyCombinerParametersType }
-    * 
+    *
     */
    public PolicyCombinerParametersType createPolicyCombinerParametersType() {
       return new PolicyCombinerParametersType();
@@ -118,7 +118,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link PolicySetType }
-    * 
+    *
     */
    public PolicySetType createPolicySetType() {
       return new PolicySetType();
@@ -126,7 +126,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link EnvironmentType }
-    * 
+    *
     */
    public EnvironmentType createEnvironmentType() {
       return new EnvironmentType();
@@ -134,7 +134,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link ActionsType }
-    * 
+    *
     */
    public ActionsType createActionsType() {
       return new ActionsType();
@@ -142,7 +142,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link ActionMatchType }
-    * 
+    *
     */
    public ActionMatchType createActionMatchType() {
       return new ActionMatchType();
@@ -150,7 +150,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link ActionType }
-    * 
+    *
     */
    public ActionType createActionType() {
       return new ActionType();
@@ -158,7 +158,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link CombinerParametersType }
-    * 
+    *
     */
    public CombinerParametersType createCombinerParametersType() {
       return new CombinerParametersType();
@@ -166,7 +166,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link ConditionType }
-    * 
+    *
     */
    public ConditionType createConditionType() {
       return new ConditionType();
@@ -174,7 +174,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link EnvironmentsType }
-    * 
+    *
     */
    public EnvironmentsType createEnvironmentsType() {
       return new EnvironmentsType();
@@ -182,7 +182,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link SubjectsType }
-    * 
+    *
     */
    public SubjectsType createSubjectsType() {
       return new SubjectsType();
@@ -190,7 +190,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link FunctionType }
-    * 
+    *
     */
    public FunctionType createFunctionType() {
       return new FunctionType();
@@ -198,7 +198,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link RuleType }
-    * 
+    *
     */
    public RuleType createRuleType() {
       return new RuleType();
@@ -206,7 +206,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link AttributeSelectorType }
-    * 
+    *
     */
    public AttributeSelectorType createAttributeSelectorType()  {
       return new AttributeSelectorType();
@@ -214,7 +214,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link AttributeValueType }
-    * 
+    *
     */
    public AttributeValueType createAttributeValueType() {
       return new AttributeValueType();
@@ -222,7 +222,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link ObligationType }
-    * 
+    *
     */
    public ObligationType createObligationType() {
       return new ObligationType();
@@ -230,7 +230,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link VariableReferenceType }
-    * 
+    *
     */
    public VariableReferenceType createVariableReferenceType() {
       return new VariableReferenceType();
@@ -238,7 +238,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link PolicyType }
-    * 
+    *
     */
    public PolicyType createPolicyType() {
       return new PolicyType();
@@ -246,7 +246,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link SubjectType }
-    * 
+    *
     */
    public SubjectType createSubjectType() {
       return new SubjectType();
@@ -254,7 +254,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link PolicySetCombinerParametersType }
-    * 
+    *
     */
    public PolicySetCombinerParametersType createPolicySetCombinerParametersType() {
       return new PolicySetCombinerParametersType();
@@ -262,7 +262,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link RuleCombinerParametersType }
-    * 
+    *
     */
    public RuleCombinerParametersType createRuleCombinerParametersType() {
       return new RuleCombinerParametersType();
@@ -270,7 +270,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link ResourceType }
-    * 
+    *
     */
    public ResourceType createResourceType() {
       return new ResourceType();
@@ -278,7 +278,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link VariableDefinitionType }
-    * 
+    *
     */
    public VariableDefinitionType createVariableDefinitionType() {
       return new VariableDefinitionType();
@@ -286,7 +286,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link DefaultsType }
-    * 
+    *
     */
    public DefaultsType createDefaultsType() {
       return new DefaultsType();
@@ -294,7 +294,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link ObligationsType }
-    * 
+    *
     */
    public ObligationsType createObligationsType() {
       return new ObligationsType();
@@ -302,7 +302,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link SubjectMatchType }
-    * 
+    *
     */
    public SubjectMatchType createSubjectMatchType() {
       return new SubjectMatchType();
@@ -310,7 +310,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link TargetType }
-    * 
+    *
     */
    public TargetType createTargetType() {
       return new TargetType();
@@ -318,7 +318,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link CombinerParameterType }
-    * 
+    *
     */
    public CombinerParameterType createCombinerParameterType() {
       return new CombinerParameterType();
@@ -326,7 +326,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link ApplyType }
-    * 
+    *
     */
    public ApplyType createApplyType() {
       return new ApplyType();
@@ -334,7 +334,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link IdReferenceType }
-    * 
+    *
     */
    public IdReferenceType createIdReferenceType() {
       return new IdReferenceType();
@@ -342,7 +342,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link ResourcesType }
-    * 
+    *
     */
    public ResourcesType createResourcesType() {
       return new ResourcesType();
@@ -350,7 +350,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link SubjectAttributeDesignatorType }
-    * 
+    *
     */
    public SubjectAttributeDesignatorType createSubjectAttributeDesignatorType() {
       return new SubjectAttributeDesignatorType();
@@ -358,7 +358,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link ResourceMatchType }
-    * 
+    *
     */
    public ResourceMatchType createResourceMatchType() {
       return new ResourceMatchType();
@@ -366,7 +366,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link PolicySetCombinerParametersType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "PolicySetCombinerParameters")
    public JAXBElement<PolicySetCombinerParametersType> createPolicySetCombinerParameters(final PolicySetCombinerParametersType value) {
@@ -376,7 +376,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link ObligationsType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Obligations")
    public JAXBElement<ObligationsType> createObligations(final ObligationsType value) {
@@ -385,7 +385,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link RuleCombinerParametersType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "RuleCombinerParameters")
    public JAXBElement<RuleCombinerParametersType> createRuleCombinerParameters(final RuleCombinerParametersType value) {
@@ -395,7 +395,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link AttributeValueType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "AttributeValue", substitutionHeadNamespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", substitutionHeadName = "Expression")
    public JAXBElement<AttributeValueType> createAttributeValue(final AttributeValueType value) {
@@ -404,7 +404,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link VariableDefinitionType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "VariableDefinition")
    public JAXBElement<VariableDefinitionType> createVariableDefinition(final VariableDefinitionType value) {
@@ -414,7 +414,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link ApplyType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Apply", substitutionHeadNamespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", substitutionHeadName = "Expression")
    public JAXBElement<ApplyType> createApply(final ApplyType value) {
@@ -423,7 +423,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link EnvironmentsType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Environments")
    public JAXBElement<EnvironmentsType> createEnvironments(final EnvironmentsType value) {
@@ -432,7 +432,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link SubjectMatchType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "SubjectMatch")
    public JAXBElement<SubjectMatchType> createSubjectMatch(final SubjectMatchType value) {
@@ -441,7 +441,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link ResourceMatchType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "ResourceMatch")
    public JAXBElement<ResourceMatchType> createResourceMatch(final ResourceMatchType value) {
@@ -450,7 +450,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link AttributeDesignatorType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "ActionAttributeDesignator", substitutionHeadNamespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", substitutionHeadName = "Expression")
    public JAXBElement<AttributeDesignatorType> createActionAttributeDesignator(final AttributeDesignatorType value) {
@@ -460,7 +460,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link PolicyCombinerParametersType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "PolicyCombinerParameters")
    public JAXBElement<PolicyCombinerParametersType> createPolicyCombinerParameters(final PolicyCombinerParametersType value) {
@@ -470,7 +470,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link ObligationType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Obligation")
    public JAXBElement<ObligationType> createObligation(final ObligationType value) {
@@ -479,7 +479,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link AttributeDesignatorType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "ResourceAttributeDesignator", substitutionHeadNamespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", substitutionHeadName = "Expression")
    public JAXBElement<AttributeDesignatorType> createResourceAttributeDesignator(final AttributeDesignatorType value) {
@@ -488,7 +488,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link FunctionType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Function", substitutionHeadNamespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", substitutionHeadName = "Expression")
    public JAXBElement<FunctionType> createFunction(final FunctionType value) {
@@ -497,7 +497,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link AttributeDesignatorType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "EnvironmentAttributeDesignator", substitutionHeadNamespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", substitutionHeadName = "Expression")
    public JAXBElement<AttributeDesignatorType> createEnvironmentAttributeDesignator(final AttributeDesignatorType value) {
@@ -507,7 +507,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link VariableReferenceType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "VariableReference", substitutionHeadNamespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", substitutionHeadName = "Expression")
    public JAXBElement<VariableReferenceType> createVariableReference(final VariableReferenceType value) {
@@ -516,7 +516,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link AttributeAssignmentType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "AttributeAssignment")
    public JAXBElement<AttributeAssignmentType> createAttributeAssignment(final AttributeAssignmentType value) {
@@ -526,7 +526,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link ResourceType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Resource")
    public JAXBElement<ResourceType> createResource(final ResourceType value) {
@@ -535,7 +535,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link ConditionType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Condition")
    public JAXBElement<ConditionType> createCondition(final ConditionType value) {
@@ -544,7 +544,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link DefaultsType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "PolicyDefaults")
    public JAXBElement<DefaultsType> createPolicyDefaults(final DefaultsType value) {
@@ -553,7 +553,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link RuleType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Rule")
    public JAXBElement<RuleType> createRule(final RuleType value) {
@@ -562,7 +562,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link ResourcesType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Resources")
    public JAXBElement<ResourcesType> createResources(final ResourcesType value) {
@@ -571,7 +571,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link PolicyType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Policy")
    public JAXBElement<PolicyType> createPolicy(final PolicyType value) {
@@ -580,7 +580,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link TargetType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Target")
    public JAXBElement<TargetType> createTarget(final TargetType value) {
@@ -589,7 +589,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link SubjectType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Subject")
    public JAXBElement<SubjectType> createSubject(final SubjectType value) {
@@ -598,7 +598,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link SubjectsType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Subjects")
    public JAXBElement<SubjectsType> createSubjects(final SubjectsType value) {
@@ -607,7 +607,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link IdReferenceType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "PolicySetIdReference")
    public JAXBElement<IdReferenceType> createPolicySetIdReference(final IdReferenceType value) {
@@ -616,7 +616,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link DefaultsType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "PolicySetDefaults")
    public JAXBElement<DefaultsType> createPolicySetDefaults(final DefaultsType value) {
@@ -625,7 +625,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "XPathVersion")
    public JAXBElement<String> createXPathVersion(final String value) {
@@ -634,7 +634,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link IdReferenceType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "PolicyIdReference")
    public JAXBElement<IdReferenceType> createPolicyIdReference(final IdReferenceType value) {
@@ -643,7 +643,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link CombinerParametersType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "CombinerParameters")
    public JAXBElement<CombinerParametersType> createCombinerParameters(final CombinerParametersType value) {
@@ -653,7 +653,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link EnvironmentMatchType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "EnvironmentMatch")
    public JAXBElement<EnvironmentMatchType> createEnvironmentMatch(final EnvironmentMatchType value) {
@@ -662,7 +662,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link EnvironmentType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Environment")
    public JAXBElement<EnvironmentType> createEnvironment(final EnvironmentType value) {
@@ -671,7 +671,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link ActionsType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Actions")
    public JAXBElement<ActionsType> createActions(final ActionsType value) {
@@ -680,7 +680,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link ActionType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Action")
    public JAXBElement<ActionType> createAction(final ActionType value) {
@@ -689,7 +689,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link ActionMatchType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "ActionMatch")
    public JAXBElement<ActionMatchType> createActionMatch(final ActionMatchType value) {
@@ -698,7 +698,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link AttributeSelectorType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "AttributeSelector", substitutionHeadNamespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", substitutionHeadName = "Expression")
    public JAXBElement<AttributeSelectorType> createAttributeSelector(final AttributeSelectorType value) {
@@ -707,7 +707,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Description")
    public JAXBElement<String> createDescription(final String value) {
@@ -716,7 +716,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link PolicySetType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "PolicySet")
    public JAXBElement<PolicySetType> createPolicySet(final PolicySetType value) {
@@ -725,7 +725,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link SubjectAttributeDesignatorType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "SubjectAttributeDesignator", substitutionHeadNamespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", substitutionHeadName = "Expression")
    public JAXBElement<SubjectAttributeDesignatorType> createSubjectAttributeDesignator(final SubjectAttributeDesignatorType value) {
@@ -735,7 +735,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link ExpressionType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Expression")
    public JAXBElement<ExpressionType> createExpression(final ExpressionType value) {
@@ -744,7 +744,7 @@ public class ObjectFactory
 
    /**
     * Create an instance of {@link JAXBElement }{@code <}{@link CombinerParameterType }{@code >}}
-    * 
+    *
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "CombinerParameter")
    public JAXBElement<CombinerParameterType> createCombinerParameter(final CombinerParameterType value) {

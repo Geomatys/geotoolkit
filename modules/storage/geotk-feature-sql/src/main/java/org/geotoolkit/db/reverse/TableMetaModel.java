@@ -36,15 +36,15 @@ public class TableMetaModel {
         COMPLEX_FEATURE_TYPE,
         ALLCOMPLEX
     }
-    
+
     String name;
     String type;
-    
+
     FeatureTypeBuilder tableType;
     FeatureTypeBuilder simpleFeatureType;
     FeatureTypeBuilder complexFeatureType;
     FeatureTypeBuilder allType;
-    
+
     PrimaryKey key;
     /**
      * those are 0:1 relations
@@ -54,7 +54,7 @@ public class TableMetaModel {
     final Collection<RelationMetaModel> exportedKeys = new ArrayList<>();
     //inherited tables
     final Collection<String> parents = new ArrayList<>();
-    
+
     public TableMetaModel(final String name, String type) {
         this.name = name;
         this.type = type;
@@ -80,7 +80,7 @@ public class TableMetaModel {
      * Detect if given type is a subtype. Conditions are :
      * - having a relation toward another type
      * - relation must be cascading
-     * 
+     *
      * @return true is type is a subtype
      */
     public boolean isSubType(){
@@ -91,7 +91,7 @@ public class TableMetaModel {
         }
         return false;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(name);
@@ -103,9 +103,9 @@ public class TableMetaModel {
         }
         return sb.toString();
     }
-    
+
     public FeatureTypeBuilder getType(View view){
-        
+
         if(view==View.TABLE){
             return tableType;
         }else if(view==View.SIMPLE_FEATURE_TYPE){
@@ -117,7 +117,7 @@ public class TableMetaModel {
         }else{
             throw new IllegalArgumentException("Unknowned view type : "+view);
         }
-        
+
     }
-    
+
 }

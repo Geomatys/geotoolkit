@@ -28,12 +28,12 @@ import org.geotoolkit.gml.xml.v311.MultiSurfacePropertyType;
 /**
  * Type describing the class for traffic Areas. Traffic areas are the surfaces where traffic actually
  *                 takes place. As subclass of _CityObject, a TrafficArea inherits all attributes and relations, in particular an id,
- *                 names, external references, and generalization relations. 
- * 
+ *                 names, external references, and generalization relations.
+ *
  * <p>Java class for TrafficAreaType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TrafficAreaType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.gml.xml.v311.MultiSurfacePropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -80,25 +80,25 @@ public class TrafficAreaType
 
     /**
      * Gets the value of the usage property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the usage property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getUsage().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getUsage() {
         if (usage == null) {
@@ -109,25 +109,25 @@ public class TrafficAreaType
 
     /**
      * Gets the value of the function property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the function property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFunction().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getFunction() {
         if (function == null) {
@@ -138,11 +138,11 @@ public class TrafficAreaType
 
     /**
      * Gets the value of the surfaceMaterial property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSurfaceMaterial() {
         return surfaceMaterial;
@@ -150,11 +150,11 @@ public class TrafficAreaType
 
     /**
      * Sets the value of the surfaceMaterial property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSurfaceMaterial(final String value) {
         this.surfaceMaterial = value;
@@ -162,11 +162,11 @@ public class TrafficAreaType
 
     /**
      * Gets the value of the lod2MultiSurface property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public MultiSurfacePropertyType getLod2MultiSurface() {
         return lod2MultiSurface;
@@ -174,11 +174,11 @@ public class TrafficAreaType
 
     /**
      * Sets the value of the lod2MultiSurface property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public void setLod2MultiSurface(final MultiSurfacePropertyType value) {
         this.lod2MultiSurface = value;
@@ -186,11 +186,11 @@ public class TrafficAreaType
 
     /**
      * Gets the value of the lod3MultiSurface property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public MultiSurfacePropertyType getLod3MultiSurface() {
         return lod3MultiSurface;
@@ -198,11 +198,11 @@ public class TrafficAreaType
 
     /**
      * Sets the value of the lod3MultiSurface property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public void setLod3MultiSurface(final MultiSurfacePropertyType value) {
         this.lod3MultiSurface = value;
@@ -210,11 +210,11 @@ public class TrafficAreaType
 
     /**
      * Gets the value of the lod4MultiSurface property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public MultiSurfacePropertyType getLod4MultiSurface() {
         return lod4MultiSurface;
@@ -222,11 +222,11 @@ public class TrafficAreaType
 
     /**
      * Sets the value of the lod4MultiSurface property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public void setLod4MultiSurface(final MultiSurfacePropertyType value) {
         this.lod4MultiSurface = value;
@@ -234,25 +234,25 @@ public class TrafficAreaType
 
     /**
      * Gets the value of the genericApplicationPropertyOfTrafficArea property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the genericApplicationPropertyOfTrafficArea property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getGenericApplicationPropertyOfTrafficArea().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getGenericApplicationPropertyOfTrafficArea() {
         if (genericApplicationPropertyOfTrafficArea == null) {

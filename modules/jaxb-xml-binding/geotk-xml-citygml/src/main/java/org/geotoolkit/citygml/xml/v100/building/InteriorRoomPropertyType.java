@@ -23,15 +23,15 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
 
 
 /**
- * Denotes the relation of an _AbstractBuilding to its rooms. 
+ * Denotes the relation of an _AbstractBuilding to its rooms.
  * The InteriorRoomPropertyType element must either carry a reference to a Room object
  * or contain a Room object inline, but neither both nor none.
- *             
- * 
+ *
+ *
  * <p>Java class for InteriorRoomPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InteriorRoomPropertyType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

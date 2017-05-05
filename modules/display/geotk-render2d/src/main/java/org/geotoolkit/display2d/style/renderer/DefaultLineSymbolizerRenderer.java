@@ -147,7 +147,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         }else{
             renderingContext.switchToObjectiveCRS();
         }
-        
+
         j2dShapes = getShapes(projectedGeometry, feature);
 
         if(j2dShapes == null){
@@ -158,7 +158,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
             portray(symbol, g2d, j2dShape, cachedStroke, feature, coeff, hints);
         }
     }
-    
+
     private Shape[] getShapes(ProjectedGeometry projectedGeometry, Object feature) throws PortrayalException{
         final float offset = symbol.getOffset(feature, coeff);
         final Shape[] j2dShapes;
@@ -184,15 +184,15 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
                     j2dShapes[i] = new JTSGeometryJ2D(g);
                     //TODO : clip geometry
                 }
-                
+
             } catch (TransformException ex) {
                 throw new PortrayalException("Could not calculate objective projected geometry",ex);
             }
         }
         return j2dShapes;
     }
-    
-    public static void portray(CachedSymbolizer symbol, Graphics2D g2d, Shape j2dShape, 
+
+    public static void portray(CachedSymbolizer symbol, Graphics2D g2d, Shape j2dShape,
             CachedStroke cachedStroke, Object feature, float coeff, RenderingHints hints){
 
         if(cachedStroke instanceof CachedStrokeSimple){
@@ -245,7 +245,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         }
 
     }
-    
+
 
     /**
      * {@inheritDoc }
@@ -305,7 +305,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
                 //can happen if the geometry has too few points, like a ring of 3points
                 LOGGER.log(Level.FINE, ex.getLocalizedMessage(), ex);
             }
-            
+
             for(Geometry j2dShape : j2dShapes){
                 if(GO2Utilities.testHit(filter,CRSShape,j2dShape)) return true;
             }

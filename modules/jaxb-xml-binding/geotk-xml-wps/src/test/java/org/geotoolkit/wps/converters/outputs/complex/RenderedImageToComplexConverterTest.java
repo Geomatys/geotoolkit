@@ -34,32 +34,32 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
- * 
+ *
  * @author Quentin Boileau (Geomatys)
  */
 public class RenderedImageToComplexConverterTest extends AbstractWPSConverterTest {
 
-    
+
     @Test
     public void testConversion() throws UnconvertibleObjectException, IOException  {
         final WPSObjectConverter<RenderedImage, ComplexDataType> converter = WPSConverterRegistry.getInstance().getConverter(RenderedImage.class, ComplexDataType.class);
-        
+
         final RenderedImage img = ConvertersTestUtils.makeRendredImage();
         final Map<String, Object> param = new HashMap<String, Object>();
         param.put(WPSObjectConverter.MIME, WPSMimeType.IMG_TIFF.val());
         param.put(WPSObjectConverter.ENCODING, "base64");
-        
+
         final ComplexDataType complex = converter.convert(img, param);
         final List<Object> content = complex.getContent();
         final String encodedImage = (String) content.get(0);
-        
+
         final InputStream expectedStream = RenderedImageToComplexConverterTest.class.getResourceAsStream("/expected/image_base64");
         assertNotNull(expectedStream);
         String expectedString = IOUtilities.toString(expectedStream);
         expectedString = expectedString.trim();
-        
+
         assertEquals(expectedString, encodedImage);
-        
+
     }
-    
+
 }

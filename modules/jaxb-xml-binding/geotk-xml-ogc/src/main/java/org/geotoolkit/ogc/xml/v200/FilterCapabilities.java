@@ -95,7 +95,7 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
         this.scalarCapabilities  = scalar;
         this.conformance = conformance;
     }
-    
+
     public FilterCapabilities(final ScalarCapabilitiesType scalar, final SpatialCapabilitiesType spatial, final TemporalCapabilitiesType temporal,
             final IdCapabilitiesType id, final ConformanceType conformance) {
         this.spatialCapabilities  = spatial;
@@ -320,8 +320,8 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
        if (object instanceof FilterCapabilities) {
            final FilterCapabilities that = (FilterCapabilities) object;
-       
-            
+
+
             return Objects.equals(this.conformance,          that.conformance)            &&
                    Objects.equals(this.extendedCapabilities, that.extendedCapabilities)   &&
                    Objects.equals(this.functions,            that.functions)              &&

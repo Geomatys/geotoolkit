@@ -28,10 +28,10 @@ import org.apache.sis.xml.MarshallerPool;
 public final class MathMLUtilities {
 
     private static MarshallerPool POLL;
-    
+
     private MathMLUtilities() {
     }
-    
+
     public static synchronized MarshallerPool getMarshallerPool() {
         if (POLL == null) {
 
@@ -45,5 +45,5 @@ public final class MathMLUtilities {
         }
         return POLL;
     }
-    
+
 }

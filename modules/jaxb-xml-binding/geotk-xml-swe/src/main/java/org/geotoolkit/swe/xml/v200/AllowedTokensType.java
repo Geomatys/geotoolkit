@@ -28,9 +28,9 @@ import org.geotoolkit.swe.xml.AbstractAllowedTokens;
 
 /**
  * <p>Java class for AllowedTokensType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AllowedTokensType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.swe.xml.AbstractAllowedTokens;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AllowedTokensType", propOrder = {
@@ -58,11 +58,11 @@ public class AllowedTokensType extends AbstractSWEType implements AbstractAllowe
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getValue() {
         if (value == null) {
@@ -73,11 +73,11 @@ public class AllowedTokensType extends AbstractSWEType implements AbstractAllowe
 
     /**
      * Gets the value of the pattern property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPattern() {
         return pattern;
@@ -85,11 +85,11 @@ public class AllowedTokensType extends AbstractSWEType implements AbstractAllowe
 
     /**
      * Sets the value of the pattern property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPattern(String value) {
         this.pattern = value;

@@ -33,12 +33,12 @@ import org.geotoolkit.internal.GeotkFX;
  * @author Johann Sorel (Geomatys)
  */
 public class FXZoomOutAction extends FXMapAction {
-    
+
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_SEARCH_MINUS, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
-    
+
     public FXZoomOutAction(FXMap map) {
         super(map,GeotkFX.getString(FXZoomOutAction.class,"zoom_out"),GeotkFX.getString(FXZoomOutAction.class,"zoom_out"),ICON);
-        
+
         map.getHandlerProperty().addListener(new ChangeListener<FXCanvasHandler>() {
             @Override
             public void changed(ObservableValue<? extends FXCanvasHandler> observable, FXCanvasHandler oldValue, FXCanvasHandler newValue) {

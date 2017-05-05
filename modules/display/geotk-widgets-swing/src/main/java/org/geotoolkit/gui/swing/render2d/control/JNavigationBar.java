@@ -59,7 +59,7 @@ public class JNavigationBar extends AbstractMapControlBar{
         actionZoomPan = new PanAction();
         actionRefresh = new RefreshAction();
         actionNavto = new NavigateToAction();
-        
+
         add(actionZoomAll);
         add(actionRefresh);
         add(actionZoomIn);

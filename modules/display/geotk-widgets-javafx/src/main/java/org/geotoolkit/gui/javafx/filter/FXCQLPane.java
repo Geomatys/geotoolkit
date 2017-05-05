@@ -34,9 +34,9 @@ import org.opengis.filter.Filter;
 public class FXCQLPane extends BorderPane {
 
     public FXCQLPane() {
-        
+
     }
-    
+
     public static Filter show(Node owner, Filter filter, MapItem target) throws CQLException{
         final FXCQLEditor editor = new FXCQLEditor(true);
         editor.setFilter(filter);
@@ -46,8 +46,8 @@ public class FXCQLPane extends BorderPane {
         pane.setContent(editor);
         pane.getButtonTypes().addAll(ButtonType.CLOSE);
         dialog.initModality(Modality.APPLICATION_MODAL);
-        
+
         return editor.getFilter();
     }
-    
+
 }

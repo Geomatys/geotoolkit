@@ -18,12 +18,12 @@ package org.geotoolkit.ncwms;
 
 /**
  * Common interface for some ncWMS requests (GetMap, GetLegendGraphic, GetFeatureInfo)
- * 
+ *
  * @author Olivier Terral (Geomatys)
  * @module
  */
 public interface NcWMSCommonRequest {
-    
+
     /**
      * Gets the opacity of the layer.
      */

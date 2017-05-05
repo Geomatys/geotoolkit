@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ConceptualSchemeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ConceptualSchemeType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,7 +64,7 @@ public class ConceptualSchemeType {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      */
     public String getName() {
         return name;
@@ -72,7 +72,7 @@ public class ConceptualSchemeType {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -80,7 +80,7 @@ public class ConceptualSchemeType {
 
     /**
      * Gets the value of the document property.
-     * 
+     *
      */
     public String getDocument() {
         return document;
@@ -88,7 +88,7 @@ public class ConceptualSchemeType {
 
     /**
      * Sets the value of the document property.
-     * 
+     *
      */
     public void setDocument(final String value) {
         this.document = value;
@@ -96,7 +96,7 @@ public class ConceptualSchemeType {
 
     /**
      * Gets the value of the authority property.
-     * 
+     *
      */
     public String getAuthority() {
         return authority;
@@ -104,7 +104,7 @@ public class ConceptualSchemeType {
 
     /**
      * Sets the value of the authority property.
-     * 
+     *
      */
     public void setAuthority(final String value) {
         this.authority = value;

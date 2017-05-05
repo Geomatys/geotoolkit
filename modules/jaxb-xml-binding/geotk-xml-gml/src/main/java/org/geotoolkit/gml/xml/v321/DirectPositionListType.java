@@ -124,7 +124,7 @@ public class DirectPositionListType implements DirectPositionList {
         }
         this.value.add(value);
     }
-    
+
     /**
      * Gets the value of the count property.
      *

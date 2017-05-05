@@ -24,14 +24,14 @@ import org.geotoolkit.ows.xml.LanguageString;
  * @author guilhem
  */
 public interface Input {
-    
+
     AbstractCodeType getIdentifier();
-    
+
     LanguageString getTitle();
-    
+
     LanguageString getAbstract();
-    
+
     DataType getData();
-    
+
     Reference getReference();
 }

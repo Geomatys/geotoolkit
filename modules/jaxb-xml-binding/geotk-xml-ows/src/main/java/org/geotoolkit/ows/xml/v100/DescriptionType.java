@@ -30,12 +30,12 @@ import org.geotoolkit.ows.xml.AbstractDescription;
 
 /**
  * Human-readable descriptive information for the object it is included within.
- * This type shall be extended if needed for specific OWS use to include additional metadata for each type of information. This type shall not be restricted for a specific OWS to change the multiplicity (or optionality) of some elements. 
- * 
+ * This type shall be extended if needed for specific OWS use to include additional metadata for each type of information. This type shall not be restricted for a specific OWS to change the multiplicity (or optionality) of some elements.
+ *
  * <p>Java class for DescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DescriptionType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.ows.xml.AbstractDescription;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -76,9 +76,9 @@ public class DescriptionType implements AbstractDescription {
      * An empty constructor used by JAXB
      */
      DescriptionType() {
-         
+
      }
-     
+
      /**
      * Build a new description
      */
@@ -87,7 +87,7 @@ public class DescriptionType implements AbstractDescription {
          this.title     = title;
          this.keywords  = keywords;
      }
-     
+
       /**
      * Build a new description
      */
@@ -97,14 +97,14 @@ public class DescriptionType implements AbstractDescription {
          this.keywords  = new ArrayList<KeywordsType>();
          this.keywords.add(keywords);
      }
-     
+
     /**
      * Gets the value of the title property.
      */
     public String getTitle() {
         return title;
     }
-    
+
     public void setTitle(final String title) {
         this.title = title;
     }

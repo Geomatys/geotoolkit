@@ -26,9 +26,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for StringPositionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="StringPositionType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,11 +64,11 @@ public class StringPositionType
 
     /**
      * Gets the value of the lookupString property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getLookupString() {
         return lookupString;
@@ -76,11 +76,11 @@ public class StringPositionType
 
     /**
      * Sets the value of the lookupString property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setLookupString(final ParameterValueType value) {
         this.lookupString = value;
@@ -88,11 +88,11 @@ public class StringPositionType
 
     /**
      * Gets the value of the stringValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getStringValue() {
         return stringValue;
@@ -100,11 +100,11 @@ public class StringPositionType
 
     /**
      * Sets the value of the stringValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setStringValue(final ParameterValueType value) {
         this.stringValue = value;
@@ -112,11 +112,11 @@ public class StringPositionType
 
     /**
      * Gets the value of the searchDirection property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SearchDirectionType }
-     *     
+     *
      */
     public SearchDirectionType getSearchDirection() {
         return searchDirection;
@@ -124,11 +124,11 @@ public class StringPositionType
 
     /**
      * Sets the value of the searchDirection property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SearchDirectionType }
-     *     
+     *
      */
     public void setSearchDirection(final SearchDirectionType value) {
         this.searchDirection = value;

@@ -52,12 +52,12 @@ public class GroovyDescriptor extends AbstractProcessDescriptor{
             .setRemarks("Map of binding script variable")
             .setRequired(true)
             .create(Map.class, null);
-    
+
     public static final String[] BEHAVIOR_KEYS = new String[] { "EXCEPTION", "RESULT"};
     public static final ParameterDescriptor<String> BEHAVIOR =
-            new ExtendedParameterDescriptor<String>("behavior", "Behavior of the process. Could be 'EXCEPTION' or 'RESULT'", 
+            new ExtendedParameterDescriptor<String>("behavior", "Behavior of the process. Could be 'EXCEPTION' or 'RESULT'",
             String.class, BEHAVIOR_KEYS, "RESULT", null, null, null, true, null);
-                    
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(SCRIPT, VARIABLES, BEHAVIOR);
 
@@ -85,5 +85,5 @@ public class GroovyDescriptor extends AbstractProcessDescriptor{
     public Process createProcess(final ParameterValueGroup input) {
         return new GroovyConditionProcess(input);
     }
-    
+
 }

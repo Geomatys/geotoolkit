@@ -29,13 +29,13 @@ import org.geotoolkit.map.FeatureMapLayer;
 
 /**
  * layer filter panel
- * 
+ *
  * @author  Johann Sorel (Puzzle-GIS)
  * @module
  */
 public class LayerFilterPropertyPanel extends MultiPropertyPanel {
 
-   
+
     /** Creates new form DefaultMapLayerQueryPanel */
     public LayerFilterPropertyPanel() {
         super();
@@ -83,7 +83,7 @@ public class LayerFilterPropertyPanel extends MultiPropertyPanel {
     public Image getPreview() {
         return null;
     }
-    
+
     @Override
     public String getToolTip() {
         return null;

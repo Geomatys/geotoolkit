@@ -76,5 +76,5 @@ public class FXBooleanCell<S> extends FXTableCell<S, Boolean> {
             checkBox.setSelected(Boolean.TRUE.equals(item));
         }
     }
-    
+
 }

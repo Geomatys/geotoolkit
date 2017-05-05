@@ -49,7 +49,7 @@ public interface PlayList extends AbstractObject{
     List<AbstractTourPrimitive> getTourPrimitives();
 
     /**
-     * 
+     *
      * @param tourPrimitives
      */
     void setTourPrimitives(List<AbstractTourPrimitive> tourPrimitives);

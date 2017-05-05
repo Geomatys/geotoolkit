@@ -4,8 +4,8 @@
  * {@linkplain org.opengis.util.CodeList code lists}.<br/>
  * Each time JAXB is trying to deal with a code list, the adapter will get in action
  * in order to replace the code list value, which will be normally written directly,
- * by a tags like in the following example of a 
- * {@linkplain org.opengis.metadata.identification.CharacterSet character set} : 
+ * by a tags like in the following example of a
+ * {@linkplain org.opengis.metadata.identification.CharacterSet character set} :
  * {@code <gmd:MD_CharacterSetCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#utf8" codeListValue="utf8"/>}
  * </p>
  *

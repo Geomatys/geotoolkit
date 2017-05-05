@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for EdgeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="EdgeType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EdgeType", propOrder = {
@@ -71,11 +71,11 @@ public class EdgeType
 
     /**
      * Gets the value of the container property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TopoSolidPropertyType }
-     *     
+     *
      */
     public TopoSolidPropertyType getContainer() {
         return container;
@@ -83,11 +83,11 @@ public class EdgeType
 
     /**
      * Sets the value of the container property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TopoSolidPropertyType }
-     *     
+     *
      */
     public void setContainer(TopoSolidPropertyType value) {
         this.container = value;
@@ -95,25 +95,25 @@ public class EdgeType
 
     /**
      * Gets the value of the directedNode property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the directedNode property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDirectedNode().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DirectedNodePropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<DirectedNodePropertyType> getDirectedNode() {
         if (directedNode == null) {
@@ -124,25 +124,25 @@ public class EdgeType
 
     /**
      * Gets the value of the directedFace property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the directedFace property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDirectedFace().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DirectedFacePropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<DirectedFacePropertyType> getDirectedFace() {
         if (directedFace == null) {
@@ -153,11 +153,11 @@ public class EdgeType
 
     /**
      * Gets the value of the curveProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurvePropertyType }
-     *     
+     *
      */
     public CurvePropertyType getCurveProperty() {
         return curveProperty;
@@ -165,11 +165,11 @@ public class EdgeType
 
     /**
      * Sets the value of the curveProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurvePropertyType }
-     *     
+     *
      */
     public void setCurveProperty(CurvePropertyType value) {
         this.curveProperty = value;
@@ -177,11 +177,11 @@ public class EdgeType
 
     /**
      * Gets the value of the aggregationType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public AggregationType getAggregationType() {
         return aggregationType;
@@ -189,11 +189,11 @@ public class EdgeType
 
     /**
      * Sets the value of the aggregationType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public void setAggregationType(AggregationType value) {
         this.aggregationType = value;

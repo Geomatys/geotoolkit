@@ -28,24 +28,24 @@ import javax.xml.bind.annotation.XmlType;
  *    curve whose curvature is a fixed function of its length.
  *    In suitably chosen co-ordinates it is given by Fresnel's
  *    integrals.
- * 
- *     x(t) = 0-integral-t cos(AT*T/2)dT    
- *     
+ *
+ *     x(t) = 0-integral-t cos(AT*T/2)dT
+ *
  *     y(t) = 0-integral-t sin(AT*T/2)dT
- *    
+ *
  *    This geometry is mainly used as a transition curve between
  *    curves of type straight line to circular arc or circular arc
- *    to circular arc. With this curve type it is possible to 
+ *    to circular arc. With this curve type it is possible to
  *    achieve a C2-continous transition between the above mentioned
  *    curve types. One formula for the Clothoid is A*A = R*t where
  *    A is constant, R is the varying radius of curvature along the
- *    the curve and t is the length along and given in the Fresnel 
+ *    the curve and t is the length along and given in the Fresnel
  *    integrals.
- * 
+ *
  * <p>Java class for ClothoidType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ClothoidType">
  *   &lt;complexContent>
@@ -70,8 +70,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -94,11 +94,11 @@ public class ClothoidType
 
     /**
      * Gets the value of the refLocation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ClothoidType.RefLocation }
-     *     
+     *
      */
     public ClothoidType.RefLocation getRefLocation() {
         return refLocation;
@@ -106,11 +106,11 @@ public class ClothoidType
 
     /**
      * Sets the value of the refLocation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ClothoidType.RefLocation }
-     *     
+     *
      */
     public void setRefLocation(final ClothoidType.RefLocation value) {
         this.refLocation = value;
@@ -118,11 +118,11 @@ public class ClothoidType
 
     /**
      * Gets the value of the scaleFactor property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getScaleFactor() {
         return scaleFactor;
@@ -130,11 +130,11 @@ public class ClothoidType
 
     /**
      * Sets the value of the scaleFactor property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setScaleFactor(final BigDecimal value) {
         this.scaleFactor = value;
@@ -142,7 +142,7 @@ public class ClothoidType
 
     /**
      * Gets the value of the startParameter property.
-     * 
+     *
      */
     public double getStartParameter() {
         return startParameter;
@@ -150,7 +150,7 @@ public class ClothoidType
 
     /**
      * Sets the value of the startParameter property.
-     * 
+     *
      */
     public void setStartParameter(final double value) {
         this.startParameter = value;
@@ -158,7 +158,7 @@ public class ClothoidType
 
     /**
      * Gets the value of the endParameter property.
-     * 
+     *
      */
     public double getEndParameter() {
         return endParameter;
@@ -166,7 +166,7 @@ public class ClothoidType
 
     /**
      * Sets the value of the endParameter property.
-     * 
+     *
      */
     public void setEndParameter(final double value) {
         this.endParameter = value;
@@ -175,9 +175,9 @@ public class ClothoidType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -189,8 +189,8 @@ public class ClothoidType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -202,28 +202,28 @@ public class ClothoidType
         protected AffinePlacementType affinePlacement;
 
         /**
-         * The "refLocation" is an affine mapping 
-         *           that places  the curve defined by the Fresnel Integrals  
+         * The "refLocation" is an affine mapping
+         *           that places  the curve defined by the Fresnel Integrals
          *           into the co-ordinate reference system of this object.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link AffinePlacementType }
-         *     
+         *
          */
         public AffinePlacementType getAffinePlacement() {
             return affinePlacement;
         }
 
         /**
-         * The "refLocation" is an affine mapping 
-         *           that places  the curve defined by the Fresnel Integrals  
+         * The "refLocation" is an affine mapping
+         *           that places  the curve defined by the Fresnel Integrals
          *           into the co-ordinate reference system of this object.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link AffinePlacementType }
-         *     
+         *
          */
         public void setAffinePlacement(final AffinePlacementType value) {
             this.affinePlacement = value;

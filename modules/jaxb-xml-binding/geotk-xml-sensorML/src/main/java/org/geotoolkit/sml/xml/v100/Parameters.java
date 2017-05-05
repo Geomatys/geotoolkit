@@ -30,9 +30,9 @@ import org.geotoolkit.sml.xml.AbstractParameters;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import org.geotoolkit.sml.xml.AbstractParameters;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -107,7 +107,7 @@ public class Parameters implements AbstractParameters {
             this.type         = param.getType();
         }
     }
-    
+
     public Parameters(final ParameterList parameterList) {
         this.parameterList = parameterList;
     }

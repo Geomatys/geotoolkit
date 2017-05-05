@@ -30,11 +30,11 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * A MultiCurve is defined by one or more Curves, referenced through curveMember elements.
- * 
+ *
  * <p>Java class for MultiCurveType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MultiCurveType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,11 +72,11 @@ public class MultiCurveType extends AbstractGeometricAggregateType implements Mu
 
     /**
      * Gets the value of the curveMember property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link CurvePropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<CurvePropertyType> getCurveMember() {
         if (curveMember == null) {
@@ -87,11 +87,11 @@ public class MultiCurveType extends AbstractGeometricAggregateType implements Mu
 
     /**
      * Gets the value of the curveMembers property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurveArrayPropertyType }
-     *     
+     *
      */
     public CurveArrayPropertyType getCurveMembers() {
         return curveMembers;
@@ -99,11 +99,11 @@ public class MultiCurveType extends AbstractGeometricAggregateType implements Mu
 
     /**
      * Sets the value of the curveMembers property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurveArrayPropertyType }
-     *     
+     *
      */
     public void setCurveMembers(final CurveArrayPropertyType value) {
         this.curveMembers = value;
@@ -149,7 +149,7 @@ public class MultiCurveType extends AbstractGeometricAggregateType implements Mu
         return hash;
     }
 
-    
+
 
 
 

@@ -26,18 +26,18 @@ import org.opengis.filter.Filter;
  * @author Guilhem Legal (Geomatys)
  */
 public interface Query {
-    
+
     String getSrsName();
-    
+
     void setSrsName(String srsName);
-    
+
     Filter getFilter();
-    
+
     List<QName> getTypeNames();
-    
+
     SortBy getSortBy();
-    
+
     List<Object> getPropertyNames();
-    
+
     List<String> getAliases();
 }

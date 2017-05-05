@@ -198,7 +198,7 @@ public final class Utilities extends Static {
     private static String name(final Object object) {
         return object.getClass().getSimpleName();
     }
-    
+
     /**
      * Utility method to avoid to fill an empty list during equals.
      * But we want to consider equals a null list and an empty one, for JAXB purpose

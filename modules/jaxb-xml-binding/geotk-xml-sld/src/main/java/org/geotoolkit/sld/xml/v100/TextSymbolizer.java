@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,11 +75,11 @@ public class TextSymbolizer
 
     /**
      * Gets the value of the geometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Geometry }
-     *     
+     *
      */
     public Geometry getGeometry() {
         return geometry;
@@ -87,11 +87,11 @@ public class TextSymbolizer
 
     /**
      * Sets the value of the geometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Geometry }
-     *     
+     *
      */
     public void setGeometry(final Geometry value) {
         this.geometry = value;
@@ -99,11 +99,11 @@ public class TextSymbolizer
 
     /**
      * Gets the value of the label property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getLabel() {
         return label;
@@ -111,11 +111,11 @@ public class TextSymbolizer
 
     /**
      * Sets the value of the label property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setLabel(final ParameterValueType value) {
         this.label = value;
@@ -123,11 +123,11 @@ public class TextSymbolizer
 
     /**
      * Gets the value of the font property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Font }
-     *     
+     *
      */
     public Font getFont() {
         return font;
@@ -135,11 +135,11 @@ public class TextSymbolizer
 
     /**
      * Sets the value of the font property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Font }
-     *     
+     *
      */
     public void setFont(final Font value) {
         this.font = value;
@@ -147,11 +147,11 @@ public class TextSymbolizer
 
     /**
      * Gets the value of the labelPlacement property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LabelPlacement }
-     *     
+     *
      */
     public LabelPlacement getLabelPlacement() {
         return labelPlacement;
@@ -159,11 +159,11 @@ public class TextSymbolizer
 
     /**
      * Sets the value of the labelPlacement property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LabelPlacement }
-     *     
+     *
      */
     public void setLabelPlacement(final LabelPlacement value) {
         this.labelPlacement = value;
@@ -171,11 +171,11 @@ public class TextSymbolizer
 
     /**
      * Gets the value of the halo property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Halo }
-     *     
+     *
      */
     public Halo getHalo() {
         return halo;
@@ -183,11 +183,11 @@ public class TextSymbolizer
 
     /**
      * Sets the value of the halo property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Halo }
-     *     
+     *
      */
     public void setHalo(final Halo value) {
         this.halo = value;
@@ -195,11 +195,11 @@ public class TextSymbolizer
 
     /**
      * Gets the value of the fill property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Fill }
-     *     
+     *
      */
     public Fill getFill() {
         return fill;
@@ -207,11 +207,11 @@ public class TextSymbolizer
 
     /**
      * Sets the value of the fill property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Fill }
-     *     
+     *
      */
     public void setFill(final Fill value) {
         this.fill = value;

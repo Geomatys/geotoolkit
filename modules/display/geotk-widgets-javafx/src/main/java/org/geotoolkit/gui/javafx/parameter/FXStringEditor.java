@@ -32,7 +32,7 @@ public class FXStringEditor extends FXValueEditor {
     public FXStringEditor(FXValueEditorSpi originatingSpi) {
         super(originatingSpi);
     }
-        
+
     @Override
     public Node getComponent() {
         return textField;
@@ -42,7 +42,7 @@ public class FXStringEditor extends FXValueEditor {
     public StringProperty valueProperty() {
         return textField.textProperty();
     }
-        
+
     public static final class Spi extends FXValueEditorSpi {
 
         @Override

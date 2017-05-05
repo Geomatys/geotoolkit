@@ -32,9 +32,9 @@ import org.opengis.geometry.primitive.Point;
 
 /**
  * <p>Java class for PointType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PointType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.opengis.geometry.primitive.Point;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PointType", propOrder = {
@@ -115,14 +115,14 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
     public PointType(final CoordinatesType coordinates) {
         this.coordinates = coordinates;
     }
-    
+
     /**
      * Gets the value of the pos property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     @Override
     public DirectPositionType getPos() {
@@ -131,11 +131,11 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
 
     /**
      * Sets the value of the pos property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     public void setPos(DirectPositionType value) {
         this.pos = value;
@@ -143,11 +143,11 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
 
     /**
      * Gets the value of the coordinates property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     @Override
     public CoordinatesType getCoordinates() {
@@ -156,11 +156,11 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
 
     /**
      * Sets the value of the coordinates property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public void setCoordinates(CoordinatesType value) {
         this.coordinates = value;

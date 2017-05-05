@@ -30,7 +30,7 @@ import org.opengis.style.Symbolizer;
 
 /**
  * Simple style panel
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -41,9 +41,9 @@ public class JSymbolizerStylePanel extends AbstractPropertyPane {
 
     /** Creates new form XMLStylePanel */
     public JSymbolizerStylePanel() {
-        super(MessageBundle.format("property_style_simple"), 
-              IconBundle.getIcon("16_simple_style"), 
-              null, 
+        super(MessageBundle.format("property_style_simple"),
+              IconBundle.getIcon("16_simple_style"),
+              null,
               "");
         setLayout(new BorderLayout());
     }
@@ -56,7 +56,7 @@ public class JSymbolizerStylePanel extends AbstractPropertyPane {
     public boolean canHandle(Object target) {
         return target instanceof MapLayer;
     }
-    
+
     @Override
     public void setTarget(final Object layer) {
 
@@ -76,7 +76,7 @@ public class JSymbolizerStylePanel extends AbstractPropertyPane {
         removeAll();
 
         detail = StyleElementEditor.findEditor(symbol);
-        
+
         if(detail != null){
             detail.parse((Symbolizer)symbol);
             detail.setLayer(layer);
@@ -94,5 +94,5 @@ public class JSymbolizerStylePanel extends AbstractPropertyPane {
         return detail.create();
     }
 
-    
+
 }

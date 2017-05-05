@@ -28,13 +28,13 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * Description of a set of Phenomena.  
- * 	  CompoundPhenomenon is the abstract head of a substitution group of specialized compound phenomena
- * 
+ * Description of a set of Phenomena.
+ *    CompoundPhenomenon is the abstract head of a substitution group of specialized compound phenomena
+ *
  * <p>Java class for CompoundPhenomenonType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CompoundPhenomenonType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -66,9 +66,9 @@ public abstract class CompoundPhenomenonType extends PhenomenonType {
      * An empty constructor used by JAXB
      */
     CompoundPhenomenonType() {
-        
+
     }
-    
+
     /**
      * Build a new Compound phenomenon.
      */
@@ -76,9 +76,9 @@ public abstract class CompoundPhenomenonType extends PhenomenonType {
             final int dimension) {
         super(id, name, description);
         this.dimension = dimension;
-        
+
     }
-    
+
     /**
      * Gets the value of the dimension property.
      */
@@ -92,7 +92,7 @@ public abstract class CompoundPhenomenonType extends PhenomenonType {
     public void setDimension(final int dimension) {
         this.dimension = dimension;
     }
-    
+
     /**
      * Return a code representing this composite phenomenon.
      */
@@ -109,19 +109,19 @@ public abstract class CompoundPhenomenonType extends PhenomenonType {
         if (object == this) {
             return true;
         }
-        
+
         if (object instanceof CompoundPhenomenonType && super.equals(object, mode)) {
             final CompoundPhenomenonType that = (CompoundPhenomenonType) object;
-            
+
             return Objects.equals(this.dimension ,that.dimension);
-       } 
+       }
        return false;
-        
-        
+
+
     }
-    
+
     @Override
     public String toString() {
         return super.toString() + " dimension:" + dimension + '\n';
-    } 
+    }
 }

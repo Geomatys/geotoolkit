@@ -29,12 +29,12 @@ import org.geotoolkit.map.MapLayer;
  * @module
  */
 public class PatternRendererService extends AbstractSymbolizerRendererService<PatternSymbolizer,CachedPatternSymbolizer>{
-    
+
     @Override
     public boolean isGroupSymbolizer() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc }
      */

@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for MatrixType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MatrixType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MatrixType")
@@ -55,11 +55,11 @@ public class MatrixType extends DataArrayType {
 
     /**
      * Gets the value of the referenceFrame property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getReferenceFrame() {
         return referenceFrame;
@@ -67,11 +67,11 @@ public class MatrixType extends DataArrayType {
 
     /**
      * Sets the value of the referenceFrame property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setReferenceFrame(String value) {
         this.referenceFrame = value;
@@ -79,11 +79,11 @@ public class MatrixType extends DataArrayType {
 
     /**
      * Gets the value of the localFrame property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLocalFrame() {
         return localFrame;
@@ -91,11 +91,11 @@ public class MatrixType extends DataArrayType {
 
     /**
      * Sets the value of the localFrame property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLocalFrame(String value) {
         this.localFrame = value;

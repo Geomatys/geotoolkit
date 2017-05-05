@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * An ArcString is a curve segment that uses three-point circular arc interpolation.
- * 
+ *
  * <p>Java class for ArcStringType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ArcStringType">
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -88,27 +88,27 @@ public class ArcStringType
 
     /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the posOrPointPropertyOrPointRep property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPosOrPointPropertyOrPointRep().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link DirectPositionType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<?>> getPosOrPointPropertyOrPointRep() {
         if (posOrPointPropertyOrPointRep == null) {
@@ -119,11 +119,11 @@ public class ArcStringType
 
     /**
      * Gets the value of the posList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public DirectPositionListType getPosList() {
         return posList;
@@ -131,11 +131,11 @@ public class ArcStringType
 
     /**
      * Sets the value of the posList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public void setPosList(final DirectPositionListType value) {
         this.posList = value;
@@ -143,11 +143,11 @@ public class ArcStringType
 
     /**
      * Deprecated with GML version 3.1.0. Use "posList" instead.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public CoordinatesType getCoordinates() {
         return coordinates;
@@ -155,11 +155,11 @@ public class ArcStringType
 
     /**
      * Deprecated with GML version 3.1.0. Use "posList" instead.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;
@@ -167,11 +167,11 @@ public class ArcStringType
 
     /**
      * Gets the value of the interpolation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public CurveInterpolationType getInterpolation() {
         if (interpolation == null) {
@@ -183,11 +183,11 @@ public class ArcStringType
 
     /**
      * Sets the value of the interpolation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public void setInterpolation(final CurveInterpolationType value) {
         this.interpolation = value;
@@ -195,11 +195,11 @@ public class ArcStringType
 
     /**
      * Gets the value of the numArc property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getNumArc() {
         return numArc;
@@ -207,11 +207,11 @@ public class ArcStringType
 
     /**
      * Sets the value of the numArc property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setNumArc(final Integer value) {
         this.numArc = value;

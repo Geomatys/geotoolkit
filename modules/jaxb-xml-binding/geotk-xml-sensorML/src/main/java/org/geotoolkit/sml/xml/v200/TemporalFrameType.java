@@ -26,9 +26,9 @@ import org.geotoolkit.swe.xml.v200.AbstractSWEIdentifiableType;
 
 /**
  * <p>Java class for TemporalFrameType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TemporalFrameType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import org.geotoolkit.swe.xml.v200.AbstractSWEIdentifiableType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TemporalFrameType", propOrder = {
@@ -56,11 +56,11 @@ public class TemporalFrameType
 
     /**
      * Gets the value of the origin property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOrigin() {
         return origin;
@@ -68,11 +68,11 @@ public class TemporalFrameType
 
     /**
      * Sets the value of the origin property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOrigin(String value) {
         this.origin = value;

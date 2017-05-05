@@ -26,9 +26,9 @@ import org.geotoolkit.wms.xml.AbstractOnlineResource;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -38,7 +38,7 @@ import org.geotoolkit.wms.xml.AbstractOnlineResource;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @author Cédric Briançon
  * @module
@@ -83,10 +83,10 @@ public class OnlineResource implements AbstractOnlineResource {
             this.title   = that.getTitle();
         }
     }
-    
+
     /**
      * Build an online resource with only the href attribute (most of the case).
-     * 
+     *
      * @param href The url of the resource.
      */
     public OnlineResource(final String href) {
@@ -104,7 +104,7 @@ public class OnlineResource implements AbstractOnlineResource {
         this.href = href;
         this.href = type;
     }
-    
+
     /**
      * Build a full OnlineResource object.
      */
@@ -121,7 +121,7 @@ public class OnlineResource implements AbstractOnlineResource {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      */
     @Override
     public String getType() {
@@ -134,7 +134,7 @@ public class OnlineResource implements AbstractOnlineResource {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      */
     @Override
     public String getHref() {
@@ -143,17 +143,17 @@ public class OnlineResource implements AbstractOnlineResource {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      */
     @Override
     public void setHref(final String href) {
         this.href = href;
     }
 
-    
+
     /**
      * Gets the value of the role property.
-     *     
+     *
      */
     @Override
     public String getRole() {
@@ -162,7 +162,7 @@ public class OnlineResource implements AbstractOnlineResource {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      */
     @Override
     public String getArcrole() {

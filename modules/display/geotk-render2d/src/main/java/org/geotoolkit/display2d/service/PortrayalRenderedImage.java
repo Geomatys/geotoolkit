@@ -303,7 +303,7 @@ public class PortrayalRenderedImage implements RenderedImage{
      * @return Rectangle
      */
     public Rectangle getBounds() {
-	return new Rectangle(getMinX(), getMinY(), getWidth(), getHeight());
+    return new Rectangle(getMinX(), getMinY(), getWidth(), getHeight());
     }
 
     @Override
@@ -382,7 +382,7 @@ public class PortrayalRenderedImage implements RenderedImage{
     }
 
     public WritableRaster copyData(Rectangle region, WritableRaster dstRaster) {
-        final Rectangle bounds = getBounds();	// image's bounds
+        final Rectangle bounds = getBounds();   // image's bounds
 
         if (region == null) {
             region = bounds;

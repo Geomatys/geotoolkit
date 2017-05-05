@@ -28,9 +28,9 @@ import org.geotoolkit.swe.xml.AbstractCountRange;
 
 /**
  * <p>Java class for CountRangeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CountRangeType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.swe.xml.AbstractCountRange;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CountRangeType", propOrder = {
@@ -58,21 +58,21 @@ public class CountRangeType extends AbstractSimpleComponentType implements Abstr
     private List<Integer> value;
 
     public CountRangeType() {
-        
+
     }
-    
+
     public CountRangeType(final String definition, final List<Integer> value) {
         super(null, definition, null);
         this.value = value;
     }
-    
+
     /**
      * Gets the value of the constraint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedValuesPropertyType }
-     *     
+     *
      */
     @Override
     public AllowedValuesPropertyType getConstraint() {
@@ -81,11 +81,11 @@ public class CountRangeType extends AbstractSimpleComponentType implements Abstr
 
     /**
      * Sets the value of the constraint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedValuesPropertyType }
-     *     
+     *
      */
     public void setConstraint(AllowedValuesPropertyType value) {
         this.constraint = value;
@@ -93,11 +93,11 @@ public class CountRangeType extends AbstractSimpleComponentType implements Abstr
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Integer }
-     * 
-     * 
+     *
+     *
      */
     @Override
     public List<Integer> getValue() {

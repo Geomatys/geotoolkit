@@ -383,8 +383,8 @@ public class JCRSChooser extends javax.swing.JDialog {
         but_fermer = new JButton();
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle(MessageBundle.format("crschooser_title")); 
-        jLabel1.setText(MessageBundle.format("crschooser_crs")); 
+        setTitle(MessageBundle.format("crschooser_title"));
+        jLabel1.setText(MessageBundle.format("crschooser_crs"));
         gui_jtf_crs.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 gui_jtf_crsActionPerformed(evt);
@@ -398,7 +398,7 @@ public class JCRSChooser extends javax.swing.JDialog {
 
         pan_list.setLayout(new BorderLayout());
 
-        guiForceLongitudeFirst.setText(MessageBundle.format("force_longitude_first")); 
+        guiForceLongitudeFirst.setText(MessageBundle.format("force_longitude_first"));
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -426,7 +426,7 @@ public class JCRSChooser extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab(MessageBundle.format("crschooser_list"), jPanel1); 
+        jTabbedPane1.addTab(MessageBundle.format("crschooser_list"), jPanel1);
         jScrollPane2.setViewportView(wktArea);
 
         GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
@@ -440,7 +440,7 @@ public class JCRSChooser extends javax.swing.JDialog {
             .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab(MessageBundle.format("crschooser_wkt"), jPanel2); 
+        jTabbedPane1.addTab(MessageBundle.format("crschooser_wkt"), jPanel2);
         jPanel3.setLayout(new BorderLayout());
         jPanel3.add(guiMap, BorderLayout.CENTER);
 
@@ -449,7 +449,7 @@ public class JCRSChooser extends javax.swing.JDialog {
         guiNav.setRollover(true);
         jPanel3.add(guiNav, BorderLayout.EAST);
 
-        jTabbedPane1.addTab(MessageBundle.format("area_validity"), jPanel3); 
+        jTabbedPane1.addTab(MessageBundle.format("area_validity"), jPanel3);
         but_valider.setText(MessageBundle.format("crschooser_apply"));         but_valider.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 but_valideractionAjouter(evt);

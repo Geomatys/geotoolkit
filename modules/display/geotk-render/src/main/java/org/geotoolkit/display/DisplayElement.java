@@ -28,19 +28,19 @@ import org.geotoolkit.factory.Hints;
 /**
  * Convenient class for rendering canvas and scene graphics.
  * Provides :
- * - default logger 
+ * - default logger
  * - event system
  * - hints map
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class DisplayElement {
-    
+
     /**
      * Default logger for the display module.
      */
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display");
-    
+
     /**
      * A set of rendering hints.
      */
@@ -50,7 +50,7 @@ public class DisplayElement {
      * Listeners list.
      */
     private EventListenerList listeners;
-    
+
     /**
      * No rendering hints.
      */
@@ -59,13 +59,13 @@ public class DisplayElement {
     }
 
     /**
-     * 
+     *
      * @param hints rendering hints
      */
     public DisplayElement(final Hints hints) {
         this.hints = hints;
     }
-    
+
     /**
      * Returns the logger for all messages to be logged by this object.
      *
@@ -74,10 +74,10 @@ public class DisplayElement {
     public Logger getLogger() {
         return LOGGER;
     }
-    
+
     /**
      * Get the EventListener list.
-     * 
+     *
      * @param create, set to true to force list creation if null.
      * @return Hints, can be null
      */
@@ -85,9 +85,9 @@ public class DisplayElement {
         if(create && listeners == null) listeners = new EventListenerList();
         return listeners;
     }
-    
+
     /**
-     * Adds a property change listener to the listener list. 
+     * Adds a property change listener to the listener list.
      * The listener is registered for all properties.
      *
      * @param listener The property change listener to be added
@@ -110,7 +110,7 @@ public class DisplayElement {
 
     /**
      * Fire a property change event.
-     * 
+     *
      * @param propName property name
      * @param oldValue old property value
      * @param newValue new property value
@@ -134,7 +134,7 @@ public class DisplayElement {
 
     /**
      * Get the Hints map.
-     * 
+     *
      * @param create, set to true to force map creation if null.
      * @return Hints, can be null
      */
@@ -142,7 +142,7 @@ public class DisplayElement {
         if(create && hints == null) hints = new Hints();
         return hints;
     }
-    
+
     /**
      * Returns a rendering hint. The default implementation always returns {@code null}.
      * The {@link AbstractCanvas} and other subclasses override this method in order to
@@ -172,13 +172,13 @@ public class DisplayElement {
         final Hints hints = getHints(true);
         hints.put(key, value);
     }
-    
+
     public void setRenderingHints(Hints hints){
         if(hints==null) return;
         final Hints th = getHints(true);
         th.add(hints);
     }
-    
+
     /**
      * Method that can be called when an object is no longer needed. Implementations may use
      * this method to release resources, if needed. Implementations may also implement this
@@ -187,9 +187,9 @@ public class DisplayElement {
      */
     public void dispose() {
     }
-    
+
     /**
-     * Returns a string representation of this element. 
+     * Returns a string representation of this element.
      * This method is for debugging purpose only and may changes in any future version.
      */
     @Override

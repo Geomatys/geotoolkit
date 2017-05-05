@@ -103,7 +103,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
     private static final ImageIcon ICON_VERSIONED = IconBuilder.createIcon(FontAwesomeIcons.ICON_CLOCK_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     public static final String ACTION_REF = "LayerFeaturePropertyPanel";
-    
+
     private final ListSelectionListener selectionListener = new ListSelectionListener() {
 
         @Override
@@ -155,11 +155,11 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
     public LayerFeaturePropertyPanel() {
         super(MessageBundle.format("property_feature_table"),ICON_TABLE,null,MessageBundle.format("crs"));
         initComponents();
-        
+
         JLabel label = new JLabel(MessageBundle.format("cql_text_help"));
         guiPanFilter.add(BorderLayout.NORTH, label);
         guiPanFilter.add(BorderLayout.CENTER,guiCQL);
-        
+
         tab_data.setEditable(false);
         tab_data.setColumnControlVisible(true);
         tab_data.setHorizontalScrollEnabled(true);

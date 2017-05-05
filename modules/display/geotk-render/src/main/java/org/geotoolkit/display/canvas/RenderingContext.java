@@ -45,14 +45,14 @@ import org.opengis.util.FactoryException;
  * A rendering usually implies the following transformations (names are
  * {@linkplain CoordinateReferenceSystem coordinate reference systems} and arrows
  * are {@linkplain MathTransform transforms}):
- * 
+ *
  * <p align="center">
  * &nbsp; {@code graphicCRS}    &nbsp; <img src="doc-files/right.png">
  * &nbsp; {@link #objectiveCRS} &nbsp; <img src="doc-files/right.png">
  * &nbsp; {@link #displayCRS}   &nbsp; <img src="doc-files/right.png">
  * &nbsp; {@code deviceCRS}
  * </p>
- * 
+ *
  * @module
  * @since 2.3
  * @version $Id$
@@ -88,7 +88,7 @@ public interface RenderingContext {
      * @return Display CRS
      */
     CoordinateReferenceSystem getDisplayCRS();
-    
+
     /**
      * Sets the coordinate reference system in use for rendering in {@link Graphics2D}. Invoking
      * this method do not alter the current state of any canvas or GO-2 graphic objects. It is
@@ -112,11 +112,11 @@ public interface RenderingContext {
      * Returns an affine transform between two coordinate reference systems. This method is
      * equivalents to the following pseudo-code, except for the exception to be thrown if the
      * transform is not an instance of {@link AffineTransform}.
-     * 
+     *
      * <blockquote><pre>
      * return (AffineTransform) {@link #getMathTransform getMathTransform}(sourceCRS, targetCRS);
      * </pre></blockquote>
-     * 
+     *
      * @param sourceCRS The source coordinate reference system.
      * @param targetCRS The target coordinate reference system.
      * @return An affine transform from {@code sourceCRS} to {@code targetCRS}.
@@ -140,7 +140,7 @@ public interface RenderingContext {
      *   <li><p><b>({@code graphicCRS}, {@linkplain #objectiveCRS}):</b><br>
      *       Arbitrary transform from the data CRS (used internally in a {@link GraphicPrimitive2D})
      *       to the objective CRS (set in {@link BufferedCanvas2D}).</p></li>
-     * 
+     *
      *   <li><p><b>({@link #objectiveCRS}, {@link #displayCRS}):</b><br>
      *       {@linkplain AffineTransform Affine transform} from the objective CRS in "real world"
      *       units (usually metres or degrees) to the display CRS in dots (usually 1/72 of inch).
@@ -159,10 +159,10 @@ public interface RenderingContext {
     MathTransform getMathTransform(final CoordinateReferenceSystem sourceCRS,
                                           final CoordinateReferenceSystem targetCRS)
                                           throws FactoryException;
-    
+
     /**
      * Get the canvas monitor.
-     * 
+     *
      * @return CanvasMonitor, can not be null.
      */
     CanvasMonitor getMonitor();
@@ -178,7 +178,7 @@ public interface RenderingContext {
     /**
      * Extract the elevation range from the canvas objective envelope (first vertical CRS).
      * This array is never null but it's values can be null.
-     * 
+     *
      * @return array of two dates for the vertical range, never null.
      */
     Double[] getElevationRange();

@@ -52,11 +52,11 @@ public interface CoverageReference extends DataNode {
 
     /**
      * Get the coverage description and statistics.
-     * 
+     *
      * @return CoverageDescripion, can be null
      */
     CoverageDescription getMetadata();
-    
+
     /**
      * @return true if coverage is writable
      * @throws org.apache.sis.storage.DataStoreException

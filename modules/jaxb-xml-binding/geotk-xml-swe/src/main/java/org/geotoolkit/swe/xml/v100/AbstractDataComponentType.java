@@ -31,13 +31,13 @@ import org.apache.sis.util.ComparisonMode;
 
 
 /**
- * Base type for all data components. 
- * 			This is implemented as an XML Schema complexType because it includes both element and attribute content.
- * 
+ * Base type for all data components.
+ *          This is implemented as an XML Schema complexType because it includes both element and attribute content.
+ *
  * <p>Java class for AbstractDataComponentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractDataComponentType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -91,7 +91,7 @@ public abstract class AbstractDataComponentType extends AbstractGMLType implemen
             this.fixed      = component.isFixed();
         }
     }
-    
+
     public AbstractDataComponentType(final String id, final String definition, final Boolean fixed) {
         super(id);
         if (definition != null) {

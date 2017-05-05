@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * A container for an array of surfaces. The elements are always contained in the array property, referencing geometry elements or arrays of geometry elements is not supported.
- * 
+ *
  * <p>Java class for SurfaceArrayPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SurfaceArrayPropertyType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,7 +59,7 @@ public class SurfaceArrayPropertyType {
 
     /**
      * Gets the value of the abstractSurface property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link SurfaceType }{@code >}
      * {@link JAXBElement }{@code <}{@link OrientableSurfaceType }{@code >}
@@ -68,8 +68,8 @@ public class SurfaceArrayPropertyType {
      * {@link JAXBElement }{@code <}{@link PolyhedralSurfaceType }{@code >}
      * {@link JAXBElement }{@code <}{@link PolygonType }{@code >}
      * {@link JAXBElement }{@code <}{@link TinType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends AbstractSurfaceType>> getJbAbstractSurface() {
         if (abstractSurface == null) {

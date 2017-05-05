@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for GetPortrayMapCapabilitiesResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetPortrayMapCapabilitiesResponseType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetPortrayMapCapabilitiesResponseType", propOrder = {
@@ -66,11 +66,11 @@ public class GetPortrayMapCapabilitiesResponseType extends AbstractResponseParam
 
     /**
      * Gets the value of the availableSRS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AvailableSRSType }
-     *     
+     *
      */
     public AvailableSRSType getAvailableSRS() {
         return availableSRS;
@@ -78,11 +78,11 @@ public class GetPortrayMapCapabilitiesResponseType extends AbstractResponseParam
 
     /**
      * Sets the value of the availableSRS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AvailableSRSType }
-     *     
+     *
      */
     public void setAvailableSRS(AvailableSRSType value) {
         this.availableSRS = value;
@@ -90,11 +90,11 @@ public class GetPortrayMapCapabilitiesResponseType extends AbstractResponseParam
 
     /**
      * Gets the value of the availableLayers property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AvailableLayersType }
-     *     
+     *
      */
     public AvailableLayersType getAvailableLayers() {
         return availableLayers;
@@ -102,11 +102,11 @@ public class GetPortrayMapCapabilitiesResponseType extends AbstractResponseParam
 
     /**
      * Sets the value of the availableLayers property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AvailableLayersType }
-     *     
+     *
      */
     public void setAvailableLayers(AvailableLayersType value) {
         this.availableLayers = value;
@@ -114,11 +114,11 @@ public class GetPortrayMapCapabilitiesResponseType extends AbstractResponseParam
 
     /**
      * Gets the value of the availableFormats property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AvailableFormatsType }
-     *     
+     *
      */
     public AvailableFormatsType getAvailableFormats() {
         return availableFormats;
@@ -126,11 +126,11 @@ public class GetPortrayMapCapabilitiesResponseType extends AbstractResponseParam
 
     /**
      * Sets the value of the availableFormats property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AvailableFormatsType }
-     *     
+     *
      */
     public void setAvailableFormats(AvailableFormatsType value) {
         this.availableFormats = value;
@@ -138,11 +138,11 @@ public class GetPortrayMapCapabilitiesResponseType extends AbstractResponseParam
 
     /**
      * Gets the value of the availableStyles property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AvailableStylesType }
-     *     
+     *
      */
     public AvailableStylesType getAvailableStyles() {
         return availableStyles;
@@ -150,11 +150,11 @@ public class GetPortrayMapCapabilitiesResponseType extends AbstractResponseParam
 
     /**
      * Sets the value of the availableStyles property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AvailableStylesType }
-     *     
+     *
      */
     public void setAvailableStyles(AvailableStylesType value) {
         this.availableStyles = value;

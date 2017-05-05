@@ -23,6 +23,6 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  */
 public interface SortBy {
-    
+
     List<? extends org.opengis.filter.sort.SortBy> getSortProperty();
 }

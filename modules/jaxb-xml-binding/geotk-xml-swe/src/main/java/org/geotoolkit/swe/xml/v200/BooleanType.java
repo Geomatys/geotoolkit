@@ -25,9 +25,9 @@ import org.geotoolkit.swe.xml.AbstractBoolean;
 
 /**
  * <p>Java class for BooleanType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BooleanType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import org.geotoolkit.swe.xml.AbstractBoolean;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BooleanType", propOrder = {
@@ -51,21 +51,21 @@ public class BooleanType extends AbstractSimpleComponentType implements Abstract
     private Boolean value;
 
     public BooleanType() {
-        
+
     }
-    
+
     public BooleanType(final Boolean value, final String definition) {
         super(null, definition, null);
         this.value = value;
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     @Override
     public Boolean isValue() {
@@ -74,11 +74,11 @@ public class BooleanType extends AbstractSimpleComponentType implements Abstract
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setValue(Boolean value) {
         this.value = value;

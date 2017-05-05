@@ -36,7 +36,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -52,9 +52,9 @@ public class MySQLFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory {
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
     /**
      * Parameter for database port
      */
@@ -113,10 +113,10 @@ public class MySQLFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory {
         //add versioning support
         return new MySQLFeatureStore(params, factoryId);
     }
-    
+
     @Override
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, DefaultFactoryMetadata.GEOMS_NONE);
     }
-    
+
 }

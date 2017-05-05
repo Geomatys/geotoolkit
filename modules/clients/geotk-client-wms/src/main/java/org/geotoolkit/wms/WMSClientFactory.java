@@ -102,7 +102,7 @@ public class WMSClientFactory extends AbstractClientFactory implements CoverageS
     public WebMapClient open(Map<String, ? extends Serializable> params) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     @Override
     public WebMapClient open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);

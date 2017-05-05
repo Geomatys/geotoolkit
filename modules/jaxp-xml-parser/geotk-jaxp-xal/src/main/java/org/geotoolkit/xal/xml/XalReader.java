@@ -101,7 +101,7 @@ public class XalReader extends StaxStreamReader{
 
     private final XalFactory XAL_FACTORY;
     private Xal root;
-    
+
     public XalReader() {
         this(null);
     }
@@ -141,7 +141,7 @@ public class XalReader extends StaxStreamReader{
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws XalException
@@ -185,7 +185,7 @@ public class XalReader extends StaxStreamReader{
      * @throws XMLStreamException
      * @throws XalException
      */
-    public AddressDetails readAddressDetails() 
+    public AddressDetails readAddressDetails()
             throws XMLStreamException, XalException{
 
         PostalServiceElements postalServiceElements = null;
@@ -235,7 +235,7 @@ public class XalReader extends StaxStreamReader{
 
         }
 
-        return XAL_FACTORY.createAddressDetails(postalServiceElements, 
+        return XAL_FACTORY.createAddressDetails(postalServiceElements,
                 localisation, addressType, currentStatus, validFromDate,
                 validToDate, usage, grPostal, addressDetailsKey);
     }
@@ -245,7 +245,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private PostalServiceElements readPostalServiceElements() 
+    private PostalServiceElements readPostalServiceElements()
             throws XMLStreamException{
 
         List<AddressIdentifier> addressIdentifiers = new ArrayList<AddressIdentifier>();
@@ -314,7 +314,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private GenericTypedGrPostal readGenericTypedGrPostal() 
+    private GenericTypedGrPostal readGenericTypedGrPostal()
             throws XMLStreamException{
 
         String type = reader.getAttributeValue(null, ATT_TYPE);
@@ -324,11 +324,11 @@ public class XalReader extends StaxStreamReader{
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      */
-    private SortingCode readSortingCode() 
+    private SortingCode readSortingCode()
             throws XMLStreamException{
 
         String type = reader.getAttributeValue(null, ATT_TYPE);
@@ -337,11 +337,11 @@ public class XalReader extends StaxStreamReader{
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      */
-    private AddressIdentifier readAddressIdentifier() 
+    private AddressIdentifier readAddressIdentifier()
             throws XMLStreamException{
 
         String identifierType = reader.getAttributeValue(null, ATT_IDENTIFIER_TYPE);
@@ -356,7 +356,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private AddressLines readAddressLines() 
+    private AddressLines readAddressLines()
             throws XMLStreamException{
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -403,7 +403,7 @@ public class XalReader extends StaxStreamReader{
      * @throws XMLStreamException
      * @throws XalException
      */
-    private Country readCountry() 
+    private Country readCountry()
             throws XMLStreamException, XalException{
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -454,7 +454,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private CountryNameCode readCountryNameCode() 
+    private CountryNameCode readCountryNameCode()
             throws XMLStreamException{
 
         String scheme = reader.getAttributeValue(null, ATT_SCHEME);
@@ -469,7 +469,7 @@ public class XalReader extends StaxStreamReader{
      * @throws XMLStreamException
      * @throws XalException
      */
-    private AdministrativeArea readAdministrativeArea() 
+    private AdministrativeArea readAdministrativeArea()
             throws XMLStreamException, XalException{
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -524,7 +524,7 @@ public class XalReader extends StaxStreamReader{
      * @throws XMLStreamException
      * @throws XalException
      */
-    private SubAdministrativeArea readSubAdministrativeArea() 
+    private SubAdministrativeArea readSubAdministrativeArea()
             throws XMLStreamException, XalException{
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -576,7 +576,7 @@ public class XalReader extends StaxStreamReader{
      * @throws XMLStreamException
      * @throws XalException
      */
-    private Locality readLocality() 
+    private Locality readLocality()
             throws XMLStreamException, XalException{
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -641,7 +641,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private PostBox readPostBox() 
+    private PostBox readPostBox()
             throws XMLStreamException {
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -700,7 +700,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private PostBoxNumber readPostBoxNumber() 
+    private PostBoxNumber readPostBoxNumber()
             throws XMLStreamException{
 
         GrPostal grPostal = this.readGrPostal();
@@ -713,7 +713,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private PostBoxNumberPrefix readPostBoxNumberPrefix() 
+    private PostBoxNumberPrefix readPostBoxNumberPrefix()
             throws XMLStreamException {
 
         GrPostal grPostal = this.readGrPostal();
@@ -727,7 +727,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private PostBoxNumberSuffix readPostBoxNumberSuffix() 
+    private PostBoxNumberSuffix readPostBoxNumberSuffix()
             throws XMLStreamException {
 
         GrPostal grPostal = this.readGrPostal();
@@ -741,7 +741,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private PostBoxNumberExtension readPostBoxNumberExtension() 
+    private PostBoxNumberExtension readPostBoxNumberExtension()
             throws XMLStreamException {
 
         String numberExtensionSeparator = reader.getAttributeValue(null, ATT_NUMBER_EXTENSION_SEPARATOR);
@@ -754,7 +754,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private Firm readFirm() 
+    private Firm readFirm()
             throws XMLStreamException {
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -804,7 +804,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private Department readDepartment() 
+    private Department readDepartment()
             throws XMLStreamException{
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -851,7 +851,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private MailStop readMailStop() 
+    private MailStop readMailStop()
             throws XMLStreamException {
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -895,7 +895,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private MailStopNumber readMailStopNumber() 
+    private MailStopNumber readMailStopNumber()
             throws XMLStreamException {
 
         String nameNumberSeparator = reader.getAttributeValue(null, ATT_NAME_NUMBER_SEPARATOR);
@@ -909,7 +909,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private PostalCode readPostalCode() 
+    private PostalCode readPostalCode()
             throws XMLStreamException {
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -956,7 +956,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private PostalCodeNumberExtension readPostalCodeNumberExtension() 
+    private PostalCodeNumberExtension readPostalCodeNumberExtension()
             throws XMLStreamException{
 
         String type = reader.getAttributeValue(null, ATT_TYPE);
@@ -971,7 +971,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private PostTown readPostTown() 
+    private PostTown readPostTown()
             throws XMLStreamException {
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -1016,7 +1016,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private PostTownSuffix readPostTownSuffix() 
+    private PostTownSuffix readPostTownSuffix()
             throws XMLStreamException {
 
         GrPostal grPostal = this.readGrPostal();
@@ -1030,7 +1030,7 @@ public class XalReader extends StaxStreamReader{
      * @throws XMLStreamException
      * @throws XalException
      */
-    private LargeMailUser readLargeMailUser() 
+    private LargeMailUser readLargeMailUser()
             throws XMLStreamException, XalException {
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -1042,7 +1042,7 @@ public class XalReader extends StaxStreamReader{
         Thoroughfare thoroughfare = null;
         PostalCode postalCode = null;
         String type = reader.getAttributeValue(null, ATT_TYPE);
-        
+
         boucle:
         while (reader.hasNext()) {
 
@@ -1090,7 +1090,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private BuildingName readBuildingName() 
+    private BuildingName readBuildingName()
             throws XMLStreamException{
 
         String type = reader.getAttributeValue(null, ATT_TYPE);
@@ -1106,7 +1106,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private LargeMailUserName readLargeMailUserName() 
+    private LargeMailUserName readLargeMailUserName()
             throws XMLStreamException{
 
         String type = reader.getAttributeValue(null, ATT_TYPE);
@@ -1120,7 +1120,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private LargeMailUserIdentifier readLargeMailUserIdentifier() 
+    private LargeMailUserIdentifier readLargeMailUserIdentifier()
             throws XMLStreamException{
 
         String type = reader.getAttributeValue(null, ATT_TYPE);
@@ -1136,7 +1136,7 @@ public class XalReader extends StaxStreamReader{
      * @throws XMLStreamException
      * @throws XalException
      */
-    private PostalRoute readPostalRoute() 
+    private PostalRoute readPostalRoute()
             throws XMLStreamException, XalException {
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -1186,7 +1186,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private PostalRouteNumber readPostalRouteNumber() 
+    private PostalRouteNumber readPostalRouteNumber()
             throws XMLStreamException {
 
         GrPostal grPostal = this.readGrPostal();
@@ -1200,7 +1200,7 @@ public class XalReader extends StaxStreamReader{
      * @throws XMLStreamException
      * @throws XalException
      */
-    private PostOffice readPostOffice() 
+    private PostOffice readPostOffice()
             throws XMLStreamException, XalException {
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -1257,7 +1257,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-     private PostOfficeNumber readPostOfficeNumber() 
+     private PostOfficeNumber readPostOfficeNumber()
              throws XMLStreamException {
 
         String indicator = reader.getAttributeValue(null, ATT_INDICATOR);
@@ -1274,7 +1274,7 @@ public class XalReader extends StaxStreamReader{
       * @return
       * @throws XMLStreamException
       */
-     private DependentLocalityNumber readDependentLocalityNumber() 
+     private DependentLocalityNumber readDependentLocalityNumber()
              throws XMLStreamException{
 
          GrPostal grPostal = this.readGrPostal();
@@ -1291,7 +1291,7 @@ public class XalReader extends StaxStreamReader{
       * @throws XMLStreamException
       * @throws XalException
       */
-    private DependentLocality readDependentLocality() 
+    private DependentLocality readDependentLocality()
             throws XMLStreamException, XalException {
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -1448,7 +1448,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private PremiseName readPremiseName() 
+    private PremiseName readPremiseName()
             throws XMLStreamException {
 
         String type = reader.getAttributeValue(null, ATT_TYPE);
@@ -1464,7 +1464,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private PremiseLocation readPremiseLocation() 
+    private PremiseLocation readPremiseLocation()
             throws XMLStreamException {
 
         GrPostal grPostal = this.readGrPostal();
@@ -1477,7 +1477,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private PremiseNumber readPremiseNumber() 
+    private PremiseNumber readPremiseNumber()
             throws XMLStreamException {
 
         SingleRangeEnum numberType = SingleRangeEnum.transform(
@@ -1546,7 +1546,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private PremiseNumberRangeFrom readPremiseNumberRangeFrom() 
+    private PremiseNumberRangeFrom readPremiseNumberRangeFrom()
             throws XMLStreamException {
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -1592,7 +1592,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private PremiseNumberRangeTo readPremiseNumberRangeTo() 
+    private PremiseNumberRangeTo readPremiseNumberRangeTo()
             throws XMLStreamException {
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -1638,7 +1638,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private PremiseNumberPrefix readPremiseNumberPrefix() 
+    private PremiseNumberPrefix readPremiseNumberPrefix()
             throws XMLStreamException {
 
         String numberPrefixSeparator = reader.getAttributeValue(null, ATT_NUMBER_PREFIX_SEPARATOR);
@@ -1654,7 +1654,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private PremiseNumberSuffix readPremiseNumberSuffix() 
+    private PremiseNumberSuffix readPremiseNumberSuffix()
             throws XMLStreamException {
 
         String numberSuffixSeparator = reader.getAttributeValue(null, ATT_NUMBER_SUFFIX_SEPARATOR);
@@ -1671,7 +1671,7 @@ public class XalReader extends StaxStreamReader{
      * @throws XMLStreamException
      * @throws XalException
      */
-    private SubPremise readSubPremise() 
+    private SubPremise readSubPremise()
             throws XMLStreamException, XalException {
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -1743,7 +1743,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private SubPremiseNumberPrefix readSubPremiseNumberPrefix() 
+    private SubPremiseNumberPrefix readSubPremiseNumberPrefix()
             throws XMLStreamException {
 
         String numberPrefixSeparator = reader.getAttributeValue(null, ATT_NUMBER_PREFIX_SEPARATOR);
@@ -1759,7 +1759,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private SubPremiseNumberSuffix readSubPremiseNumberSuffix() 
+    private SubPremiseNumberSuffix readSubPremiseNumberSuffix()
             throws XMLStreamException {
 
         String numberSuffixSeparator = reader.getAttributeValue(null, ATT_NUMBER_SUFFIX_SEPARATOR);
@@ -1775,7 +1775,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private SubPremiseName readSubPremiseName() 
+    private SubPremiseName readSubPremiseName()
             throws XMLStreamException {
 
         String type = reader.getAttributeValue(null, ATT_TYPE);
@@ -1792,7 +1792,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private SubPremiseLocation readSubPremiseLocation() 
+    private SubPremiseLocation readSubPremiseLocation()
             throws XMLStreamException {
 
         GrPostal grPostal = this.readGrPostal();
@@ -1805,7 +1805,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private SubPremiseNumber readSubPremiseNumber() 
+    private SubPremiseNumber readSubPremiseNumber()
             throws XMLStreamException {
 
         String premiseNumberSeparator = reader.getAttributeValue(null, ATT_PREMISE_NUMBER_SEPARATOR);
@@ -1827,7 +1827,7 @@ public class XalReader extends StaxStreamReader{
      * @throws XMLStreamException
      * @throws XalException
      */
-    private Thoroughfare readThoroughfare() 
+    private Thoroughfare readThoroughfare()
             throws XMLStreamException, XalException {
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -1915,7 +1915,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private ThoroughfareNumber readThoroughfareNumber() 
+    private ThoroughfareNumber readThoroughfareNumber()
             throws XMLStreamException {
 
         SingleRangeEnum numberType = SingleRangeEnum.transform(
@@ -1938,7 +1938,7 @@ public class XalReader extends StaxStreamReader{
      * @throws XMLStreamException
      * @throws XalException
      */
-    private ThoroughfareNumberRange readThoroughfareNumberRange() 
+    private ThoroughfareNumberRange readThoroughfareNumberRange()
             throws XMLStreamException, XalException {
 
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
@@ -1954,7 +1954,7 @@ public class XalReader extends StaxStreamReader{
         AfterBeforeTypeNameEnum numberRangeOccurrence = AfterBeforeTypeNameEnum.transform(
                 reader.getAttributeValue(null, ATT_NUMBER_RANGE_OCCURRENCE));
         GrPostal grPostal = this.readGrPostal();
-        
+
         boucle:
         while (reader.hasNext()) {
 
@@ -1994,7 +1994,7 @@ public class XalReader extends StaxStreamReader{
      * @throws XMLStreamException
      * @throws XalException
      */
-    private ThoroughfareNumberFrom readThoroughfareNumberFrom() 
+    private ThoroughfareNumberFrom readThoroughfareNumberFrom()
             throws XMLStreamException, XalException {
 
         List<Object> content = new ArrayList<Object>();
@@ -2045,7 +2045,7 @@ public class XalReader extends StaxStreamReader{
      * @throws XMLStreamException
      * @throws XalException
      */
-    private ThoroughfareNumberTo readThoroughfareNumberTo() 
+    private ThoroughfareNumberTo readThoroughfareNumberTo()
             throws XMLStreamException, XalException {
 
         List<Object> content = new ArrayList<Object>();
@@ -2095,7 +2095,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private ThoroughfareNumberPrefix readThoroughfareNumberPrefix() 
+    private ThoroughfareNumberPrefix readThoroughfareNumberPrefix()
             throws XMLStreamException {
 
         String numberPrefixSeparator = reader.getAttributeValue(null, ATT_NUMBER_PREFIX_SEPARATOR);
@@ -2111,7 +2111,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      * @throws XMLStreamException
      */
-    private ThoroughfareNumberSuffix readThoroughfareNumberSuffix() 
+    private ThoroughfareNumberSuffix readThoroughfareNumberSuffix()
             throws XMLStreamException {
 
         String numberSuffixSeparator = reader.getAttributeValue(null, ATT_NUMBER_SUFFIX_SEPARATOR);
@@ -2123,13 +2123,13 @@ public class XalReader extends StaxStreamReader{
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      */
-    private DependentThoroughfare readDependentThoroughfare() 
+    private DependentThoroughfare readDependentThoroughfare()
             throws XMLStreamException {
-        
+
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
         GenericTypedGrPostal thoroughfarePreDirection = null;
         GenericTypedGrPostal thoroughfareLeadingType = null;

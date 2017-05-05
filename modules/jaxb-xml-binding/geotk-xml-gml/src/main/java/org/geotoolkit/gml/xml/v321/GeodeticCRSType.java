@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * gml:GeodeticCRS is a coordinate reference system based on a geodetic datum.
- * 
+ *
  * <p>Java class for GeodeticCRSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeodeticCRSType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
@@ -73,12 +73,12 @@ public class GeodeticCRSType
 
     /**
      * Gets the value of the ellipsoidalCSProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link EllipsoidalCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link EllipsoidalCSPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<EllipsoidalCSPropertyType> getEllipsoidalCSProperty() {
         return ellipsoidalCSProperty;
@@ -86,12 +86,12 @@ public class GeodeticCRSType
 
     /**
      * Sets the value of the ellipsoidalCSProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link EllipsoidalCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link EllipsoidalCSPropertyType }{@code >}
-     *     
+     *
      */
     public void setEllipsoidalCSProperty(JAXBElement<EllipsoidalCSPropertyType> value) {
         this.ellipsoidalCSProperty = ((JAXBElement<EllipsoidalCSPropertyType> ) value);
@@ -99,12 +99,12 @@ public class GeodeticCRSType
 
     /**
      * Gets the value of the cartesianCSProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link CartesianCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CartesianCSPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<CartesianCSPropertyType> getCartesianCSProperty() {
         return cartesianCSProperty;
@@ -112,12 +112,12 @@ public class GeodeticCRSType
 
     /**
      * Sets the value of the cartesianCSProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link CartesianCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CartesianCSPropertyType }{@code >}
-     *     
+     *
      */
     public void setCartesianCSProperty(JAXBElement<CartesianCSPropertyType> value) {
         this.cartesianCSProperty = ((JAXBElement<CartesianCSPropertyType> ) value);
@@ -125,12 +125,12 @@ public class GeodeticCRSType
 
     /**
      * Gets the value of the sphericalCSProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link SphericalCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SphericalCSPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<SphericalCSPropertyType> getSphericalCSProperty() {
         return sphericalCSProperty;
@@ -138,12 +138,12 @@ public class GeodeticCRSType
 
     /**
      * Sets the value of the sphericalCSProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link SphericalCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SphericalCSPropertyType }{@code >}
-     *     
+     *
      */
     public void setSphericalCSProperty(JAXBElement<SphericalCSPropertyType> value) {
         this.sphericalCSProperty = ((JAXBElement<SphericalCSPropertyType> ) value);
@@ -151,12 +151,12 @@ public class GeodeticCRSType
 
     /**
      * Gets the value of the geodeticDatumProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link GeodeticDatumPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link GeodeticDatumPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<GeodeticDatumPropertyType> getGeodeticDatumProperty() {
         return geodeticDatumProperty;
@@ -164,12 +164,12 @@ public class GeodeticCRSType
 
     /**
      * Sets the value of the geodeticDatumProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link GeodeticDatumPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link GeodeticDatumPropertyType }{@code >}
-     *     
+     *
      */
     public void setGeodeticDatumProperty(JAXBElement<GeodeticDatumPropertyType> value) {
         this.geodeticDatumProperty = ((JAXBElement<GeodeticDatumPropertyType> ) value);

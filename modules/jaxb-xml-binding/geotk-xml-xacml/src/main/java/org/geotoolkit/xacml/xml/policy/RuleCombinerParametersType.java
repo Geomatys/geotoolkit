@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for RuleCombinerParametersType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RuleCombinerParametersType">
  *   &lt;complexContent>
@@ -35,8 +35,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -48,7 +48,7 @@ public class RuleCombinerParametersType extends CombinerParametersType {
 
    /**
     * Gets the value of the ruleIdRef property.
-    * 
+    *
     */
    public String getRuleIdRef() {
       return ruleIdRef;

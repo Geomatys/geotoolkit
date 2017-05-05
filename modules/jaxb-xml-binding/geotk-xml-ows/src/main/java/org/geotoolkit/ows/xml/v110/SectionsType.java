@@ -26,12 +26,12 @@ import org.geotoolkit.ows.xml.Sections;
 
 
 /**
- * Unordered list of zero or more names of requested sections in complete service metadata document. Each Section value shall contain an allowed section name as specified by each OWS specification. See Sections parameter subclause for more information.  
- * 
+ * Unordered list of zero or more names of requested sections in complete service metadata document. Each Section value shall contain an allowed section name as specified by each OWS specification. See Sections parameter subclause for more information.
+ *
  * <p>Java class for SectionsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SectionsType">
  *   &lt;complexContent>
@@ -43,7 +43,7 @@ import org.geotoolkit.ows.xml.Sections;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -55,7 +55,7 @@ public class SectionsType implements Sections {
 
     @XmlElement(name = "Section")
     private List<String> section = new ArrayList<>();
-    
+
     @XmlTransient
     private static final List<String> existingSections200 = new ArrayList<>(6);
     static {
@@ -66,7 +66,7 @@ public class SectionsType implements Sections {
         existingSections200.add("Filter_Capabilities");
         existingSections200.add("All");
     }
-    
+
     @XmlTransient
     private static final List<String> existingSections111 = new ArrayList<>(6);
     static {
@@ -77,7 +77,7 @@ public class SectionsType implements Sections {
         existingSections111.add("Filter_Capabilities");
         existingSections111.add("All");
     }
-    
+
     @XmlTransient
     private static final List<String> existingSections100 = new ArrayList<>(4);
     static {
@@ -92,7 +92,7 @@ public class SectionsType implements Sections {
      */
     SectionsType(){
     }
-    
+
     /**
      * Build a new list of Section.
      */
@@ -134,19 +134,19 @@ public class SectionsType implements Sections {
         }
         return false;
     }
-    
+
      /**
      * Add a new section to the list.
-     * 
+     *
      * @param section a new section.
      */
     @Override
     public void add(final String section) {
         this.section.add(section);
     }
-    
+
     /**
-     * Return a List of all the existing sections. 
+     * Return a List of all the existing sections.
      */
     public static List<String> getExistingSections(final String v) {
         if (v.equals("1.0.0")) {
@@ -159,7 +159,7 @@ public class SectionsType implements Sections {
             return null;
         }
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */

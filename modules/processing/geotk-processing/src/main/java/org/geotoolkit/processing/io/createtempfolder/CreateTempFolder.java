@@ -47,20 +47,20 @@ public class CreateTempFolder extends AbstractProcess {
         fireProcessStarted("Starting create temporary folder");
 
         final String prefix = getOrCreate(PREFIX_IN, inputParameters).stringValue();
-        
+
         final File file;
         try {
-            file = File.createTempFile(prefix, "");            
+            file = File.createTempFile(prefix, "");
             file.delete();
             file.mkdirs();
 
             getOrCreate(FILE_OUT, outputParameters).setValue(file.toURI().toURL());
-            
+
         } catch (IOException ex) {
             fireProcessFailed("Failed creating temp folder", ex);
             return;
         }
-        
+
         fireProcessCompleted("Temporay folder created.");
     }
 

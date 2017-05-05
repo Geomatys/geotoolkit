@@ -37,6 +37,9 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.sis.internal.jaxb.gco.GO_GenericName;
+import org.apache.sis.metadata.AbstractMetadata;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.jaxb.feature.catalog.FeatureCatalogueAdapter;
 import org.opengis.util.LocalName;
 import org.opengis.feature.catalog.Constraint;
@@ -99,7 +102,7 @@ import org.opengis.feature.catalog.PropertyType;
     FeatureAssociationImpl.class
 })
 @XmlRootElement(name = "FC_FeatureType")
-public class FeatureTypeImpl implements FeatureType, Referenceable {
+public class FeatureTypeImpl extends AbstractMetadata implements FeatureType, Referenceable {
 
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -180,6 +183,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     /**
      * Gets the value of the typeName property.
      */
+    @Override
     public LocalName getTypeName() {
         return typeName;
     }
@@ -195,6 +199,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
      * Gets the value of the definition property.
      *
      */
+    @Override
     public String getDefinition() {
         return definition;
     }
@@ -210,6 +215,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
      * Gets the value of the code property.
      *
      */
+    @Override
     public String getCode() {
         return code;
     }
@@ -224,6 +230,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     /**
      * Gets the value of the isAbstract property.
      */
+    @Override
     public Boolean getIsAbstract() {
         return isAbstract;
     }
@@ -239,16 +246,17 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
      * Gets the value of the aliases property.
      *
      */
+    @Override
     public List<LocalName> getAliases() {
         if (aliases == null) {
-            aliases = new ArrayList<LocalName>();
+            aliases = new ArrayList<>();
         }
         return aliases;
     }
 
     public void setAliases(final LocalName alias) {
         if (aliases == null) {
-            aliases = new ArrayList<LocalName>();
+            aliases = new ArrayList<>();
         }
         this.aliases.add(alias);
     }
@@ -260,16 +268,17 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     /**
      * Gets the value of the inheritsFrom property.
      */
+    @Override
     public List<InheritanceRelation> getInheritsFrom() {
         if (inheritsFrom == null) {
-            inheritsFrom = new ArrayList<InheritanceRelation>();
+            inheritsFrom = new ArrayList<>();
         }
         return this.inheritsFrom;
     }
 
     public void setInheritsFrom(final InheritanceRelation inheritsFrom) {
         if (this.inheritsFrom == null) {
-            this.inheritsFrom = new ArrayList<InheritanceRelation>();
+            this.inheritsFrom = new ArrayList<>();
         }
         this.inheritsFrom.add(inheritsFrom);
     }
@@ -281,16 +290,17 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     /**
      * Gets the value of the inheritsTo property.
      */
+    @Override
     public List<InheritanceRelation> getInheritsTo() {
         if (inheritsTo == null) {
-            inheritsTo = new ArrayList<InheritanceRelation>();
+            inheritsTo = new ArrayList<>();
         }
         return this.inheritsTo;
     }
 
     public void setInheritsTo(final InheritanceRelation inheritsTo) {
         if (this.inheritsTo == null) {
-            this.inheritsTo = new ArrayList<InheritanceRelation>();
+            this.inheritsTo = new ArrayList<>();
         }
         this.inheritsTo.add(inheritsTo);
     }
@@ -302,6 +312,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     /**
      * Gets the value of the featureCatalogue property.
      */
+    @Override
     public FeatureCatalogue getFeatureCatalogue() {
         return featureCatalogue;
     }
@@ -317,23 +328,24 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
      * Gets the value of the carrierOfCharacteristics property.
      *
      */
+    @Override
     public List<PropertyType> getCarrierOfCharacteristics() {
         if (carrierOfCharacteristics == null) {
-            carrierOfCharacteristics = new ArrayList<PropertyType>();
+            carrierOfCharacteristics = new ArrayList<>();
         }
         return this.carrierOfCharacteristics;
     }
 
     public void setCarrierOfCharacteristics(final PropertyType carrierOfCharacteristics) {
         if (this.carrierOfCharacteristics == null) {
-            this.carrierOfCharacteristics = new ArrayList<PropertyType>();
+            this.carrierOfCharacteristics = new ArrayList<>();
         }
         this.carrierOfCharacteristics.add(carrierOfCharacteristics);
     }
 
     public void setCarrierOfCharacteristics(final FeatureAttribute carrierOfCharacteristics) {
         if (this.carrierOfCharacteristics == null) {
-            this.carrierOfCharacteristics = new ArrayList<PropertyType>();
+            this.carrierOfCharacteristics = new ArrayList<>();
         }
         this.carrierOfCharacteristics.add(carrierOfCharacteristics);
     }
@@ -346,16 +358,17 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
      * Gets the value of the constrainedBy property.
      *
      */
+    @Override
     public List<Constraint> getConstrainedBy() {
         if (constrainedBy == null) {
-            constrainedBy = new ArrayList<Constraint>();
+            constrainedBy = new ArrayList<>();
         }
         return this.constrainedBy;
     }
 
     public void setConstrainedBy(final Constraint constrainedBy) {
         if (this.constrainedBy == null) {
-            this.constrainedBy = new ArrayList<Constraint>();
+            this.constrainedBy = new ArrayList<>();
         }
         this.constrainedBy.add(constrainedBy);
     }
@@ -368,6 +381,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
      * Gets the value of the definitionReference property.
      *
      */
+    @Override
     public DefinitionReference getDefinitionReference() {
         return definitionReference;
     }
@@ -380,6 +394,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         this.definitionReference = value;
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -398,11 +413,13 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
      /**
      * get the current feature in reference mode
      */
+    @Override
     public boolean isReference() {
         return isReference;
     }
 
-    public FeatureTypeImpl getReference() {
+    @Override
+    public FeatureTypeImpl getReferenceableObject() {
         FeatureTypeImpl reference = new FeatureTypeImpl(this);
         reference.setReference(true);
         return reference;
@@ -415,7 +432,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
      */
     private void beforeMarshal(final Marshaller marshaller) {
         if (rootElement) {
-            beforeMarshal(new HashMap<String, Referenceable>());
+            beforeMarshal(new HashMap<>());
         }
     }
 
@@ -425,12 +442,12 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         }
         rootElement = false;
 
-        List<InheritanceRelation> fromReplacement = new ArrayList<InheritanceRelation>();
+        List<InheritanceRelation> fromReplacement = new ArrayList<>();
         for (InheritanceRelation in: getInheritsFrom()) {
             InheritanceRelationImpl inf = (InheritanceRelationImpl) in;
 
             if (alreadySee.get(inf.getId()) != null) {
-                fromReplacement.add(inf.getReference());
+                fromReplacement.add(inf.getReferenceableObject());
             } else {
                 alreadySee = inf.beforeMarshal(alreadySee);
                 fromReplacement.add(inf);
@@ -438,12 +455,12 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         }
         inheritsFrom = fromReplacement;
 
-        List<InheritanceRelation> toReplacement = new ArrayList<InheritanceRelation>();
+        List<InheritanceRelation> toReplacement = new ArrayList<>();
         for (InheritanceRelation in: getInheritsTo()) {
             InheritanceRelationImpl inf = (InheritanceRelationImpl) in;
 
             if (alreadySee.get(inf.getId()) != null) {
-                toReplacement.add(inf.getReference());
+                toReplacement.add(inf.getReferenceableObject());
             } else {
                 alreadySee = inf.beforeMarshal(alreadySee);
                 toReplacement.add(inf);
@@ -453,18 +470,18 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
 
         if (featureCatalogue != null) {
             if (alreadySee.get(featureCatalogue.getId()) != null) {
-                featureCatalogue = ((FeatureCatalogueImpl)featureCatalogue).getReference();
+                featureCatalogue = ((FeatureCatalogueImpl)featureCatalogue).getReferenceableObject();
             } else {
                 alreadySee = ((FeatureCatalogueImpl)featureCatalogue).beforeMarshal(alreadySee);
             }
         }
 
-        List<PropertyType> replacement = new ArrayList<PropertyType>();
+        List<PropertyType> replacement = new ArrayList<>();
         for (PropertyType f: getCarrierOfCharacteristics()) {
             PropertyTypeImpl p = (PropertyTypeImpl) f;
 
             if (alreadySee.get(p.getId()) != null) {
-                replacement.add(p.getReference());
+                replacement.add(p.getReferenceableObject());
             } else {
                 alreadySee = p.beforeMarshal(alreadySee);
                 replacement.add(p);
@@ -540,7 +557,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
@@ -601,5 +618,10 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         hash = 61 * hash + (this.typeName != null ? this.typeName.hashCode() : 0);
         hash = 61 * hash + (this.code     != null ? this.code.hashCode()     : 0);
         return hash;
+    }
+
+    @Override
+    public MetadataStandard getStandard() {
+        return FeatureCatalogueStandard.ISO_19110;
     }
 }

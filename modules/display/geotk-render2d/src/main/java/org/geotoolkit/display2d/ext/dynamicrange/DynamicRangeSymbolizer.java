@@ -64,7 +64,7 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
     private List<DRChannel> channels;
     @XmlElement(name = "Geometry")
     protected String geometry;
-    
+
 
     public List<DRChannel> getChannels() {
         if(channels==null){

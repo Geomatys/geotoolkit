@@ -26,14 +26,14 @@ import org.geotoolkit.csw.xml.DescribeRecordResponse;
 
 
 /**
- * 
+ *
  * The response contains a list of matching schema components in the requested schema language.
- *          
- * 
+ *
+ *
  * <p>Java class for DescribeRecordResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DescribeRecordResponseType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.csw.xml.DescribeRecordResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,10 +81,10 @@ public class DescribeRecordResponseType implements DescribeRecordResponse {
     public DescribeRecordResponseType(final List<SchemaComponentType> schemaComponent) {
         this.schemaComponent = schemaComponent;
     }
-    
+
     /**
      * Gets the value of the schemaComponent property.
-     * 
+     *
      */
     public List<SchemaComponentType> getSchemaComponent() {
         if (schemaComponent == null) {

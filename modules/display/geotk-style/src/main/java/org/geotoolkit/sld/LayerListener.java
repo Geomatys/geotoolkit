@@ -29,7 +29,7 @@ import org.opengis.sld.Constraint;
 
 /**
  * Listener for user layer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -39,12 +39,12 @@ public interface LayerListener extends PropertyChangeListener{
      * Called when a change occurs in the living style collection.
      */
     void styleChange(CollectionChangeEvent<MutableLayerStyle> event);
-    
+
     /**
      * Called when a constraint change.
      */
     void constraintChange(CollectionChangeEvent<Constraint> event);
-    
+
     /**
      * Weak SLD listener. Use it when you are not
      * sure that the listener will be correctly removed by your class.
@@ -117,5 +117,5 @@ public interface LayerListener extends PropertyChangeListener{
         }
 
     }
-    
+
 }

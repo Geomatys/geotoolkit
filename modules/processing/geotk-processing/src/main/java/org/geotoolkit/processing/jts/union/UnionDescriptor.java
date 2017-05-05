@@ -33,10 +33,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class UnionDescriptor extends AbstractProcessDescriptor{
-        
+
     /**Process name : union */
     public static final String NAME = "jts:union";
-    
+
     /**
      * Input parameters
      */
@@ -50,10 +50,10 @@ public class UnionDescriptor extends AbstractProcessDescriptor{
             .setRemarks("Geometry JTS")
             .setRequired(true)
             .create(Geometry.class, null);
-    
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(GEOM1,GEOM2);
-    
+
     /**
      * OutputParameters
      */
@@ -62,7 +62,7 @@ public class UnionDescriptor extends AbstractProcessDescriptor{
             .setRemarks("The union geometry result")
             .setRequired(true)
             .create(Geometry.class, null);
-    
+
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_GEOM);
 
@@ -80,5 +80,5 @@ public class UnionDescriptor extends AbstractProcessDescriptor{
     public Process createProcess(final ParameterValueGroup input) {
         return new UnionProcess(input);
     }
-    
+
 }

@@ -23,8 +23,8 @@ import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
  * @author Guilhem Legal (Geomatys)
  */
 public interface Capabilities extends AbstractCapabilitiesBase {
- 
+
     Contents getContents();
-    
+
     FilterCapabilities getFilterCapabilities();
 }

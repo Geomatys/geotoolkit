@@ -35,9 +35,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -103,8 +103,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -136,25 +136,25 @@ public class PostalCode {
 
     /**
      * Gets the value of the addressLine property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the addressLine property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAddressLine().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AddressLine }
-     * 
-     * 
+     *
+     *
      */
     public List<AddressLine> getAddressLine() {
         if (addressLine == null) {
@@ -165,25 +165,25 @@ public class PostalCode {
 
     /**
      * Gets the value of the postalCodeNumber property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the postalCodeNumber property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPostalCodeNumber().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link PostalCode.PostalCodeNumber }
-     * 
-     * 
+     *
+     *
      */
     public List<PostalCode.PostalCodeNumber> getPostalCodeNumber() {
         if (postalCodeNumber == null) {
@@ -194,25 +194,25 @@ public class PostalCode {
 
     /**
      * Gets the value of the postalCodeNumberExtension property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the postalCodeNumberExtension property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPostalCodeNumberExtension().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link PostalCode.PostalCodeNumberExtension }
-     * 
-     * 
+     *
+     *
      */
     public List<PostalCode.PostalCodeNumberExtension> getPostalCodeNumberExtension() {
         if (postalCodeNumberExtension == null) {
@@ -223,11 +223,11 @@ public class PostalCode {
 
     /**
      * Gets the value of the postTown property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PostalCode.PostTown }
-     *     
+     *
      */
     public PostalCode.PostTown getPostTown() {
         return postTown;
@@ -235,11 +235,11 @@ public class PostalCode {
 
     /**
      * Sets the value of the postTown property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PostalCode.PostTown }
-     *     
+     *
      */
     public void setPostTown(final PostalCode.PostTown value) {
         this.postTown = value;
@@ -247,25 +247,25 @@ public class PostalCode {
 
     /**
      * Gets the value of the any property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the any property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAny().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getAny() {
         if (any == null) {
@@ -276,11 +276,11 @@ public class PostalCode {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -288,11 +288,11 @@ public class PostalCode {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -300,15 +300,15 @@ public class PostalCode {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * <p>
-     * the map is keyed by the name of the attribute and 
+     * the map is keyed by the name of the attribute and
      * the value is the string value of the attribute.
-     * 
+     *
      * the map returned by this method is live, and you can add new attribute
      * by updating the map directly. Because of this design, there's no setter.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */
@@ -319,9 +319,9 @@ public class PostalCode {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -332,8 +332,8 @@ public class PostalCode {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -354,11 +354,11 @@ public class PostalCode {
 
         /**
          * Gets the value of the content property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getContent() {
             return content;
@@ -366,11 +366,11 @@ public class PostalCode {
 
         /**
          * Sets the value of the content property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setContent(final String value) {
             this.content = value;
@@ -378,11 +378,11 @@ public class PostalCode {
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
             return type;
@@ -390,11 +390,11 @@ public class PostalCode {
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -402,11 +402,11 @@ public class PostalCode {
 
         /**
          * Gets the value of the code property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getCode() {
             return code;
@@ -414,11 +414,11 @@ public class PostalCode {
 
         /**
          * Sets the value of the code property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setCode(final String value) {
             this.code = value;
@@ -426,15 +426,15 @@ public class PostalCode {
 
         /**
          * Gets a map that contains attributes that aren't bound to any typed property on this class.
-         * 
+         *
          * <p>
-         * the map is keyed by the name of the attribute and 
+         * the map is keyed by the name of the attribute and
          * the value is the string value of the attribute.
-         * 
+         *
          * the map returned by this method is live, and you can add new attribute
          * by updating the map directly. Because of this design, there's no setter.
-         * 
-         * 
+         *
+         *
          * @return
          *     always non-null
          */
@@ -447,9 +447,9 @@ public class PostalCode {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -461,8 +461,8 @@ public class PostalCode {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -486,11 +486,11 @@ public class PostalCode {
 
         /**
          * Gets the value of the content property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getContent() {
             return content;
@@ -498,11 +498,11 @@ public class PostalCode {
 
         /**
          * Sets the value of the content property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setContent(final String value) {
             this.content = value;
@@ -510,11 +510,11 @@ public class PostalCode {
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
             return type;
@@ -522,11 +522,11 @@ public class PostalCode {
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -534,11 +534,11 @@ public class PostalCode {
 
         /**
          * Gets the value of the numberExtensionSeparator property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getNumberExtensionSeparator() {
             return numberExtensionSeparator;
@@ -546,11 +546,11 @@ public class PostalCode {
 
         /**
          * Sets the value of the numberExtensionSeparator property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setNumberExtensionSeparator(final String value) {
             this.numberExtensionSeparator = value;
@@ -558,11 +558,11 @@ public class PostalCode {
 
         /**
          * Gets the value of the code property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getCode() {
             return code;
@@ -570,11 +570,11 @@ public class PostalCode {
 
         /**
          * Sets the value of the code property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setCode(final String value) {
             this.code = value;
@@ -582,15 +582,15 @@ public class PostalCode {
 
         /**
          * Gets a map that contains attributes that aren't bound to any typed property on this class.
-         * 
+         *
          * <p>
-         * the map is keyed by the name of the attribute and 
+         * the map is keyed by the name of the attribute and
          * the value is the string value of the attribute.
-         * 
+         *
          * the map returned by this method is live, and you can add new attribute
          * by updating the map directly. Because of this design, there's no setter.
-         * 
-         * 
+         *
+         *
          * @return
          *     always non-null
          */
@@ -603,9 +603,9 @@ public class PostalCode {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -637,8 +637,8 @@ public class PostalCode {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -662,25 +662,25 @@ public class PostalCode {
 
         /**
          * Gets the value of the addressLine property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the addressLine property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getAddressLine().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link AddressLine }
-         * 
-         * 
+         *
+         *
          */
         public List<AddressLine> getAddressLine() {
             if (addressLine == null) {
@@ -691,25 +691,25 @@ public class PostalCode {
 
         /**
          * Gets the value of the postTownName property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the postTownName property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getPostTownName().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link PostalCode.PostTown.PostTownName }
-         * 
-         * 
+         *
+         *
          */
         public List<PostalCode.PostTown.PostTownName> getPostTownName() {
             if (postTownName == null) {
@@ -720,11 +720,11 @@ public class PostalCode {
 
         /**
          * Gets the value of the postTownSuffix property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link PostalCode.PostTown.PostTownSuffix }
-         *     
+         *
          */
         public PostalCode.PostTown.PostTownSuffix getPostTownSuffix() {
             return postTownSuffix;
@@ -732,11 +732,11 @@ public class PostalCode {
 
         /**
          * Sets the value of the postTownSuffix property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link PostalCode.PostTown.PostTownSuffix }
-         *     
+         *
          */
         public void setPostTownSuffix(final PostalCode.PostTown.PostTownSuffix value) {
             this.postTownSuffix = value;
@@ -744,11 +744,11 @@ public class PostalCode {
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
             return type;
@@ -756,11 +756,11 @@ public class PostalCode {
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -768,15 +768,15 @@ public class PostalCode {
 
         /**
          * Gets a map that contains attributes that aren't bound to any typed property on this class.
-         * 
+         *
          * <p>
-         * the map is keyed by the name of the attribute and 
+         * the map is keyed by the name of the attribute and
          * the value is the string value of the attribute.
-         * 
+         *
          * the map returned by this method is live, and you can add new attribute
          * by updating the map directly. Because of this design, there's no setter.
-         * 
-         * 
+         *
+         *
          * @return
          *     always non-null
          */
@@ -787,9 +787,9 @@ public class PostalCode {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -800,8 +800,8 @@ public class PostalCode {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -822,11 +822,11 @@ public class PostalCode {
 
             /**
              * Gets the value of the content property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getContent() {
                 return content;
@@ -834,11 +834,11 @@ public class PostalCode {
 
             /**
              * Sets the value of the content property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setContent(final String value) {
                 this.content = value;
@@ -846,11 +846,11 @@ public class PostalCode {
 
             /**
              * Gets the value of the type property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getType() {
                 return type;
@@ -858,11 +858,11 @@ public class PostalCode {
 
             /**
              * Sets the value of the type property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setType(final String value) {
                 this.type = value;
@@ -870,11 +870,11 @@ public class PostalCode {
 
             /**
              * Gets the value of the code property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getCode() {
                 return code;
@@ -882,11 +882,11 @@ public class PostalCode {
 
             /**
              * Sets the value of the code property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setCode(final String value) {
                 this.code = value;
@@ -894,15 +894,15 @@ public class PostalCode {
 
             /**
              * Gets a map that contains attributes that aren't bound to any typed property on this class.
-             * 
+             *
              * <p>
-             * the map is keyed by the name of the attribute and 
+             * the map is keyed by the name of the attribute and
              * the value is the string value of the attribute.
-             * 
+             *
              * the map returned by this method is live, and you can add new attribute
              * by updating the map directly. Because of this design, there's no setter.
-             * 
-             * 
+             *
+             *
              * @return
              *     always non-null
              */
@@ -915,9 +915,9 @@ public class PostalCode {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -927,8 +927,8 @@ public class PostalCode {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -946,11 +946,11 @@ public class PostalCode {
 
             /**
              * Gets the value of the content property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getContent() {
                 return content;
@@ -958,11 +958,11 @@ public class PostalCode {
 
             /**
              * Sets the value of the content property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setContent(final String value) {
                 this.content = value;
@@ -970,11 +970,11 @@ public class PostalCode {
 
             /**
              * Gets the value of the code property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getCode() {
                 return code;
@@ -982,11 +982,11 @@ public class PostalCode {
 
             /**
              * Sets the value of the code property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setCode(final String value) {
                 this.code = value;
@@ -994,15 +994,15 @@ public class PostalCode {
 
             /**
              * Gets a map that contains attributes that aren't bound to any typed property on this class.
-             * 
+             *
              * <p>
-             * the map is keyed by the name of the attribute and 
+             * the map is keyed by the name of the attribute and
              * the value is the string value of the attribute.
-             * 
+             *
              * the map returned by this method is live, and you can add new attribute
              * by updating the map directly. Because of this design, there's no setter.
-             * 
-             * 
+             *
+             *
              * @return
              *     always non-null
              */

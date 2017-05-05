@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
@@ -48,7 +48,7 @@ import org.geotoolkit.test.TestData;
  * @tutorial http://www.geotoolkit.org/display/GEOT/5.8+Test+Data
  */
 public final class ShapeTestData {
-        
+
     /**
      * Do not allow instantiation of this class.
      */

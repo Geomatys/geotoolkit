@@ -14,9 +14,9 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Quentin Boileau (Geomatys)
  */
 public class ParameterCreationDemo {
-    
+
     public static void main(String[] args) {
-        
+
         final ParameterDescriptorGroup descGroup =
                 ParametersExt.createParameterDescriptorGroup("group", null, 1, 1, new ArrayList<GeneralParameterDescriptor>());
         final JAttributeEditor editors = new JAttributeEditor();

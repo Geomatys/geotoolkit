@@ -44,7 +44,7 @@ import org.geotoolkit.swe.xml.XmlBlock;
 })
 
 public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
-    
+
     /**
      * Decribe the data encoding.
      */
@@ -53,10 +53,10 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
         @XmlElementRef(name = "TextBlock", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
     })
     private JAXBElement<? extends AbstractEncodingType> encoding;
-    
+
     @XmlTransient
     private JAXBElement<? extends AbstractEncodingType> hiddenEncoding;
-    
+
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
     private String remoteSchema;
@@ -80,12 +80,12 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
 
     @XmlTransient
     private static ObjectFactory sweFactory = new ObjectFactory();
-    
+
     /**
      * An empty constructor used by JAXB
      */
     AbstractEncodingPropertyType() {
-        
+
     }
 
     public AbstractEncodingPropertyType(final AbstractEncodingProperty enc) {
@@ -132,13 +132,13 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
             }
         }
    }
-    
-    
+
+
     /**
      * Build a new Abstract encoding Property.
      */
     public AbstractEncodingPropertyType(final AbstractEncodingType encoding) {
-        
+
         if (encoding instanceof TextBlockType) {
             this.encoding = sweFactory.createTextBlock((TextBlockType)encoding);
         } else if (encoding instanceof MultiplexedStreamFormatType) {
@@ -153,12 +153,12 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
             throw new IllegalArgumentException("only TextBlock are allowed");
         }
     }
-    
+
     /**
      * clone Abstract encoding Property.
      */
     public AbstractEncodingPropertyType(final AbstractEncodingPropertyType clone) {
-        
+
         this.actuate        = clone.actuate;
         this.arcrole        = clone.arcrole;
         if (clone.encoding != null) {
@@ -190,9 +190,9 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
         this.show           = clone.show;
         this.title          = clone.title;
         this.type           = clone.type;
-        
+
     }
-    
+
     @Override
     public void setToHref() {
         if (encoding != null) {
@@ -201,7 +201,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
             encoding = null;
         }
     }
-    
+
     /**
      * Gets the value of the encoding property.
      */
@@ -246,7 +246,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     public String getRole() {
         return role;
     }
-    
+
     /**
      * Gets the value of the arcrole property.
      */
@@ -317,7 +317,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
         return false;
     }
 
-    
+
     @Override
     public int hashCode() {
         int hash = 5;
@@ -337,7 +337,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     /**
      * Retourne une representation de l'objet.
      */
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -367,5 +367,5 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
         }
         return s.toString();
     }
-    
+
 }

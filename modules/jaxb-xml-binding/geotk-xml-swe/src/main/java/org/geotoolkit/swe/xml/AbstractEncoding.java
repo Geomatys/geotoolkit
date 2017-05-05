@@ -23,10 +23,10 @@ package org.geotoolkit.swe.xml;
  * @module
  */
 public interface AbstractEncoding {
-    
+
     /**
      * The identifier of the encoding
      */
     String getId();
-       
+
 }

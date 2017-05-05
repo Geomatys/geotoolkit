@@ -32,9 +32,9 @@ import org.geotoolkit.swe.xml.AbstractQualityProperty;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.swe.xml.AbstractQualityProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,9 +77,9 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
      * Empty constructor used by JAXB.
      */
     public Count() {
-        
+
     }
-    
+
     public Count(final AbstractCount q) {
         super(q);
         if (q != null) {
@@ -99,14 +99,14 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
             }
         }
     }
-    
+
     public Count(final int value) {
         this.value = value;
     }
 
     /**
      * Gets the value of the constraint property.
-     * 
+     *
      */
     @Override
     public AllowedValuesPropertyType getConstraint() {
@@ -169,7 +169,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
 
     /**
      * Sets the value of the referenceFrame property.
-     * 
+     *
      */
     public void setReferenceFrame(final String value) {
         this.referenceFrame = value;

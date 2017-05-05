@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ImageDatumType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ImageDatumType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
@@ -54,11 +54,11 @@ public class ImageDatumType extends AbstractDatumType {
 
     /**
      * Gets the value of the pixelInCell property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeWithAuthorityType }
-     *     
+     *
      */
     public CodeWithAuthorityType getPixelInCell() {
         return pixelInCell;
@@ -66,11 +66,11 @@ public class ImageDatumType extends AbstractDatumType {
 
     /**
      * Sets the value of the pixelInCell property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeWithAuthorityType }
-     *     
+     *
      */
     public void setPixelInCell(CodeWithAuthorityType value) {
         this.pixelInCell = value;

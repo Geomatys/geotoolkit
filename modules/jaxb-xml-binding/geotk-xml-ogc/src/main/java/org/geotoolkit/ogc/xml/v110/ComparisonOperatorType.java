@@ -23,7 +23,7 @@ import org.opengis.filter.capability.Operator;
 
 /**
  * <p>Java class for ComparisonOperatorType.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
@@ -41,7 +41,7 @@ import org.opengis.filter.capability.Operator;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlEnum
 public enum ComparisonOperatorType implements Operator {
@@ -85,7 +85,7 @@ public enum ComparisonOperatorType implements Operator {
 
     /**
      * Implements Operator interface.
-     * 
+     *
      * @return the value of the element of the enumeration
      */
     public String getName() {

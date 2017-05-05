@@ -23,18 +23,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the oasis.names.tc.ebxml_regrep.xsd.rim._3 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the oasis.names.tc.ebxml_regrep.xsd.rim._3 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  * @module
  */
 @XmlRegistry
@@ -86,14 +86,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: oasis.names.tc.ebxml_regrep.xsd.rim._3
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link SpecificationLinkType }
-     * 
+     *
      */
     public SpecificationLinkType createSpecificationLinkType() {
         return new SpecificationLinkType();
@@ -101,7 +101,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AuditableEventType }
-     * 
+     *
      */
     public AuditableEventType createAuditableEventType() {
         return new AuditableEventType();
@@ -109,7 +109,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ValueListType }
-     * 
+     *
      */
     public ValueListType createValueListType() {
         return new ValueListType();
@@ -117,7 +117,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InternationalStringType }
-     * 
+     *
      */
     public InternationalStringType createInternationalStringType() {
         return new InternationalStringType();
@@ -125,7 +125,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ServiceBindingType }
-     * 
+     *
      */
     public ServiceBindingType createServiceBindingType() {
         return new ServiceBindingType();
@@ -133,7 +133,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ServiceType }
-     * 
+     *
      */
     public ServiceType createServiceType() {
         return new ServiceType();
@@ -141,7 +141,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RegistryPackageType }
-     * 
+     *
      */
     public RegistryPackageType createRegistryPackageType() {
         return new RegistryPackageType();
@@ -149,7 +149,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ClassificationSchemeType }
-     * 
+     *
      */
     public ClassificationSchemeType createClassificationSchemeType() {
         return new ClassificationSchemeType();
@@ -157,7 +157,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RegistryObjectType }
-     * 
+     *
      */
     public RegistryObjectType createRegistryObjectType() {
         return new RegistryObjectType();
@@ -165,7 +165,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PersonNameType }
-     * 
+     *
      */
     public PersonNameType createPersonNameType() {
         return new PersonNameType();
@@ -173,7 +173,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ClassificationType }
-     * 
+     *
      */
     public ClassificationType createClassificationType() {
         return new ClassificationType();
@@ -181,7 +181,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link IdentifiableType }
-     * 
+     *
      */
     public IdentifiableType createIdentifiableType() {
         return new IdentifiableType();
@@ -189,7 +189,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PersonType }
-     * 
+     *
      */
     public PersonType createPersonType() {
         return new PersonType();
@@ -197,7 +197,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SlotType1 }
-     * 
+     *
      */
     public SlotType createSlotType1() {
         return new SlotType();
@@ -205,7 +205,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NotifyActionType }
-     * 
+     *
      */
     public NotifyActionType createNotifyActionType() {
         return new NotifyActionType();
@@ -213,7 +213,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AdhocQueryType }
-     * 
+     *
      */
     public AdhocQueryType createAdhocQueryType() {
         return new AdhocQueryType();
@@ -221,7 +221,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TelephoneNumberListType }
-     * 
+     *
      */
     public TelephoneNumberListType createTelephoneNumberListType() {
         return new TelephoneNumberListType();
@@ -229,7 +229,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RegistryType }
-     * 
+     *
      */
     public RegistryType createRegistryType() {
         return new RegistryType();
@@ -237,7 +237,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FederationType }
-     * 
+     *
      */
     public FederationType createFederationType() {
         return new FederationType();
@@ -245,7 +245,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QueryExpressionType }
-     * 
+     *
      */
     public QueryExpressionType createQueryExpressionType() {
         return new QueryExpressionType();
@@ -253,7 +253,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ObjectRefListType }
-     * 
+     *
      */
     public ObjectRefListType createObjectRefListType() {
         return new ObjectRefListType();
@@ -261,7 +261,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TelephoneNumberType }
-     * 
+     *
      */
     public TelephoneNumberType createTelephoneNumberType() {
         return new TelephoneNumberType();
@@ -269,7 +269,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ObjectRefType }
-     * 
+     *
      */
     public ObjectRefType createObjectRefType() {
         return new ObjectRefType();
@@ -277,7 +277,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExternalLinkType }
-     * 
+     *
      */
     public ExternalLinkType createExternalLinkType() {
         return new ExternalLinkType();
@@ -285,7 +285,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AssociationType1 }
-     * 
+     *
      */
     public AssociationType createAssociationType1() {
         return new AssociationType();
@@ -293,7 +293,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link VersionInfoType }
-     * 
+     *
      */
     public VersionInfoType createVersionInfoType() {
         return new VersionInfoType();
@@ -301,7 +301,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SubscriptionType }
-     * 
+     *
      */
     public SubscriptionType createSubscriptionType() {
         return new SubscriptionType();
@@ -309,7 +309,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NotificationType }
-     * 
+     *
      */
     public NotificationType createNotificationType() {
         return new NotificationType();
@@ -317,7 +317,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExternalIdentifierType }
-     * 
+     *
      */
     public ExternalIdentifierType createExternalIdentifierType() {
         return new ExternalIdentifierType();
@@ -325,7 +325,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LocalizedStringType }
-     * 
+     *
      */
     public LocalizedStringType createLocalizedStringType() {
         return new LocalizedStringType();
@@ -333,7 +333,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SlotListType }
-     * 
+     *
      */
     public SlotListType createSlotListType() {
         return new SlotListType();
@@ -341,7 +341,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PostalAddressType }
-     * 
+     *
      */
     public PostalAddressType createPostalAddressType() {
         return new PostalAddressType();
@@ -349,7 +349,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExtrinsicObjectType }
-     * 
+     *
      */
     public ExtrinsicObjectType createExtrinsicObjectType() {
         return new ExtrinsicObjectType();
@@ -357,7 +357,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ClassificationNodeType }
-     * 
+     *
      */
     public ClassificationNodeType createClassificationNodeType() {
         return new ClassificationNodeType();
@@ -365,7 +365,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OrganizationType }
-     * 
+     *
      */
     public OrganizationType createOrganizationType() {
         return new OrganizationType();
@@ -373,7 +373,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UserType }
-     * 
+     *
      */
     public UserType createUserType() {
         return new UserType();
@@ -381,7 +381,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RegistryObjectListType }
-     * 
+     *
      */
     public RegistryObjectListType createRegistryObjectListType() {
         return new RegistryObjectListType();
@@ -389,7 +389,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EmailAddressType }
-     * 
+     *
      */
     public EmailAddressType createEmailAddressType() {
         return new EmailAddressType();
@@ -397,7 +397,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PostalAddressType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "PostalAddress")
     public JAXBElement<PostalAddressType> createPostalAddress(final PostalAddressType value) {
@@ -406,7 +406,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AuditableEventType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "AuditableEvent", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<AuditableEventType> createAuditableEvent(final AuditableEventType value) {
@@ -415,7 +415,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PostalAddressType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "Address")
     public JAXBElement<PostalAddressType> createAddress(final PostalAddressType value) {
@@ -424,7 +424,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PersonType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "Person", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<PersonType> createPerson(final PersonType value) {
@@ -433,7 +433,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ServiceBindingType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "ServiceBinding", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<ServiceBindingType> createServiceBinding(final ServiceBindingType value) {
@@ -442,7 +442,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NotificationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "Notification")
     public JAXBElement<NotificationType> createNotification(final NotificationType value) {
@@ -451,7 +451,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ValueListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "ValueList")
     public JAXBElement<ValueListType> createValueList(final ValueListType value) {
@@ -460,7 +460,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ServiceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "Service", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<ServiceType> createService(final ServiceType value) {
@@ -469,7 +469,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NotifyActionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "NotifyAction", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Action")
     public JAXBElement<NotifyActionType> createNotifyAction(final NotifyActionType value) {
@@ -478,7 +478,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InternationalStringType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "UsageDescription")
     public JAXBElement<InternationalStringType> createUsageDescription(final InternationalStringType value) {
@@ -487,7 +487,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SlotType1 }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "Slot")
     public JAXBElement<SlotType> createSlot(final SlotType value) {
@@ -496,7 +496,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InternationalStringType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "InternationalString")
     public JAXBElement<InternationalStringType> createInternationalString(final InternationalStringType value) {
@@ -505,7 +505,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SpecificationLinkType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "SpecificationLink", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<SpecificationLinkType> createSpecificationLink(final SpecificationLinkType value) {
@@ -514,7 +514,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InternationalStringType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "Name")
     public JAXBElement<InternationalStringType> createName(final InternationalStringType value) {
@@ -523,7 +523,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ExternalIdentifierType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "ExternalIdentifier", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<ExternalIdentifierType> createExternalIdentifier(final ExternalIdentifierType value) {
@@ -532,7 +532,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "UsageParameter")
     public JAXBElement<String> createUsageParameter(final String value) {
@@ -541,7 +541,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SlotListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "SlotList")
     public JAXBElement<SlotListType> createSlotList(final SlotListType value) {
@@ -550,7 +550,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RegistryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "Registry", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<RegistryType> createRegistry(final RegistryType value) {
@@ -559,7 +559,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ObjectRefType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "ObjectRef", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<ObjectRefType> createObjectRef(final ObjectRefType value) {
@@ -568,7 +568,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ClassificationSchemeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "ClassificationScheme", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<ClassificationSchemeType> createClassificationScheme(final ClassificationSchemeType value) {
@@ -577,7 +577,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ExtrinsicObjectType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "ExtrinsicObject", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<ExtrinsicObjectType> createExtrinsicObject(final ExtrinsicObjectType value) {
@@ -586,7 +586,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OrganizationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "Organization", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<OrganizationType> createOrganization(final OrganizationType value) {
@@ -595,7 +595,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TelephoneNumberType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "TelephoneNumber")
     public JAXBElement<TelephoneNumberType> createTelephoneNumber(final TelephoneNumberType value) {
@@ -604,7 +604,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RegistryPackageType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "RegistryPackage", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<RegistryPackageType> createRegistryPackage(final RegistryPackageType value) {
@@ -613,7 +613,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RegistryObjectType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "RegistryObject", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<RegistryObjectType> createRegistryObject(final RegistryObjectType value) {
@@ -622,7 +622,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AssociationType1 }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "Association", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<AssociationType> createAssociation(final AssociationType value) {
@@ -631,7 +631,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AdhocQueryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "AdhocQuery", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "RegistryObject")
     public JAXBElement<AdhocQueryType> createAdhocQuery(final AdhocQueryType value) {
@@ -640,7 +640,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ActionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "Action")
     public JAXBElement<ActionType> createAction(final ActionType value) {
@@ -649,7 +649,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FederationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "Federation", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<FederationType> createFederation(final FederationType value) {
@@ -658,7 +658,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ExternalLinkType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "ExternalLink", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<ExternalLinkType> createExternalLink(final ExternalLinkType value) {
@@ -667,7 +667,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link IdentifiableType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "Identifiable")
     public JAXBElement<IdentifiableType> createIdentifiable(final IdentifiableType value) {
@@ -676,7 +676,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UserType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "User", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<UserType> createUser(final UserType value) {
@@ -685,7 +685,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ClassificationNodeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "ClassificationNode", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<ClassificationNodeType> createClassificationNode(final ClassificationNodeType value) {
@@ -694,7 +694,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PersonNameType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "PersonName")
     public JAXBElement<PersonNameType> createPersonName(final PersonNameType value) {
@@ -703,7 +703,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ObjectRefListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "ObjectRefList")
     public JAXBElement<ObjectRefListType> createObjectRefList(final ObjectRefListType value) {
@@ -712,7 +712,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ClassificationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "Classification", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<ClassificationType> createClassification(final ClassificationType value) {
@@ -721,7 +721,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EmailAddressType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "EmailAddress")
     public JAXBElement<EmailAddressType> createEmailAddress(final EmailAddressType value) {
@@ -730,7 +730,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link QueryExpressionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "QueryExpression")
     public JAXBElement<QueryExpressionType> createQueryExpression(final QueryExpressionType value) {
@@ -739,7 +739,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InternationalStringType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "Description")
     public JAXBElement<InternationalStringType> createDescription(final InternationalStringType value) {
@@ -748,7 +748,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LocalizedStringType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "LocalizedString")
     public JAXBElement<LocalizedStringType> createLocalizedString(final LocalizedStringType value) {
@@ -757,7 +757,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "Value")
     public JAXBElement<String> createValue(final String value) {
@@ -766,7 +766,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SubscriptionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "Subscription", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "Identifiable")
     public JAXBElement<SubscriptionType> createSubscription(final SubscriptionType value) {
@@ -775,7 +775,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RegistryObjectListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", name = "RegistryObjectList")
     public JAXBElement<RegistryObjectListType> createRegistryObjectList(final RegistryObjectListType value) {

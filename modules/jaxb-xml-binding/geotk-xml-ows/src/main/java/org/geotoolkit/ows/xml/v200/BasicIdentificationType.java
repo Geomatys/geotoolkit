@@ -31,11 +31,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Basic metadata identifying and describing a set of
  *       data.
- * 
+ *
  * <p>Java class for BasicIdentificationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BasicIdentificationType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BasicIdentificationType", propOrder = {
@@ -69,23 +69,23 @@ public class BasicIdentificationType extends DescriptionType {
     private List<JAXBElement<? extends MetadataType>> metadata;
 
     public BasicIdentificationType() {
-        
+
     }
-    
+
     public BasicIdentificationType(CodeType identifier, final List<LanguageStringType> title,  final List<LanguageStringType> _abstract,
             final List<KeywordsType> keywords) {
         super(title, _abstract, keywords);
         this.identifier = identifier;
     }
-    
+
     /**
      * Optional unique identifier or name of this
      *               dataset.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getIdentifier() {
         return identifier;
@@ -93,11 +93,11 @@ public class BasicIdentificationType extends DescriptionType {
 
     /**
      * Sets the value of the identifier property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setIdentifier(CodeType value) {
         this.identifier = value;
@@ -108,12 +108,12 @@ public class BasicIdentificationType extends DescriptionType {
      *               about this data(set). A list of optional metadata elements for
      *               this data identification could be specified in the
      *               Implementation Specification for this service.Gets the value of the metadata property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link MetadataType }{@code >}
      * {@link JAXBElement }{@code <}{@link AdditionalParametersType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends MetadataType>> getMetadata() {
         if (metadata == null) {

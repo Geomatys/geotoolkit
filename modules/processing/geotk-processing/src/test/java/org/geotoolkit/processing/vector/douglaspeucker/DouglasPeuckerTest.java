@@ -102,7 +102,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
 
             Geometry geomOut = (Geometry) featureOut.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
             Geometry geomResult = (Geometry) featureResult.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
-            
+
             Coordinate[] coordOut = geomOut.getCoordinates();
             Coordinate[] coordResult = geomResult.getCoordinates();
 
@@ -111,7 +111,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
                 assertEquals(coordOut[i].x, coordResult[i].x, precision);
                 assertEquals(coordOut[i].y, coordResult[i].y, precision);
             }
-            
+
         }
     }
 

@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for UpdateType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UpdateType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -76,11 +76,11 @@ public class UpdateType {
 
     /**
      * Gets the value of the targetHref property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTargetHref() {
         return targetHref;
@@ -88,11 +88,11 @@ public class UpdateType {
 
     /**
      * Sets the value of the targetHref property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTargetHref(final String value) {
         this.targetHref = value;
@@ -100,28 +100,28 @@ public class UpdateType {
 
     /**
      * Gets the value of the createOrDeleteOrChange property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the createOrDeleteOrChange property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCreateOrDeleteOrChange().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ChangeType }
      * {@link DeleteType }
      * {@link Object }
      * {@link CreateType }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getCreateOrDeleteOrChange() {
         if (createOrDeleteOrChange == null) {
@@ -132,25 +132,25 @@ public class UpdateType {
 
     /**
      * Gets the value of the updateExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the updateExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getUpdateExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getUpdateExtensionGroup() {
         if (updateExtensionGroup == null) {

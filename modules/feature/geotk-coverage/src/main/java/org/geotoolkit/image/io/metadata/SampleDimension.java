@@ -169,6 +169,6 @@ public interface SampleDimension extends RangeDimension, SampleDomain {
      * @see org.opengis.metadata.content.Band#getTransferFunctionType()
      */
     TransferFunctionType getTransferFunctionType();
-    
+
     GridSampleDimension getGridSampleDimension();
 }

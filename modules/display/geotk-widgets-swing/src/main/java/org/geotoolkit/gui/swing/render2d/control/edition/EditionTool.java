@@ -32,7 +32,7 @@ public interface EditionTool {
      * @return priority : higher value will move the tool up in the EditionTools list.
      */
     int getPriority();
-    
+
     /**
      * @return name of tool, can be used as identifier.
      * If a text is needed for user interface, use title or abstract.
@@ -48,7 +48,7 @@ public interface EditionTool {
      * @return description of the tool.
      */
     InternationalString getAbstract();
-    
+
     /**
      * @return tool icon, can be null.
      */

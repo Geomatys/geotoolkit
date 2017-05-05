@@ -45,7 +45,7 @@ public class FXChoiceEditor extends FXValueEditor{
         currentAttributeType.addListener(this::updateChoices);
         currentParamDesc.addListener(this::updateChoices);
     }
-    
+
     protected void updateChoices(ObservableValue observable, Object oldValue, Object newValue) {
         pane.getChildren().clear();
         final List choices;

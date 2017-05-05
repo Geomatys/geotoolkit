@@ -30,9 +30,9 @@ import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -73,9 +73,9 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * Empty constructor used by JAXB.
      */
     public OperationsMetadata() {
-        
+
     }
-    
+
     public OperationsMetadata(final OperationsMetadata that){
         if (that != null)  {
             if (that.constraint != null) {
@@ -100,7 +100,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
             this.extendedCapabilities = that.extendedCapabilities;
         }
     }
-    
+
     /**
      * Build a new operation metadata.
      *
@@ -111,19 +111,19 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      */
     public OperationsMetadata(final List<Operation> operation, final List<DomainType> parameter, final List<DomainType> constraint,
             final Object extendedCapabilities){
-        
+
         this.constraint           = constraint;
         this.extendedCapabilities = extendedCapabilities;
         this.operation            = operation;
         this.parameter            = parameter;
     }
-    
-    
+
+
     /**
-     * Metadata for unordered list of all the (requests for) operations that this server interface implements. 
+     * Metadata for unordered list of all the (requests for) operations that this server interface implements.
      * The list of required and optional operations implemented shall be specified in
      * the Implementation Specification for this service.Gets the value of the operation property.
-     * 
+     *
      * @return
      */
     @Override
@@ -147,10 +147,10 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
         }
         return null;
     }
-    
+
     /**
      * Remove the specified operation from the list of available operations displayed in the capabilities document.
-     * 
+     *
      * @param operationName the name of the operation to remove.
      */
     @Override
@@ -162,10 +162,10 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
             }
         }
     }
-    
+
     /**
      * Gets the value of the parameter property.
-     * 
+     *
      */
     public List<DomainType> getParameter() {
         if (parameter == null) {
@@ -189,7 +189,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
 
     /**
      * Gets the value of the constraint property.
-     * 
+     *
      */
     public List<DomainType> getConstraint() {
         if (constraint == null) {
@@ -197,7 +197,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
         }
         return this.constraint;
     }
-    
+
     @Override
     public DomainType getConstraint(final String name) {
         if (constraint == null) {
@@ -208,9 +208,9 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
                 return d;
             }
         }
-        return null; 
+        return null;
     }
-    
+
     @Override
     public void addConstraint(final AbstractDomain domain) {
         if (constraint == null) {
@@ -222,7 +222,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
             throw new IllegalArgumentException("bad version of the domain object");
         }
     }
-    
+
     @Override
     public void removeConstraint(final String name) {
         if (constraint == null) {
@@ -237,11 +237,11 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
 
     /**
      * Gets the value of the extendedCapabilities property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Object }
-     *     
+     *
      */
     @Override
     public Object getExtendedCapabilities() {
@@ -250,11 +250,11 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
 
     /**
      * Sets the value of the extendedCapabilities property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Object }
-     *     
+     *
      */
     @Override
     public void setExtendedCapabilities(Object value) {

@@ -27,12 +27,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Prioritized sequence of one or more specification versions accepted by client, with preferred versions listed first. See Version negotiation subclause for more information. 
- * 
+ * Prioritized sequence of one or more specification versions accepted by client, with preferred versions listed first. See Version negotiation subclause for more information.
+ *
  * <p>Java class for AcceptVersionsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AcceptVersionsType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,9 +61,9 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
      * Empty constructor used by JAXB.
      */
     AcceptVersionsType(){
-        
+
     }
-    
+
     /**
      * Build a new List of acceptVersion.
      */
@@ -73,11 +73,11 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
             version.add(v);
         }
     }
-    
+
     public AcceptVersionsType(final List<String> version){
         this.version = version;
     }
-    
+
     /**
      * Gets the value of the version property.
      */
@@ -88,10 +88,10 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
         }
         return Collections.unmodifiableList(version);
     }
-    
+
     /**
      * Add a new accepted version to the list.
-     * 
+     *
      * @param version a number of version.
      */
     @Override
@@ -102,7 +102,7 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
     public void addFirstVersion(final String version) {
         this.version.add(0, version);
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */

@@ -36,13 +36,13 @@ import org.opengis.geometry.Geometry;
 
 /**
  * An object on which measurements may be made, often ex-situ.
- * Note that if this specimen is a "processed" version of another (e.g. by grinding, sieving, etc) then 
+ * Note that if this specimen is a "processed" version of another (e.g. by grinding, sieving, etc) then
  * the predecessor (if known) may be recorded as a relatedSamplingFeature
- * 
+ *
  * <p>Java class for SpecimenType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SpecimenType">
  *   &lt;complexContent>
@@ -67,8 +67,8 @@ import org.opengis.geometry.Geometry;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -96,11 +96,11 @@ public class SpecimenType extends SamplingFeatureType {
 
     /**
      * Gets the value of the materialClass property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getMaterialClass() {
         return materialClass;
@@ -108,11 +108,11 @@ public class SpecimenType extends SamplingFeatureType {
 
     /**
      * Sets the value of the materialClass property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setMaterialClass(final CodeType value) {
         this.materialClass = value;
@@ -120,11 +120,11 @@ public class SpecimenType extends SamplingFeatureType {
 
     /**
      * Gets the value of the currentLocation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LocationPropertyType }
-     *     
+     *
      */
     public LocationPropertyType getCurrentLocation() {
         return currentLocation;
@@ -132,11 +132,11 @@ public class SpecimenType extends SamplingFeatureType {
 
     /**
      * Sets the value of the currentLocation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LocationPropertyType }
-     *     
+     *
      */
     public void setCurrentLocation(final LocationPropertyType value) {
         this.currentLocation = value;
@@ -144,11 +144,11 @@ public class SpecimenType extends SamplingFeatureType {
 
     /**
      * Gets the value of the size property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SpecimenType.Size }
-     *     
+     *
      */
     public SpecimenType.Size getSize() {
         return size;
@@ -156,11 +156,11 @@ public class SpecimenType extends SamplingFeatureType {
 
     /**
      * Sets the value of the size property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SpecimenType.Size }
-     *     
+     *
      */
     public void setSize(final SpecimenType.Size value) {
         this.size = value;
@@ -168,11 +168,11 @@ public class SpecimenType extends SamplingFeatureType {
 
     /**
      * Gets the value of the samplingMethod property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getSamplingMethod() {
         return samplingMethod;
@@ -180,11 +180,11 @@ public class SpecimenType extends SamplingFeatureType {
 
     /**
      * Sets the value of the samplingMethod property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setSamplingMethod(final ReferenceType value) {
         this.samplingMethod = value;
@@ -192,11 +192,11 @@ public class SpecimenType extends SamplingFeatureType {
 
     /**
      * Gets the value of the samplingTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimePrimitivePropertyType }
-     *     
+     *
      */
     public TimePrimitivePropertyType getSamplingTime() {
         return samplingTime;
@@ -204,11 +204,11 @@ public class SpecimenType extends SamplingFeatureType {
 
     /**
      * Sets the value of the samplingTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimePrimitivePropertyType }
-     *     
+     *
      */
     public void setSamplingTime(final TimePrimitivePropertyType value) {
         this.samplingTime = value;
@@ -216,11 +216,11 @@ public class SpecimenType extends SamplingFeatureType {
 
     /**
      * Gets the value of the processingDetails property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ReferenceType }
-     * 
-     * 
+     *
+     *
      */
     public List<ReferenceType> getProcessingDetails() {
         if (processingDetails == null) {
@@ -235,16 +235,16 @@ public class SpecimenType extends SamplingFeatureType {
        }
        return null;
     }
-    
+
 
 
     /**
      * Xlink attributes added to enable rich annotation, e.g. size-type
-     * 
+     *
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;simpleContent>
@@ -254,8 +254,8 @@ public class SpecimenType extends SamplingFeatureType {
      *   &lt;/simpleContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -284,11 +284,11 @@ public class SpecimenType extends SamplingFeatureType {
 
         /**
          * Gets the value of the remoteSchema property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getRemoteSchema() {
             return remoteSchema;
@@ -296,11 +296,11 @@ public class SpecimenType extends SamplingFeatureType {
 
         /**
          * Sets the value of the remoteSchema property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setRemoteSchema(final String value) {
             this.remoteSchema = value;
@@ -308,11 +308,11 @@ public class SpecimenType extends SamplingFeatureType {
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
             if (type == null) {
@@ -324,11 +324,11 @@ public class SpecimenType extends SamplingFeatureType {
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -336,11 +336,11 @@ public class SpecimenType extends SamplingFeatureType {
 
         /**
          * Gets the value of the href property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getHref() {
             return href;
@@ -348,11 +348,11 @@ public class SpecimenType extends SamplingFeatureType {
 
         /**
          * Sets the value of the href property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setHref(final String value) {
             this.href = value;
@@ -360,11 +360,11 @@ public class SpecimenType extends SamplingFeatureType {
 
         /**
          * Gets the value of the role property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getRole() {
             return role;
@@ -372,11 +372,11 @@ public class SpecimenType extends SamplingFeatureType {
 
         /**
          * Sets the value of the role property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setRole(final String value) {
             this.role = value;
@@ -384,11 +384,11 @@ public class SpecimenType extends SamplingFeatureType {
 
         /**
          * Gets the value of the arcrole property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getArcrole() {
             return arcrole;
@@ -396,11 +396,11 @@ public class SpecimenType extends SamplingFeatureType {
 
         /**
          * Sets the value of the arcrole property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setArcrole(final String value) {
             this.arcrole = value;
@@ -408,11 +408,11 @@ public class SpecimenType extends SamplingFeatureType {
 
         /**
          * Gets the value of the title property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getTitle() {
             return title;
@@ -420,11 +420,11 @@ public class SpecimenType extends SamplingFeatureType {
 
         /**
          * Sets the value of the title property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setTitle(final String value) {
             this.title = value;
@@ -432,11 +432,11 @@ public class SpecimenType extends SamplingFeatureType {
 
         /**
          * Gets the value of the show property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getShow() {
             return show;
@@ -444,11 +444,11 @@ public class SpecimenType extends SamplingFeatureType {
 
         /**
          * Sets the value of the show property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setShow(final String value) {
             this.show = value;
@@ -456,11 +456,11 @@ public class SpecimenType extends SamplingFeatureType {
 
         /**
          * Gets the value of the actuate property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getActuate() {
             return actuate;
@@ -468,11 +468,11 @@ public class SpecimenType extends SamplingFeatureType {
 
         /**
          * Sets the value of the actuate property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setActuate(final String value) {
             this.actuate = value;

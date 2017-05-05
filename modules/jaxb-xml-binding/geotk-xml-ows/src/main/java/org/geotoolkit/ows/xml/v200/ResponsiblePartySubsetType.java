@@ -31,11 +31,11 @@ import org.geotoolkit.ows.xml.AbstractResponsiblePartySubset;
  *       provides that information. The mandatory "role" element was changed to
  *       optional, since no clear use of this information is known in the
  *       ServiceProvider section.
- * 
+ *
  * <p>Java class for ResponsiblePartySubsetType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ResponsiblePartySubsetType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.ows.xml.AbstractResponsiblePartySubset;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ResponsiblePartySubsetType", propOrder = {
@@ -87,14 +87,14 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
         this.positionName   = positionName;
         this.role           = role;
     }
-    
+
     /**
      * Gets the value of the individualName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getIndividualName() {
@@ -103,11 +103,11 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
 
     /**
      * Sets the value of the individualName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIndividualName(String value) {
         this.individualName = value;
@@ -115,11 +115,11 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
 
     /**
      * Gets the value of the positionName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getPositionName() {
@@ -128,11 +128,11 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
 
     /**
      * Sets the value of the positionName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPositionName(String value) {
         this.positionName = value;
@@ -140,11 +140,11 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
 
     /**
      * Gets the value of the contactInfo property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ContactType }
-     *     
+     *
      */
     @Override
     public ContactType getContactInfo() {
@@ -153,11 +153,11 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
 
     /**
      * Sets the value of the contactInfo property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ContactType }
-     *     
+     *
      */
     public void setContactInfo(ContactType value) {
         this.contactInfo = value;
@@ -165,11 +165,11 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     @Override
     public CodeType getRole() {
@@ -178,11 +178,11 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setRole(CodeType value) {
         this.role = value;

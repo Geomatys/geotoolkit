@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for PrimeMeridianType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PrimeMeridianType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
@@ -56,11 +56,11 @@ public class PrimeMeridianType
 
     /**
      * Gets the value of the greenwichLongitude property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AngleType }
-     *     
+     *
      */
     public AngleType getGreenwichLongitude() {
         return greenwichLongitude;
@@ -68,11 +68,11 @@ public class PrimeMeridianType
 
     /**
      * Sets the value of the greenwichLongitude property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AngleType }
-     *     
+     *
      */
     public void setGreenwichLongitude(AngleType value) {
         this.greenwichLongitude = value;

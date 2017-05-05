@@ -34,11 +34,11 @@ import org.opengis.geometry.DirectPosition;
 /**
  * A LineStringSegment is a curve segment that is defined by two or more coordinate tuples, with linear interpolation between them.
  * Note: LineStringSegment implements GM_LineString of ISO 19107.
- * 
+ *
  * <p>Java class for LineStringSegmentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LineStringSegmentType">
  *   &lt;complexContent>
@@ -59,8 +59,8 @@ import org.opengis.geometry.DirectPosition;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -102,12 +102,12 @@ public class LineStringSegmentType extends AbstractCurveSegmentType implements L
 
     /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<?>> getRest() {
         if (pointPropertyOrPointRep == null) {
@@ -143,11 +143,11 @@ public class LineStringSegmentType extends AbstractCurveSegmentType implements L
 
     /**
      * Gets the value of the posList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public DirectPositionListType getPosList() {
         return posList;
@@ -155,11 +155,11 @@ public class LineStringSegmentType extends AbstractCurveSegmentType implements L
 
     /**
      * Sets the value of the posList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public void setPosList(final DirectPositionListType value) {
         this.posList = value;
@@ -167,11 +167,11 @@ public class LineStringSegmentType extends AbstractCurveSegmentType implements L
 
     /**
      * Deprecated with GML version 3.1.0. Use "posList" instead.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public CoordinatesType getCoordinates() {
         return coordinates;
@@ -179,11 +179,11 @@ public class LineStringSegmentType extends AbstractCurveSegmentType implements L
 
     /**
      * Deprecated with GML version 3.1.0. Use "posList" instead.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;
@@ -191,11 +191,11 @@ public class LineStringSegmentType extends AbstractCurveSegmentType implements L
 
     /**
      * Gets the value of the interpolation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public CurveInterpolationType getInterpolation() {
         /*if (interpolation == null) {
@@ -206,11 +206,11 @@ public class LineStringSegmentType extends AbstractCurveSegmentType implements L
 
     /**
      * Sets the value of the interpolation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public void setInterpolation(final CurveInterpolationType value) {
         this.interpolation = value;

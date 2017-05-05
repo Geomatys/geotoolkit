@@ -60,7 +60,7 @@ public abstract class AbstractTimeObjectType extends AbstractGMLType implements 
     public AbstractTimeObjectType(final String id) {
         super(id);
     }
-    
+
     public AbstractTimeObjectType(final TemporalObject that) {
         super((AbstractGML)that);// unsafe
     }

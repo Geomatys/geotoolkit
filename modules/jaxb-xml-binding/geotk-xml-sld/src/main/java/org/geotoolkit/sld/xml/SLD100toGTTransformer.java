@@ -59,7 +59,7 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
 
     protected final MutableSLDFactory sldFactory;
 
-    public SLD100toGTTransformer(final FilterFactory2 filterFactory, final MutableStyleFactory styleFactory, 
+    public SLD100toGTTransformer(final FilterFactory2 filterFactory, final MutableStyleFactory styleFactory,
             final MutableSLDFactory sldFactory) {
         super(filterFactory,styleFactory);
         this.sldFactory = sldFactory;
@@ -75,10 +75,10 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
         final InternationalString title = (sld.getTitle() == null) ? null : new SimpleInternationalString(sld.getTitle());
         final InternationalString abs = (sld.getAbstract() == null) ? null : new SimpleInternationalString(sld.getAbstract());
         geoSLD.setDescription(styleFactory.description(title, abs));
-        geoSLD.layers().addAll( visitLayers(sld.getNamedLayerOrUserLayer())); 
+        geoSLD.layers().addAll( visitLayers(sld.getNamedLayerOrUserLayer()));
         return geoSLD;
     }
-    
+
     /**
      * Transform a jaxb v1.0.0 layers in a GT Layer objects.
      */
@@ -87,7 +87,7 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
             return Collections.emptyList();
         } else {
             final Collection<MutableLayer> sldLayers = new ArrayList<MutableLayer>();
-            
+
             for(final Object obj : layers){
                 if(obj instanceof NamedLayer){
                     final NamedLayer nl = (NamedLayer) obj;
@@ -101,27 +101,27 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
                     final MutableUserLayer mul = sldFactory.createUserLayer();
                     mul.setName(ul.getName());
                     mul.styles().addAll( visitUserStyles(ul.getUserStyle()) );
-                    
+
                     if(ul.getLayerFeatureConstraints() != null){
                         final MutableLayerFeatureConstraints consts = sldFactory.createLayerFeatureConstraints();
                         consts.constraints().addAll(visitFeatureConstraints(ul.getLayerFeatureConstraints()));
                         mul.setConstraints(consts);
                     }
-                    
+
                     if(ul.getRemoteOWS() != null){
                         mul.setSource(visiteRemoteOWS(ul.getRemoteOWS()));
                     }
-                    
+
                     sldLayers.add(mul);
                 }
             }
-            
+
             return sldLayers;
         }
-        
-        
+
+
     }
-       
+
     /**
      * Transform a jaxb v1.0.0 constraints in a GT constraints class.
      */
@@ -130,7 +130,7 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
             return Collections.emptyList();
         }else{
             final Collection<FeatureTypeConstraint> constraints = new ArrayList<FeatureTypeConstraint>();
-            
+
             for(final org.geotoolkit.sld.xml.v100.FeatureTypeConstraint aftc : ftc.getFeatureTypeConstraint()){
                 final GenericName name = NamesExt.create(aftc.getFeatureTypeName());
                 final Filter filter = visitFilter(aftc.getFilter());
@@ -138,11 +138,11 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
                 final FeatureTypeConstraint cons = sldFactory.createFeatureTypeConstraint(name, filter, extents);
                 constraints.add(cons);
             }
-            
+
             return constraints;
         }
     }
-    
+
     /**
      * Transform a jaxb v1.0.0 extents in a GT extent class.
      */
@@ -151,15 +151,15 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
             return Collections.emptyList();
         }else{
             final List<Extent> extents = new ArrayList<Extent>();
-            
+
             for(final org.geotoolkit.sld.xml.v100.Extent ex : exts){
                 extents.add(sldFactory.createExtent(ex.getName(), ex.getValue()));
             }
-            
+
             return extents;
         }
     }
-       
+
     /**
      * Transform a jaxb v1.0.0 remote ows in a GT remote ows class.
      */
@@ -175,7 +175,7 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
             }
         }
     }
-       
+
     /**
      * Transform a jaxb v1.0.0 layer style in a GT layer style class.
      */
@@ -184,9 +184,9 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
             return Collections.emptyList();
         }else{
             final Collection<MutableLayerStyle> mStyles = new ArrayList<MutableLayerStyle>();
-            
+
             for(final Object obj : styles){
-                
+
                 if(obj instanceof org.geotoolkit.sld.xml.v100.NamedStyle){
                     final org.geotoolkit.sld.xml.v100.NamedStyle ns = (org.geotoolkit.sld.xml.v100.NamedStyle) obj;
                     final MutableNamedStyle mns = sldFactory.createNamedStyle();
@@ -198,11 +198,11 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
                     mStyles.add(visitUserStyle(us));
                 }
             }
-            
+
             return mStyles;
         }
     }
-    
+
     /**
      * Transform a jaxb v1.0.0 layer style in a GT layer style class.
      */
@@ -211,15 +211,15 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
             return Collections.emptyList();
         }else{
             final Collection<MutableStyle> mStyles = new ArrayList<MutableStyle>();
-            
+
             for(final org.geotoolkit.sld.xml.v100.UserStyle us : styles){
                 //we call SE transformer for this part
                 mStyles.add(visitUserStyle(us));
             }
-            
+
             return mStyles;
         }
     }
-    
-    
+
+
 }

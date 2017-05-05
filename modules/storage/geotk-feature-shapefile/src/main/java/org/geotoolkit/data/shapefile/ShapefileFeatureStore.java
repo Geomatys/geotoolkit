@@ -776,9 +776,9 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
 
     @Override
     public void refreshMetaModel() {
-		name = null;
-		schema = null;
+        name = null;
+        schema = null;
 
-	}
+    }
 
 }

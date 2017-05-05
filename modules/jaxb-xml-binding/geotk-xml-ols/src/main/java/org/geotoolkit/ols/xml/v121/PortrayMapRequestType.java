@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for PortrayMapRequestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PortrayMapRequestType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PortrayMapRequestType", propOrder = {
@@ -63,7 +63,7 @@ public class PortrayMapRequestType extends AbstractRequestParametersType {
 
     /**
      * Gets the value of the output property.
-     * 
+     *
      */
     public List<OutputType> getOutput() {
         if (output == null) {
@@ -74,11 +74,11 @@ public class PortrayMapRequestType extends AbstractRequestParametersType {
 
     /**
      * Gets the value of the basemap property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LayerType }
-     *     
+     *
      */
     public LayerType getBasemap() {
         return basemap;
@@ -86,11 +86,11 @@ public class PortrayMapRequestType extends AbstractRequestParametersType {
 
     /**
      * Sets the value of the basemap property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LayerType }
-     *     
+     *
      */
     public void setBasemap(LayerType value) {
         this.basemap = value;

@@ -31,43 +31,43 @@ import org.geotoolkit.index.tree.TreeElementMapper;
 
 /**
  * StarRTree (R* Tree) : tree implementation.<br/><br/>
- * 
+ *
  * It's a Tree implementation with a average duration insertion and search action.<br/>
- * In the case of use, if we don't know there will be a lot of data insertion or update action forthcoming, 
+ * In the case of use, if we don't know there will be a lot of data insertion or update action forthcoming,
  * this implementation is by default recommended.<br/><br/>
- * 
- * Note : insertion action is more longer than BasicRTree, because in case of overfully Node, 
+ *
+ * Note : insertion action is more longer than BasicRTree, because in case of overfully Node,
  * a re-insertion of all data over 33% distance near Node centroid is effectuate.<br/>
  * In some case this re-insertion action permit to avoid node splitting which is expensive resource in terms.
- * 
+ *
  * @author Remi Marechal (Geomatys).
  */
 public strictfp class StarRTree<E> extends AbstractTree<E> {
-    
+
     /**
      * In accordance with R* Tree properties.
      * To avoid unnecessary split permit to
      * reinsert some elements just one time.
      */
     boolean insertAgain = true;
-    
+
     /**
-     * List to store data which will be insert again. 
+     * List to store data which will be insert again.
      */
     private final LinkedList<Integer> listIdentifier = new LinkedList<Integer>();
-    private final LinkedList<double[]> listCoords    = new LinkedList<double[]>(); 
-    
+    private final LinkedList<double[]> listCoords    = new LinkedList<double[]>();
+
     /**
      * Boolean required to stop and travel up recursively insertion action to insert select data.
      */
     boolean travelUpBeforeInsertAgain = false;
-    
+
     /**
      * Create a R* Tree implementation.
-     * 
+     *
      * @param treeAccess object in which all Tree information are stored.
      * @param treeEltMap object in which data and tree identifier are stored.
-     * @throws StoreIndexException 
+     * @throws StoreIndexException
      * @see TreeAccess
      * @see TreeElementMapper
      */
@@ -78,8 +78,8 @@ public strictfp class StarRTree<E> extends AbstractTree<E> {
         super.setRoot(treeAccess.getRoot());
         treeIdentifier = treeAccess.getTreeIdentifier();
     }
-    
-    
+
+
     /**
      * Get statement from re-insert state.
      *
@@ -91,19 +91,19 @@ public strictfp class StarRTree<E> extends AbstractTree<E> {
 
     /**
      * Affect statement to permit or not, re-insertion.
-     * 
+     *
      * @param insertAgain
      */
     private void setIA(boolean insertAgain) {
         this.insertAgain = insertAgain;
     }
-    
+
     /**
      * {@inheritDoc }.
      */
     @Override
     public void insert(int identifier, double... coordinates) throws IllegalArgumentException, StoreIndexException {
-        
+
         try {
             eltCompteur++;
             Node root = getRoot();
@@ -119,7 +119,7 @@ public strictfp class StarRTree<E> extends AbstractTree<E> {
                     treeAccess.writeNode((Node)newRoot);
                 }
                 /**
-                 * Insert again. Property named Tree re-balancing. 
+                 * Insert again. Property named Tree re-balancing.
                  */
                 if (travelUpBeforeInsertAgain) {
                     travelUpBeforeInsertAgain = false;
@@ -147,7 +147,7 @@ public strictfp class StarRTree<E> extends AbstractTree<E> {
             throw new StoreIndexException(this.getClass().getName()+"Tree.insert(), impossible to add element.", ex);
         }
     }
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -171,7 +171,7 @@ public strictfp class StarRTree<E> extends AbstractTree<E> {
             subCandidateParent = (Node)nodeInsert(chooseSubtree(fileCandidate, coordinates), identifier, coordinates);
             add(fileCandidate.getBoundary(), coordinates);
         }
-        
+
         /**
          * Currently candidate was modified from precedently sub-Insert() call.
          * Affect candidate object with new candidate from sub-Insert method.
@@ -179,10 +179,10 @@ public strictfp class StarRTree<E> extends AbstractTree<E> {
         if (subCandidateParent != null) {
             fileCandidate = subCandidateParent;
         }
-        treeAccess.writeNode(fileCandidate); 
+        treeAccess.writeNode(fileCandidate);
         if (travelUpBeforeInsertAgain) return null;
         assert fileCandidate.checkInternal() : "nodeInsert : after insert.";
-        
+
         if (fileCandidate.getChildCount() > getMaxElements()) {
             /******************************** 33 % *****************************/
             if (getIA() && fileCandidate.isLeaf()) {
@@ -196,7 +196,7 @@ public strictfp class StarRTree<E> extends AbstractTree<E> {
             }
             assert fileCandidate.checkInternal() : "nodeInsert : after insert again element a 33% distance.";
             /*******************************************************************/
-            
+
 //            /*********************** Branch grafting **************************/
 //            if (fileCandidate.isLeaf() && fileCandidate.getParentId() != 0) {
 //                /**
@@ -224,7 +224,7 @@ public strictfp class StarRTree<E> extends AbstractTree<E> {
 //            }
 //            assert fileCandidate.checkInternal() : "nodeInsert : after Branch grafting.";
 //            /******************************************************************/
-            
+
             if (fileCandidate.getChildCount() > getMaxElements()) {
                 // split
                 final Node[] splitTable = splitNode(fileCandidate);
@@ -238,7 +238,7 @@ public strictfp class StarRTree<E> extends AbstractTree<E> {
                     fileCandidate.clear();
                     fileCandidate.setProperties(IS_OTHER);
                     fileCandidate.addChild(split1);
-                    fileCandidate.addChild(split2);     
+                    fileCandidate.addChild(split2);
                     assert split1.checkInternal() : "nodeInsert : split1.";
                     assert split2.checkInternal() : "nodeInsert : split2.";
                     assert fileCandidate.checkInternal() : "nodeInsert : split root.";
@@ -263,7 +263,7 @@ public strictfp class StarRTree<E> extends AbstractTree<E> {
          */
         return (subCandidateParent != null && fileCandidate.getParentId() == 0) ? fileCandidate : null;
     }
-    
+
     /**
      * Recover lesser 33% largest of {@code Node} candidate within it.
      *
@@ -281,7 +281,7 @@ public strictfp class StarRTree<E> extends AbstractTree<E> {
         getElementAtMore33PerCent((Node)candidate, candidateCentroid, distPermit, listObjects, listCoords);
         assert candidate.checkInternal() : "getElementAtMore33PerCent : end candidate not conform";
     }
-    
+
     /**
      * Recover lesser 33% largest of {@code Node} candidate within it.
      *
@@ -292,7 +292,7 @@ public strictfp class StarRTree<E> extends AbstractTree<E> {
         ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidateCentroid", candidateCentroid);
         assert distancePermit >= 0 : "getElementsAtMore33PerCent : distancePermit. Current candidate : "+candidate;
         assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
-        
+
         if (candidate.isData()) {
             final double[] dataBound = candidate.getBoundary();
             if (calculator.getDistancePoint(candidateCentroid, getMedian(dataBound)) > distancePermit) {
@@ -309,7 +309,7 @@ public strictfp class StarRTree<E> extends AbstractTree<E> {
             assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
         }
     }
-    
+
     /**
      * Exchange some entry(ies) between two nodes in aim to find best form with lesser overlaps.
      * Also branchGrafting will be able to avoid splitting node.
@@ -330,11 +330,11 @@ public strictfp class StarRTree<E> extends AbstractTree<E> {
         final int nodeACount = nodeA.getChildCount();
         final int nodeBCount = nodeB.getChildCount();
         final int size = nodeACount + nodeBCount;
-        
+
         final List<Node> listFN = new ArrayList<Node>(size);
         final Node[] nodeAChildren = nodeA.getChildren();
         final Node[] nodeBChildren = nodeB.getChildren();
-        
+
         final double[] globalE = nodeAChildren[0].getBoundary().clone();
         for (Node nod : nodeAChildren) {
             add(globalE, nod.getBoundary());
@@ -344,7 +344,7 @@ public strictfp class StarRTree<E> extends AbstractTree<E> {
             add(globalE, nod.getBoundary());
             listFN.add(nod);
         }
-        
+
         if(listFN.isEmpty()) throw new IllegalArgumentException("branchGrafting : empty list");
         final int maxEltsPermit = getMaxElements();
         final int dim           = globalE.length >> 1;
@@ -379,10 +379,10 @@ public strictfp class StarRTree<E> extends AbstractTree<E> {
                 index = cut;
             }
         }
-        
+
         //index not wrong a split is better.
         if (index > maxEltsPermit || (size-index) > maxEltsPermit) return;
-        
+
         nodeA.clear();
         nodeB.clear();
         for (int i = 0; i < index; i++) {
@@ -422,7 +422,7 @@ public strictfp class StarRTree<E> extends AbstractTree<E> {
                 // empty child
                 if (currentChild.isEmpty()) {
                     candidate.removeChild(currentChild);
-                } else if (currentChild.isLeaf() 
+                } else if (currentChild.isLeaf()
                      && currentChild.getChildCount() <= getMaxElements() / 3) {// other condition
                     if (reinsertListCoords == null) {
                         reinsertListCoords  = new ArrayList<double[]>();
@@ -461,7 +461,7 @@ public strictfp class StarRTree<E> extends AbstractTree<E> {
              treeAccess.writeNode(candidate);
             assert candidate.checkInternal() : "trim : candidate not conform";
         }
-            
+
         if (candidate.getParentId()!= 0) {
             trim (treeAccess.readNode(candidate.getParentId()));
         } else {

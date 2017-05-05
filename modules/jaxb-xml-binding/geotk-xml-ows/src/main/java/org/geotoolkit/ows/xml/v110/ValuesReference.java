@@ -27,12 +27,12 @@ import javax.xml.bind.annotation.XmlValue;
 
 
 /**
- * Human-readable name of the list of values provided by the referenced document. Can be empty string when this list has no name. 
- * 
+ * Human-readable name of the list of values provided by the referenced document. Can be empty string when this list has no name.
+ *
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;simpleContent>
@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -64,14 +64,14 @@ public class ValuesReference {
      */
     ValuesReference(){
     }
-    
+
     public ValuesReference(final ValuesReference that){
         if (that != null) {
             this.reference = that.reference;
             this.value     = that.value;
         }
     }
-    
+
     /**
      * Build a new Values reference.
      */
@@ -79,7 +79,7 @@ public class ValuesReference {
         this.value     = value;
         this.reference = reference;
     }
-    
+
     /**
      * Gets the value of the value property.
      */

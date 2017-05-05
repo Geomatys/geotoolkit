@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ClassifierListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ClassifierListType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ClassifierListType", propOrder = {
@@ -66,25 +66,25 @@ public class ClassifierListType
 
     /**
      * Gets the value of the classifier property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the classifier property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getClassifier().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ClassifierListType.Classifier }
-     * 
-     * 
+     *
+     *
      */
     public List<ClassifierListType.Classifier> getClassifier() {
         if (classifier == null) {
@@ -96,9 +96,9 @@ public class ClassifierListType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -110,8 +110,8 @@ public class ClassifierListType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -124,11 +124,11 @@ public class ClassifierListType
 
         /**
          * Gets the value of the term property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TermType }
-         *     
+         *
          */
         public TermType getTerm() {
             return term;
@@ -136,11 +136,11 @@ public class ClassifierListType
 
         /**
          * Sets the value of the term property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TermType }
-         *     
+         *
          */
         public void setTerm(TermType value) {
             this.term = value;

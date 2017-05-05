@@ -29,12 +29,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * ExtrinsicObject is the mapping of the same named interface in ebRIM.
  * It extends RegistryObject.
- *       
- * 
+ *
+ *
  * <p>Java class for ExtrinsicObjectType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ExtrinsicObjectType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

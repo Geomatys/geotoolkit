@@ -25,9 +25,9 @@ import org.geotoolkit.swe.xml.DataArray;
 
 /**
  * <p>Java class for DataArrayType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataArrayType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import org.geotoolkit.swe.xml.DataArray;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -78,7 +78,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
             this.values = ar.getValues();
         }
     }
-    
+
     public DataArrayType(final String id, final int count, final String elementName, final AbstractDataRecordType elementType,
             final AbstractEncodingType encoding, final String values) {
         super(id, count);
@@ -87,7 +87,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
         }
         this.encoding    = new BlockEncodingPropertyType(encoding);
         this.values      = values;
-        
+
     }
 
     /**
@@ -154,7 +154,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
     public void setDataValues(final DataValuePropertyType value) {
         this.dataValues = value;
     }
-    
+
     @Override
     public void setValues(final String values) {
         this.values = values;

@@ -38,7 +38,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public final class FXZoomAllAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_GLOBE, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
-    
+
     public FXZoomAllAction(FXMap map) {
         super(map,GeotkFX.getString(FXZoomAllAction.class,"zoom_all"),GeotkFX.getString(FXZoomAllAction.class,"zoom_all"),ICON);
     }
@@ -57,5 +57,5 @@ public final class FXZoomAllAction extends FXMapAction {
             }
         }
     }
-    
+
 }

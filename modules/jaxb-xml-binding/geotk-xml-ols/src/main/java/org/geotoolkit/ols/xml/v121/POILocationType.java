@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines the type of location constraints to perform search.
- * 
+ *
  * <p>Java class for POILocationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="POILocationType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "POILocationType", propOrder = {
@@ -67,11 +67,11 @@ public class POILocationType {
 
     /**
      * Gets the value of the address property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AddressType }
-     *     
+     *
      */
     public AddressType getAddress() {
         return address;
@@ -79,11 +79,11 @@ public class POILocationType {
 
     /**
      * Sets the value of the address property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AddressType }
-     *     
+     *
      */
     public void setAddress(AddressType value) {
         this.address = value;
@@ -91,11 +91,11 @@ public class POILocationType {
 
     /**
      * Gets the value of the nearest property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link NearestType }
-     *     
+     *
      */
     public NearestType getNearest() {
         return nearest;
@@ -103,11 +103,11 @@ public class POILocationType {
 
     /**
      * Sets the value of the nearest property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link NearestType }
-     *     
+     *
      */
     public void setNearest(NearestType value) {
         this.nearest = value;
@@ -115,11 +115,11 @@ public class POILocationType {
 
     /**
      * Gets the value of the withinDistance property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link WithinDistanceType }
-     *     
+     *
      */
     public WithinDistanceType getWithinDistance() {
         return withinDistance;
@@ -127,11 +127,11 @@ public class POILocationType {
 
     /**
      * Sets the value of the withinDistance property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link WithinDistanceType }
-     *     
+     *
      */
     public void setWithinDistance(WithinDistanceType value) {
         this.withinDistance = value;
@@ -139,11 +139,11 @@ public class POILocationType {
 
     /**
      * Gets the value of the withinBoundary property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link WithinBoundaryType }
-     *     
+     *
      */
     public WithinBoundaryType getWithinBoundary() {
         return withinBoundary;
@@ -151,11 +151,11 @@ public class POILocationType {
 
     /**
      * Sets the value of the withinBoundary property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link WithinBoundaryType }
-     *     
+     *
      */
     public void setWithinBoundary(WithinBoundaryType value) {
         this.withinBoundary = value;

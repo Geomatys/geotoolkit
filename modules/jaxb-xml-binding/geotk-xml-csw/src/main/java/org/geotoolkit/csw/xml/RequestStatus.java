@@ -24,10 +24,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * @module
  */
 public interface RequestStatus {
-    
+
     /**
      * Gets the value of the timestamp property.
-     * 
+     *
      */
     public XMLGregorianCalendar getTimestamp();
 

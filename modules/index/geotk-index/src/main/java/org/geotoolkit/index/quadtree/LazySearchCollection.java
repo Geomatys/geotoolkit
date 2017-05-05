@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 /**
  * A collection that will open and close the QuadTree and find the next id in
  * the index.
- * 
+ *
  * @author Jesse
  * @author Johann Sorel (Geomatys)
  * @module
@@ -70,7 +70,7 @@ public class LazySearchCollection<T extends Data> extends AbstractCollection<T> 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.AbstractCollection#iterator()
      */
     @Override

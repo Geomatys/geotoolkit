@@ -23,10 +23,10 @@ import org.geotoolkit.ows.xml.RequestBase;
  * @author Guilhem Legal (Geomatys)
  */
 public interface InsertResult extends RequestBase {
-    
+
     String getTemplate();
-    
+
     String getResultValues();
-    
+
     String getResponseFormat();
 }

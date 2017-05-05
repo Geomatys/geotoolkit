@@ -44,12 +44,12 @@ import org.w3c.dom.Element;
 /**
  * This element is used to embed the data in a WPS request or response.
  * The content can be XML data, plain character data, or specially encoded binary data (i.e. base64).
- * 				
- * 
+ *
+ *
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -60,8 +60,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -90,26 +90,26 @@ public class Data implements DataType {
     private Map<QName, String> otherAttributes = new HashMap<>();
 
     public Data() {
-        
+
     }
-    
+
     public Data(Object content) {
         if (content != null) {
             this.content = new ArrayList<>();
             this.content.add(content);
         }
     }
-    
+
     /**
-     * 
+     *
      * This element is used to embed the data in a WPS request or response.
      * The content can be XML data, plain character data, or specially encoded binary data (i.e. base64).
      *
      * @return Objects of the following type(s) are allowed in the list
      * {@link String }
      * {@link Element }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getContent() {
         if (content == null) {
@@ -120,11 +120,11 @@ public class Data implements DataType {
 
     /**
      * Gets the value of the mimeType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMimeType() {
         return mimeType;
@@ -132,11 +132,11 @@ public class Data implements DataType {
 
     /**
      * Sets the value of the mimeType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMimeType(String value) {
         this.mimeType = value;
@@ -144,11 +144,11 @@ public class Data implements DataType {
 
     /**
      * Gets the value of the encoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getEncoding() {
         return encoding;
@@ -156,11 +156,11 @@ public class Data implements DataType {
 
     /**
      * Sets the value of the encoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setEncoding(String value) {
         this.encoding = value;
@@ -168,11 +168,11 @@ public class Data implements DataType {
 
     /**
      * Gets the value of the schema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSchema() {
         return schema;
@@ -180,11 +180,11 @@ public class Data implements DataType {
 
     /**
      * Sets the value of the schema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSchema(String value) {
         this.schema = value;
@@ -192,7 +192,7 @@ public class Data implements DataType {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * @return always non-null
      */
     public Map<QName, String> getOtherAttributes() {
@@ -234,7 +234,7 @@ public class Data implements DataType {
         }
         return null;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
@@ -261,7 +261,7 @@ public class Data implements DataType {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

@@ -29,7 +29,7 @@ package org.geotoolkit.index.tree.basic;
  * until there are no remaining objects, insert the object for which the
  * difference of dead space if assigned to each of the two nodes that requires
  * lesser enlargement of its respective boundary.<br/><br/>
- * 
+ *
  * Moreover, LINEAR split is more faster than QUADRATIC during insertion are remove action,
  * whereas QUADRATIC split permit a faster search action than LINEAR.<br/>
  * User should choose split made in fonction of its use.<br/>

@@ -23,13 +23,13 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each Java content interface and Java element interface 
- * generated in the org.constellation.cat.csw.v202 package. 
- * An ObjectFactory allows you to programatically construct new instances of the Java representation for XML content. 
- * The Java representation of XML content can consist of schema derived interfaces and classes representing the binding of schema 
- * type definitions, element declarations and model groups.  
+ * This object contains factory methods for each Java content interface and Java element interface
+ * generated in the org.constellation.cat.csw.v202 package.
+ * An ObjectFactory allows you to programatically construct new instances of the Java representation for XML content.
+ * The Java representation of XML content can consist of schema derived interfaces and classes representing the binding of schema
+ * type definitions, element declarations and model groups.
  * Factory methods for each of these are provided in this class.
- * 
+ *
  * @module
  */
 @XmlRegistry
@@ -51,14 +51,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.constellation.cat.csw.v202
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link RangeOfValuesType }
-     * 
+     *
      */
     public RangeOfValuesType createRangeOfValuesType() {
         return new RangeOfValuesType();
@@ -66,7 +66,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ConceptualSchemeType }
-     * 
+     *
      */
     public ConceptualSchemeType createConceptualSchemeType() {
         return new ConceptualSchemeType();
@@ -74,7 +74,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetRecordByIdResponseType }
-     * 
+     *
      */
     public GetRecordByIdResponseType createGetRecordByIdResponseType() {
         return new GetRecordByIdResponseType();
@@ -82,7 +82,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TransactionType }
-     * 
+     *
      */
     public TransactionType createTransactionType() {
         return new TransactionType();
@@ -90,7 +90,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EmptyType }
-     * 
+     *
      */
     public EmptyType createEmptyType() {
         return new EmptyType();
@@ -98,7 +98,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertResultType }
-     * 
+     *
      */
     public InsertResultType createInsertResultType() {
         return new InsertResultType();
@@ -106,7 +106,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QueryType }
-     * 
+     *
      */
     public QueryType createQueryType() {
         return new QueryType();
@@ -114,7 +114,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertType }
-     * 
+     *
      */
     public InsertType createInsertType() {
         return new InsertType();
@@ -122,7 +122,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribeRecordType }
-     * 
+     *
      */
     public DescribeRecordType createDescribeRecordType() {
         return new DescribeRecordType();
@@ -130,7 +130,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DeleteType }
-     * 
+     *
      */
     public DeleteType createDeleteType() {
         return new DeleteType();
@@ -138,7 +138,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SummaryRecordType }
-     * 
+     *
      */
     public SummaryRecordType createSummaryRecordType() {
         return new SummaryRecordType();
@@ -146,7 +146,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DCMIRecordType }
-     * 
+     *
      */
     public DCMIRecordType createDCMIRecordType() {
         return new DCMIRecordType();
@@ -154,7 +154,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RecordPropertyType }
-     * 
+     *
      */
     public RecordPropertyType createRecordPropertyType() {
         return new RecordPropertyType();
@@ -162,7 +162,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link HarvestType }
-     * 
+     *
      */
     public HarvestType createHarvestType() {
         return new HarvestType();
@@ -170,7 +170,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ElementSetNameType }
-     * 
+     *
      */
     public ElementSetNameType createElementSetNameType() {
         return new ElementSetNameType();
@@ -178,7 +178,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribeRecordResponseType }
-     * 
+     *
      */
     public DescribeRecordResponseType createDescribeRecordResponseType() {
         return new DescribeRecordResponseType();
@@ -186,7 +186,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AcknowledgementType }
-     * 
+     *
      */
     public AcknowledgementType createAcknowledgementType() {
         return new AcknowledgementType();
@@ -194,7 +194,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link HarvestResponseType }
-     * 
+     *
      */
     public HarvestResponseType createHarvestResponseType() {
         return new HarvestResponseType();
@@ -202,7 +202,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DistributedSearchType }
-     * 
+     *
      */
     public DistributedSearchType createDistributedSearchType() {
         return new DistributedSearchType();
@@ -210,7 +210,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CapabilitiesType }
-     * 
+     *
      */
     public Capabilities createCapabilities() {
         return new Capabilities();
@@ -218,15 +218,15 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QueryConstraintType }
-     * 
+     *
      */
     public QueryConstraintType createQueryConstraintType() {
         return new QueryConstraintType();
     }
-    
+
     /**
      * Create an instance of {@link GetDomainType }
-     * 
+     *
      */
     public GetDomainType createGetDomainType() {
         return new GetDomainType();
@@ -234,7 +234,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RequestStatusType }
-     * 
+     *
      */
     public RequestStatusType createRequestStatusType() {
         return new RequestStatusType();
@@ -242,7 +242,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TransactionResponseType }
-     * 
+     *
      */
     public TransactionResponseType createTransactionResponseType() {
         return new TransactionResponseType();
@@ -250,7 +250,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SchemaComponentType }
-     * 
+     *
      */
     public SchemaComponentType createSchemaComponentType() {
         return new SchemaComponentType();
@@ -258,7 +258,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SearchResultsType }
-     * 
+     *
      */
     public SearchResultsType createSearchResultsType() {
         return new SearchResultsType();
@@ -266,7 +266,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetRecordsType }
-     * 
+     *
      */
     public GetRecordsType createGetRecordsType() {
         return new GetRecordsType();
@@ -274,7 +274,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DomainValuesType }
-     * 
+     *
      */
     public DomainValuesType createDomainValuesType() {
         return new DomainValuesType();
@@ -282,7 +282,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BriefRecordType }
-     * 
+     *
      */
     public BriefRecordType createBriefRecordType() {
         return new BriefRecordType();
@@ -290,7 +290,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TransactionSummaryType }
-     * 
+     *
      */
     public TransactionSummaryType createTransactionSummaryType() {
         return new TransactionSummaryType();
@@ -298,7 +298,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetRecordByIdType }
-     * 
+     *
      */
     public GetRecordByIdType createGetRecordByIdType() {
         return new GetRecordByIdType();
@@ -306,7 +306,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetDomainResponseType }
-     * 
+     *
      */
     public GetDomainResponseType createGetDomainResponseType() {
         return new GetDomainResponseType();
@@ -314,7 +314,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RecordType }
-     * 
+     *
      */
     public RecordType createRecordType() {
         return new RecordType();
@@ -322,7 +322,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ListOfValuesType }
-     * 
+     *
      */
     public ListOfValuesType createListOfValuesType() {
         return new ListOfValuesType();
@@ -330,7 +330,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EchoedRequestType }
-     * 
+     *
      */
     public EchoedRequestType createEchoedRequestType() {
         return new EchoedRequestType();
@@ -338,7 +338,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UpdateType }
-     * 
+     *
      */
     public UpdateType createUpdateType() {
         return new UpdateType();
@@ -346,7 +346,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetRecordsResponseType }
-     * 
+     *
      */
     public GetRecordsResponseType createGetRecordsResponseType() {
         return new GetRecordsResponseType();
@@ -354,7 +354,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetCapabilitiesType }
-     * 
+     *
      */
     public GetCapabilitiesType createGetCapabilitiesType() {
         return new GetCapabilitiesType();
@@ -362,7 +362,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ElementSetNameType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "ElementSetName", defaultValue = "summary")
     public JAXBElement<ElementSetNameType> createElementSetName(final ElementSetNameType value) {
@@ -371,17 +371,17 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link HarvestType }{@code >}}
-     * 
-     
+     *
+
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "Harvest")
     public JAXBElement<HarvestType> createHarvest(HarvestType value) {
         return new JAXBElement<HarvestType>(_Harvest_QNAME, HarvestType.class, null, value);
     }
-     
+
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetDomainType }{@code >}}
-     * 
-     
+     *
+
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "GetDomain")
     public JAXBElement<GetDomainType> createGetDomain(GetDomainType value) {
         return new JAXBElement<GetDomainType>(_GetDomain_QNAME, GetDomainType.class, null, value);
@@ -389,8 +389,8 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link QueryType }{@code >}}
-     * 
-     
+     *
+
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "Query", substitutionHeadNamespace = "http://www.opengis.net/cat/csw/2.0.2", substitutionHeadName = "AbstractQuery")
     public JAXBElement<QueryType> createQuery(QueryType value) {
         return new JAXBElement<QueryType>(_Query_QNAME, QueryType.class, null, value);
@@ -398,7 +398,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RecordType }{@code >}}
-     * 
+     *
      *
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "Record", substitutionHeadNamespace = "http://www.opengis.net/cat/csw/2.0.2", substitutionHeadName = "AbstractRecord")
     public JAXBElement<RecordType> createRecord(final RecordType value) {
@@ -407,7 +407,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RecordPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "RecordProperty")
     public JAXBElement<RecordPropertyType> createRecordProperty(final RecordPropertyType value) {
@@ -416,7 +416,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetRecordByIdResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "GetRecordByIdResponse")
     public JAXBElement<GetRecordByIdResponseType> createGetRecordByIdResponse(final GetRecordByIdResponseType value) {
@@ -425,7 +425,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetDomainResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "GetDomainResponse")
     public JAXBElement<GetDomainResponseType> createGetDomainResponse(final GetDomainResponseType value) {
@@ -434,7 +434,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BriefRecordType }{@code >}}
-     * 
+     *
      *
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "BriefRecord", substitutionHeadNamespace = "http://www.opengis.net/cat/csw/2.0.2", substitutionHeadName = "AbstractRecord")
     public JAXBElement<BriefRecordType> createBriefRecord(final BriefRecordType value) {
@@ -443,7 +443,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractQueryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "AbstractQuery")
     public JAXBElement<AbstractQueryType> createAbstractQuery(final AbstractQueryType value) {
@@ -452,7 +452,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DescribeRecordResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "DescribeRecordResponse")
     public JAXBElement<DescribeRecordResponseType> createDescribeRecordResponse(final DescribeRecordResponseType value) {
@@ -461,8 +461,8 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetCapabilitiesType }{@code >}}
-     * 
-    
+     *
+
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "GetCapabilities")
     public JAXBElement<GetCapabilities> createGetCapabilities(GetCapabilities value) {
         return new JAXBElement<GetCapabilities>(_GetCapabilities_QNAME, GetCapabilities.class, null, value);
@@ -470,8 +470,8 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TransactionType }{@code >}}
-     * 
-     
+     *
+
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "Transaction")
     public JAXBElement<TransactionType> createTransaction(TransactionType value) {
         return new JAXBElement<TransactionType>(_Transaction_QNAME, TransactionType.class, null, value);
@@ -479,7 +479,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link QueryConstraintType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "Constraint")
     public JAXBElement<QueryConstraintType> createConstraint(final QueryConstraintType value) {
@@ -488,7 +488,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SummaryRecordType }{@code >}}
-     * 
+     *
      *
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "SummaryRecord", substitutionHeadNamespace = "http://www.opengis.net/cat/csw/2.0.2", substitutionHeadName = "AbstractRecord")
     public JAXBElement<SummaryRecordType> createSummaryRecord(final SummaryRecordType value) {
@@ -497,7 +497,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DCMIRecordType }{@code >}}
-     * 
+     *
      *
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "DCMIRecord", substitutionHeadNamespace = "http://www.opengis.net/cat/csw/2.0.2", substitutionHeadName = "AbstractRecord")
     public JAXBElement<DCMIRecordType> createDCMIRecord(final DCMIRecordType value) {
@@ -506,7 +506,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetRecordByIdType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "GetRecordById")
     public JAXBElement<GetRecordByIdType> createGetRecordById(final GetRecordByIdType value) {
@@ -515,8 +515,8 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetRecordsType }{@code >}}
-     * 
-     
+     *
+
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "GetRecords")
     public JAXBElement<GetRecordsType> createGetRecords(GetRecordsType value) {
         return new JAXBElement<GetRecordsType>(_GetRecords_QNAME, GetRecordsType.class, null, value);
@@ -524,8 +524,8 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CapabilitiesType }{@code >}}
-     * 
-     
+     *
+
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "Capabilities")
     public JAXBElement<Capabilities> createCapabilities(Capabilities value) {
         return new JAXBElement<Capabilities>(_Capabilities_QNAME, Capabilities.class, null, value);
@@ -533,7 +533,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetRecordsResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "GetRecordsResponse")
     public JAXBElement<GetRecordsResponseType> createGetRecordsResponse(final GetRecordsResponseType value) {
@@ -542,7 +542,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link HarvestResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "HarvestResponse")
     public JAXBElement<HarvestResponseType> createHarvestResponse(final HarvestResponseType value) {
@@ -551,7 +551,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractRecordType }{@code >}}
-     * 
+     *
      *
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "AbstractRecord")
     public JAXBElement<AbstractRecordType> createAbstractRecord(final AbstractRecordType value) {
@@ -560,7 +560,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AcknowledgementType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "Acknowledgement")
     public JAXBElement<AcknowledgementType> createAcknowledgement(final AcknowledgementType value) {
@@ -569,7 +569,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DescribeRecordType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "DescribeRecord")
     public JAXBElement<DescribeRecordType> createDescribeRecord(final DescribeRecordType value) {
@@ -578,7 +578,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TransactionResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "TransactionResponse")
     public JAXBElement<TransactionResponseType> createTransactionResponse(final TransactionResponseType value) {

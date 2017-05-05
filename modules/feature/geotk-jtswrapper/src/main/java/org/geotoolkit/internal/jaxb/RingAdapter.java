@@ -15,11 +15,11 @@ public class RingAdapter extends XmlAdapter<RingAdapter, Ring> {
 
     @XmlElement(name = "LinearRing", namespace = "http://www.opengis.net/gml")
     private LinearRingPosListType ring;
-    
+
     public RingAdapter() {
-        
+
     }
-    
+
     public RingAdapter(final JTSRing ring) {
         this.ring = new LinearRingPosListType(ring);
     }

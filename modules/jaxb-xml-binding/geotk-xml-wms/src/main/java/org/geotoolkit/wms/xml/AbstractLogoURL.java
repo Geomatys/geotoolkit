@@ -23,10 +23,10 @@ package org.geotoolkit.wms.xml;
 public interface AbstractLogoURL {
 
     String getFormat();
-    
+
     AbstractOnlineResource getOnlineResource();
-    
+
     Integer getWidth();
-    
+
     Integer getHeight();
 }

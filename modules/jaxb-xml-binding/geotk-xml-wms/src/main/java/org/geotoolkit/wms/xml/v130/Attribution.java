@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -66,7 +66,7 @@ public class Attribution {
      */
     Attribution() {
     }
-    
+
     /**
      * Build a new Attribution.
      */
@@ -84,7 +84,7 @@ public class Attribution {
         this.onlineResource = new OnlineResource(href);
         this.logoURL        = logoURL;
     }
-    
+
     /**
      * Gets the value of the title property.
      */

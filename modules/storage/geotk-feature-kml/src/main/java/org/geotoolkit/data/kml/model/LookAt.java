@@ -138,7 +138,7 @@ public interface LookAt extends AbstractView {
     void setRange(double range);
 
     /**
-     * 
+     *
      * @param altitudeMode
      */
     void setAltitudeMode(AltitudeMode altitudeMode);

@@ -32,7 +32,7 @@ import org.apache.lucene.util.AttributeFactory;
  * <p> This should be a good tokenizer for most European-language documents:
  *
  * <ul>
- *   <li>Splits words at punctuation characters, removing punctuation. However, a 
+ *   <li>Splits words at punctuation characters, removing punctuation. However, a
  *     dot that's not followed by whitespace is considered part of a token.
  *   <li>Splits words at hyphens, unless there's a number in the token, in which case
  *     the whole token is interpreted as a product number and is not split.
@@ -75,7 +75,7 @@ public final class ClassicTokenizer extends Tokenizer {
     "<CJ>",
     "<ACRONYM_DEP>"
   };
-  
+
   private int skippedPositions;
 
   private int maxTokenLength = StandardAnalyzer.DEFAULT_MAX_TOKEN_LENGTH;
@@ -105,7 +105,7 @@ public final class ClassicTokenizer extends Tokenizer {
   }
 
   /**
-   * Creates a new ClassicTokenizer with a given {@link org.apache.lucene.util.AttributeFactory} 
+   * Creates a new ClassicTokenizer with a given {@link org.apache.lucene.util.AttributeFactory}
    */
   public ClassicTokenizer(AttributeFactory factory) {
     super(factory);
@@ -159,7 +159,7 @@ public final class ClassicTokenizer extends Tokenizer {
         skippedPositions++;
     }
   }
-  
+
   @Override
   public final void end() throws IOException {
     super.end();
@@ -169,7 +169,7 @@ public final class ClassicTokenizer extends Tokenizer {
     // adjust any skipped tokens
     posIncrAtt.setPositionIncrement(posIncrAtt.getPositionIncrement()+skippedPositions);
   }
-  
+
   @Override
   public void close() throws IOException {
     super.close();

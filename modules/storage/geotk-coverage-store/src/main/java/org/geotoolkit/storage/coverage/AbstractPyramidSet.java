@@ -23,7 +23,7 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  */
 public abstract class AbstractPyramidSet implements PyramidSet {
-    
+
     @Override
     public Pyramid getPyramid(String pyramidId) {
         for(Pyramid p : getPyramids()){
@@ -31,7 +31,7 @@ public abstract class AbstractPyramidSet implements PyramidSet {
                 return p;
             }
         }
-        
+
         return null;
     }
 
@@ -39,7 +39,7 @@ public abstract class AbstractPyramidSet implements PyramidSet {
     public GridMosaic getMosaic(String pyramidId, String mosaicId) {
         final Pyramid p = getPyramid(pyramidId);
         if(p == null){ return null; }
-        
+
         for(GridMosaic m : p.getMosaics()){
             if(m.getId().equals(mosaicId)){
                 return m;
@@ -47,7 +47,7 @@ public abstract class AbstractPyramidSet implements PyramidSet {
         }
         return null;
     }
-    
+
     @Override
     public Envelope getEnvelope() {
         for(Pyramid pyramid : getPyramids()){
@@ -56,5 +56,5 @@ public abstract class AbstractPyramidSet implements PyramidSet {
         }
         return null;
     }
-    
+
 }

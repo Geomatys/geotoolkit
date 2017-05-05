@@ -29,9 +29,9 @@ import org.geotoolkit.wcs.xml.DescribeCoverageResponse;
 
 /**
  * <p>Java class for CoverageDescriptionsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoverageDescriptionsType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.wcs.xml.DescribeCoverageResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CoverageDescriptionsType", propOrder = {
@@ -57,16 +57,16 @@ public class CoverageDescriptionsType implements DescribeCoverageResponse {
     private List<CoverageDescriptionType> coverageDescription;
 
     public CoverageDescriptionsType() {
-        
+
     }
-    
+
     public CoverageDescriptionsType(List<CoverageDescriptionType> coverageDescription) {
         this.coverageDescription = coverageDescription;
     }
-    
+
     /**
      * Gets the value of the coverageDescription property.
-     * 
+     *
      */
     public List<CoverageDescriptionType> getCoverageDescription() {
         if (coverageDescription == null) {

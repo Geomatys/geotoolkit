@@ -31,9 +31,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for GeometricComplexType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeometricComplexType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeometricComplexType", propOrder = {
@@ -63,11 +63,11 @@ public class GeometricComplexType extends AbstractGeometryType {
 
     /**
      * Gets the value of the element property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link GeometricPrimitivePropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<GeometricPrimitivePropertyType> getElement() {
         if (element == null) {
@@ -78,11 +78,11 @@ public class GeometricComplexType extends AbstractGeometryType {
 
     /**
      * Gets the value of the aggregationType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public AggregationType getAggregationType() {
         return aggregationType;
@@ -90,11 +90,11 @@ public class GeometricComplexType extends AbstractGeometryType {
 
     /**
      * Sets the value of the aggregationType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public void setAggregationType(AggregationType value) {
         this.aggregationType = value;

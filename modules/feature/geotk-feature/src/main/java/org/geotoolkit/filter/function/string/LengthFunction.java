@@ -33,7 +33,7 @@ public class LengthFunction extends AbstractFunction {
         if(feature instanceof CharSequence){
             return ((CharSequence)feature).length();
         }
-        
+
         try { // attempt to get value and perform conversion
             arg0 = parameters.get(0).evaluate(feature, String.class);
         } catch (Exception e) { // probably a type error

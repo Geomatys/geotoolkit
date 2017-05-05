@@ -27,9 +27,9 @@ import org.geotoolkit.gml.xml.v212.AbstractGeometryType;
 
 /**
  * <p>Java class for DistanceBufferType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DistanceBufferType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.gml.xml.v212.AbstractGeometryType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,9 +63,9 @@ public class DistanceBufferType extends SpatialOpsType {
     private DistanceType distance;
 
     public DistanceBufferType() {
-        
+
     }
-    
+
     public DistanceBufferType(final DistanceBufferType that) {
         if (that != null) {
             if (that.propertyName != null) {
@@ -82,7 +82,7 @@ public class DistanceBufferType extends SpatialOpsType {
     }
     /**
      * Gets the value of the propertyName property.
-     * 
+     *
      */
     public PropertyNameType getPropertyName() {
         return propertyName;
@@ -90,7 +90,7 @@ public class DistanceBufferType extends SpatialOpsType {
 
     /**
      * Sets the value of the propertyName property.
-     * 
+     *
      */
     public void setPropertyName(final PropertyNameType value) {
         this.propertyName = value;
@@ -98,7 +98,7 @@ public class DistanceBufferType extends SpatialOpsType {
 
     /**
      * Gets the value of the geometry property.
-     * 
+     *
      */
     public JAXBElement<? extends AbstractGeometryType> getGeometry() {
         return geometry;
@@ -106,7 +106,7 @@ public class DistanceBufferType extends SpatialOpsType {
 
     /**
      * Sets the value of the geometry property.
-     * 
+     *
      */
     public void setGeometry(final JAXBElement<? extends AbstractGeometryType> value) {
         this.geometry = ((JAXBElement<? extends AbstractGeometryType> ) value);
@@ -114,7 +114,7 @@ public class DistanceBufferType extends SpatialOpsType {
 
     /**
      * Gets the value of the distance property.
-     * 
+     *
      */
     public DistanceType getDistance() {
         return distance;
@@ -122,7 +122,7 @@ public class DistanceBufferType extends SpatialOpsType {
 
     /**
      * Sets the value of the distance property.
-     *     
+     *
      */
     public void setDistance(final DistanceType value) {
         this.distance = value;

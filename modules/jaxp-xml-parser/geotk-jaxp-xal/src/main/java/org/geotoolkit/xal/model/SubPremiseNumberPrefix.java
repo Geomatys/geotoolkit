@@ -37,13 +37,13 @@ public interface SubPremiseNumberPrefix
 
     /**
      * <p>A-12 where 12 is number and A is prefix and "-" is the separator</p>
-     * 
+     *
      * @return
      */
     String getNumberPrefixSeparator();
 
     /**
-     * 
+     *
      * @param numberPrefixSeparator
      */
     void setNumberPrefixSeparator(String numberPrefixSeparator);

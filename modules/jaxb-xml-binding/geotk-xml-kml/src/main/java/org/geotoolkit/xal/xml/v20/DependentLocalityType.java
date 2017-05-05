@@ -36,9 +36,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for DependentLocalityType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DependentLocalityType">
  *   &lt;complexContent>
@@ -92,8 +92,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -154,25 +154,25 @@ public class DependentLocalityType {
 
     /**
      * Gets the value of the addressLine property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the addressLine property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAddressLine().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AddressLine }
-     * 
-     * 
+     *
+     *
      */
     public List<AddressLine> getAddressLine() {
         if (addressLine == null) {
@@ -183,25 +183,25 @@ public class DependentLocalityType {
 
     /**
      * Gets the value of the dependentLocalityName property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the dependentLocalityName property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDependentLocalityName().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DependentLocalityType.DependentLocalityName }
-     * 
-     * 
+     *
+     *
      */
     public List<DependentLocalityType.DependentLocalityName> getDependentLocalityName() {
         if (dependentLocalityName == null) {
@@ -212,11 +212,11 @@ public class DependentLocalityType {
 
     /**
      * Gets the value of the dependentLocalityNumber property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DependentLocalityType.DependentLocalityNumber }
-     *     
+     *
      */
     public DependentLocalityType.DependentLocalityNumber getDependentLocalityNumber() {
         return dependentLocalityNumber;
@@ -224,11 +224,11 @@ public class DependentLocalityType {
 
     /**
      * Sets the value of the dependentLocalityNumber property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DependentLocalityType.DependentLocalityNumber }
-     *     
+     *
      */
     public void setDependentLocalityNumber(final DependentLocalityType.DependentLocalityNumber value) {
         this.dependentLocalityNumber = value;
@@ -236,11 +236,11 @@ public class DependentLocalityType {
 
     /**
      * Gets the value of the postBox property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PostBox }
-     *     
+     *
      */
     public PostBox getPostBox() {
         return postBox;
@@ -248,11 +248,11 @@ public class DependentLocalityType {
 
     /**
      * Sets the value of the postBox property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PostBox }
-     *     
+     *
      */
     public void setPostBox(final PostBox value) {
         this.postBox = value;
@@ -260,11 +260,11 @@ public class DependentLocalityType {
 
     /**
      * Gets the value of the largeMailUser property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LargeMailUserType }
-     *     
+     *
      */
     public LargeMailUserType getLargeMailUser() {
         return largeMailUser;
@@ -272,11 +272,11 @@ public class DependentLocalityType {
 
     /**
      * Sets the value of the largeMailUser property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LargeMailUserType }
-     *     
+     *
      */
     public void setLargeMailUser(final LargeMailUserType value) {
         this.largeMailUser = value;
@@ -284,11 +284,11 @@ public class DependentLocalityType {
 
     /**
      * Gets the value of the postOffice property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PostOffice }
-     *     
+     *
      */
     public PostOffice getPostOffice() {
         return postOffice;
@@ -296,11 +296,11 @@ public class DependentLocalityType {
 
     /**
      * Sets the value of the postOffice property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PostOffice }
-     *     
+     *
      */
     public void setPostOffice(final PostOffice value) {
         this.postOffice = value;
@@ -308,11 +308,11 @@ public class DependentLocalityType {
 
     /**
      * Gets the value of the postalRoute property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PostalRouteType }
-     *     
+     *
      */
     public PostalRouteType getPostalRoute() {
         return postalRoute;
@@ -320,11 +320,11 @@ public class DependentLocalityType {
 
     /**
      * Sets the value of the postalRoute property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PostalRouteType }
-     *     
+     *
      */
     public void setPostalRoute(final PostalRouteType value) {
         this.postalRoute = value;
@@ -332,11 +332,11 @@ public class DependentLocalityType {
 
     /**
      * Gets the value of the thoroughfare property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Thoroughfare }
-     *     
+     *
      */
     public Thoroughfare getThoroughfare() {
         return thoroughfare;
@@ -344,11 +344,11 @@ public class DependentLocalityType {
 
     /**
      * Sets the value of the thoroughfare property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Thoroughfare }
-     *     
+     *
      */
     public void setThoroughfare(final Thoroughfare value) {
         this.thoroughfare = value;
@@ -356,11 +356,11 @@ public class DependentLocalityType {
 
     /**
      * Gets the value of the premise property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Premise }
-     *     
+     *
      */
     public Premise getPremise() {
         return premise;
@@ -368,11 +368,11 @@ public class DependentLocalityType {
 
     /**
      * Sets the value of the premise property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Premise }
-     *     
+     *
      */
     public void setPremise(final Premise value) {
         this.premise = value;
@@ -380,11 +380,11 @@ public class DependentLocalityType {
 
     /**
      * Gets the value of the dependentLocality property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DependentLocalityType }
-     *     
+     *
      */
     public DependentLocalityType getDependentLocality() {
         return dependentLocality;
@@ -392,11 +392,11 @@ public class DependentLocalityType {
 
     /**
      * Sets the value of the dependentLocality property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DependentLocalityType }
-     *     
+     *
      */
     public void setDependentLocality(final DependentLocalityType value) {
         this.dependentLocality = value;
@@ -404,11 +404,11 @@ public class DependentLocalityType {
 
     /**
      * Gets the value of the postalCode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PostalCode }
-     *     
+     *
      */
     public PostalCode getPostalCode() {
         return postalCode;
@@ -416,11 +416,11 @@ public class DependentLocalityType {
 
     /**
      * Sets the value of the postalCode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PostalCode }
-     *     
+     *
      */
     public void setPostalCode(final PostalCode value) {
         this.postalCode = value;
@@ -428,25 +428,25 @@ public class DependentLocalityType {
 
     /**
      * Gets the value of the any property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the any property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAny().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getAny() {
         if (any == null) {
@@ -457,11 +457,11 @@ public class DependentLocalityType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -469,11 +469,11 @@ public class DependentLocalityType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -481,11 +481,11 @@ public class DependentLocalityType {
 
     /**
      * Gets the value of the usageType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUsageType() {
         return usageType;
@@ -493,11 +493,11 @@ public class DependentLocalityType {
 
     /**
      * Sets the value of the usageType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUsageType(final String value) {
         this.usageType = value;
@@ -505,11 +505,11 @@ public class DependentLocalityType {
 
     /**
      * Gets the value of the connector property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getConnector() {
         return connector;
@@ -517,11 +517,11 @@ public class DependentLocalityType {
 
     /**
      * Sets the value of the connector property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setConnector(final String value) {
         this.connector = value;
@@ -529,11 +529,11 @@ public class DependentLocalityType {
 
     /**
      * Gets the value of the indicator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIndicator() {
         return indicator;
@@ -541,11 +541,11 @@ public class DependentLocalityType {
 
     /**
      * Sets the value of the indicator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIndicator(final String value) {
         this.indicator = value;
@@ -553,15 +553,15 @@ public class DependentLocalityType {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * <p>
-     * the map is keyed by the name of the attribute and 
+     * the map is keyed by the name of the attribute and
      * the value is the string value of the attribute.
-     * 
+     *
      * the map returned by this method is live, and you can add new attribute
      * by updating the map directly. Because of this design, there's no setter.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */
@@ -572,9 +572,9 @@ public class DependentLocalityType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -585,8 +585,8 @@ public class DependentLocalityType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -607,11 +607,11 @@ public class DependentLocalityType {
 
         /**
          * Gets the value of the content property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getContent() {
             return content;
@@ -619,11 +619,11 @@ public class DependentLocalityType {
 
         /**
          * Sets the value of the content property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setContent(final String value) {
             this.content = value;
@@ -631,11 +631,11 @@ public class DependentLocalityType {
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
             return type;
@@ -643,11 +643,11 @@ public class DependentLocalityType {
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -655,11 +655,11 @@ public class DependentLocalityType {
 
         /**
          * Gets the value of the code property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getCode() {
             return code;
@@ -667,11 +667,11 @@ public class DependentLocalityType {
 
         /**
          * Sets the value of the code property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setCode(final String value) {
             this.code = value;
@@ -679,15 +679,15 @@ public class DependentLocalityType {
 
         /**
          * Gets a map that contains attributes that aren't bound to any typed property on this class.
-         * 
+         *
          * <p>
-         * the map is keyed by the name of the attribute and 
+         * the map is keyed by the name of the attribute and
          * the value is the string value of the attribute.
-         * 
+         *
          * the map returned by this method is live, and you can add new attribute
          * by updating the map directly. Because of this design, there's no setter.
-         * 
-         * 
+         *
+         *
          * @return
          *     always non-null
          */
@@ -700,9 +700,9 @@ public class DependentLocalityType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -720,8 +720,8 @@ public class DependentLocalityType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -742,11 +742,11 @@ public class DependentLocalityType {
 
         /**
          * Gets the value of the content property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getContent() {
             return content;
@@ -754,11 +754,11 @@ public class DependentLocalityType {
 
         /**
          * Sets the value of the content property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setContent(final String value) {
             this.content = value;
@@ -766,11 +766,11 @@ public class DependentLocalityType {
 
         /**
          * Gets the value of the nameNumberOccurrence property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getNameNumberOccurrence() {
             return nameNumberOccurrence;
@@ -778,11 +778,11 @@ public class DependentLocalityType {
 
         /**
          * Sets the value of the nameNumberOccurrence property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setNameNumberOccurrence(final String value) {
             this.nameNumberOccurrence = value;
@@ -790,11 +790,11 @@ public class DependentLocalityType {
 
         /**
          * Gets the value of the code property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getCode() {
             return code;
@@ -802,11 +802,11 @@ public class DependentLocalityType {
 
         /**
          * Sets the value of the code property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setCode(final String value) {
             this.code = value;
@@ -814,15 +814,15 @@ public class DependentLocalityType {
 
         /**
          * Gets a map that contains attributes that aren't bound to any typed property on this class.
-         * 
+         *
          * <p>
-         * the map is keyed by the name of the attribute and 
+         * the map is keyed by the name of the attribute and
          * the value is the string value of the attribute.
-         * 
+         *
          * the map returned by this method is live, and you can add new attribute
          * by updating the map directly. Because of this design, there's no setter.
-         * 
-         * 
+         *
+         *
          * @return
          *     always non-null
          */

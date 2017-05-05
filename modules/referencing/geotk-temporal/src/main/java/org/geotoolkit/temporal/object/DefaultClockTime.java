@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2011, Geomatys
  *
@@ -29,7 +29,7 @@ import org.opengis.temporal.TemporalReferenceSystem;
  * identify a single temporal position; it shall be used with {@linkplain org.opengis.temporal.CalendarDate
  * calendar date} for that purpose. It may be also used to identify the time of occurrence
  * of an event that recurs every day.
- * 
+ *
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */
@@ -52,7 +52,7 @@ public class DefaultClockTime extends DefaultTemporalPosition implements ClockTi
      * unit used at the next lower level, and so on. All but the last number in the sequence shall be
      * integers; the last number may be integer or real.
      *
-     * @return 
+     * @return
      */
     @Override
     public Number[] getClockTime() {

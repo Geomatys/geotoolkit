@@ -25,15 +25,15 @@ import org.geotoolkit.factory.FactoryRegistry;
 
 /**
  * Utility class to access bindings.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class Bindings {
 
     private static final Binding[] BINDINGS;
-    
+
     private Bindings() {}
-    
+
     static{
         final FactoryRegistry fr = new FactoryRegistry(Binding.class);
         final Iterator<Binding> factories = fr.getServiceProviders(Binding.class, null, null, null);
@@ -55,7 +55,7 @@ public final class Bindings {
 
     /**
      * Find binding for given glass and path.
-     * 
+     *
      * @param <C> binding class
      * @param type binding class
      * @param xpath searched path
@@ -81,7 +81,7 @@ public final class Bindings {
 
     /**
      * Shortcut to get binding and resolve it againts candidate.
-     * 
+     *
      * @param <T>
      * @param candidate
      * @param xpath

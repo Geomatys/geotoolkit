@@ -28,12 +28,12 @@ import org.opengis.metadata.Identifier;
 public interface SamplingFeature extends org.opengis.observation.sampling.SamplingFeature {
 
     String getId();
-    
+
     Identifier getName();
-    
+
     String getDescription();
-    
+
     Geometry getGeometry();
-    
+
     List<? extends FeatureProperty> getSampledFeatures();
 }

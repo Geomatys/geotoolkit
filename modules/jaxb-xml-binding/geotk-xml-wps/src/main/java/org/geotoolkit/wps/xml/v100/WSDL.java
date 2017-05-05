@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -54,11 +54,11 @@ public class WSDL {
 
     /**
      * The URL from which the WSDL document can be retrieved.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -66,11 +66,11 @@ public class WSDL {
 
     /**
      * The URL from which the WSDL document can be retrieved.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -80,7 +80,7 @@ public class WSDL {
     public String toString() {
        return "href:" + href;
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

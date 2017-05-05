@@ -174,7 +174,7 @@ public class ShapefileWriter implements Closeable{
         if (shapeBuffer == null)
             throw new IOException("Must write headers first");
         lp = shapeBuffer.position();
-        
+
         //see doc for handling null geometries
         //http://www.esri.com/library/whitepapers/pdfs/shapefile.pdf
         int length;
@@ -183,7 +183,7 @@ public class ShapefileWriter implements Closeable{
         } else {
             length = writeNonNullGeometry(g);
         }
-        
+
         assert (length * 2 == (shapeBuffer.position() - lp) - 8);
 
         lp = shapeBuffer.position();
@@ -198,7 +198,7 @@ public class ShapefileWriter implements Closeable{
 
     private int writeNonNullGeometry(final Geometry g) {
             int length = handler.getLength(g);
-                
+
         // must allocate enough for shape + header (2 ints)
         checkShapeBuffer(length + 8);
 
@@ -209,25 +209,25 @@ public class ShapefileWriter implements Closeable{
         shapeBuffer.putInt(length);
         shapeBuffer.order(ByteOrder.LITTLE_ENDIAN);
         shapeBuffer.putInt(type.id);
-        handler.write(shapeBuffer, g);	
+        handler.write(shapeBuffer, g);
         return length;
     }
-    
+
     private int writeNullGeometry() throws IOException {
-    	// two for the headers + the null shape mark
-    	int length = 4;
-    	checkShapeBuffer(8 + length);
-    	
-    	length /= 2;
-    	
-    	shapeBuffer.order(ByteOrder.BIG_ENDIAN);
+        // two for the headers + the null shape mark
+        int length = 4;
+        checkShapeBuffer(8 + length);
+
+        length /= 2;
+
+        shapeBuffer.order(ByteOrder.BIG_ENDIAN);
         shapeBuffer.putInt(++cnt);
         shapeBuffer.putInt(length);
         shapeBuffer.order(ByteOrder.LITTLE_ENDIAN);
         shapeBuffer.putInt(ShapeType.NULL.id);
         return length;
     }
-    
+
     /**
      * Close the underlying Channels.
      */
@@ -249,10 +249,10 @@ public class ShapefileWriter implements Closeable{
     public boolean isClosed() {
         if(shpChannel != null){
             return !shpChannel.isOpen();
-        }        
+        }
         return true;
     }
-    
+
     /**
      * Bulk write method for writing a collection of (hopefully) like geometries
      * of the given ShapeType.

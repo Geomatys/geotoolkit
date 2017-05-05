@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for DefinitionBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DefinitionBaseType">
  *   &lt;complexContent>
@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -67,7 +67,7 @@ public class DefinitionBaseType extends AbstractGMLType {
     public DefinitionBaseType(final String id, final String name, final String description )  {
         super(id, name, description, null);
     }
-    
+
     @Override
     public String toString() {
         return super.toString();

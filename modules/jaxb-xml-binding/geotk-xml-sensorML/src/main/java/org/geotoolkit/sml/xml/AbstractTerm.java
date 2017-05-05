@@ -29,7 +29,7 @@ public interface AbstractTerm {
     AbstractCodeSpaceProperty getCodeSpace();
 
     String getValue();
-    
+
     void setValue(String value);
 
     URI getDefinition();

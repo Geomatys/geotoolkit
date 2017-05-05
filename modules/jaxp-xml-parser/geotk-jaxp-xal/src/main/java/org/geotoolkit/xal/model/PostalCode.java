@@ -71,7 +71,7 @@ public interface PostalCode {
     List<PostalCodeNumberExtension> getPostalCodeNumberExtensions();
 
     /**
-     * 
+     *
      * @return
      */
     PostTown getPostTown();
@@ -107,7 +107,7 @@ public interface PostalCode {
     void setPostTown(PostTown postTown);
 
     /**
-     * 
+     *
      * @param type
      */
     void setType(String type);

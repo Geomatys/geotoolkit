@@ -224,7 +224,7 @@ public class BiCubicTest extends InterpolationTest {
                 for (int nx = 0; nx < 100; nx++) {
                     x = minX + 1 + nx * 0.01;
                     y = minY + 1 + ny * 0.01;
-                    
+
                     jaiInter = getJAIInterpolate(jaiInterpol, raster, x, y, rW, rH, numBand);
                     for (int b2 = 0; b2 <numBand; b2++) {
                         //-- to simulate pixel center
@@ -255,11 +255,11 @@ public class BiCubicTest extends InterpolationTest {
         int my = (int) y;
         if (x < mx) mx--;
         if (y < my) my--;
-        
+
         //-- ajust area interpolation on x, y center.
         mx -= rasterWidth  / 2 - 1;
         my -= rasterHeight / 2 - 1;
-        
+
         float ix = (float) (x-mx-1);
         float iy = (float) (y-my-1);
         final double[] jaiResult = new double[rasterNumBand];

@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for RegistryObjectListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RegistryObjectListType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -67,7 +67,7 @@ public class RegistryObjectListType {
         }
         return this.registryObject;
     }
-    
+
     /**
      * Sets the value of the registryObject property.
      */
@@ -77,7 +77,7 @@ public class RegistryObjectListType {
         }
         this.registryObject.add(registryObject);
     }
-    
+
     /**
      * Sets the value of the registryObject property.
      */
@@ -87,7 +87,7 @@ public class RegistryObjectListType {
 
     /**
      * Gets the value of the objectRef property.
-     * 
+     *
      */
     public List<ObjectRefType> getObjectRef() {
         if (objectRef == null) {
@@ -95,18 +95,18 @@ public class RegistryObjectListType {
         }
         return this.objectRef;
     }
-    
+
     /**
      * Sets the value of the objectRef property.
-     * 
+     *
      */
     public void setObjectRef(final List<ObjectRefType> objectRef) {
         this.objectRef = objectRef;
     }
-    
+
      /**
      * Sets the value of the objectRef property.
-     * 
+     *
      */
     public void setObjectRef(final ObjectRefType objectRef) {
         if (this.objectRef == null) {

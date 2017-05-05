@@ -103,18 +103,18 @@ class ShapeCoordinateSequence2D implements CoordinateSequence {
         if(size == 0){
             return envlp;
         }
-        
+
         double minX = coordinates[0];
         double minY = coordinates[1];
         double maxX = minX;
         double maxY = minY;
-        
+
         for(int i=2,n=size*2; i<n; i++){
             final double x = coordinates[i];
             final double y = coordinates[++i];
             if(x < minX) minX = x;
             else if(x > maxX) maxX = x;
-            
+
             if(y < minY) minY = y;
             else if(y > maxY) maxY = y;
         }

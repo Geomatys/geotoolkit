@@ -34,16 +34,16 @@ public class PropertyIsNotEqualToType  extends BinaryComparisonOpType implements
      * Empty constructor used by JAXB
      */
     public PropertyIsNotEqualToType() {
-        
+
     }
-    
+
     /**
      * Build a new Binary comparison operator
      */
     public PropertyIsNotEqualToType(final LiteralType literal, final String propertyName, final Boolean matchCase) {
         super(literal, propertyName, matchCase);
     }
-    
+
     public PropertyIsNotEqualToType(final PropertyIsNotEqualToType that) {
         super(that);
     }
@@ -52,6 +52,6 @@ public class PropertyIsNotEqualToType  extends BinaryComparisonOpType implements
     public ComparisonOpsType getClone() {
         return new PropertyIsNotEqualToType(this);
     }
-    
-    
+
+
 }

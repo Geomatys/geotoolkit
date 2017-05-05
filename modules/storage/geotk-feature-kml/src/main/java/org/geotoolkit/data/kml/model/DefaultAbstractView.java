@@ -30,7 +30,7 @@ public abstract class DefaultAbstractView extends DefaultAbstractObject implemen
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractViewSimpleExtensions

@@ -31,9 +31,9 @@ import org.geotoolkit.ows.xml.AbstractServiceIdentification;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -49,7 +49,7 @@ import org.geotoolkit.ows.xml.AbstractServiceIdentification;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -81,7 +81,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
      */
     ServiceIdentification(){
     }
-    
+
     /**
      * Build a new Service identification (full version).
      */
@@ -95,7 +95,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
         this.serviceType        = serviceType;
         this.serviceTypeVersion = serviceTypeVersion;
     }
-    
+
     /**
      * Build a new Service identification (light version).
      */
@@ -107,7 +107,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
         this.serviceType        = serviceType;
         this.serviceTypeVersion = serviceTypeVersion;
     }
-    
+
     /**
      * Gets the value of the serviceType property.
      */
@@ -137,14 +137,14 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
         }
         return Collections.unmodifiableList(profile);
     }
-    
+
     @Override
     public void setProfile(final List<String> profiles) {
         this.profile = profiles;
     }
 
     /**
-     * If this element is omitted, no meaning is implied. 
+     * If this element is omitted, no meaning is implied.
      */
     @Override
     public String getFees() {
@@ -165,7 +165,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
         }
         return Collections.unmodifiableList(accessConstraints);
     }
-    
+
      /**
      * Verify that this entry is identical to the specified object.
      */
@@ -178,11 +178,11 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
             final ServiceIdentification that = (ServiceIdentification) object;
 
             return Objects.equals(this.accessConstraints,  that.accessConstraints) &&
-                   Objects.equals(this.fees,               that.fees)              && 
+                   Objects.equals(this.fees,               that.fees)              &&
                    Objects.equals(this.profile,            that.profile)           &&
                    Objects.equals(this.serviceType,        that.serviceType)       &&
                    Objects.equals(this.serviceTypeVersion, that.serviceTypeVersion);
-                   
+
         }
         return false;
     }
@@ -197,7 +197,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
         hash = 43 * hash + (this.accessConstraints != null ? this.accessConstraints.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();

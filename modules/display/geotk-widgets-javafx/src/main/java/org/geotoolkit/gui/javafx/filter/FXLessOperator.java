@@ -26,7 +26,7 @@ import org.opengis.filter.expression.Expression;
  * @author Alexis Manin (Geomatys)
  */
 public class FXLessOperator extends FXComparableOperator {
-    
+
     @Override
     public CharSequence getTitle() {
         return "<";
@@ -37,5 +37,5 @@ public class FXLessOperator extends FXComparableOperator {
         return GO2Utilities.FILTER_FACTORY.less(
                 toApplyOn, GO2Utilities.FILTER_FACTORY.literal(getEditorValue(filterEditor)));
     }
-    
+
 }

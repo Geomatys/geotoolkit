@@ -87,15 +87,15 @@ public class StraightenProcess extends AbstractProcess {
         final MathTransform gridToCRS = gridgeom.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
         final Envelope outEnv = candidate.getEnvelope2D();
 
-        
-        
+
+
         try{
             final double[] coords = new double[2 * 5];
             coords[0] = gridenv.getMinX();      coords[1] = gridenv.getMinY();
             coords[2] = gridenv.getMinX();      coords[3] = gridenv.getMaxY();
             coords[4] = gridenv.getMaxX();      coords[5] = gridenv.getMaxY();
-            coords[6] = gridenv.getMaxX();      coords[7] = gridenv.getMinY();  
-            coords[8] = gridenv.getMaxX()+1;    coords[9] = gridenv.getMaxY()+1;  
+            coords[6] = gridenv.getMaxX();      coords[7] = gridenv.getMinY();
+            coords[8] = gridenv.getMaxX()+1;    coords[9] = gridenv.getMaxY()+1;
             gridToCRS.transform(coords, 0, coords, 0, 5);
             double minX = Math.min(Math.min(coords[0], coords[2]), Math.min(coords[4], coords[6]));
             double maxX = Math.max(Math.max(coords[0], coords[2]), Math.max(coords[4], coords[6]));
@@ -106,7 +106,7 @@ public class StraightenProcess extends AbstractProcess {
             double scaleX = spanX / gridenv.getWidth();
             double scaleY = spanY / gridenv.getHeight();
             double scale = Math.min(scaleX, scaleY);
-            
+
             if(coords[0] > coords[6]){
                 // x axe flip
                 minX = Math.min(minX, coords[8]);
@@ -115,8 +115,8 @@ public class StraightenProcess extends AbstractProcess {
                 // y axe flip
                 maxY = Math.max(maxY, coords[9]);
             }
-            
-            final AffineTransform2D outGridToCRS = new AffineTransform2D(scale, 0, 0, -scale, minX, maxY);            
+
+            final AffineTransform2D outGridToCRS = new AffineTransform2D(scale, 0, 0, -scale, minX, maxY);
             final GridEnvelope2D gridEnv = new GridEnvelope2D(0, 0, (int)(spanX/scale), (int)(spanY/scale));
             final GridGeometry2D outgridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, outGridToCRS,crs,null);
             final GridCoverage2D outCoverage = (GridCoverage2D) Operations.DEFAULT.resample(candidate, crs, outgridGeom, null);

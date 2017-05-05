@@ -38,13 +38,13 @@ public interface LargeMailUserIdentifier extends GenericTypedGrPostal {
 
     /**
      * <p>eg. Building 429 in which Building is the Indicator.</p>
-     * 
+     *
      * @return
      */
     String getIndicator();
 
     /**
-     * 
+     *
      * @param indicator
      */
     void setIndicator(String indicator);

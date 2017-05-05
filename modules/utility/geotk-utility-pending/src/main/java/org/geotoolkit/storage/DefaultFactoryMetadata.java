@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ package org.geotoolkit.storage;
 public class DefaultFactoryMetadata implements FactoryMetadata {
 
     public static final Class[] GEOMS_NONE = new Class[0];
-    
+
     private final DataType dataType;
     private final boolean styledFeature;
     private final boolean supportStoreReading;
@@ -32,13 +32,13 @@ public class DefaultFactoryMetadata implements FactoryMetadata {
     private final boolean supportStoreWriting;
     private final Class[] supportedGeomClasses;
 
-    public DefaultFactoryMetadata(DataType dataType, boolean supportStoreReading, 
+    public DefaultFactoryMetadata(DataType dataType, boolean supportStoreReading,
             boolean supportStoreCreation, boolean supportStoreWriting) {
         this(dataType,supportStoreReading,supportStoreCreation,supportStoreWriting,false,GEOMS_NONE);
     }
-    
-    public DefaultFactoryMetadata(DataType dataType, boolean supportStoreReading, 
-            boolean supportStoreCreation, boolean supportStoreWriting, 
+
+    public DefaultFactoryMetadata(DataType dataType, boolean supportStoreReading,
+            boolean supportStoreCreation, boolean supportStoreWriting,
             boolean styledFeature, Class[] supportedGeomClasses) {
         this.dataType = dataType;
         this.supportStoreReading = supportStoreReading;
@@ -47,7 +47,7 @@ public class DefaultFactoryMetadata implements FactoryMetadata {
         this.styledFeature = styledFeature;
         this.supportedGeomClasses = supportedGeomClasses == null ? GEOMS_NONE : supportedGeomClasses;
     }
-    
+
     @Override
     public DataType getDataType() {
         return dataType;
@@ -77,5 +77,5 @@ public class DefaultFactoryMetadata implements FactoryMetadata {
     public Class[] supportedGeometryTypes() {
         return supportedGeomClasses.clone();
     }
-    
+
 }

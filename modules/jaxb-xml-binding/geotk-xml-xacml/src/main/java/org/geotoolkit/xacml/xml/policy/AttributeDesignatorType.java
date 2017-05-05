@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AttributeDesignatorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AttributeDesignatorType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,11 +65,11 @@ public class AttributeDesignatorType extends ExpressionType {
     * An epty constructor used by JAXB.
     */
    public AttributeDesignatorType() {
-       
+
    }
-   
+
    /**
-    * Build a new AttributeDesignator from another AttributeDesignator. 
+    * Build a new AttributeDesignator from another AttributeDesignator.
     */
    public AttributeDesignatorType(final AttributeDesignatorType attribute) {
        this.attributeId   = attribute.attributeId;
@@ -77,10 +77,10 @@ public class AttributeDesignatorType extends ExpressionType {
        this.issuer        = attribute.issuer;
        this.mustBePresent = attribute.mustBePresent;
    }
-   
+
    /**
     * Gets the value of the attributeId property.
-    * 
+    *
     */
    public String getAttributeId() {
       return attributeId;

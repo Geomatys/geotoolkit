@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ImageCRSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ImageCRSType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
@@ -68,12 +68,12 @@ public class ImageCRSType extends AbstractCRSType {
 
     /**
      * Gets the value of the cartesianCSProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link CartesianCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CartesianCSPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<CartesianCSPropertyType> getCartesianCSProperty() {
         return cartesianCSProperty;
@@ -81,12 +81,12 @@ public class ImageCRSType extends AbstractCRSType {
 
     /**
      * Sets the value of the cartesianCSProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link CartesianCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CartesianCSPropertyType }{@code >}
-     *     
+     *
      */
     public void setCartesianCSProperty(JAXBElement<CartesianCSPropertyType> value) {
         this.cartesianCSProperty = ((JAXBElement<CartesianCSPropertyType> ) value);
@@ -94,12 +94,12 @@ public class ImageCRSType extends AbstractCRSType {
 
     /**
      * Gets the value of the affineCSProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AffineCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AffineCSPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<AffineCSPropertyType> getAffineCSProperty() {
         return affineCSProperty;
@@ -107,12 +107,12 @@ public class ImageCRSType extends AbstractCRSType {
 
     /**
      * Sets the value of the affineCSProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AffineCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AffineCSPropertyType }{@code >}
-     *     
+     *
      */
     public void setAffineCSProperty(JAXBElement<AffineCSPropertyType> value) {
         this.affineCSProperty = ((JAXBElement<AffineCSPropertyType> ) value);
@@ -120,11 +120,11 @@ public class ImageCRSType extends AbstractCRSType {
 
     /**
      * Gets the value of the usesObliqueCartesianCS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ObliqueCartesianCSPropertyType }
-     *     
+     *
      */
     public ObliqueCartesianCSPropertyType getUsesObliqueCartesianCS() {
         return usesObliqueCartesianCS;
@@ -132,11 +132,11 @@ public class ImageCRSType extends AbstractCRSType {
 
     /**
      * Sets the value of the usesObliqueCartesianCS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ObliqueCartesianCSPropertyType }
-     *     
+     *
      */
     public void setUsesObliqueCartesianCS(ObliqueCartesianCSPropertyType value) {
         this.usesObliqueCartesianCS = value;
@@ -144,12 +144,12 @@ public class ImageCRSType extends AbstractCRSType {
 
     /**
      * Gets the value of the imageDatumProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link ImageDatumPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ImageDatumPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<ImageDatumPropertyType> getImageDatumProperty() {
         return imageDatumProperty;
@@ -157,12 +157,12 @@ public class ImageCRSType extends AbstractCRSType {
 
     /**
      * Sets the value of the imageDatumProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link ImageDatumPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ImageDatumPropertyType }{@code >}
-     *     
+     *
      */
     public void setImageDatumProperty(JAXBElement<ImageDatumPropertyType> value) {
         this.imageDatumProperty = ((JAXBElement<ImageDatumPropertyType> ) value);

@@ -53,7 +53,7 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
 
     protected final CoverageStore store;
     protected AmendedDataNode root;
-    
+
     /**
      *
      * @param store wrapped store

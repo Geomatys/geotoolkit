@@ -24,14 +24,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * A triangulated surface is a polyhedral 
+ * A triangulated surface is a polyhedral
  *    surface that is composed only of triangles. There is no
  *    restriction on how the triangulation is derived.
- * 
+ *
  * <p>Java class for TriangulatedSurfaceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TriangulatedSurfaceType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

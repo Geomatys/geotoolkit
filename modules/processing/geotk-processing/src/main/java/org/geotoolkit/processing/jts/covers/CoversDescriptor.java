@@ -33,10 +33,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class CoversDescriptor extends AbstractProcessDescriptor{
-        
+
     /**Process name : covers */
     public static final String NAME = "jts:covers";
-    
+
     /**
      * Input parameters
      */
@@ -50,10 +50,10 @@ public class CoversDescriptor extends AbstractProcessDescriptor{
             .setRemarks("Geometry JTS")
             .setRequired(true)
             .create(Geometry.class, null);
-    
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(GEOM1,GEOM2);
-    
+
     /**
      * OutputParameters
      */
@@ -62,7 +62,7 @@ public class CoversDescriptor extends AbstractProcessDescriptor{
             .setRemarks("Covered by result")
             .setRequired(true)
             .create(Boolean.class, null);
-    
+
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT);
 
@@ -79,5 +79,5 @@ public class CoversDescriptor extends AbstractProcessDescriptor{
     public Process createProcess(final ParameterValueGroup input) {
         return new CoversProcess(input);
     }
-    
+
 }

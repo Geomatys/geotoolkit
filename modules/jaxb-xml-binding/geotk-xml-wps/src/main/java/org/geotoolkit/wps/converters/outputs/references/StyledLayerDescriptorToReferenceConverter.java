@@ -95,7 +95,7 @@ public class StyledLayerDescriptorToReferenceConverter extends AbstractReference
             }
 
             reference.setHref(params.get(TMP_DIR_URL) + "/" +dataFileName);
-            
+
         } else {
             throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + reference.getMimeType());
         }

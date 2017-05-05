@@ -30,19 +30,19 @@ public interface NavigatorModel {
     public static final String TRANSFORM_PROPERTY = "transform";
 
     /**
-     * 
+     *
      * @return the dimension as a crs on which this navigator apply
      */
     CoordinateReferenceSystem getCRS();
-    
+
     void setCRS(final CoordinateReferenceSystem axis);
-    
+
     double getGraphicValueAt(double d);
 
     double getDimensionValueAt(double candidate);
 
     double getScale();
-    
+
     void scale(double factor, double position);
 
     void translate(double tr);

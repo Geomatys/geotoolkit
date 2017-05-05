@@ -54,7 +54,7 @@ public class FXGraduation extends FXStyleElementController<GraduationSymbolizer.
     @FXML private Label uiFormatLbl;
     @FXML private FXStroke uiStroke;
     @FXML private FXFont uiFont;
-    
+
     @Override
     public Class<GraduationSymbolizer.Graduation> getEditedClass() {
         return GraduationSymbolizer.Graduation.class;
@@ -68,7 +68,7 @@ public class FXGraduation extends FXStyleElementController<GraduationSymbolizer.
     @Override
     public void initialize() {
         super.initialize();
-        
+
         uiSide.getEditor().setItems(FXCollections.observableArrayList(
                 GraduationSymbolizer.SIDE_LEFT,
                 GraduationSymbolizer.SIDE_RIGHT,
@@ -76,7 +76,7 @@ public class FXGraduation extends FXStyleElementController<GraduationSymbolizer.
         uiReverse.getEditor().setItems(FXCollections.observableArrayList(
                 GraduationSymbolizer.DIRECTION_FORWARD,
                 GraduationSymbolizer.DIRECTION_REVERSE));
-        
+
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             final GraduationSymbolizer.Graduation element = new GraduationSymbolizer.Graduation();
@@ -114,7 +114,7 @@ public class FXGraduation extends FXStyleElementController<GraduationSymbolizer.
         uiGrid.add(mode, 1, 0, 2, 1);
         setHalignment(mode, HPos.RIGHT);
     }
-    
+
     @Override
     protected void updateEditor(GraduationSymbolizer.Graduation styleElement) {
         if(styleElement!=null){
@@ -130,5 +130,5 @@ public class FXGraduation extends FXStyleElementController<GraduationSymbolizer.
             uiFont.valueProperty().setValue(styleElement.getFont());
         }
     }
-    
+
 }

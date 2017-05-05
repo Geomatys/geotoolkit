@@ -39,7 +39,7 @@ public enum OddEvenEnum {
     private String oddEven;
 
     /**
-     * 
+     *
      * @param oddEven
      */
     private OddEvenEnum(String oddEven){

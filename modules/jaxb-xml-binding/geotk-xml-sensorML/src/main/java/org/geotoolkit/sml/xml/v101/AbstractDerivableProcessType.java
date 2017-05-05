@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AbstractDerivableProcessType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractDerivableProcessType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,7 +73,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Gets the value of the inputs property.
-     * 
+     *
      */
     public InputsPropertyType getInputs() {
         return inputs;
@@ -81,7 +81,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Sets the value of the inputs property.
-     * 
+     *
     */
     public void setInputs(final InputsPropertyType value) {
         this.inputs = value;
@@ -89,7 +89,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Gets the value of the outputs property.
-     * 
+     *
      */
     public OutputsPropertyType getOutputs() {
         return outputs;
@@ -97,7 +97,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Sets the value of the outputs property.
-     * 
+     *
      */
     public void setOutputs(final OutputsPropertyType value) {
         this.outputs = value;
@@ -105,7 +105,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Gets the value of the parameters property.
-     * 
+     *
      */
     public ParametersPropertyType getParameters() {
         return parameters;
@@ -113,7 +113,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Sets the value of the parameters property.
-     * 
+     *
      */
     public void setParameters(final ParametersPropertyType value) {
         this.parameters = value;
@@ -121,7 +121,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Gets the value of the method property.
-     * 
+     *
      */
     public MethodPropertyType getMethod() {
         return method;
@@ -129,7 +129,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Sets the value of the method property.
-     * 
+     *
      */
     public void setMethod(final MethodPropertyType value) {
         this.method = value;
@@ -137,7 +137,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Gets the value of the components property.
-     * 
+     *
     */
     public ComponentsPropertyType getComponents() {
         return components;
@@ -152,7 +152,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Gets the value of the dataSources property.
-     * 
+     *
      */
     public DataSourcesPropertyType getDataSources() {
         return dataSources;
@@ -160,7 +160,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Sets the value of the dataSources property.
-     * 
+     *
      */
     public void setDataSources(final DataSourcesPropertyType value) {
         this.dataSources = value;
@@ -168,7 +168,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Gets the value of the connections property.
-     * 
+     *
      */
     public ConnectionsPropertyType getConnections() {
         return connections;
@@ -176,7 +176,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Sets the value of the connections property.
-     * 
+     *
      */
     public void setConnections(final ConnectionsPropertyType value) {
         this.connections = value;

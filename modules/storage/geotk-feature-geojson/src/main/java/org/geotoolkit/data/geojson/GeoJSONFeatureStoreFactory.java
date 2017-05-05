@@ -125,7 +125,7 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
     public GeoJSONFeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         return open(params);
     }
-    
+
     @Override
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, GEOMS_ALL);

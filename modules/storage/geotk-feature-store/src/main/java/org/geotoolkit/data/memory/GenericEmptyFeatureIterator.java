@@ -71,7 +71,7 @@ public class GenericEmptyFeatureIterator implements FeatureIterator {
 
     /**
      * An empty FeatureReader of the given type.
-     * 
+     *
      * @param <T> extends FeatureType
      * @param <F> extends Feature
      * @param <R> extends FeatureReader<T,F>
@@ -83,7 +83,7 @@ public class GenericEmptyFeatureIterator implements FeatureIterator {
         private GenericEmptyFeatureReader(final FeatureType type){
             this.type = type;
         }
-        
+
         @Override
         public FeatureType getFeatureType() {
             return type;

@@ -26,11 +26,11 @@ import javax.xml.bind.annotation.XmlType;
  * Definition of a unit of measure which is a base unit from the system of units.
  * A base unit cannot be derived by combination of other base units within this system.
  * Sometimes known as "fundamental unit".
- * 
+ *
  * <p>Java class for BaseUnitType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BaseUnitType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,11 +57,11 @@ public class BaseUnitType extends UnitDefinitionType {
 
     /**
      * Gets the value of the unitsSystem property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getUnitsSystem() {
         return unitsSystem;
@@ -69,11 +69,11 @@ public class BaseUnitType extends UnitDefinitionType {
 
     /**
      * Sets the value of the unitsSystem property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setUnitsSystem(final ReferenceType value) {
         this.unitsSystem = value;

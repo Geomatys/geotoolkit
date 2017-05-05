@@ -35,7 +35,7 @@ import org.geotoolkit.data.dbf.Closeable;
 
 /**
  * The Writer writes out the fid and record number of features to the fid index file.
- * 
+ *
  * @author Jesse
  * @module
  */
@@ -56,8 +56,8 @@ public class IndexedFidWriter implements Closeable {
 
     /**
      * Create a new instance<br>
-     * Note: {@link StorageFile#replaceOriginal()} is NOT called.  Call {@link #IndexedFidWriter(ShpFiles)} for that 
-     * behaviour.  
+     * Note: {@link StorageFile#replaceOriginal()} is NOT called.  Call {@link #IndexedFidWriter(ShpFiles)} for that
+     * behaviour.
      * @param shpFiles The shapefiles to used
      * @param storageFile the storage file that will be written to.  It will NOT be closed.
      * @throws IOException
@@ -67,9 +67,9 @@ public class IndexedFidWriter implements Closeable {
         // Note do NOT assign storageFile so that it is closed because this method method requires that
         // the caller close the storage file.
         // Call the single argument constructor instead
-        
+
         reader = new IndexedFidReader(fixUrl,readfixChannel,null);
-        
+
         this.channel = writeChannel;
         allocateBuffers();
         removes = reader.getRemoves();
@@ -93,7 +93,7 @@ public class IndexedFidWriter implements Closeable {
 
     /**
      * Drain internal buffers into underlying channels.
-     * 
+     *
      * @throws IOException DOCUMENT ME!
      */
     private void drain() throws IOException {
@@ -186,7 +186,7 @@ public class IndexedFidWriter implements Closeable {
      * 1) next(); (move to feature 2) next(); (move to feature 3) remove();(delete feature 3)
      * next(); (move to feature 4) // optional write(); (write feature 4) next(); (move to feature
      * 5) write(); (write(feature 5)
-     * 
+     *
      * @throws IOException
      */
     public void remove() throws IOException {
@@ -203,7 +203,7 @@ public class IndexedFidWriter implements Closeable {
     /**
      * Writes the current fidIndex. Writes to the same place in the file each time. Only
      * {@link #next()} moves forward in the file.
-     * 
+     *
      * @throws IOException
      * @see #next()
      * @see #remove()
@@ -246,7 +246,7 @@ public class IndexedFidWriter implements Closeable {
         LOGGER.log(Level.FINE, "Generating fids for {0}", shpFiles.get(SHP));
 
         final AccessManager locker = shpFiles.createLocker();
-        
+
         ShxReader indexFile = null;
         StorageFile file = locker.getStorageFile(FIX);
         IndexedFidWriter writer = null;

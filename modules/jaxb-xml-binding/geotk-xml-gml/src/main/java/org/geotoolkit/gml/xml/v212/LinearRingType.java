@@ -26,12 +26,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * A LinearRing is defined by four or more coordinate tuples,
  * with linear interpolation between them; the first and last coordinates must be coincident.
- *       
- * 
+ *
+ *
  * <p>Java class for LinearRingType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LinearRingType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,9 +61,9 @@ public class LinearRingType extends AbstractGeometryType {
     private CoordinatesType coordinates;
 
     public LinearRingType() {
-        
+
     }
-    
+
     public LinearRingType(final LinearRingType that) {
         super(that);
         if (that != null) {
@@ -78,13 +78,13 @@ public class LinearRingType extends AbstractGeometryType {
             }
         }
     }
-    
+
     /**
      * Gets the value of the coord property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link CoordType }
-     * 
+     *
      */
     public List<CoordType> getCoord() {
         if (coord == null) {
@@ -95,11 +95,11 @@ public class LinearRingType extends AbstractGeometryType {
 
     /**
      * Gets the value of the coordinates property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public CoordinatesType getCoordinates() {
         return coordinates;
@@ -107,11 +107,11 @@ public class LinearRingType extends AbstractGeometryType {
 
     /**
      * Sets the value of the coordinates property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;

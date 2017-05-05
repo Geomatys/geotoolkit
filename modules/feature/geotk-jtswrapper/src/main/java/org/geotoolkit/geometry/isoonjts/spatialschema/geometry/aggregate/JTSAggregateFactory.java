@@ -30,7 +30,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Implementation of AggregateFactory able to make MultiPointImpl but little else.
- * 
+ *
  * @author Jody Garnett
  * @author Johann Sorel (Geomatys)
  * @module

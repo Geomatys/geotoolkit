@@ -28,16 +28,16 @@ import org.geotoolkit.csw.xml.GetRecordsResponse;
 
 
 /**
- * 
- * The response message for a GetRecords request. Some or all of the 
- * matching records may be included as children of the SearchResults 
+ *
+ * The response message for a GetRecords request. Some or all of the
+ * matching records may be included as children of the SearchResults
  * element. The RequestId is only included if the client specified it.
- *          
- * 
+ *
+ *
  * <p>Java class for GetRecordsResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetRecordsResponseType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.csw.xml.GetRecordsResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,7 +62,7 @@ import org.geotoolkit.csw.xml.GetRecordsResponse;
     "searchStatus",
     "searchResults"
 })
-@XmlRootElement(name = "GetRecordsResponse" )        
+@XmlRootElement(name = "GetRecordsResponse" )
 public class GetRecordsResponseType implements GetRecordsResponse {
 
     @XmlElement(name = "RequestId")
@@ -79,9 +79,9 @@ public class GetRecordsResponseType implements GetRecordsResponse {
      * An empty constructor used by JAXB
      */
     GetRecordsResponseType() {
-        
+
     }
-    
+
     /**
      * Build a new response to a getRecords request
      */
@@ -90,9 +90,9 @@ public class GetRecordsResponseType implements GetRecordsResponse {
         this.searchStatus  = new RequestStatusType(time);
         this.version       = version;
         this.searchResults = searchResults;
-        
+
     }
-    
+
     /**
      * Gets the value of the requestId property.
      */
@@ -124,7 +124,7 @@ public class GetRecordsResponseType implements GetRecordsResponse {
     public String getVersion() {
         return version;
     }
-    
+
     @Override
     public void setRequestId(final String value) {
         this.requestId = value;
@@ -134,7 +134,7 @@ public class GetRecordsResponseType implements GetRecordsResponse {
     public void setVersion(final String value) {
         this.version = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[GetRecordsResponseType] version=").append(version).append(":").append('\n');

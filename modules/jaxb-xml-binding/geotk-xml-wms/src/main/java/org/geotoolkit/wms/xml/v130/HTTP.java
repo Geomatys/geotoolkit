@@ -26,9 +26,9 @@ import org.geotoolkit.wms.xml.AbstractHTTP;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.wms.xml.AbstractHTTP;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -74,7 +74,7 @@ public class HTTP implements AbstractHTTP {
             }
         }
     }
-     
+
     /**
      * Build a new HTTP object.
      */
@@ -82,11 +82,11 @@ public class HTTP implements AbstractHTTP {
         this.get  = get;
         this.post = post;
     }
-    
-    
+
+
     /**
      * Gets the value of the get property.
-     * 
+     *
      */
     public Get getGet() {
         return get;
@@ -94,7 +94,7 @@ public class HTTP implements AbstractHTTP {
 
     /**
      * Gets the value of the post property.
-     * 
+     *
      */
     public Post getPost() {
         return post;

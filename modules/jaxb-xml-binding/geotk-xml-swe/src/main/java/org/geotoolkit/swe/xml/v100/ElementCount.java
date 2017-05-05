@@ -75,11 +75,11 @@ public class ElementCount implements AbstractElementCount {
             this.ref = value.getRef();
         }
     }
-    
+
     public ElementCount(final int value) {
         this.count = new Count();
     }
-    
+
     /**
      * Gets the value of the count property.
      */

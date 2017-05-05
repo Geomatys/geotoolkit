@@ -25,7 +25,7 @@ package org.geotoolkit.data.kml.model;
  *
  * <p>This interface considers logical to inherit from AbstractLatLonBox interface which both
  * contains AbstractLatLonBoxType mapping and extends AbstractObject.</p>
- * 
+ *
  * <pre>
  * &lt;element name="LatLonAltBox" type="kml:LatLonAltBoxType" substitutionGroup="kml:AbstractObjectGroup"/>
  *

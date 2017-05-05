@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for getAllPreferedLabel complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="getAllPreferedLabel">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getAllPreferedLabel", propOrder = {
@@ -52,9 +52,9 @@ import javax.xml.bind.annotation.XmlType;
 public class GetAllPreferedLabel {
 
     private String language;
-    
+
     private Boolean showDeactivated;
-    
+
     private String outputFormat;
 
     public GetAllPreferedLabel() {
@@ -69,11 +69,11 @@ public class GetAllPreferedLabel {
 
     /**
      * Gets the value of the language property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLanguage() {
         return language;
@@ -81,11 +81,11 @@ public class GetAllPreferedLabel {
 
     /**
      * Sets the value of the language property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLanguage(String value) {
         this.language = value;

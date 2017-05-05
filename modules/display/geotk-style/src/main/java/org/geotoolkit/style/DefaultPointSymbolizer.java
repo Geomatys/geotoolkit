@@ -31,17 +31,17 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * Immutable implementation of Types point symbolizer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class DefaultPointSymbolizer extends AbstractSymbolizer implements PointSymbolizer{
 
     private final Graphic graphic;
-        
+
     /**
      * Create a default immutable Point symbolizer.
-     * 
+     *
      * @param graphic : if null will be replaced by default value.
      * @param uom : if null will be replaced by default value.
      * @param geom : can be null
@@ -52,7 +52,7 @@ public class DefaultPointSymbolizer extends AbstractSymbolizer implements PointS
         super(uom,geom,name,desc);
         this.graphic = (graphic == null) ? DEFAULT_GRAPHIC : graphic ;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -125,7 +125,7 @@ public class DefaultPointSymbolizer extends AbstractSymbolizer implements PointS
             builder.append(geom);
         }
         builder.append(']');
-        
+
         if(graphic != null){
             builder.append('\n');
             String sub = "\u2514\u2500\u2500" + graphic.toString(); //move text to the right

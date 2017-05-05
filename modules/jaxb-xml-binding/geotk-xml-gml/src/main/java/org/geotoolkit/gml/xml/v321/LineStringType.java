@@ -100,7 +100,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
         super(id, null);
         this.pos = pos;
     }
-    
+
     public LineStringType(final String id, final String srsName, final List<DirectPosition> positions) {
         super(id, srsName);
         this.pos = new ArrayList<>();

@@ -49,22 +49,22 @@ public class CreateTempFile extends AbstractProcess {
         final String prefix = getOrCreate(PREFIX_IN, inputParameters).stringValue();
         final String postfix = getOrCreate(POSTFIX_IN, inputParameters).stringValue();
         final boolean eraseParam = getOrCreate(DELETE_IN, inputParameters).booleanValue();
-        
+
         final File file;
         try {
-            file = File.createTempFile(prefix, postfix);            
-            
+            file = File.createTempFile(prefix, postfix);
+
             if(eraseParam){
                 file.deleteOnExit();
             }
 
             getOrCreate(FILE_OUT, outputParameters).setValue(file.toURI().toURL());
-            
+
         } catch (IOException ex) {
             fireProcessFailed("Failed creating temp file", ex);
             return;
         }
-        
+
         fireProcessCompleted("Temporay file created.");
     }
 

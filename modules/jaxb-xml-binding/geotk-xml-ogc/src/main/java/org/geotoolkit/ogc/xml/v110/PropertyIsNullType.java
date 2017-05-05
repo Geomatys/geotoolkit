@@ -27,9 +27,9 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * <p>Java class for PropertyIsNullType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PropertyIsNullType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,16 +58,16 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
      * An empty constructor used by JAXB
      */
      public PropertyIsNullType() {
-         
+
      }
-     
+
      /**
      * Build a new Property is null operator.
      */
      public PropertyIsNullType(final PropertyNameType prop) {
          this.propertyName = prop;
      }
-     
+
      public PropertyIsNullType(final PropertyIsNullType that) {
         if (that != null && that.propertyName != null) {
             this.propertyName = new PropertyNameType(that.propertyName);
@@ -87,13 +87,13 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
     public void setPropertyName(final PropertyNameType propertyName) {
         this.propertyName = propertyName;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
         if (propertyName != null) {
             s.append("PropertyName= ").append(propertyName.toString()).append('\n');
-        } else { 
+        } else {
             s.append(" PropertyName is null");
         }
         return s.toString();

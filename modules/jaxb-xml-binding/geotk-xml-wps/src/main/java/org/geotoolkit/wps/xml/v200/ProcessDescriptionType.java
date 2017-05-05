@@ -31,16 +31,16 @@ import org.geotoolkit.wps.xml.ProcessDescription;
 
 
 /**
- * Full description of a process. 
- * 
- * 
+ * Full description of a process.
+ *
+ *
  * In this use, the DescriptionType shall describe process properties.
- * 					
- * 
+ *
+ *
  * <p>Java class for ProcessDescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ProcessDescriptionType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.wps.xml.ProcessDescription;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ProcessDescriptionType", propOrder = {
@@ -72,9 +72,9 @@ public class ProcessDescriptionType extends DescriptionType  implements ProcessD
     protected String lang;
 
     public ProcessDescriptionType() {
-        
+
     }
-    
+
     public ProcessDescriptionType(CodeType identifier, final List<LanguageStringType> title,  final List<LanguageStringType> _abstract,
             final List<KeywordsType> keywords, List<InputDescriptionType> input, List<OutputDescriptionType> output) {
         super(identifier, title, _abstract, keywords);
@@ -83,11 +83,11 @@ public class ProcessDescriptionType extends DescriptionType  implements ProcessD
     }
     /**
      * Gets the value of the input property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link InputDescriptionType }
-     * 
-     * 
+     *
+     *
      */
     public List<InputDescriptionType> getInput() {
         if (input == null) {
@@ -98,11 +98,11 @@ public class ProcessDescriptionType extends DescriptionType  implements ProcessD
 
     /**
      * Gets the value of the output property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link OutputDescriptionType }
-     * 
-     * 
+     *
+     *
      */
     public List<OutputDescriptionType> getOutput() {
         if (output == null) {
@@ -112,19 +112,19 @@ public class ProcessDescriptionType extends DescriptionType  implements ProcessD
     }
 
     /**
-     * 
+     *
      * Identifier of a language used by the data(set) contents.
      * This language identifier shall be as specified in IETF RFC 4646. The
      * language tags shall be either complete 5 character codes (e.g. "en-CA"),
      * or abbreviated 2 character codes (e.g. "en"). In addition to the RFC
      * 4646 codes, the server shall support the single special value "*" which
      * is used to indicate "any language".
-     * 						
-     * 
+     *
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLang() {
         return lang;
@@ -132,11 +132,11 @@ public class ProcessDescriptionType extends DescriptionType  implements ProcessD
 
     /**
      * Sets the value of the lang property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLang(String value) {
         this.lang = value;

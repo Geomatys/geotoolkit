@@ -35,9 +35,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -92,8 +92,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -137,25 +137,25 @@ public class PostBox {
 
     /**
      * Gets the value of the addressLine property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the addressLine property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAddressLine().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AddressLine }
-     * 
-     * 
+     *
+     *
      */
     public List<AddressLine> getAddressLine() {
         if (addressLine == null) {
@@ -166,11 +166,11 @@ public class PostBox {
 
     /**
      * Gets the value of the postBoxNumber property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PostBox.PostBoxNumber }
-     *     
+     *
      */
     public PostBox.PostBoxNumber getPostBoxNumber() {
         return postBoxNumber;
@@ -178,11 +178,11 @@ public class PostBox {
 
     /**
      * Sets the value of the postBoxNumber property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PostBox.PostBoxNumber }
-     *     
+     *
      */
     public void setPostBoxNumber(final PostBox.PostBoxNumber value) {
         this.postBoxNumber = value;
@@ -190,11 +190,11 @@ public class PostBox {
 
     /**
      * Gets the value of the postBoxNumberPrefix property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PostBox.PostBoxNumberPrefix }
-     *     
+     *
      */
     public PostBox.PostBoxNumberPrefix getPostBoxNumberPrefix() {
         return postBoxNumberPrefix;
@@ -202,11 +202,11 @@ public class PostBox {
 
     /**
      * Sets the value of the postBoxNumberPrefix property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PostBox.PostBoxNumberPrefix }
-     *     
+     *
      */
     public void setPostBoxNumberPrefix(final PostBox.PostBoxNumberPrefix value) {
         this.postBoxNumberPrefix = value;
@@ -214,11 +214,11 @@ public class PostBox {
 
     /**
      * Gets the value of the postBoxNumberSuffix property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PostBox.PostBoxNumberSuffix }
-     *     
+     *
      */
     public PostBox.PostBoxNumberSuffix getPostBoxNumberSuffix() {
         return postBoxNumberSuffix;
@@ -226,11 +226,11 @@ public class PostBox {
 
     /**
      * Sets the value of the postBoxNumberSuffix property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PostBox.PostBoxNumberSuffix }
-     *     
+     *
      */
     public void setPostBoxNumberSuffix(final PostBox.PostBoxNumberSuffix value) {
         this.postBoxNumberSuffix = value;
@@ -238,11 +238,11 @@ public class PostBox {
 
     /**
      * Gets the value of the postBoxNumberExtension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PostBox.PostBoxNumberExtension }
-     *     
+     *
      */
     public PostBox.PostBoxNumberExtension getPostBoxNumberExtension() {
         return postBoxNumberExtension;
@@ -250,11 +250,11 @@ public class PostBox {
 
     /**
      * Sets the value of the postBoxNumberExtension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PostBox.PostBoxNumberExtension }
-     *     
+     *
      */
     public void setPostBoxNumberExtension(final PostBox.PostBoxNumberExtension value) {
         this.postBoxNumberExtension = value;
@@ -262,11 +262,11 @@ public class PostBox {
 
     /**
      * Gets the value of the firm property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FirmType }
-     *     
+     *
      */
     public FirmType getFirm() {
         return firm;
@@ -274,11 +274,11 @@ public class PostBox {
 
     /**
      * Sets the value of the firm property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FirmType }
-     *     
+     *
      */
     public void setFirm(final FirmType value) {
         this.firm = value;
@@ -286,11 +286,11 @@ public class PostBox {
 
     /**
      * Gets the value of the postalCode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PostalCode }
-     *     
+     *
      */
     public PostalCode getPostalCode() {
         return postalCode;
@@ -298,11 +298,11 @@ public class PostBox {
 
     /**
      * Sets the value of the postalCode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PostalCode }
-     *     
+     *
      */
     public void setPostalCode(final PostalCode value) {
         this.postalCode = value;
@@ -310,25 +310,25 @@ public class PostBox {
 
     /**
      * Gets the value of the any property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the any property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAny().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getAny() {
         if (any == null) {
@@ -339,11 +339,11 @@ public class PostBox {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -351,11 +351,11 @@ public class PostBox {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -363,11 +363,11 @@ public class PostBox {
 
     /**
      * Gets the value of the indicator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIndicator() {
         return indicator;
@@ -375,11 +375,11 @@ public class PostBox {
 
     /**
      * Sets the value of the indicator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIndicator(final String value) {
         this.indicator = value;
@@ -387,15 +387,15 @@ public class PostBox {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * <p>
-     * the map is keyed by the name of the attribute and 
+     * the map is keyed by the name of the attribute and
      * the value is the string value of the attribute.
-     * 
+     *
      * the map returned by this method is live, and you can add new attribute
      * by updating the map directly. Because of this design, there's no setter.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */
@@ -406,9 +406,9 @@ public class PostBox {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -418,8 +418,8 @@ public class PostBox {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -437,11 +437,11 @@ public class PostBox {
 
         /**
          * Gets the value of the content property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getContent() {
             return content;
@@ -449,11 +449,11 @@ public class PostBox {
 
         /**
          * Sets the value of the content property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setContent(final String value) {
             this.content = value;
@@ -461,11 +461,11 @@ public class PostBox {
 
         /**
          * Gets the value of the code property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getCode() {
             return code;
@@ -473,11 +473,11 @@ public class PostBox {
 
         /**
          * Sets the value of the code property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setCode(final String value) {
             this.code = value;
@@ -485,15 +485,15 @@ public class PostBox {
 
         /**
          * Gets a map that contains attributes that aren't bound to any typed property on this class.
-         * 
+         *
          * <p>
-         * the map is keyed by the name of the attribute and 
+         * the map is keyed by the name of the attribute and
          * the value is the string value of the attribute.
-         * 
+         *
          * the map returned by this method is live, and you can add new attribute
          * by updating the map directly. Because of this design, there's no setter.
-         * 
-         * 
+         *
+         *
          * @return
          *     always non-null
          */
@@ -506,9 +506,9 @@ public class PostBox {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -518,8 +518,8 @@ public class PostBox {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -537,11 +537,11 @@ public class PostBox {
 
         /**
          * Gets the value of the content property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getContent() {
             return content;
@@ -549,11 +549,11 @@ public class PostBox {
 
         /**
          * Sets the value of the content property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setContent(final String value) {
             this.content = value;
@@ -561,11 +561,11 @@ public class PostBox {
 
         /**
          * Gets the value of the numberExtensionSeparator property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getNumberExtensionSeparator() {
             return numberExtensionSeparator;
@@ -573,11 +573,11 @@ public class PostBox {
 
         /**
          * Sets the value of the numberExtensionSeparator property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setNumberExtensionSeparator(final String value) {
             this.numberExtensionSeparator = value;
@@ -585,15 +585,15 @@ public class PostBox {
 
         /**
          * Gets a map that contains attributes that aren't bound to any typed property on this class.
-         * 
+         *
          * <p>
-         * the map is keyed by the name of the attribute and 
+         * the map is keyed by the name of the attribute and
          * the value is the string value of the attribute.
-         * 
+         *
          * the map returned by this method is live, and you can add new attribute
          * by updating the map directly. Because of this design, there's no setter.
-         * 
-         * 
+         *
+         *
          * @return
          *     always non-null
          */
@@ -606,9 +606,9 @@ public class PostBox {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -619,8 +619,8 @@ public class PostBox {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -641,11 +641,11 @@ public class PostBox {
 
         /**
          * Gets the value of the content property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getContent() {
             return content;
@@ -653,11 +653,11 @@ public class PostBox {
 
         /**
          * Sets the value of the content property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setContent(final String value) {
             this.content = value;
@@ -665,11 +665,11 @@ public class PostBox {
 
         /**
          * Gets the value of the numberPrefixSeparator property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getNumberPrefixSeparator() {
             return numberPrefixSeparator;
@@ -677,11 +677,11 @@ public class PostBox {
 
         /**
          * Sets the value of the numberPrefixSeparator property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setNumberPrefixSeparator(final String value) {
             this.numberPrefixSeparator = value;
@@ -689,11 +689,11 @@ public class PostBox {
 
         /**
          * Gets the value of the code property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getCode() {
             return code;
@@ -701,11 +701,11 @@ public class PostBox {
 
         /**
          * Sets the value of the code property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setCode(final String value) {
             this.code = value;
@@ -713,15 +713,15 @@ public class PostBox {
 
         /**
          * Gets a map that contains attributes that aren't bound to any typed property on this class.
-         * 
+         *
          * <p>
-         * the map is keyed by the name of the attribute and 
+         * the map is keyed by the name of the attribute and
          * the value is the string value of the attribute.
-         * 
+         *
          * the map returned by this method is live, and you can add new attribute
          * by updating the map directly. Because of this design, there's no setter.
-         * 
-         * 
+         *
+         *
          * @return
          *     always non-null
          */
@@ -734,9 +734,9 @@ public class PostBox {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -747,8 +747,8 @@ public class PostBox {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -769,11 +769,11 @@ public class PostBox {
 
         /**
          * Gets the value of the content property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getContent() {
             return content;
@@ -781,11 +781,11 @@ public class PostBox {
 
         /**
          * Sets the value of the content property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setContent(final String value) {
             this.content = value;
@@ -793,11 +793,11 @@ public class PostBox {
 
         /**
          * Gets the value of the numberSuffixSeparator property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getNumberSuffixSeparator() {
             return numberSuffixSeparator;
@@ -805,11 +805,11 @@ public class PostBox {
 
         /**
          * Sets the value of the numberSuffixSeparator property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setNumberSuffixSeparator(final String value) {
             this.numberSuffixSeparator = value;
@@ -817,11 +817,11 @@ public class PostBox {
 
         /**
          * Gets the value of the code property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getCode() {
             return code;
@@ -829,11 +829,11 @@ public class PostBox {
 
         /**
          * Sets the value of the code property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setCode(final String value) {
             this.code = value;
@@ -841,15 +841,15 @@ public class PostBox {
 
         /**
          * Gets a map that contains attributes that aren't bound to any typed property on this class.
-         * 
+         *
          * <p>
-         * the map is keyed by the name of the attribute and 
+         * the map is keyed by the name of the attribute and
          * the value is the string value of the attribute.
-         * 
+         *
          * the map returned by this method is live, and you can add new attribute
          * by updating the map directly. Because of this design, there's no setter.
-         * 
-         * 
+         *
+         *
          * @return
          *     always non-null
          */

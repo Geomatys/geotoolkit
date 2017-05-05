@@ -33,9 +33,9 @@ import org.geotoolkit.ows.xml.v110.DescriptionType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.ows.xml.v110.DescriptionType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -97,11 +97,11 @@ public class TileMatrixSet extends DescriptionType {
 
     /**
      * Tile matrix set identifier
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getIdentifier() {
         return identifier;
@@ -109,11 +109,11 @@ public class TileMatrixSet extends DescriptionType {
 
     /**
      * Tile matrix set identifier
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setIdentifier(final CodeType value) {
         this.identifier = value;
@@ -121,12 +121,12 @@ public class TileMatrixSet extends DescriptionType {
 
     /**
      * Minimum bounding rectangle surrounding the visible layer presented by this tile matrix set, in the supported CRS
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link WGS84BoundingBoxType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BoundingBoxType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends BoundingBoxType> getBoundingBox() {
         return boundingBox;
@@ -134,12 +134,12 @@ public class TileMatrixSet extends DescriptionType {
 
     /**
      * Minimum bounding rectangle surrounding the visible layer presented by this tile matrix set, in the supported CRS
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link WGS84BoundingBoxType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BoundingBoxType }{@code >}
-     *     
+     *
      */
     public void setBoundingBox(final JAXBElement<? extends BoundingBoxType> value) {
         this.boundingBox = ((JAXBElement<? extends BoundingBoxType> ) value);
@@ -147,11 +147,11 @@ public class TileMatrixSet extends DescriptionType {
 
     /**
      * Reference to one coordinate reference system (CRS).
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSupportedCRS() {
         return supportedCRS;
@@ -159,11 +159,11 @@ public class TileMatrixSet extends DescriptionType {
 
     /**
      * Reference to one coordinate reference system (CRS).
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSupportedCRS(final String value) {
         this.supportedCRS = value;
@@ -171,11 +171,11 @@ public class TileMatrixSet extends DescriptionType {
 
     /**
      * Gets the value of the wellKnownScaleSet property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getWellKnownScaleSet() {
         return wellKnownScaleSet;
@@ -183,11 +183,11 @@ public class TileMatrixSet extends DescriptionType {
 
     /**
      * Sets the value of the wellKnownScaleSet property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setWellKnownScaleSet(final String value) {
         this.wellKnownScaleSet = value;

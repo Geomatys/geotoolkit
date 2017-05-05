@@ -36,12 +36,12 @@ import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 /**
  *  This type defines a summary representation of the common record format.
  * It extends AbstractRecordType to include the core properties.
- *          
- * 
+ *
+ *
  * <p>Java class for SummaryRecordType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SummaryRecordType">
  *   &lt;complexContent>
@@ -62,8 +62,8 @@ import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -103,32 +103,32 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
     @XmlElementRef(name = "BoundingBox", namespace = "http://www.opengis.net/ows", type = JAXBElement.class)
     private List<JAXBElement<? extends BoundingBoxType>> boundingBox;
 
-    
+
     /**
      * An empty constructor used by JAXB
      */
     SummaryRecordType(){
-        
+
     }
-    
+
     /**
      * Build a new Summary record TODO add relation and spatial
      */
     public SummaryRecordType(SimpleLiteral identifier, SimpleLiteral title, final SimpleLiteral type, final List<BoundingBoxType> bboxes,
             final List<SimpleLiteral> subject, final SimpleLiteral format, final SimpleLiteral modified, final SimpleLiteral _abstract){
-        
+
         if (identifier != null) {
             this.identifier = new ArrayList<>();
             this.identifier.add(identifier);
         }
-        
+
         if (title != null) {
             this.title = new ArrayList<>();
             this.title.add(title);
         }
-        
+
         this.type = type;
-        
+
         this.boundingBox = new ArrayList<>();
         if (bboxes != null) {
             final org.geotoolkit.ows.xml.v100.ObjectFactory owsFactory = new org.geotoolkit.ows.xml.v100.ObjectFactory();
@@ -141,41 +141,41 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
             }
         }
         this.subject = subject;
-        
+
         if (format != null) {
             this.format = new ArrayList<>();
             this.format.add(format);
         }
-        
+
         if (modified != null) {
             this.modified = new ArrayList<>();
             this.modified.add(modified);
         }
-        
+
         if (_abstract != null) {
             this._abstract = new ArrayList<>();
             this._abstract.add(_abstract);
         }
     }
-    
+
     /**
      * Build a new Summary record TODO add relation and spatial
      */
     public SummaryRecordType(SimpleLiteral identifier, SimpleLiteral title, final SimpleLiteral type, final List<BoundingBoxType> bboxes,
             final List<SimpleLiteral> subject, final List<SimpleLiteral> formats, final SimpleLiteral modified, final List<SimpleLiteral> _abstract){
-        
+
         if (identifier != null) {
             this.identifier = new ArrayList<>();
             this.identifier.add(identifier);
         }
-        
+
         if (title != null) {
             this.title = new ArrayList<>();
             this.title.add(title);
         }
-        
+
         this.type = type;
-        
+
         this.boundingBox = new ArrayList<>();
         if (bboxes != null) {
             final org.geotoolkit.ows.xml.v100.ObjectFactory owsFactory = new org.geotoolkit.ows.xml.v100.ObjectFactory();
@@ -188,9 +188,9 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
             }
         }
         this.subject = subject;
-        
+
         this.format = formats;
-        
+
         if (modified != null) {
             this.modified = new ArrayList<>();
             this.modified.add(modified);
@@ -224,8 +224,8 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
             }
         }
     }
-    
-    
+
+
     /**
      * Gets the value of the identifier property.
      * (unmodifiable)
@@ -237,7 +237,7 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         }
         return Collections.unmodifiableList(identifier);
     }
-    
+
     @Override
     public String getIdentifierStringValue() {
         if (identifier != null && !identifier.isEmpty()) {
@@ -265,7 +265,7 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         }
         return null;
     }
-    
+
     /**
      * Gets the value of the type property.
      */
@@ -283,7 +283,7 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
     }
     /**
      * Gets the value of the subject property.
-     * (unmodifiable) 
+     * (unmodifiable)
      */
     @Override
     public List<SimpleLiteral> getSubject() {
@@ -293,7 +293,7 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         return Collections.unmodifiableList(subject);
     }
 
-    
+
     @Override
     public List<String> getSubjectStringValues() {
         if (subject != null && !subject.isEmpty()) {
@@ -344,7 +344,7 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         }
         return null;
     }
-    
+
     /**
      * Gets the value of the abstract property.
      * (unmodifiable)
@@ -364,7 +364,7 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         }
         return null;
     }
-    
+
     /**
      * Gets the value of the spatial property.
      * (unmodifiable)

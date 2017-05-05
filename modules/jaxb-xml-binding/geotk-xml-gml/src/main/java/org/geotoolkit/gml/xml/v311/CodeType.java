@@ -27,16 +27,16 @@ import org.geotoolkit.gml.xml.Code;
 
 
 /**
- * Name or code with an (optional) authority.  Text token.  
- *       If the codeSpace attribute is present, then its value should identify a dictionary, thesaurus 
- *       or authority for the term, such as the organisation who assigned the value, 
- *       or the dictionary from which it is taken.  
- *       A text string with an optional codeSpace attribute. 
- * 
+ * Name or code with an (optional) authority.  Text token.
+ *       If the codeSpace attribute is present, then its value should identify a dictionary, thesaurus
+ *       or authority for the term, such as the organisation who assigned the value,
+ *       or the dictionary from which it is taken.
+ *       A text string with an optional codeSpace attribute.
+ *
  * <p>Java class for CodeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CodeType">
  *   &lt;simpleContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.gml.xml.Code;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,11 +84,11 @@ public class CodeType implements Code {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getValue() {
@@ -97,11 +97,11 @@ public class CodeType implements Code {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(final String value) {
         this.value = value;
@@ -109,11 +109,11 @@ public class CodeType implements Code {
 
     /**
      * Gets the value of the codeSpace property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getCodeSpace() {
@@ -122,11 +122,11 @@ public class CodeType implements Code {
 
     /**
      * Sets the value of the codeSpace property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCodeSpace(final String value) {
         this.codeSpace = value;

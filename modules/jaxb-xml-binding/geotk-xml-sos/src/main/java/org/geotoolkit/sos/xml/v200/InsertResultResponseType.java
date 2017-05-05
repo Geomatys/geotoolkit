@@ -27,9 +27,9 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
 
 /**
  * <p>Java class for InsertResultResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InsertResultResponseType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InsertResultResponseType")

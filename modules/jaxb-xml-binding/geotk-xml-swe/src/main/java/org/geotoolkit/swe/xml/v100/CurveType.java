@@ -25,9 +25,9 @@ import org.geotoolkit.swe.xml.AbstractCurve;
 
 /**
  * <p>Java class for CurveType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CurveType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import org.geotoolkit.swe.xml.AbstractCurve;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -78,11 +78,11 @@ public class CurveType extends AbstractDataArrayType implements AbstractCurve {
 
     /**
      * Gets the value of the elementType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SimpleDataRecordPropertyType }
-     *     
+     *
      */
     public SimpleDataRecordPropertyType getElementType() {
         return elementType;
@@ -90,11 +90,11 @@ public class CurveType extends AbstractDataArrayType implements AbstractCurve {
 
     /**
      * Sets the value of the elementType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SimpleDataRecordPropertyType }
-     *     
+     *
      */
     public void setElementType(final SimpleDataRecordPropertyType value) {
         this.elementType = value;
@@ -102,11 +102,11 @@ public class CurveType extends AbstractDataArrayType implements AbstractCurve {
 
     /**
      * Gets the value of the encoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BlockEncodingPropertyType }
-     *     
+     *
      */
     public BlockEncodingPropertyType getEncoding() {
         return encoding;
@@ -114,11 +114,11 @@ public class CurveType extends AbstractDataArrayType implements AbstractCurve {
 
     /**
      * Sets the value of the encoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BlockEncodingPropertyType }
-     *     
+     *
      */
     public void setEncoding(final BlockEncodingPropertyType value) {
         this.encoding = value;
@@ -126,11 +126,11 @@ public class CurveType extends AbstractDataArrayType implements AbstractCurve {
 
     /**
      * Gets the value of the values property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataValuePropertyType }
-     *     
+     *
      */
     public DataValuePropertyType getValues() {
         return values;
@@ -138,11 +138,11 @@ public class CurveType extends AbstractDataArrayType implements AbstractCurve {
 
     /**
      * Sets the value of the values property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataValuePropertyType }
-     *     
+     *
      */
     public void setValues(final DataValuePropertyType value) {
         this.values = value;

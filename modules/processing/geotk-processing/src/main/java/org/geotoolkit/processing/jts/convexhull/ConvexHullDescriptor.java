@@ -33,10 +33,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class ConvexHullDescriptor extends AbstractProcessDescriptor{
-        
+
     /**Process name : convexHull */
     public static final String NAME = "jts:convexHull";
-    
+
     /**
      * Input parameters
      */
@@ -45,11 +45,11 @@ public class ConvexHullDescriptor extends AbstractProcessDescriptor{
             .setRemarks("Geometry JTS")
             .setRequired(true)
             .create(Geometry.class, null);
-     
-    
+
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(GEOM);
-    
+
     /**
      * OutputParameters
      */
@@ -58,7 +58,7 @@ public class ConvexHullDescriptor extends AbstractProcessDescriptor{
             .setRemarks("ConvexHull geometry result")
             .setRequired(true)
             .create(Geometry.class, null);
-    
+
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_GEOM);
 
@@ -75,5 +75,5 @@ public class ConvexHullDescriptor extends AbstractProcessDescriptor{
     public Process createProcess(final ParameterValueGroup input) {
         return new ConvexHullProcess(input);
     }
-    
+
 }

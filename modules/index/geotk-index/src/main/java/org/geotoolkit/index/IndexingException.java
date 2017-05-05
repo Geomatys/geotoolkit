@@ -21,7 +21,7 @@ import org.geotoolkit.util.Exceptions;
 
 /**
  * Exceptions thrown by lucene indexing should be instances of this type.
- * 
+ *
  * @author Adrian Custer (Geomatys)
  * @module
  * @since 0.3
@@ -35,8 +35,8 @@ public class IndexingException extends Exception {
 
     /**
      * Construct an exception from an explanation of the cause.
-     * 
-     * @param message User understandable explanation of the cause of the 
+     *
+     * @param message User understandable explanation of the cause of the
      *                  exception.
      */
     public IndexingException(final String message) {
@@ -45,9 +45,9 @@ public class IndexingException extends Exception {
     }
 
     /**
-     * Construct an indexing exception from a lower level exception. 
-     * 
-     * @param message User understandable explanation of the cause of the 
+     * Construct an indexing exception from a lower level exception.
+     *
+     * @param message User understandable explanation of the cause of the
      *                  exception.
      * @param cause The preceding exception.
      */

@@ -28,7 +28,7 @@ import org.geotoolkit.gui.javafx.util.FXOptionDialog;
 
 /**
  * Small panel to display an object as WKT in various conventions.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class FXFormattableObjectPane extends BorderPane{
@@ -39,7 +39,7 @@ public class FXFormattableObjectPane extends BorderPane{
     public FXFormattableObjectPane(final FormattableObject obj) {
         setTop(choice);
         setCenter(text);
-        
+
         choice.valueProperty().addListener(new ChangeListener<Convention>() {
             @Override
             public void changed(ObservableValue<? extends Convention> observable, Convention oldValue, Convention newValue) {

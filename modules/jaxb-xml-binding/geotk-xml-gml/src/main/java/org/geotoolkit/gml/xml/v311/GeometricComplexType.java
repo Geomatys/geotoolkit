@@ -27,11 +27,11 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * A geometric complex.
- * 
+ *
  * <p>Java class for GeometricComplexType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeometricComplexType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

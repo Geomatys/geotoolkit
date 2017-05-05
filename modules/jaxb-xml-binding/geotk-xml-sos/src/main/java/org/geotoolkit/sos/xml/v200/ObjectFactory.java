@@ -24,18 +24,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.sos._2 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.sos._2 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -66,14 +66,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.sos._2
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link GetFeatureOfInterestPropertyType }
-     * 
+     *
      */
     public GetFeatureOfInterestPropertyType createGetFeatureOfInterestPropertyType() {
         return new GetFeatureOfInterestPropertyType();
@@ -81,7 +81,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ObservationOfferingType.ResultTime }
-     * 
+     *
      */
     public ObservationOfferingType.ResultTime createObservationOfferingTypeResultTime() {
         return new ObservationOfferingType.ResultTime();
@@ -89,7 +89,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetObservationType }
-     * 
+     *
      */
     public GetObservationType createGetObservationType() {
         return new GetObservationType();
@@ -97,7 +97,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResultTemplateType.ResultEncoding }
-     * 
+     *
      */
     public ResultEncoding createResultTemplateTypeResultEncoding() {
         return new ResultEncoding();
@@ -105,7 +105,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContentsPropertyType }
-     * 
+     *
      */
     public ContentsPropertyType createContentsPropertyType() {
         return new ContentsPropertyType();
@@ -113,7 +113,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetCapabilitiesPropertyType }
-     * 
+     *
      */
     public GetCapabilitiesPropertyType createGetCapabilitiesPropertyType() {
         return new GetCapabilitiesPropertyType();
@@ -121,7 +121,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertObservationResponsePropertyType }
-     * 
+     *
      */
     public InsertObservationResponsePropertyType createInsertObservationResponsePropertyType() {
         return new InsertObservationResponsePropertyType();
@@ -129,7 +129,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetResultResponsePropertyType }
-     * 
+     *
      */
     public GetResultResponsePropertyType createGetResultResponsePropertyType() {
         return new GetResultResponsePropertyType();
@@ -137,7 +137,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SosInsertionMetadataType }
-     * 
+     *
      */
     public SosInsertionMetadataType createSosInsertionMetadataType() {
         return new SosInsertionMetadataType();
@@ -145,7 +145,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TemporalFilter }
-     * 
+     *
      */
     public TemporalFilterType createTemporalFilterType() {
         return new TemporalFilterType();
@@ -153,7 +153,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertionCapabilitiesType }
-     * 
+     *
      */
     public InsertionCapabilitiesType createInsertionCapabilitiesType() {
         return new InsertionCapabilitiesType();
@@ -161,7 +161,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetResultTemplateResponseType.ResultStructure }
-     * 
+     *
      */
     public ResultStructure createGetResultTemplateResponseTypeResultStructure() {
         return new ResultStructure();
@@ -169,7 +169,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertResultResponsePropertyType }
-     * 
+     *
      */
     public InsertResultResponsePropertyType createInsertResultResponsePropertyType() {
         return new InsertResultResponsePropertyType();
@@ -177,7 +177,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetResultType }
-     * 
+     *
      */
     public GetResultType createGetResultType() {
         return new GetResultType();
@@ -185,7 +185,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetResultTemplateResponseType.ResultEncoding }
-     * 
+     *
      */
     public ResultEncoding createGetResultTemplateResponseTypeResultEncoding() {
         return new ResultEncoding();
@@ -193,7 +193,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResultTemplateType }
-     * 
+     *
      */
     public ResultTemplateType createResultTemplateType() {
         return new ResultTemplateType();
@@ -201,7 +201,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ObservationOfferingPropertyType }
-     * 
+     *
      */
     public ObservationOfferingPropertyType createObservationOfferingPropertyType() {
         return new ObservationOfferingPropertyType();
@@ -209,7 +209,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetObservationByIdResponsePropertyType }
-     * 
+     *
      */
     public GetObservationByIdResponsePropertyType createGetObservationByIdResponsePropertyType() {
         return new GetObservationByIdResponsePropertyType();
@@ -217,7 +217,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetResultTemplateResponseType }
-     * 
+     *
      */
     public GetResultTemplateResponseType createGetResultTemplateResponseType() {
         return new GetResultTemplateResponseType();
@@ -225,7 +225,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetFeatureOfInterestResponsePropertyType }
-     * 
+     *
      */
     public GetFeatureOfInterestResponsePropertyType createGetFeatureOfInterestResponsePropertyType() {
         return new GetFeatureOfInterestResponsePropertyType();
@@ -233,7 +233,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CapabilitiesPropertyType }
-     * 
+     *
      */
     public CapabilitiesPropertyType createCapabilitiesPropertyType() {
         return new CapabilitiesPropertyType();
@@ -241,7 +241,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertObservationType.Observation }
-     * 
+     *
      */
     public InsertObservationType.Observation createInsertObservationTypeObservation() {
         return new InsertObservationType.Observation();
@@ -249,7 +249,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SpatialFilter }
-     * 
+     *
      */
     public SpatialFilterType createSpatialFilterType() {
         return new SpatialFilterType();
@@ -257,7 +257,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetResultResponseType }
-     * 
+     *
      */
     public GetResultResponseType createGetResultResponseType() {
         return new GetResultResponseType();
@@ -265,7 +265,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CapabilitiesType }
-     * 
+     *
      */
     public CapabilitiesType createCapabilitiesType() {
         return new CapabilitiesType();
@@ -273,7 +273,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertResultResponseType }
-     * 
+     *
      */
     public InsertResultResponseType createInsertResultResponseType() {
         return new InsertResultResponseType();
@@ -281,7 +281,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetResultTemplateType }
-     * 
+     *
      */
     public GetResultTemplateType createGetResultTemplateType() {
         return new GetResultTemplateType();
@@ -289,7 +289,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetObservationByIdPropertyType }
-     * 
+     *
      */
     public GetObservationByIdPropertyType createGetObservationByIdPropertyType() {
         return new GetObservationByIdPropertyType();
@@ -297,7 +297,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetObservationPropertyType }
-     * 
+     *
      */
     public GetObservationPropertyType createGetObservationPropertyType() {
         return new GetObservationPropertyType();
@@ -305,7 +305,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetObservationResponseType.ObservationData }
-     * 
+     *
      */
     public GetObservationResponseType.ObservationData createGetObservationResponseTypeObservationData() {
         return new GetObservationResponseType.ObservationData();
@@ -313,7 +313,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertResultTemplatePropertyType }
-     * 
+     *
      */
     public InsertResultTemplatePropertyType createInsertResultTemplatePropertyType() {
         return new InsertResultTemplatePropertyType();
@@ -321,7 +321,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertResultTemplateType.ProposedTemplate }
-     * 
+     *
      */
     public InsertResultTemplateType.ProposedTemplate createInsertResultTemplateTypeProposedTemplate() {
         return new InsertResultTemplateType.ProposedTemplate();
@@ -329,7 +329,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CapabilitiesType.FilterCapabilities }
-     * 
+     *
      */
     public FilterCapabilities createCapabilitiesTypeFilterCapabilities() {
         return new FilterCapabilities();
@@ -337,7 +337,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertionCapabilitiesPropertyType }
-     * 
+     *
      */
     public InsertionCapabilitiesPropertyType createInsertionCapabilitiesPropertyType() {
         return new InsertionCapabilitiesPropertyType();
@@ -345,7 +345,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertObservationType }
-     * 
+     *
      */
     public InsertObservationType createInsertObservationType() {
         return new InsertObservationType();
@@ -353,7 +353,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetFeatureOfInterestType }
-     * 
+     *
      */
     public GetFeatureOfInterestType createGetFeatureOfInterestType() {
         return new GetFeatureOfInterestType();
@@ -361,7 +361,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetObservationByIdType }
-     * 
+     *
      */
     public GetObservationByIdType createGetObservationByIdType() {
         return new GetObservationByIdType();
@@ -369,7 +369,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetResultPropertyType }
-     * 
+     *
      */
     public GetResultPropertyType createGetResultPropertyType() {
         return new GetResultPropertyType();
@@ -377,7 +377,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResultTemplatePropertyType }
-     * 
+     *
      */
     public ResultTemplatePropertyType createResultTemplatePropertyType() {
         return new ResultTemplatePropertyType();
@@ -385,7 +385,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetObservationResponsePropertyType }
-     * 
+     *
      */
     public GetObservationResponsePropertyType createGetObservationResponsePropertyType() {
         return new GetObservationResponsePropertyType();
@@ -393,7 +393,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetObservationResponseType }
-     * 
+     *
      */
     public GetObservationResponseType createGetObservationResponseType() {
         return new GetObservationResponseType();
@@ -401,7 +401,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertResultPropertyType }
-     * 
+     *
      */
     public InsertResultPropertyType createInsertResultPropertyType() {
         return new InsertResultPropertyType();
@@ -409,7 +409,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetCapabilitiesType }
-     * 
+     *
      */
     public GetCapabilitiesType createGetCapabilitiesType() {
         return new GetCapabilitiesType();
@@ -417,7 +417,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CapabilitiesType.Contents }
-     * 
+     *
      */
     public CapabilitiesType.Contents createCapabilitiesTypeContents() {
         return new CapabilitiesType.Contents();
@@ -425,7 +425,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResultTemplateType.ObservationTemplate }
-     * 
+     *
      */
     public ResultTemplateType.ObservationTemplate createResultTemplateTypeObservationTemplate() {
         return new ResultTemplateType.ObservationTemplate();
@@ -433,7 +433,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResultTemplateType.ResultStructure }
-     * 
+     *
      */
     public ResultStructure createResultTemplateTypeResultStructure() {
         return new ResultStructure();
@@ -441,7 +441,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertObservationPropertyType }
-     * 
+     *
      */
     public InsertObservationPropertyType createInsertObservationPropertyType() {
         return new InsertObservationPropertyType();
@@ -449,7 +449,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ObservationOfferingType.ObservedArea }
-     * 
+     *
      */
     public ObservationOfferingType.ObservedArea createObservationOfferingTypeObservedArea() {
         return new ObservationOfferingType.ObservedArea();
@@ -457,7 +457,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetObservationByIdResponseType.Observation }
-     * 
+     *
      */
     public GetObservationByIdResponseType.Observation createGetObservationByIdResponseTypeObservation() {
         return new GetObservationByIdResponseType.Observation();
@@ -465,7 +465,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContentsType }
-     * 
+     *
      */
     public ContentsType createContentsType() {
         return new ContentsType();
@@ -473,7 +473,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ObservationOfferingType }
-     * 
+     *
      */
     public ObservationOfferingType createObservationOfferingType() {
         return new ObservationOfferingType();
@@ -481,7 +481,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetResultTemplatePropertyType }
-     * 
+     *
      */
     public GetResultTemplatePropertyType createGetResultTemplatePropertyType() {
         return new GetResultTemplatePropertyType();
@@ -489,7 +489,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertResultTemplateResponseType }
-     * 
+     *
      */
     public InsertResultTemplateResponseType createInsertResultTemplateResponseType() {
         return new InsertResultTemplateResponseType();
@@ -497,7 +497,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetFeatureOfInterestResponseType }
-     * 
+     *
      */
     public GetFeatureOfInterestResponseType createGetFeatureOfInterestResponseType() {
         return new GetFeatureOfInterestResponseType();
@@ -505,7 +505,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertResultTemplateResponsePropertyType }
-     * 
+     *
      */
     public InsertResultTemplateResponsePropertyType createInsertResultTemplateResponsePropertyType() {
         return new InsertResultTemplateResponsePropertyType();
@@ -513,7 +513,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertResultTemplateType }
-     * 
+     *
      */
     public InsertResultTemplateType createInsertResultTemplateType() {
         return new InsertResultTemplateType();
@@ -521,7 +521,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetObservationByIdResponseType }
-     * 
+     *
      */
     public GetObservationByIdResponseType createGetObservationByIdResponseType() {
         return new GetObservationByIdResponseType();
@@ -529,7 +529,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertResultType }
-     * 
+     *
      */
     public InsertResultType createInsertResultType() {
         return new InsertResultType();
@@ -537,7 +537,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetResultTemplateResponsePropertyType }
-     * 
+     *
      */
     public GetResultTemplateResponsePropertyType createGetResultTemplateResponsePropertyType() {
         return new GetResultTemplateResponsePropertyType();
@@ -545,7 +545,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SosInsertionMetadataPropertyType }
-     * 
+     *
      */
     public SosInsertionMetadataPropertyType createSosInsertionMetadataPropertyType() {
         return new SosInsertionMetadataPropertyType();
@@ -553,7 +553,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertObservationResponseType }
-     * 
+     *
      */
     public InsertObservationResponseType createInsertObservationResponseType() {
         return new InsertObservationResponseType();
@@ -561,7 +561,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ObservationOfferingType.PhenomenonTime }
-     * 
+     *
      */
     public ObservationOfferingType.PhenomenonTime createObservationOfferingTypePhenomenonTime() {
         return new ObservationOfferingType.PhenomenonTime();
@@ -569,7 +569,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InsertObservationResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "InsertObservationResponse", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleResponse")
     public JAXBElement<InsertObservationResponseType> createInsertObservationResponse(InsertObservationResponseType value) {
@@ -578,7 +578,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetFeatureOfInterestResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "GetFeatureOfInterestResponse", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleResponse")
     public JAXBElement<GetFeatureOfInterestResponseType> createGetFeatureOfInterestResponse(GetFeatureOfInterestResponseType value) {
@@ -587,7 +587,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InsertResultTemplateType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "InsertResultTemplate", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleRequest")
     public JAXBElement<InsertResultTemplateType> createInsertResultTemplate(InsertResultTemplateType value) {
@@ -596,7 +596,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InsertObservationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "InsertObservation", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleRequest")
     public JAXBElement<InsertObservationType> createInsertObservation(InsertObservationType value) {
@@ -605,7 +605,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SosInsertionMetadataType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "SosInsertionMetadata", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "InsertionMetadata")
     public JAXBElement<SosInsertionMetadataType> createSosInsertionMetadata(SosInsertionMetadataType value) {
@@ -614,7 +614,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InsertionCapabilitiesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "InsertionCapabilities")
     public JAXBElement<InsertionCapabilitiesType> createInsertionCapabilities(InsertionCapabilitiesType value) {
@@ -623,7 +623,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InsertResultTemplateResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "InsertResultTemplateResponse", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleResponse")
     public JAXBElement<InsertResultTemplateResponseType> createInsertResultTemplateResponse(InsertResultTemplateResponseType value) {
@@ -632,7 +632,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetObservationByIdResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "GetObservationByIdResponse", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleResponse")
     public JAXBElement<GetObservationByIdResponseType> createGetObservationByIdResponse(GetObservationByIdResponseType value) {
@@ -641,7 +641,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetObservationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "GetObservation", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleRequest")
     public JAXBElement<GetObservationType> createGetObservation(GetObservationType value) {
@@ -650,7 +650,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetCapabilitiesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "GetCapabilities", substitutionHeadNamespace = "http://www.opengis.net/ows/1.1", substitutionHeadName = "GetCapabilities")
     public JAXBElement<GetCapabilitiesType> createGetCapabilities(GetCapabilitiesType value) {
@@ -659,7 +659,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ContentsType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "Contents", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "AbstractContents")
     public JAXBElement<ContentsType> createContents(ContentsType value) {
@@ -668,7 +668,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetObservationResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "GetObservationResponse", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleResponse")
     public JAXBElement<GetObservationResponseType> createGetObservationResponse(GetObservationResponseType value) {
@@ -677,7 +677,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetFeatureOfInterestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "GetFeatureOfInterest", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleRequest")
     public JAXBElement<GetFeatureOfInterestType> createGetFeatureOfInterest(GetFeatureOfInterestType value) {
@@ -686,7 +686,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ResultTemplateType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "ResultTemplate", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "AbstractSWES")
     public JAXBElement<ResultTemplateType> createResultTemplate(ResultTemplateType value) {
@@ -695,7 +695,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ObservationOfferingType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "ObservationOffering", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "AbstractOffering")
     public JAXBElement<ObservationOfferingType> createObservationOffering(ObservationOfferingType value) {
@@ -704,7 +704,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetResultTemplateResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "GetResultTemplateResponse", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleResponse")
     public JAXBElement<GetResultTemplateResponseType> createGetResultTemplateResponse(GetResultTemplateResponseType value) {
@@ -713,7 +713,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetResultTemplateType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "GetResultTemplate", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleRequest")
     public JAXBElement<GetResultTemplateType> createGetResultTemplate(GetResultTemplateType value) {
@@ -722,7 +722,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetResultResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "GetResultResponse", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleResponse")
     public JAXBElement<GetResultResponseType> createGetResultResponse(GetResultResponseType value) {
@@ -731,7 +731,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetObservationByIdType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "GetObservationById", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleRequest")
     public JAXBElement<GetObservationByIdType> createGetObservationById(GetObservationByIdType value) {
@@ -740,7 +740,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InsertResultResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "InsertResultResponse", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleResponse")
     public JAXBElement<InsertResultResponseType> createInsertResultResponse(InsertResultResponseType value) {
@@ -749,7 +749,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InsertResultType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "InsertResult", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleRequest")
     public JAXBElement<InsertResultType> createInsertResult(InsertResultType value) {
@@ -758,7 +758,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetResultType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "GetResult", substitutionHeadNamespace = "http://www.opengis.net/swes/2.0", substitutionHeadName = "ExtensibleRequest")
     public JAXBElement<GetResultType> createGetResult(GetResultType value) {
@@ -767,7 +767,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CapabilitiesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/2.0", name = "Capabilities")
     public JAXBElement<CapabilitiesType> createCapabilities(CapabilitiesType value) {

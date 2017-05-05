@@ -144,7 +144,7 @@ public final class MapBuilder {
     public static FeatureMapLayer createFeatureLayer(final FeatureCollection collection){
         return new DefaultFeatureMapLayer(collection, RandomStyleBuilder.createDefaultVectorStyle(collection.getFeatureType()));
     }
-    
+
     /**
      * Create a default feature map layer with a feature collection and a style.
      * @param collection layer data collection

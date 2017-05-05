@@ -25,7 +25,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Default immutable implementation of remoteOWS. thread safe.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -33,15 +33,15 @@ class DefaultRemoteOWS implements RemoteOWS{
 
     private final String service;
     private final OnlineResource online;
-    
-    
+
+
     DefaultRemoteOWS(final String service, final OnlineResource online){
         ensureNonNull("service", service);
         ensureNonNull("online resource", online);
         this.service = service;
         this.online = online;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -107,5 +107,5 @@ class DefaultRemoteOWS implements RemoteOWS{
         builder.append(']');
         return builder.toString();
     }
-    
+
 }

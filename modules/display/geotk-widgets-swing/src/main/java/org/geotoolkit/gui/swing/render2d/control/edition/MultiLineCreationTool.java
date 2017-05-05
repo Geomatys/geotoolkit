@@ -37,7 +37,7 @@ public class MultiLineCreationTool extends AbstractEditionTool {
 
     public MultiLineCreationTool() {
         super(1100,"multilineCreation",MessageBundle.formatInternational(MessageBundle.Keys.createMultiLineString),
-             new SimpleInternationalString("Tool for creating multilines."), 
+             new SimpleInternationalString("Tool for creating multilines."),
              IconBundle.getIcon("16_newgeometry"), FeatureMapLayer.class);
     }
 

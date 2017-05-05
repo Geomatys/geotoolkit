@@ -31,9 +31,9 @@ import org.geotoolkit.xlink.xml.v100.ShowType;
 
 /**
  * <p>Java class for GetResultTemplatePropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetResultTemplatePropertyType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.xlink.xml.v100.ShowType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetResultTemplatePropertyType", propOrder = {
@@ -79,11 +79,11 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Gets the value of the getResultTemplate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GetResultTemplateType }
-     *     
+     *
      */
     public GetResultTemplateType getGetResultTemplate() {
         return getResultTemplate;
@@ -91,11 +91,11 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Sets the value of the getResultTemplate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GetResultTemplateType }
-     *     
+     *
      */
     public void setGetResultTemplate(GetResultTemplateType value) {
         this.getResultTemplate = value;
@@ -103,10 +103,10 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
@@ -117,11 +117,11 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -129,11 +129,11 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(String value) {
         this.remoteSchema = value;
@@ -141,11 +141,11 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -157,11 +157,11 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -169,11 +169,11 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -181,11 +181,11 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -193,11 +193,11 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -205,11 +205,11 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -217,11 +217,11 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -229,11 +229,11 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -241,11 +241,11 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Gets the value of the titleTemp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitleTemp() {
         return titleTemp;
@@ -253,11 +253,11 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Sets the value of the titleTemp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitleTemp(String value) {
         this.titleTemp = value;
@@ -265,11 +265,11 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShowType }
-     *     
+     *
      */
     public ShowType getShow() {
         return show;
@@ -277,11 +277,11 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShowType }
-     *     
+     *
      */
     public void setShow(ShowType value) {
         this.show = value;
@@ -289,11 +289,11 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public ActuateType getActuate() {
         return actuate;
@@ -301,11 +301,11 @@ public class GetResultTemplatePropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public void setActuate(ActuateType value) {
         this.actuate = value;

@@ -30,9 +30,9 @@ import org.w3c.dom.Element;
 
 /**
  * <p>Java class for titleEltType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="titleEltType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "titleEltType", propOrder = {
@@ -62,13 +62,13 @@ public class TitleEltType {
 
     /**
      * Gets the value of the content property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Element }
      * {@link Object }
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getContent() {
         if (content == null) {
@@ -79,11 +79,11 @@ public class TitleEltType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TypeType }
-     *     
+     *
      */
     public TypeType getType() {
         if (type == null) {
@@ -95,27 +95,27 @@ public class TitleEltType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TypeType }
-     *     
+     *
      */
     public void setType(TypeType value) {
         this.type = value;
     }
 
     /**
-     * 
+     *
      *      xml:lang is not required, but provides much of the
      *      motivation for title elements in addition to attributes, and so
      *      is provided here for convenience.
-     *     
-     * 
+     *
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLang() {
         return lang;
@@ -123,11 +123,11 @@ public class TitleEltType {
 
     /**
      * Sets the value of the lang property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLang(String value) {
         this.lang = value;

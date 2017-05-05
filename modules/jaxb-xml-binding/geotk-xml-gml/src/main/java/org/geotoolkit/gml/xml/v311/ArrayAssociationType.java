@@ -27,14 +27,14 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * A base for derived types used to specify complex types containing an array of objects, by unspecified UML association - either composition or aggregation.  An instance of this type contains elements representing Objects.
- * 
- * Ideally this type would be derived by extension of AssociationType.  
+ *
+ * Ideally this type would be derived by extension of AssociationType.
  * However, this leads to a non-deterministic content model, since both the base and the extension have minOccurs="0", and is thus prohibited in XML Schema.
- * 
+ *
  * <p>Java class for ArrayAssociationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ArrayAssociationType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,20 +61,20 @@ public class ArrayAssociationType {
 
     /**
      * Gets the value of the object property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the object property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getObject().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link OrientableSurfaceType }{@code >}
@@ -127,8 +127,8 @@ public class ArrayAssociationType {
      * {@link JAXBElement }{@code <}{@link PointType }{@code >}
      * {@link JAXBElement }{@code <}{@link MultiSolidType }{@code >}
      * {@link JAXBElement }{@code <}{@link DerivedUnitType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<?>> getObject() {
         if (object == null) {

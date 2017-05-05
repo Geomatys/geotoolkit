@@ -44,7 +44,7 @@ import java.util.List;
 public interface Firm {
 
     /**
-     * 
+     *
      * @return
      */
     List<GenericTypedGrPostal> getAddressLines();
@@ -112,7 +112,7 @@ public interface Firm {
     void setPostalCode(PostalCode postalCode);
 
     /**
-     * 
+     *
      * @param type
      */
     void setType(String type);

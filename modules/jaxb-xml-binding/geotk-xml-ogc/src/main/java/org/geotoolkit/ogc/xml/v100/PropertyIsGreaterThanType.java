@@ -31,16 +31,16 @@ import org.opengis.filter.PropertyIsGreaterThan;
 public class PropertyIsGreaterThanType extends BinaryComparisonOpType implements PropertyIsGreaterThan {
 
     public PropertyIsGreaterThanType() {
-        
+
     }
-    
+
     /**
      * Build a new Binary comparison operator
      */
     public PropertyIsGreaterThanType(final LiteralType literal, final PropertyNameType propertyName) {
         super(literal, propertyName);
     }
-    
+
     public PropertyIsGreaterThanType(final PropertyIsGreaterThanType that) {
         super(that);
     }

@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  * @module
  */
 public class PolygonHandler2Test extends org.geotoolkit.data.shapefile.AbstractTestCaseSupport {
-    
+
     @Test
     public void testPolygonHandler() {
         Coordinate[] c = new Coordinate[3];

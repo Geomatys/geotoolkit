@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for BlockPropertyByValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BlockPropertyByValueType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BlockPropertyByValueType", propOrder = {
@@ -53,11 +53,11 @@ public class BlockPropertyByValueType {
 
     /**
      * Gets the value of the block property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BlockType }
-     *     
+     *
      */
     public BlockType getBlock() {
         return block;
@@ -65,11 +65,11 @@ public class BlockPropertyByValueType {
 
     /**
      * Sets the value of the block property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BlockType }
-     *     
+     *
      */
     public void setBlock(BlockType value) {
         this.block = value;

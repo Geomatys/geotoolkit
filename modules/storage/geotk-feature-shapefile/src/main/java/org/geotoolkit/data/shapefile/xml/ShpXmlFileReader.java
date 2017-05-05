@@ -39,9 +39,9 @@ public class ShpXmlFileReader {
     /**
      * Parse metadataFile (currently for bounding box information).
      * <p>
-     * 
+     *
      * </p>
-     * 
+     *
      * @param shapefileFiles
      * @throws JDOMException
      * @throws IOException

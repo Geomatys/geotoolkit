@@ -25,17 +25,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- *  
+ *
  * Use to reference an Object by its id.
  * Specifies the id attribute of the object as its id attribute.
  * id attribute in ObjectAttributes is exactly the same syntax and semantics as
  * id attribute in RegistryObject.
- * 			
- * 
+ *
+ *
  * <p>Java class for ObjectRefType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ObjectRefType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

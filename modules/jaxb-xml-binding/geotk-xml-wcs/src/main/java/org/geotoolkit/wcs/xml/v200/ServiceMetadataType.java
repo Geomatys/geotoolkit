@@ -29,9 +29,9 @@ import org.geotoolkit.wcs.xml.ServiceMetadata;
 
 /**
  * <p>Java class for ServiceMetadataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ServiceMetadataType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.wcs.xml.ServiceMetadata;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ServiceMetadataType", propOrder = {
@@ -61,20 +61,20 @@ public class ServiceMetadataType implements ServiceMetadata {
     private ExtensionType extension;
 
     public ServiceMetadataType() {
-        
+
     }
-    
+
     public ServiceMetadataType(final List<String> formatSupported) {
         this.formatSupported = formatSupported;
     }
-    
+
     /**
      * Gets the value of the formatSupported property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getFormatSupported() {
         if (formatSupported == null) {
@@ -85,11 +85,11 @@ public class ServiceMetadataType implements ServiceMetadata {
 
     /**
      * Gets the value of the extension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExtensionType }
-     *     
+     *
      */
     public ExtensionType getExtension() {
         return extension;
@@ -97,11 +97,11 @@ public class ServiceMetadataType implements ServiceMetadata {
 
     /**
      * Sets the value of the extension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExtensionType }
-     *     
+     *
      */
     public void setExtension(ExtensionType value) {
         this.extension = value;

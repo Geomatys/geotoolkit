@@ -202,7 +202,7 @@ public abstract class DefaultFilterVisitor extends DefaultExpressionVisitor impl
         data = filter.getExpression().accept(this, data);
         return data;
     }
-    
+
     @Override
     public Object visit(final PropertyIsNil filter, Object data) {
         data = filter.getExpression().accept(this, data);
@@ -401,7 +401,7 @@ public abstract class DefaultFilterVisitor extends DefaultExpressionVisitor impl
 
         return data;
     }
-    
+
     @Override
     public Object visitNullFilter(final Object data) {
         return data;

@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "GetAggregatedConceptIdsResponse", namespace = "http://ws.geotk.org/")
 public class GetAggregatedConceptIdsResponse {
-    
+
     @XmlElement(name = "return")
     private List<String> response;
 

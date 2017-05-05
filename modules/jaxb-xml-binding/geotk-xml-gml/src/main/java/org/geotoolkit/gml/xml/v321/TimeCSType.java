@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * <p>Java class for TimeCSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeCSType">
  *   &lt;complexContent>
@@ -36,8 +36,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TimeCSType extends AbstractCoordinateSystemType implements Serializable {

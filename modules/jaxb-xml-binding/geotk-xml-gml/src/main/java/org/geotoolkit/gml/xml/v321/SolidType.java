@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for SolidType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SolidType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SolidType", propOrder = {
@@ -59,11 +59,11 @@ public class SolidType extends AbstractSolidType {
 
     /**
      * Gets the value of the exterior property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShellPropertyType }
-     *     
+     *
      */
     public ShellPropertyType getExterior() {
         return exterior;
@@ -71,11 +71,11 @@ public class SolidType extends AbstractSolidType {
 
     /**
      * Sets the value of the exterior property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShellPropertyType }
-     *     
+     *
      */
     public void setExterior(ShellPropertyType value) {
         this.exterior = value;
@@ -83,11 +83,11 @@ public class SolidType extends AbstractSolidType {
 
     /**
      * Gets the value of the interior property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ShellPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<ShellPropertyType> getInterior() {
         if (interior == null) {

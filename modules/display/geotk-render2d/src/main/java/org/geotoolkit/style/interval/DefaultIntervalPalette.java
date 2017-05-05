@@ -45,7 +45,7 @@ public class DefaultIntervalPalette implements IntervalPalette{
     public DefaultIntervalPalette(final Color[] colors) {
         this(null,colors);
     }
-    
+
     public DefaultIntervalPalette(double[] fractions, final Color[] colors) {
         if(fractions == null){
             fractions = new double[colors.length];
@@ -53,7 +53,7 @@ public class DefaultIntervalPalette implements IntervalPalette{
                 fractions[i] = ((double)i)/ (colors.length-1);
             }
         }
-        
+
         this.ARGB = new int[colors.length];
 
         for(int i=0;i<colors.length;i++){
@@ -66,7 +66,7 @@ public class DefaultIntervalPalette implements IntervalPalette{
     public int[] getARGB() {
         return ARGB;
     }
-    
+
     @Override
     public List<Entry<Double, Color>> getSteps() {
         final List<Entry<Double, Color>> steps = new ArrayList<Entry<Double, Color>>();
@@ -118,7 +118,7 @@ public class DefaultIntervalPalette implements IntervalPalette{
                 start += step;
             }
         }
-        
+
     }
 
     @Override

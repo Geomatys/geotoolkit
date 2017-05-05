@@ -28,12 +28,12 @@ import org.geotoolkit.wcs.xml.RangeSubset;
 
 
 /**
- * Selection of desired subset of the coverage's range fields, (optionally) the interpolation method applied to each field, and (optionally) field subsets. 
- * 
+ * Selection of desired subset of the coverage's range fields, (optionally) the interpolation method applied to each field, and (optionally) field subsets.
+ *
  * <p>Java class for RangeSubsetType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RangeSubsetType">
  *   &lt;complexContent>
@@ -57,8 +57,8 @@ import org.geotoolkit.wcs.xml.RangeSubset;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -74,13 +74,13 @@ public class RangeSubsetType implements RangeSubset {
      * An empty constructor used by JAXB
      */
     RangeSubsetType() {
-        
+
     }
-    
+
     public RangeSubsetType(final List<FieldSubset> fieldSubset) {
         this.fieldSubset = fieldSubset;
     }
-    
+
     /**
      * Gets the value of the fieldSubset property.
      * (unmodifable).
@@ -95,9 +95,9 @@ public class RangeSubsetType implements RangeSubset {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -111,8 +111,8 @@ public class RangeSubsetType implements RangeSubset {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -133,15 +133,15 @@ public class RangeSubsetType implements RangeSubset {
          * an empty constructor used by JAXB
          */
         FieldSubset() {
-            
+
         }
-        
+
         public FieldSubset(final String identifier, final String interpolationType) {
             this.identifier        = new CodeType(identifier);
             this.interpolationType = interpolationType;
         }
         /**
-         * Identifier of this requested Field. This identifier must be unique for this Coverage. 
+         * Identifier of this requested Field. This identifier must be unique for this Coverage.
          */
         public String getIdentifier() {
             if (identifier != null) {
@@ -158,7 +158,7 @@ public class RangeSubsetType implements RangeSubset {
         }
 
         /**
-         * Unordered list of zero or more axis subsets for this field. 
+         * Unordered list of zero or more axis subsets for this field.
          * TBD. Gets the value of the axisSubset property.
          * (unmodifiable).
          */

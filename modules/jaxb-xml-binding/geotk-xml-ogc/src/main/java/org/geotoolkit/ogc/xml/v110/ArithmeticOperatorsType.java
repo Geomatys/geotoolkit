@@ -27,9 +27,9 @@ import org.opengis.filter.capability.Functions;
 
 /**
  * <p>Java class for ArithmeticOperatorsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ArithmeticOperatorsType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.opengis.filter.capability.Functions;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -54,17 +54,17 @@ import org.opengis.filter.capability.Functions;
 public class ArithmeticOperatorsType implements ArithmeticOperators {
 
     @XmlElement(name = "Functions")
-    private FunctionType functions;     
+    private FunctionType functions;
     @XmlElement(name = "SimpleArithmetic")
     private SimpleArithmetic simpleArithmetic;
-    
+
     /**
      * An empty constructor used by JAXB
      */
     public ArithmeticOperatorsType() {
-        
+
     }
-    
+
     /**
      * Build a new Arithmetic Operators
      */
@@ -83,7 +83,7 @@ public class ArithmeticOperatorsType implements ArithmeticOperators {
     public SimpleArithmetic getSimpleArithmetic() {
         return simpleArithmetic;
     }
-    
+
     /**
      * Gets the value of the simpleArithmetic.
      */
@@ -96,7 +96,7 @@ public class ArithmeticOperatorsType implements ArithmeticOperators {
     public boolean hasSimpleArithmetic() {
         return simpleArithmetic != null;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[ArithmeticOperatorsType]").append("\n");
@@ -120,7 +120,7 @@ public class ArithmeticOperatorsType implements ArithmeticOperators {
 
        if (object instanceof ArithmeticOperatorsType) {
            final ArithmeticOperatorsType that = (ArithmeticOperatorsType) object;
-       
+
             return Objects.equals(this.functions, that.functions) &&
                    Objects.equals(this.simpleArithmetic, that.simpleArithmetic);
         }

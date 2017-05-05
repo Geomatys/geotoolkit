@@ -34,9 +34,9 @@ import org.geotoolkit.wfs.xml.InsertElement;
 
 /**
  * <p>Java class for InsertType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InsertType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.wfs.xml.InsertElement;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InsertType", propOrder = {
@@ -67,9 +67,9 @@ public class InsertType extends AbstractTransactionActionType implements InsertE
     private String srsName;
 
     public InsertType() {
-        
+
     }
-    
+
     public InsertType(String inputFormat, String srsName, Object any) {
         this.inputFormat = inputFormat;
         this.srsName = srsName;
@@ -79,7 +79,7 @@ public class InsertType extends AbstractTransactionActionType implements InsertE
     }
     /**
      * Gets the value of the any property.
-     * 
+     *
      */
     public List<Object> getAny() {
         if (any == null) {
@@ -87,7 +87,7 @@ public class InsertType extends AbstractTransactionActionType implements InsertE
         }
         return this.any;
     }
-    
+
     @Override
     public List getFeature() {
         return getAny();
@@ -95,11 +95,11 @@ public class InsertType extends AbstractTransactionActionType implements InsertE
 
     /**
      * Gets the value of the inputFormat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getInputFormat() {
@@ -112,11 +112,11 @@ public class InsertType extends AbstractTransactionActionType implements InsertE
 
     /**
      * Sets the value of the inputFormat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setInputFormat(String value) {
         this.inputFormat = value;
@@ -124,11 +124,11 @@ public class InsertType extends AbstractTransactionActionType implements InsertE
 
     /**
      * Gets the value of the srsName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getSrsName() {
@@ -137,11 +137,11 @@ public class InsertType extends AbstractTransactionActionType implements InsertE
 
     /**
      * Sets the value of the srsName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSrsName(String value) {
         this.srsName = value;
@@ -170,7 +170,7 @@ public class InsertType extends AbstractTransactionActionType implements InsertE
         if (this == obj) {
             return true;
         }
-        
+
         if (obj instanceof InsertType) {
             InsertType that = (InsertType) obj;
             return Objects.equals(this.any, that.any) &&
@@ -188,7 +188,7 @@ public class InsertType extends AbstractTransactionActionType implements InsertE
         hash = 17 * hash + (this.srsName != null ? this.srsName.hashCode() : 0);
         return hash;
     }
-    
+
     public IdentifierGenerationOptionType getIdgen() {
         return null; // not implemented in 2.0.0
     }

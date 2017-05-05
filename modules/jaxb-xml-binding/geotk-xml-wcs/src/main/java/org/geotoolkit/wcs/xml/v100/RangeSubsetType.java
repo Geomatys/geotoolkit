@@ -28,12 +28,12 @@ import org.geotoolkit.wcs.xml.RangeSubset;
 
 
 /**
- * Definition of a subset of the named coverage range(s). Currently, only a value enumeration definition of a range subset. 
- * 
+ * Definition of a subset of the named coverage range(s). Currently, only a value enumeration definition of a range subset.
+ *
  * <p>Java class for RangeSubsetType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RangeSubsetType">
  *   &lt;complexContent>
@@ -53,7 +53,7 @@ import org.geotoolkit.wcs.xml.RangeSubset;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -86,9 +86,9 @@ public class RangeSubsetType implements RangeSubset {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -98,8 +98,8 @@ public class RangeSubsetType implements RangeSubset {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")

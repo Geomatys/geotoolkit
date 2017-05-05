@@ -35,9 +35,9 @@ import org.geotoolkit.wfs.xml.WFSResponse;
 
 /**
  * <p>Java class for WFS_CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="WFS_CapabilitiesType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.wfs.xml.WFSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WFS_CapabilitiesType", propOrder = {
@@ -82,9 +82,9 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
     private Integer updateSequence;
 
     public WFSCapabilitiesType() {
-        
+
     }
-    
+
     public WFSCapabilitiesType(final String version, final String updateSequence) {
         this.version = version;
         if (updateSequence != null) {
@@ -95,14 +95,14 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
             }
         }
     }
-    
+
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ServiceType }
-     *     
+     *
      */
     public ServiceType getService() {
         return service;
@@ -110,11 +110,11 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ServiceType }
-     *     
+     *
      */
     public void setService(ServiceType value) {
         this.service = value;
@@ -122,11 +122,11 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
 
     /**
      * Gets the value of the capability property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CapabilityType }
-     *     
+     *
      */
     public CapabilityType getCapability() {
         return capability;
@@ -134,16 +134,16 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
 
     /**
      * Sets the value of the capability property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CapabilityType }
-     *     
+     *
      */
     public void setCapability(CapabilityType value) {
         this.capability = value;
     }
-    
+
     @Override
     public void updateURL(final String url) {
         if (capability != null && capability.getRequest() != null) {
@@ -153,11 +153,11 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
 
     /**
      * Gets the value of the featureTypeList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FeatureTypeListType }
-     *     
+     *
      */
     @Override
     public FeatureTypeListType getFeatureTypeList() {
@@ -166,11 +166,11 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
 
     /**
      * Sets the value of the featureTypeList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FeatureTypeListType }
-     *     
+     *
      */
     public void setFeatureTypeList(FeatureTypeListType value) {
         this.featureTypeList = value;
@@ -178,11 +178,11 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
 
     /**
      * Gets the value of the filterCapabilities property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FilterCapabilities }
-     *     
+     *
      */
     public FilterCapabilities getFilterCapabilities() {
         return filterCapabilities;
@@ -190,11 +190,11 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
 
     /**
      * Sets the value of the filterCapabilities property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FilterCapabilities }
-     *     
+     *
      */
     public void setFilterCapabilities(FilterCapabilities value) {
         this.filterCapabilities = value;
@@ -202,11 +202,11 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getVersion() {
@@ -219,11 +219,11 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(String value) {
         this.version = value;
@@ -231,11 +231,11 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
 
     /**
      * Gets the value of the updateSequence property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     @Override
     public String getUpdateSequence() {
@@ -248,11 +248,11 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
 
     /**
      * Sets the value of the updateSequence property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setUpdateSequence(Integer value) {
         this.updateSequence = value;

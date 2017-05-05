@@ -29,7 +29,7 @@ final class HilbertTreeAccessMemory extends TreeAccessMemory {
 
     /**
      * Build a TreeAccess adapted for HilbertRTree, and store tree information in memory.
-     * 
+     *
      * @param maxElements max element permit in each tree cells.
      * @param hilbertOrder maximum hilbert order value permit for each tree leaf.
      * @param crs Tree {@link CoordinateReferenceSystem}.

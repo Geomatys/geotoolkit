@@ -71,7 +71,7 @@ public final class RegroupDescriptor extends VectorDescriptor {
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_OUT);
-    
+
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new RegroupDescriptor();
 

@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for DynamicFeatureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DynamicFeatureType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DynamicFeatureType", propOrder = {
@@ -65,11 +65,11 @@ public class DynamicFeatureType
 
     /**
      * Gets the value of the validTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimePrimitivePropertyType }
-     *     
+     *
      */
     public TimePrimitivePropertyType getValidTime() {
         return validTime;
@@ -77,11 +77,11 @@ public class DynamicFeatureType
 
     /**
      * Sets the value of the validTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimePrimitivePropertyType }
-     *     
+     *
      */
     public void setValidTime(TimePrimitivePropertyType value) {
         this.validTime = value;
@@ -89,12 +89,12 @@ public class DynamicFeatureType
 
     /**
      * Gets the value of the history property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link HistoryPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link HistoryPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<HistoryPropertyType> getHistory() {
         return history;
@@ -102,12 +102,12 @@ public class DynamicFeatureType
 
     /**
      * Sets the value of the history property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link HistoryPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link HistoryPropertyType }{@code >}
-     *     
+     *
      */
     public void setHistory(JAXBElement<HistoryPropertyType> value) {
         this.history = ((JAXBElement<HistoryPropertyType> ) value);
@@ -115,11 +115,11 @@ public class DynamicFeatureType
 
     /**
      * Gets the value of the dataSource property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public StringOrRefType getDataSource() {
         return dataSource;
@@ -127,11 +127,11 @@ public class DynamicFeatureType
 
     /**
      * Sets the value of the dataSource property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public void setDataSource(StringOrRefType value) {
         this.dataSource = value;
@@ -139,11 +139,11 @@ public class DynamicFeatureType
 
     /**
      * Gets the value of the dataSourceReference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getDataSourceReference() {
         return dataSourceReference;
@@ -151,11 +151,11 @@ public class DynamicFeatureType
 
     /**
      * Sets the value of the dataSourceReference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setDataSourceReference(ReferenceType value) {
         this.dataSourceReference = value;

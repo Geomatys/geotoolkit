@@ -24,12 +24,12 @@ import org.geotoolkit.gml.xml.v311.MetaDataPropertyType;
 
 
 /**
- * Refers to a metadata package that contains metadata properties for an object. 
- * 
+ * Refers to a metadata package that contains metadata properties for an object.
+ *
  * <p>Java class for MetadataAssociationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MetadataAssociationType">
  *   &lt;complexContent>
@@ -42,7 +42,7 @@ import org.geotoolkit.gml.xml.v311.MetaDataPropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -52,19 +52,19 @@ import org.geotoolkit.gml.xml.v311.MetaDataPropertyType;
     MetadataLinkType.class
 })
 public class MetadataAssociationType extends MetaDataPropertyType {
-    
+
     /**
      * An empty constructor used by JAXB
      */
     MetadataAssociationType() {
         super(null);
     }
-    
+
     /**
      * build a metadata association
      */
     public MetadataAssociationType(final String href) {
         super(href);
     }
-    
+
 }

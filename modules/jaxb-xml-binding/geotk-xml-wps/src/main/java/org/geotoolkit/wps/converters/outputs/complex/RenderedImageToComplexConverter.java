@@ -74,12 +74,12 @@ public class RenderedImageToComplexConverter extends AbstractComplexOutputConver
         if (!encoding.equals(WPSEncoding.BASE64.getValue())) {
             throw new UnconvertibleObjectException("Encoding should be in Base64 for complex request.");
         }
-        
+
         String wpsVersion  = (String) params.get(WPSVERSION);
         if (wpsVersion == null) {
             LOGGER.warning("No WPS version set using default 1.0.0");
             wpsVersion = "1.0.0";
-        } 
+        }
         final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(wpsVersion, encoding,mime, null);
 
         final String formatName = mime.substring(mime.indexOf("/")+1).toUpperCase();

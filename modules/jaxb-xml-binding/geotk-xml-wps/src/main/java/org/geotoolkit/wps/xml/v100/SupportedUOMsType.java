@@ -26,12 +26,12 @@ import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 
 
 /**
- * Listing of the Unit of Measure (U0M) support for this process input or output. 
- * 
+ * Listing of the Unit of Measure (U0M) support for this process input or output.
+ *
  * <p>Java class for SupportedUOMsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SupportedUOMsType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.ows.xml.v110.DomainMetadataType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -71,14 +71,14 @@ public class SupportedUOMsType {
     protected UOMsType supported;
 
     public SupportedUOMsType() {
-        
+
     }
-    
+
     public SupportedUOMsType(SupportedUOMsType.Default _default, UOMsType supported) {
         this._default = _default;
         this.supported = supported;
     }
-    
+
     public SupportedUOMsType(DomainMetadataType _default, List<DomainMetadataType> supported) {
         if (_default != null) {
             this._default = new Default(_default);
@@ -89,11 +89,11 @@ public class SupportedUOMsType {
     }
     /**
      * Gets the value of the default property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SupportedUOMsType.Default }
-     *     
+     *
      */
     public SupportedUOMsType.Default getDefault() {
         return _default;
@@ -101,11 +101,11 @@ public class SupportedUOMsType {
 
     /**
      * Sets the value of the default property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SupportedUOMsType.Default }
-     *     
+     *
      */
     public void setDefault(final SupportedUOMsType.Default value) {
         this._default = value;
@@ -113,11 +113,11 @@ public class SupportedUOMsType {
 
     /**
      * Gets the value of the supported property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link UOMsType }
-     *     
+     *
      */
     public UOMsType getSupported() {
         return supported;
@@ -125,11 +125,11 @@ public class SupportedUOMsType {
 
     /**
      * Sets the value of the supported property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link UOMsType }
-     *     
+     *
      */
     public void setSupported(final UOMsType value) {
         this.supported = value;
@@ -147,7 +147,7 @@ public class SupportedUOMsType {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare
@@ -172,12 +172,12 @@ public class SupportedUOMsType {
         hash = 31 * hash + Objects.hashCode(this.supported);
         return hash;
     }
-    
+
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -189,8 +189,8 @@ public class SupportedUOMsType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -202,20 +202,20 @@ public class SupportedUOMsType {
         protected DomainMetadataType uom;
 
         public Default() {
-            
+
         }
-        
+
         public Default(DomainMetadataType uom) {
             this.uom = uom;
         }
-        
+
         /**
          * Reference to the default UOM supported for this Input/Output
-         * 
+         *
          * @return
          *     possible object is
          *     {@link DomainMetadataType }
-         *     
+         *
          */
         public DomainMetadataType getUOM() {
             return uom;
@@ -223,16 +223,16 @@ public class SupportedUOMsType {
 
         /**
          * Reference to the default UOM supported for this Input/Output
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link DomainMetadataType }
-         *     
+         *
          */
         public void setUOM(final DomainMetadataType value) {
             this.uom = value;
         }
-        
+
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");

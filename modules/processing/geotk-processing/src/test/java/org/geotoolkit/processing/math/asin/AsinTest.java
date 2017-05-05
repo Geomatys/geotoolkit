@@ -58,5 +58,5 @@ public class AsinTest extends AbstractProcessTest {
 
         assertEquals(0.6944, result.doubleValue(), 0.0001);
     }
-    
+
 }

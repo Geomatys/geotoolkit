@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for LinePlacementType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LinePlacementType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,11 +73,11 @@ public class LinePlacementType {
 
     /**
      * Gets the value of the perpendicularOffset property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getPerpendicularOffset() {
         return perpendicularOffset;
@@ -85,11 +85,11 @@ public class LinePlacementType {
 
     /**
      * Sets the value of the perpendicularOffset property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setPerpendicularOffset(final ParameterValueType value) {
         this.perpendicularOffset = value;
@@ -97,11 +97,11 @@ public class LinePlacementType {
 
     /**
      * Gets the value of the isRepeated property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isIsRepeated() {
         return isRepeated;
@@ -109,11 +109,11 @@ public class LinePlacementType {
 
     /**
      * Sets the value of the isRepeated property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setIsRepeated(final Boolean value) {
         this.isRepeated = value;
@@ -121,11 +121,11 @@ public class LinePlacementType {
 
     /**
      * Gets the value of the initialGap property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getInitialGap() {
         return initialGap;
@@ -133,11 +133,11 @@ public class LinePlacementType {
 
     /**
      * Sets the value of the initialGap property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setInitialGap(final ParameterValueType value) {
         this.initialGap = value;
@@ -145,11 +145,11 @@ public class LinePlacementType {
 
     /**
      * Gets the value of the gap property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getGap() {
         return gap;
@@ -157,11 +157,11 @@ public class LinePlacementType {
 
     /**
      * Sets the value of the gap property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setGap(final ParameterValueType value) {
         this.gap = value;
@@ -169,11 +169,11 @@ public class LinePlacementType {
 
     /**
      * Gets the value of the isAligned property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isIsAligned() {
         return isAligned;
@@ -181,11 +181,11 @@ public class LinePlacementType {
 
     /**
      * Sets the value of the isAligned property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setIsAligned(final Boolean value) {
         this.isAligned = value;
@@ -193,11 +193,11 @@ public class LinePlacementType {
 
     /**
      * Gets the value of the generalizeLine property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isGeneralizeLine() {
         return generalizeLine;
@@ -205,11 +205,11 @@ public class LinePlacementType {
 
     /**
      * Sets the value of the generalizeLine property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setGeneralizeLine(final Boolean value) {
         this.generalizeLine = value;

@@ -33,7 +33,7 @@ public interface AbstractLayer {
     String getAbstract();
 
     void setAbstract(final String abstrac);
-            
+
     /**
      * Get all Dimensions (TIME,ELEVATION,...) from a specific layer.
      */
@@ -48,7 +48,7 @@ public interface AbstractLayer {
      * Gets the value of the keywordList property.
      */
     AbstractKeywordList getKeywordList();
-    
+
     void setKeywordList(final List<String> kewords);
 
     /**
@@ -57,7 +57,7 @@ public interface AbstractLayer {
     List<String> getCRS();
 
     void setCrs(final List<String> crs);
-            
+
     /**
      * Unmodifiable list of layers contained in this layer.
      */
@@ -72,7 +72,7 @@ public interface AbstractLayer {
      * Set the layer name
      */
     void setName(String name);
-    
+
     /**
      * Get the layer title
      */
@@ -92,9 +92,9 @@ public interface AbstractLayer {
      * Get layer styles
      */
     List<? extends Style> getStyle();
-    
+
     void updateStyle(final List<Style> styles);
-    
+
 
     /**
      * Get if the layer is queryable or not
@@ -105,37 +105,37 @@ public interface AbstractLayer {
      * Get the layer boundingboxes
      */
     List<? extends AbstractBoundingBox> getBoundingBox();
-    
+
     /**
      * Get metadataURLs of the layer
      */
     List<? extends AbstractURL> getMetadataURL();
-    
+
     void setMetadataURL(final String format, final String href, final String type);
-    
+
     /**
      * Get dataURLs of the layer
      */
     List<? extends AbstractURL> getDataURL();
-    
+
     void setDataURL(final String format, final String href);
-    
+
     void setAuthorityURL(final String format, final String href);
-            
+
     /**
      * Get minScaleDenominator of the layer
      */
     Double getMinScaleDenominator();
-    
+
     /**
      * Get maxScaleDenominator of the layer
      */
     Double getMaxScaleDenominator();
-    
+
     void setIdentifier(final String authority, final String value);
-    
+
     void setOpaque(final Integer opaque);
-    
+
     void setAttribution(final String title, final String href, final AbstractLogoURL logo);
 
 }

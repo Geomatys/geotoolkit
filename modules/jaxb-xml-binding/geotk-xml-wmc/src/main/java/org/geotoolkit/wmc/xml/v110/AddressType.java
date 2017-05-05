@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AddressType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AddressType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,11 +73,11 @@ public class AddressType {
 
     /**
      * Gets the value of the addressType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAddressType() {
         return addressType;
@@ -85,11 +85,11 @@ public class AddressType {
 
     /**
      * Sets the value of the addressType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAddressType(final String value) {
         this.addressType = value;
@@ -97,11 +97,11 @@ public class AddressType {
 
     /**
      * Gets the value of the address property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAddress() {
         return address;
@@ -109,11 +109,11 @@ public class AddressType {
 
     /**
      * Sets the value of the address property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAddress(final String value) {
         this.address = value;
@@ -121,11 +121,11 @@ public class AddressType {
 
     /**
      * Gets the value of the city property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCity() {
         return city;
@@ -133,11 +133,11 @@ public class AddressType {
 
     /**
      * Sets the value of the city property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCity(final String value) {
         this.city = value;
@@ -145,11 +145,11 @@ public class AddressType {
 
     /**
      * Gets the value of the stateOrProvince property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStateOrProvince() {
         return stateOrProvince;
@@ -157,11 +157,11 @@ public class AddressType {
 
     /**
      * Sets the value of the stateOrProvince property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStateOrProvince(final String value) {
         this.stateOrProvince = value;
@@ -169,11 +169,11 @@ public class AddressType {
 
     /**
      * Gets the value of the postCode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPostCode() {
         return postCode;
@@ -181,11 +181,11 @@ public class AddressType {
 
     /**
      * Sets the value of the postCode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPostCode(final String value) {
         this.postCode = value;
@@ -193,11 +193,11 @@ public class AddressType {
 
     /**
      * Gets the value of the country property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCountry() {
         return country;
@@ -205,11 +205,11 @@ public class AddressType {
 
     /**
      * Sets the value of the country property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCountry(final String value) {
         this.country = value;

@@ -35,8 +35,8 @@ import org.geotoolkit.wms.xml.WMSResponse;
 
 /**
  * <p>Root element of a getCapabilities Document version 1.1.1.
- * 
- * 
+ *
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -69,11 +69,11 @@ public class WMT_MS_Capabilities implements AbstractWMSCapabilities, WMSResponse
     public WMT_MS_Capabilities(final String version, final String updateSequence) {
         this(null, null, version, updateSequence);
     }
-    
+
     /**
      * Build a new WMSCapabilities object.
      */
-    public WMT_MS_Capabilities(final Service service, final Capability capability, 
+    public WMT_MS_Capabilities(final Service service, final Capability capability,
             final String version, final String updateSequence) {
         this.capability     = capability;
         this.service        = service;
@@ -81,27 +81,27 @@ public class WMT_MS_Capabilities implements AbstractWMSCapabilities, WMSResponse
         this.version        = version;
     }
 
-    
+
     /**
      * Gets the value of the service property.
-     * 
+     *
      */
     @Override
     public Service getService() {
         return service;
     }
-    
+
     public void setService(final AbstractService service) {
         if (service instanceof Service) {
             this.service = (Service) service;
         } else {
-            throw new IllegalArgumentException("not the good version object, expected 1.1.1"); 
+            throw new IllegalArgumentException("not the good version object, expected 1.1.1");
         }
     }
 
     /**
      * Gets the value of the capability property.
-     * 
+     *
      */
     @Override
     public Capability getCapability() {
@@ -128,7 +128,7 @@ public class WMT_MS_Capabilities implements AbstractWMSCapabilities, WMSResponse
             }
         }
     }
-    
+
     private void updateLayerURL(final String url, final Layer layer) {
         if (layer.getStyle() != null) {
             for (Style style : layer.getStyle()) {
@@ -153,7 +153,7 @@ public class WMT_MS_Capabilities implements AbstractWMSCapabilities, WMSResponse
     }
     /**
      * Gets the value of the version property.
-     * 
+     *
      */
     @Override
     public String getVersion() {
@@ -166,16 +166,16 @@ public class WMT_MS_Capabilities implements AbstractWMSCapabilities, WMSResponse
 
     /**
      * Gets the value of the updateSequence property.
-     * 
+     *
      */
     @Override
     public String getUpdateSequence() {
         return updateSequence;
     }
-    
+
     /**
      * Get a specific layer from the capabilities document.
-     * 
+     *
      */
     @Override
     public AbstractLayer getLayerFromName(final String name) {
@@ -237,7 +237,7 @@ public class WMT_MS_Capabilities implements AbstractWMSCapabilities, WMSResponse
         explore(layers, layer);
         return layers;
     }
-    
+
     private static void explore(List<AbstractLayer> buffer, AbstractLayer candidate){
         buffer.add(candidate);
         final List<? extends AbstractLayer> layers = candidate.getLayer();

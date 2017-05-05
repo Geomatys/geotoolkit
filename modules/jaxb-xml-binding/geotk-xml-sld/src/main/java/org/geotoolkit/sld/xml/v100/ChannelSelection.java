@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,11 +69,11 @@ public class ChannelSelection {
 
     /**
      * Gets the value of the redChannel property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SelectedChannelType }
-     *     
+     *
      */
     public SelectedChannelType getRedChannel() {
         return redChannel;
@@ -81,11 +81,11 @@ public class ChannelSelection {
 
     /**
      * Sets the value of the redChannel property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SelectedChannelType }
-     *     
+     *
      */
     public void setRedChannel(final SelectedChannelType value) {
         this.redChannel = value;
@@ -93,11 +93,11 @@ public class ChannelSelection {
 
     /**
      * Gets the value of the greenChannel property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SelectedChannelType }
-     *     
+     *
      */
     public SelectedChannelType getGreenChannel() {
         return greenChannel;
@@ -105,11 +105,11 @@ public class ChannelSelection {
 
     /**
      * Sets the value of the greenChannel property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SelectedChannelType }
-     *     
+     *
      */
     public void setGreenChannel(final SelectedChannelType value) {
         this.greenChannel = value;
@@ -117,11 +117,11 @@ public class ChannelSelection {
 
     /**
      * Gets the value of the blueChannel property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SelectedChannelType }
-     *     
+     *
      */
     public SelectedChannelType getBlueChannel() {
         return blueChannel;
@@ -129,11 +129,11 @@ public class ChannelSelection {
 
     /**
      * Sets the value of the blueChannel property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SelectedChannelType }
-     *     
+     *
      */
     public void setBlueChannel(final SelectedChannelType value) {
         this.blueChannel = value;
@@ -141,11 +141,11 @@ public class ChannelSelection {
 
     /**
      * Gets the value of the grayChannel property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SelectedChannelType }
-     *     
+     *
      */
     public SelectedChannelType getGrayChannel() {
         return grayChannel;
@@ -153,11 +153,11 @@ public class ChannelSelection {
 
     /**
      * Sets the value of the grayChannel property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SelectedChannelType }
-     *     
+     *
      */
     public void setGrayChannel(final SelectedChannelType value) {
         this.grayChannel = value;

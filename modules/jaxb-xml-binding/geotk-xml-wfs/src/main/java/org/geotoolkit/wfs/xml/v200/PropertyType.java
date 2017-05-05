@@ -31,9 +31,9 @@ import org.geotoolkit.wfs.xml.v110.ValueType;
 
 /**
  * <p>Java class for PropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PropertyType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.wfs.xml.v110.ValueType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyType", propOrder = {
@@ -69,7 +69,7 @@ public class PropertyType implements Property {
     @XmlElement(name = "Value")
     private Object value;
 
-    
+
     public PropertyType() {
 
     }
@@ -78,7 +78,7 @@ public class PropertyType implements Property {
         this.valueReference  = valueReference;
         this.value = value;
     }
-    
+
     public String getLocalName() {
         if (valueReference != null) {
             return valueReference.getValue();
@@ -87,11 +87,11 @@ public class PropertyType implements Property {
     }
     /**
      * Gets the value of the valueReference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PropertyType.ValueReference }
-     *     
+     *
      */
     public ValueReference getValueReference() {
         return valueReference;
@@ -99,11 +99,11 @@ public class PropertyType implements Property {
 
     /**
      * Sets the value of the valueReference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PropertyType.ValueReference }
-     *     
+     *
      */
     public void setValueReference(ValueReference value) {
         this.valueReference = value;
@@ -111,11 +111,11 @@ public class PropertyType implements Property {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Object }
-     *     
+     *
      */
     public Object getValue() {
         return value;
@@ -123,11 +123,11 @@ public class PropertyType implements Property {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Object }
-     *     
+     *
      */
     public void setValue(Object value) {
         this.value = value;

@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for SpeedType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SpeedType">
  *   &lt;complexContent>
@@ -37,8 +37,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SpeedType")
@@ -49,11 +49,11 @@ public class SpeedType extends AbstractMeasureType {
 
     /**
      * Gets the value of the uom property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SpeedUnitType }
-     *     
+     *
      */
     public SpeedUnitType getUom() {
         if (uom == null) {
@@ -65,11 +65,11 @@ public class SpeedType extends AbstractMeasureType {
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SpeedUnitType }
-     *     
+     *
      */
     public void setUom(SpeedUnitType value) {
         this.uom = value;

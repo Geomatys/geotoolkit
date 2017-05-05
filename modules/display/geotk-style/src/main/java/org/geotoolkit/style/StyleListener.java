@@ -30,7 +30,7 @@ import org.apache.sis.util.Disposable;
 
 /**
  * Listener for Style.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */

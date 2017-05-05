@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -27,15 +27,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.resources.jaxb.feature.catalog.MultiplicityRangeAdapter;
+import org.opengis.feature.catalog.util.Multiplicity;
+import org.opengis.feature.catalog.util.MultiplicityRange;
 
 
 /**
  * Use to represent the possible cardinality of a relation. Represented by a set of simple multiplicity ranges.
- * 
+ *
  * <p>Java class for Multiplicity_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Multiplicity_Type">
  *   &lt;complexContent>
@@ -47,8 +49,8 @@ import org.geotoolkit.resources.jaxb.feature.catalog.MultiplicityRangeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,7 +58,7 @@ import org.geotoolkit.resources.jaxb.feature.catalog.MultiplicityRangeAdapter;
     "range"
 })
 @XmlRootElement(name = "Multiplicity")
-public class Multiplicity {
+public class MultiplicityImpl implements Multiplicity {
 
     @XmlJavaTypeAdapter(MultiplicityRangeAdapter.class)
     @XmlElement(required = true)
@@ -65,53 +67,64 @@ public class Multiplicity {
     /**
      * An empty constructor used by JAXB
      */
-    public Multiplicity() {
-        
+    public MultiplicityImpl() {
+
     }
-    
+
+    public MultiplicityImpl(final Multiplicity other) {
+        if (other != null) {
+            this.range = new ArrayList<>();
+            for (MultiplicityRange r : other.getRange()) {
+                this.range.add(r);
+            }
+        }
+    }
+
+
     /**
-     * Build a simple Mulitiplicity 
+     * Build a simple Mulitiplicity
      */
-    public Multiplicity(final MultiplicityRange range) {
-        this.range = new ArrayList<MultiplicityRange>();
+    public MultiplicityImpl(final MultiplicityRange range) {
+        this.range = new ArrayList<>();
         this.range.add(range);
     }
-    
+
     /**
-     * Build a complex Mulitiplicity 
+     * Build a complex Mulitiplicity
      */
-    public Multiplicity(final List<MultiplicityRange> range) {
+    public MultiplicityImpl(final List<MultiplicityRange> range) {
         this.range = range;
     }
-    
+
     /**
      * Gets the value of the range property.
      */
+    @Override
     public List<MultiplicityRange> getRange() {
         if (range == null) {
-            range = new ArrayList<MultiplicityRange>();
+            range = new ArrayList<>();
         }
         return this.range;
     }
-    
+
     /**
      * sets the value of the range property.
      */
     public void setRange(final List<MultiplicityRange> range) {
         this.range = range;
     }
-    
-    
+
+
     /**
      * sets the value of the range property.
      */
     public void setRange(final MultiplicityRange range) {
         if (this.range == null) {
-            this.range = new ArrayList<MultiplicityRange>();
+            this.range = new ArrayList<>();
         }
         this.range.add(range);
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -120,8 +133,8 @@ public class Multiplicity {
         }
         return s.toString();
     }
-    
-    
+
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -130,8 +143,8 @@ public class Multiplicity {
         if (object == this) {
             return true;
         }
-        if (object instanceof Multiplicity) {
-            final Multiplicity that = (Multiplicity) object;
+        if (object instanceof MultiplicityImpl) {
+            final MultiplicityImpl that = (MultiplicityImpl) object;
             return Objects.equals(this.range, that.range);
         }
         return false;

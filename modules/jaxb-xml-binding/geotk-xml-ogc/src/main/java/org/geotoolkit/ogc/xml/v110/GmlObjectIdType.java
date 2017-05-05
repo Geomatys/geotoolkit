@@ -29,9 +29,9 @@ import org.opengis.filter.identity.GmlObjectId;
 
 /**
  * <p>Java class for GmlObjectIdType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GmlObjectIdType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.opengis.filter.identity.GmlObjectId;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,22 +59,22 @@ public class GmlObjectIdType extends AbstractIdType implements GmlObjectId {
      * An empty constructor used by JAXB
      */
     public GmlObjectIdType() {
-        
+
     }
-    
+
     /**
      * Build a new GML object Id with the specified ID
      */
     public GmlObjectIdType(final String id) {
         this.id = id;
     }
-    
+
     public GmlObjectIdType(final GmlObjectIdType that) {
         if (that != null) {
             this.id = that.id;
         }
     }
-    
+
     @Override
     public String getID() {
         return id;

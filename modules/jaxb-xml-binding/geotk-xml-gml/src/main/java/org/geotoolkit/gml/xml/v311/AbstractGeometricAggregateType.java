@@ -25,11 +25,11 @@ import org.geotoolkit.gml.xml.AbstractGeometricAggregate;
 
 /**
  * This is the abstract root type of the geometric aggregates.
- * 
+ *
  * <p>Java class for AbstractGeometricAggregateType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractGeometricAggregateType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import org.geotoolkit.gml.xml.AbstractGeometricAggregate;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

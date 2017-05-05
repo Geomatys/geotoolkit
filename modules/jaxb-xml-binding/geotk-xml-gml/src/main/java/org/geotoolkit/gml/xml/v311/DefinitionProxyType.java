@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
  * An element of this type contains a reference to a remote definition object.
  * This entry is expected to be convenient in allowing multiple elements in one XML document to contain short (abbreviated XPointer) references,
  * which are resolved to an external definition provided in a Dictionary element in the same XML document.
- * 
+ *
  * <p>Java class for DefinitionProxyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DefinitionProxyType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,11 +72,11 @@ public class DefinitionProxyType extends DefinitionType {
      * A reference to a remote entry in this dictionary,
      * used when this dictionary entry is identified to allow external references to this specific entry.
      * The remote entry referenced can be in a dictionary in the same or different XML document.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getDefinitionRef() {
         return definitionRef;
@@ -86,11 +86,11 @@ public class DefinitionProxyType extends DefinitionType {
      * A reference to a remote entry in this dictionary,
      * used when this dictionary entry is identified to allow external references to this specific entry.
      * The remote entry referenced can be in a dictionary in the same or different XML document.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setDefinitionRef(final ReferenceType value) {
         this.definitionRef = value;

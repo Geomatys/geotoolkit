@@ -71,7 +71,7 @@ public class DefaultIdCapabilities implements IdCapabilities{
         }
         return true;
     }
-    
+
     /**
      * {@inheritDoc }
      */

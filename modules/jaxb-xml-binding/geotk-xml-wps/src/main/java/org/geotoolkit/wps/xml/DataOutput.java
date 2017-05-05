@@ -23,6 +23,6 @@ import org.geotoolkit.ows.xml.AbstractCodeType;
  * @author guilhem
  */
 public interface DataOutput {
- 
+
     AbstractCodeType getIdentifier();
 }

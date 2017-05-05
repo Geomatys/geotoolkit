@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -13,7 +13,7 @@
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
- */ 
+ */
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry;
 
 
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 /**
  * The {@code GeometryTest} class is a container that holds a {@code List} of
  * {@code GeometryTestCase}s and provides a way to execute them all.
- * 
+ *
  * @author Jody Garnett
  * @author Joel Skelton
  * @module

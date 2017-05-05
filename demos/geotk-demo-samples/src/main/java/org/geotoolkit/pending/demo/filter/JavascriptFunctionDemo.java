@@ -19,7 +19,7 @@ public class JavascriptFunctionDemo {
 
     public static void main(String[] args) {
         Demos.init();
-        
+
         final Feature feature = aFeature();
 
         final String mathematicText =

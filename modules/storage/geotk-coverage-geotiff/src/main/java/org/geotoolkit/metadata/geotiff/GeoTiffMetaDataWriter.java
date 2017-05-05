@@ -303,7 +303,7 @@ public class GeoTiffMetaDataWriter {
             // The following code is insensitive to axis order and rotations in
             // the 'coord' space (not in the 'grid' space, otherwise we would
             // not take the inverse of the matrix).
-			/*
+            /*
              * final AffineTransform coordToGrid = gridToCoord.createInverse();
              * final double scaleModelToRasterLongitude = 1 /
              * AffineTransforms2D.getScaleX0(coordToGrid); final double

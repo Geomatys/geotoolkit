@@ -34,7 +34,7 @@ import org.opengis.style.GraphicalSymbol;
 
 /**
  * Graphical symbol controller editor.
- * 
+ *
  * @author Fabien Rétif (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
@@ -49,14 +49,14 @@ public class JGraphicSymbolControlPane extends StyleElementEditor<GraphicalSymbo
             JGraphicSymbolControlPane.this.firePropertyChange(PROPERTY_UPDATED, null, created);
         }
     };
-    
+
     private final JButton guiMarkButton = new JButton(symbolChange);
     private final JPreview guiMarkLabel = new JPreview();
-    
-    private MapLayer layer = null;    
+
+    private MapLayer layer = null;
     private final JGraphicalSymbolPane paneGraphicalSymbolChooser = new JGraphicalSymbolPane();
 
-    /** 
+    /**
      * Creates new form JGraphicSymbolControlPane
      */
     public JGraphicSymbolControlPane() {
@@ -69,7 +69,7 @@ public class JGraphicSymbolControlPane extends StyleElementEditor<GraphicalSymbo
                 symbolChange.actionPerformed(new ActionEvent(JGraphicSymbolControlPane.this, evt.getID(), PROPERTY_UPDATED));
             }
         });
-        
+
         add(guiMarkLabel, BorderLayout.WEST);
         add(guiMarkButton,BorderLayout.EAST);
     }
@@ -79,7 +79,7 @@ public class JGraphicSymbolControlPane extends StyleElementEditor<GraphicalSymbo
      */
     @Override
     public void setLayer(final MapLayer layer) {
-        this.layer = layer;     
+        this.layer = layer;
         paneGraphicalSymbolChooser.setLayer(layer);
     }
 
@@ -90,15 +90,15 @@ public class JGraphicSymbolControlPane extends StyleElementEditor<GraphicalSymbo
     public MapLayer getLayer(){
         return layer;
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
     public void parse(final GraphicalSymbol graphicalSymbol) {
         if (graphicalSymbol != null) {
-            guiMarkLabel.parse(graphicalSymbol);            
-            paneGraphicalSymbolChooser.parse(graphicalSymbol);            
+            guiMarkLabel.parse(graphicalSymbol);
+            paneGraphicalSymbolChooser.parse(graphicalSymbol);
         }
     }
 
@@ -109,10 +109,10 @@ public class JGraphicSymbolControlPane extends StyleElementEditor<GraphicalSymbo
     public GraphicalSymbol create() {
         return paneGraphicalSymbolChooser.create();
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-   
+
 }

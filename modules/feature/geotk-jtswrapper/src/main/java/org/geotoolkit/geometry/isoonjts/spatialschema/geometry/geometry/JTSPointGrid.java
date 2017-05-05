@@ -20,24 +20,24 @@ import org.opengis.geometry.coordinate.PointGrid;
 
 /**
  * A grid of points. The grid may be see as a sequences of equal length sequences.
- *  
+ *
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  * @module
  */
 public class JTSPointGrid implements PointGrid {
-    
+
     //*************************************************************************
     //  Fields
     //*************************************************************************
-    
+
     private PointArray[] pointGrid;
-    
+
     //*************************************************************************
     //  Constructor
     //*************************************************************************
-    
+
     //*************************************************************************
     //  implement the PointGrid interface
     //*************************************************************************
@@ -78,9 +78,9 @@ public class JTSPointGrid implements PointGrid {
     public DirectPosition get(final int row, final int column) throws IndexOutOfBoundsException {
         return getInternal( row, column );
     }
-    
+
     /**
-     * Gets a copy of the {@code DirectPosition} at the particular location in this 
+     * Gets a copy of the {@code DirectPosition} at the particular location in this
      * {@code PointGrid}. If the {@code dest} argument is non-null, that object
      * will be populated with the value from the array. In all cases, the position in insulated
      * from changes in the {@code PointArray}, and vice-versa. Consequently, the same
@@ -105,8 +105,8 @@ public class JTSPointGrid implements PointGrid {
     @Override
     public DirectPosition get(final int row, final int column, final DirectPosition dest) throws IndexOutOfBoundsException {
         DirectPosition target = new GeneralDirectPosition(getInternal( row, column ));
-        
-        if (dest == null || !dest.getCoordinateReferenceSystem().equals(target.getCoordinateReferenceSystem())){ 
+
+        if (dest == null || !dest.getCoordinateReferenceSystem().equals(target.getCoordinateReferenceSystem())){
             return target;
         }
         for (int i = 0; i < target.getDimension(); i++) {
@@ -122,11 +122,11 @@ public class JTSPointGrid implements PointGrid {
      * </p>
      * @param row
      * @param column
-     * @return DirectPosition 
+     * @return DirectPosition
      */
      DirectPosition getInternal( final int row, final int column ){
         PointArray pointArray = pointGrid[row];
-        return (DirectPosition) pointArray.positions().get( column ); 
+        return (DirectPosition) pointArray.positions().get( column );
     }
 
     /**
@@ -145,7 +145,7 @@ public class JTSPointGrid implements PointGrid {
     public void set(final int row, final int column, final DirectPosition position) throws IndexOutOfBoundsException,
                                                                          UnsupportedOperationException {
         DirectPosition target = new GeneralDirectPosition(getInternal(row, column));
-        
+
         if (position.getCoordinateReferenceSystem().equals(target.getCoordinateReferenceSystem())) {
             for (int i = 0; i < position.getDimension(); i++) {
                 target.setOrdinate(i, position.getOrdinate(i));

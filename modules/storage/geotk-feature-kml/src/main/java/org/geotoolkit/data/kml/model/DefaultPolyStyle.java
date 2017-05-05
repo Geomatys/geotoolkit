@@ -32,7 +32,7 @@ public class DefaultPolyStyle extends DefaultAbstractColorStyle implements PolyS
     private boolean outline;
 
     /**
-     * 
+     *
      */
     public DefaultPolyStyle() {
         this.fill = DEF_FILL;

@@ -78,7 +78,7 @@ public interface BalloonStyle extends AbstractSubStyle {
      * @return the display mode
      */
     DisplayMode getDisplayMode();
-    
+
     /**
      *
      * @param bgColor

@@ -33,7 +33,7 @@ public class DefaultSchemaData extends DefaultAbstractObject implements SchemaDa
     public List<Object> schemaDataExtensions;
 
     /**
-     * 
+     *
      */
     public DefaultSchemaData(){
         this.simpleDatas = EMPTY_LIST;
@@ -41,7 +41,7 @@ public class DefaultSchemaData extends DefaultAbstractObject implements SchemaDa
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param schemaURL

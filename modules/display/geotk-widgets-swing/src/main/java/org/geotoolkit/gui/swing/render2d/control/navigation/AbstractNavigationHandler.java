@@ -143,13 +143,13 @@ public class AbstractNavigationHandler implements CanvasHandler{
     public static Cursor cleanCursor(Image icon, Point focusPoint, String cursorname){
         final int width = icon.getWidth(null);
         final int height = icon.getHeight(null);
-        
+
         final BufferedImage bufferARGB = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = bufferARGB.createGraphics();
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, width, height);
         g.drawImage(icon, new AffineTransform(), null);
-        
+
           for (int y = 0 ; y < height ; y++) {
             for (int x = 0 ; x < width ; x++) {
 
@@ -167,8 +167,8 @@ public class AbstractNavigationHandler implements CanvasHandler{
 
             }
         }
-        
+
         return Toolkit.getDefaultToolkit().createCustomCursor(bufferARGB,focusPoint,cursorname);
     }
-    
+
 }

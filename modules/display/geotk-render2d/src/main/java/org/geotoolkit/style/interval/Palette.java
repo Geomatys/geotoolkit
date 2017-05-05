@@ -33,5 +33,5 @@ public interface Palette {
     void render(Graphics2D g, Rectangle rect, boolean interpolate);
 
     List<Entry<Double,Color>> getSteps();
-    
+
 }

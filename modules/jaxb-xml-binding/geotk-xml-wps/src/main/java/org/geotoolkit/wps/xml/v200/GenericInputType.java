@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Description of an input to a process. 
- * 
+ * Description of an input to a process.
+ *
  * In this use, the DescriptionType shall describe a process input.
- * 					
- * 
+ *
+ *
  * <p>Java class for GenericInputType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GenericInputType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GenericInputType", propOrder = {
@@ -71,11 +71,11 @@ public class GenericInputType
 
     /**
      * Gets the value of the input property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link GenericInputType }
-     * 
-     * 
+     *
+     *
      */
     public List<GenericInputType> getInput() {
         if (input == null) {
@@ -86,11 +86,11 @@ public class GenericInputType
 
     /**
      * Gets the value of the minOccurs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMinOccurs() {
         if (minOccurs == null) {
@@ -102,11 +102,11 @@ public class GenericInputType
 
     /**
      * Sets the value of the minOccurs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMinOccurs(Integer value) {
         this.minOccurs = value;
@@ -114,11 +114,11 @@ public class GenericInputType
 
     /**
      * Gets the value of the maxOccurs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMaxOccurs() {
         if (maxOccurs == null) {
@@ -130,11 +130,11 @@ public class GenericInputType
 
     /**
      * Sets the value of the maxOccurs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMaxOccurs(String value) {
         this.maxOccurs = value;

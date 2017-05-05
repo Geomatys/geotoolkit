@@ -1,9 +1,9 @@
 /*
  *    GeotoolKit - An Open source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
- *    
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -20,7 +20,7 @@ package org.geotoolkit.geometry.jts.coordinatesequence;
 
 /**
  * A factory to obtain a builder for JTS CoordinateSequence objects.
- * 
+ *
  * @author wolf
  *
  * TODO To change the template for this generated type comment go to
@@ -28,33 +28,33 @@ package org.geotoolkit.geometry.jts.coordinatesequence;
  * @module
  */
 public class CSBuilderFactory {
-	private static Class defaultBuilderClass;
-	
-	public static CSBuilder getDefaultBuilder() {
-		try {
-			return (CSBuilder) getDefaultBuilderClass().newInstance();
-		} catch (Exception e) {
-			// TODO: should we throw a better exception here? It's a fatal error anyway...
-			throw new RuntimeException("Could not create a coordinate sequence builder", e);
-		}
-	}
-	
-	private static Class getDefaultBuilderClass() {
-		if(defaultBuilderClass == null) {
-			defaultBuilderClass = DefaultCSBuilder.class;
-		}
-		return defaultBuilderClass;
-	}
+    private static Class defaultBuilderClass;
 
-	/**
-	 * @param builderClass
-	 */
-	public static void setDefaultBuilderClass(final Class builderClass) {
-		if(!CSBuilder.class.isAssignableFrom(builderClass))
-			throw new RuntimeException(builderClass.getName() + " does not implement the CSBuilder interface");
-		defaultBuilderClass = builderClass;
-		
-	}
-	
-	
+    public static CSBuilder getDefaultBuilder() {
+        try {
+            return (CSBuilder) getDefaultBuilderClass().newInstance();
+        } catch (Exception e) {
+            // TODO: should we throw a better exception here? It's a fatal error anyway...
+            throw new RuntimeException("Could not create a coordinate sequence builder", e);
+        }
+    }
+
+    private static Class getDefaultBuilderClass() {
+        if(defaultBuilderClass == null) {
+            defaultBuilderClass = DefaultCSBuilder.class;
+        }
+        return defaultBuilderClass;
+    }
+
+    /**
+     * @param builderClass
+     */
+    public static void setDefaultBuilderClass(final Class builderClass) {
+        if(!CSBuilder.class.isAssignableFrom(builderClass))
+            throw new RuntimeException(builderClass.getName() + " does not implement the CSBuilder interface");
+        defaultBuilderClass = builderClass;
+
+    }
+
+
 }

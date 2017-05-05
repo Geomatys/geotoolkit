@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Disjoint")
 public class DisjointType extends BinarySpatialOpType {
-    
+
     public DisjointType() {
-        
+
     }
-    
+
     public DisjointType(final DisjointType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new DisjointType(this);

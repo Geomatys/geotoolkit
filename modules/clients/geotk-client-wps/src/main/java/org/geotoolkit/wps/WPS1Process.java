@@ -61,7 +61,7 @@ import org.opengis.util.FactoryException;
 
 /**
  * WPS v1.0.0 process.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class WPS1Process extends AbstractProcess {
@@ -95,7 +95,7 @@ public class WPS1Process extends AbstractProcess {
     public boolean isStatusReport() {
         return statusReport;
     }
-    
+
     @Override
     protected void execute() throws ProcessException {
         final ExecuteRequest exec = createRequest();
@@ -363,7 +363,7 @@ public class WPS1Process extends AbstractProcess {
                     final String unit = inputDesc.getUnit() != null ? inputDesc.getUnit().toString() : null;
 
                     if ("literal".equals(type)) {
-                        wpsIN.add(new WPSInputLiteral(inputIdentifier, String.valueOf(value), 
+                        wpsIN.add(new WPSInputLiteral(inputIdentifier, String.valueOf(value),
                                 WPSConvertersUtils.getDataTypeString(registry.getClient().getVersion().getCode(), inputClazz), unit));
 
                     } else if ("bbox".equals(type)) {

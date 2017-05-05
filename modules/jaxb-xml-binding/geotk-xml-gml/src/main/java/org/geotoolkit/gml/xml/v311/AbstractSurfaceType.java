@@ -25,11 +25,11 @@ import org.geotoolkit.gml.xml.AbstractSurface;
 
 /**
  * An abstraction of a surface to support the different levels of complexity. A surface is always a continuous region of a plane.
- * 
+ *
  * <p>Java class for AbstractSurfaceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractSurfaceType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import org.geotoolkit.gml.xml.AbstractSurface;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -52,9 +52,9 @@ import org.geotoolkit.gml.xml.AbstractSurface;
 public class AbstractSurfaceType extends AbstractGeometricPrimitiveType implements AbstractSurface{
 
     public AbstractSurfaceType() {
-        
+
     }
-    
+
     public AbstractSurfaceType(final String srsName) {
         super(srsName);
     }

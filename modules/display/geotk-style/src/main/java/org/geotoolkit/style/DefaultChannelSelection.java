@@ -34,10 +34,10 @@ import static org.apache.sis.util.ArgumentChecks.*;
 public class DefaultChannelSelection implements ChannelSelection{
 
     private final SelectedChannelType[] rgb;
-    
+
     private final SelectedChannelType gray;
 
-    
+
     /**
      * Create a default immutable channel selection.
      *
@@ -50,11 +50,11 @@ public class DefaultChannelSelection implements ChannelSelection{
 
         this.gray = null;
     }
-    
+
     /**
      * Create a default immutable channel selection.
      *
-     * @param gray : can not be null 
+     * @param gray : can not be null
      */
     DefaultChannelSelection(final SelectedChannelType gray){
         ensureNonNull("gray channel", gray);

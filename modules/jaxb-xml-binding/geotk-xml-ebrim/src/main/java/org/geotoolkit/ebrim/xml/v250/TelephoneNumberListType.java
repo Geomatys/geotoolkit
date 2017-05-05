@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TelephoneNumberListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TelephoneNumberListType">
  *   &lt;complexContent>
@@ -37,11 +37,11 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{urn:oasis:names:tc:ebxml-regrep:rim:xsd:2.5}TelephoneNumber" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
- *   &lt;/complexContent> 
+ *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,7 +62,7 @@ public class TelephoneNumberListType {
         }
         return this.telephoneNumber;
     }
-    
+
     /**
      * Sets the value of the telephoneNumber property.
      */
@@ -72,7 +72,7 @@ public class TelephoneNumberListType {
         }
         this.telephoneNumber.add(number);
     }
-    
+
     /**
      * Sets the value of the telephoneNumber property.
      */

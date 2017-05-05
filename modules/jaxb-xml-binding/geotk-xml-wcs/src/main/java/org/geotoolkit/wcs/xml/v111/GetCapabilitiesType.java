@@ -29,9 +29,9 @@ import org.geotoolkit.wcs.xml.GetCapabilities;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.wcs.xml.GetCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,8 +57,8 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabili
      */
     public GetCapabilitiesType(){
     }
-    
-    
+
+
      /**
      * Build a new getCapabilities request version 1.1.1.
      */
@@ -66,7 +66,7 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabili
             final AcceptFormatsType acceptFormats, final String updateSequence, final String service){
         super (acceptVersions, sections, acceptFormats, updateSequence, service);
     }
-    
+
     @Override
     public String toKvp() {
         return "request=GetCapabilities&service="+ getService() + "&version="+ getVersion();

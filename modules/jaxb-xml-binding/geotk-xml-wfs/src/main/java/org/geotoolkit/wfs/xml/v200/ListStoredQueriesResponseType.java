@@ -32,9 +32,9 @@ import org.geotoolkit.wfs.xml.ListStoredQueriesResponse;
 
 /**
  * <p>Java class for ListStoredQueriesResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ListStoredQueriesResponseType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.wfs.xml.ListStoredQueriesResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ListStoredQueriesResponseType", propOrder = {
@@ -60,13 +60,13 @@ public class ListStoredQueriesResponseType implements ListStoredQueriesResponse 
     private List<StoredQueryListItemType> storedQuery;
 
     public ListStoredQueriesResponseType() {
-        
+
     }
-    
+
     public ListStoredQueriesResponseType(final List<StoredQueryListItemType> storedQuery) {
         this.storedQuery = storedQuery;
     }
-    
+
     /**
      * Gets the value of the storedQuery property.
      */

@@ -51,7 +51,7 @@ public class BiCubicInterpolation2 extends BiCubicInterpolation {
     public BiCubicInterpolation2(PixelIterator pixelIterator) {
         super(pixelIterator);
     }
-    
+
     /**
      * Compute coefficient apply on current pixel value.
      * Compute value of Kernel filter.

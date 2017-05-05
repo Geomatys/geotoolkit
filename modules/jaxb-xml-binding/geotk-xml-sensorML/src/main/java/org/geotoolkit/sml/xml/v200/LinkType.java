@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for LinkType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LinkType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LinkType", propOrder = {
@@ -67,11 +67,11 @@ public class LinkType {
 
     /**
      * Gets the value of the source property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataComponentRefPropertyType }
-     *     
+     *
      */
     public DataComponentRefPropertyType getSource() {
         return source;
@@ -79,11 +79,11 @@ public class LinkType {
 
     /**
      * Sets the value of the source property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataComponentRefPropertyType }
-     *     
+     *
      */
     public void setSource(DataComponentRefPropertyType value) {
         this.source = value;
@@ -91,11 +91,11 @@ public class LinkType {
 
     /**
      * Gets the value of the destination property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataComponentRefPropertyType }
-     *     
+     *
      */
     public DataComponentRefPropertyType getDestination() {
         return destination;
@@ -103,11 +103,11 @@ public class LinkType {
 
     /**
      * Sets the value of the destination property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataComponentRefPropertyType }
-     *     
+     *
      */
     public void setDestination(DataComponentRefPropertyType value) {
         this.destination = value;
@@ -115,11 +115,11 @@ public class LinkType {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -127,11 +127,11 @@ public class LinkType {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(String value) {
         this.id = value;

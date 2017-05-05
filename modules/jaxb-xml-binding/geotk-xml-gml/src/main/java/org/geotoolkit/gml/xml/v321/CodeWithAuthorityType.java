@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * gml:CodeWithAuthorityType requires that the codeSpace attribute is provided in an instance.
- * 
+ *
  * <p>Java class for CodeWithAuthorityType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CodeWithAuthorityType">
  *   &lt;simpleContent>
@@ -39,15 +39,15 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CodeWithAuthorityType")
 public class CodeWithAuthorityType extends CodeType {
 
     public CodeWithAuthorityType() {
-        
+
     }
 
     public CodeWithAuthorityType(final CodeWithAuthorityType that) {

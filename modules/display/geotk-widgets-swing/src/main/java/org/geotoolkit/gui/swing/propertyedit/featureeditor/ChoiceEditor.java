@@ -95,7 +95,7 @@ public class ChoiceEditor extends PropertyValueEditor implements ActionListener{
         Class clazz = attType.getValueClass();
         final List choices = new ArrayList<>();
         if(values != null) choices.addAll(values);
-        
+
         if(choices.isEmpty()){
             return null;
         }else{

@@ -32,15 +32,15 @@ public interface Insert extends TransactionElement {
     void setHandle(String handle);
 
     CoordinateReferenceSystem getCoordinateReferenceSystem();
-    
+
     void setCoordinateReferenceSystem(CoordinateReferenceSystem crs);
-    
+
     String getInputFormat();
-    
+
     void setInputFormat(String format);
-    
+
     IdentifierGenerationOption getIdentifierGenerationOption();
-    
+
     void setIdentifierGenerationOption(IdentifierGenerationOption type);
 
     FeatureCollection getFeatures();

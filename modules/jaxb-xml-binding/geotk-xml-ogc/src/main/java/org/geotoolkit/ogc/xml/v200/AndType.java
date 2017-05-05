@@ -29,21 +29,21 @@ import org.opengis.filter.And;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "And")
 public class AndType extends BinaryLogicOpType implements And {
-    
+
      /**
      * An empty constructor used by JAXB
      */
      public AndType() {
-         
+
      }
-     
+
      /**
-      * Build a new Binary logic operator 
+      * Build a new Binary logic operator
       */
      public AndType(final Object... operators) {
          super(operators);
      }
-     
+
      public AndType(final BinaryLogicOpType that) {
          super(that);
      }

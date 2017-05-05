@@ -35,9 +35,9 @@ import org.apache.sis.util.Version;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.apache.sis.util.Version;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,7 +77,7 @@ public class GetCapabilitiesType implements GetCapabilities {
      */
     GetCapabilitiesType(){
     }
-    
+
     /**
      * Build a new getCapabilities request version 1.0.0.
      */
@@ -91,7 +91,7 @@ public class GetCapabilitiesType implements GetCapabilities {
         }
         this.service = service;
     }
-    
+
     /**
      * Gets the value of the section property.
      */
@@ -110,7 +110,7 @@ public class GetCapabilitiesType implements GetCapabilities {
             return service;
         }
     }
-    
+
     @Override
     public void setService(final String value) {
         this.service = value;
@@ -132,7 +132,7 @@ public class GetCapabilitiesType implements GetCapabilities {
     public void setVersion(final String value) {
         this.version = value;
     }
-    
+
     /**
      * Gets the value of the updateSequence property.
      */

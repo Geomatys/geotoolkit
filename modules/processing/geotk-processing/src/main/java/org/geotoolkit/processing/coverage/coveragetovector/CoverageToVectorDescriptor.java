@@ -83,7 +83,7 @@ public final class CoverageToVectorDescriptor extends AbstractProcessDescriptor 
 
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName(NAME+"OutputParameters").createGroup(GEOMETRIES);
-    
+
     public static final ProcessDescriptor INSTANCE = new CoverageToVectorDescriptor();
 
 

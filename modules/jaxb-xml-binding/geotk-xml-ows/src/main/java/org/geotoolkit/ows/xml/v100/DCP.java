@@ -29,9 +29,9 @@ import org.geotoolkit.ows.xml.AbstractDCP;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.ows.xml.AbstractDCP;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,23 +57,23 @@ public class DCP implements AbstractDCP {
     @XmlElement(name = "HTTP")
     private HTTP http;
 
-    
+
     /**
      * Empty constructor used by JAXB.
      */
     DCP(){
-        
+
     }
-    
+
     /**
      * Build a new DCP.
      */
     public DCP(final HTTP http){
         this.http = http;
     }
-    
+
     public DCP(final DCP that){
-        if (that != null && that.http != null) { 
+        if (that != null && that.http != null) {
             this.http = new HTTP(that.http);
         }
     }
@@ -118,11 +118,11 @@ public class DCP implements AbstractDCP {
         hash = 37 * hash + (this.http != null ? this.http.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         return http.toString();
-        
+
     }
 
 }

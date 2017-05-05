@@ -18,7 +18,7 @@ package org.geotoolkit.owc.xml.v030;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.List; 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,13 +28,13 @@ import org.geotoolkit.gml.xml.v212.AbstractFeatureCollectionType;
 
 import org.geotoolkit.kml.xml.v220.DocumentType;
 import org.geotoolkit.ogc.xml.v100.FilterType;
- 
+
 
 /**
  * <p>Java class for LayerType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LayerType">
  *   &lt;complexContent>
@@ -58,8 +58,8 @@ import org.geotoolkit.ogc.xml.v100.FilterType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -110,11 +110,11 @@ public class LayerType
 
     /**
      * Gets the value of the dimensionList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DimensionListType }
-     *     
+     *
      */
     public DimensionListType getDimensionList() {
         return dimensionList;
@@ -122,11 +122,11 @@ public class LayerType
 
     /**
      * Sets the value of the dimensionList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DimensionListType }
-     *     
+     *
      */
     public void setDimensionList(final DimensionListType value) {
         this.dimensionList = value;
@@ -134,11 +134,11 @@ public class LayerType
 
     /**
      * Gets the value of the responseCRS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getResponseCRS() {
         return responseCRS;
@@ -146,11 +146,11 @@ public class LayerType
 
     /**
      * Sets the value of the responseCRS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setResponseCRS(final String value) {
         this.responseCRS = value;
@@ -158,11 +158,11 @@ public class LayerType
 
     /**
      * Gets the value of the parameterList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterListType }
-     *     
+     *
      */
     public ParameterListType getParameterList() {
         return parameterList;
@@ -170,11 +170,11 @@ public class LayerType
 
     /**
      * Sets the value of the parameterList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterListType }
-     *     
+     *
      */
     public void setParameterList(final ParameterListType value) {
         this.parameterList = value;
@@ -182,11 +182,11 @@ public class LayerType
 
     /**
      * Gets the value of the depth property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDepth() {
         return depth;
@@ -194,11 +194,11 @@ public class LayerType
 
     /**
      * Sets the value of the depth property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDepth(final String value) {
         this.depth = value;
@@ -206,11 +206,11 @@ public class LayerType
 
     /**
      * Gets the value of the resx property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getResx() {
         return resx;
@@ -218,11 +218,11 @@ public class LayerType
 
     /**
      * Sets the value of the resx property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setResx(final String value) {
         this.resx = value;
@@ -230,11 +230,11 @@ public class LayerType
 
     /**
      * Gets the value of the resy property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getResy() {
         return resy;
@@ -242,11 +242,11 @@ public class LayerType
 
     /**
      * Sets the value of the resy property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setResy(final String value) {
         this.resy = value;
@@ -254,11 +254,11 @@ public class LayerType
 
     /**
      * Gets the value of the resz property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getResz() {
         return resz;
@@ -266,11 +266,11 @@ public class LayerType
 
     /**
      * Sets the value of the resz property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setResz(final String value) {
         this.resz = value;
@@ -278,11 +278,11 @@ public class LayerType
 
     /**
      * Gets the value of the maxFeatures property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getMaxFeatures() {
         return maxFeatures;
@@ -290,11 +290,11 @@ public class LayerType
 
     /**
      * Sets the value of the maxFeatures property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setMaxFeatures(final BigInteger value) {
         this.maxFeatures = value;
@@ -302,11 +302,11 @@ public class LayerType
 
     /**
      * Gets the value of the filter property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FilterType }
-     *     
+     *
      */
     public FilterType getFilter() {
         return filter;
@@ -314,11 +314,11 @@ public class LayerType
 
     /**
      * Sets the value of the filter property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FilterType }
-     *     
+     *
      */
     public void setFilter(final FilterType value) {
         this.filter = value;
@@ -326,11 +326,11 @@ public class LayerType
 
     /**
      * Gets the value of the inlineGeometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AbstractFeatureCollectionType }
-     *     
+     *
      */
     public AbstractFeatureCollectionType getInlineGeometry() {
         return inlineGeometry;
@@ -338,11 +338,11 @@ public class LayerType
 
     /**
      * Sets the value of the inlineGeometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AbstractFeatureCollectionType }
-     *     
+     *
      */
     public void setInlineGeometry(final AbstractFeatureCollectionType value) {
         this.inlineGeometry = value;
@@ -350,25 +350,25 @@ public class LayerType
 
     /**
      * Gets the value of the document property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the document property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDocument().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DocumentType }
-     * 
-     * 
+     *
+     *
      */
     public List<DocumentType> getDocument() {
         if (document == null) {
@@ -379,11 +379,11 @@ public class LayerType
 
     /**
      * Gets the value of the extension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExtensionType }
-     *     
+     *
      */
     public ExtensionType getExtension() {
         return extension;
@@ -391,11 +391,11 @@ public class LayerType
 
     /**
      * Sets the value of the extension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExtensionType }
-     *     
+     *
      */
     public void setExtension(final ExtensionType value) {
         this.extension = value;
@@ -403,11 +403,11 @@ public class LayerType
 
     /**
      * Gets the value of the queryable property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isQueryable() {
         if (queryable == null) {
@@ -419,11 +419,11 @@ public class LayerType
 
     /**
      * Sets the value of the queryable property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setQueryable(final Boolean value) {
         this.queryable = value;

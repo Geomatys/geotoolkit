@@ -26,9 +26,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for TrimType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TrimType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,11 +63,11 @@ public class TrimType
 
     /**
      * Gets the value of the stringValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getStringValue() {
         return stringValue;
@@ -75,11 +75,11 @@ public class TrimType
 
     /**
      * Sets the value of the stringValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setStringValue(final ParameterValueType value) {
         this.stringValue = value;
@@ -87,11 +87,11 @@ public class TrimType
 
     /**
      * Gets the value of the stripOffPosition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StripOffPositionType }
-     *     
+     *
      */
     public StripOffPositionType getStripOffPosition() {
         return stripOffPosition;
@@ -99,11 +99,11 @@ public class TrimType
 
     /**
      * Sets the value of the stripOffPosition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StripOffPositionType }
-     *     
+     *
      */
     public void setStripOffPosition(final StripOffPositionType value) {
         this.stripOffPosition = value;
@@ -111,11 +111,11 @@ public class TrimType
 
     /**
      * Gets the value of the stripOffChar property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStripOffChar() {
         return stripOffChar;
@@ -123,11 +123,11 @@ public class TrimType
 
     /**
      * Sets the value of the stripOffChar property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStripOffChar(final String value) {
         this.stripOffChar = value;

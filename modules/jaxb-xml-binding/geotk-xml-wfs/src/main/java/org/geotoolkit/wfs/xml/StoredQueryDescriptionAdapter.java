@@ -27,9 +27,9 @@ import org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType;
  * @author Guilhem Legal
  */
 public class StoredQueryDescriptionAdapter extends XmlAdapter<StoredQueryDescriptionAdapter, StoredQueryDescription> {
-    
+
     private StoredQueryDescription queries;
-    
+
     /**
      * Empty constructor for JAXB only.
      */
@@ -61,7 +61,7 @@ public class StoredQueryDescriptionAdapter extends XmlAdapter<StoredQueryDescrip
      */
     @XmlElement(name = "StoredQueryDescription")
     public StoredQueryDescriptionType getStoredQueryDescription() {
-        return (queries instanceof StoredQueryDescriptionType) ? 
+        return (queries instanceof StoredQueryDescriptionType) ?
                 (StoredQueryDescriptionType)queries : new StoredQueryDescriptionType(queries);
     }
 
@@ -100,7 +100,7 @@ public class StoredQueryDescriptionAdapter extends XmlAdapter<StoredQueryDescrip
         return new StoredQueryDescriptionAdapter(value);
     }
 
-    
-    
+
+
 
 }

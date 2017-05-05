@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * A type of AbstractStreetLocatorType
- * 
+ *
  * <p>Java class for BuildingLocatorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BuildingLocatorType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BuildingLocatorType")
@@ -57,11 +57,11 @@ public class BuildingLocatorType extends AbstractStreetLocatorType {
 
     /**
      * Gets the value of the number property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getNumber() {
         return number;
@@ -69,11 +69,11 @@ public class BuildingLocatorType extends AbstractStreetLocatorType {
 
     /**
      * Sets the value of the number property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setNumber(String value) {
         this.number = value;
@@ -81,11 +81,11 @@ public class BuildingLocatorType extends AbstractStreetLocatorType {
 
     /**
      * Gets the value of the subdivision property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSubdivision() {
         return subdivision;
@@ -93,11 +93,11 @@ public class BuildingLocatorType extends AbstractStreetLocatorType {
 
     /**
      * Sets the value of the subdivision property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSubdivision(String value) {
         this.subdivision = value;
@@ -105,11 +105,11 @@ public class BuildingLocatorType extends AbstractStreetLocatorType {
 
     /**
      * Gets the value of the buildingName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getBuildingName() {
         return buildingName;
@@ -117,11 +117,11 @@ public class BuildingLocatorType extends AbstractStreetLocatorType {
 
     /**
      * Sets the value of the buildingName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setBuildingName(String value) {
         this.buildingName = value;

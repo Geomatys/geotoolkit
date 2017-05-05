@@ -29,14 +29,14 @@ import org.opengis.geometry.Geometry;
 
 
 /**
- * A "SamplingSurface" is an identified 2-D spatial feature. 
+ * A "SamplingSurface" is an identified 2-D spatial feature.
  * It may be used for various purposes, in particular for observations of cross sections through features.
  * Specialized names for SamplingSurface include CrossSection, Section, Flitch, Swath, Scene, MapHorizon.
- * 
+ *
  * <p>Java class for SamplingSurfaceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SamplingSurfaceType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.opengis.geometry.Geometry;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -94,11 +94,11 @@ public class SamplingSurfaceType extends SpatiallyExtensiveSamplingFeatureType {
 
     /**
      * Gets the value of the shape property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SurfacePropertyType }
-     *     
+     *
      */
     public SurfacePropertyType getShape() {
         return shape;
@@ -106,11 +106,11 @@ public class SamplingSurfaceType extends SpatiallyExtensiveSamplingFeatureType {
 
     /**
      * Sets the value of the shape property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SurfacePropertyType }
-     *     
+     *
      */
     public void setShape(final SurfacePropertyType value) {
         this.shape = value;
@@ -118,11 +118,11 @@ public class SamplingSurfaceType extends SpatiallyExtensiveSamplingFeatureType {
 
     /**
      * Gets the value of the area property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public MeasureType getArea() {
         return area;
@@ -130,11 +130,11 @@ public class SamplingSurfaceType extends SpatiallyExtensiveSamplingFeatureType {
 
     /**
      * Sets the value of the area property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public void setArea(final MeasureType value) {
         this.area = value;

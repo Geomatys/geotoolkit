@@ -35,9 +35,9 @@ import org.geotoolkit.wms.xml.WMSResponse;
 
 /**
  * <p>Root element of a getCapabilities Document version 1.3.0.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -52,7 +52,7 @@ import org.geotoolkit.wms.xml.WMSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -72,7 +72,7 @@ public class WMSCapabilities implements AbstractWMSCapabilities, WMSResponse {
     private String version;
     @XmlAttribute
     private String updateSequence;
-    
+
     @XmlAttribute(namespace = "http://www.w3.org/2001/XMLSchema-instance")
     private String schemaLocation = "http://www.opengis.net/wms http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd";
 
@@ -88,11 +88,11 @@ public class WMSCapabilities implements AbstractWMSCapabilities, WMSResponse {
     public WMSCapabilities(final String version, final String updateSequence) {
         this(null, null, version, updateSequence);
     }
-    
+
     /**
      * Build a new WMSCapabilities object.
      */
-    public WMSCapabilities(final Service service, final Capability capability, 
+    public WMSCapabilities(final Service service, final Capability capability,
             final String version, final String updateSequence) {
         this.capability     = capability;
         this.service        = service;
@@ -100,27 +100,27 @@ public class WMSCapabilities implements AbstractWMSCapabilities, WMSResponse {
         this.version        = version;
     }
 
-    
+
     /**
      * Gets the value of the service property.
-     * 
+     *
      */
     @Override
     public Service getService() {
         return service;
     }
-    
+
     public void setService(final AbstractService service) {
         if (service instanceof Service){
             this.service = (Service) service;
         } else {
-            throw new IllegalArgumentException("not the good version object, expected 1.3.0"); 
+            throw new IllegalArgumentException("not the good version object, expected 1.3.0");
         }
     }
 
     /**
      * Gets the value of the capability property.
-     * 
+     *
      */
     @Override
     public Capability getCapability() {
@@ -147,7 +147,7 @@ public class WMSCapabilities implements AbstractWMSCapabilities, WMSResponse {
             }
         }
     }
-    
+
     private void updateLayerURL(final String url, final Layer layer) {
         if (layer.getStyle() != null) {
             for (Style style : layer.getStyle()) {
@@ -171,10 +171,10 @@ public class WMSCapabilities implements AbstractWMSCapabilities, WMSResponse {
         }
     }
 
-    
+
     /**
      * Gets the value of the version property.
-     * 
+     *
      */
     @Override
     public String getVersion() {
@@ -187,16 +187,16 @@ public class WMSCapabilities implements AbstractWMSCapabilities, WMSResponse {
 
     /**
      * Gets the value of the updateSequence property.
-     * 
+     *
      */
     @Override
     public String getUpdateSequence() {
         return updateSequence;
     }
-    
+
     /**
      * Get a specific layer from the capabilities document.
-     * 
+     *
      */
     @Override
     public AbstractLayer getLayerFromName(final String name) {
@@ -279,7 +279,7 @@ public class WMSCapabilities implements AbstractWMSCapabilities, WMSResponse {
         explore(layers, layer);
         return layers;
     }
-    
+
     private static void explore(List<AbstractLayer> buffer, AbstractLayer candidate){
         buffer.add(candidate);
         final List<? extends AbstractLayer> layers = candidate.getLayer();

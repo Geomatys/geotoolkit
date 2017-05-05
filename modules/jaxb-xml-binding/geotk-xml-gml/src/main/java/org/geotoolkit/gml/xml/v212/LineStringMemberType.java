@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Restricts the geometry member to being a LineString instance.
- * 
+ *
  * <p>Java class for LineStringMemberType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LineStringMemberType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -49,13 +49,13 @@ import javax.xml.bind.annotation.XmlType;
 public class LineStringMemberType extends GeometryAssociationType {
 
     public LineStringMemberType() {
-        
+
     }
-    
+
     public LineStringMemberType(LineStringMemberType that) {
         super(that);
     }
-    
+
     @Override
     public GeometryAssociationType getClone() {
         return new LineStringMemberType(this);

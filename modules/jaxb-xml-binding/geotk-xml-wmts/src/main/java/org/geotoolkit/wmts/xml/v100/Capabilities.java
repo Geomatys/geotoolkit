@@ -35,9 +35,9 @@ import org.geotoolkit.wmts.xml.WMTSResponse;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.wmts.xml.WMTSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -82,21 +82,21 @@ public class Capabilities extends CapabilitiesBaseType implements WMTSResponse {
     public Capabilities(final String version, final String updateSequence) {
         super(null, null, null, version, updateSequence);
     }
-    
+
     public Capabilities(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
             final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final ContentsType con, final List<Themes> them) {
         super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
         this.contents = con;
         this.themes = them;
     }
-    
+
     /**
      * Gets the value of the contents property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ContentsType }
-     *     
+     *
      */
     public ContentsType getContents() {
         return contents;
@@ -104,11 +104,11 @@ public class Capabilities extends CapabilitiesBaseType implements WMTSResponse {
 
     /**
      * Sets the value of the contents property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ContentsType }
-     *     
+     *
      */
     public void setContents(final ContentsType value) {
         this.contents = value;
@@ -135,14 +135,14 @@ public class Capabilities extends CapabilitiesBaseType implements WMTSResponse {
         }
     }
 
-    
+
     /**
      * Metadata describing a theme hierarchy for the layers
      * Gets the value of the themes property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Themes }
-     * 
+     *
      */
     public List<Themes> getThemes() {
         if (themes == null) {
@@ -153,11 +153,11 @@ public class Capabilities extends CapabilitiesBaseType implements WMTSResponse {
 
     /**
      * Gets the value of the wsdl property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link OnlineResourceType }
-     * 
-     * 
+     *
+     *
      */
     public List<OnlineResourceType> getWSDL() {
         if (wsdl == null) {
@@ -168,10 +168,10 @@ public class Capabilities extends CapabilitiesBaseType implements WMTSResponse {
 
     /**
      * Gets the value of the serviceMetadataURL property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link OnlineResourceType }
-     * 
+     *
      */
     public List<OnlineResourceType> getServiceMetadataURL() {
         if (serviceMetadataURL == null) {

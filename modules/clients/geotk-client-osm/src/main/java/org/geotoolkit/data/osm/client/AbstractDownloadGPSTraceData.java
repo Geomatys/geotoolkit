@@ -43,5 +43,5 @@ public abstract class AbstractDownloadGPSTraceData extends AbstractRequest imple
     public void setTraceID(final int id) {
         this.id = id;
     }
-    
+
 }

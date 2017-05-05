@@ -34,7 +34,7 @@ import org.opengis.style.TextSymbolizer;
 
 /**
  * Cached text symbolizer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -45,19 +45,19 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
     private final CachedHalo cachedHalo;
     private final CachedFill cachedFill;
     private final CachedLabelPlacement cachedPlacement;
-    
+
     private String label = null;
 
     public CachedTextSymbolizer(final TextSymbolizer symbolizer,
             final SymbolizerRendererService<TextSymbolizer,? extends CachedSymbolizer<TextSymbolizer>> renderer){
         super(symbolizer,renderer);
-        
+
         final org.opengis.style.Font font = styleElement.getFont();
         cachedFont = CachedFont.cache(font);
-        
+
         final Fill fill = styleElement.getFill();
         cachedFill = CachedFill.cache(fill);
-            
+
         //halo can be null.
         final Halo halo = styleElement.getHalo();
         if(halo != null){
@@ -65,7 +65,7 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
         }else{
             cachedHalo = null;
         }
-        
+
         final LabelPlacement placement = styleElement.getLabelPlacement();
         if(placement instanceof PointPlacement){
             cachedPlacement = CachedPointPlacement.cache((PointPlacement) placement);
@@ -74,65 +74,65 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
         }else{
             throw new IllegalArgumentException("A text symbolizer must have a placement set of type : PointPlacement or LinePlacement.");
         }
-        
+
         styleElement.getFont();
 //        symbol.getGeometryPropertyName();
         styleElement.getHalo();
         styleElement.getLabel();
         styleElement.getLabelPlacement();
         styleElement.getUnitOfMeasure();
-        
+
     }
 
     public Paint getFontPaint(final Object candidate, final int x, final int y, final float coeff, final RenderingHints hints){
         Paint paint;
-                
+
         if(cachedFill != null){
             paint = cachedFill.getJ2DPaint(candidate, x, y, coeff, hints);
         }else{
             paint = Color.BLACK;
         }
-        
+
         return paint;
     }
-    
+
     public Composite getFontComposite(final Object candidate){
         Composite composite;
-                
+
         if(cachedFill != null){
             composite = cachedFill.getJ2DComposite(candidate);
         }else{
             composite = AlphaComposite.SrcOver;
         }
-        
+
         return composite;
     }
-    
+
     public Font getJ2dFont(final Object candidate, final float coeff){
         return cachedFont.getJ2dFont(candidate, coeff);
     }
-    
+
     public String getLabel(final Object candidate){
         return GO2Utilities.evaluate(styleElement.getLabel(),candidate,String.class, null);
     }
-        
+
     public CachedHalo getHalo(){
         return cachedHalo;
     }
-    
+
     public CachedLabelPlacement getPlacement(){
         return cachedPlacement;
     }
-    
+
     @Override
     protected void evaluate() {
         if(!isNotEvaluated) return;
-        
+
         final Expression expLabel = styleElement.getLabel();
-        
+
         //we can not know so always visible
         isStaticVisible = VisibilityState.VISIBLE;
-        
+
         if(GO2Utilities.isStatic(expLabel)){
             label = GO2Utilities.evaluate(expLabel, null, String.class, "No Label");
         }else{
@@ -144,13 +144,13 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
         cachedFill.getRequieredAttributsName(requieredAttributs);
         cachedHalo.getRequieredAttributsName(requieredAttributs);
         cachedPlacement.getRequieredAttributsName(requieredAttributs);
-        
+
         //no attributs needed replace with static empty list.
         if(requieredAttributs.isEmpty()){
             requieredAttributs = EMPTY_ATTRIBUTS;
         }
-        
-        
+
+
         isNotEvaluated = false;
     }
 

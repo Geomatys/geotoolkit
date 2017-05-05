@@ -67,7 +67,7 @@ import org.opengis.geometry.DirectPosition;
 public class BBOXType extends SpatialOpsType implements BBOX {
 
     private static final String DEFAULT_SRS = "EPSG:4326";
-    
+
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
 
@@ -125,7 +125,7 @@ public class BBOXType extends SpatialOpsType implements BBOX {
                     throw new IllegalArgumentException("Unexpected type for expression in PropertyIsBetweenType:" + expression.getClass().getName());
                 }
             }
-            
+
             if (that.any != null) {
                 this.any = new ArrayList<>();
                 for (Object obj : that.any) {
@@ -139,7 +139,7 @@ public class BBOXType extends SpatialOpsType implements BBOX {
             }
         }
     }
-    
+
     /**
      * Gets the value of the expression property.
      *
@@ -250,12 +250,12 @@ public class BBOXType extends SpatialOpsType implements BBOX {
         }
         return null;
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new BBOXType(this);
     }
-    
+
     @Override
     public String getSRS() {
         Object candidate = getAny();

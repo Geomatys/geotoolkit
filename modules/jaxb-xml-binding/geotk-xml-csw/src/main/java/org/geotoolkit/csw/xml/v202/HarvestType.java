@@ -31,9 +31,9 @@ import org.geotoolkit.csw.xml.Harvest;
 
 
 /**
- * Requests that the catalogue attempt to harvest a resource from some 
+ * Requests that the catalogue attempt to harvest a resource from some
  * network location identified by the source URL.
- * 
+ *
  * Source          - A URL from which the resource is retrieved
  * ResourceType    - Normally a URI that specifies the type of the resource
  *                   (DCMES v1.1) being harvested if it is known.
@@ -41,14 +41,14 @@ import org.geotoolkit.csw.xml.Harvest;
  *                   The default is "application/xml".
  * ResponseHandler - A reference to some endpoint to which the response shall be forwarded when the
  *                   harvest operation has been completed
- * HarvestInterval - An interval expressed using the ISO 8601 syntax; 
- *                   it specifies the interval between harvest attempts 
+ * HarvestInterval - An interval expressed using the ISO 8601 syntax;
+ *                   it specifies the interval between harvest attempts
  *                   (e.g., P6M indicates an interval of six months).
- * 
+ *
  * <p>Java class for HarvestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="HarvestType">
  *   &lt;complexContent>
@@ -64,8 +64,8 @@ import org.geotoolkit.csw.xml.Harvest;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -96,12 +96,12 @@ public class HarvestType extends RequestBaseType implements Harvest {
      * An empty constructor used by JAXB
      */
     HarvestType() {
-        
+
     }
-    
+
     /**
      * Build a new harvest request
-     * 
+     *
      * @param service Service type fixed at CSW.
      * @param version The service version fixed at 2.0.2.
      * @param source  The distant resource URL.
@@ -109,7 +109,7 @@ public class HarvestType extends RequestBaseType implements Harvest {
      * @param handler
      * @param harvestInterval
      */
-    public HarvestType(final String service, final String version, final String source, final String resourceType, 
+    public HarvestType(final String service, final String version, final String source, final String resourceType,
             final String resourceFormat, final String handler, final Duration harvestInterval) {
         super(service, version);
         this.source          = source;
@@ -118,16 +118,16 @@ public class HarvestType extends RequestBaseType implements Harvest {
         this.responseHandler = new ArrayList<String>();
         this.responseHandler.add(handler);
         this.harvestInterval = harvestInterval;
-        
+
     }
-    
+
     /**
      * Gets the value of the source property.
      */
     public String getSource() {
         return source;
     }
-    
+
     /**
      * sets the value of the source property.
      */
@@ -141,7 +141,7 @@ public class HarvestType extends RequestBaseType implements Harvest {
     public String getResourceType() {
         return resourceType;
     }
-    
+
     /**
      * Sets the value of the resourceType property.
      */
@@ -155,7 +155,7 @@ public class HarvestType extends RequestBaseType implements Harvest {
     public String getResourceFormat() {
         return resourceFormat;
     }
-    
+
     /**
      * Sets the value of the resourceFormat property.
      */
@@ -163,14 +163,14 @@ public class HarvestType extends RequestBaseType implements Harvest {
         this.resourceFormat = resourceFormat;
     }
 
-    
+
     /**
      * Gets the value of the harvestInterval property.
      */
     public Duration getHarvestInterval() {
         return harvestInterval;
     }
-    
+
     /**
      * Sets the value of the harvestInterval property.
      */

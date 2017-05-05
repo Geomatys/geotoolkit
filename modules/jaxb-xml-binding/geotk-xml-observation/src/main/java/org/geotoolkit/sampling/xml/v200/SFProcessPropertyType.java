@@ -32,15 +32,15 @@ import org.w3c.dom.Element;
 
 /**
  *  The purpose of a sampling feature process is to generate or transform a
- * 				sampling feature. The model for SF_Process is abstract, and has no attributes,
- * 				operations, or associations. Any suitable XML may be used to describe the sampling
- * 				feature process in line, provided that it is contained in a single XML element. If
- * 				reference to a schema is provided it must also be valid. 
- * 
+ *              sampling feature. The model for SF_Process is abstract, and has no attributes,
+ *              operations, or associations. Any suitable XML may be used to describe the sampling
+ *              feature process in line, provided that it is contained in a single XML element. If
+ *              reference to a schema is provided it must also be valid.
+ *
  * <p>Java class for SF_ProcessPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SF_ProcessPropertyType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SF_ProcessPropertyType", propOrder = {
@@ -86,12 +86,12 @@ public class SFProcessPropertyType {
 
     /**
      * Gets the value of the any property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Element }
      *     {@link Object }
-     *     
+     *
      */
     public Object getAny() {
         return any;
@@ -99,12 +99,12 @@ public class SFProcessPropertyType {
 
     /**
      * Sets the value of the any property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Element }
      *     {@link Object }
-     *     
+     *
      */
     public void setAny(Object value) {
         this.any = value;
@@ -112,25 +112,25 @@ public class SFProcessPropertyType {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the nilReason property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNilReason().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
@@ -141,11 +141,11 @@ public class SFProcessPropertyType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -153,11 +153,11 @@ public class SFProcessPropertyType {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(String value) {
         this.remoteSchema = value;
@@ -165,11 +165,11 @@ public class SFProcessPropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -181,11 +181,11 @@ public class SFProcessPropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -193,11 +193,11 @@ public class SFProcessPropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -205,11 +205,11 @@ public class SFProcessPropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -217,11 +217,11 @@ public class SFProcessPropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -229,11 +229,11 @@ public class SFProcessPropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -241,11 +241,11 @@ public class SFProcessPropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -253,11 +253,11 @@ public class SFProcessPropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -265,11 +265,11 @@ public class SFProcessPropertyType {
 
     /**
      * Gets the value of the titleTemp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitleTemp() {
         return titleTemp;
@@ -277,11 +277,11 @@ public class SFProcessPropertyType {
 
     /**
      * Sets the value of the titleTemp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitleTemp(String value) {
         this.titleTemp = value;
@@ -289,11 +289,11 @@ public class SFProcessPropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShowType }
-     *     
+     *
      */
     public ShowType getShow() {
         return show;
@@ -301,11 +301,11 @@ public class SFProcessPropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShowType }
-     *     
+     *
      */
     public void setShow(ShowType value) {
         this.show = value;
@@ -313,11 +313,11 @@ public class SFProcessPropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public ActuateType getActuate() {
         return actuate;
@@ -325,11 +325,11 @@ public class SFProcessPropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public void setActuate(ActuateType value) {
         this.actuate = value;

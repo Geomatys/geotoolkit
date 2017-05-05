@@ -61,7 +61,7 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel (Geomatys)
  */
 public class FXLayerStructure extends FXPropertyPane {
-    
+
     private static final String CSS;
     static {
         CSS = "<style type=\"text/css\">"
@@ -73,7 +73,7 @@ public class FXLayerStructure extends FXPropertyPane {
         + "#error {color:red;}\n"
         + "</style>";
     }
-    
+
     private final WebView webPane = new WebView();
     private MapLayer layer;
 
@@ -86,7 +86,7 @@ public class FXLayerStructure extends FXPropertyPane {
     public String getTitle() {
         return GeotkFX.getString(FXLayerStructure.class, "title");
     }
-    
+
     public boolean canHandle(Object target) {
         return target instanceof CoverageMapLayer;
     }
@@ -95,7 +95,7 @@ public class FXLayerStructure extends FXPropertyPane {
         if(!(target instanceof CoverageMapLayer)){
             return false;
         }
-        
+
         this.layer = (MapLayer) target;
         final WebEngine webEngine = webPane.getEngine();
         webEngine.loadContent("<html></html>");
@@ -343,5 +343,5 @@ public class FXLayerStructure extends FXPropertyPane {
         }
         buffer.append(text.substring(last));
     }
-    
+
 }

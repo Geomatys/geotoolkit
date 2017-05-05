@@ -32,9 +32,9 @@ import org.geotoolkit.se.xml.v110.OnlineResourceType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.geotoolkit.se.xml.v110.OnlineResourceType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -82,11 +82,11 @@ public class UserStyle {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -94,11 +94,11 @@ public class UserStyle {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -106,11 +106,11 @@ public class UserStyle {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DescriptionType }
-     *     
+     *
      */
     public DescriptionType getDescription() {
         return description;
@@ -118,11 +118,11 @@ public class UserStyle {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DescriptionType }
-     *     
+     *
      */
     public void setDescription(final DescriptionType value) {
         this.description = value;
@@ -130,11 +130,11 @@ public class UserStyle {
 
     /**
      * Gets the value of the isDefault property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isIsDefault() {
         return isDefault;
@@ -142,11 +142,11 @@ public class UserStyle {
 
     /**
      * Sets the value of the isDefault property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setIsDefault(final Boolean value) {
         this.isDefault = value;
@@ -154,27 +154,27 @@ public class UserStyle {
 
     /**
      * Gets the value of the featureTypeStyleOrCoverageStyleOrOnlineResource property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the featureTypeStyleOrCoverageStyleOrOnlineResource property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFeatureTypeStyleOrCoverageStyleOrOnlineResource().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link FeatureTypeStyleType }
      * {@link CoverageStyleType }
      * {@link OnlineResourceType }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getFeatureTypeStyleOrCoverageStyleOrOnlineResource() {
         if (featureTypeStyleOrCoverageStyleOrOnlineResource == null) {

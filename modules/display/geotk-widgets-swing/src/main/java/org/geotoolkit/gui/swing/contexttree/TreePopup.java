@@ -40,8 +40,8 @@ final class TreePopup extends JPopupMenu {
 
     /**
      * will not be set visible if nothing is in the popup
-     * 
-     * @param view 
+     *
+     * @param view
      */
     @Override
     public void setVisible(final boolean view) {
@@ -49,7 +49,7 @@ final class TreePopup extends JPopupMenu {
         if (view && tree != null) {
             removeAll();
 
-            TreePath[] selection = tree.getRealTree().getSelectionPaths();            
+            TreePath[] selection = tree.getRealTree().getSelectionPaths();
             if(selection == null){
                 selection = new TreePath[0];
             }

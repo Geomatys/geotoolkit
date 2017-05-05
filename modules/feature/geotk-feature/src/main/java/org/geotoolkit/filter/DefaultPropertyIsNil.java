@@ -50,7 +50,7 @@ public class DefaultPropertyIsNil implements PropertyIsNil,Serializable {
     public String getNilReason() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     /**
      * {@inheritDoc }
      */

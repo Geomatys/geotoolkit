@@ -53,7 +53,7 @@ final class DefaultArrayFeature extends AbstractFeature implements ArrayFeature 
         final Collection<PropertyType> props = type.getProperties(true);
         values = new Object[props.size()];
         properties = new Property[values.length];
-        
+
         final Iterator<PropertyType> ite = type.getProperties(true).iterator();
         int i=0;
         while(ite.hasNext()){

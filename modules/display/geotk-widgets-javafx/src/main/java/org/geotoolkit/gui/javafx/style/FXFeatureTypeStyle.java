@@ -32,11 +32,11 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel (Geomatys)
  */
 public class FXFeatureTypeStyle extends FXStyleElementController<MutableFeatureTypeStyle> {
-    
+
     @FXML
-    protected TextField uiName;    
+    protected TextField uiName;
     @FXML
-    protected TextField uiTitle;    
+    protected TextField uiTitle;
     @FXML
     protected TextField uiAbstract;
 
@@ -49,11 +49,11 @@ public class FXFeatureTypeStyle extends FXStyleElementController<MutableFeatureT
     public MutableFeatureTypeStyle newValue() {
         return getStyleFactory().featureTypeStyle();
     }
-    
+
     @Override
     public void initialize() {
         super.initialize();
-        
+
         uiName.setOnKeyReleased((KeyEvent event) -> {
             value.get().setName(uiName.getText());
         });
@@ -70,7 +70,7 @@ public class FXFeatureTypeStyle extends FXStyleElementController<MutableFeatureT
             value.get().setDescription(getStyleFactory().description(title, abs));
         });
     }
-    
+
     @Override
     protected void updateEditor(MutableFeatureTypeStyle styleElement) {
         final Description desc = value.get().getDescription();
@@ -78,5 +78,5 @@ public class FXFeatureTypeStyle extends FXStyleElementController<MutableFeatureT
         uiAbstract.setText(desc!=null && desc.getAbstract()!=null ? desc.getAbstract().toString() : "");
         uiName.setText(value.get().getName());
     }
-    
+
 }

@@ -27,31 +27,31 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  * @author Guilhem Legal (Geomatys).
  */
 public interface AbstractObservation extends Observation {
- 
+
     @Override
     Process getProcedure();
-    
+
     String getId();
-    
+
     void setId(final String id);
-    
+
     void setName(final String name);
-    
+
     void setProcedure(final String procedureID);
-    
+
     void setResult(final Object result);
-    
+
     void emptySamplingTime();
-    
+
     void setSamplingTimePeriod(final Period period);
-    
+
     void extendSamplingTime(final String newEndBound);
-    
+
     boolean matchTemplate(final Observation template);
-    
+
     PhenomenonProperty getPropertyObservedProperty();
-    
+
     FeatureProperty getPropertyFeatureOfInterest();
-    
+
     AbstractObservation getTemporaryTemplate(final String temporaryName, TemporalGeometricPrimitive time);
 }

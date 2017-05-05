@@ -22,16 +22,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Vector instances hold the compoents for a (usually spatial) vector within some coordinate reference system (CRS). 
- * 			Since Vectors will often be included in larger objects that have references to CRS, the "srsName" attribute may be missing. 
- * 			In this case, the CRS is implicitly assumed to take on the value of the containing object's CRS.
- * 
- * 			Note that this content model is the same as DirectPositionType, but is defined separately to reflect the distinct semantics, and to avoid validation problems. SJDC 2004-12-02
- * 
+ * Vector instances hold the compoents for a (usually spatial) vector within some coordinate reference system (CRS).
+ *          Since Vectors will often be included in larger objects that have references to CRS, the "srsName" attribute may be missing.
+ *          In this case, the CRS is implicitly assumed to take on the value of the containing object's CRS.
+ *
+ *          Note that this content model is the same as DirectPositionType, but is defined separately to reflect the distinct semantics, and to avoid validation problems. SJDC 2004-12-02
+ *
  * <p>Java class for VectorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="VectorType">
  *   &lt;simpleContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

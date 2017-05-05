@@ -36,22 +36,22 @@ import org.opengis.filter.expression.Expression;
  * @module
  */
 public class JDashPane extends javax.swing.JPanel {
-    
-    /** 
+
+    /**
      * Dashes panel
-     * 
-     * Creates new form JDashPanel 
+     *
+     * Creates new form JDashPanel
      */
     public JDashPane() {
         initComponents();
-        
+
         final ChangeListener chl = new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 propertyChange();
             }
         };
-        
+
         guiBetween.addChangeListener(chl);
         guiLength.addChangeListener(chl);
         guiOffset.addChangeListener(chl);
@@ -60,9 +60,9 @@ public class JDashPane extends javax.swing.JPanel {
     private void propertyChange(){
         firePropertyChange(StyleElementEditor.PROPERTY_UPDATED, null, getDashes());
     }
-    
+
     /**
-     * 
+     *
      * @return float[]
      */
     public float[] getDashes() {
@@ -77,7 +77,7 @@ public class JDashPane extends javax.swing.JPanel {
     }
 
     /**
-     * 
+     *
      * @param dashes , the default dashes array
      */
     public void setDashes(final float[] dashes) {
@@ -90,9 +90,9 @@ public class JDashPane extends javax.swing.JPanel {
             guiBetween.setValue(0f);
         }
     }
-    
+
     /**
-     * 
+     *
      * @return Expression dashes offset
      */
     public Expression getOffset(){
@@ -100,19 +100,19 @@ public class JDashPane extends javax.swing.JPanel {
         return FF.literal(guiOffset.getValue());
     }
 
-       
+
     /**
-     * 
+     *
      * @param exp default dashes offset
      */
     public void setOffset(final Expression exp){
-        
+
         if(exp != null){
             guiOffset.setValue( Float.parseFloat(exp.toString()) );
         }else{
             guiOffset.setValue(0f);
         }
-      
+
     }
 
     /** This method is called from within the constructor to

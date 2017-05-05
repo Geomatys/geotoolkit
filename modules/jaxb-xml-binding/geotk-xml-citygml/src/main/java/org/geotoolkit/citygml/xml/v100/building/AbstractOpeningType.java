@@ -30,12 +30,12 @@ import org.geotoolkit.gml.xml.v311.MultiSurfacePropertyType;
 /**
  *  Type for openings (doors, windows) in walls. Used in LOD3 and LOD4 only. As subclass of
  *                 _CityObject, an _Opening inherits all attributes and relations, in particular an id, names, external references,
- *                 and generalization relations. 
- * 
+ *                 and generalization relations.
+ *
  * <p>Java class for AbstractOpeningType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractOpeningType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.gml.xml.v311.MultiSurfacePropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,11 +72,11 @@ public abstract class AbstractOpeningType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod3MultiSurface property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public MultiSurfacePropertyType getLod3MultiSurface() {
         return lod3MultiSurface;
@@ -84,11 +84,11 @@ public abstract class AbstractOpeningType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod3MultiSurface property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public void setLod3MultiSurface(final MultiSurfacePropertyType value) {
         this.lod3MultiSurface = value;
@@ -96,11 +96,11 @@ public abstract class AbstractOpeningType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod4MultiSurface property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public MultiSurfacePropertyType getLod4MultiSurface() {
         return lod4MultiSurface;
@@ -108,11 +108,11 @@ public abstract class AbstractOpeningType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod4MultiSurface property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public void setLod4MultiSurface(final MultiSurfacePropertyType value) {
         this.lod4MultiSurface = value;
@@ -120,25 +120,25 @@ public abstract class AbstractOpeningType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the genericApplicationPropertyOfOpening property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the genericApplicationPropertyOfOpening property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getGenericApplicationPropertyOfOpening().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getGenericApplicationPropertyOfOpening() {
         if (genericApplicationPropertyOfOpening == null) {

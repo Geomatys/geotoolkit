@@ -23,15 +23,15 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  */
 public interface DirectPosition extends org.opengis.geometry.DirectPosition{
-    
+
     List<Double> getValue();
-    
+
     String getSrsName();
-    
+
     Integer getSrsDimension();
-    
+
     List<String> getAxisLabels();
-    
+
     List<String> getUomLabels();
-    
+
 }

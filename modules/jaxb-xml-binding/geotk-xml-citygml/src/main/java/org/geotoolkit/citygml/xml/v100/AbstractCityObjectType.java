@@ -34,11 +34,11 @@ import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
  * A generalization relation may be used to relate features, which represent the same real-world object in different  Levels-of-Detail,
  * i.e. a feature and its generalized counterpart(s).
  * The direction of this relation is from the feature to the corresponding generalized feature.
- * 
+ *
  * <p>Java class for AbstractCityObjectType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractCityObjectType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -103,11 +103,11 @@ public abstract class AbstractCityObjectType extends AbstractFeatureType {
 
     /**
      * Sets the value of the terminationDate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setTerminationDate(final XMLGregorianCalendar value) {
         this.terminationDate = value;
@@ -142,7 +142,7 @@ public abstract class AbstractCityObjectType extends AbstractFeatureType {
         }
         return this.genericApplicationPropertyOfCityObject;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());

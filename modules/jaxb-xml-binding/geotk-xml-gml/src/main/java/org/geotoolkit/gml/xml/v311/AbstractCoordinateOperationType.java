@@ -29,11 +29,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * A mathematical operation on coordinates that transforms or converts coordinates to another coordinate reference system. Many but not all coordinate operations (from CRS A to CRS B) also uniquely define the inverse operation (from CRS B to CRS A). In some cases, the operation method algorithm for the inverse operation is the same as for the forward algorithm, but the signs of some operation parameter values must be reversed. In other cases, different algorithms are required for the forward and inverse operations, but the same operation parameter values are used. If (some) entirely different parameter values are needed, a different coordinate operation shall be defined.
- * 
+ *
  * <p>Java class for AbstractCoordinateOperationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractCoordinateOperationType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -118,7 +118,7 @@ public abstract class AbstractCoordinateOperationType extends AbstractCoordinate
 
     /**
      * Unordered set of estimates of the impact of this coordinate operation on point position accuracy.
-     * Gives position error estimates for target coordinates of this coordinate operation, 
+     * Gives position error estimates for target coordinates of this coordinate operation,
      * assuming no errors in source coordinates. Gets the value of the positionalAccuracy property.
      * (unmodifiable)
      */

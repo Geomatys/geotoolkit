@@ -32,9 +32,9 @@ import org.geotoolkit.csw.xml.ElementSetType;
 
 /**
  * <p>Java class for ElementSetNameType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ElementSetNameType">
  *   &lt;simpleContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.csw.xml.ElementSetType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,14 +58,14 @@ public class ElementSetNameType implements ElementSetName {
     private ElementSetType value;
     @XmlAttribute
     private List<QName> typeNames;
-    
+
     /**
      * An empty constructor used by JAXB
      */
     public ElementSetNameType(){
-        
+
     }
-    
+
     /**
      * Build a elementSetName with only the elementSet value (no typeNames).
      * @param value
@@ -87,17 +87,17 @@ public class ElementSetNameType implements ElementSetName {
      * Named subsets of catalogue object properties; these
      * views are mapped to a specific information model and
      * are defined in an application profile.
-     * 
+     *
      */
     public ElementSetType getValue() {
         return value;
     }
-    
+
     /**
      * Named subsets of catalogue object properties; these
      * views are mapped to a specific information model and
      * are defined in an application profile.
-     * 
+     *
      */
     public void setValue(final ElementSetType value) {
         this.value = value;
@@ -113,7 +113,7 @@ public class ElementSetNameType implements ElementSetName {
         }
         return Collections.unmodifiableList(typeNames);
     }
-    
+
     /**
      * sets the value of the typeNames property.
      */
@@ -123,14 +123,14 @@ public class ElementSetNameType implements ElementSetName {
         }
         this.typeNames.add(typeName);
     }
-    
+
     /**
      * sets the value of the typeNames property.
      */
     public void setTypeNames(final List<QName> typeNames) {
         this.typeNames = typeNames;
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */

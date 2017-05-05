@@ -24,40 +24,40 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  * A Pyramid is a collection of mosaic in the same CRS but at different
  * scale levels.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public interface Pyramid {
-    
+
     /**
      * @return unique id.
      */
     String getId();
-    
+
     /**
      * @return the pyramid set in which this pyramid is contained.
      */
     PyramidSet getPyramidSet();
-    
+
     /**
      * @return the crs used for all mosaic.
      */
     CoordinateReferenceSystem getCoordinateReferenceSystem();
-    
+
     /**
      * @return unmodifiable list of all mosaics.
      * Waring : in multidimensional pyramids, multiple mosaic at the same scale
      * may exist.
      */
     List<GridMosaic> getMosaics();
-    
+
     /**
      * @return the different scales available in the pyramid.
      * The scale value is expressed in CRS unit by image cell (pixel usually)
      */
     double[] getScales();
-    
+
     /**
      * @param index of the wanted scale, must match an available index of the scales table.
      * @return Collection<GridMosaic> available mosaics at this scale.
@@ -65,11 +65,11 @@ public interface Pyramid {
      * may exist.
      */
     Collection<GridMosaic> getMosaics(int index);
-    
+
     /**
      * Get pyramid envelope.
      * This is the aggregation of all mosaic envelopes.
-     * 
+     *
      * @return Envelope
      */
     Envelope getEnvelope();

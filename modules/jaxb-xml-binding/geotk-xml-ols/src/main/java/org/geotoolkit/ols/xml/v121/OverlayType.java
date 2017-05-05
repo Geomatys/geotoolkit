@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for OverlayType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OverlayType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OverlayType", propOrder = {
@@ -75,11 +75,11 @@ public class OverlayType {
 
     /**
      * Gets the value of the poi property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PointOfInterestType }
-     *     
+     *
      */
     public PointOfInterestType getPOI() {
         return poi;
@@ -87,11 +87,11 @@ public class OverlayType {
 
     /**
      * Sets the value of the poi property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PointOfInterestType }
-     *     
+     *
      */
     public void setPOI(PointOfInterestType value) {
         this.poi = value;
@@ -99,11 +99,11 @@ public class OverlayType {
 
     /**
      * Gets the value of the routeGeometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RouteGeometryType }
-     *     
+     *
      */
     public RouteGeometryType getRouteGeometry() {
         return routeGeometry;
@@ -111,11 +111,11 @@ public class OverlayType {
 
     /**
      * Sets the value of the routeGeometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RouteGeometryType }
-     *     
+     *
      */
     public void setRouteGeometry(RouteGeometryType value) {
         this.routeGeometry = value;
@@ -123,11 +123,11 @@ public class OverlayType {
 
     /**
      * Gets the value of the position property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PositionType }
-     *     
+     *
      */
     public PositionType getPosition() {
         return position;
@@ -135,11 +135,11 @@ public class OverlayType {
 
     /**
      * Sets the value of the position property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PositionType }
-     *     
+     *
      */
     public void setPosition(PositionType value) {
         this.position = value;
@@ -147,11 +147,11 @@ public class OverlayType {
 
     /**
      * Gets the value of the map property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MapType }
-     *     
+     *
      */
     public MapType getMap() {
         return map;
@@ -159,11 +159,11 @@ public class OverlayType {
 
     /**
      * Sets the value of the map property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MapType }
-     *     
+     *
      */
     public void setMap(MapType value) {
         this.map = value;
@@ -171,11 +171,11 @@ public class OverlayType {
 
     /**
      * Gets the value of the style property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StyleType }
-     *     
+     *
      */
     public StyleType getStyle() {
         return style;
@@ -183,11 +183,11 @@ public class OverlayType {
 
     /**
      * Sets the value of the style property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StyleType }
-     *     
+     *
      */
     public void setStyle(StyleType value) {
         this.style = value;
@@ -195,11 +195,11 @@ public class OverlayType {
 
     /**
      * Gets the value of the zorder property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getZorder() {
         return zorder;
@@ -207,11 +207,11 @@ public class OverlayType {
 
     /**
      * Sets the value of the zorder property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setZorder(Integer value) {
         this.zorder = value;

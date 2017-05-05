@@ -33,28 +33,28 @@ import org.opengis.parameter.ParameterDescriptor;
 
 /**
  * An editor which aim is to provide a javafx control adapted for setting of a property
- * of a given type. 
- * 
- * By setting a {@link ParameterDescriptor} or an {@link AttributeType} marked as 
+ * of a given type.
+ *
+ * By setting a {@link ParameterDescriptor} or an {@link AttributeType} marked as
  * compatible by {@link #getValueClass() } methods,
- * the editor will adapt itself to provide a {@link #valueProperty() } compatible 
+ * the editor will adapt itself to provide a {@link #valueProperty() } compatible
  * with the class given by input descriptor/type.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @author Alexis Manin (Geomatys)
  */
 public abstract class FXValueEditor {
-    
+
     protected final SimpleObjectProperty<ParameterDescriptor> currentParamDesc = new SimpleObjectProperty<>();
     protected final SimpleObjectProperty<AttributeType> currentAttributeType = new SimpleObjectProperty<>();
-    
+
     public final FXValueEditorSpi spi;
-    
+
     protected FXValueEditor(final FXValueEditorSpi originatingSpi) {
         ArgumentChecks.ensureNonNull("Originating Spi", originatingSpi);
         spi = originatingSpi;
     }
-            
+
     /**
      * Configure current editor data type, to specify what type of data it must provide.
      * @param attType An attribute type definning data type to work on.
@@ -74,15 +74,15 @@ public abstract class FXValueEditor {
             throw new IllegalArgumentException("Given descriptor ("+paramDesc+") cannot be handled by current editor !");
         this.currentParamDesc.set(paramDesc);
     }
-    
+
     /**
-     *   
+     *
      * @return Editor current input, compliant with given type/descriptor. Never null, but property value can be null.
      */
     public abstract Property valueProperty();
-    
+
     /**
-     * 
+     *
      * @return Type of object required by set type/descriptor.
      */
     protected Class getValueClass() {
@@ -99,7 +99,7 @@ public abstract class FXValueEditor {
      * @return JavaFX node in which editor is displayed.
      */
     public abstract Node getComponent();
-    
+
     /**
      * Search for a 'In' restriction filter.
      * return list of possible values if restriction exist. null otherwise
@@ -108,9 +108,9 @@ public abstract class FXValueEditor {
      */
     protected static List<Object> extractChoices(AttributeType at) {
         if(!(at instanceof AttributeType)) return null;
-        
+
         final PropertyType candidate = at;
-        
+
         Class clazz = at.getValueClass();
         final List choices = new ArrayList();
 //        final List<Filter> restrictions = candidate.getRestrictions();
@@ -130,7 +130,7 @@ public abstract class FXValueEditor {
 //
 //            }, choices);
 //        }
-        
+
         if(choices.isEmpty()){
             return null;
         }else{

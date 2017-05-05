@@ -23,7 +23,7 @@ public class TreeAccessSQLByteArray extends TreeAccessByteArray {
 
     private final DataSource source;
     private final Path directory;
-    
+
     public TreeAccessSQLByteArray(final Path directory, final DataSource source, int magicNumber, double versionNumber, int maxElements, CoordinateReferenceSystem crs) throws IOException {
         super(magicNumber, versionNumber, maxElements, crs);
         this.source = source;
@@ -41,7 +41,7 @@ public class TreeAccessSQLByteArray extends TreeAccessByteArray {
         final Connection c = source.getConnection();
         final Statement dstmt  = c.createStatement();
         dstmt.executeUpdate("DELETE FROM \"" + getSchemaName(directory.getFileName().toString()) + "\".\"tree\"");
-        
+
         final PreparedStatement stmt = c.prepareStatement("INSERT INTO \"" + getSchemaName(directory.getFileName().toString()) + "\".\"tree\" VALUES(?)");
         stmt.setBytes(1, array);
         stmt.execute();
@@ -56,12 +56,12 @@ public class TreeAccessSQLByteArray extends TreeAccessByteArray {
             printTree();
         } catch (SQLException | NoSuchAlgorithmException | UnsupportedEncodingException ex) {
             throw new IOException(ex);
-        } 
+        }
     }
-    
+
     public static byte[] getData(final Path directory, final DataSource source) throws SQLException, NoSuchAlgorithmException, UnsupportedEncodingException {
         byte[] data = null;
-        
+
         final Connection c = source.getConnection();
         final Statement stmt = c.createStatement();
         final ResultSet rs = stmt.executeQuery("SELECT \"data\" FROM \"" + getSchemaName(directory.getFileName().toString()) + "\".\"tree\"");
@@ -73,7 +73,7 @@ public class TreeAccessSQLByteArray extends TreeAccessByteArray {
         c.close();
         return data;
     }
-    
+
     private static String getSchemaName(String absolutePath) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         final String sha1 = AeSimpleSHA1.SHA1(absolutePath);
         return SCHEMA+sha1;

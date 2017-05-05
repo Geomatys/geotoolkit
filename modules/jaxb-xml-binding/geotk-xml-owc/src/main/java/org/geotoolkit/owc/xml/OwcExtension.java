@@ -22,12 +22,12 @@ import org.geotoolkit.owc.xml.v10.OfferingType;
 
 /**
  * OWC Specification is made in a way extensions can be added.
- * 
+ *
  * @author Samuel Andrés (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
 public abstract class OwcExtension implements Comparable<OwcExtension>{
-    
+
     private final float priority;
     private final String code;
 
@@ -35,7 +35,7 @@ public abstract class OwcExtension implements Comparable<OwcExtension>{
         this.code = code;
         this.priority = priority;
     }
-    
+
     /**
      * Sorting property.
      * @return higher priority extensions must be tested first
@@ -43,7 +43,7 @@ public abstract class OwcExtension implements Comparable<OwcExtension>{
     public float getPriority(){
         return priority;
     }
-    
+
     /**
      * Extension code.
      * @return extension code, must be unique for each extension
@@ -51,16 +51,16 @@ public abstract class OwcExtension implements Comparable<OwcExtension>{
     public String getCode(){
         return code;
     }
-    
+
     public abstract boolean canHandle(MapLayer layer);
-    
+
     public abstract MapLayer createLayer(OfferingType offering) throws DataStoreException;
-    
+
     public abstract OfferingType createOffering(MapLayer mapLayer);
 
     @Override
     public int compareTo(OwcExtension o) {
         return Float.compare(priority, o.priority);
     }
-    
+
 }

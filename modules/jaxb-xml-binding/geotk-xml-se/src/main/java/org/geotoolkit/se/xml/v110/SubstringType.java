@@ -25,9 +25,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for SubstringType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SubstringType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,11 +64,11 @@ public class SubstringType
 
     /**
      * Gets the value of the stringValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getStringValue() {
         return stringValue;
@@ -76,11 +76,11 @@ public class SubstringType
 
     /**
      * Sets the value of the stringValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setStringValue(final ParameterValueType value) {
         this.stringValue = value;
@@ -88,11 +88,11 @@ public class SubstringType
 
     /**
      * Gets the value of the position property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getPosition() {
         return position;
@@ -100,11 +100,11 @@ public class SubstringType
 
     /**
      * Sets the value of the position property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setPosition(final ParameterValueType value) {
         this.position = value;
@@ -112,11 +112,11 @@ public class SubstringType
 
     /**
      * Gets the value of the length property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getLength() {
         return length;
@@ -124,11 +124,11 @@ public class SubstringType
 
     /**
      * Sets the value of the length property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setLength(final ParameterValueType value) {
         this.length = value;

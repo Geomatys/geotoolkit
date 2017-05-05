@@ -21,44 +21,44 @@ import java.util.Date;
 /**
  * Any object which handle versioning should implement this interface.
  * It allows to navigate on the different versions of the object.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public interface Versioned<T> {
-    
+
     /**
      * Get the history of this object.
-     * 
+     *
      * @return VersionHistory, never null, sorted from oldest to newest.
      * @throws VersioningException if failed to retrieve history.
      */
     VersionHistory getHistory() throws VersioningException;
-    
+
     /**
      * Get object at specified version.
-     * 
+     *
      * @param version get object for given version date
      * @return T object at given version
      * @throws VersioningException if failed to retrieve object.
      */
     T getForVersion(Date date) throws VersioningException;
-    
+
     /**
      * Get object at specified version.
-     * 
+     *
      * @param version get object for given version label
      * @return T object at given version
      * @throws VersioningException if failed to retrieve object.
      */
     T getForVersion(String versionLabel) throws VersioningException;
-    
+
     /**
      * Get object at specified version.
-     * 
+     *
      * @param version get object for given version
      * @return T object at given version
      * @throws VersioningException if failed to retrieve object.
      */
     T getForVersion(Version version) throws VersioningException;
-    
+
 }

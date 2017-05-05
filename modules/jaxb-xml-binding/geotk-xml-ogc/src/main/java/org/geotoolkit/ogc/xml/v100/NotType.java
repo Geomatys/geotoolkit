@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Not")
 public class NotType extends UnaryLogicOpType {
-    
+
     public NotType() {
-        
+
     }
-    
+
     public NotType(final NotType that) {
         super(that);
     }
-    
+
     @Override
     public LogicOpsType getClone() {
         return new NotType(this);

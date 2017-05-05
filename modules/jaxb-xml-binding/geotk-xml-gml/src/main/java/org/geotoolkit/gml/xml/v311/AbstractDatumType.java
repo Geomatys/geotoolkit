@@ -29,12 +29,12 @@ import org.apache.sis.util.ComparisonMode;
 
 
 /**
- * A datum specifies the relationship of a coordinate system to the earth, thus creating a coordinate reference system. A datum uses a parameter or set of parameters that determine the location of the origin of the coordinate reference system. Each datum subtype can be associated with only specific types of coordinate systems. This abstract complexType shall not be used, extended, or restricted, in an Application Schema, to define a concrete subtype with a meaning equivalent to a concrete subtype specified in this document. 
- * 
+ * A datum specifies the relationship of a coordinate system to the earth, thus creating a coordinate reference system. A datum uses a parameter or set of parameters that determine the location of the origin of the coordinate reference system. Each datum subtype can be associated with only specific types of coordinate systems. This abstract complexType shall not be used, extended, or restricted, in an Application Schema, to define a concrete subtype with a meaning equivalent to a concrete subtype specified in this document.
+ *
  * <p>Java class for AbstractDatumType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractDatumType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -90,7 +90,7 @@ public abstract class AbstractDatumType extends AbstractDatumBaseType {
 
     /**
      * Set of alternative identifications of this datum.
-     * The first datumID, if any, is normally the primary identification code, 
+     * The first datumID, if any, is normally the primary identification code,
      * and any others are aliases. Gets the value of the datumID property.
      */
     public List<IdentifierType> getDatumID() {

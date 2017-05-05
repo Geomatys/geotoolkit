@@ -30,20 +30,20 @@ public class BeyondType extends DistanceBufferType implements Beyond {
      * An empty constructor used by JAXB
      */
     public BeyondType() {
-        
+
     }
-    
+
     /**
      * Build a new Beyond Type
      */
     public BeyondType(final String propertyName, final AbstractGeometryType geometry, final double distance, final String unit) {
         super(propertyName, geometry, distance, unit);
     }
-    
+
     public BeyondType(final BeyondType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new BeyondType(this);

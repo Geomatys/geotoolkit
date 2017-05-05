@@ -50,7 +50,7 @@ public class DefaultInformationDecoration extends JPanel implements InformationD
     private static final ImageIcon ICO_INFO = IconBuilder.createIcon(FontAwesomeIcons.ICON_EXCLAMATION_TRIANGLE, 16, Color.BLUE);
 
     private JMap2D map = null;
-    
+
     private static final Paint gp = new Color(0, 0, 0, 0.5f);
     private final JPanel messagesPanel = new JPanel(new GridLayout(-1, 1)){
         @Override
@@ -61,17 +61,17 @@ public class DefaultInformationDecoration extends JPanel implements InformationD
             g2d.setPaint(gp);
             g2d.fillRect(0, 0, dim.width, dim.height);
         }
-        
+
     };
     private final JXBusyLabel guiPainting = new JXBusyLabel();
     private boolean lowlevel = true;
 
     public DefaultInformationDecoration() {
         super(new BorderLayout());
-        
+
         guiPainting.setHorizontalAlignment(SwingConstants.CENTER);
         guiPainting.setVisible(false);
-        
+
         add(BorderLayout.CENTER,guiPainting);
         add(BorderLayout.SOUTH,messagesPanel);
         setOpaque(false);
@@ -111,13 +111,13 @@ public class DefaultInformationDecoration extends JPanel implements InformationD
 
     @Override
     public void displayMessage(final String text, final int time, final LEVEL level) {
-        
+
         if(!lowlevel){
             if (level != LEVEL.ERROR && level != LEVEL.WARNING) {
                 return;
             }
         }
-        
+
         final JLabel label = new JLabel();
         label.setForeground(Color.WHITE);
         switch(level){
@@ -153,5 +153,5 @@ public class DefaultInformationDecoration extends JPanel implements InformationD
     @Override
     public void dispose() {
     }
-    
+
 }

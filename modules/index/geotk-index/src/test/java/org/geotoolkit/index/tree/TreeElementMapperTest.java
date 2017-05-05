@@ -44,7 +44,7 @@ public class TreeElementMapperTest implements TreeElementMapper<double[]> {
         this.lID      = new ArrayList<Integer>();
         this.isClosed = false;
     }
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -119,7 +119,7 @@ public class TreeElementMapperTest implements TreeElementMapper<double[]> {
     public void flush() throws IOException {
         // do nothing
     }
-    
+
     @Override
     public Map<Integer, double[]> getFullMap() throws IOException {
         return new HashMap<>();

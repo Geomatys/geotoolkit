@@ -32,7 +32,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 /**
- * 
+ *
  * @version $Id$
  * @author Ian Schneider
  * @module

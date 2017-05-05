@@ -24,18 +24,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.citygml.appearance._1 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.citygml.appearance._1 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -62,14 +62,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.citygml.appearance._1
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link GeoreferencedTextureType }
-     * 
+     *
      */
     public GeoreferencedTextureType createGeoreferencedTextureType() {
         return new GeoreferencedTextureType();
@@ -77,7 +77,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link X3DMaterialType }
-     * 
+     *
      */
     public X3DMaterialType createX3DMaterialType() {
         return new X3DMaterialType();
@@ -85,7 +85,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TexCoordGenType }
-     * 
+     *
      */
     public TexCoordGenType createTexCoordGenType() {
         return new TexCoordGenType();
@@ -93,7 +93,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractTextureType }
-     * 
+     *
      */
     public AbstractTextureType createAbstractTextureType() {
         return new AbstractTextureType();
@@ -101,7 +101,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ParameterizedTextureType }
-     * 
+     *
      */
     public ParameterizedTextureType createParameterizedTextureType() {
         return new ParameterizedTextureType();
@@ -109,7 +109,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TexCoordListType }
-     * 
+     *
      */
     public TexCoordListType createTexCoordListType() {
         return new TexCoordListType();
@@ -117,7 +117,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AppearanceType }
-     * 
+     *
      */
     public AppearanceType createAppearanceType() {
         return new AppearanceType();
@@ -125,7 +125,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TexCoordListType.TextureCoordinates }
-     * 
+     *
      */
     public TexCoordListType.TextureCoordinates createTexCoordListTypeTextureCoordinates() {
         return new TexCoordListType.TextureCoordinates();
@@ -133,7 +133,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TextureAssociationType }
-     * 
+     *
      */
     public TextureAssociationType createTextureAssociationType() {
         return new TextureAssociationType();
@@ -141,7 +141,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractSurfaceDataType }
-     * 
+     *
      */
     public AbstractSurfaceDataType createAbstractSurfaceDataType() {
         return new AbstractSurfaceDataType();
@@ -149,7 +149,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SurfaceDataPropertyType }
-     * 
+     *
      */
     public SurfaceDataPropertyType createSurfaceDataPropertyType() {
         return new SurfaceDataPropertyType();
@@ -157,7 +157,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AppearancePropertyType }
-     * 
+     *
      */
     public AppearancePropertyType createAppearancePropertyType() {
         return new AppearancePropertyType();
@@ -165,7 +165,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TexCoordGenType.WorldToTexture }
-     * 
+     *
      */
     public TexCoordGenType.WorldToTexture createTexCoordGenTypeWorldToTexture() {
         return new TexCoordGenType.WorldToTexture();
@@ -173,7 +173,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GeoreferencedTextureType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "GeoreferencedTexture", substitutionHeadNamespace = "http://www.opengis.net/citygml/appearance/1.0", substitutionHeadName = "_Texture")
     public JAXBElement<GeoreferencedTextureType> createGeoreferencedTexture(GeoreferencedTextureType value) {
@@ -182,7 +182,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "_GenericApplicationPropertyOfTexture")
     public JAXBElement<Object> createGenericApplicationPropertyOfTexture(Object value) {
@@ -191,7 +191,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "_GenericApplicationPropertyOfParameterizedTexture")
     public JAXBElement<Object> createGenericApplicationPropertyOfParameterizedTexture(Object value) {
@@ -200,7 +200,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "_GenericApplicationPropertyOfSurfaceData")
     public JAXBElement<Object> createGenericApplicationPropertyOfSurfaceData(Object value) {
@@ -209,7 +209,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AppearancePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "appearance", substitutionHeadNamespace = "http://www.opengis.net/citygml/1.0", substitutionHeadName = "_GenericApplicationPropertyOfCityObject")
     public JAXBElement<AppearancePropertyType> createAppearance(AppearancePropertyType value) {
@@ -218,7 +218,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractSurfaceDataType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "_SurfaceData", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
     public JAXBElement<AbstractSurfaceDataType> createSurfaceData(AbstractSurfaceDataType value) {
@@ -227,7 +227,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ParameterizedTextureType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "ParameterizedTexture", substitutionHeadNamespace = "http://www.opengis.net/citygml/appearance/1.0", substitutionHeadName = "_Texture")
     public JAXBElement<ParameterizedTextureType> createParameterizedTexture(ParameterizedTextureType value) {
@@ -236,7 +236,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "_GenericApplicationPropertyOfGeoreferencedTexture")
     public JAXBElement<Object> createGenericApplicationPropertyOfGeoreferencedTexture(Object value) {
@@ -245,7 +245,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "_GenericApplicationPropertyOfTextureParameterization")
     public JAXBElement<Object> createGenericApplicationPropertyOfTextureParameterization(Object value) {
@@ -254,7 +254,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "_GenericApplicationPropertyOfTexCoordGen")
     public JAXBElement<Object> createGenericApplicationPropertyOfTexCoordGen(Object value) {
@@ -263,7 +263,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AppearancePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "appearanceMember", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "featureMember")
     public JAXBElement<AppearancePropertyType> createAppearanceMember(AppearancePropertyType value) {
@@ -272,7 +272,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TexCoordGenType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "TexCoordGen", substitutionHeadNamespace = "http://www.opengis.net/citygml/appearance/1.0", substitutionHeadName = "_TextureParameterization")
     public JAXBElement<TexCoordGenType> createTexCoordGen(TexCoordGenType value) {
@@ -281,7 +281,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractTextureType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "_Texture", substitutionHeadNamespace = "http://www.opengis.net/citygml/appearance/1.0", substitutionHeadName = "_SurfaceData")
     public JAXBElement<AbstractTextureType> createTexture(AbstractTextureType value) {
@@ -290,7 +290,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TexCoordListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "TexCoordList", substitutionHeadNamespace = "http://www.opengis.net/citygml/appearance/1.0", substitutionHeadName = "_TextureParameterization")
     public JAXBElement<TexCoordListType> createTexCoordList(TexCoordListType value) {
@@ -299,7 +299,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "_GenericApplicationPropertyOfX3DMaterial")
     public JAXBElement<Object> createGenericApplicationPropertyOfX3DMaterial(Object value) {
@@ -308,7 +308,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "_GenericApplicationPropertyOfAppearance")
     public JAXBElement<Object> createGenericApplicationPropertyOfAppearance(Object value) {
@@ -317,7 +317,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "_GenericApplicationPropertyOfTexCoordList")
     public JAXBElement<Object> createGenericApplicationPropertyOfTexCoordList(Object value) {
@@ -326,7 +326,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractTextureParameterizationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "_TextureParameterization", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
     public JAXBElement<AbstractTextureParameterizationType> createTextureParameterization(AbstractTextureParameterizationType value) {
@@ -335,7 +335,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link X3DMaterialType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/appearance/1.0", name = "X3DMaterial", substitutionHeadNamespace = "http://www.opengis.net/citygml/appearance/1.0", substitutionHeadName = "_SurfaceData")
     public JAXBElement<X3DMaterialType> createX3DMaterial(X3DMaterialType value) {

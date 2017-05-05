@@ -34,9 +34,9 @@ import org.geotoolkit.ebrim.xml.RegistryObject;
 
 /**
  * <p>Java class for RegistryObjectType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RegistryObjectType">
  *   &lt;complexContent>
@@ -55,8 +55,8 @@ import org.geotoolkit.ebrim.xml.RegistryObject;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -161,7 +161,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
         }
         return this.classification;
     }
-    
+
     /**
      * Sets the value of the classification property.
      */
@@ -171,14 +171,14 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
         }
         this.classification.add(classification);
     }
-    
+
     /**
      * Sets the value of the classification property.
      */
     public void setClassification(final List<ClassificationType> classification) {
        this.classification = classification;
     }
-    
+
 
     /**
      * Gets the value of the externalIdentifier property.
@@ -199,7 +199,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
         }
         this.externalIdentifier.add(externalIdentifier);
     }
-    
+
     /**
      * Sets the value of the externalIdentifier property.
      */
@@ -209,7 +209,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
         }
         this.externalIdentifier = externalIdentifier;
     }
-    
+
     /**
      * Gets the value of the lid property.
      */
@@ -251,7 +251,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
     public void setStatus(final String value) {
         this.status = value;
     }
-    
+
     /**
      * Return a BRIEF representation of the registryObject.
      * @return
@@ -266,7 +266,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
         brief.setVersionInfo(versionInfo);
         return brief;
     }
-    
+
     /**
      * Return a SUMMARY representation of the registryObject.
      * @return
@@ -324,11 +324,11 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
         if (obj instanceof RegistryObjectType && super.equals(obj)) {
             final RegistryObjectType that = (RegistryObjectType) obj;
             return Objects.equals(this.classification,     that.classification) &&
-                   Objects.equals(this.description,        that.description) && 
-                   Objects.equals(this.externalIdentifier, that.externalIdentifier) && 
-                   Objects.equals(this.lid,                that.lid) && 
-                   Objects.equals(this.name,               that.name) && 
-                   Objects.equals(this.objectType,         that.objectType) && 
+                   Objects.equals(this.description,        that.description) &&
+                   Objects.equals(this.externalIdentifier, that.externalIdentifier) &&
+                   Objects.equals(this.lid,                that.lid) &&
+                   Objects.equals(this.name,               that.name) &&
+                   Objects.equals(this.objectType,         that.objectType) &&
                    Objects.equals(this.status,             that.status) &&
                    Objects.equals(this.versionInfo,        that.versionInfo);
         }

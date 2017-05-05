@@ -106,7 +106,7 @@ public final class ScaledColorSpace extends ColorSpace {
     public float[] toRGB(final float[] values) {
         float value = (values[visibleBand] - offset) / scale;
         //-- logic operation >, < ,= return false when at least one argument is Double.NAN
-        //-- to avoid bad NAN value condition is coded as follow : 
+        //-- to avoid bad NAN value condition is coded as follow :
         if (!(value >= MIN_VALUE)) {
             value = MIN_VALUE;
         } else if (value > MAX_VALUE) {
@@ -137,7 +137,7 @@ public final class ScaledColorSpace extends ColorSpace {
     public float[] toCIEXYZ(final float[] values) {
         float value = (values[visibleBand] - offset) / scale;
         //-- logic operation >, < ,= return false when at least one argument is Double.NAN
-        //-- to avoid bad NAN value condition is coded as follow : 
+        //-- to avoid bad NAN value condition is coded as follow :
         if (!(value >= MIN_VALUE)) {
             value = MIN_VALUE;
         } else if (value > MAX_VALUE) {

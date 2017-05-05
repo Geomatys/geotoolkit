@@ -42,5 +42,5 @@ public class CachedDynamicRangeSymbolizer extends CachedSymbolizer<DynamicRangeS
     public boolean isVisible(Object candidate) {
         return true;
     }
-    
+
 }

@@ -31,15 +31,15 @@ import org.geotoolkit.wps.xml.OutputDefinition;
 
 
 /**
- * 
+ *
  * This structure contains information elements that describe the format and transmission mode
  * of the output data that is delivered by a process execution
- * 			
- * 
+ *
+ *
  * <p>Java class for OutputDefinitionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OutputDefinitionType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.wps.xml.OutputDefinition;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OutputDefinitionType", propOrder = {
@@ -78,11 +78,11 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
     @XmlAttribute(name = "schema")
     @XmlSchemaType(name = "anyURI")
     protected String schema;
-    
+
     public OutputDefinitionType() {
-        
+
     }
-    
+
     public OutputDefinitionType(String id, Boolean asReference) {
         this.id = id;
         if (asReference != null) {
@@ -96,11 +96,11 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
 
     /**
      * Gets the value of the output property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OutputDefinitionType }
-     *     
+     *
      */
     public OutputDefinitionType getOutput() {
         return output;
@@ -108,11 +108,11 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
 
     /**
      * Sets the value of the output property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OutputDefinitionType }
-     *     
+     *
      */
     public void setOutput(OutputDefinitionType value) {
         this.output = value;
@@ -120,11 +120,11 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -137,14 +137,14 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
         }
         return null;
     }
-    
+
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(String value) {
         this.id = value;
@@ -152,11 +152,11 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
 
     /**
      * Gets the value of the transmission property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataTransmissionModeType }
-     *     
+     *
      */
     public DataTransmissionModeType getTransmission() {
         return transmission;
@@ -164,11 +164,11 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
 
     /**
      * Sets the value of the transmission property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataTransmissionModeType }
-     *     
+     *
      */
     public void setTransmission(DataTransmissionModeType value) {
         this.transmission = value;
@@ -176,11 +176,11 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
 
     /**
      * Gets the value of the mimeType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getMimeType() {
@@ -189,11 +189,11 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
 
     /**
      * Sets the value of the mimeType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setMimeType(String value) {
@@ -202,11 +202,11 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
 
     /**
      * Gets the value of the encoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getEncoding() {
@@ -215,11 +215,11 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
 
     /**
      * Sets the value of the encoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setEncoding(String value) {
@@ -228,11 +228,11 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
 
     /**
      * Gets the value of the schema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getSchema() {
@@ -241,11 +241,11 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
 
     /**
      * Sets the value of the schema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setSchema(String value) {
@@ -259,7 +259,7 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
         }
         return false;
     }
-    
+
     @Override
     public void setAsReference(Boolean value) {
         if (value != null) {
@@ -270,7 +270,7 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
             }
         }
         this.transmission = null;
-        
+
     }
 
     @Override

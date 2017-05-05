@@ -25,12 +25,12 @@ import org.geotoolkit.ows.xml.AbstractContact;
 
 
 /**
- * For OWS use in the service metadata document, the optional hoursOfService and contactInstructions elements were retained, as possibly being useful in the ServiceProvider section. 
- * 
+ * For OWS use in the service metadata document, the optional hoursOfService and contactInstructions elements were retained, as possibly being useful in the ServiceProvider section.
+ *
  * <p>Java class for ContactType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ContactType">
  *   &lt;complexContent>
@@ -46,7 +46,7 @@ import org.geotoolkit.ows.xml.AbstractContact;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -76,7 +76,7 @@ public class ContactType implements AbstractContact {
      */
     ContactType() {
     }
-    
+
     /**
      * Build a new Contact.
      */
@@ -98,7 +98,7 @@ public class ContactType implements AbstractContact {
         this.hoursOfService      = hoursOfService;
         this.contactInstructions = contactInstructions;
     }
-    
+
     /**
      * Gets the value of the phone property.
      */
@@ -169,7 +169,7 @@ public class ContactType implements AbstractContact {
         hash = 23 * hash + (this.contactInstructions != null ? this.contactInstructions.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -178,7 +178,7 @@ public class ContactType implements AbstractContact {
             s.append("phone=").append(phone.toString()).append('\n');
         if (address != null)
             s.append("address=").append(address.toString()).append('\n');
-        if (onlineResource != null) 
+        if (onlineResource != null)
             s.append("onlineResource=").append(onlineResource.toString()).append('\n');
         s.append("hoursOfservice=").append(hoursOfService).append(" contactInstructions=").append(contactInstructions).append('\n');
         return s.toString();

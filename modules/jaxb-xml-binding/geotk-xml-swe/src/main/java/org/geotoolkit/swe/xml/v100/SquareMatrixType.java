@@ -27,9 +27,9 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for SquareMatrixType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SquareMatrixType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,14 +77,14 @@ public class SquareMatrixType extends AbstractMatrixType implements AbstractSqua
             }
         }
     }
-    
+
     /**
      * Gets the value of the elementType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QuantityPropertyType }
-     *     
+     *
      */
     public QuantityPropertyType getElementType() {
         return elementType;
@@ -92,11 +92,11 @@ public class SquareMatrixType extends AbstractMatrixType implements AbstractSqua
 
     /**
      * Sets the value of the elementType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QuantityPropertyType }
-     *     
+     *
      */
     public void setElementType(final QuantityPropertyType value) {
         this.elementType = value;
@@ -104,11 +104,11 @@ public class SquareMatrixType extends AbstractMatrixType implements AbstractSqua
 
     /**
      * Gets the value of the encoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BlockEncodingPropertyType }
-     *     
+     *
      */
     public BlockEncodingPropertyType getEncoding() {
         return encoding;
@@ -116,11 +116,11 @@ public class SquareMatrixType extends AbstractMatrixType implements AbstractSqua
 
     /**
      * Sets the value of the encoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BlockEncodingPropertyType }
-     *     
+     *
      */
     public void setEncoding(final BlockEncodingPropertyType value) {
         this.encoding = value;
@@ -128,11 +128,11 @@ public class SquareMatrixType extends AbstractMatrixType implements AbstractSqua
 
     /**
      * Gets the value of the values property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataValuePropertyType }
-     *     
+     *
      */
     public DataValuePropertyType getValues() {
         return values;
@@ -140,11 +140,11 @@ public class SquareMatrixType extends AbstractMatrixType implements AbstractSqua
 
     /**
      * Sets the value of the values property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataValuePropertyType }
-     *     
+     *
      */
     public void setValues(final DataValuePropertyType value) {
         this.values = value;

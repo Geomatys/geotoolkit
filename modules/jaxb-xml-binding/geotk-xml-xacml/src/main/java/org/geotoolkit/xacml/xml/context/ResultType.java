@@ -25,9 +25,9 @@ import org.geotoolkit.xacml.xml.policy.ObligationsType;
 
 /**
  * <p>Java class for ResultType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ResultType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.xacml.xml.policy.ObligationsType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,7 +65,7 @@ public class ResultType {
 
    /**
     * Gets the value of the decision property.
-    * 
+    *
     */
    public DecisionType getDecision() {
       return decision;
@@ -73,7 +73,7 @@ public class ResultType {
 
    /**
     * Sets the value of the decision property.
-    * 
+    *
     */
    public void setDecision(final DecisionType value) {
       this.decision = value;
@@ -81,7 +81,7 @@ public class ResultType {
 
    /**
     * Gets the value of the status property.
-    * 
+    *
     */
    public StatusType getStatus() {
       return status;
@@ -89,7 +89,7 @@ public class ResultType {
 
    /**
     * Sets the value of the status property.
-    * 
+    *
     */
    public void setStatus(final StatusType value) {
       this.status = value;
@@ -97,7 +97,7 @@ public class ResultType {
 
    /**
     * Gets the value of the obligations property.
-    * 
+    *
     */
    public ObligationsType getObligations() {
       return obligations;
@@ -105,7 +105,7 @@ public class ResultType {
 
    /**
     * Sets the value of the obligations property.
-    * 
+    *
     */
    public void setObligations(final ObligationsType value) {
       this.obligations = value;
@@ -113,7 +113,7 @@ public class ResultType {
 
    /**
     * Gets the value of the resourceId property.
-    * 
+    *
     */
    public String getResourceId() {
       return resourceId;
@@ -121,7 +121,7 @@ public class ResultType {
 
    /**
     * Sets the value of the resourceId property.
-    * 
+    *
     */
    public void setResourceId(final String value) {
       this.resourceId = value;

@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for SlotType1 complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SlotType1">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,7 +60,7 @@ public class SlotType {
     private String name;
     @XmlAttribute
     private String slotType;
-    
+
     @XmlTransient
     private ObjectFactory factory = new ObjectFactory();
 
@@ -70,7 +70,7 @@ public class SlotType {
     public JAXBElement<? extends ValueListType> getValueList() {
         return valueList;
     }
-    
+
     /**
      * Gets the value of the valueList property.
      */
@@ -112,7 +112,7 @@ public class SlotType {
     public void setSlotType(final String value) {
         this.slotType = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();

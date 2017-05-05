@@ -71,7 +71,7 @@ public class CoverageToComplexConverter extends AbstractComplexOutputConverter<G
         if (wpsVersion == null) {
             LOGGER.warning("No WPS version set using default 1.0.0");
             wpsVersion = "1.0.0";
-        } 
+        }
         final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(wpsVersion, "base64", WPSMimeType.IMG_GEOTIFF.val(), null);
 
         try {

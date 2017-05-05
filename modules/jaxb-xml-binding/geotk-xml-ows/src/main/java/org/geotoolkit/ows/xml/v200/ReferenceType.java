@@ -31,11 +31,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Complete reference to a remote or local resource,
  *       allowing including metadata about that resource.
- * 
+ *
  * <p>Java class for ReferenceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ReferenceType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ReferenceType", propOrder = {
@@ -77,11 +77,11 @@ public class ReferenceType extends AbstractReferenceBaseType {
     /**
      * Optional unique identifier of the referenced
      *               resource.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getIdentifier() {
         return identifier;
@@ -89,11 +89,11 @@ public class ReferenceType extends AbstractReferenceBaseType {
 
     /**
      * Sets the value of the identifier property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setIdentifier(CodeType value) {
         this.identifier = value;
@@ -101,11 +101,11 @@ public class ReferenceType extends AbstractReferenceBaseType {
 
     /**
      * Gets the value of the abstract property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link LanguageStringType }
-     * 
-     * 
+     *
+     *
      */
     public List<LanguageStringType> getAbstract() {
         if (_abstract == null) {
@@ -116,11 +116,11 @@ public class ReferenceType extends AbstractReferenceBaseType {
 
     /**
      * Gets the value of the format property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFormat() {
         return format;
@@ -128,11 +128,11 @@ public class ReferenceType extends AbstractReferenceBaseType {
 
     /**
      * Sets the value of the format property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFormat(String value) {
         this.format = value;
@@ -144,12 +144,12 @@ public class ReferenceType extends AbstractReferenceBaseType {
      *               this ReferenceType could be specified in the Implementation
      *               Specification for each use of this type in a specific
      *               OWS.Gets the value of the metadata property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link MetadataType }{@code >}
      * {@link JAXBElement }{@code <}{@link AdditionalParametersType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends MetadataType>> getMetadata() {
         if (metadata == null) {

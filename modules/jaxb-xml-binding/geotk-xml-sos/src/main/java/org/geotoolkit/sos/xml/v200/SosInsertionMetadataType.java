@@ -30,9 +30,9 @@ import org.geotoolkit.swes.xml.v200.InsertionMetadataType;
 
 /**
  * <p>Java class for SosInsertionMetadataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SosInsertionMetadataType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.swes.xml.v200.InsertionMetadataType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SosInsertionMetadataType", propOrder = {
@@ -64,7 +64,7 @@ public class SosInsertionMetadataType extends InsertionMetadataType implements S
 
     /**
      * Gets the value of the observationType property.
-     * 
+     *
      */
     @Override
     public List<String> getObservationType() {
@@ -76,7 +76,7 @@ public class SosInsertionMetadataType extends InsertionMetadataType implements S
 
     /**
      * Gets the value of the featureOfInterestType property.
-     * 
+     *
      */
     public List<String> getFeatureOfInterestType() {
         if (featureOfInterestType == null) {

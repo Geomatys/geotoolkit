@@ -51,11 +51,11 @@ import org.opengis.temporal.TemporalPrimitive;
 public class XmlObservationReader implements ObservationReader {
 
     private final List<Object> xmlObjects;
-    
+
     public XmlObservationReader(final List<Object> xmlObjects) {
         this.xmlObjects = xmlObjects;
     }
-    
+
     @Override
     public Collection<String> getProcedureNames() throws DataStoreException {
         final Set<String> names = new HashSet<>();
@@ -75,7 +75,7 @@ public class XmlObservationReader implements ObservationReader {
         }
         return names;
     }
-    
+
      @Override
     public Collection<String> getProcedureNames(String sensorType) throws DataStoreException {
         // no filter yet
@@ -189,7 +189,7 @@ public class XmlObservationReader implements ObservationReader {
             spatialBound.addDate(p.getEnding().getDate());
         }
     }
-    
+
     @Override
     public boolean existPhenomenon(final String phenomenonName) throws DataStoreException {
         return getPhenomenonNames().contains(phenomenonName);
@@ -313,7 +313,7 @@ public class XmlObservationReader implements ObservationReader {
     public void destroy() {
         // do nothing
     }
-    
+
     @Override
     public Collection<String> getOfferingNames(final String version) throws DataStoreException {
         throw new DataStoreException("offerings are not handled in XML observation reader.");

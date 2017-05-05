@@ -40,7 +40,7 @@ import org.geotoolkit.swe.xml.AbstractEncoding;
 @XmlSeeAlso({TextBlockType.class})
 @XmlType(name="AbstractEncoding")
 public class AbstractEncodingType implements AbstractEncoding, Entry {
-    
+
     /**
      * The encoding identifier.
      */
@@ -48,7 +48,7 @@ public class AbstractEncodingType implements AbstractEncoding, Entry {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     private String id;
-    
+
     /**
      * constructor used by jaxB
      */
@@ -66,7 +66,7 @@ public class AbstractEncodingType implements AbstractEncoding, Entry {
     protected AbstractEncodingType(final String id) {
         this.id = id;
     }
-    
+
     public String getId() {
         return id;
     }
@@ -78,7 +78,7 @@ public class AbstractEncodingType implements AbstractEncoding, Entry {
     public String getName() {
         return id;
     }
-    
+
     /**
      * Return the numeric code identifying this entry.
      */
@@ -86,9 +86,9 @@ public class AbstractEncodingType implements AbstractEncoding, Entry {
     public int hashCode() {
         return id.hashCode();
     }
-    
+
     /**
-     * Verify that this entry is identical to the specified object. 
+     * Verify that this entry is identical to the specified object.
      */
     @Override
     public boolean equals(final Object object) {
@@ -101,7 +101,7 @@ public class AbstractEncodingType implements AbstractEncoding, Entry {
         }
         return false;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName());

@@ -159,7 +159,7 @@ public class CoordinateType implements Coordinate {
     public void setName(final String value) {
         this.name = value;
     }
-    
+
     /**
      * Verify that the object is identical to the specified object.
      */

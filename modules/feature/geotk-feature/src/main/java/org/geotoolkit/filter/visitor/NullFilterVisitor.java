@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
@@ -75,7 +75,7 @@ import org.opengis.filter.temporal.TOverlaps;
  * This class can be used as is as a placeholder that does nothing:<pre><code>
  * Integer one = (Integer) filter.accepts( NullFilterVisitor.NULL_VISITOR, 1 );
  * </code></pre>
- * 
+ *
  * The class can also be used as an alternative to DefaultFilterVisitor if
  * you want to only walk part of the data structure:
  * <pre><code>
@@ -95,7 +95,7 @@ import org.opengis.filter.temporal.TOverlaps;
  * <li>walking And, Or, and Not data structures, returning null at any point will exit early
  * <li>a default implementation for every other construct that will return the provided data
  * </ul>
- * 
+ *
  * @author Jody Garnett (Refractions Research)
  * @module
  */
@@ -114,8 +114,8 @@ public abstract class NullFilterVisitor implements FilterVisitor, ExpressionVisi
             return data;
         }
     };
-    
-    public NullFilterVisitor() {        
+
+    public NullFilterVisitor() {
     }
 
     @Override
@@ -194,7 +194,7 @@ public abstract class NullFilterVisitor implements FilterVisitor, ExpressionVisi
     }
 
     @Override
-    public Object visit( final PropertyIsLessThan filter, final Object data ) {        
+    public Object visit( final PropertyIsLessThan filter, final Object data ) {
         return data;
     }
 
@@ -204,7 +204,7 @@ public abstract class NullFilterVisitor implements FilterVisitor, ExpressionVisi
     }
 
     @Override
-    public Object visit( final PropertyIsLike filter, final Object data ) {        
+    public Object visit( final PropertyIsLike filter, final Object data ) {
         return data;
     }
 
@@ -217,7 +217,7 @@ public abstract class NullFilterVisitor implements FilterVisitor, ExpressionVisi
     public Object visit(final PropertyIsNil filter, final Object data) {
         return data;
     }
-    
+
     @Override
     public Object visit( final BBOX filter, final Object data ) {
         return data;
@@ -342,14 +342,14 @@ public abstract class NullFilterVisitor implements FilterVisitor, ExpressionVisi
     public Object visit(TOverlaps filter, Object data) {
         return data;
     }
-    
+
     @Override
     public Object visitNullFilter( final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( final NilExpression expression, final Object data ) {        
+    public Object visit( final NilExpression expression, final Object data ) {
         return null;
     }
 
@@ -369,7 +369,7 @@ public abstract class NullFilterVisitor implements FilterVisitor, ExpressionVisi
     }
 
     @Override
-    public Object visit( final Literal expression, final Object data ) {        
+    public Object visit( final Literal expression, final Object data ) {
         return data;
     }
 

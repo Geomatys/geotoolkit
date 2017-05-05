@@ -25,27 +25,27 @@ import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types Line placement.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class DefaultLinePlacement implements LinePlacement{
 
     private final Expression offset;
-    
+
     private final Expression initial;
-    
+
     private final Expression gap;
-    
+
     private final boolean repeated;
-    
+
     private final boolean aligned;
-    
+
     private final boolean generalize;
-    
+
     /**
      * Create a default immutable line placement.
-     * 
+     *
      * @param offset : if null or Expression.NIL will be replaced by default value.
      * @param initial : if null or Expression.NIL will be replaced by default value.
      * @param gap : if null or Expression.NIL will be replaced by default value.
@@ -55,7 +55,7 @@ public class DefaultLinePlacement implements LinePlacement{
      */
     public DefaultLinePlacement(final Expression offset, final Expression initial, final Expression gap,
             final boolean repeated, final boolean aligned, final boolean generalize){
-        
+
         this.offset = (offset == null || offset == NIL) ? DEFAULT_LINEPLACEMENT_OFFSET : offset;
         this.initial  = (initial == null || initial == NIL) ? DEFAULT_LINEPLACEMENT_INITIAL_GAP : initial;
         this.gap = (gap == null || gap == NIL) ? DEFAULT_LINEPLACEMENT_GAP : gap;
@@ -63,7 +63,7 @@ public class DefaultLinePlacement implements LinePlacement{
         this.aligned = aligned;
         this.generalize = generalize;
     }
-    
+
     /**
      * {@inheritDoc }
      */

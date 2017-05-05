@@ -56,35 +56,35 @@ public class SVGGraphicFactory implements ExternalGraphicFactory {
         final SVGUniverse svgUniverse = new SVGUniverse();
         final SVGDiagram diagram = svgUniverse.getDiagram(uri);
         diagram.setIgnoringClipHeuristic(true);
-        
+
         final BufferedImage img = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = img.createGraphics();
         final Rectangle2D rect = diagram.getViewRect();
         final double scale = Math.min( ((double)dim.width)/rect.getWidth(), ((double)dim.height)/rect.getHeight() );
         final AffineTransform trs = new AffineTransform(scale, 0, 0, scale, -rect.getMinX(), -rect.getMinY());
         g.setTransform(trs);
-        diagram.render(g); 
+        diagram.render(g);
         g.dispose();
-        
+
         return img;
     }
 
     @Override
     public void renderImage(final URI uri, final String mime, Float size, final Graphics2D g,
             final Point2D center, final RenderingHints hints) throws Exception {
-        
+
         if(size == null || Float.isNaN(size)){
             size = 12f;
         }
         final float rsize = size/2f;
-        
+
         g.translate(center.getX()-rsize,center.getY()-rsize);
-        
+
         //render
         final SVGUniverse svgUniverse = new SVGUniverse();
         final SVGDiagram diagram = svgUniverse.getDiagram(uri);
         diagram.setIgnoringClipHeuristic(true);
-        
+
         final Rectangle2D bounds = diagram.getViewRect();
         final double scale = Math.min( ((double)size)/bounds.getWidth(), ((double)size)/bounds.getHeight() );
         g.scale(scale, scale);
@@ -93,10 +93,10 @@ public class SVGGraphicFactory implements ExternalGraphicFactory {
         } finally {
             g.scale(1.0/scale, 1.0/scale);
         }
-        
+
         g.translate(-center.getX()+rsize,-center.getY()+rsize);
     }
-    
+
     /**
      * {@inheritDoc }
      */

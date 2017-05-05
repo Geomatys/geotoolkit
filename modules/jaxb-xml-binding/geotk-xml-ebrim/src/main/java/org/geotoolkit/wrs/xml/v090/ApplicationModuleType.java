@@ -31,14 +31,14 @@ import org.geotoolkit.ebrim.xml.v250.RegistryPackageType;
 
 
 /**
- * Defines an expansion pack that bundles extensions for handling domain-specific resources; 
- * it may include ClassificationScheme, ClassificationNode, Association, XMLSchema, 
+ * Defines an expansion pack that bundles extensions for handling domain-specific resources;
+ * it may include ClassificationScheme, ClassificationNode, Association, XMLSchema,
  * WRS query extensions (e.g. stored queries), plus constraints on the use of slots.
- * 
+ *
  * <p>Java class for ApplicationModuleType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ApplicationModuleType">
  *   &lt;complexContent>
@@ -50,7 +50,7 @@ import org.geotoolkit.ebrim.xml.v250.RegistryPackageType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @TODO this class seemes to have a lot of error, we must review it
  *
  * @module
@@ -59,7 +59,7 @@ import org.geotoolkit.ebrim.xml.v250.RegistryPackageType;
 @XmlType(name = "ApplicationModuleType", propOrder = {
     "abstractQuery"
 })
-@XmlRootElement( name = "ApplicationModule")        
+@XmlRootElement( name = "ApplicationModule")
 public class ApplicationModuleType extends RegistryPackageType {
 
     @XmlElementRef(name = "AbstractQuery", namespace = "http://www.opengis.net/cat/csw", type = JAXBElement.class)
@@ -74,14 +74,14 @@ public class ApplicationModuleType extends RegistryPackageType {
         }
         return this.abstractQuery;
     }
-    
+
     /**
      * Sets the value of the abstractQuery property.
      */
     public void setAbstractQuery(final List<AbstractQueryType> abstractQuery) {
         this.abstractQuery = abstractQuery;
     }
-    
+
     /**
      * Sets the value of the abstractQuery property.
      */

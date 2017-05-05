@@ -31,7 +31,7 @@ import org.geotoolkit.style.StyleConstants;
 public class CachedGraduationSymbolizer extends CachedSymbolizer<GraduationSymbolizer>{
 
     private List<CachedGraduation> cache = null;
-    
+
     public CachedGraduationSymbolizer(GraduationSymbolizer styleElement, SymbolizerRendererService<GraduationSymbolizer, ? extends CachedSymbolizer<GraduationSymbolizer>> renderer) {
         super(styleElement, renderer);
     }
@@ -40,7 +40,7 @@ public class CachedGraduationSymbolizer extends CachedSymbolizer<GraduationSymbo
         evaluate();
         return cache;
     }
-    
+
     @Override
     public float getMargin(Object candidate, float coeff) {
         return 0;
@@ -62,16 +62,16 @@ public class CachedGraduationSymbolizer extends CachedSymbolizer<GraduationSymbo
     public boolean isVisible(Object candidate) {
         return true;
     }
-    
+
     public static final class CachedGraduation {
 
         private final GraduationSymbolizer.Graduation graduation;
         private CachedStroke cachedStroke;
         private CachedFont cachedFont;
-        
+
         public CachedGraduation(GraduationSymbolizer.Graduation graduation) {
             this.graduation = graduation;
-        }       
+        }
 
         public GraduationSymbolizer.Graduation getGraduation() {
             return graduation;
@@ -84,19 +84,19 @@ public class CachedGraduationSymbolizer extends CachedSymbolizer<GraduationSymbo
         public CachedFont getCachedFont() {
             return cachedFont;
         }
-        
+
         protected void evaluate() {
             if(graduation.getStroke()!=null){
                 cachedStroke = CachedStroke.cache(graduation.getStroke());
             }else{
                 cachedStroke = CachedStroke.cache(StyleConstants.DEFAULT_STROKE);
             }
-            
+
             if(graduation.getFont()!=null){
                 cachedFont = CachedFont.cache(graduation.getFont());
             }
         }
-        
+
     }
-    
+
 }

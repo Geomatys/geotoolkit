@@ -55,50 +55,50 @@ public interface PremiseNumberRange {
      * @return
      */
     PremiseNumberRangeFrom getPremiseNumberRangeFrom();
-    
+
     /**
-     * 
+     *
      * @return
      */
     PremiseNumberRangeTo getPremiseNumberRangeTo();
-    
+
     /**
      * <p>Eg. Odd or even number range.</p>
-     * 
+     *
      * @return
      */
     String getRangeType();
-    
+
     /**
      * <p>Eg. No. in Building No:C1-C5</p>
-     * 
+     *
      * @return
      */
     String getIndicator();
-    
+
     /**
      * <p>"-" in 12-14  or "Thru" in 12 Thru 14 etc.</p>
-     * 
+     *
      * @return
      */
     String getSeparator();
-    
+
     /**
-     * 
+     *
      * @return
      */
     String getType();
-    
+
     /**
      * <p>No.12-14 where "No." is before actual street number.</p>
-     * 
+     *
      * @return
      */
     AfterBeforeEnum getIndicatorOccurrence();
-    
+
     /**
      * <p>Building 23-25 where the number occurs after building name.</p>
-     * 
+     *
      * @return
      */
     AfterBeforeTypeNameEnum getNumberRangeOccurrence();
@@ -122,7 +122,7 @@ public interface PremiseNumberRange {
     void setRangeType(String rangeType);
 
     /**
-     * 
+     *
      * @param indicator
      */
     void setIndicator(String indicator);

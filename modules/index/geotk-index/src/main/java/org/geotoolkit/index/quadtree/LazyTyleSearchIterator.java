@@ -32,7 +32,7 @@ import static org.geotoolkit.index.quadtree.AbstractNode.*;
  * the given bounding box. It stores an addition information to know if each node
  * is contained or just intersect, which mean a more accurate call to intersect
  * on the geometry will be needed.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -71,7 +71,7 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
         if(relation != NONE){
             path.add(new Segment(node, -1, relation));
         }
-        
+
     }
 
     @Override
@@ -86,7 +86,7 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
         if (current == null){
             throw new NoSuchElementException("No more elements available");
         }
-        
+
         final AbstractNode temp = current;
         if(current != null){
             safe = path.getLast().relation == CONTAINED;
@@ -316,7 +316,7 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
             int remaining = nodeIds.length-inc;
             if(bufferSize-indexSize > remaining){
                 //we have enough space to store all remaining ids
-                
+
                 if(nodeSafe){
                     for(int i=inc,j=indexSize,n=inc+remaining; i<n; i++,j++){
                         indices[j] = (nodeIds[i]<<1)^LB + 1;

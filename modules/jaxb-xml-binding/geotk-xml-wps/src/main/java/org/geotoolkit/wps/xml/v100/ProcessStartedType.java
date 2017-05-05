@@ -25,14 +25,14 @@ import javax.xml.bind.annotation.XmlValue;
 
 
 /**
- * Indicates that this process has been has been accepted by the server, and processing has begun. 
- * 
- * A human-readable text string whose contents are left open to definition by each WPS server, but is expected to include any messages the server may wish to let the clients know. Such information could include how much longer the process may take to execute, or any warning conditions that may have been encountered to date. The client may display this text to a human user. 
- * 
+ * Indicates that this process has been has been accepted by the server, and processing has begun.
+ *
+ * A human-readable text string whose contents are left open to definition by each WPS server, but is expected to include any messages the server may wish to let the clients know. Such information could include how much longer the process may take to execute, or any warning conditions that may have been encountered to date. The client may display this text to a human user.
+ *
  * <p>Java class for ProcessStartedType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ProcessStartedType">
  *   &lt;simpleContent>
@@ -49,8 +49,8 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,21 +65,21 @@ public class ProcessStartedType {
     protected Integer percentCompleted;
 
     public ProcessStartedType() {
-        
+
     }
-    
+
     public ProcessStartedType(String value, Integer percentCompleted) {
         this.percentCompleted = percentCompleted;
         this.value = value;
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValue() {
         return value;
@@ -87,11 +87,11 @@ public class ProcessStartedType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(final String value) {
         this.value = value;
@@ -99,11 +99,11 @@ public class ProcessStartedType {
 
     /**
      * Gets the value of the percentCompleted property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getPercentCompleted() {
         return percentCompleted;
@@ -111,11 +111,11 @@ public class ProcessStartedType {
 
     /**
      * Sets the value of the percentCompleted property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setPercentCompleted(final Integer value) {
         this.percentCompleted = value;
@@ -132,7 +132,7 @@ public class ProcessStartedType {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

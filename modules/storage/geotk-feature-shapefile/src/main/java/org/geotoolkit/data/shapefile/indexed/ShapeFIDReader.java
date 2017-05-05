@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
- * 
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -23,7 +23,7 @@ import org.opengis.feature.FeatureType;
 
 /**
  * Reader that returns FeatureIds in a quick fashion.
- * 
+ *
  * @author Tommaso Nolli
  * @module
  */
@@ -60,7 +60,7 @@ public class ShapeFIDReader implements FeatureIDReader {
      * This method always returns true, since it is built with a
      * <code>ShapefileDataStore.Reader</code> you have to call
      * <code>ShapefileDataStore.Reader.hasNext()</code>
-     * 
+     *
      * @return always return <code>true</code>
      * @throws IOException If closed
      */
@@ -80,7 +80,7 @@ public class ShapeFIDReader implements FeatureIDReader {
 
     /**
      * Read the feature id.
-     * 
+     *
      * @return the Feature Id
      * @throws IOException If closed
      */

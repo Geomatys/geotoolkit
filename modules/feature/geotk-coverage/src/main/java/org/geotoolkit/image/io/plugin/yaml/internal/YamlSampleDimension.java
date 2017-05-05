@@ -34,15 +34,15 @@ public class YamlSampleDimension {
 
     /**
      * Description or "name" of this current {@link YamlSampleDimension}.
-     * 
-     * @see GridSampleDimension#getDescription() 
+     *
+     * @see GridSampleDimension#getDescription()
      */
     private String description;
-    
+
     /**
      * Internal {@link YamlCategory} which compose this {@link SampleDimension}.
-     * 
-     * @see GridSampleDimension#getCategories() 
+     *
+     * @see GridSampleDimension#getCategories()
      */
     private List<YamlCategory> categories;
 
@@ -51,26 +51,26 @@ public class YamlSampleDimension {
      */
     public YamlSampleDimension() {
     }
-    
+
     /**
      * Build a {@link YamlSampleDimension} from geotk {@link GridSampleDimension}.
-     * 
+     *
      * @param sampleDimension {@link GridSampleDimension} which will be serialized into Yaml format.
      */
     public YamlSampleDimension(final GridSampleDimension sampleDimension) {
         description = sampleDimension.getDescription().toString(Locale.ENGLISH);
-        
+
         categories  = new ArrayList<YamlCategory>();
         for (final Category cat : sampleDimension.getCategories()) {
             categories.add(SampleDimensionUtils.NODATA_CATEGORY_NAME.toString(Locale.ENGLISH).equalsIgnoreCase(cat.getName().toString(Locale.ENGLISH))
-                           ? new YamlCategory(cat) 
+                           ? new YamlCategory(cat)
                            : new YamlSampleCategory(cat));
         }
     }
 
     /**
      * Returns description of this current {@link YamlSampleDimension}.
-     * 
+     *
      * @return description
      * @see #description
      */
@@ -80,28 +80,28 @@ public class YamlSampleDimension {
 
     /**
      * Internal {@link YamlCategory} which compose this {@link YamlSampleDimension}.
-     * 
+     *
      * @return categories
      * @see #categories
      */
     public List<YamlCategory> getCategories() {
         return categories;
     }
-    
+
     /**
      * Set description of this current {@link YamlSampleDimension}.
-     * 
-     * @param description 
+     *
+     * @param description
      * @see #description
      */
     public void setDescription(final String description) {
         this.description = description;
     }
-    
+
     /**
      * Set internal {@link YamlCategory} which compose this {@link YamlSampleDimension}.
-     * 
-     * @param categories 
+     *
+     * @param categories
      * @see #categories
      */
     public void setCategories(final List<YamlCategory> categories) {

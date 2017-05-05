@@ -27,9 +27,9 @@ import org.opengis.filter.expression.PropertyName;
 
 /**
  * <p>Java class for PropertyNameType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PropertyNameType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import org.opengis.filter.expression.PropertyName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,9 +55,9 @@ public class PropertyNameType implements PropertyName {
      * An empty constructor used by JAXB
      */
     public PropertyNameType() {
-        
+
     }
-    
+
     /**
      * Build a new propertyName with the specified name.
      */
@@ -77,16 +77,16 @@ public class PropertyNameType implements PropertyName {
             }
         }
     }
-    
+
     public PropertyNameType(final PropertyNameType that) {
         if (that != null) {
             this.content = that.content;
         }
     }
-    
+
     /**
      * Gets the value of the content property.
-     * 
+     *
      */
     public String getContent() {
         return content;
@@ -94,7 +94,7 @@ public class PropertyNameType implements PropertyName {
 
     /**
      * Sets the value of the content property.
-     * 
+     *
      */
     public void setContent(final String value) {
         this.content = value;
@@ -107,17 +107,17 @@ public class PropertyNameType implements PropertyName {
 
     @Override
     public Object evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public <T> T evaluate(Object o, Class<T> type) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public Object accept(ExpressionVisitor ev, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

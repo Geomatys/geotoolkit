@@ -33,12 +33,12 @@ import org.opengis.feature.FeatureType;
  * @author Johann Sorel (Geomatys)
  */
 public class FXDRBound extends FXStyleElementController<DynamicRangeSymbolizer.DRBound> {
-    
+
     @FXML
     private ChoiceBox<String> uiMode;
     @FXML
     private FXTextExpression uiValue;
-    
+
     @Override
     public Class<DynamicRangeSymbolizer.DRBound> getEditedClass() {
         return DynamicRangeSymbolizer.DRBound.class;
@@ -52,13 +52,13 @@ public class FXDRBound extends FXStyleElementController<DynamicRangeSymbolizer.D
     @Override
     public void initialize() {
         super.initialize();
-        
+
         uiMode.setItems(FXCollections.observableArrayList(
                 DynamicRangeSymbolizer.DRBound.MODE_EXPRESSION,
                 DynamicRangeSymbolizer.DRBound.MODE_PERCENT
             ));
         value.set(new DynamicRangeSymbolizer.DRBound());
-        
+
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             final DynamicRangeSymbolizer.DRBound element = new DynamicRangeSymbolizer.DRBound();
@@ -66,7 +66,7 @@ public class FXDRBound extends FXStyleElementController<DynamicRangeSymbolizer.D
             element.setValue(uiValue.valueProperty().get());
             value.set(element);
         };
-        
+
         uiMode.valueProperty().addListener(changeListener);
         uiValue.valueProperty().addListener(changeListener);
 
@@ -74,7 +74,7 @@ public class FXDRBound extends FXStyleElementController<DynamicRangeSymbolizer.D
         final FeatureType ft = DynamicRangeSymbolizer.buildBandType();
         uiValue.setLayer(MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection("", ft)));
     }
-    
+
     @Override
     protected void updateEditor(DynamicRangeSymbolizer.DRBound styleElement) {
         if(styleElement!=null){
@@ -82,5 +82,5 @@ public class FXDRBound extends FXStyleElementController<DynamicRangeSymbolizer.D
             uiValue.valueProperty().setValue(styleElement.getValue());
         }
     }
-    
+
 }

@@ -20,18 +20,18 @@ import org.geotoolkit.client.AbstractRequest;
 
 /**
  * Request to grab additional information on a token.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class GetConfigRequest extends AbstractRequest{
-    
-    private static final String SUBPATH = "getConfig";    
+
+    private static final String SUBPATH = "getConfig";
     private static final String PARAM_KEY = "key";
     private static final String PARAM_OUTPUT = "output";
-    
+
     private String key;
-    
+
     public GetConfigRequest(final IGNRMClient server){
         super(server,SUBPATH);
     }
@@ -46,9 +46,9 @@ public class GetConfigRequest extends AbstractRequest{
 
     @Override
     protected void prepareParameters() {
-        super.prepareParameters();        
+        super.prepareParameters();
         requestParameters.put(PARAM_KEY, key);
         requestParameters.put(PARAM_OUTPUT, "xml");
     }
-    
+
 }

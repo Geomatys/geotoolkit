@@ -146,7 +146,7 @@ public class MapItemGlyphColumn extends TreeTableColumn {
                 cellContent.setImage(createGlyph(mapLayer));
                 setGraphic(cellContent);
             }
-        }      
+        }
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
@@ -162,7 +162,7 @@ public class MapItemGlyphColumn extends TreeTableColumn {
 
         @Override
         public void itemChange(CollectionChangeEvent<MapItem> event) {}
-        
+
     }
 
     private static Image createGlyph(final MapLayer mapLayer) {

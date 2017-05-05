@@ -17,8 +17,8 @@ public class WFSClientDemo {
 
     public static void main(String[] args) throws MalformedURLException, URISyntaxException {
         Demos.init();
-        
-        
+
+
         final WebFeatureClient wfsServer = new WebFeatureClient(new URL("http://demo.geomatys.com/constellation/WS/wfs?"), "1.1.0");
         final GetCapabilitiesRequest getCapa = wfsServer.createGetCapabilities();
         final GetFeatureRequest getFeature = wfsServer.createGetFeature();

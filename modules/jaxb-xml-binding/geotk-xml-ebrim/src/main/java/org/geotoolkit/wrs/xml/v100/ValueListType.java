@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Allows complex slot values.
- * 
+ *
  * <p>Java class for ValueListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ValueListType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,7 +65,7 @@ public class ValueListType extends org.geotoolkit.ebrim.xml.v300.ValueListType {
         }
         return this.anyValue;
     }
-    
+
     /**
      * Sets the value of the anyValue property.
      */
@@ -75,7 +75,7 @@ public class ValueListType extends org.geotoolkit.ebrim.xml.v300.ValueListType {
         }
         this.anyValue.add(anyValue);
     }
-    
+
     /**
      * Sets the value of the anyValue property.
      */

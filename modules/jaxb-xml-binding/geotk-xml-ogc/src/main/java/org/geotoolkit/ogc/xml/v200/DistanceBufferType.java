@@ -104,7 +104,7 @@ public class DistanceBufferType extends SpatialOpsType implements DistanceBuffer
                     throw new IllegalArgumentException("Unexpected type for expression in PropertyIsBetweenType:" + expression.getClass().getName());
                 }
             }
-            
+
             if (that.any != null) {
                 this.any = new ArrayList<Object>();
                 for (Object obj : that.any) {
@@ -116,13 +116,13 @@ public class DistanceBufferType extends SpatialOpsType implements DistanceBuffer
                     }
                 }
             }
-            
+
             if (that.distance != null) {
                 this.distance = new MeasureType(that.distance.getValue(), that.distance.getUom());
             }
         }
     }
-    
+
     public String getPropertyName() {
         if (expression != null && expression.getValue() instanceof String) {
             return (String)expression.getValue();

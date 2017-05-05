@@ -27,9 +27,9 @@ import org.geotoolkit.gml.xml.v311.PolygonType;
 
 /**
  * <p>Java class for ClipType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ClipType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.gml.xml.v311.PolygonType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ClipType", propOrder = {
@@ -63,11 +63,11 @@ public class ClipType {
 
     /**
      * Clips the portrayed map with a polygon
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PolygonType }
-     *     
+     *
      */
     public PolygonType getPolygon() {
         return polygon;
@@ -75,11 +75,11 @@ public class ClipType {
 
     /**
      * Sets the value of the polygon property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PolygonType }
-     *     
+     *
      */
     public void setPolygon(PolygonType value) {
         this.polygon = value;
@@ -87,11 +87,11 @@ public class ClipType {
 
     /**
      * Clips the portrayed map with a circle
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CircleByCenterPointType }
-     *     
+     *
      */
     public CircleByCenterPointType getCircleByCenterPoint() {
         return circleByCenterPoint;
@@ -99,11 +99,11 @@ public class ClipType {
 
     /**
      * Sets the value of the circleByCenterPoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CircleByCenterPointType }
-     *     
+     *
      */
     public void setCircleByCenterPoint(CircleByCenterPointType value) {
         this.circleByCenterPoint = value;
@@ -111,11 +111,11 @@ public class ClipType {
 
     /**
      * Gets the value of the lineCorridor property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LineCorridorType }
-     *     
+     *
      */
     public LineCorridorType getLineCorridor() {
         return lineCorridor;
@@ -123,11 +123,11 @@ public class ClipType {
 
     /**
      * Sets the value of the lineCorridor property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LineCorridorType }
-     *     
+     *
      */
     public void setLineCorridor(LineCorridorType value) {
         this.lineCorridor = value;

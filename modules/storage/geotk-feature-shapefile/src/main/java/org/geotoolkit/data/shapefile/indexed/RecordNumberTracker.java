@@ -21,7 +21,7 @@ import java.io.IOException;
 /**
  * A simple interface so that the current feature's record number can be
  * retrieved by the IndexedFidReader
- * 
+ *
  * @author Jesse
  * @module
  * @since 1.1.0

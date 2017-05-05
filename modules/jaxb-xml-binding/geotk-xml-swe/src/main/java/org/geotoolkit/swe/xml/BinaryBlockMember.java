@@ -26,5 +26,5 @@ public interface BinaryBlockMember {
     BinaryBlockMemberComponent getComponent();
 
     BinaryBlockMemberBlock getBlock();
-    
+
 }

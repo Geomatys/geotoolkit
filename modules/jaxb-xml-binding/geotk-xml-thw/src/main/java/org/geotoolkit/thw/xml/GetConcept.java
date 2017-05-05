@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for getConcept complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="getConcept">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getConcept", propOrder = {
@@ -66,7 +66,7 @@ public class GetConcept {
         this.language = language;
         this.uri      = uri;
     }
-    
+
     public GetConcept(final String uri, final String language, final String outputFormat, final String thesaurusUri) {
         this.language     = language;
         this.uri          = uri;
@@ -83,11 +83,11 @@ public class GetConcept {
 
     /**
      * Gets the value of the uri property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUri() {
         return uri;
@@ -95,11 +95,11 @@ public class GetConcept {
 
     /**
      * Sets the value of the uri property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUri(String value) {
         this.uri = value;
@@ -107,11 +107,11 @@ public class GetConcept {
 
     /**
      * Gets the value of the language property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLanguage() {
         return language;
@@ -119,11 +119,11 @@ public class GetConcept {
 
     /**
      * Sets the value of the language property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLanguage(String value) {
         this.language = value;

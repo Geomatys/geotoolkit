@@ -24,14 +24,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
+ *
  *         A feature collection contains zero or more featureMember elements.
- *       
- * 
+ *
+ *
  * <p>Java class for AbstractFeatureCollectionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractFeatureCollectionType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,10 +62,10 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureColle
     public AbstractFeatureCollectionType(final String fid) {
         super(fid);
     }
-    
+
     /**
      * Gets the value of the featureMember property.
-     * 
+     *
      */
     public List<FeatureAssociationType> getFeatureMember() {
         if (featureMember == null) {

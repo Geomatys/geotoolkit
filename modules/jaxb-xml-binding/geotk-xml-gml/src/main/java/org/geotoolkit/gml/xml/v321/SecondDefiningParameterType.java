@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -62,11 +62,11 @@ public class SecondDefiningParameterType {
 
     /**
      * Gets the value of the inverseFlattening property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public MeasureType getInverseFlattening() {
         return inverseFlattening;
@@ -74,11 +74,11 @@ public class SecondDefiningParameterType {
 
     /**
      * Sets the value of the inverseFlattening property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public void setInverseFlattening(MeasureType value) {
         this.inverseFlattening = value;
@@ -86,11 +86,11 @@ public class SecondDefiningParameterType {
 
     /**
      * Gets the value of the semiMinorAxis property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LengthType }
-     *     
+     *
      */
     public LengthType getSemiMinorAxis() {
         return semiMinorAxis;
@@ -98,11 +98,11 @@ public class SecondDefiningParameterType {
 
     /**
      * Sets the value of the semiMinorAxis property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LengthType }
-     *     
+     *
      */
     public void setSemiMinorAxis(LengthType value) {
         this.semiMinorAxis = value;
@@ -110,11 +110,11 @@ public class SecondDefiningParameterType {
 
     /**
      * Gets the value of the isSphere property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public java.lang.Boolean isIsSphere() {
         return isSphere;
@@ -122,11 +122,11 @@ public class SecondDefiningParameterType {
 
     /**
      * Sets the value of the isSphere property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public void setIsSphere(java.lang.Boolean value) {
         this.isSphere = value;

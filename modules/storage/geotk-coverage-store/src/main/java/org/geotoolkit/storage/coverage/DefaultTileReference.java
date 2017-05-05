@@ -57,7 +57,7 @@ public class DefaultTileReference implements TileReference{
             //could not find a proper reader for input
             throw new IOException("Could not find image reader spi for input : "+input);
         }
-        
+
         Object in = XImageIO.toSupportedInput(spi, input);
 
         if(reader == null) {

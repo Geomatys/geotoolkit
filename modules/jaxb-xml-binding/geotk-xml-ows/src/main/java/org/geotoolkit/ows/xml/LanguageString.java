@@ -21,7 +21,7 @@ package org.geotoolkit.ows.xml;
  * @author guilhem
  */
 public interface LanguageString {
-    
+
     String getValue();
 
     String getLang();

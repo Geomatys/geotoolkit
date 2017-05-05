@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AbstractMSInformationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractMSInformationType">
  *   &lt;complexContent>
@@ -61,8 +61,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractMSInformationType")
@@ -81,11 +81,11 @@ public class AbstractMSInformationType {
 
     /**
      * Gets the value of the msIDType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMsIDType() {
         if (msIDType == null) {
@@ -97,11 +97,11 @@ public class AbstractMSInformationType {
 
     /**
      * Sets the value of the msIDType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMsIDType(String value) {
         this.msIDType = value;
@@ -109,11 +109,11 @@ public class AbstractMSInformationType {
 
     /**
      * Gets the value of the msIDValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMsIDValue() {
         return msIDValue;
@@ -121,11 +121,11 @@ public class AbstractMSInformationType {
 
     /**
      * Sets the value of the msIDValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMsIDValue(String value) {
         this.msIDValue = value;
@@ -133,11 +133,11 @@ public class AbstractMSInformationType {
 
     /**
      * Gets the value of the encryption property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getEncryption() {
         if (encryption == null) {
@@ -149,11 +149,11 @@ public class AbstractMSInformationType {
 
     /**
      * Sets the value of the encryption property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setEncryption(String value) {
         this.encryption = value;

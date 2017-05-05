@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for PolygonType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PolygonType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,11 +81,11 @@ public class PolygonType extends AbstractGeometryType {
 
     /**
      * Gets the value of the extrude property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isExtrude() {
         return extrude;
@@ -93,11 +93,11 @@ public class PolygonType extends AbstractGeometryType {
 
     /**
      * Sets the value of the extrude property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setExtrude(final Boolean value) {
         this.extrude = value;
@@ -105,11 +105,11 @@ public class PolygonType extends AbstractGeometryType {
 
     /**
      * Gets the value of the tessellate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isTessellate() {
         return tessellate;
@@ -117,11 +117,11 @@ public class PolygonType extends AbstractGeometryType {
 
     /**
      * Sets the value of the tessellate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setTessellate(final Boolean value) {
         this.tessellate = value;
@@ -129,12 +129,12 @@ public class PolygonType extends AbstractGeometryType {
 
     /**
      * Gets the value of the altitudeModeGroup property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link AltitudeModeEnumType }{@code >}
-     *     
+     *
      */
     public JAXBElement<?> getAltitudeModeGroup() {
         return altitudeModeGroup;
@@ -142,12 +142,12 @@ public class PolygonType extends AbstractGeometryType {
 
     /**
      * Sets the value of the altitudeModeGroup property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link AltitudeModeEnumType }{@code >}
-     *     
+     *
      */
     public void setAltitudeModeGroup(final JAXBElement<?> value) {
         this.altitudeModeGroup = ((JAXBElement<?> ) value);
@@ -155,11 +155,11 @@ public class PolygonType extends AbstractGeometryType {
 
     /**
      * Gets the value of the outerBoundaryIs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BoundaryType }
-     *     
+     *
      */
     public BoundaryType getOuterBoundaryIs() {
         return outerBoundaryIs;
@@ -167,11 +167,11 @@ public class PolygonType extends AbstractGeometryType {
 
     /**
      * Sets the value of the outerBoundaryIs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BoundaryType }
-     *     
+     *
      */
     public void setOuterBoundaryIs(final BoundaryType value) {
         this.outerBoundaryIs = value;
@@ -179,25 +179,25 @@ public class PolygonType extends AbstractGeometryType {
 
     /**
      * Gets the value of the innerBoundaryIs property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the innerBoundaryIs property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getInnerBoundaryIs().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link BoundaryType }
-     * 
-     * 
+     *
+     *
      */
     public List<BoundaryType> getInnerBoundaryIs() {
         if (innerBoundaryIs == null) {
@@ -208,25 +208,25 @@ public class PolygonType extends AbstractGeometryType {
 
     /**
      * Gets the value of the polygonSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the polygonSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPolygonSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getPolygonSimpleExtensionGroup() {
         if (polygonSimpleExtensionGroup == null) {
@@ -237,25 +237,25 @@ public class PolygonType extends AbstractGeometryType {
 
     /**
      * Gets the value of the polygonObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the polygonObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPolygonObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getPolygonObjectExtensionGroup() {
         if (polygonObjectExtensionGroup == null) {

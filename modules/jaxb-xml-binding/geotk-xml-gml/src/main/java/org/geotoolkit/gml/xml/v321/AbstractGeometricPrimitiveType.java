@@ -32,11 +32,11 @@ import org.opengis.geometry.primitive.Primitive;
 
 /**
  * gml:AbstractGeometricPrimitiveType is the abstract root type of the geometric primitives. A geometric primitive is a geometric object that is not decomposed further into other primitives in the system. All primitives are oriented in the direction implied by the sequence of their coordinate tuples.
- * 
+ *
  * <p>Java class for AbstractGeometricPrimitiveType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractGeometricPrimitiveType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.opengis.geometry.primitive.Primitive;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractGeometricPrimitiveType")
@@ -60,13 +60,13 @@ public abstract class AbstractGeometricPrimitiveType extends AbstractGeometryTyp
 
 
     public AbstractGeometricPrimitiveType() {
-        
+
     }
-    
+
     public AbstractGeometricPrimitiveType(final String id, final String srsName) {
         super(id, srsName);
     }
-    
+
     @Override
     public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");

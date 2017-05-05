@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for PairType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PairType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,11 +75,11 @@ public class PairType extends AbstractObjectType {
 
     /**
      * Gets the value of the key property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StyleStateEnumType }
-     *     
+     *
      */
     public StyleStateEnumType getKey() {
         return key;
@@ -87,11 +87,11 @@ public class PairType extends AbstractObjectType {
 
     /**
      * Sets the value of the key property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StyleStateEnumType }
-     *     
+     *
      */
     public void setKey(final StyleStateEnumType value) {
         this.key = value;
@@ -99,11 +99,11 @@ public class PairType extends AbstractObjectType {
 
     /**
      * Gets the value of the styleUrl property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStyleUrl() {
         return styleUrl;
@@ -111,11 +111,11 @@ public class PairType extends AbstractObjectType {
 
     /**
      * Sets the value of the styleUrl property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStyleUrl(final String value) {
         this.styleUrl = value;
@@ -123,13 +123,13 @@ public class PairType extends AbstractObjectType {
 
     /**
      * Gets the value of the abstractStyleSelectorGroup property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractStyleSelectorType }{@code >}
      *     {@link JAXBElement }{@code <}{@link StyleMapType }{@code >}
      *     {@link JAXBElement }{@code <}{@link StyleType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractStyleSelectorType> getAbstractStyleSelectorGroup() {
         return abstractStyleSelectorGroup;
@@ -137,13 +137,13 @@ public class PairType extends AbstractObjectType {
 
     /**
      * Sets the value of the abstractStyleSelectorGroup property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractStyleSelectorType }{@code >}
      *     {@link JAXBElement }{@code <}{@link StyleMapType }{@code >}
      *     {@link JAXBElement }{@code <}{@link StyleType }{@code >}
-     *     
+     *
      */
     public void setAbstractStyleSelectorGroup(final JAXBElement<? extends AbstractStyleSelectorType> value) {
         this.abstractStyleSelectorGroup = ((JAXBElement<? extends AbstractStyleSelectorType> ) value);
@@ -151,25 +151,25 @@ public class PairType extends AbstractObjectType {
 
     /**
      * Gets the value of the pairSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the pairSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPairSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getPairSimpleExtensionGroup() {
         if (pairSimpleExtensionGroup == null) {
@@ -180,25 +180,25 @@ public class PairType extends AbstractObjectType {
 
     /**
      * Gets the value of the pairObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the pairObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPairObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getPairObjectExtensionGroup() {
         if (pairObjectExtensionGroup == null) {

@@ -29,9 +29,9 @@ import org.geotoolkit.wcs.xml.SupportedInterpolations;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -44,7 +44,7 @@ import org.geotoolkit.wcs.xml.SupportedInterpolations;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -66,7 +66,7 @@ public class InterpolationMethods implements SupportedInterpolations {
      */
     InterpolationMethods(){
     }
-    
+
     /**
      * build a new interpolation method.
      */
@@ -79,7 +79,7 @@ public class InterpolationMethods implements SupportedInterpolations {
             }
         }
     }
-    
+
     /**
      * Gets the value of the interpolationMethod property.
      */

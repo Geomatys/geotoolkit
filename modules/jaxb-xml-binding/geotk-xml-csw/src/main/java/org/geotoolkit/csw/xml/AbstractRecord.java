@@ -22,5 +22,5 @@ package org.geotoolkit.csw.xml;
  * @module
  */
 public interface AbstractRecord {
-    
+
 }

@@ -30,13 +30,13 @@ public abstract class DefaultAbstractObject implements AbstractObject {
     protected IdAttributes idAttributes;
 
     /**
-     * 
+     *
      */
     protected DefaultAbstractObject() {
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      */

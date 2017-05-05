@@ -27,9 +27,9 @@ import org.geotoolkit.gml.xml.v321.FeaturePropertyType;
 
 /**
  * <p>Java class for FeatureRelationshipType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FeatureRelationshipType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.gml.xml.v321.FeaturePropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureRelationshipType", propOrder = {
@@ -59,22 +59,22 @@ public class FeatureRelationshipType {
     private FeaturePropertyType target;
 
     public FeatureRelationshipType() {
-        
+
     }
-    
+
     public FeatureRelationshipType(final String target) {
         if (target != null) {
             this.target = new FeaturePropertyType(target);
         }
     }
-    
+
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -82,11 +82,11 @@ public class FeatureRelationshipType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -94,11 +94,11 @@ public class FeatureRelationshipType {
 
     /**
      * Gets the value of the target property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FeaturePropertyType }
-     *     
+     *
      */
     public FeaturePropertyType getTarget() {
         return target;
@@ -106,11 +106,11 @@ public class FeatureRelationshipType {
 
     /**
      * Sets the value of the target property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FeaturePropertyType }
-     *     
+     *
      */
     public void setTarget(FeaturePropertyType value) {
         this.target = value;

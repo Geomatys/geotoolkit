@@ -33,12 +33,12 @@ import java.util.logging.Logger;
  * @author Guilhem Legal (Geomatys)
  */
 public abstract class AbstractMetadataReader implements MetadataReader {
-    
+
     /**
      * A debugging logger
      */
     protected static final Logger LOGGER = Logging.getLogger("org.constellation.metadata.io");
-    
+
     /**
      * A flag indicating if the cache mecanism is enabled or not.
      */
@@ -48,7 +48,7 @@ public abstract class AbstractMetadataReader implements MetadataReader {
      * A flag indicating if the multi thread mecanism is enabled or not.
      */
     private boolean threadEnabled;
-    
+
     /**
      * A map containing the metadata already extract from the database.
      */
@@ -61,7 +61,7 @@ public abstract class AbstractMetadataReader implements MetadataReader {
 
     /**
      * Initialize the metadata reader base attribute.
-     * 
+     *
      * @param isCacheEnabled A flag indicating if the cache mecanism is enabled or not.
      * @param isThreadEnabled A flag indicating if the multi thread mecanism is enabled or not.
      */
@@ -69,19 +69,19 @@ public abstract class AbstractMetadataReader implements MetadataReader {
         this.cacheEnabled  = isCacheEnabled;
         this.threadEnabled = isThreadEnabled;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public abstract Node getMetadata(final String identifier, final MetadataType mode) throws MetadataIoException;
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public abstract boolean existMetadata(final String identifier) throws MetadataIoException;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -93,7 +93,7 @@ public abstract class AbstractMetadataReader implements MetadataReader {
      */
     @Override
     public abstract List<String> getAllIdentifiers() throws MetadataIoException;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -107,7 +107,7 @@ public abstract class AbstractMetadataReader implements MetadataReader {
     public void clearCache() {
         metadatas.clear();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -125,16 +125,16 @@ public abstract class AbstractMetadataReader implements MetadataReader {
     protected void addInCache(final String identifier, final Object metadata) {
         metadatas.put(identifier, metadata);
     }
-    
+
     /**
      * Return a metadata from the cache if it present.
-     * 
+     *
      * @param identifier The metadata identifier.
      */
     protected Object getFromCache(final String identifier) {
         return metadatas.get(identifier);
     }
-    
+
     /**
      * {@inheritDoc}
      */

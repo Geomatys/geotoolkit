@@ -27,9 +27,9 @@ import org.geotoolkit.wms.xml.AbstractDimension;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;simpleContent>
@@ -45,7 +45,7 @@ import org.geotoolkit.wms.xml.AbstractDimension;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -81,26 +81,26 @@ public class Dimension implements AbstractDimension {
 
      /**
       * Build a new Dimension object.
-      *  
+      *
       * @param name     The name (often the type) of this Dimension block (time, elevation,...)
       * @param units    The unit of the value (example:ISO8601 for time).
       * @param _default The default value if its not specified.
       */
     public Dimension(final String name, final String units, final String _default, final String value) {
-        
+
         this.name           = name;
         this._default       = _default;
         this.units          = units;
         this.value          = value;
     }
-    
+
     /**
      * Build a new Dimension object with full parameter.
      */
-    public Dimension(final String value, final String name, final String units, final String unitSymbol, 
+    public Dimension(final String value, final String name, final String units, final String unitSymbol,
             final String _default, final Boolean multipleValues, final Boolean nearestValue,
             final Boolean current) {
-       
+
         this.current        = current;
         this.multipleValues = multipleValues;
         this.name           = name;
@@ -110,10 +110,10 @@ public class Dimension implements AbstractDimension {
         this.units          = units;
         this.value          = value;
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
     */
     public String getValue() {
         return value;
@@ -121,7 +121,7 @@ public class Dimension implements AbstractDimension {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
     */
     public void setValue(final String value) {
         this.value = value;
@@ -136,7 +136,7 @@ public class Dimension implements AbstractDimension {
 
     /**
      * Gets the value of the units property.
-     * 
+     *
      */
     public String getUnits() {
         return units;
@@ -144,7 +144,7 @@ public class Dimension implements AbstractDimension {
 
     /**
      * Gets the value of the unitSymbol property.
-     * 
+     *
      */
     public String getUnitSymbol() {
         return unitSymbol;
@@ -156,15 +156,15 @@ public class Dimension implements AbstractDimension {
     public String getDefault() {
         return _default;
     }
-  
+
     /**
      * Sets the value of the Default property.
-     * 
+     *
      */
     public void setDefault(final String _default) {
         this._default = _default;
     }
-    
+
     /**
      * Gets the value of the multipleValues property.
      */
@@ -174,7 +174,7 @@ public class Dimension implements AbstractDimension {
 
     /**
      * Gets the value of the nearestValue property.
-     * 
+     *
      */
     public Boolean isNearestValue() {
         return nearestValue;
@@ -182,7 +182,7 @@ public class Dimension implements AbstractDimension {
 
     /**
      * Gets the value of the current property.
-     * 
+     *
      */
     public Boolean isCurrent() {
         return current;

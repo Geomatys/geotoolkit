@@ -55,7 +55,7 @@ import java.util.List;
  *  &lt;xs:anyAttribute namespace="##other"/>
  * &lt;/xs:complexType>
  * </pre>
- * 
+ *
  * @author Samuel Andrés
  * @module
  */
@@ -81,7 +81,7 @@ public interface DependentLocality {
     List<GenericTypedGrPostal> getDependentLocalityNames();
 
     /**
-     * 
+     *
      * @param dependentLocalityNames
      */
     void setDependentLocalityNames(List<GenericTypedGrPostal> dependentLocalityNames);
@@ -93,7 +93,7 @@ public interface DependentLocality {
     DependentLocalityNumber getDependentLocalityNumber();
 
     /**
-     * 
+     *
      * @param dependentLocalityNumber
      */
     void setDependentLocalityNumber(DependentLocalityNumber dependentLocalityNumber);
@@ -153,7 +153,7 @@ public interface DependentLocality {
     PostalRoute getPostalRoute();
 
     /**
-     * 
+     *
      * @param postalRoute
      */
     void setPostalRoute(PostalRoute postalRoute);
@@ -169,13 +169,13 @@ public interface DependentLocality {
     Thoroughfare getThoroughfare();
 
     /**
-     * 
+     *
      * @param thoroughfare
      */
     void setThoroughfare(Thoroughfare thoroughfare);
 
     /**
-     * 
+     *
      * @return
      */
     Premise getPremise();
@@ -209,7 +209,7 @@ public interface DependentLocality {
     PostalCode getPostalCode();
 
     /**
-     * 
+     *
      * @param postalCode
      */
     void setPostalCode(PostalCode postalCode);
@@ -241,7 +241,7 @@ public interface DependentLocality {
     String getUsageType();
 
     /**
-     * 
+     *
      * @param usageType
      */
     void setUsageType(String usageType);
@@ -268,7 +268,7 @@ public interface DependentLocality {
     String getIndicator();
 
     /**
-     * 
+     *
      * @param indicator
      */
     void setIndicator(String indicator);

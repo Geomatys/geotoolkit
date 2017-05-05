@@ -23,7 +23,7 @@ import java.net.URLConnection;
 
 /**
  * Wrap several ClientSecurity objects.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -34,7 +34,7 @@ public final class ClientSecurityStack implements ClientSecurity{
     private ClientSecurityStack(ClientSecurity ... securities) {
         this.securities = securities;
     }
-    
+
     @Override
     public URL secure(URL url) {
         for(ClientSecurity security : securities){
@@ -68,14 +68,14 @@ public final class ClientSecurityStack implements ClientSecurity{
         }
         return stream;
     }
-    
+
     /**
-     * 
+     *
      * @param securities : ClientSecurity objects to wrap together
-     * @return 
+     * @return
      */
     public static ClientSecurity wrap(ClientSecurity ... securities){
         return new ClientSecurityStack(securities);
     }
-    
+
 }

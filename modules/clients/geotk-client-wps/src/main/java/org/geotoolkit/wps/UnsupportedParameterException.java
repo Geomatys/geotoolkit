@@ -19,7 +19,7 @@ package org.geotoolkit.wps;
 /**
  * WPS excpetion raised when a process parameter could not be mapped to a known
  * data type.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -28,13 +28,13 @@ public class UnsupportedParameterException extends Exception {
     public UnsupportedParameterException(String processName, String parameterName) {
         this(processName,parameterName,null,null);
     }
-    
+
     public UnsupportedParameterException(String processName, String parameterName, String details) {
         this(processName,parameterName,details,null);
     }
-    
+
     public UnsupportedParameterException(String processName, String parameterName, String details, Throwable cause) {
         super("Parameter "+parameterName+" not supported in process "+processName+ ((details!=null)?"\n"+details:""), cause);
     }
-    
+
 }

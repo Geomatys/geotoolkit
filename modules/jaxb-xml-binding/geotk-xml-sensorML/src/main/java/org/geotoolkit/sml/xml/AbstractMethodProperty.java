@@ -24,11 +24,11 @@ package org.geotoolkit.sml.xml;
 public interface AbstractMethodProperty {
 
     AbstractProcessMethod getProcessMethod();
-    
+
     String getRemoteSchema();
 
     void setRemoteSchema(String value);
-    
+
     String getType();
 
     void setType(String value);

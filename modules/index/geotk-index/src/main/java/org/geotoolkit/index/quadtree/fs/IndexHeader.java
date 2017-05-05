@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
- * 
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -27,7 +27,7 @@ import org.geotoolkit.index.quadtree.StoreException;
 
 /**
  * DOCUMENT ME!
- * 
+ *
  * @author Tommaso Nolli
  * @module
  */
@@ -50,9 +50,9 @@ public class IndexHeader {
 
     /**
      * DOCUMENT ME!
-     * 
+     *
      * @param channel
-     * 
+     *
      * @throws IOException
      * @throws StoreException
      */

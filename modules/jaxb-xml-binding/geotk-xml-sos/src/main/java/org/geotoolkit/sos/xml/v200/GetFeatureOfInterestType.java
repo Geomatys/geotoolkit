@@ -31,9 +31,9 @@ import org.opengis.filter.Filter;
 
 /**
  * <p>Java class for GetFeatureOfInterestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetFeatureOfInterestType">
  *   &lt;complexContent>
@@ -58,8 +58,8 @@ import org.opengis.filter.Filter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetFeatureOfInterestType", propOrder = {
@@ -80,9 +80,9 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
     private List<SpatialFilterType> spatialFilter;
 
     public GetFeatureOfInterestType() {
-        
+
     }
-    
+
     public GetFeatureOfInterestType(final String version, final String service, final String featureId) {
         super(version, service);
         if (featureId != null) {
@@ -90,7 +90,7 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
             this.featureOfInterest.add(featureId);
         }
     }
-    
+
     public GetFeatureOfInterestType(final String version, final String service, final List<String> observedProperties,
             final List<String> procedure, final List<String> featureId, final Filter location) {
         super(version, service);
@@ -102,12 +102,12 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
             this.spatialFilter.add(new SpatialFilterType(location));
         }
     }
-    
+
     public GetFeatureOfInterestType(final String version, final String service, final List<String> featureId) {
         super(version, service);
         this.featureOfInterest = featureId;
     }
-    
+
     public GetFeatureOfInterestType(final String version, final String service, final Filter location) {
         super(version, service);
         if (location != null) {
@@ -115,13 +115,13 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
             this.spatialFilter.add(new SpatialFilterType(location));
         }
      }
-    
+
     /**
      * Gets the value of the procedure property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     @Override
     public List<String> getProcedure() {
@@ -133,10 +133,10 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
 
     /**
      * Gets the value of the observedProperty property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     @Override
     public List<String> getObservedProperty() {
@@ -148,10 +148,10 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
 
     /**
      * Gets the value of the featureOfInterest property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     @Override
     public List<String> getFeatureOfInterestId() {
@@ -163,10 +163,10 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
 
     /**
      * Gets the value of the spatialFilter property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link GetFeatureOfInterestType.SpatialFilter }
-     * 
+     *
      */
     public List<SpatialFilterType> getRealSpatialFilter() {
         if (spatialFilter == null) {
@@ -188,7 +188,7 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
 
     /**
      * SOS 1.0.0 compatibility
-     * @return 
+     * @return
      */
     @Override
     public List<Filter> getTemporalFilters() {

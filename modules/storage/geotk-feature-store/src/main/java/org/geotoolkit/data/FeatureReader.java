@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ import org.opengis.feature.FeatureType;
  * <br/>
  * The feature reader is the result of a query on a Featurestore, the expected
  * FeatureType can be retrieved with method getFeatureType.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -32,9 +32,9 @@ public interface FeatureReader extends FeatureIterator{
 
     /**
      * Get the reader FeatureType.
-     * This type may be abstract to reflect possible variations in the returned 
+     * This type may be abstract to reflect possible variations in the returned
      * features.
-     * 
+     *
      * @return the featuretype of all feature returned by this iterator.
      */
     FeatureType getFeatureType();

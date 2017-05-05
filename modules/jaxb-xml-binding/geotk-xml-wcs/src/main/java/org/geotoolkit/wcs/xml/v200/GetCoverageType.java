@@ -42,9 +42,9 @@ import org.opengis.util.FactoryException;
 
 /**
  * <p>Java class for GetCoverageType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetCoverageType">
  *   &lt;complexContent>
@@ -59,8 +59,8 @@ import org.opengis.util.FactoryException;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetCoverageType", propOrder = {
@@ -87,7 +87,7 @@ public class GetCoverageType extends RequestBaseType implements GetCoverage {
         this.service = "WCS";
         this.version = "2.0.1";
     }
-    
+
     public GetCoverageType(final String coverageId, final String format, final String mediaType) {
         this.coverageId = coverageId;
         this.format     = format;
@@ -95,14 +95,14 @@ public class GetCoverageType extends RequestBaseType implements GetCoverage {
         this.service    = "WCS";
         this.version    = "2.0.1";
     }
-    
+
     /**
-     * Identifier of the coverage that this GetCoverage operation request shall draw from. 
-     * 
+     * Identifier of the coverage that this GetCoverage operation request shall draw from.
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCoverageId() {
         return coverageId;
@@ -110,11 +110,11 @@ public class GetCoverageType extends RequestBaseType implements GetCoverage {
 
     /**
      * Sets the value of the coverageId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCoverageId(String value) {
         this.coverageId = value;
@@ -122,13 +122,13 @@ public class GetCoverageType extends RequestBaseType implements GetCoverage {
 
     /**
      * Gets the value of the dimensionSubset property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link DimensionTrimType }{@code >}
      * {@link JAXBElement }{@code <}{@link DimensionSubsetType }{@code >}
      * {@link JAXBElement }{@code <}{@link DimensionSliceType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends DimensionSubsetType>> getDimensionSubset() {
         if (dimensionSubset == null) {
@@ -139,11 +139,11 @@ public class GetCoverageType extends RequestBaseType implements GetCoverage {
 
     /**
      * Gets the value of the format property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getFormat() {
@@ -155,11 +155,11 @@ public class GetCoverageType extends RequestBaseType implements GetCoverage {
 
     /**
      * Sets the value of the format property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFormat(String value) {
         this.format = value;
@@ -167,11 +167,11 @@ public class GetCoverageType extends RequestBaseType implements GetCoverage {
 
     /**
      * Gets the value of the mediaType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getMediaType() {
@@ -180,11 +180,11 @@ public class GetCoverageType extends RequestBaseType implements GetCoverage {
 
     /**
      * Sets the value of the mediaType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMediaType(String value) {
         this.mediaType = value;

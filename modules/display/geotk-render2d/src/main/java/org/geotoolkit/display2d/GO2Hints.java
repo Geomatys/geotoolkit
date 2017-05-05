@@ -151,13 +151,13 @@ public final class GO2Hints extends Static {
      * Default value is null.
      */
     public static final Key KEY_ELEVATION_MODEL = new NamedKey(ElevationModel.class, "GO2 - Default Elevation Model");
-    
+
     /**
-     * Configure the PyramidalCoverageReference view, false by default in stateless mode, 
+     * Configure the PyramidalCoverageReference view, false by default in stateless mode,
      * true in statefull mode.
-     * If true the graphic rendering is tile by tile else all the view is filled. 
-     * 
-     * @see StatelessMapItemJ2D#parseChild(org.geotoolkit.map.MapItem) 
+     * If true the graphic rendering is tile by tile else all the view is filled.
+     *
+     * @see StatelessMapItemJ2D#parseChild(org.geotoolkit.map.MapItem)
      */
     public static final Key KEY_VIEW_TILE = new NamedKey(Boolean.class, "GO2 - View Tiles");
 

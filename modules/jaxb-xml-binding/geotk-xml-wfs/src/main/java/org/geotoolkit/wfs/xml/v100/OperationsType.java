@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for OperationsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OperationsType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OperationsType", propOrder = {
@@ -67,20 +67,20 @@ public class OperationsType {
 
     /**
      * Gets the value of the insertOrUpdateOrDelete property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the insertOrUpdateOrDelete property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getInsertOrUpdateOrDelete().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link EmptyType }{@code >}
@@ -88,8 +88,8 @@ public class OperationsType {
      * {@link JAXBElement }{@code <}{@link EmptyType }{@code >}
      * {@link JAXBElement }{@code <}{@link EmptyType }{@code >}
      * {@link JAXBElement }{@code <}{@link EmptyType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<EmptyType>> getInsertOrUpdateOrDelete() {
         if (insertOrUpdateOrDelete == null) {
@@ -116,11 +116,11 @@ public class OperationsType {
                     if (!Objects.equals(thisJb.getName(), thatJb.getName()) ||
                         !Objects.equals(thisJb.getValue(), thatJb.getValue())) {
                         return false;
-                    }    
+                    }
                 }
                 return true;
             }
-            
+
         }
         return false;
     }

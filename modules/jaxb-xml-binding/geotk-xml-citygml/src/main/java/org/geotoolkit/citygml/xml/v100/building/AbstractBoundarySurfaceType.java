@@ -32,12 +32,12 @@ import org.geotoolkit.gml.xml.v311.MultiSurfacePropertyType;
  * The geometry of a BoundarySurface is given by MultiSurfaces.
  * As it is a subclass of _CityObject, it inherits all atributes and relations,
  * in particular the external references, and the generalization relations.
- *             
- * 
+ *
+ *
  * <p>Java class for AbstractBoundarySurfaceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractBoundarySurfaceType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.geotoolkit.gml.xml.v311.MultiSurfacePropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -85,11 +85,11 @@ public abstract class AbstractBoundarySurfaceType extends AbstractCityObjectType
 
     /**
      * Gets the value of the lod2MultiSurface property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public MultiSurfacePropertyType getLod2MultiSurface() {
         return lod2MultiSurface;
@@ -97,11 +97,11 @@ public abstract class AbstractBoundarySurfaceType extends AbstractCityObjectType
 
     /**
      * Sets the value of the lod2MultiSurface property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public void setLod2MultiSurface(final MultiSurfacePropertyType value) {
         this.lod2MultiSurface = value;
@@ -109,11 +109,11 @@ public abstract class AbstractBoundarySurfaceType extends AbstractCityObjectType
 
     /**
      * Gets the value of the lod3MultiSurface property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public MultiSurfacePropertyType getLod3MultiSurface() {
         return lod3MultiSurface;
@@ -121,11 +121,11 @@ public abstract class AbstractBoundarySurfaceType extends AbstractCityObjectType
 
     /**
      * Sets the value of the lod3MultiSurface property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public void setLod3MultiSurface(final MultiSurfacePropertyType value) {
         this.lod3MultiSurface = value;
@@ -133,11 +133,11 @@ public abstract class AbstractBoundarySurfaceType extends AbstractCityObjectType
 
     /**
      * Gets the value of the lod4MultiSurface property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public MultiSurfacePropertyType getLod4MultiSurface() {
         return lod4MultiSurface;
@@ -145,11 +145,11 @@ public abstract class AbstractBoundarySurfaceType extends AbstractCityObjectType
 
     /**
      * Sets the value of the lod4MultiSurface property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MultiSurfacePropertyType }
-     *     
+     *
      */
     public void setLod4MultiSurface(final MultiSurfacePropertyType value) {
         this.lod4MultiSurface = value;

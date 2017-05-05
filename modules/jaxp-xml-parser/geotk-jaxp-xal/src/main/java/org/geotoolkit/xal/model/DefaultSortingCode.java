@@ -27,7 +27,7 @@ public class DefaultSortingCode implements SortingCode {
     private final GrPostal grPostal;
 
     /**
-     * 
+     *
      * @param type
      * @param grPostal
      */

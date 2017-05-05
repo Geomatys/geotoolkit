@@ -39,14 +39,14 @@ import org.opengis.feature.Feature;
 
 /**
  * Geometry clipboard edition tool delegate.
- * 
+ *
  * @author Johann Sorel
  * @module
  */
 public class GeometryFromClipboardDelegate extends AbstractFeatureEditionDelegate {
 
     private final DialogDecoration dialogDecoration = new DialogDecoration();
-    
+
     private Feature feature = null;
 
 
@@ -59,16 +59,16 @@ public class GeometryFromClipboardDelegate extends AbstractFeatureEditionDelegat
         decoration.setGeometries(null);
         dialogDecoration.clipboardPanel.setGeometry(null);
     }
-    
+
     @Override
     public MapDecoration getDecoration() {
         final MapDecoration parentDeco = super.getDecoration();
         return MapDecorationStack.wrap(dialogDecoration,parentDeco);
     }
-    
+
     private void setCurrentFeature(final Feature feature){
         this.feature = feature;
-        if(feature != null){            
+        if(feature != null){
             final Geometry geom = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(feature);
             decoration.setGeometries(Collections.singleton(helper.toObjectiveCRS(geom)));
             dialogDecoration.clipboardPanel.setGeometry(geom);
@@ -102,31 +102,31 @@ public class GeometryFromClipboardDelegate extends AbstractFeatureEditionDelegat
         private final JLayeredPane desktop;
         private final JInternalFrame frame;
         private final JClipboardPanel clipboardPanel;
-        
+
         public DialogDecoration() {
             setLayout(new BorderLayout());
-            
+
             clipboardPanel = new JClipboardPanel();
             clipboardPanel.addPropertyChangeListener(DialogDecoration.this);
-            
+
             frame = new JInternalFrame("Clipboard");
-            frame.setContentPane(clipboardPanel);      
+            frame.setContentPane(clipboardPanel);
             frame.setResizable(true);
             frame.setClosable(true);
             frame.setIconifiable(false);
             frame.pack();
             frame.setVisible(true);
-            
+
             desktop = new JLayeredPane();
             desktop.setOpaque(false);
             desktop.add(frame);
-            
-            add(BorderLayout.CENTER,desktop);            
+
+            add(BorderLayout.CENTER,desktop);
         }
 
         @Override
         public void propertyChange(final PropertyChangeEvent evt) {
-            
+
             if(JClipboardPanel.GEOMETRY_PROPERTY.equals(evt.getPropertyName())){
                 final Geometry geom = dialogDecoration.clipboardPanel.getGeometry();
                 if(geom == null){
@@ -135,8 +135,8 @@ public class GeometryFromClipboardDelegate extends AbstractFeatureEditionDelegat
                     decoration.setGeometries(Collections.singleton(helper.toObjectiveCRS(geom)));
                 }
             }
-            
+
         }
-        
+
     }
 }

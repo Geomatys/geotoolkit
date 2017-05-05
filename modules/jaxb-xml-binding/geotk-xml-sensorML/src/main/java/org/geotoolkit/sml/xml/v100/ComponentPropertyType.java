@@ -158,7 +158,7 @@ public class ComponentPropertyType implements ComponentProperty {
         }
         return null;
     }
-    
+
     /**
      * Sets the value of the process property.
      */

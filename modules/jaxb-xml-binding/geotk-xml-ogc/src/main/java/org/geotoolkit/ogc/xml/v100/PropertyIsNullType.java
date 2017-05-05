@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for PropertyIsNullType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PropertyIsNullType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,9 +56,9 @@ public class PropertyIsNullType extends ComparisonOpsType {
     private LiteralType literal;
 
     public PropertyIsNullType() {
-        
+
     }
-    
+
     public PropertyIsNullType(final PropertyIsNullType that) {
         if (that != null) {
             if (that.literal != null) {
@@ -69,10 +69,10 @@ public class PropertyIsNullType extends ComparisonOpsType {
             }
         }
     }
-    
+
     /**
      * Gets the value of the propertyName property.
-     * 
+     *
      */
     public PropertyNameType getPropertyName() {
         return propertyName;
@@ -80,7 +80,7 @@ public class PropertyIsNullType extends ComparisonOpsType {
 
     /**
      * Sets the value of the propertyName property.
-     * 
+     *
      */
     public void setPropertyName(final PropertyNameType value) {
         this.propertyName = value;
@@ -88,7 +88,7 @@ public class PropertyIsNullType extends ComparisonOpsType {
 
     /**
      * Gets the value of the literal property.
-     * 
+     *
      */
     public LiteralType getLiteral() {
         return literal;
@@ -96,7 +96,7 @@ public class PropertyIsNullType extends ComparisonOpsType {
 
     /**
      * Sets the value of the literal property.
-     * 
+     *
      */
     public void setLiteral(final LiteralType value) {
         this.literal = value;

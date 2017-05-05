@@ -23,7 +23,7 @@ import org.geotoolkit.xml.StaxStreamReader;
 
 /**
  * Stax parser to read token information from a GetConfig request.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -34,7 +34,7 @@ public class TokenInformationParser extends StaxStreamReader {
 
     public TokenInformationParser() {
     }
-    
+
     public TokenInformation read() throws XMLStreamException {
         while (reader.hasNext()) {
             final int type = reader.next();
@@ -58,9 +58,9 @@ public class TokenInformationParser extends StaxStreamReader {
                 toTagEnd(TAG_CONFIG);
             }
         }
-        
-        
+
+
         return new TokenInformation(timeout);
     }
-    
+
 }

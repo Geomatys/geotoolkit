@@ -32,12 +32,12 @@ import org.geotoolkit.wfs.xml.LockFeature;
  * identifier (lockId) is returned to the client application which
  * can be used by subsequent operations to reference the locked
  * features.
- *          
- * 
+ *
+ *
  * <p>Java class for LockFeatureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LockFeatureType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.geotoolkit.wfs.xml.LockFeature;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LockFeatureType", propOrder = {
@@ -76,7 +76,7 @@ public class LockFeatureType implements LockFeature {
 
     @XmlTransient
     private Map<String, String> prefixMapping;
-    
+
     public LockFeatureType() {
 
     }
@@ -88,14 +88,14 @@ public class LockFeatureType implements LockFeature {
         this.lock       = lock;
         this.lockAction = lockAction;
     }
-    
+
     /**
      * Gets the value of the lock property.
-     * 
+     *
     * Objects of the following type(s) are allowed in the list
      * {@link LockType }
-     * 
-     * 
+     *
+     *
      */
     public List<LockType> getLock() {
         if (lock == null) {
@@ -106,11 +106,11 @@ public class LockFeatureType implements LockFeature {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public Version getVersion() {
         if (version == null) {
@@ -122,11 +122,11 @@ public class LockFeatureType implements LockFeature {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(String value) {
         this.version = value;
@@ -134,11 +134,11 @@ public class LockFeatureType implements LockFeature {
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getService() {
         if (service == null) {
@@ -150,11 +150,11 @@ public class LockFeatureType implements LockFeature {
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setService(String value) {
         this.service = value;
@@ -162,11 +162,11 @@ public class LockFeatureType implements LockFeature {
 
     /**
      * Gets the value of the expiry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getExpiry() {
         return expiry;
@@ -174,11 +174,11 @@ public class LockFeatureType implements LockFeature {
 
     /**
      * Sets the value of the expiry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setExpiry(Integer value) {
         this.expiry = value;
@@ -186,11 +186,11 @@ public class LockFeatureType implements LockFeature {
 
     /**
      * Gets the value of the lockAction property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllSomeType }
-     *     
+     *
      */
     public AllSomeType getLockAction() {
         return lockAction;
@@ -198,11 +198,11 @@ public class LockFeatureType implements LockFeature {
 
     /**
      * Sets the value of the lockAction property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllSomeType }
-     *     
+     *
      */
     public void setLockAction(AllSomeType value) {
         this.lockAction = value;
@@ -219,7 +219,7 @@ public class LockFeatureType implements LockFeature {
     public Map<String, String> getPrefixMapping() {
         return prefixMapping;
     }
-    
+
     /**
      * @param prefixMapping the prefixMapping to set
      */

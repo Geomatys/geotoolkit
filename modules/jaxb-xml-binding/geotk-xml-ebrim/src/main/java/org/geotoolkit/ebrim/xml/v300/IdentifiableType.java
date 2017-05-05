@@ -29,16 +29,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Common base type for all types that have unique identity.     
- * If id is provided and is not in proper URN syntax then it is used for linkage within document and is ignored by the registry. 
+ * Common base type for all types that have unique identity.
+ * If id is provided and is not in proper URN syntax then it is used for linkage within document and is ignored by the registry.
  * In this case the registry generates a UUID URN for id attribute.
  * id must not be null when object is retrieved from the registry.
- *       
- * 
+ *
+ *
  * <p>Java class for IdentifiableType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="IdentifiableType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,7 +84,7 @@ public class IdentifiableType {
         }
         return this.slot;
     }
-    
+
     /**
      * Sets the value of the slot property.
      */
@@ -94,7 +94,7 @@ public class IdentifiableType {
         }
         this.slot.add(slot);
     }
-    
+
     /**
      * Sets the value of the slot property.
      */
@@ -129,7 +129,7 @@ public class IdentifiableType {
     public void setHome(final String value) {
         this.home = value;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder();

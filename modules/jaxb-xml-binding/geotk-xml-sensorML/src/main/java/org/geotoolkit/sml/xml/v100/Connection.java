@@ -30,9 +30,9 @@ import org.geotoolkit.sml.xml.AbstractConnection;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.sml.xml.AbstractConnection;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -95,7 +95,7 @@ public class Connection implements AbstractConnection {
             }
         }
     }
-    
+
     /**
      * Gets the value of the link property.
      */
@@ -165,7 +165,7 @@ public class Connection implements AbstractConnection {
         return hash;
     }
 
-    
+
 
 
     @Override

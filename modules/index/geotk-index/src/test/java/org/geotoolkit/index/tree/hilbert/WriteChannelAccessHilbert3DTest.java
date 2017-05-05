@@ -31,9 +31,9 @@ public final class WriteChannelAccessHilbert3DTest extends WriteChannelAccessHil
 
     /**
      * Create a HilbertRTree Test suite in a Cartesian 3D space stored into byte array.
-     * 
+     *
      * @throws StoreIndexException
-     * @throws IOException 
+     * @throws IOException
      */
     public WriteChannelAccessHilbert3DTest() throws StoreIndexException, IOException {
         super(PredefinedCRS.CARTESIAN_3D);

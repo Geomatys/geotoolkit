@@ -47,8 +47,8 @@ import java.io.Reader;
  *   <li> As of 2.4, Tokens incorrectly identified as acronyms
  *        are corrected (see <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1068</a>)
  * </ul>
- * 
- * ClassicAnalyzer was named StandardAnalyzer in Lucene versions prior to 3.1. 
+ *
+ * ClassicAnalyzer was named StandardAnalyzer in Lucene versions prior to 3.1.
  * As of 3.1, {@link StandardAnalyzer} implements Unicode text segmentation,
  * as specified by UAX#29.
  */
@@ -61,7 +61,7 @@ public final class ClassicAnalyzer extends StopwordAnalyzerBase {
 
   /** An unmodifiable set containing some common English words that are usually not
   useful for searching. */
-  public static final CharArraySet STOP_WORDS_SET = StopAnalyzer.ENGLISH_STOP_WORDS_SET; 
+  public static final CharArraySet STOP_WORDS_SET = StopAnalyzer.ENGLISH_STOP_WORDS_SET;
 
   /** Builds an analyzer with the given stop words.
    * @param stopWords stop words */
@@ -92,7 +92,7 @@ public final class ClassicAnalyzer extends StopwordAnalyzerBase {
   public void setMaxTokenLength(int length) {
     maxTokenLength = length;
   }
-    
+
   /**
    * @see #setMaxTokenLength
    */

@@ -27,16 +27,16 @@ import javax.xml.namespace.QName;
  */
 @XmlRegistry
 public class GraduationSymbolizerObjectFactory {
-    
+
     private static final QName _GraduationSymbolizer_QNAME = new QName("http://geotoolkit.org", "GraduationSymbolizer");
-    
+
     public GraduationSymbolizer createGraduationSymbolizer() {
         return new GraduationSymbolizer();
     }
-    
+
     @XmlElementDecl(namespace = "http://geotoolkit.org", name = "GraduationSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/se", substitutionHeadName = "Symbolizer")
     public JAXBElement<GraduationSymbolizer> createCellSymbolizer(final GraduationSymbolizer value) {
         return new JAXBElement<GraduationSymbolizer>(_GraduationSymbolizer_QNAME, GraduationSymbolizer.class, null, value);
     }
-    
+
 }

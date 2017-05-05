@@ -36,9 +36,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for LiteralType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LiteralType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LiteralType", propOrder = {
@@ -65,14 +65,14 @@ public class LiteralType implements XMLLiteral {
     private List<Object> content;
     @XmlAttribute
     private QName type;
-    
+
     /**
      * an empty constructor used by JAXB
      */
     public LiteralType() {
-        
+
     }
-    
+
     public LiteralType(final LiteralType that) {
         if (that != null) {
             this.type = that.type;
@@ -81,38 +81,38 @@ public class LiteralType implements XMLLiteral {
             }
         }
     }
-    
+
     /**
      * build a new Literal with the specified list of object
      */
     public LiteralType(final List<Object> content) {
         this.content = content;
     }
-    
+
      /**
      * build a new Literal with the specified Object.
      */
     public LiteralType(final Object content) {
-        this.content = new ArrayList<>(); 
+        this.content = new ArrayList<>();
         this.content.add(content);
     }
-    
+
     /**
      * build a new Literal with the specified String
      */
     public LiteralType(final String content) {
-        this.content = new ArrayList<>(); 
+        this.content = new ArrayList<>();
         this.content.add(content);
     }
 
     /**
      * Gets the value of the content property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     @Override
     public List<Object> getContent() {
@@ -134,7 +134,7 @@ public class LiteralType implements XMLLiteral {
             this.content.add(content);
         }
     }
-    
+
     /**
      * Sets the value of the content property.
      */
@@ -142,7 +142,7 @@ public class LiteralType implements XMLLiteral {
     public void setContent(final List<Object> content) {
         this.content = content;
     }
-    
+
     /**
      * We assume that the list have only One Value.
      */
@@ -153,7 +153,7 @@ public class LiteralType implements XMLLiteral {
         }
         return null;
     }
-    
+
     @Override
     public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -164,15 +164,15 @@ public class LiteralType implements XMLLiteral {
        Object literal = null;
        if (content != null && !content.isEmpty()) {
             literal = content.get(0);
-       } 
-       
+       }
+
        if (literal == null || literal.getClass().equals(context)) {
             return context.cast( literal );
        } else {
             return null;
        }
     }
-    
+
     /**
      * Used by FilterVisitors to perform some action on this filter instance.
      * Typicaly used by Filter decoders, but may also be used by any thing
@@ -185,16 +185,16 @@ public class LiteralType implements XMLLiteral {
      */
     @Override
     public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-    	return visitor.visit(this,extraData);
+        return visitor.visit(this,extraData);
     }
-    
+
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getType() {
         return type;
@@ -202,11 +202,11 @@ public class LiteralType implements XMLLiteral {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setType(QName value) {
         this.type = value;
@@ -220,7 +220,7 @@ public class LiteralType implements XMLLiteral {
         }
         return s.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -240,20 +240,20 @@ public class LiteralType implements XMLLiteral {
                     for (int i = 0; i < this.content.size(); i++) {
                         Object thisO = this.content.get(i);
                         Object thatO = that.content.get(i);
-                        
+
                         if (thisO instanceof JAXBElement &&
                             thatO instanceof JAXBElement) {
                             thisO = ((JAXBElement)thisO).getValue();
                             thatO = ((JAXBElement)thatO).getValue();
                         }
-                        
+
                         if (!Objects.equals(thisO, thatO)){
                             contentEquals = false;
                         }
                     }
                 }
             }
-            
+
             return contentEquals &&
                    Objects.equals(this.type,    that.type);
         }

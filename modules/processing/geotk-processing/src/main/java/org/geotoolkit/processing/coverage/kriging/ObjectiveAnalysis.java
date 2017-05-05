@@ -252,7 +252,7 @@ public class ObjectiveAnalysis {
         A.invert(); // A = A^-1
         X.mul(A, X); // X = A*X
         A = null;   // lets GC do his work
-		/*
+        /*
          * Now compute values.
          */
         final double values[] = new double[getLength()];

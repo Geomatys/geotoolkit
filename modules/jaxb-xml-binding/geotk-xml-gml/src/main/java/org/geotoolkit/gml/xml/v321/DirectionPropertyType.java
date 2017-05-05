@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for DirectionPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DirectionPropertyType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DirectionPropertyType", propOrder = {
@@ -100,11 +100,11 @@ public class DirectionPropertyType {
 
     /**
      * Gets the value of the directionVector property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectionVectorType }
-     *     
+     *
      */
     public DirectionVectorType getDirectionVector() {
         return directionVector;
@@ -112,11 +112,11 @@ public class DirectionPropertyType {
 
     /**
      * Sets the value of the directionVector property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectionVectorType }
-     *     
+     *
      */
     public void setDirectionVector(DirectionVectorType value) {
         this.directionVector = value;
@@ -124,11 +124,11 @@ public class DirectionPropertyType {
 
     /**
      * Gets the value of the directionDescription property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectionDescriptionType }
-     *     
+     *
      */
     public DirectionDescriptionType getDirectionDescription() {
         return directionDescription;
@@ -136,11 +136,11 @@ public class DirectionPropertyType {
 
     /**
      * Sets the value of the directionDescription property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectionDescriptionType }
-     *     
+     *
      */
     public void setDirectionDescription(DirectionDescriptionType value) {
         this.directionDescription = value;
@@ -148,11 +148,11 @@ public class DirectionPropertyType {
 
     /**
      * Gets the value of the compassPoint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CompassPointEnumeration }
-     *     
+     *
      */
     public CompassPointEnumeration getCompassPoint() {
         return compassPoint;
@@ -160,11 +160,11 @@ public class DirectionPropertyType {
 
     /**
      * Sets the value of the compassPoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CompassPointEnumeration }
-     *     
+     *
      */
     public void setCompassPoint(CompassPointEnumeration value) {
         this.compassPoint = value;
@@ -172,11 +172,11 @@ public class DirectionPropertyType {
 
     /**
      * Gets the value of the directionKeyword property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getDirectionKeyword() {
         return directionKeyword;
@@ -184,11 +184,11 @@ public class DirectionPropertyType {
 
     /**
      * Sets the value of the directionKeyword property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setDirectionKeyword(CodeType value) {
         this.directionKeyword = value;
@@ -196,11 +196,11 @@ public class DirectionPropertyType {
 
     /**
      * Gets the value of the directionString property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public StringOrRefType getDirectionString() {
         return directionString;
@@ -208,11 +208,11 @@ public class DirectionPropertyType {
 
     /**
      * Sets the value of the directionString property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public void setDirectionString(StringOrRefType value) {
         this.directionString = value;
@@ -220,25 +220,25 @@ public class DirectionPropertyType {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the nilReason property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNilReason().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
@@ -249,11 +249,11 @@ public class DirectionPropertyType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -261,11 +261,11 @@ public class DirectionPropertyType {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(String value) {
         this.remoteSchema = value;
@@ -273,11 +273,11 @@ public class DirectionPropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -289,11 +289,11 @@ public class DirectionPropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -301,11 +301,11 @@ public class DirectionPropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -313,11 +313,11 @@ public class DirectionPropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -325,11 +325,11 @@ public class DirectionPropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -337,11 +337,11 @@ public class DirectionPropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -349,11 +349,11 @@ public class DirectionPropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -361,11 +361,11 @@ public class DirectionPropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -373,11 +373,11 @@ public class DirectionPropertyType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -385,11 +385,11 @@ public class DirectionPropertyType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -397,11 +397,11 @@ public class DirectionPropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -409,11 +409,11 @@ public class DirectionPropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(String value) {
         this.show = value;
@@ -421,11 +421,11 @@ public class DirectionPropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -433,11 +433,11 @@ public class DirectionPropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(String value) {
         this.actuate = value;
@@ -445,11 +445,11 @@ public class DirectionPropertyType {
 
     /**
      * Gets the value of the owns property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public boolean isOwns() {
         if (owns == null) {
@@ -461,11 +461,11 @@ public class DirectionPropertyType {
 
     /**
      * Sets the value of the owns property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public void setOwns(java.lang.Boolean value) {
         this.owns = value;

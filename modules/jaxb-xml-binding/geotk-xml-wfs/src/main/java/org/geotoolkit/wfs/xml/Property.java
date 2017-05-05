@@ -21,8 +21,8 @@ package org.geotoolkit.wfs.xml;
  * @author Guilhem Legal (Geomatys)
  */
 public interface Property {
-    
+
     String getLocalName();
-    
+
     Object getValue();
 }

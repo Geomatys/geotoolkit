@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for QualityOfPositionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="QualityOfPositionType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "QualityOfPositionType", propOrder = {
@@ -72,11 +72,11 @@ public class QualityOfPositionType {
 
     /**
      * Gets the value of the horizontalAcc property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link HorAccType }
-     *     
+     *
      */
     public HorAccType getHorizontalAcc() {
         return horizontalAcc;
@@ -84,11 +84,11 @@ public class QualityOfPositionType {
 
     /**
      * Sets the value of the horizontalAcc property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link HorAccType }
-     *     
+     *
      */
     public void setHorizontalAcc(HorAccType value) {
         this.horizontalAcc = value;
@@ -96,11 +96,11 @@ public class QualityOfPositionType {
 
     /**
      * Gets the value of the verticalAcc property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link VerAccType }
-     *     
+     *
      */
     public VerAccType getVerticalAcc() {
         return verticalAcc;
@@ -108,11 +108,11 @@ public class QualityOfPositionType {
 
     /**
      * Sets the value of the verticalAcc property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link VerAccType }
-     *     
+     *
      */
     public void setVerticalAcc(VerAccType value) {
         this.verticalAcc = value;
@@ -120,11 +120,11 @@ public class QualityOfPositionType {
 
     /**
      * Gets the value of the responseReq property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getResponseReq() {
         if (responseReq == null) {
@@ -136,11 +136,11 @@ public class QualityOfPositionType {
 
     /**
      * Sets the value of the responseReq property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setResponseReq(String value) {
         this.responseReq = value;
@@ -148,11 +148,11 @@ public class QualityOfPositionType {
 
     /**
      * Gets the value of the responseTimer property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getResponseTimer() {
         return responseTimer;
@@ -160,11 +160,11 @@ public class QualityOfPositionType {
 
     /**
      * Sets the value of the responseTimer property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setResponseTimer(String value) {
         this.responseTimer = value;

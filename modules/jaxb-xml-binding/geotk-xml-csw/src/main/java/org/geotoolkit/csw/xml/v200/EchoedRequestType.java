@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for EchoedRequestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="EchoedRequestType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,19 +55,19 @@ public class EchoedRequestType {
      * An empty constructor used by JAXB
      */
     public EchoedRequestType() {
-        
+
     }
-    
+
     /**
      * Build a new Echoed request
      */
     public EchoedRequestType(final Object request) {
         this.any = request;
     }
-    
+
     /**
      * Gets the value of the any property.
-     * 
+     *
      */
     public Object getAny() {
         return any;
@@ -75,7 +75,7 @@ public class EchoedRequestType {
 
     /**
      * Sets the value of the any property.
-     * 
+     *
      */
     public void setAny(final Object value) {
         this.any = value;

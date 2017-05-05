@@ -39,7 +39,7 @@ public class DefaultUpdate implements Update {
     }
 
     /**
-     * 
+     *
      * @param targetHref
      * @param updates
      * @param updateOpExtensions

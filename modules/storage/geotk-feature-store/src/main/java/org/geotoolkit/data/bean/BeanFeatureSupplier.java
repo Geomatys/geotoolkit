@@ -26,7 +26,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Definition of a bean mapped as a FeatureType.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class BeanFeatureSupplier {
@@ -36,7 +36,7 @@ public class BeanFeatureSupplier {
     final BeanStore.FeatureSupplier supplier;
     private final Set<StorageListener> listeners = new HashSet<>();
 
-    public BeanFeatureSupplier(Class bleanClass, String idField, String defaultGeom, String namespace, 
+    public BeanFeatureSupplier(Class bleanClass, String idField, String defaultGeom, String namespace,
             CoordinateReferenceSystem crs, BeanStore.FeatureSupplier supplier) {
         this(bleanClass,idField,defaultGeom,new Predicate<java.beans.PropertyDescriptor>() {
             @Override
@@ -45,9 +45,9 @@ public class BeanFeatureSupplier {
             }
         }, namespace, crs, supplier);
     }
-    
-    public BeanFeatureSupplier(Class bleanClass, String idField, String defaultGeom, 
-            Predicate<java.beans.PropertyDescriptor> propertyFilter, String namespace, 
+
+    public BeanFeatureSupplier(Class bleanClass, String idField, String defaultGeom,
+            Predicate<java.beans.PropertyDescriptor> propertyFilter, String namespace,
             CoordinateReferenceSystem crs, BeanStore.FeatureSupplier supplier) {
         this.beanClass = bleanClass;
         this.crs = crs;
@@ -111,7 +111,7 @@ public class BeanFeatureSupplier {
             listener.contentChanged(event);
         }
     }
-    
+
     public void addStorageListener(final StorageListener listener) {
         synchronized (listeners) {
             listeners.add(listener);

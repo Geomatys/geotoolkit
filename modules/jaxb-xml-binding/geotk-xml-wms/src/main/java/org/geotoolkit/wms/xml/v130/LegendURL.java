@@ -28,9 +28,9 @@ import org.geotoolkit.wms.xml.AbstractLegendURL;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -45,7 +45,7 @@ import org.geotoolkit.wms.xml.AbstractLegendURL;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -73,7 +73,7 @@ public class LegendURL implements AbstractLegendURL {
      */
      LegendURL() {
      }
-     
+
      /**
      * Build a legend URL without specifyng the dimensions.
      */
@@ -92,7 +92,7 @@ public class LegendURL implements AbstractLegendURL {
         this.onlineResource = onlineResource;
         this.width          = width;
     }
-    
+
     /**
      * Build a new Contact person primary object.
      */
@@ -106,10 +106,10 @@ public class LegendURL implements AbstractLegendURL {
             this.width  = that.getWidth();
         }
     }
-    
+
     /**
      * Gets the value of the format property.
-     * 
+     *
      */
     @Override
     public String getFormat() {
@@ -118,7 +118,7 @@ public class LegendURL implements AbstractLegendURL {
 
     /**
      * Gets the value of the onlineResource property.
-     * 
+     *
      */
     @Override
     public OnlineResource getOnlineResource() {
@@ -135,7 +135,7 @@ public class LegendURL implements AbstractLegendURL {
 
     /**
      * Gets the value of the height property.
-     * 
+     *
      */
     @Override
     public Integer getHeight() {

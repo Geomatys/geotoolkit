@@ -26,20 +26,20 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
+ *
  * Classification is the mapping of the same named interface in ebRIM.
  * It extends RegistryObject.
- * 
+ *
  * A Classification specifies references to two registry entrys.
- * 
+ *
  * The classifiedObject is id of the Object being classified.
  * The classificationNode is id of the ClassificationNode classying the object
- * 			
- * 
+ *
+ *
  * <p>Java class for ClassificationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ClassificationType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,7 +75,7 @@ public class ClassificationType extends RegistryObjectType {
 
     /**
      * Gets the value of the classificationScheme property.
-     *     
+     *
      */
     public String getClassificationScheme() {
         return classificationScheme;

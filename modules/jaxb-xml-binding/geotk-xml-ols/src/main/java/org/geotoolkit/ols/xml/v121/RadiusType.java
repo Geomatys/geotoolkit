@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlValue;
 
 /**
  * <p>Java class for RadiusType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RadiusType">
  *   &lt;simpleContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RadiusType", propOrder = {
@@ -55,11 +55,11 @@ public class RadiusType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getValue() {
         return value;
@@ -67,11 +67,11 @@ public class RadiusType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setValue(BigDecimal value) {
         this.value = value;
@@ -79,11 +79,11 @@ public class RadiusType {
 
     /**
      * Gets the value of the unit property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DistanceUnitType }
-     *     
+     *
      */
     public DistanceUnitType getUnit() {
         return unit;
@@ -91,11 +91,11 @@ public class RadiusType {
 
     /**
      * Sets the value of the unit property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DistanceUnitType }
-     *     
+     *
      */
     public void setUnit(DistanceUnitType value) {
         this.unit = value;

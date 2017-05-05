@@ -30,11 +30,11 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * A MultiSurface is defined by one or more Surfaces, referenced through surfaceMember elements.
- * 
+ *
  * <p>Java class for MultiSurfaceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MultiSurfaceType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,7 +64,7 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType implements 
 
     /**
      * Gets the value of the surfaceMember property.
-     * 
+     *
      */
     public List<SurfacePropertyType> getSurfaceMember() {
         if (surfaceMember == null) {
@@ -86,11 +86,11 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType implements 
 
     /**
      * Gets the value of the surfaceMembers property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SurfaceArrayPropertyType }
-     *     
+     *
      */
     public SurfaceArrayPropertyType getSurfaceMembers() {
         return surfaceMembers;
@@ -98,11 +98,11 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType implements 
 
     /**
      * Sets the value of the surfaceMembers property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SurfaceArrayPropertyType }
-     *     
+     *
      */
     public void setSurfaceMembers(final SurfaceArrayPropertyType value) {
         this.surfaceMembers = value;

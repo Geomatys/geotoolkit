@@ -47,7 +47,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 /**
- * 
+ *
  */
 class XmlFeatureReader implements FeatureReader {
 
@@ -100,7 +100,7 @@ class XmlFeatureReader implements FeatureReader {
             final SamplingFeature feature = (SamplingFeature) foi;
             final Feature f = type.newInstance();
             f.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), feature.getId());
-            
+
             final org.opengis.geometry.Geometry isoGeom = feature.getGeometry();
             try {
                 final Geometry geom;

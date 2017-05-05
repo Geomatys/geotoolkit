@@ -30,7 +30,7 @@ public class DefaultStyleMap extends DefaultAbstractStyleSelector implements Sty
     private List<Pair> pairs;
 
     /**
-     * 
+     *
      */
     public DefaultStyleMap() {
         this.pairs = EMPTY_LIST;

@@ -31,7 +31,7 @@ abstract class MemoryStarRTreeTest extends AbstractTreeTest {
 
     /**
      * Create a generic StarRTree Test suite, stored in memory,  with {@link CoordinateReferenceSystem} define by user.
-     * 
+     *
      * @param crs
      * @throws StoreIndexException should never thrown.
      * @throws IOException should never thrown.

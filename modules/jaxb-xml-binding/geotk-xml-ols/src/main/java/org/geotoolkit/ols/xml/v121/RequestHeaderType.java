@@ -26,11 +26,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines the header information for request messages.
- * 
+ *
  * <p>Java class for RequestHeaderType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RequestHeaderType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RequestHeaderType")
@@ -65,11 +65,11 @@ public class RequestHeaderType extends AbstractHeaderType {
 
     /**
      * Gets the value of the clientName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getClientName() {
         return clientName;
@@ -77,11 +77,11 @@ public class RequestHeaderType extends AbstractHeaderType {
 
     /**
      * Sets the value of the clientName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setClientName(String value) {
         this.clientName = value;
@@ -89,11 +89,11 @@ public class RequestHeaderType extends AbstractHeaderType {
 
     /**
      * Gets the value of the clientPassword property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getClientPassword() {
         return clientPassword;
@@ -101,11 +101,11 @@ public class RequestHeaderType extends AbstractHeaderType {
 
     /**
      * Sets the value of the clientPassword property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setClientPassword(String value) {
         this.clientPassword = value;
@@ -113,11 +113,11 @@ public class RequestHeaderType extends AbstractHeaderType {
 
     /**
      * Gets the value of the sessionID property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSessionID() {
         return sessionID;
@@ -125,11 +125,11 @@ public class RequestHeaderType extends AbstractHeaderType {
 
     /**
      * Sets the value of the sessionID property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSessionID(String value) {
         this.sessionID = value;
@@ -137,11 +137,11 @@ public class RequestHeaderType extends AbstractHeaderType {
 
     /**
      * Gets the value of the srsName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSrsName() {
         return srsName;
@@ -149,11 +149,11 @@ public class RequestHeaderType extends AbstractHeaderType {
 
     /**
      * Sets the value of the srsName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSrsName(String value) {
         this.srsName = value;
@@ -161,11 +161,11 @@ public class RequestHeaderType extends AbstractHeaderType {
 
     /**
      * Gets the value of the msid property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMSID() {
         return msid;
@@ -173,11 +173,11 @@ public class RequestHeaderType extends AbstractHeaderType {
 
     /**
      * Sets the value of the msid property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMSID(String value) {
         this.msid = value;

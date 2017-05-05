@@ -33,13 +33,13 @@ public class FishDatastoreFactory extends AbstractFileFeatureStoreFactory{
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = new ParameterBuilder()
             .addName(AbstractFeatureStoreFactory.IDENTIFIER.getName().getCode())
             .setRemarks(AbstractFeatureStoreFactory.IDENTIFIER.getRemarks())
             .setRequired(true)
             .create(String.class, NAME);
-    
+
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("FishParameters").createGroup(IDENTIFIER, PATH,NAMESPACE);
 

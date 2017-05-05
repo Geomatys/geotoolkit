@@ -35,9 +35,9 @@ import org.geotoolkit.swe.xml.v200.VectorType;
 
 /**
  * <p>Java class for PositionUnionPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PositionUnionPropertyType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.swe.xml.v200.VectorType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PositionUnionPropertyType", propOrder = {
@@ -96,11 +96,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Provides positional information in textual form (e.g. "located on the intake line before the catalytic converter"); shall only be used when a more precise location is unknown or irrelevant.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TextType }
-     *     
+     *
      */
     public TextType getText() {
         return text;
@@ -108,11 +108,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Sets the value of the text property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TextType }
-     *     
+     *
      */
     public void setText(TextType value) {
         this.text = value;
@@ -120,11 +120,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Provides static location only using a gml:Point element.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PointType }
-     *     
+     *
      */
     public PointType getPoint() {
         return point;
@@ -132,11 +132,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Sets the value of the point property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PointType }
-     *     
+     *
      */
     public void setPoint(PointType value) {
         this.point = value;
@@ -144,11 +144,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Provides a static location using a swe:Vector.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link VectorType }
-     *     
+     *
      */
     public VectorType getVector() {
         return vector;
@@ -156,11 +156,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Sets the value of the vector property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link VectorType }
-     *     
+     *
      */
     public void setVector(VectorType value) {
         this.vector = value;
@@ -168,11 +168,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Provides location and orientation as a DataRecord consisting of one or two Vector elements.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataRecordType }
-     *     
+     *
      */
     public DataRecordType getDataRecord() {
         return dataRecord;
@@ -180,11 +180,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Sets the value of the dataRecord property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataRecordType }
-     *     
+     *
      */
     public void setDataRecord(DataRecordType value) {
         this.dataRecord = value;
@@ -192,12 +192,12 @@ public class PositionUnionPropertyType {
 
     /**
      * Provides time-tagged dynamic state information that can include, for instance, location, orientation, velocity, acceleration, angular velocity, angular acceleration; shall be a DataArray consisting of a DataRecord element of multiple Vector fields.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link DataArrayType }{@code >}
      *     {@link JAXBElement }{@code <}{@link MatrixType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends DataArrayType> getDataArray() {
         return dataArray;
@@ -205,12 +205,12 @@ public class PositionUnionPropertyType {
 
     /**
      * Sets the value of the dataArray property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link DataArrayType }{@code >}
      *     {@link JAXBElement }{@code <}{@link MatrixType }{@code >}
-     *     
+     *
      */
     public void setDataArray(JAXBElement<? extends DataArrayType> value) {
         this.dataArray = value;
@@ -218,7 +218,7 @@ public class PositionUnionPropertyType {
 
     /**
      * Provides for positional information to be provided by a process; example processes could include a physical sensor such as a GPS, a computational process such as an orbital propagation model, a specific web service such as a SOS, or any process who's output provides positional information.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractPhysicalProcessType }{@code >}
@@ -227,7 +227,7 @@ public class PositionUnionPropertyType {
      *     {@link JAXBElement }{@code <}{@link PhysicalComponentType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PhysicalSystemType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractProcessType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractProcessType> getAbstractProcess() {
         return abstractProcess;
@@ -235,7 +235,7 @@ public class PositionUnionPropertyType {
 
     /**
      * Sets the value of the abstractProcess property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractPhysicalProcessType }{@code >}
@@ -244,7 +244,7 @@ public class PositionUnionPropertyType {
      *     {@link JAXBElement }{@code <}{@link PhysicalComponentType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PhysicalSystemType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractProcessType }{@code >}
-     *     
+     *
      */
     public void setAbstractProcess(JAXBElement<? extends AbstractProcessType> value) {
         this.abstractProcess = value;
@@ -252,11 +252,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -268,11 +268,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -280,11 +280,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -292,11 +292,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -304,11 +304,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -316,11 +316,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -328,11 +328,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -340,11 +340,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -352,11 +352,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -364,11 +364,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -376,11 +376,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -388,11 +388,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(String value) {
         this.show = value;
@@ -400,11 +400,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -412,11 +412,11 @@ public class PositionUnionPropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(String value) {
         this.actuate = value;

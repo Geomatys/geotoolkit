@@ -259,7 +259,7 @@ public abstract class PixelIterator implements Closeable {
      * and move forward iterator.
      *
      * @return true if next value exist else false.
-     * @throws IllegalStateException if you call again this method when you have 
+     * @throws IllegalStateException if you call again this method when you have
      *         already reach the end of the iteration.
      */
     public abstract boolean next();

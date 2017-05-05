@@ -45,7 +45,7 @@ public class FeatureTypeUtilsTest extends org.geotoolkit.test.TestBase {
 
         testFeatureTypes(featureType, readFeatureType);
     }
-    
+
     @Test
     public void writeReadNoCRSFTTest() throws Exception {
 
@@ -64,7 +64,7 @@ public class FeatureTypeUtilsTest extends org.geotoolkit.test.TestBase {
 
         testFeatureTypes(featureType, readFeatureType);
     }
-    
+
     @Test
     public void writeReadCRSFTTest() throws Exception {
 
@@ -86,7 +86,7 @@ public class FeatureTypeUtilsTest extends org.geotoolkit.test.TestBase {
 
     private void testFeatureTypes(FeatureType expected, FeatureType result) {
         FeatureTypeExt.equalsIgnoreConvention(expected, result);
-        
+
     }
 
 //    private void testDescriptors(Collection<PropertyDescriptor> expected, Collection<PropertyDescriptor> result) {
@@ -160,24 +160,24 @@ public class FeatureTypeUtilsTest extends org.geotoolkit.test.TestBase {
         ftb.setDescription(new SimpleInternationalString("Description"));
         return ftb.build();
     }
-    
+
     private FeatureType createGeometryNoCRSFeatureType() {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("FT1");
         ftb.addAttribute(Point.class).setName("geometry").addRole(AttributeRole.DEFAULT_GEOMETRY);
         ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
         ftb.addAttribute(String.class).setName("type");
-        
+
         return ftb.build();
     }
-    
+
     private FeatureType createGeometryCRSFeatureType() {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("FT2");
         ftb.addAttribute(Point.class).setName("geometry").setCRS(CommonCRS.WGS84.geographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
         ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
         ftb.addAttribute(String.class).setName("type");
-        
+
         return ftb.build();
     }
 }

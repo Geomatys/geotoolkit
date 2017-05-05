@@ -46,7 +46,7 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  */
 public class FXRasterSymbolizer extends FXStyleElementController<RasterSymbolizer>{
-    
+
     @FXML private RadioButton uiChoiceColorNone;
     @FXML private RadioButton uiChoiceColorRGB;
     @FXML private RadioButton uiChoiceColorMap;
@@ -170,7 +170,7 @@ public class FXRasterSymbolizer extends FXStyleElementController<RasterSymbolize
                 });
         }
     }
-    
+
     @Override
     public Class<RasterSymbolizer> getEditedClass() {
         return RasterSymbolizer.class;
@@ -256,7 +256,7 @@ public class FXRasterSymbolizer extends FXStyleElementController<RasterSymbolize
         }else{
             uiChoiceOutlineNone.setSelected(true);
         }
-        
+
     }
-    
+
 }

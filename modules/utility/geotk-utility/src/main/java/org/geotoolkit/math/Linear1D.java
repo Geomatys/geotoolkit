@@ -35,11 +35,11 @@ public class Linear1D extends Search1D {
      * Les index <code>klo</code> et <code>khi</code> doivent avoir été trouvés avant
      * l'appel de cette méthode.
      *
-     * @param xi			valeur de <var>x</var> pour laquelle on désire une
-     *						valeur <var>y</var> interpolée.
-     * @param reUseIndex	<code>true</code> s'il faut réutiliser les même
-     *						index que ceux de la dernière interpolation.
-     * @return				Valeur <var>y</var> interpolée.
+     * @param xi            valeur de <var>x</var> pour laquelle on désire une
+     *                      valeur <var>y</var> interpolée.
+     * @param reUseIndex    <code>true</code> s'il faut réutiliser les même
+     *                      index que ceux de la dernière interpolation.
+     * @return              Valeur <var>y</var> interpolée.
      */
     @Override
     protected double interpolate(final double xi, final boolean reUseIndex) throws ExtrapolationException {
@@ -63,13 +63,13 @@ public class Linear1D extends Search1D {
     }
 
     /**
-     *	Interpole les NaN trouvés dans le vecteur des <var>y</var>, en les remplaçant directement
-     *	dans le vecteur des <var>y</var> sans créer de vecteur temporaire. Voyez la description de
-     *	la méthode de la classe de base pour plus de détails.
+     *  Interpole les NaN trouvés dans le vecteur des <var>y</var>, en les remplaçant directement
+     *  dans le vecteur des <var>y</var> sans créer de vecteur temporaire. Voyez la description de
+     *  la méthode de la classe de base pour plus de détails.
      *
-     * @param dxStart	Plage minimal des <var>x</var> qu'il doit y avoir de chaque côté d'un NaN pour l'interpoler.
-     * @param dxStop	Plage maximal des <var>x</var> couvert par les données manquantes pour qu'elles puissent être interpolées.
-     * @return			Le tableau des <var>y</var>.
+     * @param dxStart   Plage minimal des <var>x</var> qu'il doit y avoir de chaque côté d'un NaN pour l'interpoler.
+     * @param dxStop    Plage maximal des <var>x</var> couvert par les données manquantes pour qu'elles puissent être interpolées.
+     * @return          Le tableau des <var>y</var>.
      */
     @Override
     public double[] interpolateNaN(final double dxStart, final double dxStop) {

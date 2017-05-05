@@ -45,7 +45,7 @@ public class TimeDuringType extends BinaryTemporalOpType implements During {
     public TemporalOpsType getClone() {
         return new TimeDuringType(this);
     }
-    
+
     @Override
     public boolean evaluate(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");

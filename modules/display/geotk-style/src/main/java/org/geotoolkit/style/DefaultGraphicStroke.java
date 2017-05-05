@@ -31,22 +31,22 @@ import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types Graphic Stroke.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class DefaultGraphicStroke extends DefaultGraphic implements GraphicStroke{
 
     private final Expression initial;
-    
+
     private final Expression gap;
-    
+
     /**
      * Create a default immutable Graphic Stroke.
-     * 
+     *
      * @param symbols : can be null, if null or empty, the default mark will be added.
      * @param opacity : if null or Expression.NIL will be replaced by default value.
-     * @param size : if null will be replaced by Expression.NIL, 
+     * @param size : if null will be replaced by Expression.NIL,
      * if NIL the size of the graphicalSymbol is used
      * @param rotation : if null or Expression.NIL will be replaced by default value.
      * @param anchor : if null will be replaced by default value.
@@ -55,15 +55,15 @@ public class DefaultGraphicStroke extends DefaultGraphic implements GraphicStrok
      * @param gap : if null or Expression.NIL will be replaced by default value.
      */
     public DefaultGraphicStroke(final List<GraphicalSymbol> symbols,
-            final Expression opacity, 
-            final Expression size, 
-            final Expression rotation, 
-            final AnchorPoint anchor, 
-            final Displacement disp, 
-            final Expression initial, 
+            final Expression opacity,
+            final Expression size,
+            final Expression rotation,
+            final AnchorPoint anchor,
+            final Displacement disp,
+            final Expression initial,
             final Expression gap){
         super(symbols,opacity,size,rotation,anchor,disp);
-        
+
         this.gap = (gap == null || gap == NIL) ? DEFAULT_GRAPHIC_STROKE_GAP : gap;
         this.initial = (initial == null || initial == NIL) ? DEFAULT_GRAPHIC_STROKE_INITIAL_GAP : initial;
     }

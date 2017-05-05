@@ -29,16 +29,16 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * A tin is a triangulated surface that uses
  *    the Delauny algorithm or a similar algorithm complemented with
- *    consideration of breaklines, stoplines, and maximum length of 
+ *    consideration of breaklines, stoplines, and maximum length of
  *    triangle sides. These networks satisfy the Delauny's criterion
- *    away from the modifications: Fore each triangle in the 
+ *    away from the modifications: Fore each triangle in the
  *    network, the circle passing through its vertices does not
  *    contain, in its interior, the vertex of any other triangle.
- * 
+ *
  * <p>Java class for TinType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TinType">
  *   &lt;complexContent>
@@ -64,8 +64,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -87,11 +87,11 @@ public class TinType extends TriangulatedSurfaceType {
 
     /**
      * Gets the value of the stopLines property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link LineStringSegmentArrayPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<LineStringSegmentArrayPropertyType> getStopLines() {
         if (stopLines == null) {
@@ -102,11 +102,11 @@ public class TinType extends TriangulatedSurfaceType {
 
     /**
      * Gets the value of the breakLines property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link LineStringSegmentArrayPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<LineStringSegmentArrayPropertyType> getBreakLines() {
         if (breakLines == null) {
@@ -117,11 +117,11 @@ public class TinType extends TriangulatedSurfaceType {
 
     /**
      * Gets the value of the maxLength property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LengthType }
-     *     
+     *
      */
     public LengthType getMaxLength() {
         return maxLength;
@@ -129,11 +129,11 @@ public class TinType extends TriangulatedSurfaceType {
 
     /**
      * Sets the value of the maxLength property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LengthType }
-     *     
+     *
      */
     public void setMaxLength(final LengthType value) {
         this.maxLength = value;
@@ -141,11 +141,11 @@ public class TinType extends TriangulatedSurfaceType {
 
     /**
      * Gets the value of the controlPoint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TinType.ControlPoint }
-     *     
+     *
      */
     public TinType.ControlPoint getControlPoint() {
         return controlPoint;
@@ -153,11 +153,11 @@ public class TinType extends TriangulatedSurfaceType {
 
     /**
      * Sets the value of the controlPoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TinType.ControlPoint }
-     *     
+     *
      */
     public void setControlPoint(final TinType.ControlPoint value) {
         this.controlPoint = value;
@@ -166,9 +166,9 @@ public class TinType extends TriangulatedSurfaceType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -181,8 +181,8 @@ public class TinType extends TriangulatedSurfaceType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -200,11 +200,11 @@ public class TinType extends TriangulatedSurfaceType {
 
         /**
          * Gets the value of the posList property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link DirectPositionListType }
-         *     
+         *
          */
         public DirectPositionListType getPosList() {
             return posList;
@@ -212,11 +212,11 @@ public class TinType extends TriangulatedSurfaceType {
 
         /**
          * Sets the value of the posList property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link DirectPositionListType }
-         *     
+         *
          */
         public void setPosList(final DirectPositionListType value) {
             this.posList = value;
@@ -224,12 +224,12 @@ public class TinType extends TriangulatedSurfaceType {
 
         /**
          * Gets the value of the geometricPositionGroup property.
-         * 
+         *
          * Objects of the following type(s) are allowed in the list
          * {@link DirectPositionType }
          * {@link PointPropertyType }
-         * 
-         * 
+         *
+         *
          */
         public List<Object> getGeometricPositionGroup() {
             if (geometricPositionGroup == null) {

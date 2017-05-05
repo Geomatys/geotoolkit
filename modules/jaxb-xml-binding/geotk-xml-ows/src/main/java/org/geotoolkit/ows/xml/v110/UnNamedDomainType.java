@@ -29,12 +29,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Valid domain (or allowed set of values) of one quantity, with needed metadata but without a quantity name or identifier. 
- * 
+ * Valid domain (or allowed set of values) of one quantity, with needed metadata but without a quantity name or identifier.
+ *
  * <p>Java class for UnNamedDomainType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UnNamedDomainType">
  *   &lt;complexContent>
@@ -51,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -98,9 +98,9 @@ public class UnNamedDomainType {
      * Empty constructor used by JAXB.
      */
     UnNamedDomainType() {
-        
+
     }
-    
+
     public UnNamedDomainType(final UnNamedDomainType that) {
         if (that != null) {
             if (that.allowedValues != null) {
@@ -138,7 +138,7 @@ public class UnNamedDomainType {
             }
         }
     }
-    
+
     public UnNamedDomainType(final AnyValue anyValue) {
         if (anyValue == null) {
             this.anyValue = new AnyValue();
@@ -150,29 +150,29 @@ public class UnNamedDomainType {
     public UnNamedDomainType(final AllowedValues value) {
         this.allowedValues = value;
     }
-    
+
     public UnNamedDomainType(final ValueType defaultvalue) {
         this.defaultValue = defaultvalue;
     }
-    
+
     public UnNamedDomainType(final NoValues nv, final ValueType defaultvalue) {
         this.noValues     = nv;
         this.defaultValue = defaultvalue;
     }
-    
+
     public UnNamedDomainType(final String value) {
         this.allowedValues = new AllowedValues((Collection<String>)Arrays.asList(value));
     }
-    
+
     public UnNamedDomainType(final List<String> value) {
         this.allowedValues = new AllowedValues(value);
     }
-    
-    
+
+
     /**
      * Build a new Un-named Domain.
      */
-    public UnNamedDomainType(final AllowedValues allowedValues, final AnyValue anyValue, final ValuesReference valuesReference, 
+    public UnNamedDomainType(final AllowedValues allowedValues, final AnyValue anyValue, final ValuesReference valuesReference,
             final NoValues noValues, final ValueType defaultValue, final DomainMetadataType meaning, final DomainMetadataType dataType,
             final DomainMetadataType uom, final DomainMetadataType referenceSystem,final List<MetadataType> metadata) {
         this.allowedValues   = allowedValues;
@@ -185,16 +185,16 @@ public class UnNamedDomainType {
         this.referenceSystem = referenceSystem;
         this.uom             = uom;
         this.valuesReference = valuesReference;
-        
+
     }
-            
+
     /**
      * Gets the value of the allowedValues property.
      */
     public AllowedValues getAllowedValues() {
         return allowedValues;
     }
-    
+
     /**
      * Gets the value of the allowedValues property.
      */
@@ -224,8 +224,8 @@ public class UnNamedDomainType {
     }
 
     /**
-     * Optional default value for this quantity, 
-     * which should be included when this quantity has a default value. 
+     * Optional default value for this quantity,
+     * which should be included when this quantity has a default value.
      */
     public String getDefaultValue() {
         if (defaultValue != null) {
@@ -243,39 +243,39 @@ public class UnNamedDomainType {
     }
 
     /**
-     * Meaning metadata should be referenced or included for each quantity. 
+     * Meaning metadata should be referenced or included for each quantity.
      */
     public DomainMetadataType getMeaning() {
         return meaning;
     }
 
     /**
-     * This data type metadata should be referenced or included for each quantity. 
+     * This data type metadata should be referenced or included for each quantity.
      */
     public DomainMetadataType getDataType() {
         return dataType;
     }
 
     /**
-     * Identifier of unit of measure of this set of values. 
-     * Should be included then this set of values has units (and not a more complete reference system). 
-     * 
+     * Identifier of unit of measure of this set of values.
+     * Should be included then this set of values has units (and not a more complete reference system).
+     *
      */
     public DomainMetadataType getUOM() {
         return uom;
     }
 
     /**
-     * Identifier of reference system used by this set of values. 
-     * Should be included then this set of values has a reference system (not just units). 
+     * Identifier of reference system used by this set of values.
+     * Should be included then this set of values has a reference system (not just units).
      */
     public DomainMetadataType getReferenceSystem() {
         return referenceSystem;
     }
 
     /**
-     * Optional unordered list of other metadata about this quantity. 
-     * A list of required and optional other metadata elements for this quantity should be specified in the Implementation Specification for this service. 
+     * Optional unordered list of other metadata about this quantity.
+     * A list of required and optional other metadata elements for this quantity should be specified in the Implementation Specification for this service.
      * Gets the value of the metadata property.
      */
     public List<MetadataType> getMetadata() {
@@ -284,7 +284,7 @@ public class UnNamedDomainType {
         }
         return metadata;
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -325,7 +325,7 @@ public class UnNamedDomainType {
         hash = 83 * hash + (this.metadata != null ? this.metadata.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString(){
         StringBuilder s = new StringBuilder();
@@ -356,7 +356,7 @@ public class UnNamedDomainType {
         if (referenceSystem != null) {
             s.append(referenceSystem.toString()).append('\n');
         }
-        if (metadata != null) {        
+        if (metadata != null) {
             for (MetadataType m:metadata) {
                 s.append(m.toString()).append('\n');
             }

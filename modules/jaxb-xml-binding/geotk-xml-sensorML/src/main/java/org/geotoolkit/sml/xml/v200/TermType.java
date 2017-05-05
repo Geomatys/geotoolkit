@@ -29,9 +29,9 @@ import org.geotoolkit.swe.xml.v200.Reference;
 
 /**
  * <p>Java class for TermType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TermType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.swe.xml.v200.Reference;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TermType", propOrder = {
@@ -70,11 +70,11 @@ public class TermType
 
     /**
      * Gets the value of the label property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLabel() {
         return label;
@@ -82,11 +82,11 @@ public class TermType
 
     /**
      * Sets the value of the label property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLabel(String value) {
         this.label = value;
@@ -94,11 +94,11 @@ public class TermType
 
     /**
      * Gets the value of the codeSpace property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Reference }
-     *     
+     *
      */
     public Reference getCodeSpace() {
         return codeSpace;
@@ -106,11 +106,11 @@ public class TermType
 
     /**
      * Sets the value of the codeSpace property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Reference }
-     *     
+     *
      */
     public void setCodeSpace(Reference value) {
         this.codeSpace = value;
@@ -118,11 +118,11 @@ public class TermType
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValue() {
         return value;
@@ -130,11 +130,11 @@ public class TermType
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(String value) {
         this.value = value;
@@ -142,11 +142,11 @@ public class TermType
 
     /**
      * Gets the value of the definition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDefinition() {
         return definition;
@@ -154,11 +154,11 @@ public class TermType
 
     /**
      * Sets the value of the definition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDefinition(String value) {
         this.definition = value;

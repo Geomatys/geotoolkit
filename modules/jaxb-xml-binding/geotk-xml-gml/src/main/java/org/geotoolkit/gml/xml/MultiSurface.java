@@ -23,7 +23,7 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  */
 public interface MultiSurface extends AbstractGeometricAggregate {
-    
+
     List<? extends SurfaceProperty> getSurfaceMember();
-    
+
 }

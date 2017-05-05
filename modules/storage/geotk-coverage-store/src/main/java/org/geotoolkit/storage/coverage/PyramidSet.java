@@ -22,55 +22,55 @@ import org.opengis.geometry.Envelope;
 
 /**
  * Define a collection of pyramid for a give data.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public interface PyramidSet {
-    
+
     /**
      * Additional hint : to specify the mime type.
      */
     public static final String HINT_FORMAT = "format";
-    
+
     /**
      * @return unique id.
      */
     String getId();
-    
+
     /**
      * Get a pyramid from id.
-     * 
+     *
      * @param pyramidId
-     * @return 
+     * @return
      */
     Pyramid getPyramid(String pyramidId);
-    
+
     /**
      * Get a mosaic from id.
-     * 
+     *
      * @param pyramidId
      * @param mosaicId
-     * @return 
+     * @return
      */
     GridMosaic getMosaic(String pyramidId, String mosaicId);
-    
+
     /**
-     * 
+     *
      * @return Collection of pyramid, each pyramid has a different CRS.
      */
     Collection<Pyramid> getPyramids();
-    
+
     /**
      * List of format mime types handle by this pyramid set.
      * @return List<String>
      */
     List<String> getFormats();
-    
+
     /**
      * This envelope is not exact, it is approximative.
      * @return global envelope of all pyramids
      */
     Envelope getEnvelope();
-    
+
 }

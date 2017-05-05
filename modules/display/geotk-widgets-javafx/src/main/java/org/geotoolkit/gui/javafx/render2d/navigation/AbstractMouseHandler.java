@@ -47,7 +47,7 @@ public class AbstractMouseHandler implements EventHandler {
                 }else if(MouseEvent.MOUSE_ENTERED.equals(me.getEventType())){
                     mouseEntered(me);
                 }
-                
+
             }else if(event instanceof ScrollEvent){
                 mouseWheelMoved((ScrollEvent) event);
             }
@@ -76,5 +76,5 @@ public class AbstractMouseHandler implements EventHandler {
 
     public void mouseEntered(MouseEvent me) {
     }
-    
+
 }

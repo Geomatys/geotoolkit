@@ -51,7 +51,7 @@ import com.vividsolutions.jts.geom.CoordinateSequence;
  * @module
  */
 public interface Point extends AbstractGeometry{
-    
+
     /**
      *
      * @return

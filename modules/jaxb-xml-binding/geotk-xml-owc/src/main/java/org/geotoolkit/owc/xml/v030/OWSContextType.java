@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for OWSContextType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OWSContextType">
  *   &lt;complexContent>
@@ -43,15 +43,15 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OWSContextType", propOrder = {
     "general",
     "resourceList"
-})        
+})
 @XmlRootElement(name = "OWSContext", namespace = "http://www.opengis.net/ows-context")
 public class OWSContextType {
 
@@ -66,11 +66,11 @@ public class OWSContextType {
 
     /**
      * Gets the value of the general property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeneralType }
-     *     
+     *
      */
     public GeneralType getGeneral() {
         return general;
@@ -78,11 +78,11 @@ public class OWSContextType {
 
     /**
      * Sets the value of the general property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeneralType }
-     *     
+     *
      */
     public void setGeneral(final GeneralType value) {
         this.general = value;
@@ -90,11 +90,11 @@ public class OWSContextType {
 
     /**
      * Gets the value of the resourceList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ResourceListType }
-     *     
+     *
      */
     public ResourceListType getResourceList() {
         return resourceList;
@@ -102,11 +102,11 @@ public class OWSContextType {
 
     /**
      * Sets the value of the resourceList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ResourceListType }
-     *     
+     *
      */
     public void setResourceList(final ResourceListType value) {
         this.resourceList = value;
@@ -114,11 +114,11 @@ public class OWSContextType {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         if (version == null) {
@@ -130,11 +130,11 @@ public class OWSContextType {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(final String value) {
         this.version = value;
@@ -142,11 +142,11 @@ public class OWSContextType {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -154,11 +154,11 @@ public class OWSContextType {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(final String value) {
         this.id = value;

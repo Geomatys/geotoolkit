@@ -108,7 +108,7 @@ public abstract class CachedDisplacement{
     }
 
     /**
-     * 
+     *
      * @param candidate
      * @param coeff
      * @return maximum displacement value along x and y.
@@ -175,7 +175,7 @@ public abstract class CachedDisplacement{
                 return cachedX;
             }
         }
-        
+
         private float evalY(Object candidate){
             if(Float.isNaN(cachedY)){
                 //if Y is null it means it is dynamic
@@ -185,13 +185,13 @@ public abstract class CachedDisplacement{
                 return cachedY;
             }
         }
-        
+
         @Override
         public float getMargin(Object candidate, float coeff) {
             if(candidate==null) return Float.NaN;
             return Math.max(evalX(candidate), evalY(candidate));
         }
-        
+
     }
 
 }

@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for SpecificationLinkType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SpecificationLinkType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -76,7 +76,7 @@ public class SpecificationLinkType extends RegistryObjectType {
 
     /**
      * Sets the value of the usageDescription property.
-     * 
+     *
      */
     public void setUsageDescription(final InternationalStringType value) {
         this.usageDescription = value;
@@ -84,7 +84,7 @@ public class SpecificationLinkType extends RegistryObjectType {
 
     /**
      * Gets the value of the usageParameter property.
-     * 
+     *
      */
     public List<String> getUsageParameter() {
         if (usageParameter == null) {
@@ -92,7 +92,7 @@ public class SpecificationLinkType extends RegistryObjectType {
         }
         return this.usageParameter;
     }
-    
+
     /**
      * Sets the value of the usageParameter property.
      */
@@ -102,7 +102,7 @@ public class SpecificationLinkType extends RegistryObjectType {
         }
         this.usageParameter.add(usageParameter);
     }
-    
+
     /**
      * Sets the value of the usageParameter property.
      */

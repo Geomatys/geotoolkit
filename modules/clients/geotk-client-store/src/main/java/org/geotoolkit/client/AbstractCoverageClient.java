@@ -42,13 +42,13 @@ public abstract class AbstractCoverageClient extends AbstractCoverageStore {
     private final Map<String,Object> userProperties = new HashMap<String,Object>();
     protected final URL serverURL;
     private String sessionId = null;
-    
+
     public AbstractCoverageClient(ParameterValueGroup params){
         super(params);
         this.serverURL = Parameters.value(AbstractClientFactory.URL,params);
         ArgumentChecks.ensureNonNull("server url", serverURL);
     }
-        
+
     /**
      * {@inheritDoc}
      */
@@ -111,8 +111,8 @@ public abstract class AbstractCoverageClient extends AbstractCoverageStore {
     public Map<String, Object> getUserProperties() {
         return userProperties;
     }
-    
-    
+
+
     protected void applySessionId(final URLConnection conec) {
         if (sessionId != null) {
             conec.setRequestProperty("Cookie", sessionId);
@@ -142,5 +142,5 @@ public abstract class AbstractCoverageClient extends AbstractCoverageStore {
         }
         return param;
     }
-    
+
 }

@@ -31,9 +31,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for keybase complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="keybase">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,11 +72,11 @@ public class Keybase extends Annotated {
 
     /**
      * Gets the value of the selector property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Selector }
-     *     
+     *
      */
     public Selector getSelector() {
         return selector;
@@ -84,11 +84,11 @@ public class Keybase extends Annotated {
 
     /**
      * Sets the value of the selector property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Selector }
-     *     
+     *
      */
     public void setSelector(final Selector value) {
         this.selector = value;
@@ -96,25 +96,25 @@ public class Keybase extends Annotated {
 
     /**
      * Gets the value of the field property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the field property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getField().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Field }
-     * 
-     * 
+     *
+     *
      */
     public List<Field> getField() {
         if (field == null) {
@@ -125,11 +125,11 @@ public class Keybase extends Annotated {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -137,11 +137,11 @@ public class Keybase extends Annotated {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;

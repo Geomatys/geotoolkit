@@ -20,16 +20,16 @@ import org.geotoolkit.client.AbstractRequest;
 
 /**
  * Request to release a token.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class ReleaseTokenRequest extends AbstractRequest{
-    
-    private static final String SUBPATH = "releaseToken";  
-    
+
+    private static final String SUBPATH = "releaseToken";
+
     private Token token;
-    
+
     public ReleaseTokenRequest(final IGNRMClient server){
         super(server,SUBPATH);
     }
@@ -48,5 +48,5 @@ public class ReleaseTokenRequest extends AbstractRequest{
         //access the value directly
         requestParameters.put(token.getName(), token.value);
     }
-    
+
 }

@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Definition of one unit term for a derived unit of measure. This unit term references another unit of measure (uom) and provides an integer exponent applied to that unit in defining the compound unit. The exponent can be positive or negative, but not zero.
- * 
+ *
  * <p>Java class for DerivationUnitTermType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DerivationUnitTermType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -51,11 +51,11 @@ public class DerivationUnitTermType extends UnitOfMeasureType {
 
     /**
      * Gets the value of the exponent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getExponent() {
         return exponent;
@@ -63,11 +63,11 @@ public class DerivationUnitTermType extends UnitOfMeasureType {
 
     /**
      * Sets the value of the exponent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setExponent(final Integer value) {
         this.exponent = value;

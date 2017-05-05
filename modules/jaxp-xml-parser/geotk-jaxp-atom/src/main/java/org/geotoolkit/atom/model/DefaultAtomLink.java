@@ -43,7 +43,7 @@ public class DefaultAtomLink implements AtomLink {
     }
 
     /**
-     * 
+     *
      * @param href
      * @param rel
      * @param type

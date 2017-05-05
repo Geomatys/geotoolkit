@@ -28,17 +28,17 @@ import org.geotoolkit.wfs.xml.GetCapabilities;
 
 
 /**
- * 
+ *
  *             This type defines the GetCapabilities operation.  In response
- *             to a GetCapabilities request, a Web Feature Service must 
+ *             to a GetCapabilities request, a Web Feature Service must
  *             generate a capabilities XML document that validates against
  *             the schemas defined in WFS-capabilities.xsd.
- *          
- * 
+ *
+ *
  * <p>Java class for GetCapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetCapabilitiesType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.wfs.xml.GetCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetCapabilitiesType")
@@ -79,11 +79,11 @@ public class GetCapabilitiesType implements GetCapabilities {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public Version getVersion() {
@@ -96,11 +96,11 @@ public class GetCapabilitiesType implements GetCapabilities {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setVersion(String value) {
@@ -109,11 +109,11 @@ public class GetCapabilitiesType implements GetCapabilities {
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getService() {
@@ -126,11 +126,11 @@ public class GetCapabilitiesType implements GetCapabilities {
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setService(String value) {
@@ -166,7 +166,7 @@ public class GetCapabilitiesType implements GetCapabilities {
     public String getUpdateSequence() {
         return null; // not implemented in 1.0.0
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("[GetCapabilitiesType]\n");

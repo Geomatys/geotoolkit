@@ -22,7 +22,7 @@ import org.apache.sis.storage.DataStoreException;
 
 /**
  * Wrapper for a Shapefile Null geometry.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -42,7 +42,7 @@ public class NullHandler extends AbstractShapeHandler {
 
     /**
      * Returns the shapefile shape type value for a null
-     * 
+     *
      * @return int Shapefile.Null
      */
     @Override
@@ -59,7 +59,7 @@ public class NullHandler extends AbstractShapeHandler {
     public Object estimated(final double minX, final double maxX, final double minY, final double maxY) {
         return null;
     }
-    
+
     @Override
     public Object read(final ByteBuffer buffer, final ShapeType type) {
         return createNull();

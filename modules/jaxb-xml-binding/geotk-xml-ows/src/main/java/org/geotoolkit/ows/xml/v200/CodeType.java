@@ -31,11 +31,11 @@ import org.geotoolkit.ows.xml.AbstractCodeType;
  * Type copied from basicTypes.xsd of GML 3 with
  *       documentation edited, for possible use outside the ServiceIdentification
  *       section of a service metadata document.
- * 
+ *
  * <p>Java class for CodeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CodeType">
  *   &lt;simpleContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.ows.xml.AbstractCodeType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CodeType", propOrder = {
@@ -83,14 +83,14 @@ public class CodeType implements AbstractCodeType {
     public CodeType(final String value) {
         this.value     = value;
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getValue() {
@@ -99,11 +99,11 @@ public class CodeType implements AbstractCodeType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(String value) {
         this.value = value;
@@ -111,11 +111,11 @@ public class CodeType implements AbstractCodeType {
 
     /**
      * Gets the value of the codeSpace property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getCodeSpace() {
@@ -124,11 +124,11 @@ public class CodeType implements AbstractCodeType {
 
     /**
      * Sets the value of the codeSpace property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCodeSpace(String value) {
         this.codeSpace = value;

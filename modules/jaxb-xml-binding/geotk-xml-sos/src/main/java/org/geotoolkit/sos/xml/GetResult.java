@@ -25,18 +25,18 @@ import org.opengis.filter.Filter;
  * @author Guilhem Legal (Geomatys)
  */
 public interface GetResult extends RequestBase {
- 
+
     List<Filter> getTemporalFilter();
-    
+
     String getOffering();
-    
+
     String getObservedProperty();
-    
+
     String getObservationTemplateId();
-    
+
     List<String> getFeatureOfInterest();
-    
+
     Filter getSpatialFilter();
-    
+
     String getResponseFormat();
 }

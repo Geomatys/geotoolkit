@@ -29,12 +29,12 @@ import org.geotoolkit.ows.xml.RequestBase;
 
 
 /**
- * XML encoded WCS operation request base, for all operations except GetCapabilities. In this XML encoding, no "request" parameter is included, since the element name specifies the specific operation. 'Extension' elements allow WCS extension standards to define their individual extra request parameters. 
- * 
+ * XML encoded WCS operation request base, for all operations except GetCapabilities. In this XML encoding, no "request" parameter is included, since the element name specifies the specific operation. 'Extension' elements allow WCS extension standards to define their individual extra request parameters.
+ *
  * <p>Java class for RequestBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RequestBaseType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.ows.xml.RequestBase;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RequestBaseType", propOrder = {
@@ -70,11 +70,11 @@ public abstract class RequestBaseType implements RequestBase {
 
     /**
      * Gets the value of the extension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExtensionType }
-     *     
+     *
      */
     public ExtensionType getExtension() {
         return extension;
@@ -82,11 +82,11 @@ public abstract class RequestBaseType implements RequestBase {
 
     /**
      * Sets the value of the extension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExtensionType }
-     *     
+     *
      */
     public void setExtension(ExtensionType value) {
         this.extension = value;
@@ -94,11 +94,11 @@ public abstract class RequestBaseType implements RequestBase {
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getService() {
@@ -111,11 +111,11 @@ public abstract class RequestBaseType implements RequestBase {
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setService(String value) {
@@ -124,11 +124,11 @@ public abstract class RequestBaseType implements RequestBase {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public Version getVersion() {
@@ -137,7 +137,7 @@ public abstract class RequestBaseType implements RequestBase {
         }
         return null;
     }
-    
+
     @Override
     public void setVersion(final String value) {
         this.version = value;
@@ -150,7 +150,7 @@ public abstract class RequestBaseType implements RequestBase {
         }
         if (o instanceof RequestBaseType) {
             final RequestBaseType that = (RequestBaseType) o;
-           
+
             return Objects.equals(this.extension, that.extension) &&
                    Objects.equals(this.service,   that.service) &&
                    Objects.equals(this.version,   that.version);

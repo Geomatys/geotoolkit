@@ -21,7 +21,7 @@ import org.opengis.sld.NamedLayer;
 
 /**
  * Mutable named layer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -29,8 +29,8 @@ public interface MutableNamedLayer extends MutableLayer, NamedLayer{
 
     @Override
     List<MutableLayerStyle> styles();
-    
+
     @Override
     MutableLayerFeatureConstraints getConstraints();
-    
+
 }

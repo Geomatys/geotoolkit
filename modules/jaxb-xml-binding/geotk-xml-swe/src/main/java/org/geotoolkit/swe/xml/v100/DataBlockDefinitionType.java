@@ -35,9 +35,9 @@ import org.geotoolkit.swe.xml.DataBlockDefinition;
 
 /**
  * <p>Java class for DataBlockDefinitionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataBlockDefinitionType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.swe.xml.DataBlockDefinition;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -88,7 +88,7 @@ public class DataBlockDefinitionType implements DataBlockDefinition {
             }
         }
     }
-    
+
     /**
      * Gets the value of the components property.
      */

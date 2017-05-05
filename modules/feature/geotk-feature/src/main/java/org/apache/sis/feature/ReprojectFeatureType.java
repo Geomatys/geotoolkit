@@ -61,7 +61,7 @@ import org.opengis.util.ScopedName;
 /**
  * FeatureType implementation which define a reprojected view of a reference
  * feature type.
- * 
+ *
  *
  * @author Johann Sorel (Geomatys)
  * @module
@@ -86,7 +86,7 @@ public class ReprojectFeatureType implements DecoratedFeatureType {
     private final Map<String,PropertyType> names = new HashMap<>();
     private final CoordinateReferenceSystem targetCRS;
     private boolean isSimple;
-    
+
     private final Map<CoordinateReferenceSystem,GeometryCSTransformer> cache = new HashMap<>();
 
     /**
@@ -126,7 +126,7 @@ public class ReprojectFeatureType implements DecoratedFeatureType {
             } else if(property instanceof Operation) {
                 property = new DecoratedOperation((Operation) property);
             }
-            
+
 
             final GenericName fullName = property.getName();
             fullNames.add(fullName);
@@ -246,7 +246,7 @@ public class ReprojectFeatureType implements DecoratedFeatureType {
      *
      * Returns {@code true} if this type is same or a super-type of the given type.
      * The check is based mainly on the feature type {@linkplain #getName() name}, which should be unique.
-     * 
+     *
      * <div class="note"><b>Analogy:</b>
      * if we compare {@code FeatureType} to {@link Class} in the Java language, then this method is equivalent
      * to {@link Class#isAssignableFrom(Class)}.</div>
@@ -329,7 +329,7 @@ public class ReprojectFeatureType implements DecoratedFeatureType {
         Geometry geom = trs.transform(val);
         JTS.setCRS(geom, targetCRS);
         return geom;
-        
+
     }
 
     @Override

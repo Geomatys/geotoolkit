@@ -27,15 +27,15 @@ import org.geotoolkit.wms.xml.AbstractOperation;
 
 
 /**
- * 
+ *
  *         For each operation offered by the server, list the available output
  *         formats and the online resource.
- *       
- * 
+ *
+ *
  * <p>Java class for OperationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OperationType">
  *   &lt;complexContent>
@@ -48,7 +48,7 @@ import org.geotoolkit.wms.xml.AbstractOperation;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -82,7 +82,7 @@ public class OperationType implements AbstractOperation {
             }
         }
     }
-     
+
     /**
      * Build a new Contact person primary object.
      */
@@ -96,7 +96,7 @@ public class OperationType implements AbstractOperation {
     }
     /**
      * Gets the value of the format property.
-     * 
+     *
      */
     public List<String> getFormat() {
         return Collections.unmodifiableList(format);

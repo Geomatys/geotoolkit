@@ -100,5 +100,5 @@ public interface Client {
      * @param listener to remove
      */
     void removeStorageListener(StorageListener listener);
-    
+
 }

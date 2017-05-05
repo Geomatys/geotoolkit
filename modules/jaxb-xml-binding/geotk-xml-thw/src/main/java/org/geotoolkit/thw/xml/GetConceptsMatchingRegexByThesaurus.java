@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for getConceptsMatchingRegexByThesaurus complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="getConceptsMatchingRegexByThesaurus">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getConceptsMatchingRegexByThesaurus", propOrder = {
@@ -58,11 +58,11 @@ public class GetConceptsMatchingRegexByThesaurus {
 
     /**
      * Gets the value of the regex property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRegex() {
         return regex;
@@ -70,11 +70,11 @@ public class GetConceptsMatchingRegexByThesaurus {
 
     /**
      * Sets the value of the regex property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRegex(String value) {
         this.regex = value;
@@ -82,11 +82,11 @@ public class GetConceptsMatchingRegexByThesaurus {
 
     /**
      * Gets the value of the thesaurus property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getThesaurus() {
         return thesaurus;
@@ -94,11 +94,11 @@ public class GetConceptsMatchingRegexByThesaurus {
 
     /**
      * Sets the value of the thesaurus property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setThesaurus(String value) {
         this.thesaurus = value;
@@ -106,11 +106,11 @@ public class GetConceptsMatchingRegexByThesaurus {
 
     /**
      * Gets the value of the language property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLanguage() {
         return language;
@@ -118,11 +118,11 @@ public class GetConceptsMatchingRegexByThesaurus {
 
     /**
      * Sets the value of the language property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLanguage(String value) {
         this.language = value;

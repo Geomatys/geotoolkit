@@ -26,9 +26,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for FormatNumberType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FormatNumberType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -71,11 +71,11 @@ public class FormatNumberType
 
     /**
      * Gets the value of the numericValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getNumericValue() {
         return numericValue;
@@ -83,11 +83,11 @@ public class FormatNumberType
 
     /**
      * Sets the value of the numericValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setNumericValue(final ParameterValueType value) {
         this.numericValue = value;
@@ -95,11 +95,11 @@ public class FormatNumberType
 
     /**
      * Gets the value of the pattern property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPattern() {
         return pattern;
@@ -107,11 +107,11 @@ public class FormatNumberType
 
     /**
      * Sets the value of the pattern property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPattern(final String value) {
         this.pattern = value;
@@ -119,11 +119,11 @@ public class FormatNumberType
 
     /**
      * Gets the value of the negativePattern property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getNegativePattern() {
         return negativePattern;
@@ -131,11 +131,11 @@ public class FormatNumberType
 
     /**
      * Sets the value of the negativePattern property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setNegativePattern(final String value) {
         this.negativePattern = value;
@@ -143,11 +143,11 @@ public class FormatNumberType
 
     /**
      * Gets the value of the decimalPoint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDecimalPoint() {
         if (decimalPoint == null) {
@@ -159,11 +159,11 @@ public class FormatNumberType
 
     /**
      * Sets the value of the decimalPoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDecimalPoint(final String value) {
         this.decimalPoint = value;
@@ -171,11 +171,11 @@ public class FormatNumberType
 
     /**
      * Gets the value of the groupingSeparator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getGroupingSeparator() {
         if (groupingSeparator == null) {
@@ -187,11 +187,11 @@ public class FormatNumberType
 
     /**
      * Sets the value of the groupingSeparator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setGroupingSeparator(final String value) {
         this.groupingSeparator = value;

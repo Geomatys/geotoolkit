@@ -31,9 +31,9 @@ import org.geotoolkit.swe.xml.AbstractTimeRange;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.swe.xml.AbstractTimeRange;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -103,7 +103,7 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
             }
         }
     }
-    
+
     /**
      * Gets the value of the uom property.
      */

@@ -26,11 +26,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * A property with the content model of gml:LinearRingPropertyType encapsulates a linear ring to represent a component of a surface boundary.
- * 
+ *
  * <p>Java class for LinearRingPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LinearRingPropertyType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LinearRingPropertyType", propOrder = {
@@ -56,11 +56,11 @@ public class LinearRingPropertyType {
 
     /**
      * Gets the value of the linearRing property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LinearRingType }
-     *     
+     *
      */
     public LinearRingType getLinearRing() {
         return linearRing;
@@ -68,11 +68,11 @@ public class LinearRingPropertyType {
 
     /**
      * Sets the value of the linearRing property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LinearRingType }
-     *     
+     *
      */
     public void setLinearRing(LinearRingType value) {
         this.linearRing = value;

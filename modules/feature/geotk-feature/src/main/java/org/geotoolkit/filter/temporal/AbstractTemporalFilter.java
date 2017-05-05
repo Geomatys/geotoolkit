@@ -28,7 +28,7 @@ public class AbstractTemporalFilter {
 
     protected final Expression left;
     protected final Expression right;
-    
+
     public AbstractTemporalFilter(final Expression left, final Expression right) {
         this.left = left;
         this.right = right;
@@ -41,7 +41,7 @@ public class AbstractTemporalFilter {
     public Expression getExpression2() {
         return right;
     }
-    
+
     /**
      * {@inheritDoc }
      */

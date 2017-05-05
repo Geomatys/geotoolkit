@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for DMSAngleType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DMSAngleType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DMSAngleType", propOrder = {
@@ -68,11 +68,11 @@ public class DMSAngleType {
 
     /**
      * Gets the value of the degrees property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DegreesType }
-     *     
+     *
      */
     public DegreesType getDegrees() {
         return degrees;
@@ -80,11 +80,11 @@ public class DMSAngleType {
 
     /**
      * Sets the value of the degrees property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DegreesType }
-     *     
+     *
      */
     public void setDegrees(DegreesType value) {
         this.degrees = value;
@@ -92,11 +92,11 @@ public class DMSAngleType {
 
     /**
      * Gets the value of the decimalMinutes property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getDecimalMinutes() {
         return decimalMinutes;
@@ -104,11 +104,11 @@ public class DMSAngleType {
 
     /**
      * Sets the value of the decimalMinutes property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setDecimalMinutes(BigDecimal value) {
         this.decimalMinutes = value;
@@ -116,11 +116,11 @@ public class DMSAngleType {
 
     /**
      * Gets the value of the minutes property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMinutes() {
         return minutes;
@@ -128,11 +128,11 @@ public class DMSAngleType {
 
     /**
      * Sets the value of the minutes property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMinutes(Integer value) {
         this.minutes = value;
@@ -140,11 +140,11 @@ public class DMSAngleType {
 
     /**
      * Gets the value of the seconds property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getSeconds() {
         return seconds;
@@ -152,11 +152,11 @@ public class DMSAngleType {
 
     /**
      * Sets the value of the seconds property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setSeconds(BigDecimal value) {
         this.seconds = value;

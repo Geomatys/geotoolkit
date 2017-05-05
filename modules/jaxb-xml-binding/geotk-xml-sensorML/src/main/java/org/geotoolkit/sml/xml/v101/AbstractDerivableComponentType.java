@@ -30,11 +30,11 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * Complex Type to allow creation of component profiles by extension
- * 
+ *
  * <p>Java class for AbstractDerivableComponentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractDerivableComponentType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -122,7 +122,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
     public Location getSMLLocation() {
         return location;
     }
-    
+
     @Override
     public void setSMLLocation(final AbstractLocation location) {
         if (location != null) {
@@ -137,7 +137,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
     public Position getPosition() {
         return position;
     }
-    
+
     @Override
     public void setPosition(final AbstractPosition position) {
         if (position != null) {
@@ -159,7 +159,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
     public void setSpatialReferenceFrame(final SpatialReferenceFrame spatialReferenceFrame) {
         this.spatialReferenceFrame = spatialReferenceFrame;
     }
-    
+
     /**
      * @return the timePosition
      */
@@ -204,7 +204,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
     public void setInterfaces(final Interfaces interfaces) {
         this.interfaces = interfaces;
     }
-    
+
     /**
      * Verify if this entry is identical to specified object.
      */
@@ -225,7 +225,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
         }
         return false;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -260,5 +260,5 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
         }
         return s.toString();
     }
-    
+
 }

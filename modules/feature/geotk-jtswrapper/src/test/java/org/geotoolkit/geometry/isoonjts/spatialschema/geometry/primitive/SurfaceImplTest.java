@@ -39,7 +39,7 @@ public class SurfaceImplTest extends TestCase {
     private JTSPositionFactory postitionFactory;
     private JTSPrimitiveFactory primitiveFactory;
     private JTSGeometryFactory geometryFactory;
-    
+
     @Override
     protected void setUp() throws Exception {
         postitionFactory = new JTSPositionFactory( CommonCRS.WGS84.normalizedGeographic() );
@@ -48,7 +48,7 @@ public class SurfaceImplTest extends TestCase {
         // TODO Auto-generated method stub
         super.setUp();
     }
-    
+
     /** We need to create a large surface with 7000 points */
     public void testLargeSurface(){
          int NUMBER = 100000;
@@ -62,7 +62,7 @@ public class SurfaceImplTest extends TestCase {
              DirectPosition point = postitionFactory.createDirectPosition( ordinates );
              points.add( point );
          }
-         List<OrientableCurve> curves = new ArrayList<OrientableCurve>();        
+         List<OrientableCurve> curves = new ArrayList<OrientableCurve>();
          // A curve will be created
          // - The curve will be set as parent curves for the Curve segments
          // - Start and end params for the CurveSegments will be set
@@ -80,7 +80,7 @@ public class SurfaceImplTest extends TestCase {
          Ring ring = primitiveFactory.createRing( curves );
          SurfaceBoundary boundary = primitiveFactory.createSurfaceBoundary(ring,new ArrayList());
          JTSSurface surface = (JTSSurface) primitiveFactory.createSurface(boundary);
-         
+
          Geometry peer = surface.computeJTSPeer();
     }
 }

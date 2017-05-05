@@ -78,11 +78,11 @@ import org.opengis.style.TextSymbolizer;
  * @author Johann Sorel (Geomatys)
  */
 public class FXStyleSimplePane extends FXLayerStylePane implements LayerListener {
-    
+
     private MapLayer layer;
     //keep track of where the rule was to avoid rewriting the complete style
     private MutableRule rule;
-    
+
     @FXML private ComboBox<FXStyleElementController> uiChoice;
     @FXML private TableView<Symbolizer> uiTable;
     @FXML private ImageView uiPreview;
@@ -100,19 +100,19 @@ public class FXStyleSimplePane extends FXLayerStylePane implements LayerListener
     public String getTitle() {
         return GeotkFX.getString(FXStyleSimplePane.class, "title");
     }
-    
+
     @Override
     public String getCategory() {
         return GeotkFX.getString(FXStyleSimplePane.class, "category");
     }
-    
+
     @FXML
     void addSymbol(ActionEvent event) {
-        final FXStyleElementController styleController = uiChoice.getSelectionModel().getSelectedItem();        
+        final FXStyleElementController styleController = uiChoice.getSelectionModel().getSelectedItem();
         final Symbolizer symbolizer = (Symbolizer) styleController.newValue();
         uiTable.getItems().add(symbolizer);
     }
-    
+
     /**
      * Called by FXMLLoader after creating controller.
      */
@@ -125,13 +125,13 @@ public class FXStyleSimplePane extends FXLayerStylePane implements LayerListener
         if(!editors.isEmpty()){
             uiChoice.getSelectionModel().select(0);
         }
-        
+
         final TableColumn<Symbolizer,Symbolizer> previewCol = new TableColumn<>();
         previewCol.setMinWidth(40);
         previewCol.setEditable(false);
         previewCol.setCellValueFactory((TableColumn.CellDataFeatures<Symbolizer, Symbolizer> param) -> new SimpleObjectProperty<>((Symbolizer)param.getValue()));
         previewCol.setCellFactory((TableColumn<Symbolizer, Symbolizer> p) -> new GlyphTableCell());
-        
+
         uiTable.getColumns().add(previewCol);
         uiTable.getColumns().add(new FXMoveUpTableColumn());
         uiTable.getColumns().add(new FXMoveDownTableColumn());
@@ -139,7 +139,7 @@ public class FXStyleSimplePane extends FXLayerStylePane implements LayerListener
         uiTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         uiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         uiTable.setTableMenuButtonVisible(false);
-        
+
         uiTable.getSelectionModel().getSelectedCells().addListener(new ListChangeListener<TablePosition>() {
             @Override
             public void onChanged(ListChangeListener.Change<? extends TablePosition> c) {
@@ -149,7 +149,7 @@ public class FXStyleSimplePane extends FXLayerStylePane implements LayerListener
                 }
 
                 uiSymbolizerEditorPane.setContent(null);
-                
+
                 for(final TablePosition tablePosition : uiTable.getSelectionModel().getSelectedCells()){
                     final Symbolizer symbolizer = uiTable.getItems().get(tablePosition.getRow());
                     System.out.println(symbolizer);
@@ -175,11 +175,11 @@ public class FXStyleSimplePane extends FXLayerStylePane implements LayerListener
                         uiSymbolizerEditorPane.setContent(symbolizerEditor);
                     }
                 }
-                
+
                 updatePreview();
             }
         });
-        
+
     }
 
     private void updatePreview(){
@@ -196,9 +196,9 @@ public class FXStyleSimplePane extends FXLayerStylePane implements LayerListener
         if(this.layer!=null){
             layerListener.unregisterSource(this.layer);
         }
-        
+
         this.layer = (MapLayer) candidate;
-        
+
         rule = null;
         loop:
         for(final FeatureTypeStyle typeStyle : layer.getStyle().featureTypeStyles()){
@@ -211,7 +211,7 @@ public class FXStyleSimplePane extends FXLayerStylePane implements LayerListener
         if(this.layer!=null){
             layerListener.registerSource(this.layer);
         }
-        
+
         return true;
     }
 
@@ -243,7 +243,7 @@ public class FXStyleSimplePane extends FXLayerStylePane implements LayerListener
             updatePreview();
         }
     }
-    
+
     @Override
     public MutableStyle getMutableStyle() {
         return layer.getStyle();
@@ -259,7 +259,7 @@ public class FXStyleSimplePane extends FXLayerStylePane implements LayerListener
             init(this.layer,this.layer.getStyle());
         }
     }
-    
+
     private static class GlyphTableCell extends TableCell<Symbolizer, Symbolizer>{
 
         @Override
@@ -277,16 +277,16 @@ public class FXStyleSimplePane extends FXLayerStylePane implements LayerListener
             }
         }
     }
-        
+
     private static class SymbolizersList extends ModifiableObservableListBase<Symbolizer> implements RuleListener{
-        
+
         private final MutableRule rule;
-        
+
         public SymbolizersList(MutableRule rule) {
             this.rule = rule;
             rule.addListener(this);
         }
-        
+
         @Override
         public Symbolizer get(int index) {
             return rule.symbolizers().get(index);
@@ -311,7 +311,7 @@ public class FXStyleSimplePane extends FXLayerStylePane implements LayerListener
         protected Symbolizer doRemove(int index) {
             return rule.symbolizers().remove(index);
         }
-        
+
         @Override
         public void symbolizerChange(CollectionChangeEvent<Symbolizer> event) {
             final int type = event.getType();
@@ -331,7 +331,7 @@ public class FXStyleSimplePane extends FXLayerStylePane implements LayerListener
         }
 
     }
-    
+
     private static class SymbolizerButtonListCell extends ListCell<FXStyleElementController>{
         @Override
         protected void updateItem(FXStyleElementController item, boolean empty) {

@@ -39,16 +39,16 @@ import org.opengis.metadata.quality.PositionalAccuracy;
 
 /**
  *  When observations are made to estimate properties of a geospatial
- * 				feature, in particular where the value of a property varies within the scope of the
- * 				feature, a spatial sampling feature is used. Depending on accessibility and on the
- * 				nature of the expected property variation, the sampling feature may be extensive in
- * 				one, two or three spatial dimensions. Processing and visualization methods are often
- * 				dependent on the topological dimension of the sampling manifold, so this provides a
- * 				natural classification system for sampling features. This classification follows
- * 				common practice in focussing on conventional spatial dimensions. Properties observed
- * 				on sampling features may be time-dependent, but the temporal axis does not generally
- * 				contribute to the classification of sampling feature classes. Sampling feature
- * 				identity is usually less time-dependent than is the property value.
+ *              feature, in particular where the value of a property varies within the scope of the
+ *              feature, a spatial sampling feature is used. Depending on accessibility and on the
+ *              nature of the expected property variation, the sampling feature may be extensive in
+ *              one, two or three spatial dimensions. Processing and visualization methods are often
+ *              dependent on the topological dimension of the sampling manifold, so this provides a
+ *              natural classification system for sampling features. This classification follows
+ *              common practice in focussing on conventional spatial dimensions. Properties observed
+ *              on sampling features may be time-dependent, but the temporal axis does not generally
+ *              contribute to the classification of sampling feature classes. Sampling feature
+ *              identity is usually less time-dependent than is the property value.
  *
  * <p>Java class for SF_SpatialSamplingFeatureType complex type.
  *

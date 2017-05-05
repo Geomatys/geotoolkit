@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for NAICSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="NAICSType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "NAICSType")
@@ -55,11 +55,11 @@ public class NAICSType extends AbstractNamedReferenceSystem {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -67,11 +67,11 @@ public class NAICSType extends AbstractNamedReferenceSystem {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -79,11 +79,11 @@ public class NAICSType extends AbstractNamedReferenceSystem {
 
     /**
      * Gets the value of the subType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSubType() {
         return subType;
@@ -91,11 +91,11 @@ public class NAICSType extends AbstractNamedReferenceSystem {
 
     /**
      * Sets the value of the subType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSubType(String value) {
         this.subType = value;
@@ -103,11 +103,11 @@ public class NAICSType extends AbstractNamedReferenceSystem {
 
     /**
      * Gets the value of the category property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCategory() {
         return category;
@@ -115,11 +115,11 @@ public class NAICSType extends AbstractNamedReferenceSystem {
 
     /**
      * Sets the value of the category property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCategory(String value) {
         this.category = value;

@@ -55,30 +55,30 @@ import org.opengis.filter.Filter;
 /**
  * A panel to create and chain filters on properties.
  * To fill list of properties which can be filtered, use {@link #getAvailableProperties() }.
- * 
+ *
  * @author Alexis Manin (Geomatys)
  */
 public class FXFilterBuilder extends BorderPane {
-    
+
     protected static enum JOIN_TYPE {
         AND,
         OR;
     }
     protected static final ObservableList<JOIN_TYPE> JOIN_TYPES = FXCollections.observableArrayList(JOIN_TYPE.values());
-    
+
     private static final Image ICON_PLUS = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PLUS, 16, new Color(74,123,165)), null);
     private static final Image ICON_MINUS = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_MINUS, 16, Color.RED), null);
-    
+
     protected static final ServiceLoader<FXFilterOperator> OPERATORS = ServiceLoader.load(FXFilterOperator.class);
-    
+
     /**
      * A simple button to add a new filter in filter chain.
      */
     protected final Button addFilter;
-    
+
     /**
      * A grid pane which will contain filter editors bound by an AND or OR filter.
-     * Columns are : 
+     * Columns are :
      * <ul>
      * <li>Type of link (AND, OR, or nothing for first row).</li>
      * <li>Property to apply filter upon,</li>
@@ -88,41 +88,41 @@ public class FXFilterBuilder extends BorderPane {
      * </ul>
      */
     protected final GridPane filterEditors;
-    
+
     /**
      * Properties which can be filtered. User will be able to choose which one to filter on using a combo-box.
      */
     protected final ObservableList<PropertyType> availableProperties = FXCollections.observableArrayList();
-    
+
     /**
      * A simple string converter for property display in a combo-box. it uses method {@link #getPropertyTitle(org.opengis.filter.expression.PropertyName) }.
      */
     private final StringConverter<PropertyType> propertyConverter;
-    
+
     private final StringConverter<FXFilterOperator> operatorConverter;
-    
+
     /**
      * Contains main information about edited filters.
      */
     private final ObservableList<FilterBox> sandboxes = FXCollections.observableArrayList();
-    
+
     /**
-     * A simple observable boolean to know if we have multiple filters (rows in 
+     * A simple observable boolean to know if we have multiple filters (rows in
      * inner grid pane) active (true) or not (false).
      */
     public final BooleanBinding multipleRows;
-    
+
     /**
      * A property to keep track of first edited filter.
      */
     protected final ObjectBinding<FilterBox> firstFilter = Bindings.valueAt(sandboxes, 0);
-    
+
     public FXFilterBuilder() {
         super();
-        
+
         setMinSize(USE_PREF_SIZE, USE_PREF_SIZE);
         setPrefSize(USE_COMPUTED_SIZE, USE_COMPUTED_SIZE);
-        
+
         // String converters
         propertyConverter = new StringConverter<PropertyType>() {
             @Override
@@ -138,7 +138,7 @@ public class FXFilterBuilder extends BorderPane {
                 return null;
             }
         };
-        
+
         operatorConverter = new StringConverter<FXFilterOperator>() {
             @Override
             public String toString(FXFilterOperator object) {
@@ -153,7 +153,7 @@ public class FXFilterBuilder extends BorderPane {
                 return null;
             }
         };
-        
+
         // display rules
         filterEditors = new GridPane();
         filterEditors.getColumnConstraints().addAll(
@@ -164,33 +164,33 @@ public class FXFilterBuilder extends BorderPane {
                 new ColumnConstraints(USE_PREF_SIZE, USE_COMPUTED_SIZE, USE_PREF_SIZE, Priority.NEVER, HPos.CENTER, true)
         );
         multipleRows = Bindings.size(sandboxes).greaterThan(1);
-        
+
         addFilter = new Button(null, new ImageView(ICON_PLUS));
         addFilter.visibleProperty().bind(Bindings.isNotEmpty(availableProperties));
         addFilter.setOnAction(event -> addFilterRow());
-                
+
         setTop(addFilter);
         setCenter(filterEditors);
-        
+
         // CSS rules
         getStylesheets().add(FXFilterBuilder.class.getResource("/org/geotoolkit/gui/javafx/filter/FXFilterBuilder.css").toExternalForm());
         getStyleClass().add("filter-root");
         addFilter.getStyleClass().add("header-button");
         filterEditors.getStyleClass().add("grid");
-        
+
     }
-    
+
     /**
-     * @return A list of properties available for filtering. Use it to add new 
+     * @return A list of properties available for filtering. Use it to add new
      * filter possibilities.
      */
     public ObservableList<PropertyType> getAvailableProperties() {
         return availableProperties;
     }
-    
+
     /**
      * Build a filter which is the aggregation of all filters edited.
-     * AND conditions are grouped first, then they are joined by or conditions, 
+     * AND conditions are grouped first, then they are joined by or conditions,
      * which make the final filter to return.
      * @return A filter representing user input. Never null, but a runtime exception
      * can be thrown if user input is not wring or not sufficient to build a proper filter.
@@ -207,14 +207,14 @@ public class FXFilterBuilder extends BorderPane {
                 orGroups.add((andGroups.size()==1)? andGroups.get(0) : GO2Utilities.FILTER_FACTORY.and(andGroups));
                 andGroups.clear();
             }
-            
+
             andGroups.add(box.buildFilter());
         }
-        
+
         orGroups.add((andGroups.size()==1)? andGroups.get(0) : GO2Utilities.FILTER_FACTORY.and(andGroups));
         return (orGroups.size() == 1)? orGroups.get(0) : GO2Utilities.FILTER_FACTORY.or(orGroups);
     }
-    
+
     /**
      * Return a title to be displayed in combo-box for user. By default, raw name
      * is returned,
@@ -226,12 +226,12 @@ public class FXFilterBuilder extends BorderPane {
             return "";
         return candidate.getName().head().toString();
     }
-    
+
     /**
      * Add a new filter, and display an editor to allow user to configure it.
      */
     protected void addFilterRow() {
-        
+
         // TODO : make international label for join types.
         final ChoiceBox<JOIN_TYPE> joinChoice = new ChoiceBox<>(JOIN_TYPES);
         final ComboBox<PropertyType> propertyChoice = createPropertyChoice();
@@ -239,31 +239,31 @@ public class FXFilterBuilder extends BorderPane {
         final ChoiceBox<FXFilterOperator> operatorChoice = new ChoiceBox<>(operators);
         final StackPane editorPane = new StackPane();
         final Button removeButton = new Button(null, new ImageView(ICON_MINUS));
-        
+
         // CSS rules
         joinChoice.getStyleClass().add("join-choice");
         propertyChoice.getStyleClass().add("property-choice");
         operatorChoice.getStyleClass().add("operator-choice");
         editorPane.getStyleClass().add("editor-pane");
         removeButton.getStyleClass().add("remove-button");
-        
-        
+
+
         operatorChoice.setConverter(operatorConverter);
         operatorChoice.disableProperty().bind(propertyChoice.valueProperty().isNull());
-        
+
         final FilterBox filterBox = new FilterBox(joinChoice.valueProperty(), propertyChoice.valueProperty(), operatorChoice.valueProperty(), editorPane);
-        filterBox.propertyType.addListener(new PropertyChoiceListener(operators));   
-        
+        filterBox.propertyType.addListener(new PropertyChoiceListener(operators));
+
         // bind remove button and join type visibility to number of rows (only one row left = no join or deletion).
         joinChoice.getSelectionModel().select(JOIN_TYPE.AND);
-        joinChoice.visibleProperty().bind(firstFilter.isNotEqualTo(filterBox));            
-        removeButton.visibleProperty().bind(multipleRows);    
+        joinChoice.visibleProperty().bind(firstFilter.isNotEqualTo(filterBox));
+        removeButton.visibleProperty().bind(multipleRows);
         removeButton.setOnAction(event -> {
             filterEditors.getChildren().removeAll(joinChoice, propertyChoice, operatorChoice, editorPane, removeButton);
             // Delete filter entry
             sandboxes.remove(filterBox);
         });
-        
+
         // To add a new line in the grid, we must get row indice of the last added pane.
         final int newRowIndice;
         if (sandboxes.isEmpty()) {
@@ -272,13 +272,13 @@ public class FXFilterBuilder extends BorderPane {
             final FilterBox box = sandboxes.get(sandboxes.size()-1);
             newRowIndice = GridPane.getRowIndex(box.filterEditorContainer) + 1;
         }
-        
+
         filterEditors.addRow(newRowIndice, joinChoice, propertyChoice, operatorChoice, editorPane, removeButton);
         sandboxes.add(filterBox);
     }
-    
+
     /**
-     * Create a combo-box (by default its editable with auto-completion) to allow 
+     * Create a combo-box (by default its editable with auto-completion) to allow
      * user to pick a property as filter target.
      * @return ComboBox
      */
@@ -287,30 +287,30 @@ public class FXFilterBuilder extends BorderPane {
         cBox.setConverter(propertyConverter);
         cBox.setEditable(true);
         new ComboBoxCompletion(cBox);
-        
+
         return cBox;
     }
-    
+
     /**
      * Update list of compatible operators when target property is changed.
      */
     private class PropertyChoiceListener implements ChangeListener<PropertyType> {
 
         private final ObservableList operatorList;
-        
+
         public PropertyChoiceListener(final ObservableList operators) {
             ArgumentChecks.ensureNonNull("operator list", operators);
             operatorList = operators;
         }
-        
+
         @Override
         public void changed(ObservableValue<? extends PropertyType> observable, PropertyType oldValue, PropertyType newValue) {
             if (newValue == null) {
                 operatorList.clear();
-                
+
             } else {
                 // Do not clear and re-fill operator list to keep selected operator if possible.
-                
+
                 // Remove filters which are not valid for current property.
                 final Iterator<FXFilterOperator> it = operatorList.iterator();
                 while (it.hasNext()) {
@@ -318,7 +318,7 @@ public class FXFilterBuilder extends BorderPane {
                         it.remove();
                     }
                 }
-                
+
                 // Check if new filters can be applied to data
                 for (final FXFilterOperator operator : OPERATORS) {
                     if (!operatorList.contains(operator) && operator.canHandle(newValue)) {
@@ -328,7 +328,7 @@ public class FXFilterBuilder extends BorderPane {
             }
         }
     }
-    
+
     /**
      * A simple POJO to keep references of a grid line row, which describes a filter edition rule.
      */
@@ -347,11 +347,11 @@ public class FXFilterBuilder extends BorderPane {
             this.propertyType = propertyType;
             this.operator = operator;
             this.filterEditorContainer = filterEditorContainer;
-            
+
             this.propertyType.addListener(this::updateOperator);
             this.operator.addListener(this::updateOperator);
         }
-        
+
         /**
          * Build filter described by current attributes.
          * @return Never null.
@@ -368,11 +368,11 @@ public class FXFilterBuilder extends BorderPane {
                     GO2Utilities.FILTER_FACTORY.property(propertyType.get().getName()),
                     paneChildren.isEmpty()? null : paneChildren.get(0));
         }
-        
+
         private void updateOperator(ObservableValue observable, Object oldValue, Object newValue) {
             final FXFilterOperator op = operator.get();
             final PropertyType property = propertyType.get();
-            
+
             if (op == null || property == null) {
                 filterEditorContainer.getChildren().clear();
             } else {
@@ -387,5 +387,5 @@ public class FXFilterBuilder extends BorderPane {
                 }
             }
         }
-    }   
+    }
 }

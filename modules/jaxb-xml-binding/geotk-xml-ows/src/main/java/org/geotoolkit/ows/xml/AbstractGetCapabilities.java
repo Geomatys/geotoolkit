@@ -34,6 +34,6 @@ public interface AbstractGetCapabilities extends RequestBase {
     boolean containsSection(String sectionName);
 
     AcceptFormats getAcceptFormats();
-    
+
     String getUpdateSequence();
 }

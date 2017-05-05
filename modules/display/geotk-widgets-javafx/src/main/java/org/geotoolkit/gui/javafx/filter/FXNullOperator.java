@@ -30,7 +30,7 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * Operator for {@link PropertyIsNull} filter.
- * 
+ *
  * @author Alexis Manin (Geomatys)
  */
 public class FXNullOperator implements FXFilterOperator {
@@ -43,7 +43,7 @@ public class FXNullOperator implements FXFilterOperator {
         locales.put(Locale.FRENCH, "est nul(le)");
         TITLE = new DefaultInternationalString(locales);
     }
-    
+
     @Override
     public boolean canHandle(PropertyType target) {
         if (target instanceof AttributeType) {
@@ -62,7 +62,7 @@ public class FXNullOperator implements FXFilterOperator {
     public boolean canExtractSettings(PropertyType propertyType, Node settingsContainer) {
         return false;
     }
-    
+
     @Override
     public Filter getFilterOver(Expression toApplyOn, Node editor) {
         return GO2Utilities.FILTER_FACTORY.isNull(toApplyOn);
@@ -72,5 +72,5 @@ public class FXNullOperator implements FXFilterOperator {
     public Optional<Node> createFilterEditor(PropertyType target) {
         return Optional.empty();
     }
-    
+
 }

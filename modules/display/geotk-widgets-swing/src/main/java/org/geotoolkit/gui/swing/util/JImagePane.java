@@ -27,7 +27,7 @@ import javax.swing.JComponent;
 /**
  * Swing component displaying an image.
  * Image is scaled and clipped to always fill the complete space.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class JImagePane extends JComponent{
@@ -42,26 +42,26 @@ public final class JImagePane extends JComponent{
         this.image = image;
         repaint();
     }
-    
+
     @Override
     protected void paintComponent(Graphics gra) {
         super.paintComponent(gra);
-        
+
         if(image == null) return;
-        
-        final Graphics2D g = (Graphics2D) gra.create();        
+
+        final Graphics2D g = (Graphics2D) gra.create();
         g.clip(new Rectangle(getSize()));
 
-        final AffineTransform trs = new AffineTransform();        
+        final AffineTransform trs = new AffineTransform();
         final double scaleX = (double)getWidth() / (double)image.getWidth(null);
         final double scaleY = (double)getHeight() / (double)image.getHeight(null);
         final double scale = Math.max(scaleX, scaleY);
-        
+
 //        trs.translate(getWidth()/2 - image.getWidth(null)/2, getHeight()/2 - image.getHeight(null)/2);
         trs.scale(scale, scale);
-        
+
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         g.drawImage(image, trs, null);
     }
-    
+
 }

@@ -24,8 +24,8 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
  * Provide the possibility to extend the work of the portrayal service.
  * This can used to add several graphic object or decorations on the canvas
  * before it is renderer.
- * 
- * Don't call repainting or refreshing actions on the canvas in here. This will 
+ *
+ * Don't call repainting or refreshing actions on the canvas in here. This will
  * be called at the last moment in the portrayal service.
  *
  * @author Johann Sorel (Geomatys)

@@ -33,9 +33,9 @@ import org.opengis.filter.identity.Identifier;
 
 /**
  * <p>Java class for ResourceIdType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ResourceIdType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.opengis.filter.identity.Identifier;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ResourceIdType")
@@ -70,13 +70,13 @@ public class ResourceIdType extends AbstractIdType  implements FeatureId {
     private XMLGregorianCalendar endDate;
 
     public ResourceIdType() {
-        
+
     }
-    
+
     public ResourceIdType(final String rid) {
         this.rid = rid;
     }
-    
+
     public ResourceIdType(final ResourceIdType that) {
         if (that != null) {
             this.rid         = that.rid;
@@ -86,14 +86,14 @@ public class ResourceIdType extends AbstractIdType  implements FeatureId {
             this.version     = that.version;
         }
     }
-    
+
     /**
      * Gets the value of the rid property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRid() {
         return rid;
@@ -101,11 +101,11 @@ public class ResourceIdType extends AbstractIdType  implements FeatureId {
 
     /**
      * Sets the value of the rid property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRid(String value) {
         this.rid = value;
@@ -113,11 +113,11 @@ public class ResourceIdType extends AbstractIdType  implements FeatureId {
 
     /**
      * Gets the value of the previousRid property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPreviousRid() {
         return previousRid;
@@ -125,11 +125,11 @@ public class ResourceIdType extends AbstractIdType  implements FeatureId {
 
     /**
      * Sets the value of the previousRid property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPreviousRid(String value) {
         this.previousRid = value;
@@ -137,11 +137,11 @@ public class ResourceIdType extends AbstractIdType  implements FeatureId {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         return version;
@@ -149,11 +149,11 @@ public class ResourceIdType extends AbstractIdType  implements FeatureId {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(String value) {
         this.version = value;
@@ -161,11 +161,11 @@ public class ResourceIdType extends AbstractIdType  implements FeatureId {
 
     /**
      * Gets the value of the startDate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getStartDate() {
         return startDate;
@@ -173,11 +173,11 @@ public class ResourceIdType extends AbstractIdType  implements FeatureId {
 
     /**
      * Sets the value of the startDate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setStartDate(XMLGregorianCalendar value) {
         this.startDate = value;
@@ -185,11 +185,11 @@ public class ResourceIdType extends AbstractIdType  implements FeatureId {
 
     /**
      * Gets the value of the endDate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getEndDate() {
         return endDate;
@@ -197,11 +197,11 @@ public class ResourceIdType extends AbstractIdType  implements FeatureId {
 
     /**
      * Sets the value of the endDate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setEndDate(XMLGregorianCalendar value) {
         this.endDate = value;

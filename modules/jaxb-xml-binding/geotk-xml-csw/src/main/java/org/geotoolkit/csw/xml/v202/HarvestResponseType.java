@@ -27,9 +27,9 @@ import org.geotoolkit.csw.xml.HarvestResponse;
 
 /**
  * <p>Java class for HarvestResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="HarvestResponseType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.csw.xml.HarvestResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -51,35 +51,35 @@ import org.geotoolkit.csw.xml.HarvestResponse;
     "acknowledgement",
     "transactionResponse"
 })
-@XmlRootElement(name = "HarvestResponse")        
+@XmlRootElement(name = "HarvestResponse")
 public class HarvestResponseType implements HarvestResponse {
 
     @XmlElement(name = "Acknowledgement")
     private AcknowledgementType acknowledgement;
     @XmlElement(name = "TransactionResponse")
     private TransactionResponseType transactionResponse;
-    
+
     /**
      * An empty constructor used by JAXB
      */
     HarvestResponseType() {
-        
+
     }
-    
+
     /**
      * Build a new Response to an harvest request (synchronous mode)
      */
     public HarvestResponseType(final TransactionResponseType transactionResponse) {
         this.transactionResponse = transactionResponse;
     }
-    
+
     /**
      * Build a new Response to an harvest request (synchronous mode)
      */
     public HarvestResponseType(final AcknowledgementType acknowledgement) {
         this.acknowledgement = acknowledgement;
     }
-    
+
 
     /**
      * Gets the value of the acknowledgement property.

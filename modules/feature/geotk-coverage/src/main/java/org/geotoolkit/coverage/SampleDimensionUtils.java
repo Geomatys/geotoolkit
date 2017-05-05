@@ -32,36 +32,36 @@ import org.opengis.util.InternationalString;
  * @since 4.0
  */
 public final strictfp class SampleDimensionUtils {
-    
+
     /**
      * Used nodata {@link Category} name.
-     * @see Category#getName() 
+     * @see Category#getName()
      */
     public static InternationalString NODATA_CATEGORY_NAME = Vocabulary.formatInternational(Vocabulary.Keys.Nodata);
-    
+
     /**
      * Create a {@link Category} adapted for No data value.<br>
      * Moreover : <br>
      * - the default associate color for this category is ARGB : (0, 0, 0, 0)<br>
      * - interval borders of single nodata value are <strong>Inclusive</strong><br>
      * - the default associate Category name will be {@link #NODATA_CATEGORY_NAME}.
-     * 
+     *
      * @param dataType sample type of data (double, byte, short ...)
      * @param noDataValue no data value.
      * @return no data {@link Category}.
      */
     public static Category buildSingleNoDataCategory(final Class dataType, final double noDataValue) {
         ArgumentChecks.ensureNonNull("dataType", dataType);
-        return new Category(NODATA_CATEGORY_NAME, new Color(0,0,0,0), 
+        return new Category(NODATA_CATEGORY_NAME, new Color(0,0,0,0),
                                        getTypedRangeNumber(dataType, noDataValue, true, noDataValue, true));
     }
-    
+
     /**
      * Create a {@link Category} adapted for No data values.<br>
      * Moreover : <br>
      * - the default associate color for this category is ARGB : (0, 0, 0, 0)
      * - the default associate Category name will be {@link #NODATA_CATEGORY_NAME}.
-     * 
+     *
      * @param dataType sample type of data (double, byte, short ...)
      * @param minNoDataValue minimum interval category value.
      * @param isMinInclusive {@code true} for minimum interval inclusive value, else {@code false} for exclusive.
@@ -69,17 +69,17 @@ public final strictfp class SampleDimensionUtils {
      * @param IsMaxInclusive {@code true} for maximum interval inclusive value, else {@code false} for exclusive.
      * @return expected noData category.
      */
-    public static Category buildNoDataCategory(final Class dataType, 
+    public static Category buildNoDataCategory(final Class dataType,
                                                final double minNoDataValue, final boolean isMinInclusive,
                                                final double maxNodataValue, final boolean IsMaxInclusive) {
         ArgumentChecks.ensureNonNull("dataType", dataType);
-        return new Category(NODATA_CATEGORY_NAME, new Color(0, 0, 0, 0), 
+        return new Category(NODATA_CATEGORY_NAME, new Color(0, 0, 0, 0),
                                        getTypedRangeNumber(dataType, minNoDataValue, isMinInclusive, maxNodataValue, IsMaxInclusive));
     }
-    
+
     /**
      * Create a {@link Category} adapted for any values.
-     * 
+     *
      * @param name category name.
      * @param dataType sample type of data (double, byte, short ...)
      * @param colors The category color, or {@code null} for a default color.
@@ -91,7 +91,7 @@ public final strictfp class SampleDimensionUtils {
      * @param offset value for internaly sample to geophysic mathematic function.
      * @return expected {@link Category} adapted for any values.
      * @throws NullArgumentException if name or dataType is {@code null}.
-     * @throws NullArgumentException if name {@link String} is empty. 
+     * @throws NullArgumentException if name {@link String} is empty.
      */
     public static Category buildCategory(final String name, final Class dataType, final Color[] colors,
                                          final double minCategoryValue, final boolean isMinInclude,
@@ -100,15 +100,15 @@ public final strictfp class SampleDimensionUtils {
         ArgumentChecks.ensureNonNull("name", name);
         ArgumentChecks.ensureNonEmpty("name", name);
         ArgumentChecks.ensureNonNull("dataType", dataType);
-        return new Category(name, colors, 
-                        getTypedRangeNumber(dataType, 
-                                            minCategoryValue, isMinInclude, 
+        return new Category(name, colors,
+                        getTypedRangeNumber(dataType,
+                                            minCategoryValue, isMinInclude,
                                             maxCategoryValue, isMaxInclude), scale, offset);
     }
-        
+
     /**
      * Returns an appropriate {@link NumberRange} from given parameters.
-     * 
+     *
      * @param <T> type of internal data.
      * @param type type of internal data.
      * @param min minimum range value.

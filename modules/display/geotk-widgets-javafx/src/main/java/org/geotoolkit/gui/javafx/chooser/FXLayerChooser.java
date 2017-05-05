@@ -72,7 +72,7 @@ import org.opengis.filter.FilterFactory2;
  */
 public class FXLayerChooser extends BorderPane{
 
-    
+
     private static final Comparator SORTER = new Comparator() {
 
         @Override
@@ -101,19 +101,19 @@ public class FXLayerChooser extends BorderPane{
     };
 
     private Object source = null;
-    
+
     public final ListView<Object> layerNames = new ListView<>();
     private final ScrollPane scroll = new ScrollPane(layerNames);
-    
-    public FXLayerChooser() {        
+
+    public FXLayerChooser() {
         scroll.setFitToHeight(true);
         scroll.setFitToWidth(true);
         setCenter(scroll);
-        
+
         layerNames.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         layerNames.setCellFactory((ListView<Object> param) -> new LayerCell());
     }
-    
+
     public List<MapLayer> getLayers() throws DataStoreException{
 
         final MutableStyleFactory styleFactory = (MutableStyleFactory) FactoryFinder.getStyleFactory(
@@ -121,7 +121,7 @@ public class FXLayerChooser extends BorderPane{
 
         final FilterFactory2 FF = new DefaultFilterFactory2();
         final MutableStyleFactory SF = styleFactory;
-        
+
         final List values = layerNames.getSelectionModel().getSelectedItems();
         final List<MapLayer> layers = new ArrayList<>();
 
@@ -139,22 +139,22 @@ public class FXLayerChooser extends BorderPane{
                     final DataStoreFactory factory = store.getFactory();
                     final Session session = store.createSession(true);
                     final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name.toString()));
-                    
+
                     final MutableStyle style;
-                    
+
                     if(factory.getMetadata().produceStyledFeature()){
                         //do not create a style, each feature defines it's own symbolizers
                         style = SF.style();
-                        
+
                     }else{
                         style = RandomStyleBuilder.createRandomVectorStyle(collection.getFeatureType());
                     }
-                    
+
                     final FeatureMapLayer layer = MapBuilder.createFeatureLayer(collection, style);
                     layer.setName(name.tip().toString());
                     layer.setDescription(styleFactory.description(name.tip().toString(), name.toString()));
                     layer.setUserProperty(MapLayer.USERKEY_STYLED_FEATURE, factory.getMetadata().produceStyledFeature());
-                    layers.add(layer);                    
+                    layers.add(layer);
 
                 }else if(source instanceof CoverageStore){
                     final CoverageStore store = (CoverageStore) source;
@@ -214,7 +214,7 @@ public class FXLayerChooser extends BorderPane{
     public Object getSource() {
         return source;
     }
-    
+
     private final class LayerCell extends ListCell{
 
         @Override
@@ -271,7 +271,7 @@ public class FXLayerChooser extends BorderPane{
                     }
 
                     setGraphic(new ImageView(SwingFXUtils.toFXImage(icon, null)));
-                        
+
                 }
 
                 value = ft.getName();
@@ -284,7 +284,7 @@ public class FXLayerChooser extends BorderPane{
             }
 
         }
-    
+
     }
-    
+
 }

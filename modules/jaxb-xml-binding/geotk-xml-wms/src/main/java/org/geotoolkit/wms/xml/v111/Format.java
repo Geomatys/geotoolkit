@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlValue;
 
 
 /**
- * 
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -46,7 +46,7 @@ public class Format {
     }
     /**
      * Gets the value of the value property.
-     * 
+     *
      */
     public String getvalue() {
         return value;

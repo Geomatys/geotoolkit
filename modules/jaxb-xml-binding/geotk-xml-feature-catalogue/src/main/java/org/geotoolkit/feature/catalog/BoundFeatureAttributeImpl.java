@@ -30,6 +30,9 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.sis.metadata.AbstractMetadata;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.BoundFeatureAttribute;
 import org.opengis.feature.catalog.FeatureAttribute;
 import org.opengis.feature.catalog.FeatureType;
@@ -45,7 +48,7 @@ import org.opengis.feature.catalog.FeatureType;
     "attribute"
 })
 @XmlRootElement(name = "FC_BoundFeature")
-public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referenceable {
+public class BoundFeatureAttributeImpl extends AbstractMetadata implements BoundFeatureAttribute, Referenceable {
 
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -80,6 +83,7 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
 
     }
 
+    @Override
     public FeatureType getFeatureType() {
         return featureType;
     }
@@ -88,6 +92,7 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
         this.featureType = featureType;
     }
 
+    @Override
     public FeatureAttribute getAttribute() {
        return attribute;
     }
@@ -96,6 +101,7 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
        this.attribute = attribute;
     }
 
+    @Override
      public String getId() {
         return id;
     }
@@ -107,6 +113,7 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
     /**
      * set the feature in reference mode
      */
+    @Override
     public void setReference(final boolean mode) {
         this.isReference = mode;
     }
@@ -114,11 +121,13 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
      /**
      * get the current feature in reference mode
      */
+    @Override
     public boolean isReference() {
         return isReference;
     }
 
-    public BoundFeatureAttributeImpl getReference() {
+    @Override
+    public BoundFeatureAttributeImpl getReferenceableObject() {
         BoundFeatureAttributeImpl reference = new BoundFeatureAttributeImpl(this);
         reference.setReference(true);
         return reference;
@@ -131,7 +140,7 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
 
         if (featureType != null) {
             if (alreadySee.get(featureType.getId()) != null) {
-                featureType = ((FeatureTypeImpl)featureType).getReference();
+                featureType = ((FeatureTypeImpl)featureType).getReferenceableObject();
             } else {
                 alreadySee = ((FeatureTypeImpl)featureType).beforeMarshal(alreadySee);
             }
@@ -139,7 +148,7 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
 
         if (attribute != null) {
             if (alreadySee.get(attribute.getId()) != null) {
-                attribute = ((FeatureAttributeImpl)attribute).getReference();
+                attribute = ((FeatureAttributeImpl)attribute).getReferenceableObject();
             } else {
                 alreadySee = ((FeatureAttributeImpl)attribute).beforeMarshal(alreadySee);
             }
@@ -162,7 +171,7 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
@@ -181,6 +190,11 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
         hash = 11 * hash + (this.featureType != null ? this.featureType.hashCode() : 0);
         hash = 11 * hash + (this.attribute != null ? this.attribute.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public MetadataStandard getStandard() {
+        return FeatureCatalogueStandard.ISO_19110;
     }
 
 }

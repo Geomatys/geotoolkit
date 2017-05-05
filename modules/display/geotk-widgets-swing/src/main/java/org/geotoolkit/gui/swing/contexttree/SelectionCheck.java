@@ -26,7 +26,7 @@ import org.geotoolkit.font.IconBuilder;
 
 /**
  * Component used to present layer selectability
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
@@ -46,5 +46,5 @@ class SelectionCheck extends JCheckBox {
         setDisabledIcon(        ICO_NOSELECT);
         setDisabledSelectedIcon(ICO_SELECT);
     }
-    
+
 }

@@ -33,9 +33,9 @@ import org.geotoolkit.swes.xml.SOSResponse;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -48,7 +48,7 @@ import org.geotoolkit.swes.xml.SOSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -69,24 +69,24 @@ public class Capabilities extends CapabilitiesBaseType implements org.geotoolkit
      * An empty constructor used by JAXB
      */
     public Capabilities() {}
-    
+
     public Capabilities(final String version, final String updateSequence) {
         super(version, updateSequence);
-                    
+
     }
-    
+
     public Capabilities(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
             final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final FilterCapabilities filterCapabilities,
             final Contents contents) {
         super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
         this.contents           = contents;
         this.filterCapabilities = filterCapabilities;
-                    
+
     }
 
     /**
      * Return the value of the filterCapabilities property.
-     * 
+     *
      */
     @Override
     public FilterCapabilities getFilterCapabilities() {
@@ -103,17 +103,17 @@ public class Capabilities extends CapabilitiesBaseType implements org.geotoolkit
 
     /**
      * Sets the value of the contents property.
-     * 
+     *
      */
     public void setContents(final Contents value) {
         this.contents = value;
     }
-    
+
     @Override
     public String getSpecificationVersion() {
         return "1.0.0";
     }
-    
+
     @Override
     public AbstractCapabilitiesCore applySections(final Sections sections) {
         //we prepare the different parts response document
@@ -149,7 +149,7 @@ public class Capabilities extends CapabilitiesBaseType implements org.geotoolkit
         // we build and normalize the document
         return new Capabilities(si, sp, om, "1.0.0", getUpdateSequence(), fc, cont);
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */

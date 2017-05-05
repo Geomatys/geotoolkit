@@ -63,7 +63,7 @@ public class FileToComplexConverter extends AbstractComplexOutputConverter<File>
         if (wpsVersion == null) {
             LOGGER.warning("No WPS version set using default 1.0.0");
             wpsVersion = "1.0.0";
-        } 
+        }
 
         String mime = (String) params.get(MIME);
         String encoding = (String) params.get(ENCODING);

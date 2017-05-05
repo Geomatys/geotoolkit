@@ -26,15 +26,15 @@ import org.geotoolkit.csw.xml.GetRecordsResponse;
 
 
 /**
- * The response message for a GetRecords request. 
- * Some or all of the matching records may be included as children of the searchResults element. 
+ * The response message for a GetRecords request.
+ * Some or all of the matching records may be included as children of the searchResults element.
  * The requestId is included if the client specified it.
- *          
- * 
+ *
+ *
  * <p>Java class for GetRecordsResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetRecordsResponseType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.csw.xml.GetRecordsResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,9 +75,9 @@ public class GetRecordsResponseType implements GetRecordsResponse {
      * An empty constructor used by JAXB
      */
     GetRecordsResponseType() {
-        
+
     }
-    
+
     /**
      * Build a new response to a getRecords request
      */
@@ -86,12 +86,12 @@ public class GetRecordsResponseType implements GetRecordsResponse {
         this.searchStatus  = new RequestStatusType(time);
         this.version       = version;
         this.searchResults = searchResults;
-        
+
     }
-    
+
     /**
      * Gets the value of the requestId property.
-     * 
+     *
      */
     public String getRequestId() {
         return requestId;
@@ -99,7 +99,7 @@ public class GetRecordsResponseType implements GetRecordsResponse {
 
     /**
      * Sets the value of the requestId property.
-     * 
+     *
      */
     public void setRequestId(final String value) {
         this.requestId = value;
@@ -107,7 +107,7 @@ public class GetRecordsResponseType implements GetRecordsResponse {
 
     /**
      * Gets the value of the searchStatus property.
-     * 
+     *
      */
     public RequestStatusType getSearchStatus() {
         return searchStatus;
@@ -115,7 +115,7 @@ public class GetRecordsResponseType implements GetRecordsResponse {
 
     /**
      * Sets the value of the searchStatus property.
-     * 
+     *
      */
     public void setSearchStatus(final RequestStatusType value) {
         this.searchStatus = value;
@@ -123,7 +123,7 @@ public class GetRecordsResponseType implements GetRecordsResponse {
 
     /**
      * Gets the value of the searchResults property.
-     * 
+     *
      */
     public SearchResultsType getSearchResults() {
         return searchResults;
@@ -131,7 +131,7 @@ public class GetRecordsResponseType implements GetRecordsResponse {
 
     /**
      * Sets the value of the searchResults property.
-     * 
+     *
      */
     public void setSearchResults(final SearchResultsType value) {
         this.searchResults = value;
@@ -139,7 +139,7 @@ public class GetRecordsResponseType implements GetRecordsResponse {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      */
     public String getVersion() {
         return version;
@@ -147,12 +147,12 @@ public class GetRecordsResponseType implements GetRecordsResponse {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      */
     public void setVersion(final String value) {
         this.version = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[GetRecordsResponseType] version=").append(version).append(":").append('\n');

@@ -30,9 +30,9 @@ import org.geotoolkit.sml.xml.AbstractLegalConstraint;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.sml.xml.AbstractLegalConstraint;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -96,7 +96,7 @@ public class LegalConstraint implements AbstractLegalConstraint {
             }
         }
     }
-    
+
     public LegalConstraint(final Rights rights) {
         this.rights = rights;
     }
@@ -127,11 +127,11 @@ public class LegalConstraint implements AbstractLegalConstraint {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -202,7 +202,7 @@ public class LegalConstraint implements AbstractLegalConstraint {
 
     /**
      * Gets the value of the show property.
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -210,7 +210,7 @@ public class LegalConstraint implements AbstractLegalConstraint {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      */
     public void setShow(final String value) {
         this.show = value;

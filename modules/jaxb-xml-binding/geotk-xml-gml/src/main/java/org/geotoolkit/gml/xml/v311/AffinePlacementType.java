@@ -28,35 +28,35 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * A placement takes a standard geometric
  *    construction and places it in geographic space. It defines a
- *    transformation from a constructive parameter space to the 
- *    co-ordinate space of the co-ordinate reference system being used.  
- *    Parameter spaces in formulae in this International Standard are 
- *    given as (u, v) in 2D and(u, v, w) in 3D. Co-ordinate reference 
- *    systems positions are given in formulae, in this International 
+ *    transformation from a constructive parameter space to the
+ *    co-ordinate space of the co-ordinate reference system being used.
+ *    Parameter spaces in formulae in this International Standard are
+ *    given as (u, v) in 2D and(u, v, w) in 3D. Co-ordinate reference
+ *    systems positions are given in formulae, in this International
  *    Standard, by either (x, y) in 2D, or (x, y, z) in 3D.
- * 
- *    Affine placements are defined by linear transformations from 
- *    parameter space to the target co-ordiante space. 2-dimensional 
+ *
+ *    Affine placements are defined by linear transformations from
+ *    parameter space to the target co-ordiante space. 2-dimensional
  *    Cartesian parameter space,(u,v) transforms into 3-dimensional co-
- *    ordinate reference systems,(x,y,z) by using an affine 
+ *    ordinate reference systems,(x,y,z) by using an affine
  *    transformation,(u,v)->(x,y,z) which is defined :
- * 
- * 	x	ux vx  	x0
- * 			 u	  
- * 	y =	uy vy   + y0
- * 			 v		
- * 	x	uz vz	z0
- * 	
- *    Then, given this equation, the location element of the 
+ *
+ *  x   ux vx   x0
+ *           u
+ *  y = uy vy   + y0
+ *           v
+ *  x   uz vz   z0
+ *
+ *    Then, given this equation, the location element of the
  *    AffinePlacement is the direct position (x0, y0, z0), which is the
  *    target position of the origin in (u, v). The two reference
- *    directions (ux, uy, uz) and (vx, vy, vz) are the target     
+ *    directions (ux, uy, uz) and (vx, vy, vz) are the target
  *    directions of the unit vectors at the origin in (u, v).
- * 
+ *
  * <p>Java class for AffinePlacementType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AffinePlacementType">
  *   &lt;complexContent>
@@ -71,8 +71,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -97,11 +97,11 @@ public class AffinePlacementType {
 
     /**
      * Gets the value of the location property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     public DirectPositionType getLocation() {
         return location;
@@ -109,11 +109,11 @@ public class AffinePlacementType {
 
     /**
      * Sets the value of the location property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     public void setLocation(final DirectPositionType value) {
         this.location = value;
@@ -121,25 +121,25 @@ public class AffinePlacementType {
 
     /**
      * Gets the value of the refDirection property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the refDirection property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRefDirection().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link VectorType }
-     * 
-     * 
+     *
+     *
      */
     public List<VectorType> getRefDirection() {
         if (refDirection == null) {
@@ -150,11 +150,11 @@ public class AffinePlacementType {
 
     /**
      * Gets the value of the inDimension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getInDimension() {
         return inDimension;
@@ -162,11 +162,11 @@ public class AffinePlacementType {
 
     /**
      * Sets the value of the inDimension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setInDimension(final Integer value) {
         this.inDimension = value;
@@ -174,11 +174,11 @@ public class AffinePlacementType {
 
     /**
      * Gets the value of the outDimension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getOutDimension() {
         return outDimension;
@@ -186,11 +186,11 @@ public class AffinePlacementType {
 
     /**
      * Sets the value of the outDimension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setOutDimension(final Integer value) {
         this.outDimension = value;

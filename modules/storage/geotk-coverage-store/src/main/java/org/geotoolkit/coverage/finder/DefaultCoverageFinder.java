@@ -37,7 +37,7 @@ import org.opengis.util.FactoryException;
  */
 @Deprecated
 public class DefaultCoverageFinder extends CoverageFinder {
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -80,7 +80,7 @@ public class DefaultCoverageFinder extends CoverageFinder {
                     //continue on other axes
                 }
             }
-            
+
             //check if it will not require too much tiles
             final Dimension tileSize = candidate.getTileSize();
             double nbtileX = clip.getSpan(0) / (tileSize.width * scale);

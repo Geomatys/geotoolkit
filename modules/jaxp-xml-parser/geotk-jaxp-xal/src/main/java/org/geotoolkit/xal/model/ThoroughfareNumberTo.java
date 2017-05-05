@@ -52,7 +52,7 @@ public interface ThoroughfareNumberTo {
     List<Object> getContent();
 
     /**
-     * 
+     *
      * @return
      */
     GrPostal getGrPostal();

@@ -23,12 +23,12 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
 
 /**
  * An interface containing the common methods to the different version of the operation GetRecords.
- * 
+ *
  * @module
  */
 public interface GetRecordsRequest extends AbstractCswRequest {
 
-    
+
     /**
      * Gets the value of the requestId property.
      */
@@ -36,7 +36,7 @@ public interface GetRecordsRequest extends AbstractCswRequest {
 
     /**
      * Sets the value of the requestId property.
-     * 
+     *
      */
     public void setRequestId(String value);
 
@@ -47,54 +47,54 @@ public interface GetRecordsRequest extends AbstractCswRequest {
 
     /**
      * Sets the value of the outputSchema property.
-     * 
+     *
      */
     public void setOutputSchema(String value);
 
     /**
      * Gets the value of the startPosition property.
-     * 
+     *
      */
     public Integer getStartPosition();
-    
+
     /**
      * Sets the value of the startPosition property.
-     * 
+     *
      */
     public void setStartPosition(Integer value);
 
     /**
      * Gets the value of the maxRecords property.
-     * 
+     *
      */
     public Integer getMaxRecords();
 
     /**
      * Sets the value of the maxRecords property.
-     * 
+     *
      */
     public void setMaxRecords(Integer value);
-    
+
     /**
      * Set the service version number.
      */
     public void setVersion(String version);
-    
+
     /**
      * Set the typeNames field of the Query part.
      */
     public void setTypeNames(List<QName> typenames);
-    
+
     /**
      * Remove all the Query constraint.
      */
     public void removeConstraint();
-    
+
     /**
      * replace the Query constraint by a new COnstraint with the specified CQL text.
      */
     public void setCQLConstraint(String CQLQuery);
-    
+
     /**
      * This method set a query constraint by a filter.
      * @param filter FilterType

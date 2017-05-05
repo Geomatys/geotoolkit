@@ -42,7 +42,7 @@ public class LatLonBoundingBox implements AbstractGeographicBoundingBox {
     private double maxx;
     @XmlAttribute
     private double maxy;
-    
+
     /**
      * An empty constructor used by JAXB.
      */
@@ -53,13 +53,13 @@ public class LatLonBoundingBox implements AbstractGeographicBoundingBox {
      * Build a new bounding box.
      *
      */
-    public LatLonBoundingBox(final double minx, final double miny, 
+    public LatLonBoundingBox(final double minx, final double miny,
             final double maxx, final double maxy) {
         this.minx = minx;
         this.miny = miny;
         this.maxx = maxx;
         this.maxy = maxy;
-        
+
     }
 
     public LatLonBoundingBox(final GeographicBoundingBox geoBox) {
@@ -71,7 +71,7 @@ public class LatLonBoundingBox implements AbstractGeographicBoundingBox {
 
     /**
      * Gets the value of the maxy property.
-     * 
+     *
      */
     public double getWestBoundLongitude() {
         return minx;
@@ -79,7 +79,7 @@ public class LatLonBoundingBox implements AbstractGeographicBoundingBox {
 
     /**
      * Gets the value of the minx property.
-     * 
+     *
      */
     public double getEastBoundLongitude() {
         return maxx;
@@ -87,7 +87,7 @@ public class LatLonBoundingBox implements AbstractGeographicBoundingBox {
 
     /**
      * Gets the value of the maxx property.
-     * 
+     *
      */
     public double getSouthBoundLatitude() {
         return miny;
@@ -95,20 +95,20 @@ public class LatLonBoundingBox implements AbstractGeographicBoundingBox {
 
     /**
      * Gets the value of the miny property.
-     * 
+     *
      */
     public double getNorthBoundLatitude() {
         return maxy;
     }
-    
+
     @Override
     public Boolean getInclusion() {
         return Boolean.TRUE;
     }
-    
+
     @Override
     public String toString() {
         return "Env[" + minx + " : " + maxx + ", " + miny + " : " + maxy + "]";
     }
-    
+
 }

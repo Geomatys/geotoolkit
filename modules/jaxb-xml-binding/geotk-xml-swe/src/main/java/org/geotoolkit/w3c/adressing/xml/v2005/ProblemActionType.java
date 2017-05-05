@@ -30,9 +30,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for ProblemActionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ProblemActionType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ProblemActionType", propOrder = {
@@ -66,11 +66,11 @@ public class ProblemActionType {
 
     /**
      * Gets the value of the action property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AttributedURIType }
-     *     
+     *
      */
     public AttributedURIType getAction() {
         return action;
@@ -78,11 +78,11 @@ public class ProblemActionType {
 
     /**
      * Sets the value of the action property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AttributedURIType }
-     *     
+     *
      */
     public void setAction(AttributedURIType value) {
         this.action = value;
@@ -90,11 +90,11 @@ public class ProblemActionType {
 
     /**
      * Gets the value of the soapAction property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSoapAction() {
         return soapAction;
@@ -102,11 +102,11 @@ public class ProblemActionType {
 
     /**
      * Sets the value of the soapAction property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSoapAction(String value) {
         this.soapAction = value;
@@ -114,7 +114,7 @@ public class ProblemActionType {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * @return
      *     always non-null
      */

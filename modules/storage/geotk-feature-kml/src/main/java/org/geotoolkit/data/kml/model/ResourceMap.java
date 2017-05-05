@@ -39,7 +39,7 @@ import java.util.List;
  * &lt;element name="ResourceMapsimpleExtensionGroup" abstract="true" type="anySimpleType"/>
  * &lt;element name="ResourceMapObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
  * </pre>
- * 
+ *
  * @author Samuel Andrés
  * @module
  */

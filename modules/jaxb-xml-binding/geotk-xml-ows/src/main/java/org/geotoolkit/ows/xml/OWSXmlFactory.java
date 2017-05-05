@@ -26,7 +26,7 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
  * @author Guilhem Legal (Geomatys)
  */
 public class OWSXmlFactory {
-    
+
     public static AbstractOnlineResourceType buildOnlineResource(final String currentVersion, final String url) {
         if ("1.1.0".equals(currentVersion)) {
             return new org.geotoolkit.ows.xml.v110.OnlineResourceType(url);
@@ -50,7 +50,7 @@ public class OWSXmlFactory {
                 throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static AcceptFormats buildAcceptFormat(final String currentVersion, final List<String> acceptformats) {
         if ("1.1.0".equals(currentVersion)) {
             return new org.geotoolkit.ows.xml.v110.AcceptFormatsType(acceptformats);
@@ -62,7 +62,7 @@ public class OWSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static Sections buildSections(final String currentVersion, final List<String> sections) {
         if ("1.1.0".equals(currentVersion)) {
             return new org.geotoolkit.ows.xml.v110.SectionsType(sections);
@@ -168,7 +168,7 @@ public class OWSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static AbstractDCP buildDCP(final String currentVersion, final String getURL, final String postURL) {
         if ("1.1.0".equals(currentVersion)) {
             org.geotoolkit.ows.xml.v110.RequestMethodType getReq = null;
@@ -443,7 +443,7 @@ public class OWSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static AbstractResponsiblePartySubset buildResponsiblePartySubset(final String currentVersion, final String individualName, final String positionName,
             final AbstractContact contact, final String role) {
         if ("1.1.0".equals(currentVersion)) {
@@ -456,7 +456,7 @@ public class OWSXmlFactory {
             } else {
                 r = null;
             }
-            return new org.geotoolkit.ows.xml.v110.ResponsiblePartySubsetType(individualName, positionName, 
+            return new org.geotoolkit.ows.xml.v110.ResponsiblePartySubsetType(individualName, positionName,
                                                                               (org.geotoolkit.ows.xml.v110.ContactType)contact,
                                                                               r);
         } else if ("1.0.0".equals(currentVersion)) {
@@ -526,7 +526,7 @@ public class OWSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static AbstractOperationsMetadata buildOperationsMetadata(final String currentVersion, final List<AbstractOperation> operations, final List<AbstractDomain> parameters,
              final List<AbstractDomain> constraints, final Object extendedCapabilities) {
         if ("1.1.0".equals(currentVersion)) {

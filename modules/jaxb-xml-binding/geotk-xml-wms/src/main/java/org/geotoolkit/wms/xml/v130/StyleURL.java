@@ -26,9 +26,9 @@ import org.geotoolkit.wms.xml.AbstractStyleURL;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,7 +41,7 @@ import org.geotoolkit.wms.xml.AbstractStyleURL;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -71,7 +71,7 @@ public class StyleURL implements AbstractStyleURL {
         this.format         = format;
         this.onlineResource = onlineResource;
     }
-    
+
     /**
      * Build a new Contact person primary object.
      */
@@ -83,7 +83,7 @@ public class StyleURL implements AbstractStyleURL {
             }
         }
     }
-    
+
     /**
      * Gets the value of the format property.
      */
@@ -94,7 +94,7 @@ public class StyleURL implements AbstractStyleURL {
 
     /**
      * Gets the value of the onlineResource property.
-     * 
+     *
      */
     @Override
     public OnlineResource getOnlineResource() {

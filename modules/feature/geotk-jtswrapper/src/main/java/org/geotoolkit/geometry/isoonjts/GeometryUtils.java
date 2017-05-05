@@ -93,7 +93,7 @@ public final class GeometryUtils {
         return envelope.getLowerCorner().getCoordinateReferenceSystem();
     }
 
-	// PENDING(jdc): need to respect a given Unit for the return array.
+    // PENDING(jdc): need to respect a given Unit for the return array.
     /**
      * Converts an {@code Envelope} to a "minx, miny, maxx, maxy" array.
      * @param envelope
@@ -303,10 +303,10 @@ public final class GeometryUtils {
         DirectPosition bot2 = envelope2.getLowerCorner();
         CoordinateReferenceSystem crs = top1.getCoordinateReferenceSystem();
         if (!crs.equals(bot1.getCoordinateReferenceSystem())
-        		|| !crs.equals(top2.getCoordinateReferenceSystem())
-        		|| !crs.equals(bot2.getCoordinateReferenceSystem())) {
-        	throw new IllegalArgumentException(
-        		"Current implementation of GeoemtryUtils.intersect requires that the corners of both Envelopes have the same CRS");
+                || !crs.equals(top2.getCoordinateReferenceSystem())
+                || !crs.equals(bot2.getCoordinateReferenceSystem())) {
+            throw new IllegalArgumentException(
+                "Current implementation of GeoemtryUtils.intersect requires that the corners of both Envelopes have the same CRS");
         }
         double minx1 = bot1.getOrdinate(0);
         double maxx1 = top1.getOrdinate(0);
@@ -413,26 +413,26 @@ public final class GeometryUtils {
      * or the transformed DirectPosition.
      */
     public static DirectPosition ensureWGS84(DirectPosition dp) {
-    	CoordinateReferenceSystem crs = dp.getCoordinateReferenceSystem();
-    	int dim = crs.getCoordinateSystem().getDimension();
-    	CoordinateReferenceSystem bcrs = crs instanceof ProjectedCRS
-			? ((ProjectedCRS) crs).getBaseCRS() : crs;
+        CoordinateReferenceSystem crs = dp.getCoordinateReferenceSystem();
+        int dim = crs.getCoordinateSystem().getDimension();
+        CoordinateReferenceSystem bcrs = crs instanceof ProjectedCRS
+            ? ((ProjectedCRS) crs).getBaseCRS() : crs;
 
         GeographicCRS wgs84crs = CommonCRS.WGS84.geographic3D();
 
         //have doubts about following line, was the commented out 2nd clause to condition doing anything - colin
         if (bcrs.equals(wgs84crs)) {    // || bcrs.equals(CRSUtils.WGS84_PROJ)) {
-    		return dp;
-    	}
+            return dp;
+        }
         //again, what does the follllowing achieve? - colin
-    	if (bcrs.toWKT().indexOf("WGS84") > -1) {
-    		return dp;
-    	}
-    	if (bcrs instanceof GeographicCRS) {
-    		if (((GeographicCRS) bcrs).getDatum().equals(wgs84crs.getDatum())) {
-    			return dp;
-    		}
-    	}
+        if (bcrs.toWKT().indexOf("WGS84") > -1) {
+            return dp;
+        }
+        if (bcrs instanceof GeographicCRS) {
+            if (((GeographicCRS) bcrs).getDatum().equals(wgs84crs.getDatum())) {
+                return dp;
+            }
+        }
         //not going to need CommonFactory.getCoordinateOperationFactory(),
         //can use transform util in org.geotoolkit.referencing.CRS instaed
         //CoordinateReferenceSystem crs2 = dim == 2 ? wgs84crs : CRSUtils.WGS84_PROJ;
@@ -442,21 +442,21 @@ public final class GeometryUtils {
             MathTransform transform = CRS.findOperation(crs, wgs84crs, null).getMathTransform();
             transform.transform(dp, dp2);
         } catch (FactoryException fe) {
-        	LOGGER.log(Level.WARNING,"Could not create CoordinateOperation to convert DirectPosition CRS "
-        		+ crs.getName() + " to WGS84, using original ordinates", fe);
-        	//throw new IllegalArgumentException("Unconvertible coordinate CRS");
+            LOGGER.log(Level.WARNING,"Could not create CoordinateOperation to convert DirectPosition CRS "
+                + crs.getName() + " to WGS84, using original ordinates", fe);
+            //throw new IllegalArgumentException("Unconvertible coordinate CRS");
         } catch (TransformException e) {
-        	LOGGER.log(Level.WARNING,"Could not transform DirectPosition CRS "
-        		+ crs.getName() + " to WGS84, using original ordinates", e);
-        	//throw new IllegalArgumentException("Unconvertible coordinate CRS");
+            LOGGER.log(Level.WARNING,"Could not transform DirectPosition CRS "
+                + crs.getName() + " to WGS84, using original ordinates", e);
+            //throw new IllegalArgumentException("Unconvertible coordinate CRS");
         } catch (MismatchedDimensionException e) {
-        	// PENDING(NL): There's probably something better we can do here
-        	// than just throw an exception.  Normally we only care about lat and lon,
-        	// and if one has altitude and the other doesn't that shouldn't
-        	// be a showstopper.
-        	LOGGER.log(Level.WARNING,"Dimension mismatch prevented conversion of DirectPosition CRS "
-        		+ crs.getName() + " to WGS84, using original ordinates", e);
-        	//throw new IllegalArgumentException("Unconvertible coordinate CRS");
+            // PENDING(NL): There's probably something better we can do here
+            // than just throw an exception.  Normally we only care about lat and lon,
+            // and if one has altitude and the other doesn't that shouldn't
+            // be a showstopper.
+            LOGGER.log(Level.WARNING,"Dimension mismatch prevented conversion of DirectPosition CRS "
+                + crs.getName() + " to WGS84, using original ordinates", e);
+            //throw new IllegalArgumentException("Unconvertible coordinate CRS");
         }
         return dp2;
 
@@ -466,47 +466,47 @@ public final class GeometryUtils {
         //boolean wasLatLonAlt = dp instanceof LatLongAlt;
         /*
         if (wasLatLonAlt) {
-        	dp = commonFactory.getGeometryFactory(crs).createDirectPosition();
+            dp = commonFactory.getGeometryFactory(crs).createDirectPosition();
         }
         */
         /*
         CommonFactory commonFactory = FactoryManager.getCommonFactory();
         CoordinateOperationFactory coopFactory = commonFactory.getCoordinateOperationFactory();
         try {
-        	CoordinateReferenceSystem crs2 = dim == 2 ? wgs84crs : CRSUtils.WGS84_PROJ;
-        	CoordinateOperation coOp = coopFactory.createOperation(crs, crs2);
-        	DirectPosition dp2 = commonFactory.getGeometryFactory(crs2).createDirectPosition();
+            CoordinateReferenceSystem crs2 = dim == 2 ? wgs84crs : CRSUtils.WGS84_PROJ;
+            CoordinateOperation coOp = coopFactory.createOperation(crs, crs2);
+            DirectPosition dp2 = commonFactory.getGeometryFactory(crs2).createDirectPosition();
             dp2 = coOp.getMathTransform().transform(dp, dp2);
-        	if (dp2.getCoordinateReferenceSystem() != null) {
-        		if (wasLatLonAlt) {
-        			dp2 = new LatLonAlt(dp2);
-        		}
-        		return dp2;
-        	} else {
-        		getLog().warn(
-        			"Attempted to convert coordinate CRS, transform method returned DirectPosition with null CRS, using original ordinates",
-					new IllegalArgumentException("Unconvertible coordinate CRS"));
-        	}
+            if (dp2.getCoordinateReferenceSystem() != null) {
+                if (wasLatLonAlt) {
+                    dp2 = new LatLonAlt(dp2);
+                }
+                return dp2;
+            } else {
+                getLog().warn(
+                    "Attempted to convert coordinate CRS, transform method returned DirectPosition with null CRS, using original ordinates",
+                    new IllegalArgumentException("Unconvertible coordinate CRS"));
+            }
         } catch (FactoryException fe) {
-        	getLog().warn("Could not create CoordinateOperation to convert DirectPosition CRS "
-        		+ crs.getName() + " to WGS84, using original ordinates", fe);
-        	//throw new IllegalArgumentException("Unconvertible coordinate CRS");
+            getLog().warn("Could not create CoordinateOperation to convert DirectPosition CRS "
+                + crs.getName() + " to WGS84, using original ordinates", fe);
+            //throw new IllegalArgumentException("Unconvertible coordinate CRS");
         } catch (TransformException e) {
-        	getLog().warn("Could not transform DirectPosition CRS "
-        		+ crs.getName() + " to WGS84, using original ordinates", e);
-        	//throw new IllegalArgumentException("Unconvertible coordinate CRS");
+            getLog().warn("Could not transform DirectPosition CRS "
+                + crs.getName() + " to WGS84, using original ordinates", e);
+            //throw new IllegalArgumentException("Unconvertible coordinate CRS");
         } catch (MismatchedDimensionException e) {
-        	// PENDING(NL): There's probably something better we can do here
-        	// than just throw an exception.  Normally we only care about lat and lon,
-        	// and if one has altitude and the other doesn't that shouldn't
-        	// be a showstopper.
-        	getLog().warn("Dimension mismatch prevented conversion of DirectPosition CRS "
-        		+ crs.getName() + " to WGS84, using original ordinates", e);
-        	//throw new IllegalArgumentException("Unconvertible coordinate CRS");
+            // PENDING(NL): There's probably something better we can do here
+            // than just throw an exception.  Normally we only care about lat and lon,
+            // and if one has altitude and the other doesn't that shouldn't
+            // be a showstopper.
+            getLog().warn("Dimension mismatch prevented conversion of DirectPosition CRS "
+                + crs.getName() + " to WGS84, using original ordinates", e);
+            //throw new IllegalArgumentException("Unconvertible coordinate CRS");
         } catch (RuntimeException e) {
-        	getLog().warn("Could not convert DirectPosition CRS "
-        		+ crs.getName() + " to WGS84, using original ordinates", e);
-        	//throw e;
+            getLog().warn("Could not convert DirectPosition CRS "
+                + crs.getName() + " to WGS84, using original ordinates", e);
+            //throw e;
         }
         return dp;*/
     }
@@ -518,12 +518,12 @@ public final class GeometryUtils {
      * @param newPts The list of new points
      * /
     public static void populatePointArray(PointArray pointArray, List newPts) {
-    	List pts = pointArray.positions();
-    	pts.clear();
-    	// PENDING(NL): Verify points are really DirectPositions --
-    	// convert from Positions if not
-    	// Probably should save this method for when we can use 1.5
-    	pts.addAll(newPts);
+        List pts = pointArray.positions();
+        pts.clear();
+        // PENDING(NL): Verify points are really DirectPositions --
+        // convert from Positions if not
+        // Probably should save this method for when we can use 1.5
+        pts.addAll(newPts);
     }
 */
     /**
@@ -533,12 +533,12 @@ public final class GeometryUtils {
      * @param dps The new array of points
      */
     public static void populatePointArray(final PointArray pointArray, final DirectPosition[] dps) {
-    	List pts = pointArray.positions();
-    	pts.clear();
-    	int count = dps.length;
-    	for (int i = 0; i < count; i++) {
-    		pts.add(dps[i]);
-    	}
+        List pts = pointArray.positions();
+        pts.clear();
+        int count = dps.length;
+        for (int i = 0; i < count; i++) {
+            pts.add(dps[i]);
+        }
     }
 
     /**
@@ -551,17 +551,17 @@ public final class GeometryUtils {
      * exceeds the number of points initially in the PointArray
      * /
     public static void populatePointArray(PointArray pointArray, DirectPosition[] dps,
-    		int startIndex) {
-    	if (startIndex < 0 || startIndex > pointArray.length()) {
-    		throw new ArrayIndexOutOfBoundsException("Specified start index was "
-    				+ startIndex + ", PointArray size was " + pointArray.length());
-    	}
-    	List pts = pointArray.positions();
-    	pts.clear();
-    	int count = dps.length;
-    	for (int i = 0; i < count; i++) {
-    		pointArray.set(i, dps[i]);
-    	}
+            int startIndex) {
+        if (startIndex < 0 || startIndex > pointArray.length()) {
+            throw new ArrayIndexOutOfBoundsException("Specified start index was "
+                    + startIndex + ", PointArray size was " + pointArray.length());
+        }
+        List pts = pointArray.positions();
+        pts.clear();
+        int count = dps.length;
+        for (int i = 0; i < count; i++) {
+            pointArray.set(i, dps[i]);
+        }
     }
 */
 
@@ -577,12 +577,12 @@ public final class GeometryUtils {
      * For the present version, only Curves that wrap only LineCharSequences are convertible.
      */
     public static LineString[] getLineCharSequences(final CompositeCurve cc) {
-    	ArrayList lsList = getLineCharSequences(cc, new ArrayList());
-    	if (lsList == null) {
-    		throw new IllegalArgumentException(
-    				"Unable to convert all elements of CompositeCurve to LineString");
-    	}
-    	return (LineString[]) lsList.toArray(new LineString[lsList.size()]);
+        ArrayList lsList = getLineCharSequences(cc, new ArrayList());
+        if (lsList == null) {
+            throw new IllegalArgumentException(
+                    "Unable to convert all elements of CompositeCurve to LineString");
+        }
+        return (LineString[]) lsList.toArray(new LineString[lsList.size()]);
     }
 
     /**
@@ -596,35 +596,35 @@ public final class GeometryUtils {
      */
     private static ArrayList getLineCharSequences(final CompositeCurve cc, final ArrayList lsList) {
         // Cast below can be removed when Types will be allowed to abandon Java 1.4 support.
-    	List elements = (List) cc.getGenerators();
-    	boolean valid = true;
-    	if (!elements.isEmpty()) {
-    		Iterator it = elements.iterator();
-    		LineString ls = null;
-    		while (it.hasNext() && valid) {
-    			Object element = it.next();
-    			if (element instanceof CompositeCurve) {
-    				valid = getLineCharSequences((CompositeCurve) element, lsList) != null;
-    			} else if (element instanceof Curve) {
-    				// PENDING(NL):  When we have arc geometries implemented,
-    				// make provision to pass in real parameters for spacing and offset.
-    				// What we have below essentially just returns start and end points
-    				// if it's not a LineString
-    				ls = ((Curve) element).asLineString(Double.MAX_VALUE, Double.MAX_VALUE);
-    				if (ls != null) {
-    					lsList.add(ls);
-    				} else {
-    					valid = false;
-    				}
-    			} else {
-    				valid = false;
-    			}
-    		}
-    	}
-    	if (valid) {
-    		return null;
-    	}
-    	return lsList;
+        List elements = (List) cc.getGenerators();
+        boolean valid = true;
+        if (!elements.isEmpty()) {
+            Iterator it = elements.iterator();
+            LineString ls = null;
+            while (it.hasNext() && valid) {
+                Object element = it.next();
+                if (element instanceof CompositeCurve) {
+                    valid = getLineCharSequences((CompositeCurve) element, lsList) != null;
+                } else if (element instanceof Curve) {
+                    // PENDING(NL):  When we have arc geometries implemented,
+                    // make provision to pass in real parameters for spacing and offset.
+                    // What we have below essentially just returns start and end points
+                    // if it's not a LineString
+                    ls = ((Curve) element).asLineString(Double.MAX_VALUE, Double.MAX_VALUE);
+                    if (ls != null) {
+                        lsList.add(ls);
+                    } else {
+                        valid = false;
+                    }
+                } else {
+                    valid = false;
+                }
+            }
+        }
+        if (valid) {
+            return null;
+        }
+        return lsList;
     }
 
     public static DirectPosition[] getDirectPositions(final LineString lineString) {

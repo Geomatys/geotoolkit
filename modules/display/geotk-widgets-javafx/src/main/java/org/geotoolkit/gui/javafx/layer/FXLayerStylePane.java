@@ -34,7 +34,7 @@ public abstract class FXLayerStylePane extends BorderPane{
     public String getCategory(){
         return "";
     }
-    
+
     public abstract MutableStyle getMutableStyle();
 
     public abstract boolean init(MapLayer layer, Object rootStyleElement);

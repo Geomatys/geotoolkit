@@ -67,7 +67,7 @@ public class CanvasDef {
     public boolean isStretchImage() {
         return stretchImage;
     }
-    
+
     @Override
     public String toString() {
         return "CanvasDef[dimension="+ dimension +", background="+ background +", stretchImage="+ stretchImage +"]";

@@ -57,7 +57,7 @@ import org.opengis.util.FactoryException;
 
 /**
  * WPS 2 process.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -76,7 +76,7 @@ public class WPS2Process extends AbstractProcess {
 
     /**
      * Create a new WPS process.
-     * 
+     *
      * @param registry WPS registry
      * @param desc process description
      * @param params input parameters
@@ -89,7 +89,7 @@ public class WPS2Process extends AbstractProcess {
 
     /**
      * Open a process which is already running on a WPS server.
-     * 
+     *
      * @param registry WPS registry
      * @param desc process description
      * @param jobId process running task identifier
@@ -100,22 +100,22 @@ public class WPS2Process extends AbstractProcess {
         this.registry = registry;
         this.jobId = jobId;
     }
-    
+
     /**
      * Returns the process execution identifier, called jobId.<br>
      * This value is available only after the process execution has started.
-     * 
+     *
      * @return job identifier, null before execution
      */
     public String getJobId() {
         return jobId;
     }
-    
+
     /**
      * Get current task status.<br>
-     * 
+     *
      * This method should not be called if process is not running.
-     * 
+     *
      * @return StatusInfo
      * @throws org.geotoolkit.process.ProcessException
      * @throws javax.xml.bind.UnmarshalException
@@ -123,18 +123,18 @@ public class WPS2Process extends AbstractProcess {
      */
     public StatusInfo getStatus() throws ProcessException, JAXBException, IOException {
         if (jobId==null) throw new ProcessException("Process is not started.", this);
-        
+
         final GetStatusRequest req = registry.getClient().createGetStatus();
         req.getContent().setJobID(jobId);
         final Object response = req.getResponse();
-        
+
         if (response instanceof ExceptionResponse) {
             final ExceptionResponse report = (ExceptionResponse) response;
             throw new ProcessException("Exception when executing the process.", this, report.toException());
 
         } else if (response instanceof StatusInfo) {
             return (StatusInfo) response;
-        
+
         } else {
             throw new ProcessException("Unexpected response "+response.getClass().getName(), this);
         }
@@ -148,12 +148,12 @@ public class WPS2Process extends AbstractProcess {
     public void cancelProcess() {
         if(isCanceled() || jobId==null) return;
         super.cancelProcess();
-        
+
         //send a stop request
         final DismissRequest request = registry.getClient().createDismiss();
         final Dismiss dismiss = request.getContent();
         dismiss.setJobID(jobId);
-        
+
         try {
             checkResult(request.getResponse());
         } catch (JAXBException ex) {
@@ -199,7 +199,7 @@ public class WPS2Process extends AbstractProcess {
     /**
      * A Function to ensure response object is success or failure. Otherwise, we request continually status until
      * we reach a result.
-     * 
+     *
      * @param response The execute response given by service.
      */
     private Result checkResult(Object response) throws IOException, JAXBException, InterruptedException, ProcessException {
@@ -212,14 +212,14 @@ public class WPS2Process extends AbstractProcess {
             final StatusInfo statusInfo = (StatusInfo) response;
             final String status = statusInfo.getStatus();
             jobId = statusInfo.getJobID();
-            
+
             if (StatusInfo.STATUS_SUCCEEDED.equalsIgnoreCase(status)) {
                 fireProgressing("", 100f, false);
                 return null;
             } else if (StatusInfo.STATUS_FAILED.equalsIgnoreCase(status)) {
                 throw new ProcessException("Process failed", this);
             }
-            
+
             //loop until we have an answer
             Object tmpResponse;
             int timeLapse = 3000;
@@ -258,13 +258,13 @@ public class WPS2Process extends AbstractProcess {
                     } else if (StatusInfo.STATUS_FAILED.equalsIgnoreCase(stat)) {
                         throw new ProcessException("Process failed", this);
                     }
-                    
+
                     lastMessage = stat;
                     if (statInfo.getPercentCompleted()!=null) {
                         lastProgress = statInfo.getPercentCompleted();
                     }
                     fireProgressing(lastMessage, lastProgress, false);
-                    
+
                 } else if (tmpResponse instanceof ExceptionResponse) {
                     final ExceptionResponse report = (ExceptionResponse) tmpResponse;
                     throw new ProcessException("Exception when executing the process.", this, report.toException());
@@ -287,7 +287,7 @@ public class WPS2Process extends AbstractProcess {
      * @throws ProcessException if data conversion fails.
      */
     private void fillOutputs(Object response) throws ProcessException {
-        
+
         try {
             if (response==null) {
                 //request the result from the server
@@ -295,7 +295,7 @@ public class WPS2Process extends AbstractProcess {
                 request.getContent().setJobID(jobId);
                 response = request.getResponse();
             }
-            
+
             if (response instanceof Result) {
                 final Result result = (Result) response;
                 for (DataOutputType out : result.getOutput()) {
@@ -305,12 +305,12 @@ public class WPS2Process extends AbstractProcess {
                         final LiteralValue literalData = data.getLiteralData();
                         final BoundingBox bbox = data.getBoundingBoxData();
                         final ComplexDataType complex = data.getComplexData();
-                        
+
                         if (literalData!=null) {
                             final String value = literalData.getValue();
                             final Object cvalue = ObjectConverters.convert(value, ((ParameterDescriptor)desc).getValueClass());
                             ParametersExt.getOrCreateValue(outputParameters, out.getId()).setValue(cvalue);
-                            
+
                         } else if (bbox!=null) {
                             final List<Double> lower = bbox.getLowerCorner();
                             final List<Double> upper = bbox.getUpperCorner();
@@ -334,24 +334,24 @@ public class WPS2Process extends AbstractProcess {
                         } else {
                             throw new UnsupportedOperationException("unsupported data type");
                         }
-                        
+
                     } else {
                         throw new UnsupportedOperationException("unsupported data type");
                     }
                 }
-                        
+
             } else if (response instanceof ExceptionResponse) {
                 final ExceptionResponse report = (ExceptionResponse) response;
                 throw new ProcessException("Exception when getting process result.", this, report.toException());
             }
-            
+
         } catch (JAXBException ex) {
             Logger.getLogger(WPS2Process.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(WPS2Process.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /**
      * Make a WPS Execute request from {@link ParameterValueGroup values}.
      *
@@ -393,27 +393,27 @@ public class WPS2Process extends AbstractProcess {
                         litValue.setDataType(WPSConvertersUtils.getDataTypeString(registry.getClient().getVersion().getCode(), inputClazz));
                         litValue.setValue(String.valueOf(value));
                         litValue.setUom(unit);
-                        
+
                         final Data data = new Data();
                         data.getContent().add(litValue);
-                        
+
                         final DataInputType dit = new DataInputType();
                         dit.setId(inputIdentifier);
                         dit.setData(data);
-                        
+
                         wpsIN.add(dit);
 
                     } else if ("bbox".equals(type)) {
                         final Envelope envelop = (Envelope) value;
-                        
+
                         final BoundingBoxType litValue = new BoundingBoxType(envelop);
                         final Data data = new Data();
                         data.getContent().add(litValue);
-                        
+
                         final DataInputType dit = new DataInputType();
                         dit.setId(inputIdentifier);
                         dit.setData(data);
-                        
+
                         wpsIN.add(dit);
 
                     } else if ("complex".equals(type)) {
@@ -431,7 +431,7 @@ public class WPS2Process extends AbstractProcess {
                         }
 
                         final ComplexDataType cdt = new ComplexDataType();
-                        throw new UnsupportedOperationException("Complex type not supported.");                        
+                        throw new UnsupportedOperationException("Complex type not supported.");
                         //wpsIN.add(new WPSInputComplex(inputIdentifier, value, inputClazz, encoding, schema, mime));
                     }
                 }
@@ -458,7 +458,7 @@ public class WPS2Process extends AbstractProcess {
                             schema   = support.getSchema();
                         }
                     }
-                    
+
                     final OutputDefinitionType out = new OutputDefinitionType(outputIdentifier, asReference);
 //                    out.setEncoding(encoding);
 //                    out.setMimeType(mime);
@@ -488,5 +488,5 @@ public class WPS2Process extends AbstractProcess {
             throw new ProcessException("Error during conversion step.", null, ex);
         }
     }
-    
+
 }

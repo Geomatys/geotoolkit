@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines a POI and its distance from a predetermined point.
- * 
+ *
  * <p>Java class for POIWithDistanceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="POIWithDistanceType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "POIWithDistanceType", propOrder = {
@@ -59,11 +59,11 @@ public class POIWithDistanceType {
 
     /**
      * Gets the value of the poi property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PointOfInterestType }
-     *     
+     *
      */
     public PointOfInterestType getPOI() {
         return poi;
@@ -71,11 +71,11 @@ public class POIWithDistanceType {
 
     /**
      * Sets the value of the poi property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PointOfInterestType }
-     *     
+     *
      */
     public void setPOI(PointOfInterestType value) {
         this.poi = value;
@@ -83,11 +83,11 @@ public class POIWithDistanceType {
 
     /**
      * Gets the value of the distance property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DistanceType }
-     *     
+     *
      */
     public DistanceType getDistance() {
         return distance;
@@ -95,11 +95,11 @@ public class POIWithDistanceType {
 
     /**
      * Sets the value of the distance property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DistanceType }
-     *     
+     *
      */
     public void setDistance(DistanceType value) {
         this.distance = value;

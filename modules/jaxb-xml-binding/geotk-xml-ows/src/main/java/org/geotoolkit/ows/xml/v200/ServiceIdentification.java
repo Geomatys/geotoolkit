@@ -30,9 +30,9 @@ import org.geotoolkit.ows.xml.AbstractServiceIdentification;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.ows.xml.AbstractServiceIdentification;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -108,11 +108,11 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
 
     /**
      * Gets the value of the serviceType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     @Override
     public CodeType getServiceType() {
@@ -121,11 +121,11 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
 
     /**
      * Sets the value of the serviceType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setServiceType(CodeType value) {
         this.serviceType = value;
@@ -133,7 +133,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
 
     /**
      * Gets the value of the serviceTypeVersion property.
-     * 
+     *
      */
     @Override
     public List<String> getServiceTypeVersion() {
@@ -145,7 +145,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
 
     /**
      * Gets the value of the profile property.
-     * 
+     *
      */
     @Override
     public List<String> getProfile() {
@@ -154,7 +154,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
         }
         return this.profile;
     }
-    
+
     @Override
     public void setProfile(final List<String> profile) {
         this.profile = profile;
@@ -163,11 +163,11 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
     /**
      * If this element is omitted, no meaning is
      *                 implied.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getFees() {
@@ -176,11 +176,11 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
 
     /**
      * Sets the value of the fees property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFees(String value) {
         this.fees = value;
@@ -194,7 +194,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
      *                 insensitive) shall be used to mean no access constraints are
      *                 imposed. When this element is omitted, no meaning is
      *                 implied.Gets the value of the accessConstraints property.
-     * 
+     *
      */
     @Override
     public List<String> getAccessConstraints() {

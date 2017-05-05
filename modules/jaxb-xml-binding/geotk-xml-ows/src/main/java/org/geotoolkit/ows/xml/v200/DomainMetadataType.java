@@ -31,14 +31,14 @@ import org.geotoolkit.ows.xml.DomainMetadata;
  * References metadata about a quantity, and provides a name
  *       for this metadata. (Informative: This element was simplified from the
  *       metaDataProperty element in GML 3.0.)
- * 
+ *
  * Human-readable name of the metadata described by
  *           associated referenced document.
- * 
+ *
  * <p>Java class for DomainMetadataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DomainMetadataType">
  *   &lt;simpleContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.ows.xml.DomainMetadata;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DomainMetadataType", propOrder = {
@@ -64,32 +64,32 @@ public class DomainMetadataType implements DomainMetadata {
     private String reference;
 
     DomainMetadataType(){
-        
+
     }
-    
+
     public DomainMetadataType(final DomainMetadataType that){
         if (that != null) {
             this.reference = that.reference;
             this.value     = that.value;
         }
     }
-    
+
     /**
      * Build a new Domaint metadata.
      */
     public DomainMetadataType(final String value, final String reference){
         this.reference = reference;
         this.value     = value;
-        
+
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getValue() {
@@ -98,11 +98,11 @@ public class DomainMetadataType implements DomainMetadata {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setValue(String value) {
@@ -111,11 +111,11 @@ public class DomainMetadataType implements DomainMetadata {
 
     /**
      * Gets the value of the reference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getReference() {
@@ -124,11 +124,11 @@ public class DomainMetadataType implements DomainMetadata {
 
     /**
      * Sets the value of the reference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setReference(String value) {
@@ -158,10 +158,10 @@ public class DomainMetadataType implements DomainMetadata {
         hash = 29 * hash + (this.reference != null ? this.reference.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         return "class: DomainMetadataType value=" + value + " reference=" + reference;
-        
+
     }
 }

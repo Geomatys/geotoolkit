@@ -24,7 +24,7 @@ package org.geotoolkit.swe.xml;
 public interface MultiplexedStreamFormatProperty {
 
     public MultiplexedStreamFormat getMultiplexedStreamFormat();
-    
+
     String getRemoteSchema();
 
     void setRemoteSchema(String value);

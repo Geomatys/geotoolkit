@@ -204,7 +204,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
     @Override
     public boolean retainAll(Collection<?> c) {
         boolean modified = false;
-	final FeatureIterator e = iterator();
+    final FeatureIterator e = iterator();
         try{
             while (e.hasNext()) {
                 if (!c.contains(e.next())) {

@@ -45,10 +45,10 @@ public class BandCombineDescriptor extends AbstractProcessDescriptor {
             .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandcombine_inImagesDesc))
             .setRequired(true)
             .create(RenderedImage[].class, null);
-    
+
     public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder()
             .addName(NAME + "InputParameters").createGroup(IN_IMAGES);
-    
+
     /**
      * Mandatory - Resulting image.
      */
@@ -61,12 +61,12 @@ public class BandCombineDescriptor extends AbstractProcessDescriptor {
 
     public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder()
             .addName(NAME + "OutputParameters").createGroup(OUT_IMAGE);
-    
+
     public static final ProcessDescriptor INSTANCE = new BandCombineDescriptor();
 
     private BandCombineDescriptor() {
         super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
-                new SimpleInternationalString("Combine multiple images."), 
+                new SimpleInternationalString("Combine multiple images."),
                 INPUT_DESC, OUTPUT_DESC);
     }
 
@@ -74,5 +74,5 @@ public class BandCombineDescriptor extends AbstractProcessDescriptor {
     public Process createProcess(ParameterValueGroup input) {
         return new BandCombineProcess(input);
     }
-    
+
 }

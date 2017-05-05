@@ -25,13 +25,13 @@ import java.util.LinkedList;
 /**
  * A construction is a 2 edge line string.
  * Each edge append coordinates at opposite ends.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class Construction {
-    
+
     private static final GeometryFactory GF = new GeometryFactory();
-    
+
     private LinkedList<Coordinate> lst = new LinkedList<Coordinate>();
     private final Edge edge1;
     private final Edge edge2;
@@ -51,11 +51,11 @@ public final class Construction {
     public Edge getEdge2() {
         return edge2;
     }
-    
+
     public double getLevel() {
         return level;
     }
-    
+
     public Geometry toGeometry(){
         if(locked){
             throw new IllegalStateException("Construction has been merged, should not be used anymore.");
@@ -71,7 +71,7 @@ public final class Construction {
             //closing a construction
             return;
         }
-        
+
         if(this.lst.getFirst().equals2D(ocst.lst.getLast())){
             //add at the beginning of this segment
             this.lst.removeFirst();
@@ -97,17 +97,17 @@ public final class Construction {
         }else{
             throw new IllegalArgumentException("Strings can not be merged, no common point");
         }
-        
+
         ocst.locked = true;
         ocst.lst = this.lst;
         return;
     }
-    
+
     private void flipEdges(){
         edge1.atEnd = !edge1.atEnd;
         edge2.atEnd = !edge2.atEnd;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         return ((Construction)obj).lst == this.lst;
@@ -117,7 +117,7 @@ public final class Construction {
     public int hashCode() {
         return 17;
     }
-    
+
     public void update(Boundary bnd){
         if(bnd==null) return;
         bnd.VTop = update(bnd.VTop);
@@ -127,7 +127,7 @@ public final class Construction {
         bnd.HMiddle = update(bnd.HMiddle);
         bnd.HRight = update(bnd.HRight);
     }
-    
+
     private Edge update(Edge edge){
         if(edge != null && edge.getConstruction().equals(this)){
             if(edge.atEnd){
@@ -138,19 +138,19 @@ public final class Construction {
         }
         return edge;
     }
-    
+
     public final class Edge{
-        
+
         private boolean atEnd;
 
         public Edge(boolean atEnd) {
             this.atEnd = atEnd;
         }
-        
+
         public Construction getConstruction(){
             return Construction.this;
         }
-        
+
         public void add(Coordinate coord){
             if(locked) throw new IllegalStateException("Construction has been merged, should not be used anymore.");
             if(atEnd){
@@ -167,21 +167,21 @@ public final class Construction {
                 return lst.getFirst();
             }
         }
-        
+
         public boolean isPonctual(){
             return Construction.this.lst.size() == 1;
         }
-        
+
         @Override
         public boolean equals(Object obj) {
             return getConstruction().equals( ((Edge)obj).getConstruction() );
         }
-        
+
         @Override
         public int hashCode() {
             return 3;
         }
-        
+
     }
-    
+
 }

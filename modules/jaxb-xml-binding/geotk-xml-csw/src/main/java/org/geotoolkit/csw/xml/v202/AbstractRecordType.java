@@ -25,9 +25,9 @@ import org.geotoolkit.csw.xml.AbstractRecord;
 
 /**
  * <p>Java class for AbstractRecordType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractRecordType">
  *   &lt;complexContent>
@@ -36,8 +36,8 @@ import org.geotoolkit.csw.xml.AbstractRecord;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

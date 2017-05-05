@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Encapsulates a ring to represent properties in features or geometry collections.
- * 
+ *
  * <p>Java class for RingPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RingPropertyType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,11 +55,11 @@ public class RingPropertyType {
 
     /**
      * Gets the value of the ring property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RingType }
-     *     
+     *
      */
     public RingType getRing() {
         return ring;
@@ -67,11 +67,11 @@ public class RingPropertyType {
 
     /**
      * Sets the value of the ring property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RingType }
-     *     
+     *
      */
     public void setRing(final RingType value) {
         this.ring = value;

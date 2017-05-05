@@ -33,7 +33,7 @@ public class ObjectFactory {
     public ParameterType createParameterType() {
         return new ParameterType();
     }
-    
+
     @XmlElementDecl(namespace = "http://www.geotoolkit.org/owc", name = "parameter")
     public JAXBElement<ParameterType> createOffering(ParameterType value) {
         return new JAXBElement<ParameterType>(_Parameter_QNAME, ParameterType.class, null, value);
@@ -43,15 +43,15 @@ public class ObjectFactory {
     public JAXBElement<Boolean> createVisible(Boolean value) {
         return new JAXBElement<Boolean>(_Visible_QNAME, Boolean.class, null, value);
     }
-    
+
     @XmlElementDecl(namespace = "http://www.geotoolkit.org/owc", name = "selectable")
     public JAXBElement<Boolean> createSelectable(Boolean value) {
         return new JAXBElement<Boolean>(_Selectable_QNAME, Boolean.class, null, value);
     }
-    
+
     @XmlElementDecl(namespace = "http://www.geotoolkit.org/owc", name = "opacity")
     public JAXBElement<Double> createOpacity(Double value) {
         return new JAXBElement<Double>(_Opacity_QNAME, Double.class, null, value);
     }
-    
+
 }

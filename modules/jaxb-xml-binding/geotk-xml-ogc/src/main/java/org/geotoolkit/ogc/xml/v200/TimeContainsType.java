@@ -36,7 +36,7 @@ public class TimeContainsType extends BinaryTemporalOpType implements TContains 
     public TimeContainsType(final String propertyName, final Object temporal) {
         super(propertyName, temporal);
     }
-    
+
     public TimeContainsType(final TimeContainsType that) {
         super(that);
     }

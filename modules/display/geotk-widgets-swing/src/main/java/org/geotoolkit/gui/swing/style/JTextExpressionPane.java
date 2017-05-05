@@ -40,18 +40,18 @@ import org.opengis.filter.expression.Expression;
 public class JTextExpressionPane extends StyleElementEditor<Expression>{
 
     private final Dimension specialSize;
-    
+
     /** Creates new form JColorExpressionPane */
     public JTextExpressionPane() {
         super(Expression.class);
         initComponents();
         specialSize = guiSpecial.getPreferredSize();
     }
-    
+
     public void setExpressionVisible(boolean visible){
         guiSpecial.setPreferredSize( visible ? new Dimension(specialSize) : new Dimension(1, 1));
         guiSpecial.setVisible(visible);
-    } 
+    }
 
     @Override
     public void setLayer(final MapLayer layer) {
@@ -63,7 +63,7 @@ public class JTextExpressionPane extends StyleElementEditor<Expression>{
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

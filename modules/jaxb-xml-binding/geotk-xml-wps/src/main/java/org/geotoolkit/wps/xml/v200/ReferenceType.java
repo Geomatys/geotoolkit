@@ -28,14 +28,14 @@ import org.geotoolkit.wps.xml.Reference;
 
 
 /**
- * 
+ *
  * Reference to an input (output) value that is a web accessible resource.
- * 			
- * 
+ *
+ *
  * <p>Java class for ReferenceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ReferenceType">
  *   &lt;complexContent>
@@ -58,8 +58,8 @@ import org.geotoolkit.wps.xml.Reference;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ReferenceType", propOrder = {
@@ -85,22 +85,22 @@ public class ReferenceType implements Reference {
     protected String schema;
 
     public ReferenceType() {
-        
+
     }
-    
+
     public ReferenceType(String href, String mimeType, String encoding) {
         this.href = href;
         this.mimeType = mimeType;
         this.encoding = encoding;
     }
-    
+
     /**
      * Gets the value of the body property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Object }
-     *     
+     *
      */
     @Override
     public Object getBody() {
@@ -109,11 +109,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Sets the value of the body property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Object }
-     *     
+     *
      */
     public void setBody(Object value) {
         this.body = value;
@@ -121,11 +121,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Gets the value of the bodyReference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType.BodyReference }
-     *     
+     *
      */
     public ReferenceType.BodyReference getBodyReference() {
         return bodyReference;
@@ -133,25 +133,25 @@ public class ReferenceType implements Reference {
 
     /**
      * Sets the value of the bodyReference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType.BodyReference }
-     *     
+     *
      */
     public void setBodyReference(ReferenceType.BodyReference value) {
         this.bodyReference = value;
     }
 
     /**
-     * 
+     *
      * HTTP URI that points to the remote resource where the data may be retrieved.
-     * 				
-     * 
+     *
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getHref() {
@@ -160,11 +160,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setHref(String value) {
@@ -173,11 +173,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Gets the value of the mimeType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getMimeType() {
@@ -186,11 +186,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Sets the value of the mimeType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setMimeType(String value) {
@@ -199,11 +199,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Gets the value of the encoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getEncoding() {
@@ -212,11 +212,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Sets the value of the encoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setEncoding(String value) {
@@ -225,11 +225,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Gets the value of the schema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getSchema() {
@@ -238,11 +238,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Sets the value of the schema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setSchema(String value) {
@@ -272,7 +272,7 @@ public class ReferenceType implements Reference {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare
@@ -309,9 +309,9 @@ public class ReferenceType implements Reference {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -321,8 +321,8 @@ public class ReferenceType implements Reference {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -333,14 +333,14 @@ public class ReferenceType implements Reference {
         protected String href;
 
         /**
-         * 
+         *
          * HTTP URI that points to the remote resource where the request body may be retrieved.
-         * 							
-         * 
+         *
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getHref() {
             return href;
@@ -348,16 +348,16 @@ public class ReferenceType implements Reference {
 
         /**
          * Sets the value of the href property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setHref(String value) {
             this.href = value;
         }
-        
+
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
@@ -366,7 +366,7 @@ public class ReferenceType implements Reference {
             }
             return sb.toString();
         }
-    
+
         /**
          * Verify that this entry is identical to the specified object.
          * @param object Object to compare

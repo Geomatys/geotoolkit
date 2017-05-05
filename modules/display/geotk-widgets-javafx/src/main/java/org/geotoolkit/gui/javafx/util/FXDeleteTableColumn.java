@@ -40,7 +40,7 @@ import org.geotoolkit.internal.GeotkFX;
  */
 public class FXDeleteTableColumn extends TableColumn{
 
-    
+
     public FXDeleteTableColumn(final boolean showWarning) {
         super("Suppression");
         setSortable(false);
@@ -50,7 +50,7 @@ public class FXDeleteTableColumn extends TableColumn{
         setMinWidth(24);
         setMaxWidth(24);
         setGraphic(new ImageView(GeotkFX.ICON_DELETE));
-        
+
         setCellValueFactory(new Callback<TableColumn.CellDataFeatures, ObservableValue>() {
                 @Override
                 public ObservableValue call(TableColumn.CellDataFeatures param) {
@@ -64,7 +64,7 @@ public class FXDeleteTableColumn extends TableColumn{
                 return new DeleteTableCell(showWarning);
             }
         });
-        
+
     }
 
     private static final class DeleteTableCell extends TableCell<Object, Object>{
@@ -74,7 +74,7 @@ public class FXDeleteTableColumn extends TableColumn{
         public DeleteTableCell(final boolean showWarning) {
             setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
             setAlignment(Pos.CENTER);
-            
+
             button.setBackground(Background.EMPTY);
             button.setBorder(Border.EMPTY);
             button.setPadding(Insets.EMPTY);

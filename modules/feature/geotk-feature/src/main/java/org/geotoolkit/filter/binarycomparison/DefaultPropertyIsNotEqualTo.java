@@ -61,7 +61,7 @@ public class DefaultPropertyIsNotEqualTo extends AbstractPropertyEqual implement
         sb.append(StringUtilities.toStringTree(left,right));
         return sb.toString();
     }
-    
+
     /**
      * {@inheritDoc }
      */

@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -53,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -71,27 +71,27 @@ public class Contents implements org.geotoolkit.sos.xml.Contents {
      * Empty constructor used by JAXB
      */
     Contents() {
-        
+
     }
-    
+
     /**
      * Build a new Contents
      */
     public Contents(final ObservationOfferingList observationOfferingList) {
         this.observationOfferingList = observationOfferingList;
     }
-    
+
     public Contents(final List<ObservationOfferingType> offerings) {
         this.observationOfferingList = new ObservationOfferingList(offerings);
     }
-    
+
     /**
      * Return the value of the observationOfferingList property.
      */
     public ObservationOfferingList getObservationOfferingList() {
         return observationOfferingList;
     }
-    
+
     @Override
     public List<ObservationOfferingType> getOfferings() {
         if (observationOfferingList != null) {
@@ -121,7 +121,7 @@ public class Contents implements org.geotoolkit.sos.xml.Contents {
         hash = 59 * hash + (this.observationOfferingList != null ? this.observationOfferingList.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -131,9 +131,9 @@ public class Contents implements org.geotoolkit.sos.xml.Contents {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -145,8 +145,8 @@ public class Contents implements org.geotoolkit.sos.xml.Contents {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -161,16 +161,16 @@ public class Contents implements org.geotoolkit.sos.xml.Contents {
          * Empty constructor used by JAXB
          */
         ObservationOfferingList(){
-            
+
         }
-        
+
         /**
          * Build a new Observation offering list.
          */
         public ObservationOfferingList(final List<ObservationOfferingType> observationOffering){
             this.observationOffering = observationOffering;
         }
-        
+
         /**
          * Return the list of observation Offering.
          */
@@ -180,7 +180,7 @@ public class Contents implements org.geotoolkit.sos.xml.Contents {
             }
             return Collections.unmodifiableList(observationOffering);
         }
-        
+
          /**
           * Verify if this entry is identical to the specified object.
           */
@@ -202,7 +202,7 @@ public class Contents implements org.geotoolkit.sos.xml.Contents {
             hash = 67 * hash + (this.observationOffering != null ? this.observationOffering.hashCode() : 0);
             return hash;
         }
-        
+
         @Override
         public String toString() {
             StringBuilder s = new StringBuilder();

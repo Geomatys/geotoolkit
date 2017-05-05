@@ -21,7 +21,7 @@ import org.geotoolkit.ows.xml.AbstractCapabilitiesCore;
 
 /**
  * Abstract main class which describe a capabilities document  for all version of WMS.
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -29,31 +29,31 @@ public interface AbstractWMSCapabilities extends AbstractCapabilitiesCore {
 
      /**
      * return the Service part of the capabilities document.
-     * 
+     *
      */
-    AbstractService getService(); 
-    
+    AbstractService getService();
+
     /**
      *return the capability part of the capabilities document.
-     * 
+     *
      */
     AbstractCapability getCapability();
 
     /**
      * get the version number.
-     * 
+     *
      */
-    String getVersion(); 
+    String getVersion();
 
     /**
      * Gets the value of the updateSequence property.
-     * 
+     *
      */
     String getUpdateSequence();
-    
+
     /**
      * Get a specific layer from the capabilities document.
-     * 
+     *
      */
     AbstractLayer getLayerFromName(String name);
 
@@ -63,10 +63,10 @@ public interface AbstractWMSCapabilities extends AbstractCapabilitiesCore {
      * element is the wanted layer.
      */
     AbstractLayer[] getLayerStackFromName(String name);
-    
+
     /**
      * List all layers recursivly.
      */
     List<AbstractLayer> getLayers();
-    
+
 }

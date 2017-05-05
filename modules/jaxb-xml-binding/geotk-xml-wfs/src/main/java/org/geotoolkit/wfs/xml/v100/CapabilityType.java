@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for CapabilityType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CapabilityType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CapabilityType", propOrder = {
@@ -56,11 +56,11 @@ public class CapabilityType {
 
     /**
      * Gets the value of the request property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RequestType }
-     *     
+     *
      */
     public RequestType getRequest() {
         return request;
@@ -68,11 +68,11 @@ public class CapabilityType {
 
     /**
      * Sets the value of the request property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RequestType }
-     *     
+     *
      */
     public void setRequest(RequestType value) {
         this.request = value;
@@ -80,11 +80,11 @@ public class CapabilityType {
 
     /**
      * Gets the value of the vendorSpecificCapabilities property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVendorSpecificCapabilities() {
         return vendorSpecificCapabilities;
@@ -92,11 +92,11 @@ public class CapabilityType {
 
     /**
      * Sets the value of the vendorSpecificCapabilities property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVendorSpecificCapabilities(String value) {
         this.vendorSpecificCapabilities = value;

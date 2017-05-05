@@ -41,7 +41,7 @@ public class StatelessContextParams<T extends MapLayer> {
      * TODO : need to find a better way to reduce the geometry preserving length
      */
     public static final int CLIP_PIXEL_MARGIN = 50;
-    
+
     public RenderingContext2D context;
     public final AbstractCanvas2D canvas;
     public final T layer;
@@ -50,7 +50,7 @@ public class StatelessContextParams<T extends MapLayer> {
             new GeometryCSTransformer(new CoordinateSequenceMathTransformer(null));
     public CoordinateReferenceSystem objectiveCRS;
     public CoordinateReferenceSystem displayCRS;
-    
+
     /**
      * This envelope should be the painted are in ojective CRS,
      * but symbolizer may need to enlarge it because of symbols size.
@@ -60,7 +60,7 @@ public class StatelessContextParams<T extends MapLayer> {
     //clipping geometries
     public Rectangle2D displayClipRect;
     public Polygon displayClip;
-    
+
     public StatelessContextParams(final AbstractCanvas2D canvas, final T layer){
         this.canvas = canvas;
         this.layer = layer;
@@ -89,12 +89,12 @@ public class StatelessContextParams<T extends MapLayer> {
             ((CoordinateSequenceMathTransformer)objToDisplayTransformer.getCSTransformer())
                     .setTransform(objtoDisp);
         }
-        
+
         displayClipRect = (Rectangle2D) context.getCanvasDisplayBounds().clone();
         displayClipRect.setRect(
-                displayClipRect.getX()-CLIP_PIXEL_MARGIN, 
-                displayClipRect.getY()-CLIP_PIXEL_MARGIN, 
-                displayClipRect.getWidth()+2*CLIP_PIXEL_MARGIN, 
+                displayClipRect.getX()-CLIP_PIXEL_MARGIN,
+                displayClipRect.getY()-CLIP_PIXEL_MARGIN,
+                displayClipRect.getWidth()+2*CLIP_PIXEL_MARGIN,
                 displayClipRect.getHeight()+2*CLIP_PIXEL_MARGIN);
         displayClip = JTS.toGeometry(context.getCanvasDisplayBounds());
     }

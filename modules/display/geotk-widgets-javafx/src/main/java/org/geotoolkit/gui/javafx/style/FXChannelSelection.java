@@ -48,7 +48,7 @@ public class FXChannelSelection extends FXStyleElementController<ChannelSelectio
     @FXML protected RadioButton uiRGB;
     @FXML protected RadioButton uiSingle;
     private ToggleGroup group;
-    
+
     @FXML
     void updateTypeChoice(ActionEvent event) {
         if(uiNone.isSelected()){
@@ -68,7 +68,7 @@ public class FXChannelSelection extends FXStyleElementController<ChannelSelectio
             uiRedLbl.setVisible(true);
             uiGreenLbl.setVisible(true);
             uiBlueLbl.setVisible(true);
-            uiGrayLbl.setVisible(false);       
+            uiGrayLbl.setVisible(false);
         }else if(uiSingle.isSelected()){
             uiRed.setVisible(false);
             uiGreen.setVisible(false);
@@ -80,7 +80,7 @@ public class FXChannelSelection extends FXStyleElementController<ChannelSelectio
             uiGrayLbl.setVisible(true);
         }
     }
-    
+
     @Override
     public Class<ChannelSelection> getEditedClass() {
         return ChannelSelection.class;
@@ -90,7 +90,7 @@ public class FXChannelSelection extends FXStyleElementController<ChannelSelectio
     public ChannelSelection newValue() {
         return StyleConstants.DEFAULT_RASTER_CHANNEL_RGB;
     }
-    
+
     @Override
     public void initialize() {
         super.initialize();
@@ -99,7 +99,7 @@ public class FXChannelSelection extends FXStyleElementController<ChannelSelectio
         uiNone.setToggleGroup(group);
         uiRGB.setToggleGroup(group);
         uiSingle.setToggleGroup(group);
-        
+
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             if(uiRGB.isSelected()){
@@ -114,16 +114,16 @@ public class FXChannelSelection extends FXStyleElementController<ChannelSelectio
                 value.set(null);
             }
         };
-        
+
         uiRed.valueProperty().addListener(changeListener);
         uiGreen.valueProperty().addListener(changeListener);
         uiBlue.valueProperty().addListener(changeListener);
         uiGray.valueProperty().addListener(changeListener);
     }
-    
+
     @Override
     protected void updateEditor(ChannelSelection styleElement) {
-        
+
         if(styleElement == null || (styleElement.getGrayChannel()==null && styleElement.getRGBChannels()==null) ){
             uiNone.setSelected(true);
             uiGray.valueProperty().set(null);
@@ -140,7 +140,7 @@ public class FXChannelSelection extends FXStyleElementController<ChannelSelectio
             uiBlue.valueProperty().setValue(styleElement.getRGBChannels()[2]);
         }
     }
-    
+
     @Override
     public void setLayer(MapLayer layer) {
         super.setLayer(layer);
@@ -149,5 +149,5 @@ public class FXChannelSelection extends FXStyleElementController<ChannelSelectio
         uiBlue.setLayer(layer);
         uiGray.setLayer(layer);
     }
-    
+
 }

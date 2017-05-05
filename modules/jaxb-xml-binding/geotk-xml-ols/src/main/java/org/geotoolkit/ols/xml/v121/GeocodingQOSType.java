@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Quality of service type
- * 
+ *
  * <p>Java class for GeocodingQOSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeocodingQOSType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeocodingQOSType")
@@ -54,11 +54,11 @@ public class GeocodingQOSType {
 
     /**
      * Gets the value of the accuracy property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Float }
-     *     
+     *
      */
     public Float getAccuracy() {
         return accuracy;
@@ -66,11 +66,11 @@ public class GeocodingQOSType {
 
     /**
      * Sets the value of the accuracy property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Float }
-     *     
+     *
      */
     public void setAccuracy(Float value) {
         this.accuracy = value;
@@ -78,11 +78,11 @@ public class GeocodingQOSType {
 
     /**
      * Gets the value of the matchType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMatchType() {
         return matchType;
@@ -90,11 +90,11 @@ public class GeocodingQOSType {
 
     /**
      * Sets the value of the matchType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMatchType(String value) {
         this.matchType = value;

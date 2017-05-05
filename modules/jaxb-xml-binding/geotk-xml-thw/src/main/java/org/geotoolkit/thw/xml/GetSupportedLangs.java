@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for getSupportedLangs complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="getSupportedLangs">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getSupportedLangs", propOrder = {
@@ -60,7 +60,7 @@ public class GetSupportedLangs {
 
     public GetSupportedLangs(String thesaurus, String outputFormat) {
         this.thesaurus = thesaurus;
-        this.outputFormat = outputFormat; 
+        this.outputFormat = outputFormat;
     }
 
     public GetSupportedLangs(URI thesaurus) {
@@ -71,11 +71,11 @@ public class GetSupportedLangs {
 
     /**
      * Gets the value of the thesaurus property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getThesaurus() {
         return thesaurus;
@@ -83,11 +83,11 @@ public class GetSupportedLangs {
 
     /**
      * Sets the value of the thesaurus property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setThesaurus(String value) {
         this.thesaurus = value;

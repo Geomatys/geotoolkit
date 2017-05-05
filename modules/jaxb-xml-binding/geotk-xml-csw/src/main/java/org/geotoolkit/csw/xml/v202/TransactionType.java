@@ -31,15 +31,15 @@ import org.geotoolkit.csw.xml.Transaction;
 
 
 /**
- * Users may insert, update, or delete catalogue entries. 
+ * Users may insert, update, or delete catalogue entries.
  * If the verboseResponse attribute has the value "true", then one or more
  * csw:InsertResult elements must be included in the response.
- *          
- * 
+ *
+ *
  * <p>Java class for TransactionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TransactionType">
  *   &lt;complexContent>
@@ -57,8 +57,8 @@ import org.geotoolkit.csw.xml.Transaction;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,10 +81,10 @@ public class TransactionType extends RequestBaseType implements Transaction {
     private String requestId;
 
     /**
-     * An empty constructor used by JAXB. 
+     * An empty constructor used by JAXB.
      */
     public TransactionType() {}
-    
+
     /**
      * Build a new transaction request to insert a list of object
      */
@@ -120,7 +120,7 @@ public class TransactionType extends RequestBaseType implements Transaction {
         }
         verboseResponse = false;
     }
-    
+
     /**
      * Gets the value of the insertOrUpdateOrDelete property.
      */

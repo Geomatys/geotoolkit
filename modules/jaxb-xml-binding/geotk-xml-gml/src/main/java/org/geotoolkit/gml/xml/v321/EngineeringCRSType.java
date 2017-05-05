@@ -30,9 +30,9 @@ import org.geotoolkit.gml.xml.EngineeringDatumRef;
 
 /**
  * <p>Java class for EngineeringCRSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="EngineeringCRSType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.gml.xml.EngineeringDatumRef;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
@@ -88,12 +88,12 @@ public class EngineeringCRSType extends AbstractCRSType implements EngineeringCR
 
     /**
      * Gets the value of the affineCSProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AffineCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AffineCSPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<AffineCSPropertyType> getAffineCSProperty() {
         return affineCSProperty;
@@ -101,12 +101,12 @@ public class EngineeringCRSType extends AbstractCRSType implements EngineeringCR
 
     /**
      * Sets the value of the affineCSProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AffineCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AffineCSPropertyType }{@code >}
-     *     
+     *
      */
     public void setAffineCSProperty(JAXBElement<AffineCSPropertyType> value) {
         this.affineCSProperty = ((JAXBElement<AffineCSPropertyType> ) value);
@@ -114,12 +114,12 @@ public class EngineeringCRSType extends AbstractCRSType implements EngineeringCR
 
     /**
      * Gets the value of the cartesianCSProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link CartesianCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CartesianCSPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<CartesianCSPropertyType> getCartesianCSProperty() {
         return cartesianCSProperty;
@@ -127,12 +127,12 @@ public class EngineeringCRSType extends AbstractCRSType implements EngineeringCR
 
     /**
      * Sets the value of the cartesianCSProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link CartesianCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CartesianCSPropertyType }{@code >}
-     *     
+     *
      */
     public void setCartesianCSProperty(JAXBElement<CartesianCSPropertyType> value) {
         this.cartesianCSProperty = ((JAXBElement<CartesianCSPropertyType> ) value);
@@ -140,11 +140,11 @@ public class EngineeringCRSType extends AbstractCRSType implements EngineeringCR
 
     /**
      * Gets the value of the cylindricalCSProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CylindricalCSPropertyType }
-     *     
+     *
      */
     public CylindricalCSPropertyType getCylindricalCSProperty() {
         return cylindricalCSProperty;
@@ -152,11 +152,11 @@ public class EngineeringCRSType extends AbstractCRSType implements EngineeringCR
 
     /**
      * Sets the value of the cylindricalCSProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CylindricalCSPropertyType }
-     *     
+     *
      */
     public void setCylindricalCSProperty(CylindricalCSPropertyType value) {
         this.cylindricalCSProperty = value;
@@ -164,11 +164,11 @@ public class EngineeringCRSType extends AbstractCRSType implements EngineeringCR
 
     /**
      * Gets the value of the linearCSProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LinearCSPropertyType }
-     *     
+     *
      */
     public LinearCSPropertyType getLinearCSProperty() {
         return linearCSProperty;
@@ -176,11 +176,11 @@ public class EngineeringCRSType extends AbstractCRSType implements EngineeringCR
 
     /**
      * Sets the value of the linearCSProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LinearCSPropertyType }
-     *     
+     *
      */
     public void setLinearCSProperty(LinearCSPropertyType value) {
         this.linearCSProperty = value;
@@ -188,11 +188,11 @@ public class EngineeringCRSType extends AbstractCRSType implements EngineeringCR
 
     /**
      * Gets the value of the polarCSProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PolarCSPropertyType }
-     *     
+     *
      */
     public PolarCSPropertyType getPolarCSProperty() {
         return polarCSProperty;
@@ -200,11 +200,11 @@ public class EngineeringCRSType extends AbstractCRSType implements EngineeringCR
 
     /**
      * Sets the value of the polarCSProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PolarCSPropertyType }
-     *     
+     *
      */
     public void setPolarCSProperty(PolarCSPropertyType value) {
         this.polarCSProperty = value;
@@ -212,12 +212,12 @@ public class EngineeringCRSType extends AbstractCRSType implements EngineeringCR
 
     /**
      * Gets the value of the sphericalCSProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link SphericalCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SphericalCSPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<SphericalCSPropertyType> getSphericalCSProperty() {
         return sphericalCSProperty;
@@ -225,12 +225,12 @@ public class EngineeringCRSType extends AbstractCRSType implements EngineeringCR
 
     /**
      * Sets the value of the sphericalCSProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link SphericalCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SphericalCSPropertyType }{@code >}
-     *     
+     *
      */
     public void setSphericalCSProperty(JAXBElement<SphericalCSPropertyType> value) {
         this.sphericalCSProperty = ((JAXBElement<SphericalCSPropertyType> ) value);
@@ -238,11 +238,11 @@ public class EngineeringCRSType extends AbstractCRSType implements EngineeringCR
 
     /**
      * Gets the value of the userDefinedCSProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link UserDefinedCSPropertyType }
-     *     
+     *
      */
     public UserDefinedCSPropertyType getUserDefinedCSProperty() {
         return userDefinedCSProperty;
@@ -250,11 +250,11 @@ public class EngineeringCRSType extends AbstractCRSType implements EngineeringCR
 
     /**
      * Sets the value of the userDefinedCSProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link UserDefinedCSPropertyType }
-     *     
+     *
      */
     public void setUserDefinedCSProperty(UserDefinedCSPropertyType value) {
         this.userDefinedCSProperty = value;
@@ -262,12 +262,12 @@ public class EngineeringCRSType extends AbstractCRSType implements EngineeringCR
 
     /**
      * Gets the value of the coordinateSystem property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link CoordinateSystemPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CoordinateSystemPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<CoordinateSystemPropertyType> getCoordinateSystem() {
         return coordinateSystem;
@@ -275,12 +275,12 @@ public class EngineeringCRSType extends AbstractCRSType implements EngineeringCR
 
     /**
      * Sets the value of the coordinateSystem property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link CoordinateSystemPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CoordinateSystemPropertyType }{@code >}
-     *     
+     *
      */
     public void setCoordinateSystem(JAXBElement<CoordinateSystemPropertyType> value) {
         this.coordinateSystem = ((JAXBElement<CoordinateSystemPropertyType> ) value);
@@ -288,12 +288,12 @@ public class EngineeringCRSType extends AbstractCRSType implements EngineeringCR
 
     /**
      * Gets the value of the engineeringDatumProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link EngineeringDatumPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link EngineeringDatumPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<EngineeringDatumPropertyType> getEngineeringDatumProperty() {
         return engineeringDatumProperty;
@@ -301,12 +301,12 @@ public class EngineeringCRSType extends AbstractCRSType implements EngineeringCR
 
     /**
      * Sets the value of the engineeringDatumProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link EngineeringDatumPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link EngineeringDatumPropertyType }{@code >}
-     *     
+     *
      */
     public void setEngineeringDatumProperty(JAXBElement<EngineeringDatumPropertyType> value) {
         this.engineeringDatumProperty = ((JAXBElement<EngineeringDatumPropertyType> ) value);

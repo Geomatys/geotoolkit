@@ -39,7 +39,7 @@ public class MapItemSelectableColumn extends TreeTableColumn{
             GeotkFX.getString(MapItemSelectableColumn.class, "lockTooltip"));
     private static final Tooltip UNLOCK_TOOLTIP = new Tooltip(
             GeotkFX.getString(MapItemSelectableColumn.class, "unlockTooltip"));
-    
+
     public MapItemSelectableColumn() {
         setEditable(true);
         setPrefWidth(26);
@@ -48,7 +48,7 @@ public class MapItemSelectableColumn extends TreeTableColumn{
 
         setCellValueFactory((Object param) -> {
             try {
-                return FXUtilities.beanProperty(((CellDataFeatures)param).getValue().getValue(), "selectable", Boolean.class);                
+                return FXUtilities.beanProperty(((CellDataFeatures)param).getValue().getValue(), "selectable", Boolean.class);
             } catch (IllegalArgumentException e) {
                 return null;
             }
@@ -57,7 +57,7 @@ public class MapItemSelectableColumn extends TreeTableColumn{
     }
 
     private static final class SelectableCell extends TreeTableCell{
-                
+
         public SelectableCell() {
             setFont(FXUtilities.FONTAWESOME);
             setOnMouseClicked(this::mouseClick);

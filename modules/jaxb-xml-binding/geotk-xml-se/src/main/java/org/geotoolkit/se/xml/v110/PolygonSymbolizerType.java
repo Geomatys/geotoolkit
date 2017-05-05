@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for PolygonSymbolizerType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PolygonSymbolizerType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,11 +72,11 @@ public class PolygonSymbolizerType
 
     /**
      * Gets the value of the geometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeometryType }
-     *     
+     *
      */
     public ParameterValueType getGeometry() {
         return geometry;
@@ -84,11 +84,11 @@ public class PolygonSymbolizerType
 
     /**
      * Sets the value of the geometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeometryType }
-     *     
+     *
      */
     public void setGeometry(final ParameterValueType value) {
         this.geometry = value;
@@ -96,11 +96,11 @@ public class PolygonSymbolizerType
 
     /**
      * Gets the value of the fill property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FillType }
-     *     
+     *
      */
     public FillType getFill() {
         return fill;
@@ -108,11 +108,11 @@ public class PolygonSymbolizerType
 
     /**
      * Sets the value of the fill property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FillType }
-     *     
+     *
      */
     public void setFill(final FillType value) {
         this.fill = value;
@@ -120,11 +120,11 @@ public class PolygonSymbolizerType
 
     /**
      * Gets the value of the stroke property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StrokeType }
-     *     
+     *
      */
     public StrokeType getStroke() {
         return stroke;
@@ -132,11 +132,11 @@ public class PolygonSymbolizerType
 
     /**
      * Sets the value of the stroke property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StrokeType }
-     *     
+     *
      */
     public void setStroke(final StrokeType value) {
         this.stroke = value;
@@ -144,11 +144,11 @@ public class PolygonSymbolizerType
 
     /**
      * Gets the value of the displacement property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DisplacementType }
-     *     
+     *
      */
     public DisplacementType getDisplacement() {
         return displacement;
@@ -156,11 +156,11 @@ public class PolygonSymbolizerType
 
     /**
      * Sets the value of the displacement property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DisplacementType }
-     *     
+     *
      */
     public void setDisplacement(final DisplacementType value) {
         this.displacement = value;
@@ -168,11 +168,11 @@ public class PolygonSymbolizerType
 
     /**
      * Gets the value of the perpendicularOffset property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getPerpendicularOffset() {
         return perpendicularOffset;
@@ -180,11 +180,11 @@ public class PolygonSymbolizerType
 
     /**
      * Sets the value of the perpendicularOffset property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setPerpendicularOffset(final ParameterValueType value) {
         this.perpendicularOffset = value;

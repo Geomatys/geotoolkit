@@ -35,7 +35,7 @@ package org.geotoolkit.xal.model;
 public interface SubPremiseLocation {
 
     /**
-     * 
+     *
      * @return
      */
     String getContent();

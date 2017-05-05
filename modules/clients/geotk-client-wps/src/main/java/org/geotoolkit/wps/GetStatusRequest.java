@@ -122,5 +122,5 @@ public class GetStatusRequest extends AbstractRequest {
 
         return response;
     }
-    
+
 }

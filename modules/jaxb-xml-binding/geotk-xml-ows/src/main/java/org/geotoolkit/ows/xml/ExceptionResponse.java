@@ -30,11 +30,11 @@ public interface ExceptionResponse {
 
     /**
      * Convert this object to a java Exception object.
-     * 
+     *
      * @return Exception
      */
     default Exception toException() {
-        
+
         final StringBuilder sb = new StringBuilder();
         for (ExceptionType type : getException()) {
             if(sb.length()!=0) sb.append('\n');

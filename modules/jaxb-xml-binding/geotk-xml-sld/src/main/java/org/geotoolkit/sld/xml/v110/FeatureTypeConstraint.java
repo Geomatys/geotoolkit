@@ -29,9 +29,9 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -67,11 +67,11 @@ public class FeatureTypeConstraint {
 
     /**
      * Gets the value of the featureTypeName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getFeatureTypeName() {
         return featureTypeName;
@@ -79,11 +79,11 @@ public class FeatureTypeConstraint {
 
     /**
      * Sets the value of the featureTypeName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setFeatureTypeName(final QName value) {
         this.featureTypeName = value;
@@ -91,11 +91,11 @@ public class FeatureTypeConstraint {
 
     /**
      * Gets the value of the filter property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FilterType }
-     *     
+     *
      */
     public FilterType getFilter() {
         return filter;
@@ -103,11 +103,11 @@ public class FeatureTypeConstraint {
 
     /**
      * Sets the value of the filter property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FilterType }
-     *     
+     *
      */
     public void setFilter(final FilterType value) {
         this.filter = value;
@@ -115,25 +115,25 @@ public class FeatureTypeConstraint {
 
     /**
      * Gets the value of the extent property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the extent property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getExtent().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Extent }
-     * 
-     * 
+     *
+     *
      */
     public List<Extent> getExtent() {
         if (extent == null) {

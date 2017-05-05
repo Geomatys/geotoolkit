@@ -31,7 +31,7 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  * @author guilhem
  */
 public class GeoSpatialBound {
-    
+
     public Date dateStart;
     public Date dateEnd;
 
@@ -47,7 +47,7 @@ public class GeoSpatialBound {
         final Date d = new Date(millis);
         addDate(d);
     }
-    
+
     public void addDate(final Date date) {
         if (date == null) return;
         if (dateStart == null) {
@@ -63,7 +63,7 @@ public class GeoSpatialBound {
             dateEnd = date;
         }
     }
-    
+
     public void addXYCoordinate(final Double x, final Double y) {
         addXCoordinate(x);
         addYCoordinate(y);
@@ -100,7 +100,7 @@ public class GeoSpatialBound {
             maxy = y;
         }
     }
-    
+
    /**
     * TODO int from a CRS
     */
@@ -111,13 +111,13 @@ public class GeoSpatialBound {
         maxy = 90.0;
     }
 
-      
+
     public void addGeometry(final AbstractGeometry geometry) {
         if (!geometries.contains(geometry)) {
             geometries.add(geometry);
         }
     }
-    
+
     public boolean hasFullSpatialCoordinates() {
         return maxx != null && minx != null &&
                maxy != null && miny != null;
@@ -130,7 +130,7 @@ public class GeoSpatialBound {
         addXCoordinate(other.maxx);
         addYCoordinate(other.miny);
         addYCoordinate(other.maxy);
-        
+
         for (AbstractGeometry geom : other.geometries) {
             if (!this.geometries.contains(geom)) {
                 this.geometries.add(geom);
@@ -165,7 +165,7 @@ public class GeoSpatialBound {
             throw new IllegalArgumentException("unexpected version:" + version);
         }
     }
-    
+
     public AbstractGeometry getPolyGonBounds(final String version) {
         if (!hasFullSpatialCoordinates()) {
             return null;
@@ -173,19 +173,19 @@ public class GeoSpatialBound {
         final List<Double> positions = new ArrayList<>();
         positions.add(miny);
         positions.add(minx);
-        
+
         positions.add(miny);
         positions.add(maxx);
-        
+
         positions.add(maxy);
         positions.add(maxx);
-        
+
         positions.add(maxy);
         positions.add(minx);
-        
+
         positions.add(miny);
         positions.add(minx);
-        
+
         if ("1.0.0".equals(version)) {
             final org.geotoolkit.gml.xml.v311.DirectPositionListType posList = new org.geotoolkit.gml.xml.v311.DirectPositionListType(positions);
             final org.geotoolkit.gml.xml.v311.AbstractRingType exterior = new org.geotoolkit.gml.xml.v311.LinearRingType("EPSG:4326", posList);
@@ -198,7 +198,7 @@ public class GeoSpatialBound {
             throw new IllegalArgumentException("unexpected version:" + version);
         }
     }
-    
+
     public AbstractGeometry getGeometry(final String version) {
         if (geometries.isEmpty()) {
             return null;

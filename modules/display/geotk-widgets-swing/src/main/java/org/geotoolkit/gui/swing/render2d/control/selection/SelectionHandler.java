@@ -23,20 +23,20 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
 
 /**
  * selection handler
- * 
+ *
  * @author Johann Sorel
  * @module
  */
 public interface SelectionHandler {
 
     void install(JMap2D map2d);
-    
+
     void uninstall();
-    
+
     boolean isInstalled();
-    
+
     String getTitle();
-    
+
     ImageIcon getIcon();
-    
+
 }

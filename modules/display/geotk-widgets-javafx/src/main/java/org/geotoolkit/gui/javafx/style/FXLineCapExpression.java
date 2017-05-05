@@ -56,12 +56,12 @@ public class FXLineCapExpression extends FXExpression {
     private final ToggleButton uiSquare = new ToggleButton(null, new ImageView(IMG_SQUARE));
     private final ToggleButton uiButt = new ToggleButton(null, new ImageView(IMG_BUTT));
     private final HBox hbox = new HBox(uiRound,uiSquare,uiButt);
-        
+
     public FXLineCapExpression(){
         uiRound.setToggleGroup(group);
         uiSquare.setToggleGroup(group);
         uiButt.setToggleGroup(group);
-        
+
         group.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {

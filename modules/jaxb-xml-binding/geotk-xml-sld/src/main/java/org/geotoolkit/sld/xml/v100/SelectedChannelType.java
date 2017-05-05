@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for SelectedChannelType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SelectedChannelType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,11 +57,11 @@ public class SelectedChannelType {
 
     /**
      * Gets the value of the sourceChannelName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSourceChannelName() {
         return sourceChannelName;
@@ -69,11 +69,11 @@ public class SelectedChannelType {
 
     /**
      * Sets the value of the sourceChannelName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSourceChannelName(final String value) {
         this.sourceChannelName = value;
@@ -81,11 +81,11 @@ public class SelectedChannelType {
 
     /**
      * Gets the value of the contrastEnhancement property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ContrastEnhancement }
-     *     
+     *
      */
     public ContrastEnhancement getContrastEnhancement() {
         return contrastEnhancement;
@@ -93,11 +93,11 @@ public class SelectedChannelType {
 
     /**
      * Sets the value of the contrastEnhancement property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ContrastEnhancement }
-     *     
+     *
      */
     public void setContrastEnhancement(final ContrastEnhancement value) {
         this.contrastEnhancement = value;

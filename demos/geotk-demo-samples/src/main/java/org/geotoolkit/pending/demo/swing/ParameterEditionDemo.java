@@ -16,18 +16,18 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Quentin Boileau (Geomatys)
  */
 public class ParameterEditionDemo {
-    
+
     public static void main(String[] args) {
-        
+
         List<GeneralParameterDescriptor> params = new ArrayList<>();
         params.add(ParametersExt.createParameterDescriptor("strParam", null, String.class, null, "Test", null, null, null, true));
         params.add(ParametersExt.createParameterDescriptor("boolParam", null, Boolean.class, null, true, null, null, null, true));
         params.add(ParametersExt.createParameterDescriptor("doubleParam", null, Double.class, null, 10.5, null, null, null, false));
-        
+
         List<GeneralParameterDescriptor> subParams = new ArrayList<>();
         subParams.add(ParametersExt.createParameterDescriptor("dateParam", null, Date.class, null, null, null, null, null, true));
         params.add(ParametersExt.createParameterDescriptorGroup("subgroup", null, 2, 5, subParams));
-        
+
         final ParameterDescriptorGroup descGroup = ParametersExt.createParameterDescriptorGroup("group", null, 1, 1, params);
         final JAttributeEditor editors = new JAttributeEditor();
 

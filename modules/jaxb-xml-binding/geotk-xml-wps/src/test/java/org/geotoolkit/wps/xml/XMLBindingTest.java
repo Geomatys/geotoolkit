@@ -164,7 +164,7 @@ public class XMLBindingTest extends org.geotoolkit.test.TestBase {
         m.marshal(executeRoot, System.out);
 
     }
-    
+
     @Test
     public void testMarshallingExecuteV2() throws JAXBException, IOException {
         final ExecuteRequestType executeBody = new ExecuteRequestType();

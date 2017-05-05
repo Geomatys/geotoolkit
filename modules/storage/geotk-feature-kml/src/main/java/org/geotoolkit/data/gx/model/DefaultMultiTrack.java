@@ -43,7 +43,7 @@ public class DefaultMultiTrack extends DefaultAbstractGeometry implements MultiT
     }
 
     /**
-     * 
+     *
      * @param altitudeMode
      * @param interpolate
      * @param tracks

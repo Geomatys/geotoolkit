@@ -20,7 +20,7 @@ import org.opengis.style.LabelPlacement;
 
 /**
  * Superclass for CachedPointPlacement and CachedLinePlacement.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -29,6 +29,6 @@ public abstract class CachedLabelPlacement<T extends LabelPlacement> extends Cac
     protected CachedLabelPlacement(final T element){
         super(element);
     }
-    
+
 
 }

@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2014, Geomatys
  *
@@ -14,7 +14,7 @@
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
- */ 
+ */
 package org.geotoolkit.temporal.object;
 
 import java.util.ArrayList;
@@ -52,13 +52,13 @@ public class DefaultTemporalTopologicalComplex extends AbstractIdentifiedObject 
      * Link the {@link DefaultTemporalTopologicalComplex} to the set of {@link TemporalTopologicalPrimitive} that its includes.
      */
     final Collection<TemporalTopologicalPrimitive> composition;
-    
+
     /**
      * Creates a default {@link TemporalTopologicalComplex} implementation from the given properties and {@link Instant}.
      * The properties given in argument follow the same rules than for the
      * {@linkplain DefaultTemporalGeometricPrimitive#DefaultTemporalGeometricPrimitive(java.util.Map) )  super-class constructor}.
-     * 
-     * 
+     *
+     *
      * <table class="referencingTemporal">
      *   <caption>Recognized properties (non exhaustive list)</caption>
      *   <tr>
@@ -85,10 +85,10 @@ public class DefaultTemporalTopologicalComplex extends AbstractIdentifiedObject 
      *     <td>{@link #getRemarks() }</td>
      *   </tr>
      * </table>
-     * 
+     *
      * @param properties The properties to be given to this object.
      * @param primitives the set of {@link TemporalTopologicalPrimitive} that its includes
-     * @throws NullArgumentException if primitives is {@code null}. 
+     * @throws NullArgumentException if primitives is {@code null}.
      */
     public DefaultTemporalTopologicalComplex(final Map<String, ?> properties, final Collection<TemporalTopologicalPrimitive> primitives) throws IllegalArgumentException {
         super(properties);
@@ -103,7 +103,7 @@ public class DefaultTemporalTopologicalComplex extends AbstractIdentifiedObject 
         super(NilReferencingObject.INSTANCE);
         this.composition = null;
     }
-    
+
     /**
      * Constructs a new instance initialized with the values from the specified metadata object.
      * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
@@ -146,21 +146,21 @@ public class DefaultTemporalTopologicalComplex extends AbstractIdentifiedObject 
         }
         return new DefaultTemporalTopologicalComplex(object);
     }
-    
-    
+
+
     /**
      * Returns aggregation of connected {@linkplain TemporalTopologicalPrimitive temporal topological primitives}
-     * 
+     *
      * @return aggregation of connected {@linkplain TemporalTopologicalPrimitive temporal topological primitives}
      */
     @Override
     public Collection<TemporalTopologicalPrimitive> getTemporalTopologicalPrimitives() {
         return composition;
     }
-    
+
     /**
      * Returns aggregation of connected {@linkplain TemporalTopologicalPrimitive temporal topological primitives}
-     * 
+     *
      * @return aggregation of connected {@linkplain TemporalTopologicalPrimitive temporal topological primitives}
      */
     @XmlElement(name = "primitive", required = true)

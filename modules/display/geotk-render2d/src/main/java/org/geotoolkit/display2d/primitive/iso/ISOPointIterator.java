@@ -27,9 +27,9 @@ import org.opengis.geometry.primitive.Point;
  * @module
  */
 public final class ISOPointIterator extends ISOGeometryIterator<Point> {
-        
+
     private boolean done = false;
-    
+
     /**
      * Creates a new PointIterator object.
      *

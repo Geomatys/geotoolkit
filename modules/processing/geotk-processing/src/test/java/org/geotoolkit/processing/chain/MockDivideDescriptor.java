@@ -76,5 +76,5 @@ public class MockDivideDescriptor extends AbstractProcessDescriptor{
             outputParameters.parameter(MockAddDescriptor.RESULT_NUMBER.getName().getCode()).setValue(result);
         }
     }
-    
+
 }

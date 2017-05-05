@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for SignatureListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SignatureListType">
  *   &lt;complexContent>
@@ -41,25 +41,25 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SignatureListType", propOrder = {
-   
+
 })
 public class SignatureListType {
 
     /**
      *  TODO see if we need that part
-     
+
     @XmlElement(name = "Signature", namespace = "http://www.w3.org/2000/09/xmldsig#", required = true)
     private List<SignatureType> signature;
 
     /**
      * Gets the value of the signature property.
-     * 
+     *
      *
     public List<SignatureType> getSignature() {
         if (signature == null) {

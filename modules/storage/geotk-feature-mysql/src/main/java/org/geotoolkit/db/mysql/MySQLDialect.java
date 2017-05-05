@@ -117,12 +117,12 @@ public class MySQLDialect extends AbstractSQLDialect {
     private static final Map<Class,String> CLASS_TO_TYPENAME = new HashMap<>();
     private static final Map<String, String> TYPE_TO_ST_TYPE_MAP = new HashMap<>();
     private static final Set<String> IGNORE_TABLES = new HashSet<>();
-    
+
     private static final FilterCapabilities FILTER_CAPABILITIES;
     private static final String TABLE_ESCAPE = "`";
-    
+
     static {
-        
+
         //fill base types
         TYPE_TO_CLASS.put(Types.VARCHAR,        String.class);
         TYPE_TO_CLASS.put(Types.CHAR,           String.class);
@@ -142,13 +142,13 @@ public class MySQLDialect extends AbstractSQLDialect {
         TYPE_TO_CLASS.put(Types.NUMERIC,        BigDecimal.class);
         TYPE_TO_CLASS.put(Types.DATE,           Date.class);
         TYPE_TO_CLASS.put(Types.TIME,           Time.class);
-        TYPE_TO_CLASS.put(Types.TIMESTAMP,      Timestamp.class);     
+        TYPE_TO_CLASS.put(Types.TIMESTAMP,      Timestamp.class);
         TYPE_TO_CLASS.put(Types.BLOB,           byte[].class);
         TYPE_TO_CLASS.put(Types.BINARY,         byte[].class);
-        TYPE_TO_CLASS.put(Types.CLOB,           String.class);   
+        TYPE_TO_CLASS.put(Types.CLOB,           String.class);
         TYPE_TO_CLASS.put(Types.VARBINARY,      byte[].class);
         //TYPE_TO_CLASS.put(Types.ARRAY,          Array.class);//mysql do not support array type
-        
+
         //BINARY,BLOB,LONGBLOB,MEDIUMBLOB,TINYBLOB,VARBINARY(10)
         //DATE,DATETIME,TIME,TIMESTAMP,YEAR
         //CURVE,GEOMETRY,LINE,LINEARRING,LINESTRING,POINT,POLYGON,SURFACE
@@ -200,7 +200,7 @@ public class MySQLDialect extends AbstractSQLDialect {
         TYPENAME_TO_CLASS.put("bit",        Boolean.class);
         TYPENAME_TO_CLASS.put("enum",   String[].class);
         TYPENAME_TO_CLASS.put("set",    String[].class);
-        
+
         CLASS_TO_TYPENAME.put(String.class, "varchar");
         CLASS_TO_TYPENAME.put(Boolean.class, "bool");
         CLASS_TO_TYPENAME.put(boolean.class, "bool");
@@ -223,8 +223,8 @@ public class MySQLDialect extends AbstractSQLDialect {
         CLASS_TO_TYPENAME.put(java.util.Date.class, "timestamp");
         CLASS_TO_TYPENAME.put(Timestamp.class, "timestamp");
         CLASS_TO_TYPENAME.put(byte[].class, "blob");
-        
-        
+
+
         //filter capabilities
         final String version = null;
         //ID capabilities, support : EID, FID
@@ -251,12 +251,12 @@ public class MySQLDialect extends AbstractSQLDialect {
         };
         final SpatialOperators spatialOperators = new DefaultSpatialOperators(spatialOperatrs);
         final SpatialCapabilities spatialCapa = new DefaultSpatialCapabilities(geometryOperands, spatialOperators);
-        
+
         //scalar capabilities
         //support : AND, OR, NOT
-        final boolean logical = true; 
+        final boolean logical = true;
         //support : =, <>, <, <=, >, >=, LIKE, BEETWEN, NULL
-        final Operator[] comparaisonOps = new Operator[]{ 
+        final Operator[] comparaisonOps = new Operator[]{
             new DefaultOperator(PropertyIsEqualTo.NAME),
             new DefaultOperator(PropertyIsNotEqualTo.NAME),
             new DefaultOperator(PropertyIsLessThan.NAME),
@@ -269,24 +269,24 @@ public class MySQLDialect extends AbstractSQLDialect {
         };
         final ComparisonOperators comparisonOperators = new DefaultComparisonOperators(comparaisonOps);
         //support : +, -, *, /
-        final boolean arithmeticSimple = true; 
+        final boolean arithmeticSimple = true;
         //support various functions
         final FunctionName[] functionNames = new FunctionName[0];
         final Functions functions = new DefaultFunctions(functionNames);
         final ArithmeticOperators arithmeticOperators = new DefaultArithmeticOperators(arithmeticSimple, functions);
         final ScalarCapabilities scalarCapa = new DefaultScalarCapabilities(logical, comparisonOperators, arithmeticOperators);
-        
+
         //temporal capabilities
         final TemporalOperand[] temporalOperands = new TemporalOperand[0];
         final TemporalOperator[] temporalOperatrs = new TemporalOperator[0];
         final TemporalOperators temporalOperators = new DefaultTemporalOperators(temporalOperatrs);
         final TemporalCapabilities temporalCapa = new DefaultTemporalCapabilities(temporalOperands, temporalOperators);
-        
+
         FILTER_CAPABILITIES = new DefaultFilterCapabilities(version, idCapa, spatialCapa, scalarCapa, temporalCapa);
     }
-    
+
     private final DefaultJDBCFeatureStore featurestore;
-    
+
     //cache
     private Version version = null;
 
@@ -298,16 +298,16 @@ public class MySQLDialect extends AbstractSQLDialect {
     public boolean supportGlobalMetadata() {
         return false;
     }
-    
+
     @Override
     public Version getVersion(String schema) {
         if(version != null){
             return version;
         }
-        
+
         Connection cx = null;
         Statement statement = null;
-        ResultSet result = null;        
+        ResultSet result = null;
         try {
             cx = featurestore.getDataSource().getConnection();
             statement = cx.createStatement();
@@ -323,7 +323,7 @@ public class MySQLDialect extends AbstractSQLDialect {
         } finally {
             JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(),cx,statement,result);
         }
-        
+
         return version;
     }
 
@@ -357,13 +357,13 @@ public class MySQLDialect extends AbstractSQLDialect {
         name = name.toLowerCase();
         return IGNORE_TABLES.contains(name.toLowerCase());
     }
-    
+
     @Override
     public Class getJavaType(int sqlType, String sqlTypeName) {
-        
+
         Class c = null;
         sqlTypeName = sqlTypeName.toLowerCase();
-        
+
         if(sqlType == Types.ARRAY){
             //special case for array types
             if(sqlTypeName.startsWith("_")){
@@ -371,7 +371,7 @@ public class MySQLDialect extends AbstractSQLDialect {
             }
             c = TYPENAME_TO_CLASS.get(sqlTypeName);
             if(c==null) c = TYPENAME_TO_CLASS.get(sqlTypeName.toUpperCase());
-            
+
             if(c == null){
                 c = Object.class;
             }
@@ -379,13 +379,13 @@ public class MySQLDialect extends AbstractSQLDialect {
         }else{
             c = TYPENAME_TO_CLASS.get(sqlTypeName);
             if(c==null) c = TYPENAME_TO_CLASS.get(sqlTypeName.toUpperCase());
-            
+
             if(c == null){
                 //try relying on base type.
                 c = TYPE_TO_CLASS.get(sqlType);
             }
         }
-        
+
         if(c == null){
             featurestore.getLogger().log(Level.INFO, "No definied mapping for type : {0} {1}", new Object[]{sqlType, sqlTypeName});
             c = Object.class;
@@ -463,11 +463,11 @@ public class MySQLDialect extends AbstractSQLDialect {
         final Class binding = descriptor.getValueClass();
         return rs.getObject(i);
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // Geometry types, not supported yet ///////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public Integer getGeometrySRID(String schemaName, String tableName, String columnName, Map metas, Connection cx) throws SQLException {
         throw new UnsupportedOperationException("Geometry types not supported in MySQL.");
@@ -477,17 +477,17 @@ public class MySQLDialect extends AbstractSQLDialect {
     public CoordinateReferenceSystem createCRS(int srid, Connection cx) throws SQLException {
         throw new UnsupportedOperationException("Geometry types not supported in MySQL.");
     }
-    
+
     @Override
     public void encodeGeometryColumn(StringBuilder sql, AttributeType gatt, int srid, Hints hints) {
         throw new UnsupportedOperationException("Geometry types not supported in MySQL.");
     }
-    
+
     @Override
     public void encodeGeometryValue(StringBuilder sql, Geometry value, int srid) throws DataStoreException {
         throw new UnsupportedOperationException("Geometry types not supported in MySQL.");
     }
-    
+
     @Override
     public Geometry decodeGeometryValue(AttributeType descriptor, ResultSet rs, String column) throws IOException, SQLException {
         throw new UnsupportedOperationException("Geometry types not supported in MySQL.");

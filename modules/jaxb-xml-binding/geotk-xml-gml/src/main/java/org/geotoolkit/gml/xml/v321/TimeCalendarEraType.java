@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TimeCalendarEraType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeCalendarEraType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeCalendarEraType", propOrder = {
@@ -70,11 +70,11 @@ public class TimeCalendarEraType
 
     /**
      * Gets the value of the referenceEvent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public StringOrRefType getReferenceEvent() {
         return referenceEvent;
@@ -82,11 +82,11 @@ public class TimeCalendarEraType
 
     /**
      * Sets the value of the referenceEvent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public void setReferenceEvent(StringOrRefType value) {
         this.referenceEvent = value;
@@ -94,11 +94,11 @@ public class TimeCalendarEraType
 
     /**
      * Gets the value of the referenceDate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getReferenceDate() {
         return referenceDate;
@@ -106,11 +106,11 @@ public class TimeCalendarEraType
 
     /**
      * Sets the value of the referenceDate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setReferenceDate(String value) {
         this.referenceDate = value;
@@ -118,11 +118,11 @@ public class TimeCalendarEraType
 
     /**
      * Gets the value of the julianReference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getJulianReference() {
         return julianReference;
@@ -130,11 +130,11 @@ public class TimeCalendarEraType
 
     /**
      * Sets the value of the julianReference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setJulianReference(BigDecimal value) {
         this.julianReference = value;
@@ -142,11 +142,11 @@ public class TimeCalendarEraType
 
     /**
      * Gets the value of the epochOfUse property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimePeriodPropertyType }
-     *     
+     *
      */
     public TimePeriodPropertyType getEpochOfUse() {
         return epochOfUse;
@@ -154,11 +154,11 @@ public class TimeCalendarEraType
 
     /**
      * Sets the value of the epochOfUse property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimePeriodPropertyType }
-     *     
+     *
      */
     public void setEpochOfUse(TimePeriodPropertyType value) {
         this.epochOfUse = value;

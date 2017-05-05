@@ -58,7 +58,7 @@ public interface PremiseNumberRangeTo {
     List<PremiseNumber> getPremiseNumbers();
 
     /**
-     * 
+     *
      * @return
      */
     List<PremiseNumberSuffix> getPremiseNumberSuffixes();
@@ -82,7 +82,7 @@ public interface PremiseNumberRangeTo {
     void setPremiseNumbers(List<PremiseNumber> premiseNumbers);
 
     /**
-     * 
+     *
      * @param premiseNumberSuffixes
      */
     void setPremiseNumberSuffixes(List<PremiseNumberSuffix> premiseNumberSuffixes);

@@ -29,9 +29,9 @@ import org.geotoolkit.wcs.xml.DescribeCoverageResponse;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -43,7 +43,7 @@ import org.geotoolkit.wcs.xml.DescribeCoverageResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -59,11 +59,11 @@ public class CoverageDescriptions implements DescribeCoverageResponse {
 
     CoverageDescriptions() {
     }
-    
+
     public CoverageDescriptions(final List<CoverageDescriptionType> coverageDescription) {
         this.coverageDescription = coverageDescription;
     }
-    
+
     /**
      * Gets the value of the coverageDescription property.
      */

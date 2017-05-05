@@ -28,15 +28,15 @@ import org.geotoolkit.wfs.xml.Transaction;
 
 
 /**
- * The TransactionType defines the Transaction operation. 
+ * The TransactionType defines the Transaction operation.
  * A Transaction element contains one or more Insert, Update Delete and Native elements that allow a client application
  * to create, modify or remove feature instances from the feature repository that a Web Feature Service controls.
- *          
- * 
+ *
+ *
  * <p>Java class for TransactionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TransactionType">
  *   &lt;complexContent>
@@ -58,8 +58,8 @@ import org.geotoolkit.wfs.xml.Transaction;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TransactionType", propOrder = {
@@ -88,7 +88,7 @@ public class TransactionType implements Transaction {
 
     @XmlTransient
     private Map<String, String> prefixMapping;
-    
+
     public TransactionType() {
 
     }
@@ -103,7 +103,7 @@ public class TransactionType implements Transaction {
             this.insertOrUpdateOrDelete.add(delete);
         }
     }
-    
+
     public TransactionType(final String service, final String version, final String handle, final AllSomeType releaseAction, final InsertElementType insert) {
         this.service = service;
         this.version = version;
@@ -114,7 +114,7 @@ public class TransactionType implements Transaction {
             this.insertOrUpdateOrDelete.add(insert);
         }
     }
-    
+
     public TransactionType(final String service, final String version, final String handle, final AllSomeType releaseAction, final UpdateElementType udpate) {
         this.service = service;
         this.version = version;
@@ -125,23 +125,23 @@ public class TransactionType implements Transaction {
             this.insertOrUpdateOrDelete.add(udpate);
         }
     }
-    
+
     /**
-     * In order for a client application to operate upon locked  feature instances, 
-     * the Transaction request must include the LockId element. 
+     * In order for a client application to operate upon locked  feature instances,
+     * the Transaction request must include the LockId element.
      * The content of this element must be the lock identifier the client application obtained from
      * a previous GetFeatureWithLock or LockFeature operation.
-     * 
+     *
      * If the correct lock identifier is specified the Web Feature Service knows that the client application may
      * operate upon the locked feature instances.
-     * 
+     *
      * No LockId element needs to be specified to operate upon unlocked features.
-     *                
-     * 
+     *
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLockId() {
         return lockId;
@@ -149,11 +149,11 @@ public class TransactionType implements Transaction {
 
     /**
      * Sets the value of the lockId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLockId(String value) {
         this.lockId = value;
@@ -161,14 +161,14 @@ public class TransactionType implements Transaction {
 
     /**
      * Gets the value of the insertOrUpdateOrDelete property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link NativeType }
      * {@link DeleteElementType }
      * {@link InsertElementType }
      * {@link UpdateElementType }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getInsertOrUpdateOrDelete() {
         if (insertOrUpdateOrDelete == null) {
@@ -180,14 +180,14 @@ public class TransactionType implements Transaction {
     public List<Object> getTransactionAction() {
         return getInsertOrUpdateOrDelete();
     }
-    
+
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public Version getVersion() {
         if (version == null) {
@@ -199,11 +199,11 @@ public class TransactionType implements Transaction {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(String value) {
         this.version = value;
@@ -211,11 +211,11 @@ public class TransactionType implements Transaction {
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getService() {
         if (service == null) {
@@ -227,11 +227,11 @@ public class TransactionType implements Transaction {
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setService(String value) {
         this.service = value;
@@ -239,11 +239,11 @@ public class TransactionType implements Transaction {
 
     /**
      * Gets the value of the handle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHandle() {
         return handle;
@@ -251,11 +251,11 @@ public class TransactionType implements Transaction {
 
     /**
      * Sets the value of the handle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHandle(String value) {
         this.handle = value;
@@ -263,11 +263,11 @@ public class TransactionType implements Transaction {
 
     /**
      * Gets the value of the releaseAction property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllSomeType }
-     *     
+     *
      */
     public AllSomeType getReleaseAction() {
         return releaseAction;
@@ -275,11 +275,11 @@ public class TransactionType implements Transaction {
 
     /**
      * Sets the value of the releaseAction property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllSomeType }
-     *     
+     *
      */
     public void setReleaseAction(AllSomeType value) {
         this.releaseAction = value;
@@ -329,7 +329,7 @@ public class TransactionType implements Transaction {
     public Map<String, String> getPrefixMapping() {
         return prefixMapping;
     }
-    
+
     /**
      * @param prefixMapping the prefixMapping to set
      */

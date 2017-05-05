@@ -29,11 +29,11 @@ import org.geotoolkit.ows.xml.Value;
  * A single value, encoded as a string. This type can be
  *       used for one value, for a spacing between allowed values, or for the
  *       default value of a parameter.
- * 
+ *
  * <p>Java class for ValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ValueType">
  *   &lt;simpleContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.ows.xml.Value;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ValueType", propOrder = {
@@ -56,27 +56,27 @@ public class ValueType implements Value {
 
     protected ValueType(){
     }
-    
+
     public ValueType(final Value that){
         if (that != null) {
             this.value = that.getValue();
         }
     }
-    
+
     /**
      * Build a new Value.
      */
     public ValueType(final String value){
         this.value = value;
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValue() {
         return value;
@@ -84,16 +84,16 @@ public class ValueType implements Value {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(String value) {
         this.value = value;
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -115,7 +115,7 @@ public class ValueType implements Value {
         hash = 67 * hash + (this.value != null ? this.value.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         return value;

@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ScreenOverlayType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ScreenOverlayType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -79,11 +79,11 @@ public class ScreenOverlayType
 
     /**
      * Gets the value of the overlayXY property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Vec2Type }
-     *     
+     *
      */
     public Vec2Type getOverlayXY() {
         return overlayXY;
@@ -91,11 +91,11 @@ public class ScreenOverlayType
 
     /**
      * Sets the value of the overlayXY property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Vec2Type }
-     *     
+     *
      */
     public void setOverlayXY(final Vec2Type value) {
         this.overlayXY = value;
@@ -103,11 +103,11 @@ public class ScreenOverlayType
 
     /**
      * Gets the value of the screenXY property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Vec2Type }
-     *     
+     *
      */
     public Vec2Type getScreenXY() {
         return screenXY;
@@ -115,11 +115,11 @@ public class ScreenOverlayType
 
     /**
      * Sets the value of the screenXY property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Vec2Type }
-     *     
+     *
      */
     public void setScreenXY(final Vec2Type value) {
         this.screenXY = value;
@@ -127,11 +127,11 @@ public class ScreenOverlayType
 
     /**
      * Gets the value of the rotationXY property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Vec2Type }
-     *     
+     *
      */
     public Vec2Type getRotationXY() {
         return rotationXY;
@@ -139,11 +139,11 @@ public class ScreenOverlayType
 
     /**
      * Sets the value of the rotationXY property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Vec2Type }
-     *     
+     *
      */
     public void setRotationXY(final Vec2Type value) {
         this.rotationXY = value;
@@ -151,11 +151,11 @@ public class ScreenOverlayType
 
     /**
      * Gets the value of the size property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Vec2Type }
-     *     
+     *
      */
     public Vec2Type getSize() {
         return size;
@@ -163,11 +163,11 @@ public class ScreenOverlayType
 
     /**
      * Sets the value of the size property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Vec2Type }
-     *     
+     *
      */
     public void setSize(final Vec2Type value) {
         this.size = value;
@@ -175,11 +175,11 @@ public class ScreenOverlayType
 
     /**
      * Gets the value of the rotation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getRotation() {
         return rotation;
@@ -187,11 +187,11 @@ public class ScreenOverlayType
 
     /**
      * Sets the value of the rotation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setRotation(final Double value) {
         this.rotation = value;
@@ -199,25 +199,25 @@ public class ScreenOverlayType
 
     /**
      * Gets the value of the screenOverlaySimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the screenOverlaySimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getScreenOverlaySimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getScreenOverlaySimpleExtensionGroup() {
         if (screenOverlaySimpleExtensionGroup == null) {
@@ -228,25 +228,25 @@ public class ScreenOverlayType
 
     /**
      * Gets the value of the screenOverlayObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the screenOverlayObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getScreenOverlayObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getScreenOverlayObjectExtensionGroup() {
         if (screenOverlayObjectExtensionGroup == null) {

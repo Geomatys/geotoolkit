@@ -39,9 +39,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Classe Java pour anonymous complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -380,20 +380,20 @@ public class Math {
 
     /**
      * Gets the value of the mathExpression property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the mathExpression property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMathExpression().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link Neq }{@code >}
@@ -571,8 +571,8 @@ public class Math {
      * {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}
      * {@link JAXBElement }{@code <}{@link Mo }{@code >}
      * {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<Object> getMathExpression() {
         if (mathExpression == null) {
@@ -583,11 +583,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété display.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDisplay() {
         return display;
@@ -595,11 +595,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété display.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDisplay(String value) {
         this.display = value;
@@ -607,11 +607,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété maxwidth.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMaxwidth() {
         return maxwidth;
@@ -619,11 +619,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété maxwidth.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMaxwidth(String value) {
         this.maxwidth = value;
@@ -631,11 +631,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété overflow.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOverflow() {
         return overflow;
@@ -643,11 +643,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété overflow.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOverflow(String value) {
         this.overflow = value;
@@ -655,11 +655,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété altimg.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAltimg() {
         return altimg;
@@ -667,11 +667,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété altimg.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAltimg(String value) {
         this.altimg = value;
@@ -679,11 +679,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété altimgWidth.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAltimgWidth() {
         return altimgWidth;
@@ -691,11 +691,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété altimgWidth.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAltimgWidth(String value) {
         this.altimgWidth = value;
@@ -703,11 +703,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété altimgHeight.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAltimgHeight() {
         return altimgHeight;
@@ -715,11 +715,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété altimgHeight.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAltimgHeight(String value) {
         this.altimgHeight = value;
@@ -727,11 +727,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété altimgValign.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAltimgValign() {
         return altimgValign;
@@ -739,11 +739,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété altimgValign.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAltimgValign(String value) {
         this.altimgValign = value;
@@ -751,11 +751,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété alttext.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAlttext() {
         return alttext;
@@ -763,11 +763,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété alttext.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAlttext(String value) {
         this.alttext = value;
@@ -775,11 +775,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété cdgroup.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCdgroup() {
         return cdgroup;
@@ -787,11 +787,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété cdgroup.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCdgroup(String value) {
         this.cdgroup = value;
@@ -799,11 +799,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété id.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -811,11 +811,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété id.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(String value) {
         this.id = value;
@@ -823,11 +823,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété xref.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getXref() {
         return xref;
@@ -835,11 +835,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété xref.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setXref(String value) {
         this.xref = value;
@@ -847,25 +847,25 @@ public class Math {
 
     /**
      * Gets the value of the clazz property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the clazz property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getClazz().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<String> getClazz() {
         if (clazz == null) {
@@ -876,11 +876,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété style.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStyle() {
         return style;
@@ -888,11 +888,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété style.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStyle(String value) {
         this.style = value;
@@ -900,11 +900,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété href.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -912,11 +912,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété href.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -924,11 +924,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété other.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOther() {
         return other;
@@ -936,11 +936,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété other.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOther(String value) {
         this.other = value;
@@ -948,11 +948,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété accent.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAccent() {
         return accent;
@@ -960,11 +960,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété accent.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAccent(String value) {
         this.accent = value;
@@ -972,11 +972,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété accentunder.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAccentunder() {
         return accentunder;
@@ -984,11 +984,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété accentunder.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAccentunder(String value) {
         this.accentunder = value;
@@ -996,11 +996,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété align.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAlign() {
         return align;
@@ -1008,11 +1008,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété align.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAlign(String value) {
         this.align = value;
@@ -1020,25 +1020,25 @@ public class Math {
 
     /**
      * Gets the value of the alignmentscope property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the alignmentscope property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAlignmentscope().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<String> getAlignmentscope() {
         if (alignmentscope == null) {
@@ -1049,11 +1049,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété bevelled.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getBevelled() {
         return bevelled;
@@ -1061,11 +1061,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété bevelled.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setBevelled(String value) {
         this.bevelled = value;
@@ -1073,11 +1073,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété charalign.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCharalign() {
         return charalign;
@@ -1085,11 +1085,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété charalign.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCharalign(String value) {
         this.charalign = value;
@@ -1097,11 +1097,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété charspacing.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCharspacing() {
         return charspacing;
@@ -1109,11 +1109,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété charspacing.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCharspacing(String value) {
         this.charspacing = value;
@@ -1121,11 +1121,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété close.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getClose() {
         return close;
@@ -1133,11 +1133,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété close.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setClose(String value) {
         this.close = value;
@@ -1145,25 +1145,25 @@ public class Math {
 
     /**
      * Gets the value of the columnalign property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the columnalign property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getColumnalign().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Columnalignstyle }
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<Columnalignstyle> getColumnalign() {
         if (columnalign == null) {
@@ -1174,25 +1174,25 @@ public class Math {
 
     /**
      * Gets the value of the columnlines property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the columnlines property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getColumnlines().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Linestyle }
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<Linestyle> getColumnlines() {
         if (columnlines == null) {
@@ -1203,25 +1203,25 @@ public class Math {
 
     /**
      * Gets the value of the columnspacing property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the columnspacing property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getColumnspacing().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<String> getColumnspacing() {
         if (columnspacing == null) {
@@ -1232,11 +1232,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété columnspan.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getColumnspan() {
         return columnspan;
@@ -1244,11 +1244,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété columnspan.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setColumnspan(BigInteger value) {
         this.columnspan = value;
@@ -1256,25 +1256,25 @@ public class Math {
 
     /**
      * Gets the value of the columnwidth property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the columnwidth property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getColumnwidth().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<String> getColumnwidth() {
         if (columnwidth == null) {
@@ -1285,25 +1285,25 @@ public class Math {
 
     /**
      * Gets the value of the crossout property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the crossout property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCrossout().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<String> getCrossout() {
         if (crossout == null) {
@@ -1314,11 +1314,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété denomalign.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDenomalign() {
         return denomalign;
@@ -1326,11 +1326,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété denomalign.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDenomalign(String value) {
         this.denomalign = value;
@@ -1338,11 +1338,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété depth.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDepth() {
         return depth;
@@ -1350,11 +1350,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété depth.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDepth(String value) {
         this.depth = value;
@@ -1362,11 +1362,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété dir.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDir() {
         return dir;
@@ -1374,11 +1374,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété dir.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDir(String value) {
         this.dir = value;
@@ -1386,11 +1386,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété edge.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getEdge() {
         return edge;
@@ -1398,11 +1398,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété edge.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setEdge(String value) {
         this.edge = value;
@@ -1410,11 +1410,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété equalcolumns.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getEqualcolumns() {
         return equalcolumns;
@@ -1422,11 +1422,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété equalcolumns.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setEqualcolumns(String value) {
         this.equalcolumns = value;
@@ -1434,11 +1434,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété equalrows.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getEqualrows() {
         return equalrows;
@@ -1446,11 +1446,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété equalrows.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setEqualrows(String value) {
         this.equalrows = value;
@@ -1458,11 +1458,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété fence.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFence() {
         return fence;
@@ -1470,11 +1470,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété fence.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFence(String value) {
         this.fence = value;
@@ -1482,11 +1482,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété form.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getForm() {
         return form;
@@ -1494,11 +1494,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété form.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setForm(String value) {
         this.form = value;
@@ -1506,11 +1506,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété frame.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Linestyle }
-     *     
+     *
      */
     public Linestyle getFrame() {
         return frame;
@@ -1518,11 +1518,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété frame.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Linestyle }
-     *     
+     *
      */
     public void setFrame(Linestyle value) {
         this.frame = value;
@@ -1530,25 +1530,25 @@ public class Math {
 
     /**
      * Gets the value of the framespacing property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the framespacing property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFramespacing().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<String> getFramespacing() {
         if (framespacing == null) {
@@ -1559,11 +1559,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété groupalign.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getGroupalign() {
         return groupalign;
@@ -1571,11 +1571,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété groupalign.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setGroupalign(String value) {
         this.groupalign = value;
@@ -1583,11 +1583,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété height.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHeight() {
         return height;
@@ -1595,11 +1595,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété height.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHeight(String value) {
         this.height = value;
@@ -1607,11 +1607,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété indentalign.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIndentalign() {
         return indentalign;
@@ -1619,11 +1619,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété indentalign.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIndentalign(String value) {
         this.indentalign = value;
@@ -1631,11 +1631,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété indentalignfirst.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIndentalignfirst() {
         return indentalignfirst;
@@ -1643,11 +1643,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété indentalignfirst.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIndentalignfirst(String value) {
         this.indentalignfirst = value;
@@ -1655,11 +1655,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété indentalignlast.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIndentalignlast() {
         return indentalignlast;
@@ -1667,11 +1667,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété indentalignlast.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIndentalignlast(String value) {
         this.indentalignlast = value;
@@ -1679,11 +1679,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété indentshift.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIndentshift() {
         return indentshift;
@@ -1691,11 +1691,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété indentshift.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIndentshift(String value) {
         this.indentshift = value;
@@ -1703,11 +1703,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété indentshiftfirst.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIndentshiftfirst() {
         return indentshiftfirst;
@@ -1715,11 +1715,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété indentshiftfirst.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIndentshiftfirst(String value) {
         this.indentshiftfirst = value;
@@ -1727,11 +1727,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété indentshiftlast.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIndentshiftlast() {
         return indentshiftlast;
@@ -1739,11 +1739,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété indentshiftlast.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIndentshiftlast(String value) {
         this.indentshiftlast = value;
@@ -1751,11 +1751,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété indenttarget.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIndenttarget() {
         return indenttarget;
@@ -1763,11 +1763,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété indenttarget.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIndenttarget(String value) {
         this.indenttarget = value;
@@ -1775,11 +1775,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété largeop.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLargeop() {
         return largeop;
@@ -1787,11 +1787,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété largeop.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLargeop(String value) {
         this.largeop = value;
@@ -1799,11 +1799,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété leftoverhang.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLeftoverhang() {
         return leftoverhang;
@@ -1811,11 +1811,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété leftoverhang.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLeftoverhang(String value) {
         this.leftoverhang = value;
@@ -1823,11 +1823,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété length.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getLength() {
         return length;
@@ -1835,11 +1835,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété length.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setLength(BigInteger value) {
         this.length = value;
@@ -1847,11 +1847,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété linebreak.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLinebreak() {
         return linebreak;
@@ -1859,11 +1859,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété linebreak.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLinebreak(String value) {
         this.linebreak = value;
@@ -1871,11 +1871,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété linebreakmultchar.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLinebreakmultchar() {
         return linebreakmultchar;
@@ -1883,11 +1883,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété linebreakmultchar.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLinebreakmultchar(String value) {
         this.linebreakmultchar = value;
@@ -1895,11 +1895,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété linebreakstyle.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLinebreakstyle() {
         return linebreakstyle;
@@ -1907,11 +1907,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété linebreakstyle.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLinebreakstyle(String value) {
         this.linebreakstyle = value;
@@ -1919,11 +1919,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété lineleading.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLineleading() {
         return lineleading;
@@ -1931,11 +1931,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété lineleading.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLineleading(String value) {
         this.lineleading = value;
@@ -1943,11 +1943,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété linethickness.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLinethickness() {
         return linethickness;
@@ -1955,11 +1955,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété linethickness.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLinethickness(String value) {
         this.linethickness = value;
@@ -1967,11 +1967,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété location.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLocation() {
         return location;
@@ -1979,11 +1979,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété location.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLocation(String value) {
         this.location = value;
@@ -1991,11 +1991,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété longdivstyle.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLongdivstyle() {
         return longdivstyle;
@@ -2003,11 +2003,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété longdivstyle.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLongdivstyle(String value) {
         this.longdivstyle = value;
@@ -2015,11 +2015,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété lquote.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLquote() {
         return lquote;
@@ -2027,11 +2027,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété lquote.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLquote(String value) {
         this.lquote = value;
@@ -2039,11 +2039,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété lspace.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLspace() {
         return lspace;
@@ -2051,11 +2051,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété lspace.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLspace(String value) {
         this.lspace = value;
@@ -2063,11 +2063,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété mathsize.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMathsize() {
         return mathsize;
@@ -2075,11 +2075,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété mathsize.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMathsize(String value) {
         this.mathsize = value;
@@ -2087,11 +2087,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété mathvariant.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMathvariant() {
         return mathvariant;
@@ -2099,11 +2099,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété mathvariant.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMathvariant(String value) {
         this.mathvariant = value;
@@ -2111,11 +2111,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété maxsize.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMaxsize() {
         return maxsize;
@@ -2123,11 +2123,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété maxsize.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMaxsize(String value) {
         this.maxsize = value;
@@ -2135,11 +2135,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété minlabelspacing.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMinlabelspacing() {
         return minlabelspacing;
@@ -2147,11 +2147,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété minlabelspacing.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMinlabelspacing(String value) {
         this.minlabelspacing = value;
@@ -2159,11 +2159,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété minsize.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMinsize() {
         return minsize;
@@ -2171,11 +2171,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété minsize.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMinsize(String value) {
         this.minsize = value;
@@ -2183,11 +2183,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété movablelimits.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMovablelimits() {
         return movablelimits;
@@ -2195,11 +2195,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété movablelimits.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMovablelimits(String value) {
         this.movablelimits = value;
@@ -2207,11 +2207,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété mslinethickness.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMslinethickness() {
         return mslinethickness;
@@ -2219,11 +2219,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété mslinethickness.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMslinethickness(String value) {
         this.mslinethickness = value;
@@ -2231,11 +2231,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété notation.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getNotation() {
         return notation;
@@ -2243,11 +2243,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété notation.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setNotation(String value) {
         this.notation = value;
@@ -2255,11 +2255,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété numalign.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getNumalign() {
         return numalign;
@@ -2267,11 +2267,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété numalign.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setNumalign(String value) {
         this.numalign = value;
@@ -2279,11 +2279,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété open.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOpen() {
         return open;
@@ -2291,11 +2291,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété open.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOpen(String value) {
         this.open = value;
@@ -2303,11 +2303,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété position.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getPosition() {
         return position;
@@ -2315,11 +2315,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété position.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setPosition(BigInteger value) {
         this.position = value;
@@ -2327,11 +2327,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété rightoverhang.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRightoverhang() {
         return rightoverhang;
@@ -2339,11 +2339,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété rightoverhang.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRightoverhang(String value) {
         this.rightoverhang = value;
@@ -2351,25 +2351,25 @@ public class Math {
 
     /**
      * Gets the value of the rowalign property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the rowalign property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRowalign().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Verticalalign }
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<Verticalalign> getRowalign() {
         if (rowalign == null) {
@@ -2380,25 +2380,25 @@ public class Math {
 
     /**
      * Gets the value of the rowlines property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the rowlines property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRowlines().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Linestyle }
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<Linestyle> getRowlines() {
         if (rowlines == null) {
@@ -2409,25 +2409,25 @@ public class Math {
 
     /**
      * Gets the value of the rowspacing property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the rowspacing property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRowspacing().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<String> getRowspacing() {
         if (rowspacing == null) {
@@ -2438,11 +2438,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété rowspan.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getRowspan() {
         return rowspan;
@@ -2450,11 +2450,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété rowspan.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setRowspan(BigInteger value) {
         this.rowspan = value;
@@ -2462,11 +2462,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété rquote.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRquote() {
         return rquote;
@@ -2474,11 +2474,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété rquote.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRquote(String value) {
         this.rquote = value;
@@ -2486,11 +2486,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété rspace.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRspace() {
         return rspace;
@@ -2498,11 +2498,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété rspace.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRspace(String value) {
         this.rspace = value;
@@ -2510,11 +2510,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété selection.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getSelection() {
         return selection;
@@ -2522,11 +2522,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété selection.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setSelection(BigInteger value) {
         this.selection = value;
@@ -2534,11 +2534,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété separator.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSeparator() {
         return separator;
@@ -2546,11 +2546,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété separator.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSeparator(String value) {
         this.separator = value;
@@ -2558,11 +2558,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété separators.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSeparators() {
         return separators;
@@ -2570,11 +2570,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété separators.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSeparators(String value) {
         this.separators = value;
@@ -2582,11 +2582,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété shift.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getShift() {
         return shift;
@@ -2594,11 +2594,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété shift.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setShift(BigInteger value) {
         this.shift = value;
@@ -2606,11 +2606,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété side.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSide() {
         return side;
@@ -2618,11 +2618,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété side.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSide(String value) {
         this.side = value;
@@ -2630,11 +2630,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété stackalign.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStackalign() {
         return stackalign;
@@ -2642,11 +2642,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété stackalign.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStackalign(String value) {
         this.stackalign = value;
@@ -2654,11 +2654,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété stretchy.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStretchy() {
         return stretchy;
@@ -2666,11 +2666,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété stretchy.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStretchy(String value) {
         this.stretchy = value;
@@ -2678,11 +2678,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété subscriptshift.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSubscriptshift() {
         return subscriptshift;
@@ -2690,11 +2690,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété subscriptshift.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSubscriptshift(String value) {
         this.subscriptshift = value;
@@ -2702,11 +2702,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété superscriptshift.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSuperscriptshift() {
         return superscriptshift;
@@ -2714,11 +2714,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété superscriptshift.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSuperscriptshift(String value) {
         this.superscriptshift = value;
@@ -2726,11 +2726,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété symmetric.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSymmetric() {
         return symmetric;
@@ -2738,11 +2738,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété symmetric.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSymmetric(String value) {
         this.symmetric = value;
@@ -2750,11 +2750,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété valign.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValign() {
         return valign;
@@ -2762,11 +2762,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété valign.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValign(String value) {
         this.valign = value;
@@ -2774,11 +2774,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété width.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getWidth() {
         return width;
@@ -2786,11 +2786,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété width.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setWidth(String value) {
         this.width = value;
@@ -2798,11 +2798,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété mode.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMode() {
         return mode;
@@ -2810,11 +2810,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété mode.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMode(String value) {
         this.mode = value;
@@ -2822,11 +2822,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété macros.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMacros() {
         return macros;
@@ -2834,11 +2834,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété macros.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMacros(String value) {
         this.macros = value;
@@ -2846,11 +2846,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété scriptlevel.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getScriptlevel() {
         return scriptlevel;
@@ -2858,11 +2858,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété scriptlevel.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setScriptlevel(BigInteger value) {
         this.scriptlevel = value;
@@ -2870,11 +2870,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété displaystyle.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDisplaystyle() {
         return displaystyle;
@@ -2882,11 +2882,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété displaystyle.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDisplaystyle(String value) {
         this.displaystyle = value;
@@ -2894,11 +2894,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété scriptsizemultiplier.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getScriptsizemultiplier() {
         return scriptsizemultiplier;
@@ -2906,11 +2906,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété scriptsizemultiplier.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setScriptsizemultiplier(BigDecimal value) {
         this.scriptsizemultiplier = value;
@@ -2918,11 +2918,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété scriptminsize.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getScriptminsize() {
         return scriptminsize;
@@ -2930,11 +2930,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété scriptminsize.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setScriptminsize(String value) {
         this.scriptminsize = value;
@@ -2942,11 +2942,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété infixlinebreakstyle.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getInfixlinebreakstyle() {
         return infixlinebreakstyle;
@@ -2954,11 +2954,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété infixlinebreakstyle.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setInfixlinebreakstyle(String value) {
         this.infixlinebreakstyle = value;
@@ -2966,11 +2966,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété decimalpoint.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDecimalpoint() {
         return decimalpoint;
@@ -2978,11 +2978,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété decimalpoint.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDecimalpoint(String value) {
         this.decimalpoint = value;
@@ -2990,11 +2990,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété mathcolor.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMathcolor() {
         return mathcolor;
@@ -3002,11 +3002,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété mathcolor.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMathcolor(String value) {
         this.mathcolor = value;
@@ -3014,11 +3014,11 @@ public class Math {
 
     /**
      * Obtient la valeur de la propriété mathbackground.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMathbackground() {
         return mathbackground;
@@ -3026,11 +3026,11 @@ public class Math {
 
     /**
      * Définit la valeur de la propriété mathbackground.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMathbackground(String value) {
         this.mathbackground = value;
@@ -3038,15 +3038,15 @@ public class Math {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * <p>
-     * the map is keyed by the name of the attribute and 
+     * the map is keyed by the name of the attribute and
      * the value is the string value of the attribute.
-     * 
+     *
      * the map returned by this method is live, and you can add new attribute
      * by updating the map directly. Because of this design, there's no setter.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */

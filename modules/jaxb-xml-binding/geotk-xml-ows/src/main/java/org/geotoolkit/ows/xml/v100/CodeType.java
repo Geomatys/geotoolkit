@@ -27,12 +27,12 @@ import org.geotoolkit.ows.xml.AbstractCodeType;
 
 
 /**
- * Type copied from basicTypes.xsd of GML 3 with documentation edited, for possible use outside the ServiceIdentification section of a service metadata document. 
- * 
+ * Type copied from basicTypes.xsd of GML 3 with documentation edited, for possible use outside the ServiceIdentification section of a service metadata document.
+ *
  * <p>Java class for CodeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CodeType">
  *   &lt;simpleContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.ows.xml.AbstractCodeType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,7 +63,7 @@ public class CodeType implements AbstractCodeType {
      */
     protected CodeType() {
     }
-    
+
     /**
      * Build a new code.
      */
@@ -71,14 +71,14 @@ public class CodeType implements AbstractCodeType {
         this.codeSpace = codespace;
         this.value     = value;
     }
-    
+
     /**
      * Build a new code without codespace.
      */
     public CodeType(final String value) {
         this.value     = value;
     }
-    
+
     /**
      * Gets the value of the value property.
      */

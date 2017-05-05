@@ -182,7 +182,7 @@ public class VectorType extends AbstractVectorType implements Vector {
         }
         coordinate.add(coord);
     }
-    
+
     @Override
     public AbstractGeometry getGeometry(final URI crs) {
         final org.geotoolkit.swe.xml.v100.CoordinateType lat = getLatitude();

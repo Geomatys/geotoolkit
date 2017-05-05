@@ -30,14 +30,14 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.storage.DataStoreException;
 
 /**
- * 
+ *
  * @author aaime
  * @author Ian Schneider
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class MultiPointHandler extends AbstractShapeHandler {
-    
+
     /** Creates new MultiPointHandler */
     public MultiPointHandler(final boolean read3D) {
         super(ShapeType.POINT,read3D);
@@ -54,7 +54,7 @@ public class MultiPointHandler extends AbstractShapeHandler {
 
     /**
      * Returns the shapefile shape type value for a point
-     * 
+     *
      * @return int Shapefile.POINT
      */
     @Override
@@ -64,7 +64,7 @@ public class MultiPointHandler extends AbstractShapeHandler {
 
     /**
      * Calcuates the record length of this object.
-     * 
+     *
      * @return int The length of the record that this shapepoint will take up in
      *         a shapefile
      */
@@ -104,7 +104,7 @@ public class MultiPointHandler extends AbstractShapeHandler {
         final Coordinate coord = new Coordinate((minX + maxX) / 2, (minY + maxY) / 2);
         return GEOMETRY_FACTORY.createMultiPoint(new Coordinate[] {coord});
     }
-    
+
     @Override
     public Object read(final ByteBuffer buffer, final ShapeType type) {
         if (type == ShapeType.NULL) {

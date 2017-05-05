@@ -33,10 +33,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class LenghtDescriptor extends AbstractProcessDescriptor{
-        
+
     /**Process name : lenght */
     public static final String NAME = "jts:lenght";
-    
+
     /**
      * Input parameters
      */
@@ -45,11 +45,11 @@ public class LenghtDescriptor extends AbstractProcessDescriptor{
             .setRemarks("Geometry JTS source")
             .setRequired(true)
             .create(Geometry.class, null);
-    
-    
+
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(GEOM);
-    
+
     /**
      * OutputParameters
      */
@@ -58,7 +58,7 @@ public class LenghtDescriptor extends AbstractProcessDescriptor{
             .setRemarks("Lenght result")
             .setRequired(true)
             .create(Double.class, null);
-    
+
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT);
 
@@ -75,5 +75,5 @@ public class LenghtDescriptor extends AbstractProcessDescriptor{
     public Process createProcess(final ParameterValueGroup input) {
         return new LenghtProcess(input);
     }
-    
+
 }

@@ -24,18 +24,18 @@ import org.geotoolkit.csw.xml.v202.Capabilities;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.cat.wrs._1 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.cat.wrs._1 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  * @module
  */
 @XmlRegistry
@@ -49,14 +49,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.cat.wrs._1
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link AnyValueType }
-     * 
+     *
      */
     public AnyValueType createAnyValueType() {
         return new AnyValueType();
@@ -64,7 +64,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SimpleLinkType }
-     * 
+     *
      */
     public SimpleLinkType createSimpleLinkType() {
         return new SimpleLinkType();
@@ -72,7 +72,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RecordIdType }
-     * 
+     *
      */
     public RecordIdType createRecordIdType() {
         return new RecordIdType();
@@ -80,7 +80,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ValueListType }
-     * 
+     *
      */
     public ValueListType createValueListType() {
         return new ValueListType();
@@ -88,7 +88,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExtrinsicObjectType }
-     * 
+     *
      */
     public ExtrinsicObjectType createExtrinsicObjectType() {
         return new ExtrinsicObjectType();
@@ -96,7 +96,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RecordIdType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/wrs/1.0", name = "RecordId", substitutionHeadNamespace = "http://www.opengis.net/ogc", substitutionHeadName = "_Id")
     public JAXBElement<RecordIdType> createRecordId(final RecordIdType value) {
@@ -105,7 +105,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CapabilitiesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/wrs/1.0", name = "Capabilities")
     public JAXBElement<Capabilities> createCapabilities(final Capabilities value) {
@@ -114,7 +114,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ExtrinsicObjectType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/wrs/1.0", name = "ExtrinsicObject", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "ExtrinsicObject")
     public JAXBElement<ExtrinsicObjectType> createExtrinsicObject(final ExtrinsicObjectType value) {
@@ -123,7 +123,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AnyValueType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/wrs/1.0", name = "AnyValue")
     public JAXBElement<AnyValueType> createAnyValue(final AnyValueType value) {
@@ -132,7 +132,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ValueListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/wrs/1.0", name = "ValueList", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "ValueList")
     public JAXBElement<ValueListType> createValueList(final ValueListType value) {

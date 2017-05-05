@@ -28,25 +28,25 @@ import static org.geotoolkit.swe.xml.v200.TextEncodingType.DEFAULT_ENCODING;
  * @author Guilhem Legal (Geomatys)
  */
 public class MeasureStringBuilder {
-    
+
     private static final DateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     private final TextBlock encoding = DEFAULT_ENCODING;
-    
+
     private final StringBuilder sb = new StringBuilder();
-    
+
     public void appendDate(final Date d) {
         synchronized(FORMATTER) {
             sb.append(FORMATTER.format(d)).append(encoding.getTokenSeparator());
         }
     }
-    
+
     public void appendDate(final long millis) {
         final Date d = new Date(millis);
         synchronized(FORMATTER) {
             sb.append(FORMATTER.format(d)).append(encoding.getTokenSeparator());
         }
     }
-    
+
     public void appendValue(final Double value) {
         //empty string for missing value
         if (!Double.isNaN(value)) {
@@ -54,7 +54,7 @@ public class MeasureStringBuilder {
         }
         sb.append(encoding.getTokenSeparator());
     }
-    
+
     public void appendValue(final String value) {
         //empty string for null value
         if (value != null) {
@@ -62,7 +62,7 @@ public class MeasureStringBuilder {
         }
         sb.append(encoding.getTokenSeparator());
     }
-    
+
     public void appendValue(final Integer value) {
         //empty string for null value
         if (value != null) {
@@ -70,7 +70,7 @@ public class MeasureStringBuilder {
         }
         sb.append(encoding.getTokenSeparator());
     }
-    
+
     public void appendValue(final Boolean value) {
         //empty string for null value
         if (value != null) {
@@ -78,13 +78,13 @@ public class MeasureStringBuilder {
         }
         sb.append(encoding.getTokenSeparator());
     }
-    
+
     public void closeBlock() {
          // remove the last token separator
         sb.deleteCharAt(sb.length() - 1);
         sb.append(encoding.getBlockSeparator());
     }
-    
+
     public String getString() {
         return sb.toString();
     }

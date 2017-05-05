@@ -48,7 +48,7 @@ public class DefaultSampleDimensionExt extends DefaultSampleDimension{
     /**
      * Get band histogram.
      * Histogram uses regular intervals between histogram min and max values.
-     * 
+     *
      * @return histogram, can be null.
      */
     public long[] getHistogram(){
@@ -57,11 +57,11 @@ public class DefaultSampleDimensionExt extends DefaultSampleDimension{
 
     /**
      * Set band histogram.
-     * 
+     *
      * @param histogram, can be null.
      */
     public void setHistogram(long[] histogram) {
         this.histogram = histogram;
     }
-    
+
 }

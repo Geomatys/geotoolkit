@@ -36,7 +36,7 @@ public class TimeOverlapsType extends BinaryTemporalOpType implements TOverlaps 
     public TimeOverlapsType(final String propertyName, final Object temporal) {
         super(propertyName, temporal);
     }
-    
+
     public TimeOverlapsType(final TimeOverlapsType that) {
         super(that);
     }

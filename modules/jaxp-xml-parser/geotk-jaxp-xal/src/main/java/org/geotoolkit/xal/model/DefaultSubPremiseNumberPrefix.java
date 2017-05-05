@@ -21,7 +21,7 @@ package org.geotoolkit.xal.model;
  * @author Samuel Andrés
  * @module
  */
-public class DefaultSubPremiseNumberPrefix 
+public class DefaultSubPremiseNumberPrefix
         extends DefaultGenericTypedGrPostal
         implements SubPremiseNumberPrefix {
 
@@ -29,7 +29,7 @@ public class DefaultSubPremiseNumberPrefix
 
     public DefaultSubPremiseNumberPrefix(){
     }
-    
+
     /**
      *
      * @param numberPrefixSeparator

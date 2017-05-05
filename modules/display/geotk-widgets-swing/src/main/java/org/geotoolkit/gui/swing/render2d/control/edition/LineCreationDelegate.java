@@ -40,7 +40,7 @@ public class LineCreationDelegate extends AbstractFeatureEditionDelegate {
     public LineCreationDelegate(final JMap2D map, final FeatureMapLayer candidate) {
         super(map,candidate);
     }
-    
+
     private void reset(){
         geometry = null;
         coords.clear();
@@ -61,8 +61,8 @@ public class LineCreationDelegate extends AbstractFeatureEditionDelegate {
             }
             geometry = EditionHelper.createLine(coords);
             decoration.setGeometries(Collections.singleton(geometry));
-                    
-        }else if(button == MouseEvent.BUTTON3){            
+
+        }else if(button == MouseEvent.BUTTON3){
             helper.sourceAddGeometry(geometry);
             reset();
             decoration.setGeometries(null);

@@ -49,7 +49,7 @@ public abstract class AbstractEditionTool implements EditionTool{
     public int getPriority() {
         return priority;
     }
-    
+
     @Override
     public String getName() {
         return name;
@@ -72,7 +72,7 @@ public abstract class AbstractEditionTool implements EditionTool{
 
     @Override
     public boolean canHandle(Object candidate) {
-        
+
         if(clazz.isInstance(candidate)){
             if(candidate instanceof FeatureMapLayer){
                 final FeatureMapLayer fml = (FeatureMapLayer) candidate;
@@ -80,7 +80,7 @@ public abstract class AbstractEditionTool implements EditionTool{
             }
             return true;
         }
-        
+
         return false;
     }
 

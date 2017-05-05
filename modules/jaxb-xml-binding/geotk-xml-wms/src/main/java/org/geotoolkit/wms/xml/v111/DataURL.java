@@ -26,7 +26,7 @@ import org.geotoolkit.wms.xml.AbstractURL;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -64,10 +64,10 @@ public class DataURL implements AbstractURL {
         this.format         = format;
         this.onlineResource = new OnlineResource(href);
     }
-    
+
     /**
      * Gets the value of the format property.
-     * 
+     *
      */
     public String getFormat() {
         return format;
@@ -75,7 +75,7 @@ public class DataURL implements AbstractURL {
 
     /**
      * Gets the value of the onlineResource property.
-     * 
+     *
      */
     public OnlineResource getOnlineResource() {
         return onlineResource;

@@ -28,7 +28,7 @@ import org.apache.sis.xml.MarshallerPool;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * 
+ *
  * @since 2.2.3
  */
 public class THSMarshallerPool {

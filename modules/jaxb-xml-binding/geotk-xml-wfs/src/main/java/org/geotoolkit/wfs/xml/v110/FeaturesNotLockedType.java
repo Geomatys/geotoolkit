@@ -27,9 +27,9 @@ import org.geotoolkit.ogc.xml.v110.FeatureIdType;
 
 /**
  * <p>Java class for FeaturesNotLockedType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FeaturesNotLockedType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.ogc.xml.v110.FeatureIdType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,7 +56,7 @@ public class FeaturesNotLockedType {
 
     /**
      * Gets the value of the featureId property.
-     * 
+     *
      */
     public List<FeatureIdType> getFeatureId() {
         if (featureId == null) {

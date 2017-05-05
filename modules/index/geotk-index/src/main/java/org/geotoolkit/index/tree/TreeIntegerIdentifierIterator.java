@@ -36,22 +36,22 @@ class TreeIntegerIdentifierIterator implements TreeIdentifierIterator {
      * {@link TreeAccess} which contain all saved {@link Tree} {@link Node}.
      */
     private final TreeAccess tAF;
-    
+
     /**
      * Area of search.
      */
     private final double[] regionSearch;
-    
+
     /**
      * List which contain all Node search stack path.
      */
     private final List<Node> path;
-    
+
     /**
      * Current data Node identifier.
      */
     private int dataID;
-    
+
     /**
      * Current tree identifier.
      */
@@ -59,7 +59,7 @@ class TreeIntegerIdentifierIterator implements TreeIdentifierIterator {
 
     /**
      * Create an Iterator to travel all treeIdentifier from search results one by one.
-     * 
+     *
      * @param tAF TreeAccess which contain all saved Node.
      * @param regionSearch area of search
      * @throws StoreIndexException if problem during iterator initialize.(TreeAccess should not read tree root Node).
@@ -84,22 +84,22 @@ class TreeIntegerIdentifierIterator implements TreeIdentifierIterator {
         } catch (IOException ex) {
             throw new StoreIndexException("problem during first data search file reading.", ex);
         }
-    }  
+    }
 
     /**
      * Remove all Nodes from i index position to end of list.
-     * 
-     * @param i index position of first Node which will be delete.   
+     *
+     * @param i index position of first Node which will be delete.
      */
     private void removeNodes(final int i) {
         for (int idL = path.size()-1; idL >= i; idL--) {
             path.remove(idL);
         }
     }
-    
+
     /**
      * Find recursively, next data in tree.
-     * 
+     *
      * @param pathID Node index position in path list.
      * @throws IOException if problem during Node reading from TreeAccess.
      */
@@ -130,7 +130,7 @@ class TreeIntegerIdentifierIterator implements TreeIdentifierIterator {
                 if (pathID + 1 == path.size()) {//pas d'enfant
                     path.add(tAF.readNode(currentNode.getChildId()));
                     getNextData(pathID+1);
-                } else if (currentNode.getSiblingId() != 0) {// there is a child in list which mean we are in travel up recurency 
+                } else if (currentNode.getSiblingId() != 0) {// there is a child in list which mean we are in travel up recurency
                     /**
                      * There is a child in list which mean we are in travel up recurency and the current Node has already be red.<br/>
                      * We follow its sibling Node.
@@ -168,9 +168,9 @@ class TreeIntegerIdentifierIterator implements TreeIdentifierIterator {
                 dataValue = 0;
             }
         }
-            
+
     }
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -198,7 +198,7 @@ class TreeIntegerIdentifierIterator implements TreeIdentifierIterator {
     }
 
     /**
-     * 
+     *
      */
     @Override
     public void remove() {

@@ -25,8 +25,8 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
  * @author Johann Sorel (Geomatys)
  */
 public class FXRenderingContext {
-    
+
     public final ObjectProperty<AffineTransform2D> objToDisp = new SimpleObjectProperty<>();
-    
-    
+
+
 }

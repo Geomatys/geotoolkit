@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for DynamicFeatureCollectionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DynamicFeatureCollectionType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DynamicFeatureCollectionType", propOrder = {
@@ -56,11 +56,11 @@ public class DynamicFeatureCollectionType
 
     /**
      * Gets the value of the dynamicMembers property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DynamicFeatureMemberType }
-     *     
+     *
      */
     public DynamicFeatureMemberType getDynamicMembers() {
         return dynamicMembers;
@@ -68,11 +68,11 @@ public class DynamicFeatureCollectionType
 
     /**
      * Sets the value of the dynamicMembers property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DynamicFeatureMemberType }
-     *     
+     *
      */
     public void setDynamicMembers(DynamicFeatureMemberType value) {
         this.dynamicMembers = value;

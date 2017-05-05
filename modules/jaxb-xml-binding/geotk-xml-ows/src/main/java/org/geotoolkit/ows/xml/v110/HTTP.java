@@ -31,9 +31,9 @@ import org.geotoolkit.ows.xml.AbstractHTTP;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -46,7 +46,7 @@ import org.geotoolkit.ows.xml.AbstractHTTP;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -68,7 +68,7 @@ public class HTTP implements AbstractHTTP {
      */
     HTTP(){
     }
-    
+
     public HTTP(final HTTP that){
         if (that != null && that.getOrPost != null) {
             this.getOrPost = new ArrayList<>();
@@ -77,7 +77,7 @@ public class HTTP implements AbstractHTTP {
             }
         }
     }
-    
+
     /**
      * build a new HTTP object.
      */
@@ -116,7 +116,7 @@ public class HTTP implements AbstractHTTP {
             }
         }
     }
-    
+
     /**
      * Gets the value of the getOrPost property.
      */
@@ -126,13 +126,13 @@ public class HTTP implements AbstractHTTP {
         }
         return getOrPost;
     }
-    
+
     /**
      * Gets the value of the getOrPost property.
      */
     @Override
     public List<RequestMethodType> getGetOrPost() {
-        
+
         List<RequestMethodType> result = new ArrayList<>();
         for (JAXBElement<RequestMethodType> jb: getOrPost) {
             if(jb != null && jb.getValue() != null){

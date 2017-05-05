@@ -71,7 +71,7 @@ public final class DataStores extends Static {
     private static synchronized <T extends DataStoreFactory> Set<T> getFactories(final Class<T> type, final boolean all) {
         final Set<T> results = new HashSet<>();
         final Iterator<DataStoreFactory> factories = loader.iterator();
-        
+
         while (factories.hasNext()) {
             final DataStoreFactory candidate = factories.next();
             if (type == null || type.isInstance(candidate)) {

@@ -58,7 +58,7 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
             .setRemarks("Area on which to create the tiles")
             .setRequired(true)
             .create(Envelope.class,null);
-    
+
     /**
      * Mandatory - Size of the tiles.
      */
@@ -67,7 +67,7 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
             .setRemarks("Tile size.")
             .setRequired(true)
             .create(Dimension.class,new Dimension(256,256));
-    
+
     /**
      * Mandatory - Scales to create.
      * Expressed in CRS unit by pixel.
@@ -77,7 +77,7 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
             .setRemarks("Different scales to generate. (in crs unit by pixel)")
             .setRequired(true)
             .create(double[].class,null);
-    
+
     /**
      * Optional - Number of painters.
      * Increasing the number of painting thread may improve performances.
@@ -88,7 +88,7 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
             .setRemarks("Number of threads painting images.")
             .setRequired(false)
             .create(Integer.class,null);
-    
+
     /**
      * Mandatory - Container which will receive the tiles.
      */
@@ -97,7 +97,7 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
             .setRemarks("The container which will receive the tiles.")
             .setRequired(true)
             .create(PyramidalCoverageReference.class,null);
-    
+
     /**
      * Optional - Rendering hints.
      * Hints for the rendering engine.
@@ -117,7 +117,7 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
             .setRemarks("Update mode.")
             .setRequired(false)
             .create(Boolean.class,Boolean.FALSE);
-    
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName(NAME+"InputParameters").createGroup(
                 IN_MAPCONTEXT,IN_EXTENT,IN_TILE_SIZE,IN_SCALES,IN_NBPAINTER,IN_CONTAINER,IN_HINTS, IN_UPDATE);
@@ -127,10 +127,10 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
             .setRemarks("The container which will receive the tiles.")
             .setRequired(true)
             .create(PyramidalCoverageReference.class,null);
-    
+
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName(NAME+"OutputParameters").createGroup(OUT_CONTAINER);
-    
+
     public static final ProcessDescriptor INSTANCE = new MapcontextPyramidDescriptor();
 
 

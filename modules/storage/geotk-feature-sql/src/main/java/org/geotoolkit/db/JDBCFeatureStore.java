@@ -33,26 +33,26 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public abstract class JDBCFeatureStore extends AbstractFeatureStore{
-    
+
     public static final RenderingHints.Key RESAMPLING = new org.geotoolkit.factory.Hints.Key(Object.class);
-    
+
     /**
      * Query language supported : SQL.
      */
     public static final String CUSTOM_SQL = "CUSTOM-SQL";
-    
+
     /**
      * Property information, The native SRID associated to a certain descriptor.
      * Value is an Integer.
      */
     public static final AttributeType JDBC_PROPERTY_SRID = new SingleAttributeTypeBuilder().setName("nativeSRID").setValueClass(Integer.class).build();
-    
+
     /**
      * Property information, if the field is unique in the database.
      * Value is a Boolean.
      */
     public static final AttributeType JDBC_PROPERTY_UNIQUE = new SingleAttributeTypeBuilder().setName("unique").setValueClass(Boolean.class).build();
-    
+
     /**
      * Property information, if the field is a relation.
      * Value is a RelationMetaModel.
@@ -62,32 +62,32 @@ public abstract class JDBCFeatureStore extends AbstractFeatureStore{
     public JDBCFeatureStore(ParameterValueGroup params) {
         super(params);
     }
-          
+
     /**
      * Each database type have slim deformation from the SQL specification.
      * The dialect object provide informations on those changes.
-     * 
+     *
      * @return SQLDialect, never null
      */
     public abstract SQLDialect getDialect();
-    
+
     /**
      * Source object providing connexions to the database.
-     * 
+     *
      * @return DataSource, never null
      */
     public abstract DataSource getDataSource();
-    
+
     /**
      * @return the database schema used, if any.
      */
     public abstract String getDatabaseSchema();
-    
+
     /**
      * @return the database model.
      */
-    public abstract DataBaseModel getDatabaseModel();        
-    
+    public abstract DataBaseModel getDatabaseModel();
+
     /**
      * @return logger used by this featurestore.
      */
@@ -95,7 +95,7 @@ public abstract class JDBCFeatureStore extends AbstractFeatureStore{
     public Logger getLogger(){
         return super.getLogger();
     }
-    
+
     /**
      * @return the database default namespace.
      */
@@ -103,12 +103,12 @@ public abstract class JDBCFeatureStore extends AbstractFeatureStore{
     public String getDefaultNamespace(){
         return super.getDefaultNamespace();
     }
-    
+
     /**
      * Returns the select query fetch size.
      * Using a high value will require more memory but improve the overall performance.
      * @return int sql fetch size
      */
     public abstract int getFetchSize();
-    
+
 }

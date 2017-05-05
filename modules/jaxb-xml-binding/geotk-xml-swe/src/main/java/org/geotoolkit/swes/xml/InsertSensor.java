@@ -23,13 +23,13 @@ import org.geotoolkit.ows.xml.RequestBase;
  * @author Guilhem Legal (Geomatys)
  */
 public interface InsertSensor extends RequestBase {
-    
+
     Object getSensorDescription();
-    
+
     Object getInsertionMetadata();
-    
+
     ObservationTemplate getObservationTemplate();
-    
+
     String getProcedureDescriptionFormat();
-    
+
 }

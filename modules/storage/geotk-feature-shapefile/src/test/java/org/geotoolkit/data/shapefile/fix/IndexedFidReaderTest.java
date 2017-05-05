@@ -38,7 +38,7 @@ import org.junit.Test;
 import org.opengis.feature.Feature;
 
 public class IndexedFidReaderTest extends FIDTestCase {
-    
+
     private AccessManager locker;
     private IndexedFidReader reader;
     private ShxReader indexFile;
@@ -94,7 +94,7 @@ public class IndexedFidReaderTest extends FIDTestCase {
     public void testFindAllFids() throws Exception {
         int expectedCount = 0;
         final Set<String> expectedFids = new LinkedHashSet<>();
-        
+
         final IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(backshp.toURI(), null,
                 true, true, IndexType.NONE,null);
         final FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(ds.getNames().iterator().next()));
@@ -107,7 +107,7 @@ public class IndexedFidReaderTest extends FIDTestCase {
 
         assertTrue(expectedCount > 0);
         assertEquals(expectedCount, reader.getCount());
-        
+
         for(String fid : expectedFids){
             final long offset = reader.findFid(fid);
             assertFalse(-1 == offset);
