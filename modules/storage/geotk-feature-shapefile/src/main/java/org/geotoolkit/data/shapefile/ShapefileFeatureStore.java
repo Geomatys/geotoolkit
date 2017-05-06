@@ -626,7 +626,12 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
 
         //add an identifier field
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        builder.setName(namespace,shpFiles.getTypeName());
+        final String name = shpFiles.getTypeName();
+        if (namespace != null) {
+            builder.setName(namespace, name);
+        } else {
+            builder.setName(name);
+        }
         builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
 
 

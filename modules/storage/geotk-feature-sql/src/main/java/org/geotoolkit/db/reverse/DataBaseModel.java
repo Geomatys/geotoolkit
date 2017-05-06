@@ -672,7 +672,11 @@ public final class DataBaseModel {
         final String namespace = store.getDefaultNamespace();
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(namespace, name);
+        if (namespace != null) {
+            ftb.setName(namespace, name);
+        } else {
+            ftb.setName(name);
+        }
 
         final ResultSetMetaData metadata = result.getMetaData();
         final int nbcol = metadata.getColumnCount();
@@ -749,7 +753,12 @@ public final class DataBaseModel {
                 //fill the namespace--------------------------------------------
                 final FeatureTypeBuilder ftb = new FeatureTypeBuilder(table.tableType.build());
                 final String namespace = store.getDefaultNamespace();
-                ftb.setName(namespace, ftb.getName().tip().toString());
+                final String featureName = ftb.getName().tip().toString();
+                if (namespace != null) {
+                    ftb.setName(namespace, featureName);
+                } else {
+                    ftb.setName(featureName);
+                }
 
                 final List<PropertyTypeBuilder> descs = ftb.properties();
 

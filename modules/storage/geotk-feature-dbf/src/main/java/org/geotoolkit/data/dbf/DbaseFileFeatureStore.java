@@ -136,7 +136,11 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
             final DbaseFileHeader header = reader.getHeader();
             final String defaultNs = getDefaultNamespace();
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.setName(defaultNs, name);
+            if (defaultNs != null) {
+                ftb.setName(defaultNs, name);
+            } else {
+                ftb.setName(name);
+            }
             ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY).setMinimumOccurs(1).setMaximumOccurs(1);
             final List<AttributeType> fields = header.createDescriptors(defaultNs);
             for(AttributeType at : fields){
