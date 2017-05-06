@@ -68,26 +68,6 @@
 
 
   <!-- ===========================================================
-           JAR packaging
-       =========================================================== -->
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <mainClass>org.geotoolkit.console.ReferencingCommands</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
-
-  <!-- ===========================================================
            Modules included in the build
        =========================================================== -->
   <modules>

@@ -32,7 +32,10 @@ import java.util.Objects;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Replaced by {@link org.apache.sis.measure.Quantities}.
  */
+@Deprecated
 public final class Measure extends Number {
     /**
      * For compatibility with different versions.

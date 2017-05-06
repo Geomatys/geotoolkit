@@ -67,7 +67,6 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.internal.EmptySortedSet;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -529,7 +528,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
             }
-            available = EmptySortedSet.INSTANCE;
+            available = Collections.emptySortedSet();
             if (count != null) {
                 final Set<Double> all = new HashSet<>();
                 for (final GridGeometryEntry entry : count) {
@@ -817,7 +816,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
                 throw new CoverageStoreException(e);
             }
             if (extents == null) {
-                return EmptySortedSet.INSTANCE;
+                return Collections.emptySortedSet();
             }
             final int[] count = extents.frequencies();
             final FrequencySortedSet<GeneralGridGeometry> geometries = new FrequencySortedSet<>(true);

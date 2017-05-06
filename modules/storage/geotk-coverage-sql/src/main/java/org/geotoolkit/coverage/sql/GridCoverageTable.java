@@ -27,7 +27,6 @@ import java.io.IOException;
 
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.collection.RangeSet;
-import org.geotoolkit.internal.EmptySortedSet;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.BoundedSingletonTable;
@@ -398,7 +397,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
             release(lc, ce);
         }
         if (dates.isEmpty()) {
-            return EmptySortedSet.INSTANCE;
+            return Collections.emptySortedSet();
         }
         return new UnmodifiableArraySortedSet.Date(dates);
     }
