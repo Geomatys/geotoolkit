@@ -26,10 +26,6 @@
  * as a duplicated (at least partially) of persistence frameworks like Hibernate. It was created
  * before Hibernate became in wide use, and is still used because it provides us maximal control
  * over the way we are querying the SQL database.
- * <p>
- * This package logically belong to the {@code geotk-coverage-sql} module.  But it is defined in
- * the {@code geotk-metadata-sql} module in order to allow other modules to use it. The metadata
- * SQL module does not use it itself right now, but it could use it in some future version.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.09

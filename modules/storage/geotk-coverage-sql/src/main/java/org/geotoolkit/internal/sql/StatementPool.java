@@ -39,7 +39,7 @@ import static org.apache.sis.util.collection.Containers.hashMapCapacity;
  * {@note This class duplicates the work done by statement pools in modern JDBC drivers.
  * Nevertheless it still useful when we retain some additional JDBC resources together with
  * the <code>PreparedStatement</code>, for example the <code>ResultSet</code> created from
- * that statement. This is what the <code>geotk-metadata-sql</code> module does.}
+ * that statement. This is what the <code>geotk-coverage-sql</code> module does.}
  *
  * {@section Synchronization}
  * Every access to this pool <strong>must</strong> be synchronized on {@code this}.

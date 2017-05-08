@@ -64,11 +64,6 @@
       <groupId>org.apache.sis.core</groupId>
       <artifactId>sis-utility</artifactId>
     </dependency>
-    <dependency>
-        <groupId>org.geotoolkit</groupId>
-        <artifactId>geotk-metadata-sql</artifactId>
-        <version>${project.version}</version>
-    </dependency>
     <!-- for GML Temporal factory -->
     <dependency>
         <groupId>org.geotoolkit</groupId>
