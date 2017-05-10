@@ -202,8 +202,8 @@ public abstract class AbstractCollectionCoverageReference extends AbstractCovera
                 ref.recycle(reader);
             }
 
-            if (references.isEmpty()) {
-                throw new DisjointCoverageDomainException("No coverage matched parameters");
+            if (coverages.isEmpty()) {
+                throw new DisjointCoverageDomainException("No coverage match parameters");
             }
 
             try {
@@ -218,7 +218,12 @@ public abstract class AbstractCollectionCoverageReference extends AbstractCovera
                 //compute final grid geometry
                 //calculate the output grid geometry and image size
                 final int sizeX = (int)(env.getSpan(0) / resolution);
-                final int sizeY = (int)(env.getSpan(1) / resolution);
+                final int sizeY = (int) (env.getSpan(1) / resolution);
+
+                if (sizeX <= 0 || sizeY <= 0) {
+                    throw new DisjointCoverageDomainException("No coverage match parameters");
+                }
+
                 final GridGeometry2D gridGeom = new GridGeometry2D(new GridEnvelope2D(0, 0, sizeX, sizeY), env);
 
                 final BufferedImage targetImage = BufferedImages.createImage(sizeX, sizeY, coverages.get(0).getRenderedImage());
