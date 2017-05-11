@@ -156,8 +156,6 @@ public class PyramidalModelReader extends GridCoverageReader{
 
                 //-- use the first mosaic informations, most accurate
                 final GridMosaic mosaic  = mosaics.get(0);
-                final Dimension gridSize = mosaic.getGridSize();
-                final Dimension tileSize = mosaic.getTileSize();
 
                 //-- we expect no rotation
                 final MathTransform gridToCRS = AbstractGridMosaic.getTileGridToCRS2D(mosaic, new Point(0, 0));
@@ -189,15 +187,18 @@ public class PyramidalModelReader extends GridCoverageReader{
 
                 final MathTransform gridToCRSds = ReferencingUtilities.toTransform(minordi, gridToCRS, multiAxisValues, cs.getDimension());
 
+                //-- size of internal pixel data recovered
+                final Rectangle dataSize = mosaic.getDataArea();
+
                 final int[] low   = new int[nbdim];
                 final int[] high  = new int[nbdim];
 
                 for (int i = 0; i < cs.getDimension(); i++) {
                     low[i] = 0; //-- on each dimension low begin at 0
                     if (i == minordi) {
-                        high[i] = gridSize.width  * tileSize.width; //-- X horizontal 2D part
+                        high[i] = dataSize.width; //-- X horizontal 2D part
                     } else if (i == minordi + 1) {
-                        high[i] = gridSize.height * tileSize.height; //-- Y horizontal 2D part
+                        high[i] = dataSize.height; //-- Y horizontal 2D part
                     } else if (i != minordi && i != minordi + 1) {
                         high[i] = multiAxisValues.get(i).length; //-- other dimension grid high value = discret axis values number.
                     } else {
@@ -237,7 +238,8 @@ public class PyramidalModelReader extends GridCoverageReader{
         final int[] sourceBands = param.getSourceBands();
 
         if (desBands != null || sourceBands != null)
-            throw new CoverageStoreException("Source or destination bands can not be used on pyramidal coverages.");
+            LOGGER.log(Level.FINE, "Source or destination bands can not be used on pyramidal coverages."
+                                    + " Continue Coverage reading without sources and destinations bands interpretations.");
 
         CoordinateReferenceSystem crs = param.getCoordinateReferenceSystem();
         Envelope paramEnv = param.getEnvelope();

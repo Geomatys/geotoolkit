@@ -758,6 +758,19 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
      * {@inheritDoc }.
      */
     @Override
+    public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize,
+            Dimension dataPixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
+        final XMLPyramidSet set = getPyramidSet();
+        final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
+        final XMLMosaic mosaic = pyramid.createMosaic(gridSize, tilePixelSize, dataPixelSize, upperleft, pixelscale);
+        save();
+        return mosaic;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
     public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }

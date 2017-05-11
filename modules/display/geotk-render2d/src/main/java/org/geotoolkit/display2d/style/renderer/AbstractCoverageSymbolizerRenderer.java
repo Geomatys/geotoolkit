@@ -19,10 +19,17 @@ package org.geotoolkit.display2d.style.renderer;
 import java.awt.geom.Area;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.Map;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.FileImageOutputStream;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.feature.PropertyNotFoundException;
@@ -259,7 +266,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * @param projectedCoverage Convenient representation of a {@link Coverage} for rendering.
      * @param renderingBound Rendering context enveloppe
      * @param resolution Rendering resolution in envelope crs
-     * @param objToDisp Objective to displace affine transform
+     * @param objToDisp2D Objective to displace affine transform
      * @param isElevation {@code true} if we want elevation coverage, else ({@code false}) for read coverage.
      * @param sourceBands coverage source bands to read
      * @return expected {@linkplain GridCoverage2D elevation coverage} or {@linkplain GridCoverage2D coverage}
@@ -271,7 +278,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * @see ProjectedCoverage#getCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam)
      */
     protected GridCoverage2D getObjectiveCoverage(final ProjectedCoverage projectedCoverage,
-            Envelope renderingBound, double[] resolution, AffineTransform2D objToDisp, final boolean isElevation, int[] sourceBands)
+            Envelope renderingBound, double[] resolution, AffineTransform2D objToDisp2D, final boolean isElevation, int[] sourceBands)
             throws CoverageStoreException, TransformException, FactoryException, ProcessException {
         ArgumentChecks.ensureNonNull("projectedCoverage", projectedCoverage);
 
@@ -436,9 +443,10 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         //----------------------------- DISPLAY -------------------------------//
         //-- compute output grid Envelope into rendering context display
         //-- get destination image size
-        final GeneralEnvelope dispEnv = Envelopes.transform(objToDisp, outputRenderingCoverageEnv2D);
-        final int width               = (int) Math.ceil(dispEnv.getSpan(0));
-        final int height              = (int) Math.ceil(dispEnv.getSpan(1));
+        final GeneralEnvelope dispEnv = Envelopes.transform(objToDisp2D, outputRenderingCoverageEnv2D);
+
+        final int width               = (int) dispEnv.getSpan(0);
+        final int height              = (int) dispEnv.getSpan(1);
 
         if (width <= 0 || height <= 0) {
             LOGGER.log(Level.FINE, "Coverage is out of rendering window.");
@@ -502,6 +510,14 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         ////////////////////////////////////////////////////////////////////////
         // 6 - Reproject data                                                 //
         ////////////////////////////////////////////////////////////////////////
+
+        /* If Coverage is only of PHOGRAPHIC type, transform it into Coverage
+         * with transparency to avoid BLACK BORDER during resampling.
+         * Example : photographic RGB raster become ARGB.
+         * A Photographic Coverage is a Coverage without any SampleDimension.
+         */
+        dataCoverage = prepareCoverageToResampling(dataCoverage, symbol);
+
         /*
          * NODATA
          *
@@ -545,6 +561,15 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         dataCoverage = (GridCoverage2D) result.parameter("result").getValue();
 
         return dataCoverage;
+    }
+
+    /**
+     * {@inheritDoc }
+     *
+     * Prepare coverage for Raster rendering.
+     */
+    protected GridCoverage2D prepareCoverageToResampling(final GridCoverage2D coverageSource, final C symbolizer) {
+        return coverageSource;
     }
 
     /**

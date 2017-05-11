@@ -306,11 +306,14 @@ public final class CoverageUtilities {
             final double v = (d == maxHorizOrdinate) ? envelope.getMaximum(d) : envelope.getMinimum(d);
             newUpperleft.setOrdinate(d, v);
         }
-        
+
         //generate each mosaic
         for (final double scale : scales) {
             final double gridWidth  = envelope.getSpan(0) / (scale*tileSize.width);
             final double gridHeight = envelope.getSpan(1) / (scale*tileSize.height);
+
+            final int dataPixelWidth  = (int) (envelope.getSpan(0) / scale);//-- fully filled area
+            final int dataPixelHeight = (int) (envelope.getSpan(1) / scale);
 
             Dimension tileDim = tileSize;
             Dimension gridSize = new Dimension( (int)(Math.ceil(gridWidth)), (int)(Math.ceil(gridHeight)));
@@ -328,7 +331,7 @@ public final class CoverageUtilities {
 
             if (!mosaicFound) {
                 //create a new mosaic
-                container.createMosaic(pyramid.getId(),gridSize, tileDim, newUpperleft, scale);
+                container.createMosaic(pyramid.getId(),gridSize, tileDim, new Dimension(dataPixelWidth, dataPixelHeight), newUpperleft, scale);
             }
         }
 

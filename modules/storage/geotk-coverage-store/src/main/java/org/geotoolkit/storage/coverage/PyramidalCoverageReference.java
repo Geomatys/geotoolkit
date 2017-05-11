@@ -37,86 +37,86 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module
  */
 public interface PyramidalCoverageReference extends CoverageReference{
-    
+
     PyramidSet getPyramidSet() throws DataStoreException;
 
     /**
      * Get the defined mode in which datas are stored.
-     * 
+     *
      * @return ViewType, never null
      * @throws org.apache.sis.storage.DataStoreException
      */
     ViewType getPackMode() throws DataStoreException;
-    
+
     /**
      * Set stored data mode.
      * This won't change the data itself.
-     * 
+     *
      * This method should be called before adding any data.
-     * 
-     * @param packMode 
-     * @throws org.apache.sis.storage.DataStoreException 
+     *
+     * @param packMode
+     * @throws org.apache.sis.storage.DataStoreException
      */
     void setPackMode(ViewType packMode) throws DataStoreException;
-    
+
     /**
      * List sample dimensions.
-     * 
+     *
      * This method should be called before adding any data.
-     * 
+     *
      * @return can be null
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     List<GridSampleDimension> getSampleDimensions() throws DataStoreException;
 
     /**
      * Set sample dimensions.
-     * 
-     * @param dimensions 
-     * @throws org.apache.sis.storage.DataStoreException 
+     *
+     * @param dimensions
+     * @throws org.apache.sis.storage.DataStoreException
      */
     void setSampleDimensions(final List<GridSampleDimension> dimensions) throws DataStoreException;
-    
+
     /**
      * Get default color model.
-     * 
+     *
      * @return ColorModel can be null
      * @throws org.apache.sis.storage.DataStoreException
      */
     ColorModel getColorModel() throws DataStoreException;
-    
+
     /**
      * Set color model, the store is not require to respect completely the model.
      * The object given is a hint for the store to choose more accurately
      * the storage parameters.
-     * 
+     *
      * This method should be called before adding any data.
-     * 
+     *
      * @param colorModel
      * @throws org.apache.sis.storage.DataStoreException
      */
     void setColorModel(ColorModel colorModel) throws DataStoreException;
-    
+
     /**
      * Get sample model.
-     * 
+     *
      * @return SampleModel can be null
      * @throws org.apache.sis.storage.DataStoreException
      */
     SampleModel getSampleModel() throws DataStoreException;
-    
+
     /**
      * Set sample model, the store is not require to respect completely the model
      * The object given is a hint for the store to choose more accurately
      * the storage parameters.
-     * 
+     *
      * This method should be called before adding any data.
-     * 
+     *
      * @param sampleModel
      * @throws org.apache.sis.storage.DataStoreException
      */
     void setSampleModel(SampleModel sampleModel) throws DataStoreException;
-    
+
     /**
      *
      * @return true if model can be modified
@@ -150,9 +150,25 @@ public interface PyramidalCoverageReference extends CoverageReference{
      * @return created mosaic
      * @throws DataStoreException
      */
+    @Deprecated
     GridMosaic createMosaic(String pyramidId, Dimension gridSize,
              Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException;
 
+
+    /**
+     * Create {@link GridMosaic} .
+     *
+     * @param pyramidId : pyramid id in which to insert the mosaic
+     * @param gridSize : size in number of column and row
+     * @param tilePixelSize : size of a tile in pixel
+     * @param dataPixelSize : size of the data pixel, written into tile mosaic space.
+     * @param upperleft : upperleft corner position in pyramid crs
+     * @param pixelscale : size of a pixel in crs unit
+     * @return created mosaic
+     * @throws DataStoreException
+     */
+    GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize,
+            Dimension dataPixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException;
     /**
      * Delete given mosaic.
      *
