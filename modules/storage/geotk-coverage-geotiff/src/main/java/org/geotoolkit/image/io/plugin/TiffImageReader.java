@@ -82,6 +82,7 @@ import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.internal.ImageUtils;
+import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.io.wkt.PrjFiles;
@@ -919,6 +920,16 @@ public class TiffImageReader extends SpatialImageReader {
             sourceDataBufferType = rawImageType.getSampleModel().getDataType();
         }
         return rawImageType;
+    }
+
+    /**
+     * Returns appropriate {@link SpatialImageReadParam} to {@link TiffImageReader}.
+     *
+     * @return ImageReadParam for TiffImageReader.
+     */
+    @Override
+    public SpatialImageReadParam getDefaultReadParam() {
+        return new TiffReaderParam(this);
     }
 
     /**
@@ -4102,6 +4113,29 @@ public class TiffImageReader extends SpatialImageReader {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * {@link TiffimageReader} does not support param reader with setted source and destination band parameters.
+     * To avoid reading action problem, override param method to throw exception.
+     *
+     * When source and destination bands will be managed, delete this class and use parent SpatialImageParam.
+     */
+    private class TiffReaderParam extends SpatialImageReadParam {
+
+        public TiffReaderParam(ImageReader reader) {
+            super(reader);
+        }
+
+        @Override
+        public void setSourceBands(int[] sourceBands) {
+            throw new UnsupportedOperationException("Set Source Band not implemented yet Into TiffImageReader.");
+        }
+
+        @Override
+        public void setDestinationBands(int[] destinationBands) {
+            throw new UnsupportedOperationException("Set Destination Band not implemented yet Into TiffImageReader.");
         }
     }
 }
