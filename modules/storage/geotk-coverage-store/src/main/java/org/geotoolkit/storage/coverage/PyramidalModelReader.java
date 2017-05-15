@@ -188,7 +188,7 @@ public class PyramidalModelReader extends GridCoverageReader{
                 final MathTransform gridToCRSds = ReferencingUtilities.toTransform(minordi, gridToCRS, multiAxisValues, cs.getDimension());
 
                 //-- size of internal pixel data recovered
-                final Rectangle dataSize = mosaic.getDataArea();
+                final Rectangle dataSize = mosaic.getDataExtent();
 
                 final int[] low   = new int[nbdim];
                 final int[] high  = new int[nbdim];

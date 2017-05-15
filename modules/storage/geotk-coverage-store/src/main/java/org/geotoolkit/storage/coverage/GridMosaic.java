@@ -30,107 +30,109 @@ import org.opengis.geometry.Envelope;
  * - Size
  * - CRS
  * - Span
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public interface GridMosaic {
-    
+
     /**
      * Sentinel object used to notify the end of the queue.
      */
     public static final Object END_OF_QUEUE = new Object();
-    
+
     /**
      * @return unique id.
      */
     String getId();
-    
+
     /**
      * @return pyramid containing this mosaic.
      */
     Pyramid getPyramid();
-        
+
     /**
      * @return upper left corner of the mosaic, expressed in pyramid CRS.
      */
     DirectPosition getUpperLeftCorner();
-    
+
     /**
      * @return size of the grid in number of columns/rows.
      */
     Dimension getGridSize();
-    
+
     /**
      * @return size of a pixel in crs unit
      */
     double getScale();
-    
+
     /**
      * @return image width in cell units.
      */
     Dimension getTileSize();
-    
+
     /**
      * Envelope of the given tile.
-     * 
+     *
      * @param col
      * @param row
      * @return Envelope of the given tile.
      */
     Envelope getEnvelope(int col, int row);
-    
+
     /**
      * Envelope of the mosaic.
-     * 
+     *
      * @return Envelope
      */
     Envelope getEnvelope();
-    
+
     /**
      * Some services define some missing tiles.
      * WMTS for example may define for a given layer a limitation saying
-     * only tiles for column 10 to 30 are available. 
-     * 
+     * only tiles for column 10 to 30 are available.
+     *
      * @param col
      * @param row
      * @return true if tile is missing
      * @throws org.opengis.coverage.PointOutsideCoverageException if the queried coordinate is not an allowed tile indice.
      */
     boolean isMissing(int col, int row) throws PointOutsideCoverageException;
-    
+
     /**
      * Get a tile.
      * @param col : tile column index
      * @param row : row column index
      * @param hints : additional hints. Can be null.
      * @return TileReference , may be null if tile is missing.
-     * @throws DataStoreException  
+     * @throws DataStoreException
      */
     TileReference getTile(int col, int row, Map hints) throws DataStoreException;
-        
+
     /**
      * Retrieve a set of TileReferences.<p>
      * The end of the queue is notified by the {@link GridMosaic#END_OF_QUEUE} object.<p>
      * The returned queue may implement Canceleable if for some reason there is no need
      * to continue iteration on the queue.
-     * 
+     *
      * @param positions : requested tiles positions
      * @param hints : additional hints
-     * @return blocking queue over the requested tiles. 
+     * @return blocking queue over the requested tiles.
      *         Order might be different from the list of positions.
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException;
 
     /**
-     * Method to optimize mosaic browsing by returning a {@link java.awt.Rectangle} of where data are.
-     * This rectangle can contain all grid or a part of it, but it shouldn't never exceed grid size.
-     * It can also be {@code null} if mosaic is empty.
+     * Returns Extent of written data into mosaic tile.<br>
+     * If extent is not known by mosaic implementation, this method browse all
+     * mosaic grid to returning a {@link java.awt.Rectangle} of where data are.<br>
+     * Rectangle represente area exprimate in <strong>pixels</strong> grid coordinate.<br>
+     * May return {@code null} if mosaic is empty.
      *
      * @return {@link java.awt.Rectangle} of data area or null if all
      * tiles of the mosaic are missing.
      */
-    Rectangle getDataArea();
+    Rectangle getDataExtent();
 
 }

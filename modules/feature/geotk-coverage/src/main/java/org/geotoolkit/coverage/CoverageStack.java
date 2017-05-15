@@ -992,12 +992,12 @@ public class CoverageStack extends AbstractCoverage {
      */
     @Override
     public int getNumSampleDimensions() {
-        if (numSampleDimensions != 0) {
-            return numSampleDimensions;
-        } else {
-            // TODO: provides a localized message.
-            throw new IllegalStateException("Sample dimensions are undetermined.");
-        }
+//        if (numSampleDimensions != 0) {
+            return numSampleDimensions; //-- allow multidimensionnal Coverage without any sample dimension.
+//        } else {
+//            // TODO: provides a localized message.
+//            throw new IllegalStateException("Sample dimensions are undetermined.");
+//        }
     }
 
     /**
@@ -1009,12 +1009,13 @@ public class CoverageStack extends AbstractCoverage {
      */
     @Override
     public SampleDimension getSampleDimension(final int index) {
-        if (sampleDimensions != null) {
-            return sampleDimensions[index];
-        } else {
-            // TODO: provides a localized message.
-            throw new IllegalStateException("Sample dimensions are undetermined.");
-        }
+        //if (sampleDimensions != null) //{
+            return (sampleDimensions != null) ? sampleDimensions[index] : null;
+
+//        } else {
+//            // TODO: provides a localized message.
+//            throw new IllegalStateException("Sample dimensions are undetermined.");
+//    }
     }
 
     /**

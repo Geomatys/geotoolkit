@@ -481,7 +481,7 @@ public class XMLMosaic implements GridMosaic {
      * {@inheritDoc }
      */
     @Override
-    public Rectangle getDataArea() {
+    public Rectangle getDataExtent() {
 
         if (dataPixelWidth != 0 && dataPixelHeight != 0) {
             return new Rectangle(dataPixelWidth, dataPixelHeight);
