@@ -1,16 +1,22 @@
 
 package org.apache.sis.feature;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.DefaultParameterDescriptor;
 import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.geometry.jts.JTS;
 import org.junit.Assert;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -23,6 +29,8 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  */
 public class FeatureExtTest {
+
+    private static final GeometryFactory GF = new GeometryFactory();
 
     @Test
     public void parameterToFeatureTest(){
@@ -100,7 +108,7 @@ public class FeatureExtTest {
         final FeatureType baseType = builder.build();
 
         final FeatureType challenger = builder.setName("challenger type").build();
-        Assert.assertTrue("We should detect that both feature types have got the same properties", FeatureExt.sameProperties(baseType, challenger, false));
+        assertTrue("We should detect that both feature types have got the same properties", FeatureExt.sameProperties(baseType, challenger, false));
 
         builder = new FeatureTypeBuilder();
         builder.setSuperTypes(baseType)
@@ -109,9 +117,40 @@ public class FeatureExtTest {
 
         final FeatureType firstChild = builder.build();
         final FeatureType secondChild = builder.setSuperTypes(challenger).build();
-        Assert.assertTrue("We should detect that both feature types have got the same properties (inherited ones included).", FeatureExt.sameProperties(firstChild, secondChild, true));
+        assertTrue("We should detect that both feature types have got the same properties (inherited ones included).", FeatureExt.sameProperties(firstChild, secondChild, true));
 
         FeatureType thirdChild = builder.setSuperTypes(firstChild).build();
-        Assert.assertFalse("We should detect a difference in inherited properties", FeatureExt.sameProperties(firstChild, thirdChild, true));
+        assertFalse("We should detect a difference in inherited properties", FeatureExt.sameProperties(firstChild, thirdChild, true));
+    }
+
+    @Test
+    public void getEnvelopeTest() {
+
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName("type");
+        ftb.addAttribute(Geometry.class).setName("geom").addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final FeatureType featureType = ftb.build();
+        final Feature feature = featureType.newInstance();
+
+        //case geometry is not set
+        assertNull(FeatureExt.getEnvelope(feature));
+
+        //case geometry has no crs
+        Point geom = GF.createPoint(new Coordinate(10, 20));
+        feature.setPropertyValue("geom", geom);
+        final GeneralEnvelope envNoCrs = new GeneralEnvelope(2);
+        envNoCrs.setRange(0, 10, 10);
+        envNoCrs.setRange(1, 20, 20);
+        assertEquals(envNoCrs, FeatureExt.getEnvelope(feature));
+
+        //case geometry has a crs
+        geom = GF.createPoint(new Coordinate(10, 20));
+        JTS.setCRS(geom, CommonCRS.WGS84.normalizedGeographic());
+        feature.setPropertyValue("geom", geom);
+        final GeneralEnvelope envCrs = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
+        envCrs.setRange(0, 10, 10);
+        envCrs.setRange(1, 20, 20);
+        assertEquals(envCrs, FeatureExt.getEnvelope(feature));
+
     }
 }
