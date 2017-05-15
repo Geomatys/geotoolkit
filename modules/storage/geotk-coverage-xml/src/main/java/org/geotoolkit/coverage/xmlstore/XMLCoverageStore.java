@@ -182,12 +182,12 @@ public class XMLCoverageStore extends AbstractCoverageStore {
         name = NamesExt.create(getDefaultNamespace(), name.tip().toString());
         final Set<GenericName> names = getNames();
         if(names.contains(name)){
-            throw new DataStoreException("Name already used in store : " + name.tip().toString());
+            throw new DataStoreException("Name already used in store: " + name.tip());
         }
 
         final XMLPyramidSet set = new XMLPyramidSet();
         final XMLCoverageReference ref = new XMLCoverageReference(this,name,set);
-        ref.initialize(root.resolve(name.tip().toString()+".xml"));
+        ref.initialize(root.resolve(name.tip() + ".xml"));
 
         if (packMode != null) {
             ref.setPackMode(packMode);

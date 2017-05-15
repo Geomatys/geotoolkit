@@ -113,7 +113,6 @@
        =========================================================== -->
   <modules>
     <module>utility</module>
-    <module>metadata</module>
     <module>referencing</module>
     <module>feature</module>
     <module>index</module>

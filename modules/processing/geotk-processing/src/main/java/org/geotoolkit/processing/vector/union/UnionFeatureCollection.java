@@ -71,7 +71,7 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
         CoordinateReferenceSystem geometryCRS;
         if (inputGeomName == null) {
             final PropertyType property = inputFC.getFeatureType().getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
-            this.inputGeomName = property.getName().tip().toString();
+            this.inputGeomName = property.getName().toString();
             geometryCRS = FeatureExt.getCRS(property);
         } else {
             this.inputGeomName = inputGeomName;

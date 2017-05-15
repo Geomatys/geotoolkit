@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import org.apache.sis.storage.FeatureNaming;
+import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -36,7 +36,6 @@ import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
-import org.opengis.util.ScopedName;
 
 /**
  * FeatureType implementation which define a filtered view of a reference
@@ -47,12 +46,9 @@ import org.opengis.util.ScopedName;
  * @module
  */
 public class ViewFeatureType implements DecoratedFeatureType {
-
-    private static final PropertyType AMBIGUOUS = new DefaultAttributeType(Collections.singletonMap("name", "ambiguous"),Object.class,0,0,null);
-
     private final FeatureType base;
     private final Set<GenericName> fullNames = new HashSet<>();
-    private final Map<String,PropertyType> names = new HashMap<>();
+    private final FeatureNaming<PropertyType> names = new FeatureNaming<>();
     private boolean isSimple;
 
     /**
@@ -104,20 +100,10 @@ public class ViewFeatureType implements DecoratedFeatureType {
             final GenericName fullName = property.getName();
             fullNames.add(fullName);
             GenericName name = fullName;
-            names.put(name.toString(), property);
-            while (name instanceof ScopedName) {
-                name = ((ScopedName)name).tail();
-                if(names.containsKey(name.toString())){
-                    //name is ambigus
-                    names.put(name.toString(), AMBIGUOUS);
-                    break;
-                }else{
-                    names.put(name.toString(), property);
-                }
-            }
-            //name tip part
-            if(!names.containsKey(name.toString())){
-                names.put(name.toString(), property);
+            try {
+                names.add(null, name, property);
+            } catch (IllegalNameException e) {
+                throw new IllegalArgumentException(e);
             }
         }
     }
@@ -188,13 +174,11 @@ public class ViewFeatureType implements DecoratedFeatureType {
 
     @Override
     public PropertyType getProperty(String name) throws PropertyNotFoundException {
-        final PropertyType type = names.get(name);
-        if (type==null) {
-            throw new PropertyNotFoundException("No property for name "+name);
-        }else if (type==AMBIGUOUS) {
-            throw new PropertyNotFoundException("Ambiguous name "+name);
+        try {
+            return names.get(null, name);
+        } catch (IllegalNameException e) {
+            throw new PropertyNotFoundException("Property " + name + " not found or ambiguous.");
         }
-        return type;
     }
 
     @Override
@@ -313,23 +297,13 @@ public class ViewFeatureType implements DecoratedFeatureType {
 
         @Override
         public Object getPropertyValue(String name) throws PropertyNotFoundException {
-            final PropertyType n = names.get(name);
-            if (n==null) {
-                throw new PropertyNotFoundException("No property for name "+name);
-            }else if (n==AMBIGUOUS) {
-                throw new PropertyNotFoundException("Ambiguous name "+name);
-            }
+            getProperty(name);
             return base.getPropertyValue(name);
         }
 
         @Override
         public void setPropertyValue(String name, Object value) throws IllegalArgumentException {
-            final PropertyType n = names.get(name);
-            if (n==null) {
-                throw new PropertyNotFoundException("No property for name "+name);
-            }else if (n==AMBIGUOUS) {
-                throw new PropertyNotFoundException("Ambiguous name "+name);
-            }
+            getProperty(name);
             base.setPropertyValue(name, value);
         }
 

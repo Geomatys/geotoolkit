@@ -23,7 +23,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -696,7 +695,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                     getLogger().log(Level.WARNING, ex1.getMessage(), ex1);
                 }
             }
-            throw new DataStoreException("Failed to create table "+typeName.tip().toString()+","+ex.getMessage()+"\n Query : "+sql, ex);
+            throw new DataStoreException("Failed to create table "+typeName.tip() + "," + ex.getMessage() + "\n Query: "+sql, ex);
         } finally {
             JDBCFeatureStoreUtilities.closeSafe(getLogger(),cnx,stmt,null);
         }
@@ -747,7 +746,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             }
 
         } catch (final SQLException ex) {
-            throw new DataStoreException("Failed updating table "+typeName.tip().toString()+", "+ex.getMessage(), ex);
+            throw new DataStoreException("Failed updating table " + typeName.tip() + ", " + ex.getMessage(), ex);
         } finally{
             JDBCFeatureStoreUtilities.closeSafe(getLogger(),cnx);
         }
@@ -798,7 +797,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             dbmodel.clearCache();
 
         } catch (SQLException ex) {
-            throw new DataStoreException("Failed to drop table "+typeName.tip().toString()+","+ex.getMessage()+"\n Query : "+sql, ex);
+            throw new DataStoreException("Failed to drop table " + typeName.tip() + "," + ex.getMessage() + "\n Query: " + sql, ex);
         } finally {
             JDBCFeatureStoreUtilities.closeSafe(getLogger(),cnx,stmt,null);
         }

@@ -231,9 +231,11 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
             V entry = pool.remove(key);
             if (entry == null) {
                 final boolean quote = quoteColumn();
-                entry = value(key, pool.connection().prepareStatement(buffer.clear().append("SELECT DISTINCT ")
-                        .appendIdentifier(column, quote).append(" FROM ").appendIdentifier(schema, table).append(" WHERE ")
-                        .appendIdentifier(column, quote).append(" LIKE ? ORDER BY ").appendIdentifier(column, quote).toString()));
+                buffer.clear().append("SELECT DISTINCT ");
+                buffer.appendIdentifier(column, quote).append(" FROM ").appendIdentifier(schema, table).append(" WHERE ");
+                buffer.appendIdentifier(column, quote).append(" LIKE ? ORDER BY ");
+                buffer.appendIdentifier(column, quote);
+                entry = value(key, pool.connection().prepareStatement(buffer.toString()));
             }
             entry.statement.setString(1, buffer.clear().appendEscaped(proposal).append('%').toString());
             try (ResultSet rs = entry.statement.executeQuery()) {

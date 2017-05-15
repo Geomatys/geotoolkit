@@ -265,7 +265,7 @@ public class JCQLEditor extends javax.swing.JPanel{
             final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             if(value instanceof PropertyType){
                 final PropertyType desc = (PropertyType) value;
-                String text = desc.getName().tip().toString().toString();
+                String text = desc.getName().tip().toString();
 
                 final InternationalString is = desc.getDescription();
                 if(is!=null && !is.toString().isEmpty()){

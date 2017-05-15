@@ -79,7 +79,7 @@ public class ConvexHullProcess extends AbstractProcess {
                 }
                 for (PropertyType property : feature.getType().getProperties(true)) {
                     if (AttributeConvention.isGeometryAttribute(property)) {
-                        final String name = property.getName().tip().toString();
+                        final String name = property.getName().toString();
                         if (name.equals(geometryName)) {
                             crs = FeatureExt.getCRS(property);
                             final Geometry tmpGeom = (Geometry) feature.getPropertyValue(name);

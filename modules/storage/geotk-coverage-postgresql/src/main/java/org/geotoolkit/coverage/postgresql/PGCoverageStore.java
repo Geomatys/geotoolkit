@@ -138,7 +138,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         query.append("INSERT INTO ");
         query.append(encodeTableName("Layer"));
         query.append("(name) VALUES ('");
-        query.append(name.tip().toString());
+        query.append(name.tip());
         query.append("')");
 
         Connection cnx = null;
@@ -165,7 +165,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         query.append("DELETE FROM ");
         query.append(encodeTableName("Layer"));
         query.append(" WHERE name='");
-        query.append(name.tip().toString());
+        query.append(name.tip());
         query.append("'");
 
         Connection cnx = null;

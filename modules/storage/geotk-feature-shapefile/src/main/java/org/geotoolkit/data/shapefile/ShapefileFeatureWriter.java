@@ -391,7 +391,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
         // reader has no more (no were are adding to the file)
         // so return an empty feature
         try {
-            final String featureID = getFeatureType().getName().tip().toString()+"."+(records+1);
+            final String featureID = getFeatureType().getName().tip() + "." + (records+1);
             originalFeature = null;
             currentFeature = getFeatureType().newInstance();
             currentFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), featureID);
@@ -407,7 +407,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
      * @return a fid for the new feature
      */
     protected String nextFeatureId() {
-        return getFeatureType().getName().tip().toString()+"."+(records+1);
+        return getFeatureType().getName().tip() + "." + (records+1);
     }
 
     /**

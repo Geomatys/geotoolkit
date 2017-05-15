@@ -84,7 +84,7 @@
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-metadata-sql</artifactId>
+      <artifactId>geotk-coverage-sql</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

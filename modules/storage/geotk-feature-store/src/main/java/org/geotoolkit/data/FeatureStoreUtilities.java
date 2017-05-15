@@ -364,7 +364,7 @@ public class FeatureStoreUtilities {
 
             //retype the collection
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder(baseType);
-            ftb.setName(NamesExt.create(NamesExt.getNamespace(name), name.tip().toString()+"_"+geomClass.getSimpleName()));
+            ftb.setName(NamesExt.create(NamesExt.getNamespace(name), name.tip().toString() + '_' + geomClass.getSimpleName()));
             for(PropertyTypeBuilder ptb : ftb.properties()){
                 if(ptb.getName().equals(geomPropName)){
                     final AttributeTypeBuilder atb = (AttributeTypeBuilder) ptb;

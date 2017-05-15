@@ -107,7 +107,12 @@ public class BeanFeature extends AbstractFeature{
         public Mapping(Class clazz, String namespace, CoordinateReferenceSystem crs, String idField, String defaultGeom, Predicate<java.beans.PropertyDescriptor> filter) {
             this.idField = idField;
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.setName(namespace,clazz.getSimpleName());
+            final String name = clazz.getSimpleName();
+            if (namespace != null) {
+                ftb.setName(namespace, name);
+            } else {
+                ftb.setName(name);
+            }
             try {
                 for (java.beans.PropertyDescriptor pd : Introspector.getBeanInfo(clazz).getPropertyDescriptors()) {
 

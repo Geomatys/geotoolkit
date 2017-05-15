@@ -108,5 +108,4 @@ public class JDBCFeatureWriterUpdate extends JDBCFeatureReader implements Featur
             throw new FeatureStoreRuntimeException(e);
         }
     }
-
 }

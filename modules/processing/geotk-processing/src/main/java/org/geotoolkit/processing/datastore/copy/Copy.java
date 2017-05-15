@@ -250,7 +250,7 @@ public class Copy extends AbstractProcess {
         @Override
         public Object visit(PropertyName expression, Object extraData) {
             if ("*".equals(expression.getPropertyName()) && extraData instanceof FeatureType) {
-                return new DefaultPropertyName(((FeatureType) extraData).getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString()).getName().tip().toString());
+                return new DefaultPropertyName(((FeatureType) extraData).getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString()).getName().toString());
             }
             return super.visit(expression, extraData);
         }

@@ -614,7 +614,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                             pointInPixel = georect.getPointInPixel();
                         }
                     }
-                        }
+                }
             } catch (IOException e) {
                 throw new CoverageStoreException(formatErrorMessage(e), e);
             }

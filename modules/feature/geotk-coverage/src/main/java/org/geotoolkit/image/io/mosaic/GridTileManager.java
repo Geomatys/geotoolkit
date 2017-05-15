@@ -31,7 +31,7 @@ import java.awt.Rectangle;
 import java.io.IOException;
 import javax.imageio.spi.ImageReaderSpi;
 
-import org.geotoolkit.util.collection.FrequencySortedSet;
+import org.apache.sis.util.collection.FrequencySortedSet;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 

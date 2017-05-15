@@ -199,8 +199,6 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
      * @return The set of duplicated codes.
      * @throws FactoryException if an error occurred.
      *
-     * @see org.geotoolkit.console.ReferencingCommands#test
-     *
      * @since 2.4
      */
     public Set<String> reportDuplicates(final PrintWriter out) throws FactoryException {
@@ -258,8 +256,6 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
      * @return The set of codes that can't be instantiated.
      * @throws FactoryException if an error occurred while
      *         {@linkplain #getAuthorityCodes fetching authority codes}.
-     *
-     * @see org.geotoolkit.console.ReferencingCommands#test
      *
      * @since 2.4
      */

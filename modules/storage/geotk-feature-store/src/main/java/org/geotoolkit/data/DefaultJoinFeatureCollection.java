@@ -100,7 +100,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection{
             ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY).setDefaultValue("");
             ftb.addAssociation(leftType).setName(leftName).setMinimumOccurs(0).setMaximumOccurs(1);
             ftb.addAssociation(rightType).setName(rightName).setMinimumOccurs(0).setMaximumOccurs(1);
-            ftb.setName(leftName.tip().toString()+'-'+rightName.tip().toString());
+            ftb.setName(leftName.tip().toString() + '-' + rightName.tip());
             type = ftb.build();
         }
 

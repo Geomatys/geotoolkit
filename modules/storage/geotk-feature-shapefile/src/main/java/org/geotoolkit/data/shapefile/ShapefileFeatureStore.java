@@ -346,9 +346,9 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         // to return attribute _and_ to run the query filter
         if (   propertyNames != null
             && propertyNames.length == 1
-            && NamesExt.valueOf(propertyNames[0]).tip().toString().equals(defaultGeomName.tip().toString())
-            && (filterAttnames.length == 0 || (filterAttnames.length == 1 && filterAttnames[0].tip().toString()
-                        .equals(defaultGeomName.tip().toString())))) {
+            && NamesExt.valueOf(propertyNames[0]).toString().equals(defaultGeomName.toString())
+            && (filterAttnames.length == 0 || (filterAttnames.length == 1 && filterAttnames[0].toString()
+                        .equals(defaultGeomName.toString())))) {
             try {
                 final FeatureType newSchema = FeatureTypeExt.createSubType(schema, propertyNames);
 
@@ -583,7 +583,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
                 final AttributeType at = (AttributeType) pt;
                 if(!Geometry.class.isAssignableFrom(at.getValueClass())) {
                     try {
-                    ((AttributeTypeBuilder)ftb.getProperty(at.getName().tip().toString()))
+                    ((AttributeTypeBuilder)ftb.getProperty(at.getName().toString()))
                         .setValueClass(at.getValueClass())
                         .setName(at.getName());
                     }catch(PropertyNotFoundException ex){}
@@ -626,7 +626,12 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
 
         //add an identifier field
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        builder.setName(namespace,shpFiles.getTypeName());
+        final String name = shpFiles.getTypeName();
+        if (namespace != null) {
+            builder.setName(namespace, name);
+        } else {
+            builder.setName(name);
+        }
         builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
 
 

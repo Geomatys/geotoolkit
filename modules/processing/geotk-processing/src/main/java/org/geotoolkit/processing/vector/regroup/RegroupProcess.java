@@ -22,11 +22,9 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.apache.sis.feature.AbstractOperation;
 
-import org.apache.sis.feature.SingleAttributeTypeBuilder;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
@@ -40,7 +38,6 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.util.GenericName;
 
 import static org.geotoolkit.processing.vector.regroup.RegroupDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
@@ -132,7 +129,7 @@ public class RegroupProcess extends AbstractProcess {
                     //if property is a geometry
                     if (AttributeConvention.isGeometryAttribute(property)) {
                         //if it's the property we needed
-                        final String name = property.getName().tip().toString();
+                        final String name = property.getName().toString();
                         if (name.equals(geometryName)) {
                             Geometry candidate = (Geometry) feature.getPropertyValue(name);
                             geoms.add(candidate);

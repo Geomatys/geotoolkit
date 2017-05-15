@@ -75,7 +75,6 @@ public class JDBCFeatureReader implements FeatureReader {
             final FeatureType type, Connection cnx, boolean release, final Hints hints) throws SQLException,DataStoreException {
         ArgumentChecks.ensureNonNull("Connection", cnx);
         final GenericName typeName = type.getName();
-        final String name = typeName.tip().toString();
 
         this.type = type;
         this.store = store;

@@ -750,9 +750,9 @@ final class PostgresDialect extends AbstractSQLDialect{
                         sb.append("select addrasterconstraints('");
                         sb.append(schemaName);
                         sb.append("', '");
-                        sb.append(featureType.getName().tip().toString());
+                        sb.append(featureType.getName().tip());
                         sb.append("', '");
-                        sb.append(att.getName().tip().toString());
+                        sb.append(att.getName().tip());
                         sb.append("', ");
                         sb.append("true");
                         sb.append(", false, false, false, false, false, false, false, false, false, false, false);");
@@ -762,7 +762,7 @@ final class PostgresDialect extends AbstractSQLDialect{
 
                         //add the srid in the comments
                         //the view crs is not set until a first raster in added, so we store it in the comments
-                        st.execute("COMMENT ON COLUMN \""+schemaName+"\".\""+featureType.getName().tip().toString()+"\".\""+att.getName().tip().toString()+"\" IS '"+srid+"';");
+                        st.execute("COMMENT ON COLUMN \""+schemaName+"\".\""+featureType.getName().tip()+"\".\""+att.getName().tip()+"\" IS '"+srid+"';");
 
                         continue;
                     }
@@ -781,7 +781,7 @@ final class PostgresDialect extends AbstractSQLDialect{
                     sb.append(" WHERE f_table_catalog=''");
                     sb.append(" AND f_table_schema = '").append(schemaName).append('\'');
                     sb.append(" AND f_table_name = '").append(tableName).append('\'');
-                    sb.append(" AND f_geometry_column = '").append(gd.getName().tip().toString()).append('\'');
+                    sb.append(" AND f_geometry_column = '").append(gd.getName().tip()).append('\'');
                     String sql = sb.toString();
 
                     featurestore.getLogger().fine( sql );
@@ -790,7 +790,7 @@ final class PostgresDialect extends AbstractSQLDialect{
                     sb = new StringBuilder("INSERT INTO GEOMETRY_COLUMNS VALUES ('',");
                     sb.append('\'').append(schemaName).append("',");
                     sb.append('\'').append(tableName).append("',");
-                    sb.append('\'').append(gd.getName().tip().toString()).append("',");
+                    sb.append('\'').append(gd.getName().tip()).append("',");
                     sb.append(dimensions).append(',');
                     sb.append(srid).append(',');
                     sb.append('\'').append(geomType).append("')");
@@ -803,9 +803,9 @@ final class PostgresDialect extends AbstractSQLDialect{
                         sb = new StringBuilder("ALTER TABLE ");
                         encodeSchemaAndTableName(sb, schemaName, tableName);
                         sb.append(" ADD CONSTRAINT \"enforce_srid_");
-                        sb.append(gd.getName().tip().toString()).append('"');
+                        sb.append(gd.getName().tip()).append('"');
                         sb.append(" CHECK (st_srid(");
-                        sb.append('"').append(gd.getName().tip().toString()).append('"');
+                        sb.append('"').append(gd.getName().tip()).append('"');
                         sb.append(") = ").append(srid).append(')');
                         sql = sb.toString();
                         featurestore.getLogger().fine( sql );
@@ -817,8 +817,8 @@ final class PostgresDialect extends AbstractSQLDialect{
                     sb = new StringBuilder("ALTER TABLE ");
                     encodeSchemaAndTableName(sb, schemaName, tableName);
                     sb.append(" ADD CONSTRAINT \"enforce_dims_");
-                    sb.append(gd.getName().tip().toString()).append('"');
-                    sb.append(" CHECK (st_ndims(\"").append(gd.getName().tip().toString()).append("\") = 2)");
+                    sb.append(gd.getName().tip()).append('"');
+                    sb.append(" CHECK (st_ndims(\"").append(gd.getName().tip()).append("\") = 2)");
                     sql = sb.toString();
                     featurestore.getLogger().fine(sql);
                     st.execute(sql);
@@ -828,11 +828,11 @@ final class PostgresDialect extends AbstractSQLDialect{
                         sb = new StringBuilder("ALTER TABLE ");
                         encodeSchemaAndTableName(sb, schemaName, tableName);
                         sb.append(" ADD CONSTRAINT \"enforce_geotype_");
-                        sb.append(gd.getName().tip().toString()).append('"');
+                        sb.append(gd.getName().tip()).append('"');
                         sb.append(" CHECK (st_geometrytype(");
-                        sb.append('"').append(gd.getName().tip().toString()).append('"');
+                        sb.append('"').append(gd.getName().tip()).append('"');
                         sb.append(") = '").append(TYPE_TO_ST_TYPE_MAP.get(geomType)).append("'::text OR \"");
-                        sb.append(gd.getName().tip().toString()).append('"').append(" IS NULL)");
+                        sb.append(gd.getName().tip()).append('"').append(" IS NULL)");
                         sql = sb.toString();
                         featurestore.getLogger().fine(sql);
                         st.execute(sql);
@@ -844,7 +844,7 @@ final class PostgresDialect extends AbstractSQLDialect{
                     sb.append(" ON ");
                     encodeSchemaAndTableName(sb, schemaName, tableName);
                     sb.append(" USING GIST (");
-                    sb.append('"').append(gd.getName().tip().toString()).append('"').append(')');
+                    sb.append('"').append(gd.getName().tip()).append('"').append(')');
                     sql = sb.toString();
                     featurestore.getLogger().fine(sql);
                     st.execute(sql);

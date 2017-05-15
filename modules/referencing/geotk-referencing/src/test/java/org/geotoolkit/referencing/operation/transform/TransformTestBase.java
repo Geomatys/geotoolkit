@@ -21,7 +21,6 @@ import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.datum.DatumFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
@@ -35,9 +34,6 @@ import static org.geotoolkit.test.Assert.*;
  * the convenience methods defined in GeoAPI and adds a few {@code asserts} statements.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.19
- *
- * @since 2.0
  */
 public abstract strictfp class TransformTestBase extends MathTransformTestCase {
     /**
@@ -51,11 +47,6 @@ public abstract strictfp class TransformTestBase extends MathTransformTestCase {
     protected final MathTransformFactory mtFactory;
 
     /**
-     * The transformation factory to use for testing.
-     */
-    protected final CoordinateOperationFactory opFactory;
-
-    /**
      * Creates a new test case using the given hints for fetching the factories.
      *
      * @param type  The base class of the transform being tested.
@@ -64,8 +55,7 @@ public abstract strictfp class TransformTestBase extends MathTransformTestCase {
     protected TransformTestBase(final Class<? extends MathTransform> type, final Hints hints) {
         this(FactoryFinder.getDatumFactory(hints),
              FactoryFinder.getCRSFactory(hints),
-             FactoryFinder.getMathTransformFactory(hints),
-             FactoryFinder.getCoordinateOperationFactory(hints));
+             FactoryFinder.getMathTransformFactory(hints));
         assertTrue("Tests should be run with assertions enabled.", type.desiredAssertionStatus());
     }
 
@@ -76,12 +66,10 @@ public abstract strictfp class TransformTestBase extends MathTransformTestCase {
     private TransformTestBase(
             final DatumFactory            datumFactory,
             final CRSFactory                crsFactory,
-            final MathTransformFactory       mtFactory,
-            final CoordinateOperationFactory opFactory)
+            final MathTransformFactory       mtFactory)
     {
-        super(datumFactory, crsFactory, mtFactory, opFactory);
+        super(datumFactory, crsFactory, mtFactory);
         this.mtFactory    = mtFactory;
         this.crsFactory   = crsFactory;
-        this.opFactory    = opFactory;
     }
 }

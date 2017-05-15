@@ -37,7 +37,7 @@ public class GxModelConstants {
     public static final AttributeType<PlayList> ATT_TOUR_PLAY_LIST;
 
     static {
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder().setDefaultScope(GX_NAMESPACE).setDefaultCardinality(0, Integer.MAX_VALUE);
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder().setNameSpace(GX_NAMESPACE).setDefaultCardinality(0, Integer.MAX_VALUE);
 
         //-------------------- TOUR ------------------------------
         ATT_TOUR_PLAY_LIST = ftb.addAttribute(PlayList.class).setName(KmlConstants.ATT_PLAYLIST).build();

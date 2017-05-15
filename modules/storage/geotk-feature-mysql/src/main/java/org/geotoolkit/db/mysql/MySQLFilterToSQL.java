@@ -31,7 +31,6 @@ import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.Version;
 import org.geotoolkit.db.FilterToSQL;
-import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.FactoryFinder;
@@ -292,7 +291,7 @@ public class MySQLFilterToSQL implements FilterToSQL {
         final StringBuilder sb = toStringBuilder(o);
         final GenericName name = NamesExt.valueOf(candidate.getPropertyName());
         sb.append('"');
-        sb.append(name.tip().toString());
+        sb.append(name.tip());
         sb.append('"');
         return sb;
     }

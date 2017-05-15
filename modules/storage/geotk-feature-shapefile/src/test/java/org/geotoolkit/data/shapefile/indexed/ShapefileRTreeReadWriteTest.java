@@ -179,7 +179,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         }
 
         for(PropertyType desc : descs){
-            final String name = desc.getName().tip().toString();
+            final String name = desc.getName().toString();
             Object att1 = f1.getPropertyValue(name);
             Object att2 = f2.getPropertyValue(name);
             if (att1 instanceof Geometry && att2 instanceof Geometry) {

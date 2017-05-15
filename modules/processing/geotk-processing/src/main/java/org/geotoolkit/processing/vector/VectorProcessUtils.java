@@ -33,7 +33,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -126,7 +125,7 @@ public final class VectorProcessUtils extends Static {
         final List<PropertyTypeBuilder> listIterator = new ArrayList<>(ftb.properties());
         for (PropertyTypeBuilder pt : listIterator){
             if(pt instanceof AttributeTypeBuilder && Geometry.class.isAssignableFrom( ((AttributeTypeBuilder)pt).getValueClass())){
-                if(!pt.getName().tip().toString().equals(keepedGeometry)){
+                if(!pt.getName().toString().equals(keepedGeometry)){
                     ftb.properties().remove(pt);
                 }
             }
@@ -316,7 +315,7 @@ public final class VectorProcessUtils extends Static {
         // found used input geometry with CRS
         for (PropertyType inputProperty : sourceFeature.getType().getProperties(true)) {
             if (AttributeConvention.isGeometryAttribute(inputProperty)) {
-                final String name = inputProperty.getName().tip().toString();
+                final String name = inputProperty.getName().toString();
                 if (name.equals(sourceGeomName)) {
                     sourceGeometry = (Geometry) sourceFeature.getPropertyValue(name);
                     sourceCRS = FeatureExt.getCRS(inputProperty);
@@ -329,7 +328,7 @@ public final class VectorProcessUtils extends Static {
         // found used target geometry with CRS
         for (PropertyType inputProperty : targetFeature.getType().getProperties(true)) {
             if (AttributeConvention.isGeometryAttribute(inputProperty)) {
-                final String name = inputProperty.getName().tip().toString();
+                final String name = inputProperty.getName().toString();
                 if (name.equals(targetGeomName)) {
                     targetGeometry = (Geometry) targetFeature.getPropertyValue(name);
                     targetCRS = FeatureExt.getCRS(inputProperty);
@@ -372,7 +371,7 @@ public final class VectorProcessUtils extends Static {
         // found used input geometry with CRS
         for (PropertyType inputProperty : inputFeature.getType().getProperties(true)) {
             if (AttributeConvention.isGeometryAttribute(inputProperty)) {
-                final String name = inputProperty.getName().tip().toString();
+                final String name = inputProperty.getName().toString();
                 if (name.equals(geometryName)) {
                     inputGeometry = (Geometry) inputFeature.getPropertyValue(name);
                     inputCRS = FeatureExt.getCRS(inputProperty);
@@ -450,7 +449,7 @@ public final class VectorProcessUtils extends Static {
                             FeatureExt.getId(inputFeature).getID() + "<->" + FeatureExt.getId(outFeature).getID());
 
                     for (PropertyType property : inputFeature.getType().getProperties(true)) {
-                        final String name = property.getName().tip().toString();
+                        final String name = property.getName().toString();
                         if (AttributeConvention.isGeometryAttribute(property)) {
                             if (name.equals(geometryName)) {
                                 //set the intersection as the feature Geometry

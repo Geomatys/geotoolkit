@@ -105,10 +105,10 @@ public class PGVersionControl extends AbstractVersionControl{
         sql.append(store.encodeTableName("PyramidProperty"));
         sql.append(" AS pp ON pp.\"pyramidId\" = p.id AND pp.key = 'version' ");
         sql.append("WHERE l.name = '");
-        sql.append(name.tip().toString()).append('\'');
+        sql.append(name.tip()).append('\'');
 
         final ISODateParser dateparser = new ISODateParser();
-        final List<Date> dates = new ArrayList<Date>();
+        final List<Date> dates = new ArrayList<>();
         Connection cnx = null;
         Statement stmt = null;
         ResultSet rs = null;

@@ -33,7 +33,6 @@ import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.version.AbstractVersionControl;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersioningException;
-import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
@@ -113,7 +112,7 @@ public class PostgresVersionControl extends AbstractVersionControl{
                 FeatureAssociationRole far = (FeatureAssociationRole) desc;
                 createVersioningTable(schemaName, far.getValueType(), visited);
             }else if(desc instanceof AttributeType) {
-                hsColumnNames.add("'"+desc.getName().tip().toString()+"'");
+                hsColumnNames.add("'" + desc.getName().tip() + '\'');
             }
         }
 
@@ -346,7 +345,6 @@ public class PostgresVersionControl extends AbstractVersionControl{
         }finally{
             JDBCFeatureStoreUtilities.closeSafe(featureStore.getLogger(), cnx, stmt, null);
         }
-
         return versions;
     }
 
@@ -383,7 +381,6 @@ public class PostgresVersionControl extends AbstractVersionControl{
         }finally{
             JDBCFeatureStoreUtilities.closeSafe(featureStore.getLogger(), cnx, stmt, null);
         }
-
         return isVersioned;
     }
 
@@ -392,7 +389,6 @@ public class PostgresVersionControl extends AbstractVersionControl{
      * @return String
      */
     public String getHSTableName(){
-        return "HS_TBL_"+featureType.getName().tip().toString();
+        return "HS_TBL_" + featureType.getName().tip();
     }
-
 }

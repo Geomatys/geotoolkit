@@ -21,14 +21,12 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -69,7 +67,6 @@ import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
@@ -292,10 +289,10 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         //write properties in the type order
         for(final PropertyType desc : type.getProperties(true)){
-            if(AttributeConvention.contains(desc.getName())) continue;
-            if(!isAttributeProperty(desc.getName())) continue;
+            if (AttributeConvention.contains(desc.getName())) continue;
+            if (!isAttributeProperty(desc.getName())) continue;
 
-            if(desc.getName().tip().toString().equals("@id")) {
+            if (desc.getName().tip().toString().equals("@id")) {
                 //gml id has already been written
                 continue;
             }
@@ -408,13 +405,12 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     }
 
     private void writeProperty(Feature parent, PropertyType typeA, Object valueA, String id) throws XMLStreamException{
-        final FeatureType parentType = parent.getType();
         final GenericName nameA = typeA.getName();
+        if (AttributeConvention.contains(nameA) || isAttributeProperty(nameA)) return;
+
         final String nameProperty = nameA.tip().toString();
         String namespaceProperty = NamesExt.getNamespace(nameA);
         final boolean hasChars = typeA instanceof AttributeType && !((AttributeType)typeA).characteristics().isEmpty();
-
-        if(isAttributeProperty(nameA)) return;
 
         //TODO : search for link operation which match
 //        if(!isSubstitute){
@@ -851,7 +847,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      * @param name
      * @return true if property is an atribute, starts by a @
      */
-    public static boolean isAttributeProperty(GenericName name){
+    private static boolean isAttributeProperty(GenericName name){
         final String localPart = name.tip().toString();
         return !localPart.isEmpty() && localPart.charAt(0) == '@';
     }

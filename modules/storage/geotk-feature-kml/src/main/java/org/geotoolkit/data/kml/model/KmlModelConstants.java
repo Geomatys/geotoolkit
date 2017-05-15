@@ -106,7 +106,7 @@ public final class KmlModelConstants {
         FeatureTypeBuilder ftb;
 
         //-------------------- GENERIC KML ENTITY ------------------------------
-        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, 1);
+        ftb = new FeatureTypeBuilder().setNameSpace(KML_NAMESPACE).setDefaultCardinality(0, 1);
         ATT_ID_ATTRIBUTES   = ftb.addAttribute(IdAttributes.class).setName(KmlConstants.ATT_ID).build();
         ATT_NAME            = ftb.addAttribute(String.class).setName(KmlConstants.TAG_NAME).build();
         ATT_VISIBILITY      = ftb.addAttribute(Boolean.class).setName(KmlConstants.TAG_VISIBILITY).setDefaultValue(KmlConstants.DEF_VISIBILITY).build();
@@ -128,48 +128,48 @@ public final class KmlModelConstants {
         TYPE_KML_ENTITY     = ftb.setName("KMLEntity").setAbstract(true).build();
 
         //-------------------- PLACEMARK ------------------------------
-        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, 1);
+        ftb = new FeatureTypeBuilder().setNameSpace(KML_NAMESPACE).setDefaultCardinality(0, 1);
         ATT_PLACEMARK_GEOMETRY = ftb.addAttribute(AbstractGeometry.class).setName(KmlConstants.TAG_GEOMETRY).build();
         TYPE_PLACEMARK         = ftb.setSuperTypes(TYPE_KML_ENTITY).setName(KmlConstants.TAG_PLACEMARK).build();
 
         //-------------------- NETWORK_LINK ------------------------------
-        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, 1);
+        ftb = new FeatureTypeBuilder().setNameSpace(KML_NAMESPACE).setDefaultCardinality(0, 1);
         ATT_NETWORK_LINK_REFRESH_VISIBILITY = ftb.addAttribute(Boolean.class).setName(KmlConstants.TAG_REFRESH_VISIBILITY).setDefaultValue(KmlConstants.DEF_REFRESH_VISIBILITY).build();
         ATT_NETWORK_LINK_FLY_TO_VIEW        = ftb.addAttribute(Boolean.class).setName(KmlConstants.TAG_FLY_TO_VIEW).setDefaultValue(KmlConstants.DEF_FLY_TO_VIEW).build();
         ATT_NETWORK_LINK_LINK               = ftb.addAttribute(Link.class).setName(KmlConstants.TAG_LINK).build();
         TYPE_NETWORK_LINK                   = ftb.setSuperTypes(TYPE_KML_ENTITY).setName(KmlConstants.TAG_DOCUMENT).build();
 
         //-------------------- GENERIC CONTAINER ------------------------------
-        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, 1);
+        ftb = new FeatureTypeBuilder().setNameSpace(KML_NAMESPACE).setDefaultCardinality(0, 1);
         TYPE_CONTAINER = ftb.setSuperTypes(TYPE_KML_ENTITY).setName("Container").setAbstract(true).build();
 
         //-------------------- FOLDER ------------------------------
-        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, Integer.MAX_VALUE);
+        ftb = new FeatureTypeBuilder().setNameSpace(KML_NAMESPACE).setDefaultCardinality(0, Integer.MAX_VALUE);
         ATT_FOLDER_FEATURES = ftb.addAssociation(TYPE_KML_ENTITY).setName(KmlConstants.TAG_FEATURES).build();
         TYPE_FOLDER         = ftb.setSuperTypes(TYPE_CONTAINER).setName(KmlConstants.TAG_FOLDER).build();
 
         //-------------------- DOCUMENT ------------------------------
-        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, Integer.MAX_VALUE);
+        ftb = new FeatureTypeBuilder().setNameSpace(KML_NAMESPACE).setDefaultCardinality(0, Integer.MAX_VALUE);
         ATT_DOCUMENT_FEATURES = ftb.addAssociation(TYPE_KML_ENTITY).setName(KmlConstants.TAG_FEATURES).build();
         ATT_DOCUMENT_SCHEMAS  = ftb.addAttribute(Schema.class).setName(KmlConstants.TAG_SCHEMA).build();
         TYPE_DOCUMENT         = ftb.setSuperTypes(TYPE_CONTAINER).setName(KmlConstants.TAG_DOCUMENT).build();
 
         //-------------------- GENERIC OVERLAY ------------------------------
-        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, 1);
+        ftb = new FeatureTypeBuilder().setNameSpace(KML_NAMESPACE).setDefaultCardinality(0, 1);
         ATT_OVERLAY_COLOR      = ftb.addAttribute(Color.class).setName(KmlConstants.TAG_COLOR).setDefaultValue(KmlConstants.DEF_COLOR).build();
         ATT_OVERLAY_DRAW_ORDER = ftb.addAttribute(Integer.class).setName(KmlConstants.TAG_DRAW_ORDER).setDefaultValue(KmlConstants.DEF_DRAW_ORDER).build();
         ATT_OVERLAY_ICON       = ftb.addAttribute(Link.class).setName(KmlConstants.TAG_ICON).build();
         TYPE_OVERLAY           = ftb.setSuperTypes(TYPE_KML_ENTITY).setName("Overlay").setAbstract(true).build();
 
         //-------------------- GROUND OVERLAY ------------------------------
-        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, 1);
+        ftb = new FeatureTypeBuilder().setNameSpace(KML_NAMESPACE).setDefaultCardinality(0, 1);
         ATT_GROUND_OVERLAY_ALTITUDE      = ftb.addAttribute(Double.class).setName(KmlConstants.TAG_ALTITUDE).setDefaultValue(KmlConstants.DEF_ALTITUDE).build();
         ATT_GROUND_OVERLAY_ALTITUDE_MODE = ftb.addAttribute(EnumAltitudeMode.class).setName(KmlConstants.TAG_ALTITUDE_MODE).setDefaultValue(KmlConstants.DEF_ALTITUDE_MODE).build();
         ATT_GROUND_OVERLAY_LAT_LON_BOX   = ftb.addAttribute(LatLonBox.class).setName(KmlConstants.TAG_LAT_LON_BOX).build();
         TYPE_GROUND_OVERLAY              = ftb.setSuperTypes(TYPE_OVERLAY).setName("GroundOverlay").build();
 
         //-------------------- SCREEN OVERLAY ------------------------------
-        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, 1);
+        ftb = new FeatureTypeBuilder().setNameSpace(KML_NAMESPACE).setDefaultCardinality(0, 1);
         ATT_SCREEN_OVERLAY_ROTATIONXY = ftb.addAttribute(Vec2.class).setName(KmlConstants.TAG_ROTATION_XY).build();
         ATT_SCREEN_OVERLAY_OVERLAYXY  = ftb.addAttribute(Vec2.class).setName(KmlConstants.TAG_OVERLAY_XY).build();
         ATT_SCREEN_OVERLAY_SCREENXY   = ftb.addAttribute(Vec2.class).setName(KmlConstants.TAG_SCREEN_XY).build();
@@ -178,7 +178,7 @@ public final class KmlModelConstants {
         TYPE_SCREEN_OVERLAY           = ftb.setSuperTypes(TYPE_OVERLAY).setName("ScreenOverlay").build();
 
         //-------------------- PHOTO OVERLAY ------------------------------
-        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, 1);
+        ftb = new FeatureTypeBuilder().setNameSpace(KML_NAMESPACE).setDefaultCardinality(0, 1);
         ATT_PHOTO_OVERLAY_ROTATION = ftb.addAttribute(Double.class).setName(KmlConstants.TAG_ROTATION).setDefaultValue(KmlConstants.DEF_ROTATION).build();
         ATT_PHOTO_OVERLAY_VIEW_VOLUME = ftb.addAttribute(ViewVolume.class).setName(KmlConstants.TAG_VIEW_VOLUME).build();
         ATT_PHOTO_OVERLAY_IMAGE_PYRAMID = ftb.addAttribute(ImagePyramid.class).setName(KmlConstants.TAG_IMAGE_PYRAMID).build();

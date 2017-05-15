@@ -33,7 +33,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
-import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -381,11 +380,11 @@ public class XmlTestData {
         //feature with gml identifier property
         featureEmpty = typeEmpty2.newInstance();
         featureEmpty.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-156");
-        final AttributeType charType = (AttributeType) ((AttributeType)typeEmpty2.getProperty("identifier")).characteristics().get("http://www.opengis.net/gml/3.2:@codeBase");
+        final AttributeType charType = (AttributeType) ((AttributeType)typeEmpty2.getProperty("http://www.opengis.net/gml/3.2:identifier")).characteristics().get("http://www.opengis.net/gml/3.2:@codeBase");
         final Attribute charac = charType.newInstance();
         charac.setValue("something");
-        featureEmpty.setPropertyValue("identifier","some text");
-        ((Attribute)featureEmpty.getProperty("identifier")).characteristics().put("http://www.opengis.net/gml/3.2:@codeBase",charac);
+        featureEmpty.setPropertyValue("http://www.opengis.net/gml/3.2:identifier", "some text");
+        ((Attribute)featureEmpty.getProperty("http://www.opengis.net/gml/3.2:identifier")).characteristics().put("http://www.opengis.net/gml/3.2:@codeBase",charac);
 
         //feature with a nil complex property
         featureNil = typeWithNil.newInstance();

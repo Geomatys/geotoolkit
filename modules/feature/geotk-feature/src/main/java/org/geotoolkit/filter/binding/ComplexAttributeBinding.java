@@ -18,11 +18,11 @@ package org.geotoolkit.filter.binding;
 
 import java.util.regex.Pattern;
 import org.apache.sis.feature.FeatureExt;
-import static org.geotoolkit.filter.binding.AttributeBinding.stripPrefix;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.PropertyNotFoundException;
+import static org.geotoolkit.filter.binding.AttributeBinding.stripPrefix;
 
 /**
  *

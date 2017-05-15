@@ -157,7 +157,7 @@ public final class CRS extends Static {
      * @category information
      * @since 2.2
      *
-     * @deprecated Moved to Apache SIS as {@link return org.apache.sis.referencing.CRS#getDomainOfValidity}.
+     * @deprecated Moved to Apache SIS as {@link org.apache.sis.referencing.CRS#getDomainOfValidity}.
      */
     @Deprecated
     public static Envelope getEnvelope(final CoordinateReferenceSystem crs) {

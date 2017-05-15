@@ -43,7 +43,6 @@ import org.junit.*;
 import static org.junit.Assert.*;
 import static org.geotoolkit.feature.xml.XmlTestData.*;
 import org.opengis.feature.AttributeType;
-import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.xml.sax.SAXException;
@@ -236,7 +235,7 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
 
         //TODO we should check all properties
         final FeatureType type = types.get(0);
-        final PropertyType itype = type.getProperty("identifier");
+        final PropertyType itype = type.getProperty("http://www.opengis.net/gml/3.2:identifier");
         assertNotNull(itype);
         assertTrue(itype instanceof AttributeType);
         final AttributeType ct = (AttributeType) itype;

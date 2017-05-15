@@ -60,6 +60,7 @@ import javax.xml.stream.events.XMLEvent;
 import net.iharder.Base64;
 import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.feature.Features;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.xsd.xml.v2001.Import;
 import org.geotoolkit.xsd.xml.v2001.Include;
@@ -867,13 +868,14 @@ public class Utils {
         }
         visited.add(name);
         String nsuri = NamesExt.getNamespace(type.getName());
-        if(nsuri!=null) ns.add(nsuri);
+        if (nsuri!=null) ns.add(nsuri);
 
-        final FeatureType ct = (FeatureType) type;
-        for(PropertyType pd : ct.getProperties(true)){
-            nsuri = NamesExt.getNamespace(pd.getName());
-            if(nsuri!=null) ns.add(nsuri);
-            listAllNamespaces(pd, ns, visited);
+        for (PropertyType pd : type.getProperties(true)) {
+            if (!AttributeConvention.contains(pd.getName())) {
+                nsuri = NamesExt.getNamespace(pd.getName());
+                if (nsuri!=null) ns.add(nsuri);
+                listAllNamespaces(pd, ns, visited);
+            }
         }
     }
 

@@ -235,7 +235,7 @@ public class MIFManager {
 
             } else {
                 final FeatureTypeBuilder builder = new FeatureTypeBuilder(toAdd);
-                builder.getProperty(geom.getName().tip().toString()).remove();
+                builder.getProperty(geom.getName().toString()).remove();
                 builder.setName(mifName+".baseType");
 
                 mifBaseType = builder.build();
@@ -581,7 +581,7 @@ public class MIFManager {
                 final FeatureType bind = MIFUtils.getGeometryType(typename, mifCRS, mifBaseType);
                 if (bind != null) {
                     FeatureTypeBuilder builder = new FeatureTypeBuilder(bind);
-                    builder.setName(NamesExt.getNamespace(bind.getName()), mifBaseType.getName().tip().toString()+"_"+bind.getName().tip().toString());
+                    builder.setName(NamesExt.getNamespace(bind.getName()), mifBaseType.getName().tip() + "_" + bind.getName().tip());
                     mifChildTypes.add(builder.build());
                 }
             }

@@ -51,7 +51,7 @@ public class DefaultCoverageFinder extends CoverageFinder {
         for (GridMosaic candidate : mosaics) {
             //check the mosaic intersect the searched envelope
             final GeneralEnvelope clip = new GeneralEnvelope(candidate.getEnvelope());
-            if (!clip.intersects(env)) continue;
+            if (!clip.intersects(env, true)) continue;
             //calculate the intersection, will be used to determinate the number of tiles used.
             clip.intersect(env);
 
