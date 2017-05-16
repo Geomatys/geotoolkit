@@ -73,6 +73,5 @@
   <modules>
     <module>geotk-referencing</module>
     <module>geotk-temporal</module>
-    <module>geotk-referencing-sis-fragment</module>
   </modules>
 </project>
