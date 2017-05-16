@@ -486,9 +486,15 @@ public class ResampleProcess extends AbstractProcess {
         ////                                                                                ////
         ////////////////////////////////////////////////////////////////////////////////////////
 
-        if(allSteps2D.isIdentity()){
-            //we can directly copy raster to raster
-            targetRaster.setDataElements(0, 0, sourceImage.getData());
+        if (allSteps2D.isIdentity()) {
+            if (sourceImage.getWidth() == targetRaster.getWidth() && sourceImage.getHeight() == targetRaster.getHeight()) {
+                //we can directly copy raster to raster
+                targetRaster.setDataElements(0, 0, sourceImage.getData());
+            } else {
+                // the setRect method is more expensive but will make the appropriate clipping
+                targetRaster.setRect(0, 0, sourceImage.getData());
+            }
+
             return create(sourceCoverage, targetImage, targetGG, finalView, hints);
         }
 
