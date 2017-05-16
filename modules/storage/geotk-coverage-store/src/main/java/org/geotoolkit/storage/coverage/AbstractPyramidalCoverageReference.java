@@ -160,6 +160,12 @@ public abstract class AbstractPyramidalCoverageReference extends AbstractCoverag
     }
 
     @Override
+    public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize,
+            Dimension dataPixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
+        throw new DataStoreException("Pyramid writing not supported.");
+    }
+
+    @Override
     public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
         throw new DataStoreException("Pyramid writing not supported.");
     }

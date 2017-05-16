@@ -180,38 +180,40 @@ public abstract class AbstractGridMosaic implements GridMosaic{
      * {@inheritDoc}
      */
     @Override
-    public Rectangle getDataArea() {
+    public Rectangle getDataExtent() {
 
         Point start = null;
-        exitStart:
         for (int y = 0; y < gridSize.height; y++) {
             for (int x = 0; x < gridSize.width; x++) {
                 if (!isMissing(x,y)) {
-                    start = new Point(x,y);
-                    continue exitStart;
+                     start = new Point(x,y);
+                     break;//--get only the first point of the grid
                 }
             }
+            if (start != null) break;//--get only the first point of the grid
         }
 
         if (start != null) {
-            Point end = new Point(gridSize.width-1, gridSize.height-1);
-            exitEnd:
+            Point end = null;
             for (int y = gridSize.height-1; y >= start.y; y--) {
                 for (int x = gridSize.width-1; x >= start.x; x--) {
                     if (!isMissing(x, y)) {
                         end = new Point(x, y);
-                        continue exitEnd;
+                        break; //-- get only the last tile grid
                     }
                 }
+                if (end != null) break; //-- get only the last tile grid
             }
 
             assert end.x >= start.x;
             assert end.y >= start.y;
 
-            return new Rectangle(start.x, start.y, end.x - start.x, end.y - start.y);
+            return new Rectangle(start.x*tileSize.width, start.y*tileSize.height,
+                                (end.x - start.x + 1) * tileSize.width,
+                                (end.y - start.y + 1) * tileSize.height);
         } else {
             //all mosaic tiles are missing
-            return null;
+            return new Rectangle(0,0, gridSize.width*tileSize.width, gridSize.height * tileSize.height);
         }
     }
 

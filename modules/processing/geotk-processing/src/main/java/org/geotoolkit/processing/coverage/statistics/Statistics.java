@@ -292,14 +292,15 @@ public class Statistics extends AbstractProcess {
             int endX = gridSize.width;
             int endY = gridSize.height;
             int totalTiles = gridSize.width * gridSize.height;
+            Dimension tileSize = gridMosaic.getTileSize();
 
-            final Rectangle dataArea = gridMosaic.getDataArea();
+            final Rectangle dataArea = gridMosaic.getDataExtent();
             if (dataArea != null) {
-                startX = dataArea.x;
-                startY = dataArea.y;
-                endX = dataArea.x + dataArea.width;
-                endY = dataArea.y + dataArea.height;
-                totalTiles = dataArea.width * dataArea.height;
+                startX = dataArea.x / tileSize.width;
+                startY = dataArea.y / tileSize.height;
+                endX = (int) Math.ceil((dataArea.x + dataArea.width) / tileSize.width);
+                endY = (int) Math.ceil((dataArea.y + dataArea.height) / tileSize.height);
+                totalTiles = (endX - startX) * (endY - startY);
             }
 
             //analyse each tiles of GridMosaicRenderedImage

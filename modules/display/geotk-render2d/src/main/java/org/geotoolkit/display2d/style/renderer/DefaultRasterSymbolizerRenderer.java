@@ -269,6 +269,44 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     }
 
     /**
+     * Analyse input coverage to know if we need to add an alpha channel. Alpha channel is required in photographic
+     * coverage case, in order for the resample to deliver a ready to style image.
+     *
+     * @param source The coverage to analyse.
+     * @param symbolizer contain color Map.
+     * @return The same coverage as input if style do not require an ARGB data to properly render, or a new ARGB coverage
+     * computed from source data.
+     */
+    @Override
+    protected final GridCoverage2D prepareCoverageToResampling(final GridCoverage2D source, final CachedRasterSymbolizer symbolizer) {
+        final GridSampleDimension[] dims = source.getSampleDimensions();
+        final ColorMap cMap = symbolizer.getSource().getColorMap();
+        if ((cMap != null && cMap.getFunction() != null) ||
+            (dims != null && dims.length != 0 && dims[0].getNoDataValues() != null) ||
+            source.getViewTypes().contains(ViewType.GEOPHYSICS)) {
+            return source;
+
+        } else {
+            final GridCoverage2D photoCvg = source.view(ViewType.PHOTOGRAPHIC);
+            RenderedImage img = photoCvg.getRenderedImage();
+            final int datatype = img.getSampleModel().getDataType();
+            if (datatype != DataBuffer.TYPE_BYTE) return source;
+            //-- RGB -> ARGB
+            RenderedImage imga = GO2Utilities.forceAlpha(img);
+
+            if (imga != img) {
+                final GridCoverageBuilder gcb = new GridCoverageBuilder();
+                gcb.setName("temp");
+                gcb.setGridGeometry(source.getGridGeometry());
+                gcb.setRenderedImage(imga);
+                return gcb.getGridCoverage2D();
+            } else {
+                return source;
+            }
+        }
+    }
+
+    /**
      * Apply style on current coverage.<br><br>
      *
      * Style application follow way given by

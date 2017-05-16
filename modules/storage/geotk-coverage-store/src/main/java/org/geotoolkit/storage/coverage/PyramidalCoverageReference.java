@@ -150,9 +150,25 @@ public interface PyramidalCoverageReference extends CoverageReference{
      * @return created mosaic
      * @throws DataStoreException
      */
+    @Deprecated
     GridMosaic createMosaic(String pyramidId, Dimension gridSize,
              Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException;
 
+
+    /**
+     * Create {@link GridMosaic} .
+     *
+     * @param pyramidId : pyramid id in which to insert the mosaic
+     * @param gridSize : size in number of column and row
+     * @param tilePixelSize : size of a tile in pixel
+     * @param dataPixelSize : size of the data pixel, written into tile mosaic space.
+     * @param upperleft : upperleft corner position in pyramid crs
+     * @param pixelscale : size of a pixel in crs unit
+     * @return created mosaic
+     * @throws DataStoreException
+     */
+    GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize,
+            Dimension dataPixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException;
     /**
      * Delete given mosaic.
      *

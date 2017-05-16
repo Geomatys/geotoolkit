@@ -124,13 +124,15 @@ public interface GridMosaic {
     BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException;
 
     /**
-     * Method to optimize mosaic browsing by returning a {@link java.awt.Rectangle} of where data are.
-     * This rectangle can contain all grid or a part of it, but it shouldn't never exceed grid size.
-     * It can also be {@code null} if mosaic is empty.
+     * Returns Extent of written data into mosaic tile.<br>
+     * If extent is not known by mosaic implementation, this method browse all
+     * mosaic grid to returning a {@link java.awt.Rectangle} of where data are.<br>
+     * Rectangle represente area exprimate in <strong>pixels</strong> grid coordinate.<br>
+     * May return {@code null} if mosaic is empty.
      *
      * @return {@link java.awt.Rectangle} of data area or null if all
      * tiles of the mosaic are missing.
      */
-    Rectangle getDataArea();
+    Rectangle getDataExtent();
 
 }
