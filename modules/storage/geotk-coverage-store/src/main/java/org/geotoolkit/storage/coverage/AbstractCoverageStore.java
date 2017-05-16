@@ -28,10 +28,19 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
+import org.apache.sis.util.collection.TreeTable;
 import org.apache.sis.util.collection.TreeTable.Node;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DataStore;
@@ -42,8 +51,12 @@ import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.util.GenericName;
 import org.opengis.metadata.Metadata;
+import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.metadata.extent.Extent;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Abstract implementation of a coverage store.
@@ -52,7 +65,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public abstract class AbstractCoverageStore extends DataStore implements CoverageStore {
-
 
     protected static final String NO_NAMESPACE = "no namespace";
 
@@ -91,9 +103,126 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         });
     }
 
+    /**
+     * Create a new metadata containing information about this datastore and the
+     * coverages it contains.
+     *
+     * Note : Analysis should be restricted to report only information currently
+     * available in this dataset. Further computing should be performed externally.
+     *
+     * Note 2 : You can decide how extents are stored in the metadata by overriding
+     * solely {@link #setSpatialInfo(java.util.Map) } only.
+     *
+     * @return Created metadata, Can be null if no data is available at the
+     * moment.
+     *
+     * @throws DataStoreException If an error occurs while analyzing underlying
+     * data.
+     */
     @Override
-    public Metadata getMetadata() throws DataStoreException {
-        return null;
+    protected Metadata createMetadata() throws DataStoreException {
+        final DataNode root = getRootNode();
+        if (root == null) {
+            return null;
+        }
+
+        final DefaultMetadata rootMd = new DefaultMetadata();
+
+        // Queries data specific information
+        final Map<GenericName, GeneralGridGeometry> geometries = new HashMap<>();
+        final List<CoverageReference> refs = flattenSubTree(root)
+                .filter(node -> node instanceof CoverageReference)
+                .map(node -> ((CoverageReference) node))
+                .collect(Collectors.toList());
+
+        for (final CoverageReference ref : refs) {
+            final GridCoverageReader reader = ref.acquireReader();
+            final SpatialMetadata md;
+            final GeneralGridGeometry gg;
+            try {
+                md = reader.getCoverageMetadata(ref.getImageIndex());
+                gg = reader.getGridGeometry(ref.getImageIndex());
+                ref.recycle(reader);
+            } catch (Exception e) {
+                // If something turned wrong, we definitively get rid of the reader.
+                reader.dispose();
+                throw e;
+            }
+
+            if (gg != null) {
+                geometries.put(ref.getName(), gg);
+            }
+
+            if (md != null) {
+                final CoverageDescription cd = md.getInstanceForType(CoverageDescription.class); // ImageDescription
+                if (cd != null)
+                    rootMd.getContentInfo().add(cd);
+            }
+        }
+
+        setSpatialInfo(rootMd, geometries);
+
+        return rootMd;
+    }
+
+    /**
+     * Compute extents to set in store's metadata. This analysis is separated in
+     * a method so inheriting stores will be able to customize it easily.
+     * This method is needed because geographic information could be read differently
+     * according to its structure. Example :
+     * - If the metadata represents two distinct data, we should have two distinct
+     * extents
+     * - If the metadata describes an non-continuous data cube, we should have a
+     * single extent which contains multiple disjoint geographic/temporal/elevation
+     * extents.
+     *
+     * Note : Default algorithm is really simple. We put all envelopes in a simple
+     * extent, which will directly contain the list of geographic, temporal and
+     * vertical extents for each reference.
+     *
+     * We'll also add all reference systems found in the input grid geometries if
+     * they're not here already.
+     *
+     * @param md The metadata to update
+     * @param geometries The grid geometries of each store's reference, grouped
+     * by reference name.
+     */
+    protected void setSpatialInfo(final Metadata md, final Map<GenericName, GeneralGridGeometry> geometries) {
+        if (geometries == null || geometries.isEmpty())
+            return;
+
+        // HACk : create temporary sets to automatically remove doublon extents.
+        final DefaultExtent extent = new DefaultExtent() {
+            @Override
+            protected <E> Class<? extends Collection<E>> collectionType(Class<E> elementType) {
+                if (Extent.class.isAssignableFrom(elementType))
+                    return (Class) Set.class;
+                return super.collectionType(elementType);
+            }
+        };
+
+        final Set<CoordinateReferenceSystem> crss = new HashSet<>();
+        geometries.forEach((name, gg) -> {
+            try {
+                extent.addElements(gg.getEnvelope());
+            } catch (TransformException ex) {
+                LOGGER.log(Level.WARNING, "Extent cannot be computed for reference " + name, ex);
+            }
+
+            crss.add(gg.getCoordinateReferenceSystem());
+        });
+
+        /* Hack : copy original extents, so allocated sets are transformed into
+         * lists. It is necessary, so if someone modifies an inner extent, the set
+         * uniquenes won't be messed.
+         */
+        final DefaultDataIdentification ddi = new DefaultDataIdentification();
+        ddi.getExtents().add(new DefaultExtent(extent));
+        ((Collection)md.getIdentificationInfo()).add(ddi);
+
+        // Ensure we'll have no doublon
+        crss.removeAll(md.getReferenceSystemInfo());
+        md.getReferenceSystemInfo().addAll((Collection)crss);
     }
 
     @Override
@@ -375,4 +504,23 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         sendContentEvent(event.copy(this));
     }
 
+    /**
+     * Send back a list of all nodes in a tree. Nodes are ordered by depth-first
+     * encounter order.
+     *
+     * @param root Node to start flattening from. It will be included in result.
+     * @return A list of all nodes under given root.
+     * @throws NullPointerException If input node is null.
+     */
+    public static Stream<? extends TreeTable.Node> flattenSubTree(final TreeTable.Node root) throws NullPointerException {
+        final Stream<TreeTable.Node> nodeStream = Stream.of(root);
+        if (root.isLeaf() || root.getChildren() == null || root.getChildren().isEmpty())
+            return nodeStream;
+        else
+            return Stream.concat(
+                    nodeStream,
+                    root.getChildren().stream()
+                            .flatMap(AbstractCoverageStore::flattenSubTree)
+            );
+    }
 }

@@ -19,16 +19,19 @@
 package org.geotoolkit.data.memory;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import junit.framework.TestCase;
 import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.feature.builder.AttributeRole;
@@ -57,6 +60,14 @@ import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
+import org.junit.Assert;
+import org.opengis.metadata.Metadata;
+import org.opengis.metadata.content.FeatureCatalogueDescription;
+import org.opengis.referencing.ReferenceSystem;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.crs.ProjectedCRS;
 
 /**
  *
@@ -814,4 +825,50 @@ public class MemoryDatastoreTest extends TestCase{
 
     }
 
+    @Test
+    public static void testMetadata() throws DataStoreException {
+        final ProjectedCRS utmMontpellier = CommonCRS.NAD27.universal(43.61, 3.88);
+
+        FeatureTypeBuilder builder = new FeatureTypeBuilder();
+        builder.setName("first");
+        builder.addAttribute(Geometry.class)
+                .setName("geometry")
+                .setCRS(utmMontpellier)
+                .addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final FeatureType firstType = builder.build();
+
+        final GeographicCRS defaultGeographic = CommonCRS.defaultGeographic();
+
+        builder = new FeatureTypeBuilder();
+        builder.setName("second");
+        builder.addAttribute(Geometry.class)
+                .setName("geometry")
+                .setCRS(defaultGeographic)
+                .addRole(AttributeRole.DEFAULT_GEOMETRY);
+        builder.build();
+        final FeatureType secondType = builder.build();
+
+        final MemoryFeatureStore store = new MemoryFeatureStore();
+        store.createFeatureType(firstType);
+        store.createFeatureType(secondType);
+
+        final Metadata md = store.getMetadata();
+        // Check reference systems
+        final Collection<? extends ReferenceSystem> crss = md.getReferenceSystemInfo();
+        Assert.assertEquals("Metadata should only reference both store CRSs.", 2, crss.size());
+        List<CoordinateReferenceSystem> expectedSystems = Arrays.asList(utmMontpellier, defaultGeographic);
+        Assert.assertTrue("First referenced CRS cannot be found in metadata", crss.containsAll(expectedSystems));
+
+        // Check type names
+        Set<GenericName> names = md.getContentInfo().stream()
+                .filter(info -> info instanceof FeatureCatalogueDescription)
+                .map(info -> (FeatureCatalogueDescription) info)
+                .flatMap(catalogue -> catalogue.getFeatureTypeInfo().stream())
+                .map(typeInfo -> typeInfo.getFeatureTypeName())
+                .collect(Collectors.toSet());
+
+        Assert.assertEquals("Metadata should only reference both stored types.", 2, names.size());
+        final List<GenericName> expectedNames = Arrays.asList(firstType.getName(), secondType.getName());
+        Assert.assertTrue("First referenced CRS cannot be found in metadata", names.containsAll(expectedNames));
+    }
 }

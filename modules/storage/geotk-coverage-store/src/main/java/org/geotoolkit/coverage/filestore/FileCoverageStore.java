@@ -30,6 +30,7 @@ import java.util.logging.LogRecord;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
+import org.apache.sis.metadata.iso.DefaultMetadata;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.nio.IOUtilities;
@@ -40,12 +41,14 @@ import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DefaultDataNode;
+import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -305,5 +308,20 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
     @Override
     public Path[] getDataFiles() throws DataStoreException {
         return new Path[] {root};
+    }
+
+    /**
+     * {@inheritDoc }
+     * Note : add source file location in metadata.
+     */
+    @Override
+    protected Metadata createMetadata() throws DataStoreException {
+        Metadata md = super.createMetadata();
+        if (md == null)
+            md = new DefaultMetadata();
+
+        MetadataUtilities.addOnlineResource(md, rootPath);
+
+        return md;
     }
 }
