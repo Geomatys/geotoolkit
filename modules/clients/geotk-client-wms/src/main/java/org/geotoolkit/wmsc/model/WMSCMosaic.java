@@ -27,6 +27,7 @@ import org.geotoolkit.storage.coverage.TileReference;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.wms.xml.v111.BoundingBox;
+import org.geotoolkit.wmsc.xml.v111.TileSet;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
@@ -144,7 +145,8 @@ public class WMSCMosaic implements GridMosaic{
     }
 
     @Override
-    public Rectangle getDataArea() {
-        return new Rectangle(0,0, gridSize.width, gridSize.height);
+    public Rectangle getDataExtent() {
+        TileSet tileset = pyramid.getTileset();
+        return new Rectangle(0,0, gridSize.width * tileset.getWidth() , gridSize.height * tileset.getHeight());
     }
 }

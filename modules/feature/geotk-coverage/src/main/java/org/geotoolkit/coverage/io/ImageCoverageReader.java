@@ -981,8 +981,23 @@ public class ImageCoverageReader extends GridCoverageReader {
              * because the MosaicImageReader may have changed the subsampling to more
              * efficient values if it was authorized to make such change.
              */
-            imageParam.setSourceBands(srcBands);
-            imageParam.setDestinationBands(dstBands);
+            if (srcBands != null) {
+                //-- TODO : implement into image tiff reader source and dest band.
+                //-- particulaity case for tiff image reader which does not support setbands indexes.
+                try {
+                    imageParam.setSourceBands(srcBands);
+                } catch(UnsupportedOperationException ex) {
+                    LOGGER.log(Level.WARNING, ex.getMessage()+"Read coverage without set any source bands.");
+                }
+            }
+
+            if (dstBands != null) {
+                try {
+                    imageParam.setDestinationBands(dstBands);
+                } catch(UnsupportedOperationException ex) {
+                    LOGGER.log(Level.WARNING, ex.getMessage()+"Read coverage without set any destination bands.");
+                }
+            }
         } else {
             srcBands = null;
             dstBands = null;

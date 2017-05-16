@@ -174,7 +174,8 @@ public class WMTSMosaic implements GridMosaic{
     }
 
     @Override
-    public Rectangle getDataArea() {
-        return new Rectangle(0,0, getGridSize().width, getGridSize().height);
+    public Rectangle getDataExtent() {
+        Dimension tileSize = getTileSize();
+        return new Rectangle(0,0, getGridSize().width * tileSize.width, getGridSize().height * tileSize.height);
     }
 }
