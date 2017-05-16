@@ -33,9 +33,9 @@ import org.w3c.dom.Element;
 
 /**
  * <p>Java class for EndpointReferenceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="EndpointReferenceType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EndpointReferenceType", propOrder = {
@@ -76,11 +76,11 @@ public class EndpointReferenceType {
 
     /**
      * Gets the value of the address property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AttributedURIType }
-     *     
+     *
      */
     public AttributedURIType getAddress() {
         return address;
@@ -88,11 +88,11 @@ public class EndpointReferenceType {
 
     /**
      * Sets the value of the address property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AttributedURIType }
-     *     
+     *
      */
     public void setAddress(AttributedURIType value) {
         this.address = value;
@@ -100,11 +100,11 @@ public class EndpointReferenceType {
 
     /**
      * Gets the value of the referenceParameters property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceParametersType }
-     *     
+     *
      */
     public ReferenceParametersType getReferenceParameters() {
         return referenceParameters;
@@ -112,11 +112,11 @@ public class EndpointReferenceType {
 
     /**
      * Sets the value of the referenceParameters property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceParametersType }
-     *     
+     *
      */
     public void setReferenceParameters(ReferenceParametersType value) {
         this.referenceParameters = value;
@@ -124,11 +124,11 @@ public class EndpointReferenceType {
 
     /**
      * Gets the value of the metadata property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MetadataType }
-     *     
+     *
      */
     public MetadataType getMetadata() {
         return metadata;
@@ -136,11 +136,11 @@ public class EndpointReferenceType {
 
     /**
      * Sets the value of the metadata property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MetadataType }
-     *     
+     *
      */
     public void setMetadata(MetadataType value) {
         this.metadata = value;
@@ -148,26 +148,26 @@ public class EndpointReferenceType {
 
     /**
      * Gets the value of the any property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the any property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAny().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Element }
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getAny() {
         if (any == null) {
@@ -178,15 +178,15 @@ public class EndpointReferenceType {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * <p>
-     * the map is keyed by the name of the attribute and 
+     * the map is keyed by the name of the attribute and
      * the value is the string value of the attribute.
-     * 
+     *
      * the map returned by this method is live, and you can add new attribute
      * by updating the map directly. Because of this design, there's no setter.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */

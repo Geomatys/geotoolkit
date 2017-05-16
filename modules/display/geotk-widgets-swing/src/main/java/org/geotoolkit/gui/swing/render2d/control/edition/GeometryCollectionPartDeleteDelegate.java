@@ -32,7 +32,7 @@ import org.opengis.feature.Feature;
 
 /**
  * Edition tool to remove geometry parts in geometry collections.
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -50,7 +50,7 @@ public class GeometryCollectionPartDeleteDelegate extends AbstractFeatureEdition
         geometry = null;
         decoration.setGeometries(null);
     }
-    
+
     private void setCurrentFeature(final Feature feature){
         this.feature = feature;
         if(feature != null){

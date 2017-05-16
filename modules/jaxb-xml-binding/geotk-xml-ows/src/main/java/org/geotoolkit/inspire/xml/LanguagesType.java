@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * List of languages defined by a 3-letter code as described in ISO 639-2 that are supported by this service instance.
- * 
+ *
  * <p>Java class for LanguagesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LanguagesType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,7 +59,7 @@ public class LanguagesType {
     public LanguagesType() {
 
     }
-    
+
     public LanguagesType(final LanguagesType that) {
         if (that != null && that.language != null) {
             this.language = new ArrayList<String>(that.language);

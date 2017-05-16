@@ -29,12 +29,12 @@ import org.opengis.parameter.GeneralParameterDescriptor;
  * @author Quentin Boileau (Geomatys)
  */
 public abstract class GeneralParameterValuePanel extends JPanel implements PropertyChangeListener, MouseListener, Comparable<GeneralParameterValuePanel> {
-    
+
     /*
      * Common parameters properties.
      */
     protected final String code;
-    
+
     protected boolean selected = false;
     protected GeneralParameterDescriptor paramDesc;
     protected String validationError = null;
@@ -42,7 +42,7 @@ public abstract class GeneralParameterValuePanel extends JPanel implements Prope
      * Parent parameter group.
      */
     private JParameterValueGroupPanel parent;
-    
+
     protected GeneralParameterValuePanel(final GeneralParameterDescriptor paramDesc, final JParameterValueGroupPanel parent) {
         this.parent = parent;
         this.paramDesc = paramDesc;
@@ -51,7 +51,7 @@ public abstract class GeneralParameterValuePanel extends JPanel implements Prope
 
     /**
      * Get parameter <code>code</code>
-     * @return 
+     * @return
      */
     public String getCode() {
         return code;
@@ -65,8 +65,8 @@ public abstract class GeneralParameterValuePanel extends JPanel implements Prope
      * Set if a GeneralParameterValuePanel is selected.
      * This method also firePropertyChange event {@link JParameterValuesEditor#PARAMETER_SELECTED_EVENT}
      * and change panel background color.
-     * 
-     * @param selected 
+     *
+     * @param selected
      */
     public void setSelected(boolean selected) {
         this.selected = selected;
@@ -77,43 +77,43 @@ public abstract class GeneralParameterValuePanel extends JPanel implements Prope
             this.setBackgroundColor(UIManager.getColor("Label.background"));
         }
     }
-    
+
     /**
      * Return parent JParameterValueGroupPanel of current GeneralParameterValuePanel.
      * Can return null in case of current parameter is the root JParameterValueGroupPanel.
-     * 
+     *
      * @return JParameterValueGroupPanel parent or null if root.
      */
     public JParameterValueGroupPanel getParentPanel(){
         return parent;
     }
-    
+
     /**
      * Compute and return current panel ParameterDescriptor.
-     * 
+     *
      * @return GeneralParameterDescriptor
      */
     public GeneralParameterDescriptor getDescriptor() {
         return paramDesc;
     }
-    
+
     /**
      * Method called to update parameter component panel.
      */
     public abstract void updateContent();
-    
+
     /**
      * Set GeneralParameterValuePanel background color.
-     * 
-     * @param color 
+     *
+     * @param color
      */
     public abstract void setBackgroundColor(final Color color);
-    
-    
+
+
     /**
      * Mouse events when a parameter is clicked.
      */
-    
+
     @Override
     public void mouseClicked(MouseEvent e) {
         setSelected(true);
@@ -138,9 +138,9 @@ public abstract class GeneralParameterValuePanel extends JPanel implements Prope
     /**
      * Use to sort Parameter in a JParameterValueGroupPanel.
      * This sort parameters in alphabetical order using there code attribute.
-     * 
+     *
      * @param o
-     * @return 
+     * @return
      */
     @Override
     public int compareTo(final GeneralParameterValuePanel o) {

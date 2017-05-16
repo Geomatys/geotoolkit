@@ -29,9 +29,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for MultiSolidType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MultiSolidType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiSolidType", propOrder = {
@@ -61,11 +61,11 @@ public class MultiSolidType extends AbstractGeometricAggregateType
 
     /**
      * Gets the value of the solidMember property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link SolidPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<SolidPropertyType> getSolidMember() {
         if (solidMember == null) {
@@ -76,11 +76,11 @@ public class MultiSolidType extends AbstractGeometricAggregateType
 
     /**
      * Gets the value of the solidMembers property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SolidArrayPropertyType }
-     *     
+     *
      */
     public SolidArrayPropertyType getSolidMembers() {
         return solidMembers;
@@ -88,11 +88,11 @@ public class MultiSolidType extends AbstractGeometricAggregateType
 
     /**
      * Sets the value of the solidMembers property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SolidArrayPropertyType }
-     *     
+     *
      */
     public void setSolidMembers(SolidArrayPropertyType value) {
         this.solidMembers = value;

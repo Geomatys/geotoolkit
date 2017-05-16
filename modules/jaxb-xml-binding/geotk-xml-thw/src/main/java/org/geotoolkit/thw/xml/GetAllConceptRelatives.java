@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for getAllConceptRelatives complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="getAllConceptRelatives">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getAllConceptRelatives", propOrder = {
@@ -81,14 +81,14 @@ public class GetAllConceptRelatives {
             this.thesaurus = thesaurus.toString();
         }
     }
-    
+
     /**
      * Gets the value of the concept property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getConcept() {
         return concept;
@@ -96,11 +96,11 @@ public class GetAllConceptRelatives {
 
     /**
      * Sets the value of the concept property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setConcept(String value) {
         this.concept = value;
@@ -108,11 +108,11 @@ public class GetAllConceptRelatives {
 
     /**
      * Gets the value of the thesaurus property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getThesaurus() {
         return thesaurus;
@@ -120,11 +120,11 @@ public class GetAllConceptRelatives {
 
     /**
      * Sets the value of the thesaurus property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setThesaurus(String value) {
         this.thesaurus = value;
@@ -132,11 +132,11 @@ public class GetAllConceptRelatives {
 
     /**
      * Gets the value of the relation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRelation() {
         return relation;
@@ -144,11 +144,11 @@ public class GetAllConceptRelatives {
 
     /**
      * Sets the value of the relation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRelation(String value) {
         this.relation = value;

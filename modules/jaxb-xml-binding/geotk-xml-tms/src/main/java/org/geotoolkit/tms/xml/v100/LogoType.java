@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for LogoType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LogoType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LogoType")
@@ -57,11 +57,11 @@ public class LogoType {
 
     /**
      * Gets the value of the width property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getWidth() {
         return width;
@@ -69,11 +69,11 @@ public class LogoType {
 
     /**
      * Sets the value of the width property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setWidth(Integer value) {
         this.width = value;
@@ -81,11 +81,11 @@ public class LogoType {
 
     /**
      * Gets the value of the height property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getHeight() {
         return height;
@@ -93,11 +93,11 @@ public class LogoType {
 
     /**
      * Sets the value of the height property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setHeight(Integer value) {
         this.height = value;
@@ -105,11 +105,11 @@ public class LogoType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -117,11 +117,11 @@ public class LogoType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -129,11 +129,11 @@ public class LogoType {
 
     /**
      * Gets the value of the mimeType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMimeType() {
         return mimeType;
@@ -141,11 +141,11 @@ public class LogoType {
 
     /**
      * Sets the value of the mimeType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMimeType(String value) {
         this.mimeType = value;

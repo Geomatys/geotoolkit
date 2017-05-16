@@ -32,7 +32,7 @@ public class DefaultLatLonAltBox extends DefaultAbstractLatLonBox implements Lat
     private AltitudeMode altitudeMode;
 
     /**
-     * 
+     *
      */
     public DefaultLatLonAltBox() {
         this.minAltitude = DEF_MIN_ALTITUDE;
@@ -41,7 +41,7 @@ public class DefaultLatLonAltBox extends DefaultAbstractLatLonBox implements Lat
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param north

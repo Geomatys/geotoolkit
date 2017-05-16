@@ -94,7 +94,7 @@ public class Histogram {
                 final double span = getBucketSize();
                 final double bucketStart = start+i*span;
                 final double bucketEnd = start+(i+1)*span;
-                
+
                 ratio = 1.0 - (((double)buckets[i]-remain) / (double)buckets[i]);
 
                 return bucketStart + (bucketEnd-bucketStart) * ratio;

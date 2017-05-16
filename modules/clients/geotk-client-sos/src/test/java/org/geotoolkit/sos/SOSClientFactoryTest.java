@@ -29,7 +29,7 @@ import static org.junit.Assert.fail;
  * @module
  */
 public class SOSClientFactoryTest extends org.geotoolkit.test.TestBase {
-    
+
     public SOSClientFactoryTest() {
     }
 

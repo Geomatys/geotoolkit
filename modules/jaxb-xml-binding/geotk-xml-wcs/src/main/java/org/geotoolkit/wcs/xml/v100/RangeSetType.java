@@ -27,12 +27,12 @@ import java.util.List;
 
 
 /**
- * Defines the properties (categories, measures, or values) assigned to each location in the domain. Any such property may be a scalar (numeric or text) value, such as population density, or a compound (vector or tensor) value, such as incomes by race, or radiances by wavelength. The semantic of the range set is typically an observable and is referenced by a URI. A rangeSet also has a reference system that is reffered by the URI in the refSys attribute. The refSys is either qualitative (classification) or quantitative (uom). The three attributes can be included either here and in each axisDescription. If included in both places, the values in the axisDescription over-ride those included in the RangeSet. 
- * 
+ * Defines the properties (categories, measures, or values) assigned to each location in the domain. Any such property may be a scalar (numeric or text) value, such as population density, or a compound (vector or tensor) value, such as incomes by race, or radiances by wavelength. The semantic of the range set is typically an observable and is referenced by a URI. A rangeSet also has a reference system that is reffered by the URI in the refSys attribute. The refSys is either qualitative (classification) or quantitative (uom). The three attributes can be included either here and in each axisDescription. If included in both places, the values in the axisDescription over-ride those included in the RangeSet.
+ *
  * <p>Java class for RangeSetType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RangeSetType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * @author Guilhem Legal 
+ *
+ * @author Guilhem Legal
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -90,7 +90,7 @@ public class RangeSetType extends AbstractDescriptionType {
         this.refSysLabel = refSysLabel;
         this.axisDescription = axisDescription;
     }
-    
+
     /**
      * Gets the value of the semantic property.
      */
@@ -100,7 +100,7 @@ public class RangeSetType extends AbstractDescriptionType {
 
     /**
      * Gets the value of the refSys property.
-     * 
+     *
      */
     public String getRefSys() {
         return refSys;

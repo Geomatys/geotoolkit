@@ -53,7 +53,7 @@ public class OMXmlFactory {
             throw new IllegalArgumentException("unexpected O&M version number:" + version);
         }
     }
-    
+
     private static AbstractObservation convertTo100(final Observation observation) {
         final String name = (observation.getName() != null) ? observation.getName().getCode() : "";
         final String definition = observation.getDefinition();
@@ -92,7 +92,7 @@ public class OMXmlFactory {
             phenId = phenomenonName;
         }
         final org.geotoolkit.swe.xml.v101.PhenomenonType observedProperty = new PhenomenonType(phenId, phenomenonName);
-        
+
         final org.geotoolkit.sampling.xml.v100.SamplingFeatureType sf = (org.geotoolkit.sampling.xml.v100.SamplingFeatureType)convertTo100((SamplingFeature)observation.getFeatureOfInterest());
         final Object result;
         if (observation.getResult() instanceof org.geotoolkit.swe.xml.v200.DataArrayPropertyType) {
@@ -103,34 +103,34 @@ public class OMXmlFactory {
             final String id = resultv200.getDataArray().getId();
             final org.geotoolkit.swe.xml.v101.TextBlockType enc = new org.geotoolkit.swe.xml.v101.TextBlockType(encodingV200.getId(), encodingV200.getDecimalSeparator(), encodingV200.getTokenSeparator(), encodingV200.getBlockSeparator());
             final String values = resultv200.getDataArray().getValues();
-            
+
             final org.geotoolkit.swe.xml.v200.DataRecordType recordv200 =  (org.geotoolkit.swe.xml.v200.DataRecordType) resultv200.getDataArray().getElementType().getAbstractRecord();
             final List<org.geotoolkit.swe.xml.v101.AnyScalarPropertyType> fields = new ArrayList<org.geotoolkit.swe.xml.v101.AnyScalarPropertyType>();
             for (org.geotoolkit.swe.xml.v200.Field scalar : recordv200.getField()) {
                 fields.add(new org.geotoolkit.swe.xml.v101.AnyScalarPropertyType(scalar));
             }
-            final org.geotoolkit.swe.xml.v101.SimpleDataRecordType record = new org.geotoolkit.swe.xml.v101.SimpleDataRecordType(null, 
-                                                                                                                                 recordv200.getId(), 
+            final org.geotoolkit.swe.xml.v101.SimpleDataRecordType record = new org.geotoolkit.swe.xml.v101.SimpleDataRecordType(null,
+                                                                                                                                 recordv200.getId(),
                                                                                                                                  recordv200.getDefinition(),
                                                                                                                                  recordv200.isFixed(),
                                                                                                                                  fields);
-                    
+
             final org.geotoolkit.swe.xml.v101.DataArrayType array = new org.geotoolkit.swe.xml.v101.DataArrayType(id, count, null, record, enc, values);
             final org.geotoolkit.swe.xml.v101.DataArrayPropertyType resultv100 = new org.geotoolkit.swe.xml.v101.DataArrayPropertyType(array);
             result = resultv100;
         } else {
             result = observation.getResult();
         }
-        
+
         if (observation instanceof Measurement) {
             return new org.geotoolkit.observation.xml.v100.MeasurementType(name, definition, sf, observedProperty, procedure, (org.geotoolkit.observation.xml.v100.MeasureType)result, time);
         } else {
             return new org.geotoolkit.observation.xml.v100.ObservationType(name, definition, sf, observedProperty, procedure, result, time);
         }
     }
-    
+
     private static AbstractObservation convertTo200(final Observation observation) {
-       
+
         final String name = (observation.getName() != null) ? observation.getName().getCode() : "";
         final String type;
         if (observation instanceof Measurement) {
@@ -192,7 +192,7 @@ public class OMXmlFactory {
         }
         return new org.geotoolkit.observation.xml.v200.OMObservationType(null, name, type, time, procedure, observedProperty, feature, result);
     }
-    
+
     public static SamplingFeature convert(final String version, final SamplingFeature feature) {
         if (version.equals("2.0.0")) {
             if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingFeatureType) {
@@ -210,7 +210,7 @@ public class OMXmlFactory {
             throw new IllegalArgumentException("unexpected O&M version number:" + version);
         }
     }
-    
+
     private static SamplingFeature convertTo100(final SamplingFeature feature) {
         final org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType feature200 = (org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType) feature;
         final String f200Name = (feature200.getName() != null) ? feature200.getName().getCode() : "";
@@ -231,7 +231,7 @@ public class OMXmlFactory {
             return new org.geotoolkit.sampling.xml.v100.SamplingPointType(feature200.getId(), f200Name, feature200.getDescription(),
                     fp, pt);
         } else if (feature200.getType().getHref().equals("http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve")) {
-            
+
             final org.geotoolkit.gml.xml.v311.LineStringType pt;
             if (feature200.getGeometry() != null && feature200.getGeometry() instanceof org.geotoolkit.gml.xml.v321.LineStringType) {
                 final org.geotoolkit.gml.xml.v321.LineStringType line321 = (org.geotoolkit.gml.xml.v321.LineStringType)feature200.getGeometry();
@@ -245,16 +245,16 @@ public class OMXmlFactory {
                 pt = null;
             }
             final org.geotoolkit.gml.xml.v311.EnvelopeType env = new org.geotoolkit.gml.xml.v311.EnvelopeType(feature200.getBoundedBy().getEnvelope());
-            return new org.geotoolkit.sampling.xml.v100.SamplingCurveType(feature200.getId(), f200Name, feature200.getDescription(), 
+            return new org.geotoolkit.sampling.xml.v100.SamplingCurveType(feature200.getId(), f200Name, feature200.getDescription(),
                     fp, new org.geotoolkit.gml.xml.v311.CurvePropertyType(pt), null, env);
         } else if (feature instanceof org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType) {
-            
+
             return new org.geotoolkit.sampling.xml.v100.SamplingFeatureType(feature200.getId(), f200Name, feature200.getDescription(), fp);
         } else {
             throw new IllegalArgumentException("unexpected feature type.");
         }
     }
-    
+
     private static SamplingFeature convertTo200(final SamplingFeature feature) {
         if (feature instanceof  org.geotoolkit.sampling.xml.v100.SamplingPointType) {
             final org.geotoolkit.sampling.xml.v100.SamplingPointType sp = (org.geotoolkit.sampling.xml.v100.SamplingPointType) feature;
@@ -295,7 +295,7 @@ public class OMXmlFactory {
                 pt = null;
             }
             final org.geotoolkit.gml.xml.v321.EnvelopeType env = new org.geotoolkit.gml.xml.v321.EnvelopeType(sp.getBoundedBy().getEnvelope());
-            return new org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType(sp.getId(),((sp.getName() != null)?sp.getName().getCode():""), sp.getDescription(), 
+            return new org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType(sp.getId(),((sp.getName() != null)?sp.getName().getCode():""), sp.getDescription(),
                     "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve", fp, pt, env);
         } else if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingFeatureType) {
             final org.geotoolkit.sampling.xml.v100.SamplingFeatureType sp = (org.geotoolkit.sampling.xml.v100.SamplingFeatureType) feature;
@@ -306,13 +306,13 @@ public class OMXmlFactory {
             } else {
                 fp = null;
             }
-            return new org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType(sp.getId(), spName, sp.getDescription(), 
+            return new org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType(sp.getId(), spName, sp.getDescription(),
                     "http://www.opengis.net/def/samplingFeatureType/OGC-OM/SF_SamplingFeature", fp, null);
         } else {
             throw new IllegalArgumentException("unexpected feature type.");
         }
     }
-    
+
     public static org.geotoolkit.swe.xml.v200.AbstractDataComponentType convert(org.geotoolkit.swe.xml.v101.AbstractDataComponentType data) {
         if (data instanceof org.geotoolkit.swe.xml.v101.BooleanType) {
             final org.geotoolkit.swe.xml.v101.BooleanType old = (org.geotoolkit.swe.xml.v101.BooleanType)data;
@@ -352,7 +352,7 @@ public class OMXmlFactory {
             throw new IllegalArgumentException("Unexpected data component type:" + data);
         }
     }
-    
+
     public static FeatureProperty buildFeatureProperty(final String version, final SamplingFeature feature) {
         if ("1.0.0".equals(version)) {
             final org.geotoolkit.sampling.xml.v100.ObjectFactory samplingFactory = new org.geotoolkit.sampling.xml.v100.ObjectFactory();
@@ -376,7 +376,7 @@ public class OMXmlFactory {
                 return new org.geotoolkit.gml.xml.v321.FeaturePropertyType(spatialFactory.createSFSpatialSamplingFeature((org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType)feature));
              } else if (feature instanceof org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType) {
                  return new org.geotoolkit.gml.xml.v321.FeaturePropertyType(samplingFactory.createSFSamplingFeature((org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType)feature));
-             } else if (feature != null) { 
+             } else if (feature != null) {
                 throw new IllegalArgumentException("unexpected object version");
              }
         } else {
@@ -384,7 +384,7 @@ public class OMXmlFactory {
         }
         return null;
     }
-    
+
     public static AbstractObservation buildObservation(final String version, final String id, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
             final String procedure, final Object result, final TemporalGeometricPrimitive time) {
         if ("1.0.0".equals(version)) {
@@ -397,12 +397,12 @@ public class OMXmlFactory {
             if (time != null && !(time instanceof org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType)) {
                 throw new IllegalArgumentException("unexpected object version for time element");
             }
-            return new org.geotoolkit.observation.xml.v100.ObservationType(name, 
-                                                                           definition, 
+            return new org.geotoolkit.observation.xml.v100.ObservationType(name,
+                                                                           definition,
                                                                            (org.geotoolkit.gml.xml.v311.FeaturePropertyType)sampledFeature,
-                                                                           (org.geotoolkit.swe.xml.v101.PhenomenonType)phen, 
-                                                                           procedure , 
-                                                                           result, 
+                                                                           (org.geotoolkit.swe.xml.v101.PhenomenonType)phen,
+                                                                           procedure ,
+                                                                           result,
                                                                            (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType)time);
         } else if ("2.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v321.FeaturePropertyType)) {
@@ -416,8 +416,8 @@ public class OMXmlFactory {
             }
             final String phename = (((org.geotoolkit.swe.xml.Phenomenon)phen).getName() != null)?((org.geotoolkit.swe.xml.Phenomenon)phen).getName().getCode():"";
            return new org.geotoolkit.observation.xml.v200.OMObservationType(id,
-                                                                            name, 
-                                                                            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation", 
+                                                                            name,
+                                                                            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation",
                                                                             (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType)time,
                                                                             procedure,
                                                                             phename,
@@ -427,7 +427,7 @@ public class OMXmlFactory {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
     }
-    
+
     public static AbstractObservation buildMeasurement(final String version, final String id, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
             final String procedure, final Object result, final TemporalGeometricPrimitive time) {
         if ("1.0.0".equals(version)) {
@@ -443,12 +443,12 @@ public class OMXmlFactory {
             if (result != null && !(result instanceof org.geotoolkit.observation.xml.v100.MeasureType)) {
                 throw new IllegalArgumentException("unexpected object version for result element");
             }
-            return new org.geotoolkit.observation.xml.v100.MeasurementType(name, 
-                                                                           definition, 
+            return new org.geotoolkit.observation.xml.v100.MeasurementType(name,
+                                                                           definition,
                                                                            (org.geotoolkit.gml.xml.v311.FeaturePropertyType)sampledFeature,
-                                                                           (org.geotoolkit.swe.xml.v101.PhenomenonType)phen, 
-                                                                           procedure , 
-                                                                           (org.geotoolkit.observation.xml.v100.MeasureType)result, 
+                                                                           (org.geotoolkit.swe.xml.v101.PhenomenonType)phen,
+                                                                           procedure ,
+                                                                           (org.geotoolkit.observation.xml.v100.MeasureType)result,
                                                                            (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType)time);
         } else if ("2.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v321.FeaturePropertyType)) {
@@ -466,8 +466,8 @@ public class OMXmlFactory {
             final String phename = (((org.geotoolkit.swe.xml.Phenomenon)phen).getName() != null)?((org.geotoolkit.swe.xml.Phenomenon)phen).getName().getCode():"";
 
            return new org.geotoolkit.observation.xml.v200.OMObservationType(id,
-                                                                            name, 
-                                                                            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement", 
+                                                                            name,
+                                                                            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
                                                                             (org.geotoolkit.gml.xml.v321.TimePeriodType)time,
                                                                             procedure,
                                                                             phename,
@@ -477,7 +477,7 @@ public class OMXmlFactory {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
     }
-    
+
     public static Observation cloneObervation(final String version, final Observation observation) {
         if (version.equals("1.0.0")) {
             if (observation instanceof org.geotoolkit.observation.xml.v100.MeasurementType) {

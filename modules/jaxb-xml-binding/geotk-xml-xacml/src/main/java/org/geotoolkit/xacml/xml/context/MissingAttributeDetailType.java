@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for MissingAttributeDetailType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MissingAttributeDetailType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,7 +69,7 @@ public class MissingAttributeDetailType {
 
    /**
     * Gets the value of the attributeValue property.
-    * 
+    *
     */
    public List<AttributeValueType> getAttributeValue() {
       if (attributeValue == null) {
@@ -80,7 +80,7 @@ public class MissingAttributeDetailType {
 
    /**
     * Gets the value of the attributeId property.
-    * 
+    *
     */
    public String getAttributeId() {
       return attributeId;
@@ -88,7 +88,7 @@ public class MissingAttributeDetailType {
 
    /**
     * Sets the value of the attributeId property.
-    * 
+    *
     */
    public void setAttributeId(final String value) {
       this.attributeId = value;
@@ -96,7 +96,7 @@ public class MissingAttributeDetailType {
 
    /**
     * Gets the value of the dataType property.
-    * 
+    *
     */
    public String getDataType() {
       return dataType;
@@ -104,7 +104,7 @@ public class MissingAttributeDetailType {
 
    /**
     * Sets the value of the dataType property.
-    * 
+    *
     */
    public void setDataType(final String value) {
       this.dataType = value;
@@ -112,7 +112,7 @@ public class MissingAttributeDetailType {
 
    /**
     * Gets the value of the issuer property.
-    * 
+    *
     */
    public String getIssuer() {
       return issuer;
@@ -120,7 +120,7 @@ public class MissingAttributeDetailType {
 
    /**
     * Sets the value of the issuer property.
-    * 
+    *
     */
    public void setIssuer(final String value) {
       this.issuer = value;

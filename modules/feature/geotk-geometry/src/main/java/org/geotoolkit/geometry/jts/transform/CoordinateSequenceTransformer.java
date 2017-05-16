@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
@@ -41,5 +41,5 @@ public interface CoordinateSequenceTransformer {
      * @throws TransformException if at least one coordinate can't be transformed.
      */
     public CoordinateSequence transform(CoordinateSequence sequence, int minpoints) throws TransformException;
-    
+
 }

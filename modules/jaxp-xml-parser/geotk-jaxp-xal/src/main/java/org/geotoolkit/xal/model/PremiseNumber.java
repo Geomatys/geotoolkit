@@ -97,7 +97,7 @@ public interface PremiseNumber extends GenericTypedGrPostal{
     void setIndicatorOccurrence(AfterBeforeEnum indicatorOccurrence);
 
     /**
-     * 
+     *
      * @param numberTypeOccurrence
      */
     void setNumberTypeOccurrence(AfterBeforeEnum numberTypeOccurrence);

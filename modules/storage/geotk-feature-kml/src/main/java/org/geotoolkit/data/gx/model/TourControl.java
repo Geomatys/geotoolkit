@@ -45,7 +45,7 @@ public interface TourControl extends AbstractTourPrimitive {
     EnumPlayMode getPlayMode();
 
     /**
-     * 
+     *
      * @param playMode
      */
     void setPlayMode(EnumPlayMode playMode);

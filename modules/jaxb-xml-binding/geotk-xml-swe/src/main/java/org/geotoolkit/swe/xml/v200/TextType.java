@@ -25,9 +25,9 @@ import org.geotoolkit.swe.xml.AbstractText;
 
 /**
  * <p>Java class for TextType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TextType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import org.geotoolkit.swe.xml.AbstractText;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TextType", propOrder = {
@@ -54,21 +54,21 @@ public class TextType extends AbstractSimpleComponentType implements AbstractTex
     private String value;
 
     public TextType() {
-        
+
     }
-    
+
     public TextType(final String definition, final String value) {
         super(null, definition, null);
         this.value = value;
     }
-    
+
     /**
      * Gets the value of the constraint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedTokensPropertyType }
-     *     
+     *
      */
     public AllowedTokensPropertyType getConstraint() {
         return constraint;
@@ -76,11 +76,11 @@ public class TextType extends AbstractSimpleComponentType implements AbstractTex
 
     /**
      * Sets the value of the constraint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedTokensPropertyType }
-     *     
+     *
      */
     public void setConstraint(AllowedTokensPropertyType value) {
         this.constraint = value;
@@ -88,11 +88,11 @@ public class TextType extends AbstractSimpleComponentType implements AbstractTex
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getValue() {
@@ -101,11 +101,11 @@ public class TextType extends AbstractSimpleComponentType implements AbstractTex
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(String value) {
         this.value = value;

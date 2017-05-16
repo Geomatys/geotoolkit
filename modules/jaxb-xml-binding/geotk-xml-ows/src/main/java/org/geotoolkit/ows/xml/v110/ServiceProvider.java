@@ -27,9 +27,9 @@ import org.geotoolkit.ows.xml.AbstractServiceProvider;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -43,7 +43,7 @@ import org.geotoolkit.ows.xml.AbstractServiceProvider;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  *  @author Guilhem Legal
  * @module
  */
@@ -68,7 +68,7 @@ public class ServiceProvider implements AbstractServiceProvider {
      */
     ServiceProvider(){
     }
-    
+
     /**
      * Build a new Service provider.
      */
@@ -77,7 +77,7 @@ public class ServiceProvider implements AbstractServiceProvider {
         this.providerSite   = providerSite;
         this.serviceContact = serviceContact;
     }
-    
+
     /**
      * Gets the value of the providerName property.
      */
@@ -96,7 +96,7 @@ public class ServiceProvider implements AbstractServiceProvider {
 
     /**
      * Gets the value of the serviceContact property.
-     * 
+     *
      */
     @Override
     public ResponsiblePartySubsetType getServiceContact() {
@@ -127,7 +127,7 @@ public class ServiceProvider implements AbstractServiceProvider {
         hash = 29 * hash + (this.providerName != null ? this.providerName.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();

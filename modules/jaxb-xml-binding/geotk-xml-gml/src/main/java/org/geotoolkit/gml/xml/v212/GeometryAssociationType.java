@@ -27,18 +27,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *         An instance of this type (e.g. a geometryMember) can either 
- *         enclose or point to a primitive geometry element. When serving 
- *         as a simple link that references a remote geometry instance, 
- *         the value of the gml:remoteSchema attribute can be used to 
+ *
+ *         An instance of this type (e.g. a geometryMember) can either
+ *         enclose or point to a primitive geometry element. When serving
+ *         as a simple link that references a remote geometry instance,
+ *         the value of the gml:remoteSchema attribute can be used to
  *         locate a schema fragment that constrains the target instance.
- *       
- * 
+ *
+ *
  * <p>Java class for GeometryAssociationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeometryAssociationType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -99,9 +99,9 @@ public class GeometryAssociationType {
     private String actuate;
 
     public GeometryAssociationType() {
-        
+
     }
-    
+
     public GeometryAssociationType(final GeometryAssociationType that) {
         if (that != null) {
             this.actuate      = that.actuate;
@@ -112,17 +112,17 @@ public class GeometryAssociationType {
             this.show         = that.show;
             this.title        = that.title;
             this.type         = that.type;
-            
+
             if (that.abstractGeometry != null) {
                 AbstractGeometryType geom = that.abstractGeometry.getValue().getClone();
                 this.abstractGeometry = geom.getXmlElement();
             }
         }
-    } 
-    
+    }
+
     /**
      * Gets the value of the abstractGeometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link MultiPointType }{@code >}
@@ -135,7 +135,7 @@ public class GeometryAssociationType {
      *     {@link JAXBElement }{@code <}{@link GeometryCollectionType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PointType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PolygonType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractGeometryType> getAbstractGeometry() {
         return abstractGeometry;
@@ -143,7 +143,7 @@ public class GeometryAssociationType {
 
     /**
      * Sets the value of the abstractGeometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link MultiPointType }{@code >}
@@ -156,7 +156,7 @@ public class GeometryAssociationType {
      *     {@link JAXBElement }{@code <}{@link GeometryCollectionType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PointType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PolygonType }{@code >}
-     *     
+     *
      */
     public void setAbstractGeometry(final JAXBElement<? extends AbstractGeometryType> value) {
         this.abstractGeometry = ((JAXBElement<? extends AbstractGeometryType> ) value);
@@ -164,11 +164,11 @@ public class GeometryAssociationType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -176,11 +176,11 @@ public class GeometryAssociationType {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -188,11 +188,11 @@ public class GeometryAssociationType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -204,11 +204,11 @@ public class GeometryAssociationType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -216,11 +216,11 @@ public class GeometryAssociationType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -228,11 +228,11 @@ public class GeometryAssociationType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -240,11 +240,11 @@ public class GeometryAssociationType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -252,11 +252,11 @@ public class GeometryAssociationType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -264,11 +264,11 @@ public class GeometryAssociationType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -276,11 +276,11 @@ public class GeometryAssociationType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -288,11 +288,11 @@ public class GeometryAssociationType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -300,11 +300,11 @@ public class GeometryAssociationType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -312,11 +312,11 @@ public class GeometryAssociationType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -324,11 +324,11 @@ public class GeometryAssociationType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -336,11 +336,11 @@ public class GeometryAssociationType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -348,11 +348,11 @@ public class GeometryAssociationType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;
@@ -361,7 +361,7 @@ public class GeometryAssociationType {
     public GeometryAssociationType getClone() {
         throw new UnsupportedOperationException("Must be overriden by sub-class");
     }
-    
+
     public JAXBElement<? extends GeometryAssociationType> getXmlElement() {
         final ObjectFactory factory = new ObjectFactory();
         if (this instanceof PointPropertyType) {

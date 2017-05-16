@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for RectangleType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RectangleType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RectangleType", propOrder = {
@@ -60,11 +60,11 @@ public class RectangleType
 
     /**
      * Gets the value of the exterior property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AbstractRingPropertyType }
-     *     
+     *
      */
     public AbstractRingPropertyType getExterior() {
         return exterior;
@@ -72,11 +72,11 @@ public class RectangleType
 
     /**
      * Sets the value of the exterior property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AbstractRingPropertyType }
-     *     
+     *
      */
     public void setExterior(AbstractRingPropertyType value) {
         this.exterior = value;
@@ -84,11 +84,11 @@ public class RectangleType
 
     /**
      * Gets the value of the interpolation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SurfaceInterpolationType }
-     *     
+     *
      */
     public SurfaceInterpolationType getInterpolation() {
         if (interpolation == null) {
@@ -100,11 +100,11 @@ public class RectangleType
 
     /**
      * Sets the value of the interpolation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SurfaceInterpolationType }
-     *     
+     *
      */
     public void setInterpolation(SurfaceInterpolationType value) {
         this.interpolation = value;

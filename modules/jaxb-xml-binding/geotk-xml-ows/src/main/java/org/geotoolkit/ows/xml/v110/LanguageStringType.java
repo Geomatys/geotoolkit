@@ -26,12 +26,12 @@ import org.geotoolkit.ows.xml.LanguageString;
 
 
 /**
- * Text string with the language of the string identified as recommended in the XML 1.0 W3C Recommendation, section 2.12. 
- * 
+ * Text string with the language of the string identified as recommended in the XML 1.0 W3C Recommendation, section 2.12.
+ *
  * <p>Java class for LanguageStringType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LanguageStringType">
  *   &lt;simpleContent>
@@ -41,7 +41,7 @@ import org.geotoolkit.ows.xml.LanguageString;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -61,7 +61,7 @@ public class LanguageStringType implements LanguageString {
      */
     LanguageStringType(){
     }
-    
+
     /**
      * Build a new String in the specified language.
      */
@@ -69,14 +69,14 @@ public class LanguageStringType implements LanguageString {
         this.lang  = lang;
         this.value = value;
     }
-    
+
     /**
      * Build a new String without specifying the language.
      */
     public LanguageStringType(final String value){
         this.value = value;
     }
-    
+
     /**
      * Gets the value of the value property.
      */
@@ -117,7 +117,7 @@ public class LanguageStringType implements LanguageString {
         hash = 97 * hash + (this.lang != null ? this.lang.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         return "class:LanguageStringType  value=" + value + " lang=" + lang;

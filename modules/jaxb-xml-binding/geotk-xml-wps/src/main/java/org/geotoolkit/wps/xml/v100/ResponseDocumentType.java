@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ResponseDocumentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ResponseDocumentType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,32 +62,32 @@ public class ResponseDocumentType {
     protected Boolean lineage;
     @XmlAttribute
     protected Boolean status;
-    
+
     public ResponseDocumentType() {
-        
+
     }
-    
+
     public ResponseDocumentType(Boolean storeExecuteResponse, Boolean lineage, Boolean status) {
         this.lineage = lineage;
         this.status = status;
         this.storeExecuteResponse = storeExecuteResponse;
     }
-    
+
     public ResponseDocumentType(Boolean storeExecuteResponse, Boolean lineage, Boolean status, List<DocumentOutputDefinitionType> output) {
         this.lineage = lineage;
         this.status = status;
         this.storeExecuteResponse = storeExecuteResponse;
         this.output = output;
     }
-    
+
 
     /**
      * Gets the value of the output property.
-     * 
+     *
      * @return Objects of the following type(s) are allowed in the list
      * {@link DocumentOutputDefinitionType }
-     * 
-     * 
+     *
+     *
      */
     public List<DocumentOutputDefinitionType> getOutput() {
         if (output == null) {
@@ -95,18 +95,18 @@ public class ResponseDocumentType {
         }
         return this.output;
     }
-    
+
     public void setOutput(List<DocumentOutputDefinitionType> output) {
         this.output = output;
     }
 
     /**
      * Gets the value of the storeExecuteResponse property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isStoreExecuteResponse() {
         if (storeExecuteResponse == null) {
@@ -118,11 +118,11 @@ public class ResponseDocumentType {
 
     /**
      * Sets the value of the storeExecuteResponse property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setStoreExecuteResponse(final Boolean value) {
         this.storeExecuteResponse = value;
@@ -130,11 +130,11 @@ public class ResponseDocumentType {
 
     /**
      * Gets the value of the lineage property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isLineage() {
         if (lineage == null) {
@@ -146,11 +146,11 @@ public class ResponseDocumentType {
 
     /**
      * Sets the value of the lineage property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setLineage(final Boolean value) {
         this.lineage = value;
@@ -158,11 +158,11 @@ public class ResponseDocumentType {
 
     /**
      * Gets the value of the status property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isStatus() {
         if (status == null) {
@@ -174,11 +174,11 @@ public class ResponseDocumentType {
 
     /**
      * Sets the value of the status property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setStatus(final Boolean value) {
         this.status = value;

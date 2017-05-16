@@ -26,14 +26,14 @@ import javax.xml.bind.annotation.XmlValue;
 
 
 /**
- * One simple literal value (such as an integer or real number) that is embedded in the Execute operation request or response. 
- * 
+ * One simple literal value (such as an integer or real number) that is embedded in the Execute operation request or response.
+ *
  * String containing the Literal value (e.g., "49").
- * 
+ *
  * <p>Java class for LiteralDataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LiteralDataType">
  *   &lt;simpleContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,22 +64,22 @@ public class LiteralDataType implements org.geotoolkit.wps.xml.LiteralDataType {
     protected String uom;
 
     public LiteralDataType() {
-        
+
     }
-    
+
     public LiteralDataType(final String value, final String dataType, final String uom) {
         this.dataType = dataType;
         this.uom      = uom;
         this.value    = value;
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getValue() {
@@ -88,11 +88,11 @@ public class LiteralDataType implements org.geotoolkit.wps.xml.LiteralDataType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setValue(final String value) {
@@ -101,11 +101,11 @@ public class LiteralDataType implements org.geotoolkit.wps.xml.LiteralDataType {
 
     /**
      * Gets the value of the dataType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getDataType() {
@@ -114,11 +114,11 @@ public class LiteralDataType implements org.geotoolkit.wps.xml.LiteralDataType {
 
     /**
      * Sets the value of the dataType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setDataType(final String value) {
@@ -127,11 +127,11 @@ public class LiteralDataType implements org.geotoolkit.wps.xml.LiteralDataType {
 
     /**
      * Gets the value of the uom property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getUom() {
@@ -140,11 +140,11 @@ public class LiteralDataType implements org.geotoolkit.wps.xml.LiteralDataType {
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setUom(final String value) {
@@ -165,7 +165,7 @@ public class LiteralDataType implements org.geotoolkit.wps.xml.LiteralDataType {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

@@ -98,7 +98,7 @@ public class BinaryTemporalOpType extends TemporalOpsType implements BinaryTempo
             rest.add(obj);
         }
     }
-    
+
     public BinaryTemporalOpType(final BinaryTemporalOpType that) {
         if (that != null) {
             this.propertyName = that.propertyName;
@@ -177,7 +177,7 @@ public class BinaryTemporalOpType extends TemporalOpsType implements BinaryTempo
         }
         return null;
     }
-    
+
     @Override
     public TemporalOpsType getClone() {
         throw new UnsupportedOperationException("Must be overriden by sub-class");

@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for UpperBoundaryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UpperBoundaryType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -53,9 +53,9 @@ public class UpperBoundaryType {
     private JAXBElement<?> expression;
 
     public UpperBoundaryType() {
-        
+
     }
-    
+
     public UpperBoundaryType(final UpperBoundaryType that) {
         if (that != null && that.expression != null) {
             final ObjectFactory factory = new ObjectFactory();
@@ -73,10 +73,10 @@ public class UpperBoundaryType {
             }
         }
     }
-    
+
     /**
      * Gets the value of the expression property.
-     * 
+     *
      */
     public JAXBElement<?> getExpression() {
         return expression;
@@ -84,7 +84,7 @@ public class UpperBoundaryType {
 
     /**
      * Sets the value of the expression property.
-     * 
+     *
      */
     public void setExpression(final JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);

@@ -43,7 +43,7 @@ public class LegendDemo {
 
     public static void main(String[] args) throws PortrayalException, JAXBException, FactoryException, URISyntaxException {
         Demos.init();
-        
+
         //generate a map context
         final MapContext context = createContext();
 

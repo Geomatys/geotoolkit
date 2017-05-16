@@ -32,9 +32,9 @@ import org.geotoolkit.wfs.xml.StoredQuery;
 
 /**
  * <p>Java class for StoredQueryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="StoredQueryType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.wfs.xml.StoredQuery;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "StoredQueryType", propOrder = {
@@ -63,18 +63,18 @@ public class StoredQueryType extends AbstractQueryExpressionType implements Stor
     private String id;
 
     public StoredQueryType() {
-        
+
     }
-    
+
     public StoredQueryType(final String id, final String handle, final List<ParameterType> parameter) {
         super(handle);
         this.id = id;
         this.parameter = parameter;
     }
-    
+
     /**
      * Gets the value of the parameter property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ParameterType }
      */
@@ -88,11 +88,11 @@ public class StoredQueryType extends AbstractQueryExpressionType implements Stor
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getId() {
@@ -101,11 +101,11 @@ public class StoredQueryType extends AbstractQueryExpressionType implements Stor
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(String value) {
         this.id = value;

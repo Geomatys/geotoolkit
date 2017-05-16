@@ -69,7 +69,7 @@ public class FXFontStyleExpression extends FXExpression {
             }
         });
     }
-    
+
     @Override
     public Expression newValue() {
         return StyleConstants.FONT_STYLE_NORMAL;
@@ -82,7 +82,7 @@ public class FXFontStyleExpression extends FXExpression {
 
     @Override
     protected boolean canHandle(Expression styleElement) {
-        
+
         final Toggle selected = group.getSelectedToggle();
         if(StyleConstants.FONT_STYLE_NORMAL.equals(styleElement)){
             if(selected!=uiNormal) group.selectToggle(uiNormal);
@@ -94,5 +94,5 @@ public class FXFontStyleExpression extends FXExpression {
 
         return false;
     }
-    
+
 }

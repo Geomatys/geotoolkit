@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,17 +64,17 @@ public class Extent {
 
      /**
       * Build a new Extent object.
-      *  
+      *
       * @param name     The name (often the type) of this Dimension block (time, elevation,...)
       * @param _default The default value if its not specified.
       */
     public Extent(final String name, final String _default, final String value) {
-        
+
         this.name           = name;
         this._default       = _default;
         this.value          = value;
     }
-    
+
     /**
      * Gets the value of the name property.
      */
@@ -92,8 +92,8 @@ public class Extent {
 
     /**
      * Gets the value of the nearestValue property.
-     * 
-     *     
+     *
+     *
      */
     public String getNearestValue() {
         if (nearestValue == null) {
@@ -117,8 +117,8 @@ public class Extent {
 
     /**
      * Gets the value of the current property.
-     * 
-     *     
+     *
+     *
      */
     public String getCurrent() {
         if (current == null) {
@@ -131,8 +131,8 @@ public class Extent {
 
     /**
      * Gets the value of the value property.
-     * 
-     *     
+     *
+     *
      */
     public String getvalue() {
         return value;

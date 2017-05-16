@@ -33,7 +33,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @see BasicRTree
  */
 public final class FileBasicRTree<E> extends BasicRTree<E> {
-    
+
     /**
      * Create a new {@link BasicRTree} implementation which store Tree architecture
      * into file stored at {@link Path} location.<br/><br/>

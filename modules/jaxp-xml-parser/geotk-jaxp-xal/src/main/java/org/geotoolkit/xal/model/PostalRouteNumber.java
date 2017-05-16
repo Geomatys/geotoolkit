@@ -40,7 +40,7 @@ public interface PostalRouteNumber {
     String getContent();
 
     /**
-     * 
+     *
      * @return
      */
     GrPostal getGrPostal();

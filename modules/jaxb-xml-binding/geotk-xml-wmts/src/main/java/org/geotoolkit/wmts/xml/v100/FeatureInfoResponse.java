@@ -26,9 +26,9 @@ import org.geotoolkit.gml.xml.v311.AbstractFeatureCollectionType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.gml.xml.v311.AbstractFeatureCollectionType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -68,11 +68,11 @@ public class FeatureInfoResponse {
     /**
      * This allows to define any FeatureCollection that is a substitutionGroup  of gml:_GML and use it here.
      * A Geography Markup Language GML Simple Features Profile level 0 response format is strongly recommended as a FeatureInfo response.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AbstractFeatureCollectionType }
-     *     
+     *
      */
     public AbstractFeatureCollectionType getAbstractFeatureCollection() {
         return abstractFeatureCollection;
@@ -80,11 +80,11 @@ public class FeatureInfoResponse {
 
     /**
      * Sets the value of the abstractFeatureCollection property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AbstractFeatureCollectionType }
-     *     
+     *
      */
     public void setAbstractFeatureCollection(final AbstractFeatureCollectionType value) {
         this.abstractFeatureCollection = value;
@@ -95,7 +95,7 @@ public class FeatureInfoResponse {
      * @return
      *     possible object is
      *     {@link TextPayload }
-     *     
+     *
      */
     public TextPayload getTextPayload() {
         return textPayload;
@@ -103,11 +103,11 @@ public class FeatureInfoResponse {
 
     /**
      * Sets the value of the textPayload property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TextPayload }
-     *     
+     *
      */
     public void setTextPayload(final TextPayload value) {
         this.textPayload = value;
@@ -116,11 +116,11 @@ public class FeatureInfoResponse {
     /**
      * This allows to include any binary format. Binary formats are not common
      * response for a GeFeatureInfo requests but possible for some imaginative implementations.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BinaryPayload }
-     *     
+     *
      */
     public BinaryPayload getBinaryPayload() {
         return binaryPayload;
@@ -128,11 +128,11 @@ public class FeatureInfoResponse {
 
     /**
      * Sets the value of the binaryPayload property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BinaryPayload }
-     *     
+     *
      */
     public void setBinaryPayload(final BinaryPayload value) {
         this.binaryPayload = value;
@@ -140,11 +140,11 @@ public class FeatureInfoResponse {
 
     /**
      * Gets the value of the anyContent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Object }
-     *     
+     *
      */
     public Object getAnyContent() {
         return anyContent;
@@ -152,11 +152,11 @@ public class FeatureInfoResponse {
 
     /**
      * Sets the value of the anyContent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Object }
-     *     
+     *
      */
     public void setAnyContent(final Object value) {
         this.anyContent = value;

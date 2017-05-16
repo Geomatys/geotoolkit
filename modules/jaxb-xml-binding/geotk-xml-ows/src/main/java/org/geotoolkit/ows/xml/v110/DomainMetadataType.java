@@ -27,14 +27,14 @@ import org.geotoolkit.ows.xml.DomainMetadata;
 
 
 /**
- * References metadata about a quantity, and provides a name for this metadata. (Informative: This element was simplified from the metaDataProperty element in GML 3.0.) 
- * 
- * Human-readable name of the metadata described by associated referenced document. 
- * 
+ * References metadata about a quantity, and provides a name for this metadata. (Informative: This element was simplified from the metaDataProperty element in GML 3.0.)
+ *
+ * Human-readable name of the metadata described by associated referenced document.
+ *
  * <p>Java class for DomainMetadataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DomainMetadataType">
  *   &lt;simpleContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.ows.xml.DomainMetadata;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,16 +64,16 @@ public class DomainMetadataType implements DomainMetadata {
      * Empty constructor used by JAXB.
      */
     DomainMetadataType(){
-        
+
     }
-    
+
     public DomainMetadataType(final DomainMetadataType that){
         if (that != null) {
             this.reference = that.reference;
             this.value     = that.value;
         }
     }
-    
+
     /**
      * Build a new Domain metadata.
      * @param value
@@ -82,9 +82,9 @@ public class DomainMetadataType implements DomainMetadata {
     public DomainMetadataType(final String value, final String reference){
         this.reference = reference;
         this.value     = value;
-        
+
     }
-    
+
     /**
      * Gets the value of the value property.
      */
@@ -111,7 +111,7 @@ public class DomainMetadataType implements DomainMetadata {
         this.reference = reference;
     }
 
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -135,11 +135,11 @@ public class DomainMetadataType implements DomainMetadata {
         hash = 29 * hash + (this.reference != null ? this.reference.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         return "class: DomainMetadataType value=" + value + " reference=" + reference;
-        
+
     }
 
 }

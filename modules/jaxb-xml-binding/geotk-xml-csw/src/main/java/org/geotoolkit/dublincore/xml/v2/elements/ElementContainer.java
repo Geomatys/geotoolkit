@@ -27,13 +27,13 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * This type definition is included as a convenience for schema authors 
+ * This type definition is included as a convenience for schema authors
  *       who need a container element for all of the DC elements.
- * 
+ *
  * <p>Java class for elementContainer complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="elementContainer">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

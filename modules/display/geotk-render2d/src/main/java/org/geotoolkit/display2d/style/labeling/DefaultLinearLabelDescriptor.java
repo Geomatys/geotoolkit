@@ -22,7 +22,7 @@ import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 
 /**
  * Immutable default linear label descriptor.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -40,9 +40,9 @@ public class DefaultLinearLabelDescriptor implements LinearLabelDescriptor{
     private final boolean aligned;
     private final boolean generalize;
     private final ProjectedGeometry geom;
-    
+
     public DefaultLinearLabelDescriptor(final String text, final Font textFont, final Paint textPaint,
-            final float haloWidth, final Paint haloPaint, 
+            final float haloWidth, final Paint haloPaint,
             final float gap, final float initial, final float offset,
             final boolean repeated, final boolean aligned, final boolean generalize,
             final ProjectedGeometry geom){
@@ -59,7 +59,7 @@ public class DefaultLinearLabelDescriptor implements LinearLabelDescriptor{
         this.generalize = generalize;
         this.geom = geom;
     }
-        
+
     /**
      * {@inheritDoc }
      */
@@ -99,7 +99,7 @@ public class DefaultLinearLabelDescriptor implements LinearLabelDescriptor{
     public Paint getHaloPaint() {
         return haloPaint;
     }
-    
+
     /**
      * {@inheritDoc }
      */

@@ -26,16 +26,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Description of a process Output. 
- * 
- * 
+ * Description of a process Output.
+ *
+ *
  * In this use, the DescriptionType shall describe a process output.
- * 					
- * 
+ *
+ *
  * <p>Java class for GenericOutputType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GenericOutputType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GenericOutputType", propOrder = {
@@ -61,11 +61,11 @@ public class GenericOutputType extends DescriptionType {
 
     /**
      * Gets the value of the output property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link GenericOutputType }
-     * 
-     * 
+     *
+     *
      */
     public List<GenericOutputType> getOutput() {
         if (output == null) {

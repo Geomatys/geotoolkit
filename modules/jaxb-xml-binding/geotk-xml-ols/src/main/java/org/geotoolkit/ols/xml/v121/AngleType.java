@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * This type is used as a unit of measure for ADTs only, it's not used by the GML3 geometry. This will be a point for future work of harmonization.
- * 
+ *
  * <p>Java class for AngleType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AngleType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AngleType")
@@ -51,11 +51,11 @@ public class AngleType extends AbstractMeasureType {
 
     /**
      * Gets the value of the uom property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUom() {
         if (uom == null) {
@@ -67,11 +67,11 @@ public class AngleType extends AbstractMeasureType {
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUom(String value) {
         this.uom = value;

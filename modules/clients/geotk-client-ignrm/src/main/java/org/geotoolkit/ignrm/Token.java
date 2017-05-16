@@ -22,19 +22,19 @@ import javax.xml.stream.XMLStreamException;
 /**
  * Token represent an authentification for IGN server.
  * The token key and value must be added on each request send to the server.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public final class Token {
-    
+
     private static int TIME_MARGIN = 30; //seconds
-    
+
     private final IGNRMClient server;
     private final String key;
     private final String name;
     String value;
-    
+
     private TokenInformation information;
     private long lastUpdate;
 
@@ -54,7 +54,7 @@ public final class Token {
     }
 
     /**
-     * 
+     *
      * @return the name of the token for the url parameters.
      */
     public String getName() {
@@ -65,10 +65,10 @@ public final class Token {
      * The token value is automaticly updated when needed.
      * Always call getValue() at the last moment possible.
      * After this method is called the value is valid for at least 30seconds.
-     * 
+     *
      * @return the value of the token
      * @throws IOException
-     * @throws XMLStreamException 
+     * @throws XMLStreamException
      */
     public String getValue() throws IOException, XMLStreamException {
         //check if the token value is obsolete, if so get a new one.
@@ -79,7 +79,7 @@ public final class Token {
             release();
             refresh();
         }
-        
+
         return value;
     }
 
@@ -91,35 +91,35 @@ public final class Token {
     }
 
     /**
-     * 
+     *
      * @return TokenInformation
      * @throws IOException
-     * @throws XMLStreamException 
+     * @throws XMLStreamException
      */
     public TokenInformation getInformation() throws IOException, XMLStreamException {
         if(information == null){
             information = server.getConfig(this);
         }
-        
+
         return information;
     }
-        
+
     /**
      * Force refreshing the token value.
-     * 
+     *
      * @throws IOException
-     * @throws XMLStreamException 
+     * @throws XMLStreamException
      */
     public void refresh() throws IOException, XMLStreamException{
         final Token newVal = server.getToken(key);
         lastUpdate = newVal.lastUpdate;
         value = newVal.value;
     }
-    
+
     /**
      * Send a query to the server to release this token.
-     * 
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     public void release() throws IOException{
         server.releaseToken(this);
@@ -141,5 +141,5 @@ public final class Token {
             return super.toString();
         }
     }
-    
+
 }

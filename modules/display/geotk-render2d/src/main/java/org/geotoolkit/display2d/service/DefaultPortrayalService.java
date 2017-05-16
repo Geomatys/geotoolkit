@@ -97,7 +97,7 @@ import org.geotoolkit.nio.IOUtilities;
 
 /**
  * Default implementation of portrayal service.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -433,7 +433,7 @@ public final class DefaultPortrayalService implements PortrayalService{
             //we succeeded in writing it with coverage writer directly.
             return;
         }
-        
+
         if("image/svg+xml".equalsIgnoreCase(mime)){
             //special canvas for svg
             final Envelope contextEnv = viewDef.getEnvelope();
@@ -901,9 +901,9 @@ public final class DefaultPortrayalService implements PortrayalService{
     public static ColorModel rectifyColorModel(final ColorModel model, final String mime){
         if(model instanceof IndexColorModel && INDEXED_CM_UNSUPPORTED.contains(mime)){
             return new DirectColorModel(24,
-                                        0x00ff0000,	// Red
-                                        0x0000ff00,	// Green
-                                        0x000000ff,	// Blue
+                                        0x00ff0000, // Red
+                                        0x0000ff00, // Green
+                                        0x000000ff, // Blue
                                         0x0           // Alpha
                                         );
         }

@@ -25,18 +25,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.wps._2 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.wps._2 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -56,14 +56,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.wps._2
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link WPSCapabilitiesType }
-     * 
+     *
      */
     public WPSCapabilitiesType createWPSCapabilitiesType() {
         return new WPSCapabilitiesType();
@@ -71,7 +71,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReferenceType }
-     * 
+     *
      */
     public ReferenceType createReferenceType() {
         return new ReferenceType();
@@ -79,7 +79,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LiteralDataType }
-     * 
+     *
      */
     public LiteralDataType createLiteralDataType() {
         return new LiteralDataType();
@@ -87,7 +87,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Result }
-     * 
+     *
      */
     public Result createResult() {
         return new Result();
@@ -95,7 +95,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataOutputType }
-     * 
+     *
      */
     public DataOutputType createDataOutputType() {
         return new DataOutputType();
@@ -103,7 +103,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ProcessOfferings }
-     * 
+     *
      */
     public ProcessOfferings createProcessOfferings() {
         return new ProcessOfferings();
@@ -111,7 +111,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ProcessOffering }
-     * 
+     *
      */
     public ProcessOffering createProcessOffering() {
         return new ProcessOffering();
@@ -119,7 +119,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ProcessDescriptionType }
-     * 
+     *
      */
     public ProcessDescriptionType createProcessDescriptionType() {
         return new ProcessDescriptionType();
@@ -127,7 +127,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Format }
-     * 
+     *
      */
     public Format createFormat() {
         return new Format();
@@ -135,7 +135,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetCapabilitiesType }
-     * 
+     *
      */
     public GetCapabilitiesType createGetCapabilitiesType() {
         return new GetCapabilitiesType();
@@ -143,7 +143,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ComplexDataType }
-     * 
+     *
      */
     public ComplexDataType createComplexDataType() {
         return new ComplexDataType();
@@ -151,7 +151,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Dismiss }
-     * 
+     *
      */
     public Dismiss createDismiss() {
         return new Dismiss();
@@ -159,7 +159,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetResult }
-     * 
+     *
      */
     public GetResult createGetResult() {
         return new GetResult();
@@ -167,7 +167,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetStatus }
-     * 
+     *
      */
     public GetStatus createGetStatus() {
         return new GetStatus();
@@ -175,7 +175,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SupportedCRS }
-     * 
+     *
      */
     public SupportedCRS createSupportedCRS() {
         return new SupportedCRS();
@@ -183,7 +183,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GenericProcessType }
-     * 
+     *
      */
     public GenericProcessType createGenericProcessType() {
         return new GenericProcessType();
@@ -191,7 +191,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StatusInfo }
-     * 
+     *
      */
     public StatusInfo createStatusInfo() {
         return new StatusInfo();
@@ -199,7 +199,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Data }
-     * 
+     *
      */
     public Data createData() {
         return new Data();
@@ -207,7 +207,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribeProcess }
-     * 
+     *
      */
     public DescribeProcess createDescribeProcess() {
         return new DescribeProcess();
@@ -215,7 +215,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BoundingBoxData }
-     * 
+     *
      */
     public BoundingBoxData createBoundingBoxData() {
         return new BoundingBoxData();
@@ -223,7 +223,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExecuteRequestType }
-     * 
+     *
      */
     public ExecuteRequestType createExecuteRequestType() {
         return new ExecuteRequestType();
@@ -231,7 +231,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Contents }
-     * 
+     *
      */
     public Contents createContents() {
         return new Contents();
@@ -239,7 +239,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ProcessSummaryType }
-     * 
+     *
      */
     public ProcessSummaryType createProcessSummaryType() {
         return new ProcessSummaryType();
@@ -247,7 +247,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LiteralValue }
-     * 
+     *
      */
     public LiteralValue createLiteralValue() {
         return new LiteralValue();
@@ -255,7 +255,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataInputType }
-     * 
+     *
      */
     public DataInputType createDataInputType() {
         return new DataInputType();
@@ -263,7 +263,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OutputDescriptionType }
-     * 
+     *
      */
     public OutputDescriptionType createOutputDescriptionType() {
         return new OutputDescriptionType();
@@ -271,7 +271,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OutputDefinitionType }
-     * 
+     *
      */
     public OutputDefinitionType createOutputDefinitionType() {
         return new OutputDefinitionType();
@@ -279,7 +279,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InputDescriptionType }
-     * 
+     *
      */
     public InputDescriptionType createInputDescriptionType() {
         return new InputDescriptionType();
@@ -287,7 +287,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GenericOutputType }
-     * 
+     *
      */
     public GenericOutputType createGenericOutputType() {
         return new GenericOutputType();
@@ -295,7 +295,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GenericInputType }
-     * 
+     *
      */
     public GenericInputType createGenericInputType() {
         return new GenericInputType();
@@ -303,7 +303,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LiteralDataDomainType }
-     * 
+     *
      */
     public LiteralDataDomainType createLiteralDataDomainType() {
         return new LiteralDataDomainType();
@@ -311,7 +311,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescriptionType }
-     * 
+     *
      */
     public DescriptionType createDescriptionType() {
         return new DescriptionType();
@@ -319,7 +319,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WPSCapabilitiesType.Extension }
-     * 
+     *
      */
     public WPSCapabilitiesType.Extension createWPSCapabilitiesTypeExtension() {
         return new WPSCapabilitiesType.Extension();
@@ -327,7 +327,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReferenceType.BodyReference }
-     * 
+     *
      */
     public ReferenceType.BodyReference createReferenceTypeBodyReference() {
         return new ReferenceType.BodyReference();
@@ -335,7 +335,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LiteralDataType.LiteralDataDomain }
-     * 
+     *
      */
     public LiteralDataType.LiteralDataDomain createLiteralDataTypeLiteralDataDomain() {
         return new LiteralDataType.LiteralDataDomain();
@@ -343,7 +343,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link XMLGregorianCalendar }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wps/2.0", name = "ExpirationDate")
     public JAXBElement<XMLGregorianCalendar> createExpirationDate(XMLGregorianCalendar value) {
@@ -352,7 +352,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WPSCapabilitiesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wps/2.0", name = "Capabilities")
     public JAXBElement<WPSCapabilitiesType> createCapabilities(WPSCapabilitiesType value) {
@@ -361,7 +361,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BoundingBoxData }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wps/2.0", name = "BoundingBoxData", substitutionHeadNamespace = "http://www.opengis.net/wps/2.0", substitutionHeadName = "DataDescription")
     public JAXBElement<BoundingBoxData> createBoundingBoxData(BoundingBoxData value) {
@@ -370,7 +370,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ProcessDescriptionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wps/2.0", name = "Process")
     public JAXBElement<ProcessDescriptionType> createProcess(ProcessDescriptionType value) {
@@ -379,7 +379,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ComplexDataType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wps/2.0", name = "ComplexData", substitutionHeadNamespace = "http://www.opengis.net/wps/2.0", substitutionHeadName = "DataDescription")
     public JAXBElement<ComplexDataType> createComplexData(ComplexDataType value) {
@@ -388,7 +388,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DataDescriptionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wps/2.0", name = "DataDescription")
     public JAXBElement<DataDescriptionType> createDataDescription(DataDescriptionType value) {
@@ -397,7 +397,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ReferenceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wps/2.0", name = "Reference")
     public JAXBElement<ReferenceType> createReference(ReferenceType value) {
@@ -406,7 +406,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetCapabilitiesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wps/2.0", name = "GetCapabilities")
     public JAXBElement<GetCapabilitiesType> createGetCapabilities(GetCapabilitiesType value) {
@@ -415,7 +415,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wps/2.0", name = "JobID")
     public JAXBElement<String> createJobID(String value) {
@@ -424,7 +424,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ExecuteRequestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wps/2.0", name = "Execute")
     public JAXBElement<ExecuteRequestType> createExecute(ExecuteRequestType value) {
@@ -433,7 +433,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LiteralDataType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wps/2.0", name = "LiteralData", substitutionHeadNamespace = "http://www.opengis.net/wps/2.0", substitutionHeadName = "DataDescription")
     public JAXBElement<LiteralDataType> createLiteralData(LiteralDataType value) {
@@ -442,7 +442,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GenericProcessType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wps/2.0", name = "GenericProcess")
     public JAXBElement<GenericProcessType> createGenericProcess(GenericProcessType value) {

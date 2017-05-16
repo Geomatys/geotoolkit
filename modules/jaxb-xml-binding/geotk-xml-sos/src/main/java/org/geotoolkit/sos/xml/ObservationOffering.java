@@ -28,31 +28,31 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  * @author Guilhem Legal (Geomatys)
  */
 public interface ObservationOffering {
-    
+
     String getId();
-    
+
     Identifier getName();
-    
+
     String getDescription();
     /*
      * 1.0.0
      */
     List<String> getSrsName();
-    
+
     TemporalGeometricPrimitive getTime();
-            
+
     Envelope getObservedArea();
     /*
      * 1.0.0
      */
     List<QName> getResultModel();
-    
+
     List<String> getProcedures();
-    
+
     List<String> getFeatureOfInterestIds();
-    
+
     List<String> getObservedProperties();
-    
+
     List<String> getResponseFormat();
 
     List<ResponseModeType> getResponseMode();

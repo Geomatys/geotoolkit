@@ -31,7 +31,7 @@ import static org.geotoolkit.xml.parameter.ParameterConstants.*;
 
 /**
  * <p>This class provides a GeneralParameterValue writing method.</p>
- * 
+ *
  * @author Samuel Andrés
  * @module
  */
@@ -40,13 +40,13 @@ public class ParameterValueWriter extends StaxStreamWriter {
     /**
      * <p>This method writes an XML document containing a GeneralParameterValue</p>
      * Do not write the start/end, use when encapsulated in another writer.
-     * 
+     *
      * @param generalParameterValue
      */
     public void writeForInsertion(final GeneralParameterValue generalParameterValue) throws XMLStreamException {
         this.writeGeneralParameterValue(generalParameterValue);
     }
-    
+
     /**
      * <p>This method writes an XML document containing a GeneralParameterValue</p>
      *
@@ -59,7 +59,7 @@ public class ParameterValueWriter extends StaxStreamWriter {
         writer.writeEndDocument();
         writer.flush();
     }
-    
+
     /**
      * <p>This method writes a GenaralParameterValue.</p>
      *
@@ -86,7 +86,7 @@ public class ParameterValueWriter extends StaxStreamWriter {
                     this.writeParameterValue(Array.get(values, i));
                     writer.writeEndElement();
                 }
-                
+
             } else {
                 this.writeParameterValue(param.getValue());
             }

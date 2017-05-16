@@ -29,9 +29,9 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for DataArrayType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataArrayType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -66,7 +66,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
      * An empty constructor used by JAXB.
      */
     DataArrayType() {
-        
+
     }
 
     /**
@@ -97,9 +97,9 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
         }
         this.encoding    = new AbstractEncodingPropertyType(encoding);
         this.values      = values;
-        
+
     }
-    
+
     /**
      * Gets the value of the elementType property.
      */
@@ -109,7 +109,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
         }
         return null;
     }
-    
+
     @Override
     public DataComponentPropertyType getPropertyElementType(){
         return elementType;
@@ -129,12 +129,12 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
         }
         return null;
     }
-    
+
     @Override
     public AbstractEncodingPropertyType getPropertyEncoding(){
         return encoding;
     }
-    
+
     public void setPropertyEncoding(final AbstractEncodingPropertyType encoding) {
         this.encoding = encoding;
     }
@@ -146,7 +146,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
     public String getValues() {
         return values;
     }
-    
+
     /**
      * Sets the value of the values property.
      */
@@ -159,12 +159,12 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
         this.values = values;
         this.setElementCount(nbValues);
     }
-    
+
     @Override
     public AbstractDataValueProperty getDataValues() {
         return null;
     }
-    
+
     /**
      * Verify if this entry is identical to specified object.
      */
@@ -190,7 +190,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
         hash = 29 * hash + (this.values != null ? this.values.hashCode() : 0);
         return hash;
     }
-    
+
     /**
      * Return a string representing the dataArray.
      */
@@ -208,7 +208,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
             //we format a little the result
             String formatedValues = values;
             formatedValues        = formatedValues.replace("\t", " ");
-            formatedValues        = formatedValues.replace("\n", " "); 
+            formatedValues        = formatedValues.replace("\n", " ");
             while (formatedValues.indexOf("  ") != -1) {
                 formatedValues    = formatedValues.replace("  ", "");
             }

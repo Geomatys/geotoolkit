@@ -37,62 +37,62 @@ import org.geotoolkit.gui.javafx.util.FXUtilities;
 
 /**
  * Convert a JTS Geometry in a JavaFX Shape.
- * JavaFX has a very limited geometry model, multi part geometries and holes 
+ * JavaFX has a very limited geometry model, multi part geometries and holes
  * can not be create directly.
  * As a result the jts geometry is translated as a group of smaller geometries.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class FXGeometry extends Group {
 
     private final Geometry geometry;
     private final Node shape;
-    
+
     public FXGeometry(Geometry geometry) {
         this.geometry = geometry;
         this.shape = toShape(geometry);
         getChildren().add(shape);
     }
-    
+
     public void setFill(final Paint paint){
         FXUtilities.visit(this, (Node n) -> {if(n instanceof Shape)((Shape)n).setFill(paint);});
     }
-    
+
     public void setStroke(final Paint paint){
         FXUtilities.visit(this, (Node n) -> {if(n instanceof Shape)((Shape)n).setStroke(paint);});
     }
-    
+
     public void setStrokeDashOffset(final double offset){
         FXUtilities.visit(this, (Node n) -> {if(n instanceof Shape)((Shape)n).setStrokeDashOffset(offset);});
     }
-    
+
     public void setStrokeLineCap(final StrokeLineCap cap){
         FXUtilities.visit(this, (Node n) -> {if(n instanceof Shape)((Shape)n).setStrokeLineCap(cap);});
     }
-    
+
     public void setStrokeLineJoin(final StrokeLineJoin join){
         FXUtilities.visit(this, (Node n) -> {if(n instanceof Shape)((Shape)n).setStrokeLineJoin(join);});
     }
-    
+
     public void setStrokeMiterLimit(final double value){
         FXUtilities.visit(this, (Node n) -> {if(n instanceof Shape)((Shape)n).setStrokeMiterLimit(value);});
     }
-    
+
     public void setStrokeType(final StrokeType type){
         FXUtilities.visit(this, (Node n) -> {if(n instanceof Shape)((Shape)n).setStrokeType(type);});
     }
-    
+
     public void setStrokeWidth(final double value){
         FXUtilities.visit(this, (Node n) -> {if(n instanceof Shape)((Shape)n).setStrokeWidth(value);});
     }
-    
+
     public void setSmooth(final boolean smooth){
         FXUtilities.visit(this, (Node n) -> {if(n instanceof Shape)((Shape)n).setSmooth(smooth);});
     }
-        
-            
+
+
     private static Node toShape(Geometry jts){
-        
+
         if(jts.isEmpty()){
             //do nothing
             return new Group();
@@ -103,16 +103,16 @@ public class FXGeometry extends Group {
             fxgeom.getElements().add(new LineTo(geom.getX(),geom.getY()));
             fxgeom.setCache(false);
             return fxgeom;
-            
+
         }else if(jts instanceof LineString){
             final LineString geom = (LineString) jts;
             return toShape(geom,false);
-                        
-        }else if(jts instanceof Polygon){            
+
+        }else if(jts instanceof Polygon){
             //append exterior
             final Polygon geom = (Polygon) jts;
             final LineString exterior = geom.getExteriorRing();
-            Shape fxgeom = toShape(exterior, true);            
+            Shape fxgeom = toShape(exterior, true);
             //remove holes
             final int nbHole = geom.getNumInteriorRing();
             for(int i=0;i<nbHole;i++){
@@ -121,7 +121,7 @@ public class FXGeometry extends Group {
             }
             fxgeom.setCache(false);
             return fxgeom;
-            
+
         }else if(jts instanceof GeometryCollection){
             final GeometryCollection geom = (GeometryCollection)jts;
             final Group fxgeom = new Group();
@@ -135,7 +135,7 @@ public class FXGeometry extends Group {
             throw new IllegalArgumentException("Unexpected geometry type : "+jts);
         }
     }
-    
+
     private static Shape toShape(LineString geom, boolean closed){
         final Coordinate[] coords = geom.getCoordinates();
         final double[] vals = new double[coords.length*2];
@@ -145,13 +145,13 @@ public class FXGeometry extends Group {
         }
         final Shape fxgeom;
         if(closed){
-            fxgeom = new javafx.scene.shape.Polygon(vals);            
-            
+            fxgeom = new javafx.scene.shape.Polygon(vals);
+
         }else{
             fxgeom = new Polyline(vals);
         }
         fxgeom.setCache(false);
         return fxgeom;
     }
-    
+
 }

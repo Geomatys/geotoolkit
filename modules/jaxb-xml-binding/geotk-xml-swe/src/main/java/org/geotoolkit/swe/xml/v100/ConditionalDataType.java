@@ -32,9 +32,9 @@ import org.geotoolkit.swe.xml.AbstractConditionalData;
 
 /**
  * <p>Java class for ConditionalDataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ConditionalDataType">
  *   &lt;complexContent>
@@ -58,8 +58,8 @@ import org.geotoolkit.swe.xml.AbstractConditionalData;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -98,9 +98,9 @@ public class ConditionalDataType extends AbstractDataRecordType implements Abstr
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -114,8 +114,8 @@ public class ConditionalDataType extends AbstractDataRecordType implements Abstr
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -215,7 +215,7 @@ public class ConditionalDataType extends AbstractDataRecordType implements Abstr
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          */
         public String getType() {
             return type;
@@ -223,7 +223,7 @@ public class ConditionalDataType extends AbstractDataRecordType implements Abstr
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -287,7 +287,7 @@ public class ConditionalDataType extends AbstractDataRecordType implements Abstr
 
         /**
          * Gets the value of the show property.
-         *     
+         *
          */
         public String getShow() {
             return show;
@@ -309,7 +309,7 @@ public class ConditionalDataType extends AbstractDataRecordType implements Abstr
 
         /**
          * Sets the value of the actuate property.
-         * 
+         *
          */
         public void setActuate(final String value) {
             this.actuate = value;

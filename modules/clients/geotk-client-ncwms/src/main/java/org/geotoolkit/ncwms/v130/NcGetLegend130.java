@@ -28,7 +28,7 @@ import org.geotoolkit.security.ClientSecurity;
  * @module
  */
 public class NcGetLegend130 extends AbstractNcGetLegend {
-    
+
     /**
      * Defines the server url and its version.
      *

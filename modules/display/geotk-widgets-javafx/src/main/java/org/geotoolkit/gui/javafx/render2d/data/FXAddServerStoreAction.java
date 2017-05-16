@@ -37,15 +37,15 @@ import org.geotoolkit.map.MapLayer;
  */
 public class FXAddServerStoreAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(GeotkFX.getBufferedImage("add-server", new Dimension(16, 16)), null);
-    
+
     public FXAddServerStoreAction(FXMap map) {
         super(map,GeotkFX.getString(FXAddServerStoreAction.class,"label"),
                 GeotkFX.getString(FXAddServerStoreAction.class,"label"),ICON);
     }
-    
+
     @Override
     public void accept(ActionEvent event) {
-        
+
         try {
             final List<MapLayer> layers = FXStoreChooser.showLayerDialog(null,FXStoreChooser.CLIENTFACTORY_ONLY);
 
@@ -57,7 +57,7 @@ public class FXAddServerStoreAction extends FXMapAction {
         } catch (DataStoreException ex) {
             Loggers.DATA.log(Level.WARNING, ex.getMessage(), ex);
         }
-        
+
     }
-    
+
 }

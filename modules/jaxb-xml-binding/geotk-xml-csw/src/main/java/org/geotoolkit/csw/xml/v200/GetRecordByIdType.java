@@ -30,12 +30,12 @@ import org.geotoolkit.csw.xml.GetRecordById;
  * Requests the default representation of a catalogue object
  *  Id - object idenitifier (a URI)
  *  ElementSetName - one of "brief, "summary", or "full"
- *          
- * 
+ *
+ *
  * <p>Java class for GetRecordByIdType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetRecordByIdType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.csw.xml.GetRecordById;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,9 +69,9 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
      * An empty constructor used by JAXB
      */
      GetRecordByIdType(){
-         
+
      }
-     
+
      /**
      * An empty constructor used by JAXB
      */
@@ -80,10 +80,10 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
          this.elementSetName = elementSetName;
          this.id             = id;
      }
-     
+
     /**
      * Gets the value of the id property.
-     * 
+     *
      */
     @Override
     public List<String> getId() {
@@ -92,7 +92,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      */
     public void setId(final String value) {
         this.id = value;
@@ -100,7 +100,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
 
     /**
      * Gets the value of the elementSetName property.
-     * 
+     *
      */
     @Override
     public ElementSetNameType getElementSetName() {
@@ -109,7 +109,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
 
     /**
      * Sets the value of the elementSetName property.
-     * 
+     *
      */
     public void setElementSetName(final ElementSetNameType value) {
         this.elementSetName = value;

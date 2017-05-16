@@ -30,11 +30,11 @@ import org.geotoolkit.ows.xml.AcceptVersions;
  * Prioritized sequence of one or more specification
  *       versions accepted by client, with preferred versions listed first. See
  *       Version negotiation subclause for more information.
- * 
+ *
  * <p>Java class for AcceptVersionsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AcceptVersionsType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.ows.xml.AcceptVersions;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AcceptVersionsType", propOrder = {
@@ -62,9 +62,9 @@ public class AcceptVersionsType implements AcceptVersions {
      * Empty constructor used by JAXB.
      */
     AcceptVersionsType(){
-        
+
     }
-    
+
     /**
      * Build a new List of acceptVersion.
      */
@@ -74,14 +74,14 @@ public class AcceptVersionsType implements AcceptVersions {
             version.add(v);
         }
     }
-    
+
     public AcceptVersionsType(final List<String> version){
         this.version = version;
     }
-    
+
     /**
      * Gets the value of the version property.
-     * 
+     *
      */
     @Override
     public List<String> getVersion() {
@@ -93,14 +93,14 @@ public class AcceptVersionsType implements AcceptVersions {
 
     /**
      * Add a new accepted version to the list.
-     * 
+     *
      * @param version a number of version.
      */
     @Override
     public void addVersion(final String version) {
         this.version.add(version);
     }
-    
+
     public void addFirstVersion(final String version) {
         this.version.add(0, version);
     }

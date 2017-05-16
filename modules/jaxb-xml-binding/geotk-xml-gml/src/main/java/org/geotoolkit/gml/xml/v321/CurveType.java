@@ -28,9 +28,9 @@ import org.geotoolkit.gml.xml.Curve;
 
 /**
  * <p>Java class for CurveType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CurveType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.gml.xml.Curve;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CurveType", propOrder = {
@@ -57,11 +57,11 @@ public class CurveType extends AbstractCurveType implements Curve {
 
     /**
      * Gets the value of the segments property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurveSegmentArrayPropertyType }
-     *     
+     *
      */
     public CurveSegmentArrayPropertyType getSegments() {
         return segments;
@@ -69,11 +69,11 @@ public class CurveType extends AbstractCurveType implements Curve {
 
     /**
      * Sets the value of the segments property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurveSegmentArrayPropertyType }
-     *     
+     *
      */
     public void setSegments(CurveSegmentArrayPropertyType value) {
         this.segments = value;

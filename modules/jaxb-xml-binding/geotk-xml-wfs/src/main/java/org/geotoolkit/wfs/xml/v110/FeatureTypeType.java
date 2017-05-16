@@ -34,11 +34,11 @@ import org.geotoolkit.wfs.xml.FeatureType;
 /**
  * An element of this type that describes a feature in an application
  * namespace shall have an xml xmlns specifier, e.g. xmlns:bo="http://www.BlueOx.org/BlueOx"
- * 
+ *
  * <p>Java class for FeatureTypeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FeatureTypeType">
  *   &lt;complexContent>
@@ -71,8 +71,8 @@ import org.geotoolkit.wfs.xml.FeatureType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -130,11 +130,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     @Override
     public QName getName() {
@@ -143,11 +143,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     @Override
     public void setName(final QName value) {
@@ -156,11 +156,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -168,11 +168,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -180,11 +180,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Gets the value of the abstract property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAbstract() {
         return _abstract;
@@ -192,11 +192,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Sets the value of the abstract property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setAbstract(final String value) {
@@ -221,14 +221,14 @@ public class FeatureTypeType implements FeatureType {
             }
         }
     }
-    
+
     /**
      * Gets the value of the defaultSRS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getDefaultCRS() {
@@ -237,11 +237,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Sets the value of the defaultSRS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setDefaultCRS(final String value) {
@@ -268,11 +268,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Gets the value of the noSRS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FeatureTypeType.NoSRS }
-     *     
+     *
      */
     public FeatureTypeType.NoSRS getNoSRS() {
         return noSRS;
@@ -280,11 +280,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Sets the value of the noSRS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FeatureTypeType.NoSRS }
-     *     
+     *
      */
     public void setNoSRS(final FeatureTypeType.NoSRS value) {
         this.noSRS = value;
@@ -292,11 +292,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Gets the value of the operations property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OperationsType }
-     *     
+     *
      */
     public OperationsType getOperations() {
         return operations;
@@ -304,11 +304,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Sets the value of the operations property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OperationsType }
-     *     
+     *
      */
     public void setOperations(final OperationsType value) {
         this.operations = value;
@@ -316,11 +316,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Gets the value of the outputFormats property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OutputFormatListType }
-     *     
+     *
      */
     public OutputFormatListType getOutputFormats() {
         return outputFormats;
@@ -328,11 +328,11 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * Sets the value of the outputFormats property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OutputFormatListType }
-     *     
+     *
      */
     public void setOutputFormats(final OutputFormatListType value) {
         this.outputFormats = value;
@@ -363,7 +363,7 @@ public class FeatureTypeType implements FeatureType {
     public void addMetadataURL(final String value, final String type, final String format) {
         getMetadataURL().add(new MetadataURLType(value, type, format));
     }
-    
+
     /**
      * Verify if this entry is identical to specified object.
      */
@@ -460,9 +460,9 @@ public class FeatureTypeType implements FeatureType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -471,8 +471,8 @@ public class FeatureTypeType implements FeatureType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")

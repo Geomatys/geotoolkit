@@ -32,10 +32,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class SumDescriptor extends AbstractProcessDescriptor {
-        
+
     /**Process name : sum */
     public static final String NAME = "math:sum";
-    
+
     /**
      * Input parameters
      */
@@ -44,10 +44,10 @@ public class SumDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Set of double")
             .setRequired(true)
             .create(Double[].class, null);
-    
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(SET);
-    
+
     /**
      * OutputParameters
      */
@@ -72,5 +72,5 @@ public class SumDescriptor extends AbstractProcessDescriptor {
     public Process createProcess(final ParameterValueGroup input) {
         return new SumProcess(input);
     }
-    
+
 }

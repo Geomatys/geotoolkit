@@ -28,9 +28,9 @@ import org.geotoolkit.swe.xml.v200.AbstractSWEType;
 
 /**
  * <p>Java class for ConnectionListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ConnectionListType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.swe.xml.v200.AbstractSWEType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ConnectionListType", propOrder = {
@@ -68,25 +68,25 @@ public class ConnectionListType
 
     /**
      * Gets the value of the connection property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the connection property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getConnection().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ConnectionListType.Connection }
-     * 
-     * 
+     *
+     *
      */
     public List<ConnectionListType.Connection> getConnection() {
         if (connection == null) {
@@ -98,9 +98,9 @@ public class ConnectionListType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -112,8 +112,8 @@ public class ConnectionListType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -126,11 +126,11 @@ public class ConnectionListType
 
         /**
          * Gets the value of the link property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link LinkType }
-         *     
+         *
          */
         public LinkType getLink() {
             return link;
@@ -138,11 +138,11 @@ public class ConnectionListType
 
         /**
          * Sets the value of the link property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link LinkType }
-         *     
+         *
          */
         public void setLink(LinkType value) {
             this.link = value;

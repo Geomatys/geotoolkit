@@ -292,9 +292,9 @@ public class FeatureStoreUtilities {
      * Multiple feature store can only support a limited number of geometry types.
      * This method will split the content of the given collection in collections with a
      * simple geometry type.
-     * 
+     *
      * Collection datas are not copied, result collections are filtered collections
-     * 
+     *
      * @param col
      * @param geomClasses
      * @return splitted collections
@@ -312,7 +312,7 @@ public class FeatureStoreUtilities {
      * Collection datas are not copied, result collections are filtered collections
      *
      * @param col
-     * @param adaptType : ry to map types even if they do not match exactly. 
+     * @param adaptType : ry to map types even if they do not match exactly.
      * list of adapt operations :
      * LineString -> MultiLineString
      * Polygon -> MultiPolygon
@@ -364,7 +364,7 @@ public class FeatureStoreUtilities {
 
             //retype the collection
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder(baseType);
-            ftb.setName(NamesExt.create(NamesExt.getNamespace(name), name.tip().toString()+"_"+geomClass.getSimpleName()));
+            ftb.setName(NamesExt.create(NamesExt.getNamespace(name), name.tip().toString() + '_' + geomClass.getSimpleName()));
             for(PropertyTypeBuilder ptb : ftb.properties()){
                 if(ptb.getName().equals(geomPropName)){
                     final AttributeTypeBuilder atb = (AttributeTypeBuilder) ptb;
@@ -377,7 +377,7 @@ public class FeatureStoreUtilities {
 
         return cols;
     }
-    
+
     /**
      * Provide a collection that link several collections in one.
      * All collection are appended in the order they are given like a sequence.
@@ -805,5 +805,5 @@ public class FeatureStoreUtilities {
         }
 
     }
-    
+
 }

@@ -29,14 +29,14 @@ import org.geotoolkit.map.MapLayer;
 
 /**
  * layer list renderer
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
 public class LayerListRenderer extends DefaultListCellRenderer {
 
-    private static final ImageIcon ICON_LAYER_VISIBLE = IconBundle.getIcon("16_maplayer_visible");    
-    
+    private static final ImageIcon ICON_LAYER_VISIBLE = IconBundle.getIcon("16_maplayer_visible");
+
     @Override
     public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
         final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -46,7 +46,7 @@ public class LayerListRenderer extends DefaultListCellRenderer {
             lbl.setText(layer.getDescription().getTitle().toString());
             lbl.setIcon(ICON_LAYER_VISIBLE);
         }
-                        
+
         return lbl;
     }
 

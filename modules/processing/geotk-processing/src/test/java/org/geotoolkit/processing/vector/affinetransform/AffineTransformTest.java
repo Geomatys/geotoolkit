@@ -41,7 +41,6 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -116,7 +115,7 @@ public class AffineTransformTest extends AbstractProcessTest {
                     new Coordinate(3.0, 3.0)
                 });
         myFeature1 = type.newInstance();
-        myFeature1.setPropertyValue("@identifier", "id-01");
+        myFeature1.setPropertyValue("sis:identifier", "id-01");
         myFeature1.setPropertyValue("color", "grey");
         myFeature1.setPropertyValue("height", 9);
         myFeature1.setPropertyValue("type", "church");
@@ -141,7 +140,7 @@ public class AffineTransformTest extends AbstractProcessTest {
                     new Coordinate(5.5, 6.5)
                 });
         myFeature2 = type.newInstance();
-        myFeature2.setPropertyValue("@identifier", "id-02");
+        myFeature2.setPropertyValue("sis:identifier", "id-02");
         myFeature2.setPropertyValue("color", "blue");
         myFeature2.setPropertyValue("height", 3);
         myFeature2.setPropertyValue("type", "office");
@@ -164,7 +163,7 @@ public class AffineTransformTest extends AbstractProcessTest {
                     new Coordinate(9.0, 3.0)
                 });
         myFeature3 = type.newInstance();
-        myFeature3.setPropertyValue("@identifier", "id-03");
+        myFeature3.setPropertyValue("sis:identifier", "id-03");
         myFeature3.setPropertyValue("color", "black");
         myFeature3.setPropertyValue("height", 2);
         myFeature3.setPropertyValue("type", "office");
@@ -182,7 +181,7 @@ public class AffineTransformTest extends AbstractProcessTest {
                     new Coordinate(2.0, 2.0)
                 });
         myFeature4 = type.newInstance();
-        myFeature4.setPropertyValue("@identifier", "id-04");
+        myFeature4.setPropertyValue("sis:identifier", "id-04");
         myFeature4.setPropertyValue("color", "yellow");
         myFeature4.setPropertyValue("height", 2);
         myFeature4.setPropertyValue("type", "post office");
@@ -205,7 +204,7 @@ public class AffineTransformTest extends AbstractProcessTest {
                     new Coordinate(5.0, 3.0)
                 });
         myFeature5 = type.newInstance();
-        myFeature5.setPropertyValue("@identifier", "id-05");
+        myFeature5.setPropertyValue("sis:identifier", "id-05");
         myFeature5.setPropertyValue("color", "yellow");
         myFeature5.setPropertyValue("height", 9);
         myFeature5.setPropertyValue("type", "office");
@@ -230,7 +229,7 @@ public class AffineTransformTest extends AbstractProcessTest {
                     new Coordinate(8.0, 0.0)
                 });
         myFeature6 = type.newInstance();
-        myFeature6.setPropertyValue("@identifier", "id-06");
+        myFeature6.setPropertyValue("sis:identifier", "id-06");
         myFeature6.setPropertyValue("color", "black");
         myFeature6.setPropertyValue("height", 2);
         myFeature6.setPropertyValue("type", "church");
@@ -257,7 +256,7 @@ public class AffineTransformTest extends AbstractProcessTest {
                     new Coordinate(103.0, 103.0)
                 });
         myFeature1 = type.newInstance();
-        myFeature1.setPropertyValue("@identifier", "id-01");
+        myFeature1.setPropertyValue("sis:identifier", "id-01");
         myFeature1.setPropertyValue("color", "grey");
         myFeature1.setPropertyValue("height", 9);
         myFeature1.setPropertyValue("type", "church");
@@ -282,7 +281,7 @@ public class AffineTransformTest extends AbstractProcessTest {
                     new Coordinate(105.5,106.5)
                 });
         myFeature2 = type.newInstance();
-        myFeature2.setPropertyValue("@identifier", "id-02");
+        myFeature2.setPropertyValue("sis:identifier", "id-02");
         myFeature2.setPropertyValue("color", "blue");
         myFeature2.setPropertyValue("height", 3);
         myFeature2.setPropertyValue("type", "office");
@@ -305,7 +304,7 @@ public class AffineTransformTest extends AbstractProcessTest {
                     new Coordinate(109.0, 103.0)
                 });
         myFeature3 = type.newInstance();
-        myFeature3.setPropertyValue("@identifier", "id-03");
+        myFeature3.setPropertyValue("sis:identifier", "id-03");
         myFeature3.setPropertyValue("color", "black");
         myFeature3.setPropertyValue("height", 2);
         myFeature3.setPropertyValue("type", "office");
@@ -323,7 +322,7 @@ public class AffineTransformTest extends AbstractProcessTest {
                     new Coordinate(102.0, 102.0)
                 });
         myFeature4 = type.newInstance();
-        myFeature4.setPropertyValue("@identifier", "id-04");
+        myFeature4.setPropertyValue("sis:identifier", "id-04");
         myFeature4.setPropertyValue("color", "yellow");
         myFeature4.setPropertyValue("height", 2);
         myFeature4.setPropertyValue("type", "post office");
@@ -346,7 +345,7 @@ public class AffineTransformTest extends AbstractProcessTest {
                     new Coordinate(105.0, 103.0)
                 });
         myFeature5 = type.newInstance();
-        myFeature5.setPropertyValue("@identifier", "id-05");
+        myFeature5.setPropertyValue("sis:identifier", "id-05");
         myFeature5.setPropertyValue("color", "yellow");
         myFeature5.setPropertyValue("height", 9);
         myFeature5.setPropertyValue("type", "office");
@@ -371,7 +370,7 @@ public class AffineTransformTest extends AbstractProcessTest {
                     new Coordinate(108.0, 100.0)
                 });
         myFeature6 = type.newInstance();
-        myFeature6.setPropertyValue("@identifier", "id-06");
+        myFeature6.setPropertyValue("sis:identifier", "id-06");
         myFeature6.setPropertyValue("color", "black");
         myFeature6.setPropertyValue("height", 2);
         myFeature6.setPropertyValue("type", "church");

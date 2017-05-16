@@ -125,7 +125,7 @@ public class LineStringSegmentType extends AbstractCurveSegmentType implements L
         }
         this.pos.add(pos);
     }
-    
+
     /**
      * Gets the value of the posList property.
      *

@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ModeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ModeType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ModeType", propOrder = {
@@ -55,11 +55,11 @@ public class ModeType
 
     /**
      * Gets the value of the configuration property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SettingsPropertyType }
-     *     
+     *
      */
     public SettingsPropertyType getConfiguration() {
         return configuration;
@@ -67,11 +67,11 @@ public class ModeType
 
     /**
      * Sets the value of the configuration property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SettingsPropertyType }
-     *     
+     *
      */
     public void setConfiguration(SettingsPropertyType value) {
         this.configuration = value;

@@ -29,16 +29,16 @@ import org.geotoolkit.csw.xml.InsertResult;
 
 
 /**
- * 
+ *
  *             Returns a "brief" view of any newly created catalogue records.
  *             The handle attribute may reference a particular statement in
  *             the corresponding transaction request.
- *          
- * 
+ *
+ *
  * <p>Java class for InsertResultType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InsertResultType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.csw.xml.InsertResult;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

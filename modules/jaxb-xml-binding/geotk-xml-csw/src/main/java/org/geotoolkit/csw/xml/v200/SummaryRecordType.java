@@ -28,14 +28,14 @@ import org.geotoolkit.dublincore.xml.v1.elements.SimpleLiteral;
 
 
 /**
- * This type defines a summary representation of the common record format. 
+ * This type defines a summary representation of the common record format.
  * It extends AbstractRecordType to include the core properties.
- *       
- * 
+ *
+ *
  * <p>Java class for SummaryRecordType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SummaryRecordType">
  *   &lt;complexContent>
@@ -57,8 +57,8 @@ import org.geotoolkit.dublincore.xml.v1.elements.SimpleLiteral;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -82,7 +82,7 @@ public class SummaryRecordType extends AbstractRecordType {
 
     /**
      * Gets the value of the identifierOrTypeOrTitle property.
-     * 
+     *
      */
     public List<JAXBElement<SimpleLiteral>> getIdentifierOrTypeOrTitle() {
         if (identifierOrTypeOrTitle == null) {

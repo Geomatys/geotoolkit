@@ -28,7 +28,7 @@ public class DefaultMailStopNumber implements MailStopNumber {
     private GrPostal grPostal;
 
     public DefaultMailStopNumber(){}
-    
+
     /**
      *
      * @param content
@@ -42,7 +42,7 @@ public class DefaultMailStopNumber implements MailStopNumber {
     }
 
     /**
-     * 
+     *
      * @{@inheritDoc }
      */
     @Override

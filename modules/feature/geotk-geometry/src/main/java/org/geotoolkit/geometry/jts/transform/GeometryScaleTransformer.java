@@ -54,7 +54,7 @@ public class GeometryScaleTransformer extends AbstractGeometryTransformer{
 
     private Coordinate[] decimate(final Coordinate[] coords, final int minpoint) {
         if(coords.length==0) return coords;
-        
+
         int lenght = 1;
 
         final boolean closed = coords[0].equals2D(coords[coords.length-1]);
@@ -89,7 +89,7 @@ public class GeometryScaleTransformer extends AbstractGeometryTransformer{
                 }
                 lenght = minpoint;
             }
-            
+
             //ensure it forms a closed line string if asked for
             if(closed && !coords[0].equals2D(coords[lenght-1])){
                 coords[lenght] = new Coordinate(coords[0]);
@@ -101,7 +101,7 @@ public class GeometryScaleTransformer extends AbstractGeometryTransformer{
             return cs;
         }
     }
-    
+
     @Override
     public Point transform(final Point geom) throws TransformException{
         //nothing to decimate

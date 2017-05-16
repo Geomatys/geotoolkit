@@ -49,7 +49,7 @@ public class WChainParametersBasic extends Widget{
         getActions().addAction(ActionFactory.createEditAction(new ParametersEditorProvider()));
 
         setBorder(BorderFactory.createRoundedBorder(20, 20, 8, 8, Color.WHITE, Color.DARK_GRAY));
-        
+
 
         execWidget = new WName(scene, name, (editable && id != Integer.MAX_VALUE), true, true, this);
         execWidget.setFont(new Font("monospaced", Font.BOLD, 12));
@@ -69,7 +69,7 @@ public class WChainParametersBasic extends Widget{
     public WName getExecutionWidget(){
         return execWidget;
     }
-    
+
     private class ParametersEditorProvider implements EditProvider {
 
         @Override
@@ -79,5 +79,5 @@ public class WChainParametersBasic extends Widget{
             pane.showDialog();
         }
     }
-    
+
 }

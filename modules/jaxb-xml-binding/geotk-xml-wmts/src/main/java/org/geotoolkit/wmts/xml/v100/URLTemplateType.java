@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for URLTemplateType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="URLTemplateType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "URLTemplateType")
@@ -79,11 +79,11 @@ public class URLTemplateType {
 
     /**
      * Gets the value of the format property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFormat() {
         return format;
@@ -91,11 +91,11 @@ public class URLTemplateType {
 
     /**
      * Sets the value of the format property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFormat(final String value) {
         this.format = value;
@@ -103,11 +103,11 @@ public class URLTemplateType {
 
     /**
      * Gets the value of the resourceType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getResourceType() {
         return resourceType;
@@ -115,11 +115,11 @@ public class URLTemplateType {
 
     /**
      * Sets the value of the resourceType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setResourceType(final String value) {
         this.resourceType = value;
@@ -127,11 +127,11 @@ public class URLTemplateType {
 
     /**
      * Gets the value of the template property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTemplate() {
         return template;
@@ -139,11 +139,11 @@ public class URLTemplateType {
 
     /**
      * Sets the value of the template property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTemplate(final String value) {
         this.template = value;

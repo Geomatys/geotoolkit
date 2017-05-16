@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for InsertionCapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InsertionCapabilitiesType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InsertionCapabilitiesType", propOrder = {
@@ -70,9 +70,9 @@ public class InsertionCapabilitiesType {
     private List<String> supportedEncoding;
 
     public InsertionCapabilitiesType() {
-        
+
     }
-    
+
     public InsertionCapabilitiesType(final List<String> procedureDescriptionFormat, List<String> featureOfInterestType,
             final List<String> observationType, final List<String> supportedEncoding) {
         this.featureOfInterestType      = featureOfInterestType;
@@ -80,13 +80,13 @@ public class InsertionCapabilitiesType {
         this.procedureDescriptionFormat = procedureDescriptionFormat;
         this.supportedEncoding          = supportedEncoding;
     }
-    
+
     /**
      * Gets the value of the procedureDescriptionFormat property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getProcedureDescriptionFormat() {
         if (procedureDescriptionFormat == null) {
@@ -97,10 +97,10 @@ public class InsertionCapabilitiesType {
 
     /**
      * Gets the value of the featureOfInterestType property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getFeatureOfInterestType() {
         if (featureOfInterestType == null) {
@@ -111,10 +111,10 @@ public class InsertionCapabilitiesType {
 
     /**
      * Gets the value of the observationType property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getObservationType() {
         if (observationType == null) {
@@ -125,10 +125,10 @@ public class InsertionCapabilitiesType {
 
     /**
      * Gets the value of the supportedEncoding property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getSupportedEncoding() {
         if (supportedEncoding == null) {

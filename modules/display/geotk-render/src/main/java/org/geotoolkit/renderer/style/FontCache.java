@@ -39,9 +39,9 @@ import java.util.logging.Logger;
 
 /**
  * Lookup and caches font definitions for faster retrieval
- * 
+ *
  * @author Andrea Aime - TOPP
- * 
+ *
  * @module
  */
 public class FontCache {
@@ -100,9 +100,9 @@ public class FontCache {
             if (LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.finest("not a system font");
             }
-            javaFont = loadFromUrl(requestedFont); 
+            javaFont = loadFromUrl(requestedFont);
         }
-        
+
         // log the result and exit
         if(javaFont == null) {
             if (LOGGER.isLoggable(Level.FINE)) {
@@ -182,5 +182,5 @@ public class FontCache {
             return null;
         }
     }
-    
+
 }

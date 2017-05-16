@@ -23,7 +23,7 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  */
 public interface StoredQuery {
-    
+
     String getId();
 
     List<? extends Parameter> getParameter();

@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for getAllConceptRelativesResponse complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="getAllConceptRelativesResponse">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getAllConceptRelativesResponse", propOrder = {
@@ -62,7 +62,7 @@ public class GetAllConceptRelativesResponse {
     public GetAllConceptRelativesResponse(List<Mapping> response) {
         this.response = response;
     }
-    
+
     /**
      * Gets the value of the return property.
      */

@@ -94,7 +94,7 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
             wpsVersion = "1.0.0";
         }
         Reference reference = WPSXmlFactory.buildInOutReference(wpsVersion, ioType);
-        
+
         reference.setMimeType((String) params.get(MIME));
         reference.setEncoding((String) params.get(ENCODING));
 

@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2014, Geomatys
  *
@@ -35,17 +35,17 @@ import org.opengis.temporal.OrdinalReferenceSystem;
  * In its simpliest form, an ordinal temporal reference system is an ordered series of events.
  * Generally a specific series of events is associated with a single location.
  * Temporal relationships between different locations can be determinate only to the degree
- * that events at one location can be correlated with events at other locations on the basis 
- * of non-temporal characteristics of the events. Such correlation can be used to develop a 
- * more broadly based temporal reference system define in terms of periods within which similar 
- * events have occured. The term {@linkplain OrdinalEra ordinal era} is use in this standard to 
+ * that events at one location can be correlated with events at other locations on the basis
+ * of non-temporal characteristics of the events. Such correlation can be used to develop a
+ * more broadly based temporal reference system define in terms of periods within which similar
+ * events have occured. The term {@linkplain OrdinalEra ordinal era} is use in this standard to
  * refer to such a period.</p>
- * 
- * <blockquote><font size="-1">An {@linkplain OrdinalReferenceSystem Ordinal Temporal Reference System} 
- * consists of a set of {@linkplain OrdinalEra ordinal era}. {@linkplain OrdinalReferenceSystem Ordinal Reference System} 
- * are often hierarchically structured such that an {@linkplain OrdinalEra ordinal era} at a given 
+ *
+ * <blockquote><font size="-1">An {@linkplain OrdinalReferenceSystem Ordinal Temporal Reference System}
+ * consists of a set of {@linkplain OrdinalEra ordinal era}. {@linkplain OrdinalReferenceSystem Ordinal Reference System}
+ * are often hierarchically structured such that an {@linkplain OrdinalEra ordinal era} at a given
  *  level of hierarchy includes a sequence of coterminous shorter {@linkplain OrdinalEra ordinal era}</font></blockquote>
- * 
+ *
  * @author Mehdi Sidhoum (Geomatys)
  * @author Remi Marechal (Geomatys)
  * @module
@@ -64,13 +64,13 @@ public class DefaultOrdinalReferenceSystem extends DefaultTemporalReferenceSyste
      * that make up the highest level of hierarchy.
      */
     private final Collection<OrdinalEra> ordinalEraSequence;
-    
+
     /**
-     * Create a default {@link OrdinalReferenceSystem} implementation initialize with the given parameters. 
-     * 
+     * Create a default {@link OrdinalReferenceSystem} implementation initialize with the given parameters.
+     *
      * The properties given in argument follow the same rules than for the
      * {@linkplain DefaultTemporalReferenceSystem#DefaultTemporalReferenceSystem(java.util.Map, org.opengis.referencing.datum.TemporalDatum, org.opengis.referencing.cs.TimeCS)   super-class constructor}.
-     * 
+     *
      * <table class="ISO 19108">
      *   <caption>Recognized properties (non exhaustive list)</caption>
      *   <tr>
@@ -94,11 +94,11 @@ public class DefaultOrdinalReferenceSystem extends DefaultTemporalReferenceSyste
      *     <td>{@link #getReferenceEvent()}</td>
      *   </tr>
      * </table>
-     * 
+     *
      * @param properties The properties to be given to the coordinate reference system.
      * @param datum The datum.
      * @param cs The coordinate system.
-     * @param ordinalEraSequence A hierarchically-structured collection of {@linkplain OrdinalEra ordinal era}. 
+     * @param ordinalEraSequence A hierarchically-structured collection of {@linkplain OrdinalEra ordinal era}.
      */
     public DefaultOrdinalReferenceSystem(Map<String, ?> properties, Collection<OrdinalEra> ordinalEraSequence) {
         super(properties);
@@ -157,10 +157,10 @@ public class DefaultOrdinalReferenceSystem extends DefaultTemporalReferenceSyste
         }
         return new DefaultOrdinalReferenceSystem(object);
     }
-    
+
     /**
      * Returns the set of ordinal eras of which this ordinal reference system consists of.
-     * <blockquote><font size="-1">{@linkplain OrdinalEra ordinal era} that make up the 
+     * <blockquote><font size="-1">{@linkplain OrdinalEra ordinal era} that make up the
      * highest level of hierarchy.</font></blockquote>
      *
      * @return A hierarchically-structured collection of {@linkplain OrdinalEra ordinal era}.
@@ -186,7 +186,7 @@ public class DefaultOrdinalReferenceSystem extends DefaultTemporalReferenceSyste
         }
         return false;
     }
-    
+
     /**
      * {@inheritDoc }
      */

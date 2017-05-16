@@ -23,7 +23,7 @@ package org.geotoolkit.wms.xml;
  * @module
  */
 public interface AbstractBoundingBox {
-    
+
     /**
      * Gets the value of the crs or srs property.
      */

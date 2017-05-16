@@ -45,7 +45,7 @@ public class TimeEndsType extends BinaryTemporalOpType implements Ends {
     public TemporalOpsType getClone() {
         return new TimeEndsType(this);
     }
-    
+
     @Override
     public boolean evaluate(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");

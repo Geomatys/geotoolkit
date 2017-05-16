@@ -27,7 +27,7 @@ public class DefaultPostBoxNumberExtension implements PostBoxNumberExtension {
     private final String numberExtensionSeparator;
 
     /**
-     * 
+     *
      * @param numberExtensionSeparator
      * @param content
      */

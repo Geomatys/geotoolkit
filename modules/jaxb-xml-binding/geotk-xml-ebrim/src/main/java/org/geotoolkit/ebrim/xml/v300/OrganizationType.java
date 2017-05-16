@@ -29,11 +29,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Mapping of the same named interface in ebRIM.
- * 
+ *
  * <p>Java class for OrganizationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OrganizationType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,7 +75,7 @@ public class OrganizationType extends RegistryObjectType {
 
     /**
      * Gets the value of the address property.
-     * 
+     *
      */
     public List<PostalAddressType> getAddress() {
         if (address == null) {
@@ -83,10 +83,10 @@ public class OrganizationType extends RegistryObjectType {
         }
         return this.address;
     }
-    
+
     /**
      * Sets the value of the address property.
-     * 
+     *
      */
     public void setAddress(final PostalAddressType address) {
         if (this.address == null) {
@@ -94,10 +94,10 @@ public class OrganizationType extends RegistryObjectType {
         }
         this.address.add(address);
     }
-    
+
     /**
      * Sets the value of the address property.
-     * 
+     *
      */
     public void setAddress(final List<PostalAddressType> address) {
         this.address = address;
@@ -112,7 +112,7 @@ public class OrganizationType extends RegistryObjectType {
         }
         return this.telephoneNumber;
     }
-    
+
     /**
      * Sets the value of the telephoneNumber property.
      */
@@ -122,7 +122,7 @@ public class OrganizationType extends RegistryObjectType {
         }
         this.telephoneNumber.add(number);
     }
-    
+
     /**
      * Sets the value of the telephoneNumber property.
      */
@@ -149,14 +149,14 @@ public class OrganizationType extends RegistryObjectType {
         }
         this.emailAddress.add(email);
     }
-    
+
     /**
      * Sets the value of the emailAddress property.
      */
     public void setEmailAddress(final List<EmailAddressType> emails) {
         this.emailAddress = emails;
     }
-    
+
     /**
      * Gets the value of the parent property.
      */

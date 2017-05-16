@@ -30,16 +30,16 @@ import org.geotoolkit.wps.xml.Execute;
 
 
 /**
- * 
+ *
  * Schema for a WPS Execute operation request, to execute
  * one identified process with the given data and provide the requested
  * output data.
- * 			
- * 
+ *
+ *
  * <p>Java class for ExecuteRequestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ExecuteRequestType">
  *   &lt;complexContent>
@@ -70,8 +70,8 @@ import org.geotoolkit.wps.xml.Execute;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ExecuteRequestType", propOrder = {
@@ -94,26 +94,26 @@ public class ExecuteRequestType extends RequestBaseType implements Execute {
     protected String response;
 
     public ExecuteRequestType() {
-        
+
     }
-    
+
     public ExecuteRequestType(CodeType identifier, List<DataInputType> input, List<OutputDefinitionType> output, String response) {
         this.identifier = identifier;
         this.input = input;
         this.output = output;
         this.response = response;
     }
-    
+
     /**
-     * 
+     *
      * Identifier of the process to be executed. All valid process identifiers are
      * listed in the wps:Contents section of the Capabilities document.
-     * 							
-     * 
+     *
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     @Override
     public CodeType getIdentifier() {
@@ -122,11 +122,11 @@ public class ExecuteRequestType extends RequestBaseType implements Execute {
 
     /**
      * Sets the value of the identifier property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setIdentifier(CodeType value) {
         this.identifier = value;
@@ -142,12 +142,12 @@ public class ExecuteRequestType extends RequestBaseType implements Execute {
 
     /**
      * Gets the value of the input property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link DataInputType }
-     * 
-     * 
-     * @return 
+     *
+     *
+     * @return
      */
     @Override
     public List<DataInputType> getInput() {
@@ -159,12 +159,12 @@ public class ExecuteRequestType extends RequestBaseType implements Execute {
 
     /**
      * Gets the value of the output property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link OutputDefinitionType }
-     * 
-     * 
-     * @return 
+     *
+     *
+     * @return
      */
     @Override
     public List<OutputDefinitionType> getOutput() {
@@ -176,11 +176,11 @@ public class ExecuteRequestType extends RequestBaseType implements Execute {
 
     /**
      * Gets the value of the mode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMode() {
         return mode;
@@ -188,11 +188,11 @@ public class ExecuteRequestType extends RequestBaseType implements Execute {
 
     /**
      * Sets the value of the mode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMode(String value) {
         this.mode = value;
@@ -200,11 +200,11 @@ public class ExecuteRequestType extends RequestBaseType implements Execute {
 
     /**
      * Gets the value of the response property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getResponse() {
         return response;
@@ -212,16 +212,16 @@ public class ExecuteRequestType extends RequestBaseType implements Execute {
 
     /**
      * Sets the value of the response property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setResponse(String value) {
         this.response = value;
     }
-    
+
     @Override
     public String getLanguage() {
         return "en-EN";

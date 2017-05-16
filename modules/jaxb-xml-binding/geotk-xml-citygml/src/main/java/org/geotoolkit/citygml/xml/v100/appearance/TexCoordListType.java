@@ -33,12 +33,12 @@ import javax.xml.bind.annotation.XmlValue;
  *                 requires a separate "textureCoordinates"-entry with 2 doubles per ring vertex. The "ring"- attribute provides the
  *                 gml:id of the target LinearRing. It is prohibited to link texture coordinates to any other object type than
  *                 LinearRing. Thus, surfaces not consisting of LinearRings cannot be textured this way. Use transformation matrices
- *                 (see below) or georeferenced textures instead. 
- * 
+ *                 (see below) or georeferenced textures instead.
+ *
  * <p>Java class for TexCoordListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TexCoordListType">
  *   &lt;complexContent>
@@ -59,8 +59,8 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TexCoordListType", propOrder = {
@@ -76,7 +76,7 @@ public class TexCoordListType extends AbstractTextureParameterizationType {
 
     /**
      * Gets the value of the textureCoordinates property.
-     * 
+     *
      */
     public List<TexCoordListType.TextureCoordinates> getTextureCoordinates() {
         if (textureCoordinates == null) {
@@ -87,7 +87,7 @@ public class TexCoordListType extends AbstractTextureParameterizationType {
 
     /**
      * Gets the value of the genericApplicationPropertyOfTexCoordList property.
-     * 
+     *
      */
     public List<Object> getGenericApplicationPropertyOfTexCoordList() {
         if (genericApplicationPropertyOfTexCoordList == null) {
@@ -114,12 +114,12 @@ public class TexCoordListType extends AbstractTextureParameterizationType {
         }
         return s.toString();
     }
-    
+
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;simpleContent>
@@ -129,8 +129,8 @@ public class TexCoordListType extends AbstractTextureParameterizationType {
      *   &lt;/simpleContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -146,7 +146,7 @@ public class TexCoordListType extends AbstractTextureParameterizationType {
 
         /**
          * XML List based on XML Schema double type.  An element of this type contains a space-separated list of double values Gets the value of the value property.
-         * 
+         *
          */
         public List<Double> getValue() {
             if (value == null) {
@@ -157,11 +157,11 @@ public class TexCoordListType extends AbstractTextureParameterizationType {
 
         /**
          * Gets the value of the ring property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getRing() {
             return ring;
@@ -169,11 +169,11 @@ public class TexCoordListType extends AbstractTextureParameterizationType {
 
         /**
          * Sets the value of the ring property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setRing(String value) {
             this.ring = value;

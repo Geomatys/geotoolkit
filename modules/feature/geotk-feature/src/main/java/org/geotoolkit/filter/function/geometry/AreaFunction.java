@@ -22,11 +22,11 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * Extract geometry area.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class AreaFunction extends AbstractFunction {
-    
+
     public AreaFunction(final Expression expr1) {
         super(GeometryFunctionFactory.AREA, new Expression[] {expr1}, null);
     }
@@ -40,9 +40,9 @@ public class AreaFunction extends AbstractFunction {
         } catch (Exception e){
             throw new IllegalArgumentException("Invalid function parameter."+parameters.get(0));
         }
-        
+
         if(geom==null) return 0.0;
         return geom.getArea();
     }
-        
+
 }

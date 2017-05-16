@@ -23,14 +23,14 @@ import org.opengis.filter.Filter;
  * @author Guilhem Legal (Geomatys)
  */
 public interface ReplaceElement {
-    
+
     Filter getFilter();
-    
+
     String getHandle();
-    
+
     String getInputFormat();
-    
+
     String getSrsName();
-    
+
     Object getFeature();
 }

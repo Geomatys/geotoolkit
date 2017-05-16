@@ -24,14 +24,14 @@ import org.opengis.filter.spatial.Touches;
  * @module
  */
 public class TouchesType extends BinarySpatialOpType implements Touches {
-    
+
     /**
      * An empty constructor used by JAXB
      */
     public TouchesType() {
-        
+
     }
-    
+
     /**
      * Build a new Overlaps Type
      */
@@ -42,7 +42,7 @@ public class TouchesType extends BinarySpatialOpType implements Touches {
     public TouchesType(final TouchesType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new TouchesType(this);

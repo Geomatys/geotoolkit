@@ -27,14 +27,14 @@ import javax.xml.datatype.Duration;
 
 
 /**
- * 
+ *
  * Mapping of the same named interface in ebRIM.
- * 			
- * 
+ *
+ *
  * <p>Java class for FederationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FederationType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.datatype.Duration;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -30,9 +30,9 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
 
 /**
  * <p>Java class for AbstractSimpleComponentPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractSimpleComponentPropertyType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractSimpleComponentPropertyType", propOrder = {
@@ -73,7 +73,7 @@ public class AbstractSimpleComponentPropertyType {
 
     /**
      * Gets the value of the abstractSimpleComponent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link BooleanType }{@code >}
@@ -87,7 +87,7 @@ public class AbstractSimpleComponentPropertyType {
      *     {@link JAXBElement }{@code <}{@link CountType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CategoryRangeType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractSimpleComponentType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractSimpleComponentType> getAbstractSimpleComponent() {
         return abstractSimpleComponent;
@@ -95,7 +95,7 @@ public class AbstractSimpleComponentPropertyType {
 
     /**
      * Sets the value of the abstractSimpleComponent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link BooleanType }{@code >}
@@ -109,7 +109,7 @@ public class AbstractSimpleComponentPropertyType {
      *     {@link JAXBElement }{@code <}{@link CountType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CategoryRangeType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractSimpleComponentType }{@code >}
-     *     
+     *
      */
     public void setAbstractSimpleComponent(JAXBElement<? extends AbstractSimpleComponentType> value) {
         this.abstractSimpleComponent = ((JAXBElement<? extends AbstractSimpleComponentType> ) value);
@@ -117,11 +117,11 @@ public class AbstractSimpleComponentPropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TypeType }
-     *     
+     *
      */
     public TypeType getType() {
         if (type == null) {
@@ -133,11 +133,11 @@ public class AbstractSimpleComponentPropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TypeType }
-     *     
+     *
      */
     public void setType(TypeType value) {
         this.type = value;
@@ -145,11 +145,11 @@ public class AbstractSimpleComponentPropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -157,11 +157,11 @@ public class AbstractSimpleComponentPropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -169,11 +169,11 @@ public class AbstractSimpleComponentPropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -181,11 +181,11 @@ public class AbstractSimpleComponentPropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -193,11 +193,11 @@ public class AbstractSimpleComponentPropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -205,11 +205,11 @@ public class AbstractSimpleComponentPropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -217,11 +217,11 @@ public class AbstractSimpleComponentPropertyType {
 
     /**
      * Gets the value of the titleTemp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitleTemp() {
         return titleTemp;
@@ -229,11 +229,11 @@ public class AbstractSimpleComponentPropertyType {
 
     /**
      * Sets the value of the titleTemp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitleTemp(String value) {
         this.titleTemp = value;
@@ -241,11 +241,11 @@ public class AbstractSimpleComponentPropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShowType }
-     *     
+     *
      */
     public ShowType getShow() {
         return show;
@@ -253,11 +253,11 @@ public class AbstractSimpleComponentPropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShowType }
-     *     
+     *
      */
     public void setShow(ShowType value) {
         this.show = value;
@@ -265,11 +265,11 @@ public class AbstractSimpleComponentPropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public ActuateType getActuate() {
         return actuate;
@@ -277,11 +277,11 @@ public class AbstractSimpleComponentPropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public void setActuate(ActuateType value) {
         this.actuate = value;

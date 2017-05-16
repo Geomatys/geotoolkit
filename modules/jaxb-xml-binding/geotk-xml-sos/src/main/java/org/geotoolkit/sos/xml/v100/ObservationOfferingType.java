@@ -42,7 +42,7 @@ import org.apache.sis.util.ComparisonMode;
 
 
 /**
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -77,9 +77,9 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
 
     /**
      *  An empty constructor used by jaxB
-     */ 
+     */
     ObservationOfferingType(){}
-    
+
     public ObservationOfferingType(final ObservationOfferingType that){
         super(that);
         if (that != null) {
@@ -115,17 +115,17 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
                 this.resultModel = new ArrayList<>(that.resultModel);
             }
         }
-    } 
-    
-    
+    }
+
+
     /**
      *  Build a new offering.
-     */ 
+     */
     public ObservationOfferingType(final String id, final String name, final String description, final ReferenceType descriptionReference,
             final BoundingShapeType boundedBy, final List<String> srsName, final AbstractTimeGeometricPrimitiveType time, final List<ReferenceType> procedure,
             final List<PhenomenonPropertyType> observedProperty, final List<ReferenceType> featureOfInterest,
             final List<String> responseFormat, final List<QName> resultModel, final List<ResponseModeType> responseMode) {
-        
+
         super(id, name, description, descriptionReference, boundedBy, srsName);
         this.procedure         = procedure;
         this.observedProperty = observedProperty;
@@ -139,7 +139,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
     /**
      *  Build a new offering.
      */
-    public ObservationOfferingType(final String id, final String name, final String description, final List<String> srsName, final AbstractTimeGeometricPrimitiveType time, 
+    public ObservationOfferingType(final String id, final String name, final String description, final List<String> srsName, final AbstractTimeGeometricPrimitiveType time,
             final List<String> procedure, final List<PhenomenonPropertyType> observedProperties, final List<String> featureOfInterest,
             final List<String> responseFormat, final List<QName> resultModel, final List<ResponseModeType> responseMode) {
 
@@ -162,7 +162,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
         this.responseMode      = responseMode;
         this.time              = new TimeGeometricPrimitivePropertyType(time);
     }
-    
+
     @Override
     public Envelope getObservedArea() {
         if (getBoundedBy() != null) {
@@ -170,10 +170,10 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
         }
         return null;
     }
-    
+
     /**
      * Return the value of the intendedApplication property.
-     * 
+     *
      */
     public List<String> getIntendedApplication() {
         if (intendedApplication == null) {
@@ -184,7 +184,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
 
     /**
      * Return the value of the eventTime property.
-     * 
+     *
      */
     @Override
     public AbstractTimeGeometricPrimitiveType getTime() {
@@ -211,7 +211,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
         }
         return procedure;
     }
-    
+
     @Override
     public List<String> getProcedures() {
         if (procedure == null) {
@@ -223,7 +223,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
         }
         return result;
     }
-    
+
     public void setProcedures(final List<String> procedures) {
         if (procedures != null) {
             procedure = new ArrayList<>();
@@ -232,7 +232,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
             }
         }
     }
-    
+
     /**
      * Return an unmodifiable list of the observedProperty.
      */
@@ -248,7 +248,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
             return result;
         }
     }
-    
+
     @Override
     public List<String> getObservedProperties() {
         final List<String> result = new ArrayList<>();
@@ -263,7 +263,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
         }
         return result;
     }
-    
+
     /**
      * Return an unmodifiable list of the observedProperty.
      */
@@ -278,7 +278,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
 
     /**
      * Return an unmodifiable list of the featureOfInterest.
-     * 
+     *
      */
     public List<ReferenceType> getFeatureOfInterest() {
         if (featureOfInterest == null){
@@ -298,10 +298,10 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
         }
         return result;
     }
-   
+
     /**
      * Return the value of the resultFormat property.
-     * 
+     *
      */
     @Override
     public List<String> getResponseFormat() {
@@ -313,7 +313,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
 
     /**
      * Return the value of the resultModel property.
-     * 
+     *
      */
     @Override
     public List<QName> getResultModel() {
@@ -325,7 +325,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
 
     /**
      * Return the value of the responseMode property.
-     * 
+     *
      */
     @Override
     public List<ResponseModeType> getResponseMode() {
@@ -334,7 +334,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
         }
        return responseMode;
     }
-    
+
     /**
      * Verifie si cette entree est identique a l'objet specifie.
      */
@@ -347,7 +347,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
             final ObservationOfferingType that = (ObservationOfferingType) object;
             return Objects.equals(this.time,                that.time)                &&
                    Objects.equals(this.featureOfInterest,   that.featureOfInterest)   &&
-                   Objects.equals(this.intendedApplication, that.intendedApplication) && 
+                   Objects.equals(this.intendedApplication, that.intendedApplication) &&
                    Objects.equals(this.observedProperty,    that.observedProperty)    &&
                    Objects.equals(this.procedure,           that.procedure)           &&
                    Objects.equals(this.responseFormat,      that.responseFormat)      &&
@@ -370,7 +370,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
         hash = 67 * hash + (this.responseMode != null ? this.responseMode.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString()).append('\n');
@@ -403,19 +403,19 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
            s.append('\n').append("feature of interest:").append('\n');
            for (ReferenceType ref:featureOfInterest){
                 s.append(ref.toString());
-            } 
+            }
         }
         if (procedure != null){
            s.append('\n').append("procedure:").append('\n');
            for (ReferenceType ref:procedure){
                 s.append(ref.toString());
-            } 
+            }
         }
         if (observedProperty != null){
            s.append('\n').append("observedProperty:").append('\n');
            for (PhenomenonPropertyType phen:observedProperty){
                 s.append(phen);
-            } 
+            }
         }
         return s.toString();
     }

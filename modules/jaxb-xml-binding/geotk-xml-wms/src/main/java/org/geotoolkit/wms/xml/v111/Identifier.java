@@ -26,8 +26,8 @@ import javax.xml.bind.annotation.XmlValue;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
- * 
+ *
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -56,8 +56,8 @@ public class Identifier {
         this.value     = value;
         this.authority = authority;
     }
-    
-    
+
+
     /**
      * Gets the value of the value property.
      */

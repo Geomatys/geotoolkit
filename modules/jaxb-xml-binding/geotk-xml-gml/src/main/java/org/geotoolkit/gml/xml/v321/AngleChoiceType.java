@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AngleChoiceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AngleChoiceType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AngleChoiceType", propOrder = {
@@ -55,11 +55,11 @@ public class AngleChoiceType {
 
     /**
      * Gets the value of the angle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AngleType }
-     *     
+     *
      */
     public AngleType getAngle() {
         return angle;
@@ -67,11 +67,11 @@ public class AngleChoiceType {
 
     /**
      * Sets the value of the angle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AngleType }
-     *     
+     *
      */
     public void setAngle(AngleType value) {
         this.angle = value;
@@ -79,11 +79,11 @@ public class AngleChoiceType {
 
     /**
      * Gets the value of the dmsAngle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DMSAngleType }
-     *     
+     *
      */
     public DMSAngleType getDmsAngle() {
         return dmsAngle;
@@ -91,11 +91,11 @@ public class AngleChoiceType {
 
     /**
      * Sets the value of the dmsAngle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DMSAngleType }
-     *     
+     *
      */
     public void setDmsAngle(DMSAngleType value) {
         this.dmsAngle = value;

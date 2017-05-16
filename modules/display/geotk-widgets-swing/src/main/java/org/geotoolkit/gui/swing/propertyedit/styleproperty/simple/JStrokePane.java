@@ -57,7 +57,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
 
     private final StyleBank model = StyleBank.getInstance();
     private MapLayer layer = null;
-    
+
     /**
      * Creates new form JStrokePane and initializes number graphic component
      */
@@ -131,7 +131,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -296,7 +296,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
             pane.add(BorderLayout.WEST, preview);
             pane.setOpaque(false);
             EmptyCellRenderer.mimicStyle(lbl, preview);
-            
+
             if (o instanceof Stroke) {
                 Stroke symbol = (Stroke) o;
                 preview.parse(symbol);

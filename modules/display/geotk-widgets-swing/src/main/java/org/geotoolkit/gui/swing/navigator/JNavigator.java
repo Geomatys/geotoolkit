@@ -125,7 +125,7 @@ public class JNavigator extends JPanel implements
             }
             updateDisplay();
         }
-        
+
     };
 
     private int orientation = SwingConstants.SOUTH;
@@ -145,21 +145,21 @@ public class JNavigator extends JPanel implements
         bandsPan.setInheritsPopupMenu(true);
         graduation.setInheritsPopupMenu(true);
 
-        final BoxLayout bl = new BoxLayout(bandsPan, BoxLayout.Y_AXIS);        
+        final BoxLayout bl = new BoxLayout(bandsPan, BoxLayout.Y_AXIS);
         bandsPan.setLayout(bl);
-                
+
         model.addPropertyChangeListener(listener);
         this.graduation.setOpaque(false);
         add(BorderLayout.SOUTH,graduation);
-        
+
         final JScrollPane scroller = new JScrollPane(bandsPan);
         scroller.setOpaque(false);
         scroller.setInheritsPopupMenu(true);
         scroller.setBorder(null);
         scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scroller.getViewport().setBorder(null);
-        scroller.getViewport().setOpaque(false);      
-        scroller.getViewport().setInheritsPopupMenu(true);  
+        scroller.getViewport().setOpaque(false);
+        scroller.getViewport().setInheritsPopupMenu(true);
         add(BorderLayout.CENTER,scroller);
 
         addMouseListener(this);
@@ -184,15 +184,15 @@ public class JNavigator extends JPanel implements
 
     private void updateDisplay(){
         bandsPan.removeAll();
-        
+
         for(JNavigatorBand band : bands){
             bandsPan.add(band);
         }
-        
+
         bandsPan.revalidate();
         bandsPan.repaint();
     }
-        
+
     /**
      * Nodifiable list of bands to display.
      */
@@ -219,7 +219,7 @@ public class JNavigator extends JPanel implements
     }
 
     public void setOrientation(final int orientation) {
-        
+
         if(this.orientation != orientation){
             this.orientation = orientation;
             //change the order
@@ -362,14 +362,14 @@ public class JNavigator extends JPanel implements
 
         final int speed = 3;
         switch(orientation){
-            case NORTH : 
+            case NORTH :
                 switch(code){
                     case VK_RIGHT : getModel().translate(-speed/scale);break;
                     case VK_LEFT :  getModel().translate(speed/scale);break;
                     case VK_UP :    getModel().scale(0.9d, x);break;
                     case VK_DOWN : getModel().scale(1.1d, x);break;
                 } break;
-            case SOUTH : 
+            case SOUTH :
                 switch(code){
                     case VK_RIGHT : getModel().translate(-speed/scale);break;
                     case VK_LEFT :  getModel().translate(speed/scale);break;
@@ -412,7 +412,7 @@ public class JNavigator extends JPanel implements
             }
         }else{
             switch(orientation){
-                case NORTH : return getWidth()/2; 
+                case NORTH : return getWidth()/2;
                 case SOUTH : return getWidth()/2;
                 case EAST : return getHeight()/2;
                 default : return getHeight()/2;

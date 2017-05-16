@@ -26,7 +26,7 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * An identification of a CRS object. 
+ * An identification of a CRS object.
  * The first use of the IdentifierType for an object, if any, is normally the primary identification code,
  * and any others are aliases.
  * @module
@@ -46,7 +46,7 @@ public class IdentifierType {
 
     /**
      * The code or name for this Identifier, often from a controlled list or pattern defined by a code space. The optional codeSpace attribute is normally included to identify or reference a code space within which one or more codes are defined. This code space is often defined by some authority organization, where one organization may define multiple code spaces. The range and format of each Code Space identifier is defined by that code space authority. Information about that code space authority can be included as metaDataProperty elements which are optionally allowed in all CRS objects.
-     * 
+     *
      */
     public JAXBElement<CodeType> getName() {
         return name;
@@ -54,7 +54,7 @@ public class IdentifierType {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      */
     public void setName(final JAXBElement<CodeType> value) {
         this.name = ((JAXBElement<CodeType> ) value);
@@ -62,7 +62,7 @@ public class IdentifierType {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      */
     public String getVersion() {
         return version;
@@ -70,7 +70,7 @@ public class IdentifierType {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      */
     public void setVersion(final String value) {
         this.version = value;
@@ -78,7 +78,7 @@ public class IdentifierType {
 
     /**
      * Remarks about this code or alias.
-     * 
+     *
      */
     public StringOrRefType getRemarks() {
         return remarks;
@@ -86,7 +86,7 @@ public class IdentifierType {
 
     /**
      * Sets the value of the remarks property.
-     * 
+     *
      */
     public void setRemarks(final StringOrRefType value) {
         this.remarks = value;

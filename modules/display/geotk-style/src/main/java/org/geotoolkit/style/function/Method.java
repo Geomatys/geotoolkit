@@ -29,7 +29,7 @@ import org.opengis.annotation.XmlElement;
 public enum Method {
     NUMERIC,
     COLOR;
-    
+
     public static Method parse(String val){
         if("numeric".equalsIgnoreCase(val)){
             return NUMERIC;

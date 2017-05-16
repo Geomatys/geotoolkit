@@ -27,9 +27,9 @@ import org.geotoolkit.swe.xml.BlockEncodingProperty;
 
 /**
  * <p>Java class for BlockEncodingPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BlockEncodingPropertyType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.swe.xml.BlockEncodingProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -115,14 +115,14 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
             }
         }
     }
-    
+
     /**
      * Gets the value of the standardFormat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StandardFormat }
-     *     
+     *
      */
     public StandardFormat getStandardFormat() {
         return standardFormat;
@@ -130,11 +130,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Sets the value of the standardFormat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StandardFormat }
-     *     
+     *
      */
     public void setStandardFormat(final StandardFormat value) {
         this.standardFormat = value;
@@ -142,11 +142,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Gets the value of the binaryBlock property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BinaryBlock }
-     *     
+     *
      */
     public BinaryBlock getBinaryBlock() {
         return binaryBlock;
@@ -154,11 +154,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Sets the value of the binaryBlock property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BinaryBlock }
-     *     
+     *
      */
     public void setBinaryBlock(final BinaryBlock value) {
         this.binaryBlock = value;
@@ -166,11 +166,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Gets the value of the textBlock property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TextBlock }
-     *     
+     *
      */
     public TextBlockType getTextBlock() {
         return textBlock;
@@ -178,11 +178,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Sets the value of the textBlock property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TextBlock }
-     *     
+     *
      */
     public void setTextBlock(final TextBlockType value) {
         this.textBlock = value;
@@ -190,11 +190,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Gets the value of the xmlBlock property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLBlockType }
-     *     
+     *
      */
     public XMLBlockType getXMLBlock() {
         return xmlBlock;
@@ -202,11 +202,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Sets the value of the xmlBlock property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLBlockType }
-     *     
+     *
      */
     public void setXMLBlock(final XMLBlockType value) {
         this.xmlBlock = value;
@@ -214,11 +214,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -226,11 +226,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -238,11 +238,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -250,11 +250,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -262,11 +262,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -274,11 +274,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -286,11 +286,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -298,11 +298,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -310,11 +310,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -322,11 +322,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -334,11 +334,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -346,11 +346,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -358,11 +358,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -370,11 +370,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -382,11 +382,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -394,11 +394,11 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;

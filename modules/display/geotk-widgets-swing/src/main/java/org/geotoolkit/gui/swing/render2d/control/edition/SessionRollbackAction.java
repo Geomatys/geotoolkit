@@ -39,7 +39,7 @@ public class SessionRollbackAction extends AbstractAction implements FeatureStor
 
     private static final ImageIcon ICON_ROLLBACK = IconBuilder.createIcon(FontAwesomeIcons.ICON_UNDO, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_WAIT = IconBuilder.createIcon(FontAwesomeIcons.ICON_SPINNER, 16, FontAwesomeIcons.DEFAULT_COLOR);
-    
+
     private final FeatureStoreListener.Weak weakListener = new Weak(this);
     private FeatureMapLayer layer;
 

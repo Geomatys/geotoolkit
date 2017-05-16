@@ -30,7 +30,7 @@ import javafx.scene.control.TableCell;
  * @param <S> cell source value type
  */
 public class FXPasswordTableCell<S> extends TableCell<S, String>{
-    
+
     private final PasswordField field = new PasswordField();
     private final MessageDigest messageDigest;
 
@@ -51,7 +51,7 @@ public class FXPasswordTableCell<S> extends TableCell<S, String>{
         });
         this.messageDigest=messageDigest;
     }
-    
+
     private String digest(final String toEncrypt){
         if(messageDigest==null) return toEncrypt;
         else {

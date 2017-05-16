@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ServiceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ServiceType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ServiceType", propOrder = {
@@ -76,11 +76,11 @@ public class ServiceType {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -88,11 +88,11 @@ public class ServiceType {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -100,11 +100,11 @@ public class ServiceType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -112,11 +112,11 @@ public class ServiceType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -124,11 +124,11 @@ public class ServiceType {
 
     /**
      * Gets the value of the abstract property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAbstract() {
         return _abstract;
@@ -136,11 +136,11 @@ public class ServiceType {
 
     /**
      * Sets the value of the abstract property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAbstract(String value) {
         this._abstract = value;
@@ -148,11 +148,11 @@ public class ServiceType {
 
     /**
      * Gets the value of the keywords property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getKeywords() {
         return keywords;
@@ -160,11 +160,11 @@ public class ServiceType {
 
     /**
      * Sets the value of the keywords property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setKeywords(String value) {
         this.keywords = value;
@@ -172,11 +172,11 @@ public class ServiceType {
 
     /**
      * Gets the value of the onlineResource property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Object }
-     *     
+     *
      */
     public Object getOnlineResource() {
         return onlineResource;
@@ -184,11 +184,11 @@ public class ServiceType {
 
     /**
      * Sets the value of the onlineResource property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Object }
-     *     
+     *
      */
     public void setOnlineResource(Object value) {
         this.onlineResource = value;
@@ -196,11 +196,11 @@ public class ServiceType {
 
     /**
      * Gets the value of the fees property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFees() {
         return fees;
@@ -208,11 +208,11 @@ public class ServiceType {
 
     /**
      * Sets the value of the fees property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFees(String value) {
         this.fees = value;
@@ -220,11 +220,11 @@ public class ServiceType {
 
     /**
      * Gets the value of the accessConstraints property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAccessConstraints() {
         return accessConstraints;
@@ -232,11 +232,11 @@ public class ServiceType {
 
     /**
      * Sets the value of the accessConstraints property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAccessConstraints(String value) {
         this.accessConstraints = value;

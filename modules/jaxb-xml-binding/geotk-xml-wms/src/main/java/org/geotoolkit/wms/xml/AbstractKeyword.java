@@ -23,12 +23,12 @@ package org.geotoolkit.wms.xml;
  * @module
  */
 public interface AbstractKeyword {
-    
+
     /**
      * Gets the value of this keyword.
      */
     public String getValue();
-    
+
     /**
     * Gets the vocabulary value of this keyword.
     */

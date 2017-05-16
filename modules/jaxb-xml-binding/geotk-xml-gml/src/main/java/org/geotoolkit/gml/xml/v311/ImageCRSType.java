@@ -23,12 +23,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * An engineering coordinate reference system applied to locations in images. Image coordinate reference systems are treated as a separate sub-type because a separate user community exists for images with its own terms of reference. 
- * 
+ * An engineering coordinate reference system applied to locations in images. Image coordinate reference systems are treated as a separate sub-type because a separate user community exists for images with its own terms of reference.
+ *
  * <p>Java class for ImageCRSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ImageCRSType">
  *   &lt;complexContent>
@@ -44,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -66,7 +66,7 @@ public class ImageCRSType extends AbstractReferenceSystemType {
      */
     ImageCRSType() {
     }
-    
+
     /**
      * Build a new Image CRS with cartesian CS.
      */
@@ -75,7 +75,7 @@ public class ImageCRSType extends AbstractReferenceSystemType {
         this.usesCartesianCS        = usesCartesianCS;
         this.usesObliqueCartesianCS = null;
     }
-    
+
      /**
      * Build a new Image CRS with oblique cartesian CS.
      */
@@ -84,7 +84,7 @@ public class ImageCRSType extends AbstractReferenceSystemType {
         this.usesObliqueCartesianCS = usesObliqueCartesianCS;
         this.usesCartesianCS        = null;
     }
-            
+
     /**
      * Gets the value of the usesCartesianCS property.
      */

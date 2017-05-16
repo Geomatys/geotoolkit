@@ -91,7 +91,7 @@ public abstract class AbstractNode {
         return buffer;
     }
 
-    /** 
+    /**
      * @return Number of sub nodes
      */
     public abstract int getNumSubNodes();
@@ -107,7 +107,7 @@ public abstract class AbstractNode {
 
     /**
      * Gets the Node at the requested position
-     * 
+     *
      * @param pos The position
      * @return A Node
      * @throws StoreException DOCUMENT ME!
@@ -116,7 +116,7 @@ public abstract class AbstractNode {
 
     /**
      * Add a shape id
-     * 
+     *
      * @param id
      */
     public void addShapeId(final int id) {
@@ -129,7 +129,7 @@ public abstract class AbstractNode {
 
     /**
      * Gets a shape id
-     * 
+     *
      * @param pos The position
      * @return The shape id (or recno) at the requested position
      * @throws ArrayIndexOutOfBoundsException DOCUMENT ME!

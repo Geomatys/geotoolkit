@@ -36,7 +36,7 @@ public class DefaultRegion extends DefaultAbstractObject implements Region {
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param latLonAltBox

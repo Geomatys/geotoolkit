@@ -110,7 +110,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
 
         s = new IndexedShapefileFeatureStore(tmp.toURI());
         assertEquals(one.size() * 2, s.getCount(QueryBuilder.all(s.getName().toString())));
-        
+
         s.close();
     }
 
@@ -138,7 +138,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         Session session = s.createSession(true);
         session.addFeatures(s.getName().toString(),one);
         session.commit();
-        
+
         s.close();
 
         s = new IndexedShapefileFeatureStore(tmp.toURI());
@@ -179,7 +179,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         }
 
         for(PropertyType desc : descs){
-            final String name = desc.getName().tip().toString();
+            final String name = desc.getName().toString();
             Object att1 = f1.getPropertyValue(name);
             Object att2 = f2.getPropertyValue(name);
             if (att1 instanceof Geometry && att2 instanceof Geometry) {

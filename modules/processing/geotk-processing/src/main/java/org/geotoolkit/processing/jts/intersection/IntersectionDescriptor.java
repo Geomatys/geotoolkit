@@ -33,10 +33,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class IntersectionDescriptor extends AbstractProcessDescriptor{
-        
+
     /**Process name : intersection */
     public static final String NAME = "jts:intersection";
-    
+
     /**
      * Input parameters
      */
@@ -50,10 +50,10 @@ public class IntersectionDescriptor extends AbstractProcessDescriptor{
             .setRemarks("Geometry JTS")
             .setRequired(true)
             .create(Geometry.class, null);
-    
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(GEOM1,GEOM2);
-    
+
     /**
      * OutputParameters
      */
@@ -62,7 +62,7 @@ public class IntersectionDescriptor extends AbstractProcessDescriptor{
             .setRemarks("The intersection geometry result")
             .setRequired(true)
             .create(Geometry.class, null);
-    
+
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_GEOM);
 
@@ -80,5 +80,5 @@ public class IntersectionDescriptor extends AbstractProcessDescriptor{
     public Process createProcess(final ParameterValueGroup input) {
         return new IntersectionProcess(input);
     }
-    
+
 }

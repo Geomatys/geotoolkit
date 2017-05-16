@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for BinaryLogicOpType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BinaryLogicOpType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,11 +62,11 @@ public class BinaryLogicOpType extends LogicOpsType {
     private List<JAXBElement<?>> comparisonOpsOrSpatialOpsOrLogicOps;
 
     public BinaryLogicOpType() {
-        
+
     }
-    
+
     /**
-      * Build a new Binary logic operator 
+      * Build a new Binary logic operator
       */
     public BinaryLogicOpType(final BinaryLogicOpType that) {
          if (that != null && that.comparisonOpsOrSpatialOpsOrLogicOps != null) {
@@ -81,17 +81,17 @@ public class BinaryLogicOpType extends LogicOpsType {
                     final ComparisonOpsType co = ((ComparisonOpsType)obj).getClone();
                     this.comparisonOpsOrSpatialOpsOrLogicOps.add(FilterType.createComparisonOps(co));
 
-                // logical operator    
+                // logical operator
                 } else if (obj instanceof LogicOpsType) {
                     final LogicOpsType lo = ((LogicOpsType)obj).getClone();
                     this.comparisonOpsOrSpatialOpsOrLogicOps.add(FilterType.createLogicOps(lo));
 
-                // spatial operator    
+                // spatial operator
                 } else if (obj instanceof SpatialOpsType) {
                     final SpatialOpsType so = ((SpatialOpsType)obj).getClone();
                     this.comparisonOpsOrSpatialOpsOrLogicOps.add(FilterType.createSpatialOps(so));
-                    
-                // function   
+
+                // function
                 } else if (obj instanceof FunctionType) {
                     final FunctionType fu = new FunctionType((FunctionType)obj);
                     this.comparisonOpsOrSpatialOpsOrLogicOps.add(factory.createFunction(fu));
@@ -102,10 +102,10 @@ public class BinaryLogicOpType extends LogicOpsType {
             }
          }
      }
-     
+
     /**
      * Gets the value of the comparisonOpsOrSpatialOpsOrLogicOps property.
-     * 
+     *
      */
     public List<JAXBElement<?>> getComparisonOpsOrSpatialOpsOrLogicOps() {
         if (comparisonOpsOrSpatialOpsOrLogicOps == null) {

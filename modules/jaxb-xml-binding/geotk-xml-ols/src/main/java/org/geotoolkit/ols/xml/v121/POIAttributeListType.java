@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for POIAttributeListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="POIAttributeListType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "POIAttributeListType", propOrder = {
@@ -57,11 +57,11 @@ public class POIAttributeListType {
 
     /**
      * Gets the value of the referenceSystem property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceSystemType }
-     *     
+     *
      */
     public ReferenceSystemType getReferenceSystem() {
         return referenceSystem;
@@ -69,11 +69,11 @@ public class POIAttributeListType {
 
     /**
      * Sets the value of the referenceSystem property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceSystemType }
-     *     
+     *
      */
     public void setReferenceSystem(ReferenceSystemType value) {
         this.referenceSystem = value;
@@ -81,11 +81,11 @@ public class POIAttributeListType {
 
     /**
      * Gets the value of the poiInfoList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link POIInfoListType }
-     *     
+     *
      */
     public POIInfoListType getPOIInfoList() {
         return poiInfoList;
@@ -93,11 +93,11 @@ public class POIAttributeListType {
 
     /**
      * Sets the value of the poiInfoList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link POIInfoListType }
-     *     
+     *
      */
     public void setPOIInfoList(POIInfoListType value) {
         this.poiInfoList = value;

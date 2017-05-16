@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines the Determine Route response parameters.
- * 
+ *
  * <p>Java class for DetermineRouteResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DetermineRouteResponseType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DetermineRouteResponseType", propOrder = {
@@ -73,11 +73,11 @@ public class DetermineRouteResponseType extends AbstractResponseParametersType {
 
     /**
      * Reference to the route stored at the Route Determination Service server.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RouteHandleType }
-     *     
+     *
      */
     public RouteHandleType getRouteHandle() {
         return routeHandle;
@@ -85,11 +85,11 @@ public class DetermineRouteResponseType extends AbstractResponseParametersType {
 
     /**
      * Sets the value of the routeHandle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RouteHandleType }
-     *     
+     *
      */
     public void setRouteHandle(RouteHandleType value) {
         this.routeHandle = value;
@@ -97,11 +97,11 @@ public class DetermineRouteResponseType extends AbstractResponseParametersType {
 
     /**
      * Response for requested route summary.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RouteSummaryType }
-     *     
+     *
      */
     public RouteSummaryType getRouteSummary() {
         return routeSummary;
@@ -109,11 +109,11 @@ public class DetermineRouteResponseType extends AbstractResponseParametersType {
 
     /**
      * Sets the value of the routeSummary property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RouteSummaryType }
-     *     
+     *
      */
     public void setRouteSummary(RouteSummaryType value) {
         this.routeSummary = value;
@@ -121,11 +121,11 @@ public class DetermineRouteResponseType extends AbstractResponseParametersType {
 
     /**
      * Response for requested route geometry.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RouteGeometryType }
-     *     
+     *
      */
     public RouteGeometryType getRouteGeometry() {
         return routeGeometry;
@@ -133,11 +133,11 @@ public class DetermineRouteResponseType extends AbstractResponseParametersType {
 
     /**
      * Sets the value of the routeGeometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RouteGeometryType }
-     *     
+     *
      */
     public void setRouteGeometry(RouteGeometryType value) {
         this.routeGeometry = value;
@@ -145,11 +145,11 @@ public class DetermineRouteResponseType extends AbstractResponseParametersType {
 
     /**
      * Response for requested route instructions.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RouteInstructionsListType }
-     *     
+     *
      */
     public RouteInstructionsListType getRouteInstructionsList() {
         return routeInstructionsList;
@@ -157,11 +157,11 @@ public class DetermineRouteResponseType extends AbstractResponseParametersType {
 
     /**
      * Sets the value of the routeInstructionsList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RouteInstructionsListType }
-     *     
+     *
      */
     public void setRouteInstructionsList(RouteInstructionsListType value) {
         this.routeInstructionsList = value;
@@ -169,25 +169,25 @@ public class DetermineRouteResponseType extends AbstractResponseParametersType {
 
     /**
      * Response list for requested route maps.Gets the value of the routeMap property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the routeMap property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRouteMap().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link RouteMapType }
-     * 
-     * 
+     *
+     *
      */
     public List<RouteMapType> getRouteMap() {
         if (routeMap == null) {

@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Restricts the geometry member to being a Point instance.
- * 
+ *
  * <p>Java class for PointMemberType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PointMemberType">
  *   &lt;complexContent>
@@ -40,22 +40,22 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PointMemberType")
 public class PointMemberType extends GeometryAssociationType {
-    
+
     public PointMemberType() {
-        
+
     }
-    
+
     public PointMemberType(PointMemberType that) {
         super(that);
     }
-    
+
     @Override
     public GeometryAssociationType getClone() {
         return new PointMemberType(this);

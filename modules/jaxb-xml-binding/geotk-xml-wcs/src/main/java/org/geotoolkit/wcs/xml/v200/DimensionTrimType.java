@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for DimensionTrimType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DimensionTrimType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DimensionTrimType", propOrder = {
@@ -57,11 +57,11 @@ public class DimensionTrimType extends DimensionSubsetType {
 
     /**
      * Gets the value of the trimLow property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTrimLow() {
         return trimLow;
@@ -69,11 +69,11 @@ public class DimensionTrimType extends DimensionSubsetType {
 
     /**
      * Sets the value of the trimLow property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTrimLow(String value) {
         this.trimLow = value;
@@ -81,11 +81,11 @@ public class DimensionTrimType extends DimensionSubsetType {
 
     /**
      * Gets the value of the trimHigh property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTrimHigh() {
         return trimHigh;
@@ -93,11 +93,11 @@ public class DimensionTrimType extends DimensionSubsetType {
 
     /**
      * Sets the value of the trimHigh property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTrimHigh(String value) {
         this.trimHigh = value;

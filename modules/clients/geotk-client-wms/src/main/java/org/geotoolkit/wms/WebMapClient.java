@@ -224,7 +224,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
      * @see {@link #getCapabilities(long)}
      */
     public AbstractWMSCapabilities getCapabilities() throws CapabilitiesException{
-    	return getCapabilities(TIMEOUT_GETCAPS);
+        return getCapabilities(TIMEOUT_GETCAPS);
     }
 
     /**
@@ -439,8 +439,8 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
         return sb.toString();
     }
 
-	@Override
-	public CoverageType getType() {
-		return CoverageType.GRID;
-	}
+    @Override
+    public CoverageType getType() {
+        return CoverageType.GRID;
+    }
 }

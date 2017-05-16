@@ -35,9 +35,9 @@ import org.geotoolkit.swe.xml.AbstractAllowedTokens;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.swe.xml.AbstractAllowedTokens;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -70,9 +70,9 @@ public class AllowedTokens implements AbstractAllowedTokens {
     private String id;
 
     public AllowedTokens() {
-        
+
     }
-    
+
     public AllowedTokens(final AbstractAllowedTokens tk) {
         if (tk != null) {
             this.id = tk.getId();
@@ -83,7 +83,7 @@ public class AllowedTokens implements AbstractAllowedTokens {
             }
         }
     }
-    
+
     /**
      * Gets the value of the valueList property.
      */

@@ -18,7 +18,7 @@ package org.geotoolkit.data.wfs;
 
 /**
  * <p>Java class for AllSomeType.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
@@ -29,7 +29,7 @@ package org.geotoolkit.data.wfs;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 public enum ReleaseAction {
     ALL,

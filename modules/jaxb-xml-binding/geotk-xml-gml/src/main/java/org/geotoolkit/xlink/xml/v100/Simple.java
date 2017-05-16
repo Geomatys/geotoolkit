@@ -29,15 +29,15 @@ import org.w3c.dom.Element;
 
 
 /**
- * 
+ *
  *     Intended for use as the type of user-declared elements to make them
  *     simple links.
- *    
- * 
+ *
+ *
  * <p>Java class for simple complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="simple">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "simple", propOrder = {
@@ -76,17 +76,17 @@ public class Simple {
     private ActuateType actuate;
 
     /**
-     * 
+     *
      *     Intended for use as the type of user-declared elements to make them
      *     simple links.
      *    Gets the value of the content property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Element }
      * {@link Object }
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getContent() {
         if (content == null) {
@@ -97,11 +97,11 @@ public class Simple {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TypeType }
-     *     
+     *
      */
     public TypeType getType() {
         if (type == null) {
@@ -113,11 +113,11 @@ public class Simple {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TypeType }
-     *     
+     *
      */
     public void setType(TypeType value) {
         this.type = value;
@@ -125,11 +125,11 @@ public class Simple {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -137,11 +137,11 @@ public class Simple {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -149,11 +149,11 @@ public class Simple {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -161,11 +161,11 @@ public class Simple {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -173,11 +173,11 @@ public class Simple {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -185,11 +185,11 @@ public class Simple {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -197,11 +197,11 @@ public class Simple {
 
     /**
      * Gets the value of the titleTemp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitleTemp() {
         return titleTemp;
@@ -209,11 +209,11 @@ public class Simple {
 
     /**
      * Sets the value of the titleTemp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitleTemp(String value) {
         this.titleTemp = value;
@@ -221,11 +221,11 @@ public class Simple {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShowType }
-     *     
+     *
      */
     public ShowType getShow() {
         return show;
@@ -233,11 +233,11 @@ public class Simple {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShowType }
-     *     
+     *
      */
     public void setShow(ShowType value) {
         this.show = value;
@@ -245,11 +245,11 @@ public class Simple {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public ActuateType getActuate() {
         return actuate;
@@ -257,11 +257,11 @@ public class Simple {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public void setActuate(ActuateType value) {
         this.actuate = value;

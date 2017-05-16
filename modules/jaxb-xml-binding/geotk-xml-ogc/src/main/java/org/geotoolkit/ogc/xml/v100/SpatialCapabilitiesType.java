@@ -28,9 +28,9 @@ import org.opengis.filter.capability.SpatialOperators;
 
 /**
  * <p>Java class for Spatial_CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Spatial_CapabilitiesType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.opengis.filter.capability.SpatialOperators;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Spatial_CapabilitiesType", propOrder = {
@@ -61,14 +61,14 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
     public SpatialCapabilitiesType(final SpatialOperators spatialOperators) {
         this.spatialOperators = (SpatialOperatorsType) spatialOperators;
     }
-    
+
     /**
      * Gets the value of the spatialOperators property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SpatialOperatorsType }
-     *     
+     *
      */
     @Override
     public SpatialOperatorsType getSpatialOperators() {
@@ -77,11 +77,11 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
 
     /**
      * Sets the value of the spatialOperators property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SpatialOperatorsType }
-     *     
+     *
      */
     public void setSpatialOperators(SpatialOperatorsType value) {
         this.spatialOperators = value;

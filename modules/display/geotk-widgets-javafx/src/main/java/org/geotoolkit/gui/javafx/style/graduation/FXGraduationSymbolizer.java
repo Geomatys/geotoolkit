@@ -53,13 +53,13 @@ public class FXGraduationSymbolizer extends FXStyleElementController<GraduationS
 
     private FXGraduation uiGraduation;
     private boolean updatingSubEditor = false;
-    
+
     @FXML
     void addGraduation(ActionEvent event) {
         final Graduation graduation = new Graduation();
         uiTable.getItems().add(graduation);
     }
-    
+
     @Override
     public Class<GraduationSymbolizer> getEditedClass() {
         return GraduationSymbolizer.class;
@@ -73,16 +73,16 @@ public class FXGraduationSymbolizer extends FXStyleElementController<GraduationS
     @Override
     public void initialize() {
         super.initialize();
-        
+
         uiGraduation = new FXGraduation();
         uiGraduation.visibleProperty().bind(uiTable.getSelectionModel().selectedItemProperty().isNotNull());
         uiGraduation.managedProperty().bind(uiGraduation.visibleProperty());
-        
+
         final ScrollPane scrollPane = new ScrollPane(uiGraduation);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
         uiSplit.getItems().add(scrollPane);
-        
+
         uiTable.setEditable(true);
         uiTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         uiTable.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<Graduation>() {
@@ -96,7 +96,7 @@ public class FXGraduationSymbolizer extends FXStyleElementController<GraduationS
             }
         });
         FXUtilities.hideTableHeader(uiTable);
-        
+
         uiGraduation.valueProperty().addListener(new ChangeListener<Graduation>() {
             @Override
             public void changed(ObservableValue<? extends Graduation> observable, Graduation oldValue, Graduation newValue) {
@@ -111,7 +111,7 @@ public class FXGraduationSymbolizer extends FXStyleElementController<GraduationS
                 }
             }
         });
-        
+
         final TableColumn<Graduation,String> nameCol = new TableColumn<>();
         nameCol.setEditable(false);
         nameCol.setMinWidth(100);
@@ -129,14 +129,14 @@ public class FXGraduationSymbolizer extends FXStyleElementController<GraduationS
         deleteCol.setMaxWidth(30);
         deleteCol.setCellValueFactory((TableColumn.CellDataFeatures<Graduation, Graduation> param) -> new SimpleObjectProperty<>((Graduation)param.getValue()));
         deleteCol.setCellFactory((TableColumn<Graduation, Graduation> p) -> new DeleteButton());
-        
-        
+
+
         uiTable.getColumns().add(nameCol);
         uiTable.getColumns().add(deleteCol);
         uiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         uiTable.setTableMenuButtonVisible(false);
     }
-    
+
     @Override
     protected void updateEditor(GraduationSymbolizer styleElement) {
         uiTable.getSelectionModel().clearSelection();
@@ -149,9 +149,9 @@ public class FXGraduationSymbolizer extends FXStyleElementController<GraduationS
                 symbolizer.getGraduations().addAll(uiTable.getItems());
                 value.set(symbolizer);
             }
-        });        
+        });
     }
-    
+
     private class DeleteButton extends ButtonTableCell<Graduation, Graduation>{
 
         public DeleteButton() {
@@ -165,5 +165,5 @@ public class FXGraduationSymbolizer extends FXStyleElementController<GraduationS
                 });
         }
     }
-    
+
 }

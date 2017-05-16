@@ -39,7 +39,7 @@ import org.geotoolkit.gui.swing.render2d.control.information.presenter.TreeFeatu
 
 /**
  * Panoramic handler
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -52,8 +52,8 @@ public class PanHandler extends AbstractNavigationHandler {
     private final double zoomFactor = 2;
     private final boolean infoOnRightClick;
     private final TreeFeaturePresenter presenter = new TreeFeaturePresenter();
-    
-    
+
+
     public PanHandler(final JMap2D map, boolean infoOnRightClick) {
         super(map);
         this.infoOnRightClick= infoOnRightClick;
@@ -82,7 +82,7 @@ public class PanHandler extends AbstractNavigationHandler {
         component.removeMouseWheelListener(mouseInputListener);
         map.setCursor(null);
     }
-    
+
     //---------------------PRIVATE CLASSES--------------------------------------
     private class MouseListen implements MouseInputListener, MouseWheelListener {
 
@@ -91,14 +91,14 @@ public class PanHandler extends AbstractNavigationHandler {
         private int lastX;
         private int lastY;
         private int mousebutton = 0;
-        
+
         @Override
         public void mouseClicked(final MouseEvent e) {
             startX = e.getX();
             startY = e.getY();
             lastX = startX;
             lastY = startY;
-            
+
             if (infoOnRightClick && MouseEvent.BUTTON3 == e.getButton()) {
                 final Area searchArea = new Area(new Rectangle(e.getPoint().x - 2, e.getPoint().y - 2, 4, 4));
                 final InformationVisitor visitor = new InformationVisitor();
@@ -109,7 +109,7 @@ public class PanHandler extends AbstractNavigationHandler {
                     dialog.display(visitor.graphics, presenter, e.getLocationOnScreen(), visitor.ctx, visitor.area);
                 }
             }
-            
+
         }
 
         @Override
@@ -169,7 +169,7 @@ public class PanHandler extends AbstractNavigationHandler {
             if ((lastX > 0) && (lastY > 0)) {
                 int dx = lastX - startX;
                 int dy = lastY - startY;
-                
+
                 if(isStateFull()){
 
                     if (mousebutton == MouseEvent.BUTTON1) {
@@ -204,8 +204,8 @@ public class PanHandler extends AbstractNavigationHandler {
             }
         }
     }
-    
-    
+
+
     private static class InformationVisitor implements GraphicVisitor {
 
         private final List<org.opengis.display.primitive.Graphic> graphics = new ArrayList<org.opengis.display.primitive.Graphic>();
@@ -232,6 +232,6 @@ public class PanHandler extends AbstractNavigationHandler {
             this.area = (SearchAreaJ2D) area;
         }
     }
-    
-    
+
+
 }

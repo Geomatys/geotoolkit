@@ -73,7 +73,7 @@ public class Identifier implements AbstractIdentifier {
             this.term = new Term(id.getTerm());
         }
     }
-    
+
     /**
      * Gets the value of the term property.
      */

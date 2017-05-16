@@ -39,9 +39,9 @@ public class DefaultAddressDetails implements AddressDetails {
     private String addressDetailsKey;
 
     public DefaultAddressDetails(){}
-    
+
     /**
-     * 
+     *
      * @param postalServiceElements
      * @param localisation
      * @param addressType
@@ -53,7 +53,7 @@ public class DefaultAddressDetails implements AddressDetails {
      * @param addressDetailsKey
      * @throws XalException
      */
-    public DefaultAddressDetails(PostalServiceElements postalServiceElements, 
+    public DefaultAddressDetails(PostalServiceElements postalServiceElements,
             Object localisation, String addressType, String currentStatus,
             String validFromDate, String validToDate,
             String usage, GrPostal grPostal, String addressDetailsKey)

@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * This parallels gml:AbstractContinuousCoverageType, except that the gml:coverageFunction element has been moved "up" into gmlcov:AbstractCoverageType.
- * 
+ *
  * <p>Java class for AbstractContinuousCoverageType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractContinuousCoverageType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractContinuousCoverageType")

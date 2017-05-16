@@ -51,13 +51,13 @@ public interface Boundary {
     LinearRing getLinearRing();
 
     /**
-     * 
+     *
      * @param linearRing
      */
     void setLinearRing(LinearRing linearRing);
 
     /**
-     * 
+     *
      * @return
      */
     Extensions extensions();

@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ActionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ActionType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,11 +60,11 @@ public class ActionType {
 
     /**
      * Gets the value of the message property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMessage() {
         return message;
@@ -72,11 +72,11 @@ public class ActionType {
 
     /**
      * Sets the value of the message property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMessage(final String value) {
         this.message = value;
@@ -84,11 +84,11 @@ public class ActionType {
 
     /**
      * Gets the value of the locator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLocator() {
         return locator;
@@ -96,11 +96,11 @@ public class ActionType {
 
     /**
      * Sets the value of the locator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLocator(final String value) {
         this.locator = value;
@@ -108,11 +108,11 @@ public class ActionType {
 
     /**
      * Gets the value of the code property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCode() {
         return code;
@@ -120,11 +120,11 @@ public class ActionType {
 
     /**
      * Sets the value of the code property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCode(final String value) {
         this.code = value;

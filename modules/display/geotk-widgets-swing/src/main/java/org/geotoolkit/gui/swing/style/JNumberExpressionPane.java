@@ -180,5 +180,5 @@ private void guiNumberStateChanged(final ChangeEvent evt) {//GEN-FIRST:event_gui
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
 }

@@ -31,9 +31,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for DomainSetType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DomainSetType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DomainSetType", propOrder = {
@@ -90,9 +90,9 @@ public class DomainSetType {
     private java.lang.Boolean owns;
 
     public DomainSetType() {
-        
+
     }
-    
+
     public DomainSetType(final GridType grid) {
         final ObjectFactory factory = new ObjectFactory();
         if (grid instanceof RectifiedGridType) {
@@ -101,10 +101,10 @@ public class DomainSetType {
             this.abstractGeometry = factory.createGrid(grid);
         }
     }
-    
+
     /**
      * Gets the value of the abstractGeometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link MultiSurfaceType }{@code >}
@@ -136,7 +136,7 @@ public class DomainSetType {
      *     {@link JAXBElement }{@code <}{@link SurfaceType }{@code >}
      *     {@link JAXBElement }{@code <}{@link MultiSolidType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PointType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractGeometryType> getAbstractGeometry() {
         return abstractGeometry;
@@ -144,7 +144,7 @@ public class DomainSetType {
 
     /**
      * Sets the value of the abstractGeometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link MultiSurfaceType }{@code >}
@@ -176,7 +176,7 @@ public class DomainSetType {
      *     {@link JAXBElement }{@code <}{@link SurfaceType }{@code >}
      *     {@link JAXBElement }{@code <}{@link MultiSolidType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PointType }{@code >}
-     *     
+     *
      */
     public void setAbstractGeometry(JAXBElement<? extends AbstractGeometryType> value) {
         this.abstractGeometry = ((JAXBElement<? extends AbstractGeometryType> ) value);
@@ -184,7 +184,7 @@ public class DomainSetType {
 
     /**
      * Gets the value of the abstractTimeObject property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractTimeComplexType }{@code >}
@@ -197,7 +197,7 @@ public class DomainSetType {
      *     {@link JAXBElement }{@code <}{@link TimeEdgeType }{@code >}
      *     {@link JAXBElement }{@code <}{@link TimeTopologyComplexType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractTimeObjectType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractTimeObjectType> getAbstractTimeObject() {
         return abstractTimeObject;
@@ -205,7 +205,7 @@ public class DomainSetType {
 
     /**
      * Sets the value of the abstractTimeObject property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractTimeComplexType }{@code >}
@@ -218,7 +218,7 @@ public class DomainSetType {
      *     {@link JAXBElement }{@code <}{@link TimeEdgeType }{@code >}
      *     {@link JAXBElement }{@code <}{@link TimeTopologyComplexType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractTimeObjectType }{@code >}
-     *     
+     *
      */
     public void setAbstractTimeObject(JAXBElement<? extends AbstractTimeObjectType> value) {
         this.abstractTimeObject = ((JAXBElement<? extends AbstractTimeObjectType> ) value);
@@ -226,11 +226,11 @@ public class DomainSetType {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
@@ -241,11 +241,11 @@ public class DomainSetType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -253,11 +253,11 @@ public class DomainSetType {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(String value) {
         this.remoteSchema = value;
@@ -265,11 +265,11 @@ public class DomainSetType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -281,11 +281,11 @@ public class DomainSetType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -293,11 +293,11 @@ public class DomainSetType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -305,11 +305,11 @@ public class DomainSetType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -317,11 +317,11 @@ public class DomainSetType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -329,11 +329,11 @@ public class DomainSetType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -341,11 +341,11 @@ public class DomainSetType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -353,11 +353,11 @@ public class DomainSetType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -365,11 +365,11 @@ public class DomainSetType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -377,11 +377,11 @@ public class DomainSetType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -389,11 +389,11 @@ public class DomainSetType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -401,11 +401,11 @@ public class DomainSetType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(String value) {
         this.show = value;
@@ -413,11 +413,11 @@ public class DomainSetType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -425,11 +425,11 @@ public class DomainSetType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(String value) {
         this.actuate = value;
@@ -437,11 +437,11 @@ public class DomainSetType {
 
     /**
      * Gets the value of the owns property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public boolean isOwns() {
         if (owns == null) {
@@ -453,11 +453,11 @@ public class DomainSetType {
 
     /**
      * Sets the value of the owns property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public void setOwns(java.lang.Boolean value) {
         this.owns = value;

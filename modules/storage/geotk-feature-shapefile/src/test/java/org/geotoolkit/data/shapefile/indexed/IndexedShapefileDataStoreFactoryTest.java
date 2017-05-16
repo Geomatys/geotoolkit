@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
  * @module
  */
 public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSupport {
-    
+
     private ShapefileFeatureStoreFactory factory;
 
     @Before

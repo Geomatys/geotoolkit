@@ -30,9 +30,9 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
 
 /**
  * <p>Java class for GetResultTemplateType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetResultTemplateType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetResultTemplateType", propOrder = {
@@ -64,34 +64,34 @@ public class GetResultTemplateType extends ExtensibleRequestType implements GetR
     private String observedProperty;
 
     public GetResultTemplateType() {
-        
+
     }
-    
+
     public GetResultTemplateType(final String version, final String offering, final String observedProperty) {
         super(version, "SOS");
         this.observedProperty = observedProperty;
         this.offering         = offering;
     }
-    
+
     public GetResultTemplateType(final String version, final String service, final String offering, final String observedProperty) {
         super(version, service);
         this.observedProperty = observedProperty;
         this.offering         = offering;
     }
-    
+
     public GetResultTemplateType(final String version, final String service, final String offering, final String observedProperty, final List<Object> extension) {
         super(version, service, extension);
         this.observedProperty = observedProperty;
         this.offering         = offering;
     }
-    
+
     /**
      * Gets the value of the offering property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getOffering() {
@@ -100,11 +100,11 @@ public class GetResultTemplateType extends ExtensibleRequestType implements GetR
 
     /**
      * Sets the value of the offering property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOffering(String value) {
         this.offering = value;
@@ -112,11 +112,11 @@ public class GetResultTemplateType extends ExtensibleRequestType implements GetR
 
     /**
      * Gets the value of the observedProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getObservedProperty() {
@@ -125,11 +125,11 @@ public class GetResultTemplateType extends ExtensibleRequestType implements GetR
 
     /**
      * Sets the value of the observedProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setObservedProperty(String value) {
         this.observedProperty = value;

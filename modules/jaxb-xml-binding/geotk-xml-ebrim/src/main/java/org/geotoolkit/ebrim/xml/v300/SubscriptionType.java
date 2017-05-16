@@ -33,11 +33,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * A Subscription for specified Events in an ebXML V3+ registry.
- * 
+ *
  * <p>Java class for SubscriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SubscriptionType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -74,7 +74,7 @@ public class SubscriptionType extends RegistryObjectType {
     private XMLGregorianCalendar endTime;
     @XmlAttribute
     private Duration notificationInterval;
-    
+
     @XmlTransient
     private static ObjectFactory factory = new ObjectFactory();
 
@@ -87,7 +87,7 @@ public class SubscriptionType extends RegistryObjectType {
         }
         return this.action;
     }
-    
+
         /**
      * Sets the value of the action property.
      */
@@ -100,7 +100,7 @@ public class SubscriptionType extends RegistryObjectType {
         else
             this.action.add(factory.createAction(action));
     }
-    
+
     /**
      * Sets the value of the action property.
      */
@@ -131,7 +131,7 @@ public class SubscriptionType extends RegistryObjectType {
 
     /**
      * Sets the value of the startTime property.
-     *     
+     *
      */
     public void setStartTime(final XMLGregorianCalendar value) {
         this.startTime = value;

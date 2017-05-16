@@ -28,8 +28,8 @@ import org.opengis.filter.expression.Literal;
  */
 @XmlElement("Jenks")
 public interface Jenks extends Function {
-    
-    
+
+
     /**
      * Get number of class.
      *
@@ -37,7 +37,7 @@ public interface Jenks extends Function {
      */
     @XmlElement("ClassNumber")
     Literal getClassNumber();
-    
+
     /**
      * Get palette name.
      *
@@ -45,16 +45,16 @@ public interface Jenks extends Function {
      */
     @XmlElement("Palette")
     Literal getPalette();
-    
+
     /**
      * Get no-data values
      * @return
      */
     @XmlElement("noData")
     double[] getNoData();
-    
+
     /**
-    * Generated color map. 
+    * Generated color map.
     * @return map of value and associated color.
     */
     Map<Double, Color> getColorMap();

@@ -28,16 +28,16 @@ import javax.xml.namespace.QName;
  */
 @XmlRegistry
 public class PatternSymbolizerObjectFactory {
-    
+
     private static final QName _PatternSymbolizer_QNAME = new QName("http://geotoolkit.org", "PatternSymbolizer");
-    
+
     public PatternSymbolizerType createPatternSymbolizer() {
         return new PatternSymbolizerType();
     }
-    
+
     @XmlElementDecl(namespace = "http://geotoolkit.org", name = "CellSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/se", substitutionHeadName = "Symbolizer")
     public JAXBElement<PatternSymbolizerType> createCellSymbolizer(final PatternSymbolizerType value) {
         return new JAXBElement<PatternSymbolizerType>(_PatternSymbolizer_QNAME, PatternSymbolizerType.class, null, value);
     }
-    
+
 }

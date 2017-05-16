@@ -16,7 +16,7 @@ public class JTSDemo {
 
     public static void main(String[] args) {
         Demos.init();
-        
+
         final GeometryFactory gf = new GeometryFactory();
 
         //creating a point -----------------------------------------------
@@ -55,5 +55,5 @@ public class JTSDemo {
 
 
     }
-   
+
 }

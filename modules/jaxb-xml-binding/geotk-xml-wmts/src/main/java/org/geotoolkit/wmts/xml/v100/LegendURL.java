@@ -28,9 +28,9 @@ import org.geotoolkit.ows.xml.v110.OnlineResourceType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.ows.xml.v110.OnlineResourceType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,11 +81,11 @@ public class LegendURL extends OnlineResourceType {
 
     /**
      * Gets the value of the format property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFormat() {
         return format;
@@ -93,11 +93,11 @@ public class LegendURL extends OnlineResourceType {
 
     /**
      * Sets the value of the format property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFormat(final String value) {
         this.format = value;
@@ -105,11 +105,11 @@ public class LegendURL extends OnlineResourceType {
 
     /**
      * Gets the value of the minScaleDenominator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMinScaleDenominator() {
         return minScaleDenominator;
@@ -117,11 +117,11 @@ public class LegendURL extends OnlineResourceType {
 
     /**
      * Sets the value of the minScaleDenominator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMinScaleDenominator(final Double value) {
         this.minScaleDenominator = value;
@@ -129,11 +129,11 @@ public class LegendURL extends OnlineResourceType {
 
     /**
      * Gets the value of the maxScaleDenominator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMaxScaleDenominator() {
         return maxScaleDenominator;
@@ -141,11 +141,11 @@ public class LegendURL extends OnlineResourceType {
 
     /**
      * Sets the value of the maxScaleDenominator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMaxScaleDenominator(final Double value) {
         this.maxScaleDenominator = value;
@@ -153,11 +153,11 @@ public class LegendURL extends OnlineResourceType {
 
     /**
      * Gets the value of the width property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getWidth() {
         return width;
@@ -165,11 +165,11 @@ public class LegendURL extends OnlineResourceType {
 
     /**
      * Sets the value of the width property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setWidth(final BigInteger value) {
         this.width = value;
@@ -177,11 +177,11 @@ public class LegendURL extends OnlineResourceType {
 
     /**
      * Gets the value of the height property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getHeight() {
         return height;
@@ -189,11 +189,11 @@ public class LegendURL extends OnlineResourceType {
 
     /**
      * Sets the value of the height property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setHeight(final BigInteger value) {
         this.height = value;

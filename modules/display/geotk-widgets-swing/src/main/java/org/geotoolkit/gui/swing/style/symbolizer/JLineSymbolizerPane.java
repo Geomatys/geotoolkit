@@ -21,16 +21,16 @@ import org.opengis.style.LineSymbolizer;
 
 /**
  * Simple and complet line symbolizer editor.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class JLineSymbolizerPane extends JTwoStateEditor<LineSymbolizer>{
 
     public JLineSymbolizerPane() {
         super(new JLineSymbolizerSimple(), new JLineSymbolizerAdvanced());
-        
+
         //configure panel with a default symbolizer
         parse(getStyleFactory().lineSymbolizer());
     }
-    
+
 }

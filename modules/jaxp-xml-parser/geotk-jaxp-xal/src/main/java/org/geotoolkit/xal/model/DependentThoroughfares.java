@@ -41,7 +41,7 @@ public enum DependentThoroughfares {
     private String dependentThoroughfares;
 
     /**
-     * 
+     *
      * @param dependentThoroughfares
      */
     private DependentThoroughfares(String dependentThoroughfares){

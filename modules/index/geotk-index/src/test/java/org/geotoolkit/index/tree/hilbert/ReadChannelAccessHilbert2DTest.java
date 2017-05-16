@@ -33,5 +33,5 @@ public final class ReadChannelAccessHilbert2DTest extends ReadChannelAccessHilbe
     public ReadChannelAccessHilbert2DTest() throws IOException, StoreIndexException, ClassNotFoundException {
         super(PredefinedCRS.CARTESIAN_2D, true);
     }
-    
+
 }

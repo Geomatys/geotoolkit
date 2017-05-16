@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AbstractOfferingType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractOfferingType">
  *   &lt;complexContent>
@@ -55,8 +55,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractOfferingType", propOrder = {
@@ -80,9 +80,9 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
     private List<AbstractOfferingType.RelatedFeature> relatedFeature;
 
     public AbstractOfferingType() {
-        
+
     }
-    
+
     public AbstractOfferingType(final String id, final String identifier, final String name, final String description, final String procedure,
             final List<String> observableProperty, final List<String> relatedFeature, final List<String> procedureDescriptionFormat) {
         super(id, identifier, name, description);
@@ -96,14 +96,14 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
         }
         this.procedureDescriptionFormat = procedureDescriptionFormat;
     }
-    
+
     /**
      * Gets the value of the procedure property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getProcedure() {
         return procedure;
@@ -111,11 +111,11 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
 
     /**
      * Sets the value of the procedure property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setProcedure(String value) {
         this.procedure = value;
@@ -123,10 +123,10 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
 
     /**
      * Gets the value of the procedureDescriptionFormat property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getProcedureDescriptionFormat() {
         if (procedureDescriptionFormat == null) {
@@ -137,10 +137,10 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
 
     /**
      * Gets the value of the observableProperty property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getObservableProperty() {
         if (observableProperty == null) {
@@ -151,10 +151,10 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
 
     /**
      * Gets the value of the relatedFeature property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractOfferingType.RelatedFeature }
-     * 
+     *
      */
     public List<AbstractOfferingType.RelatedFeature> getRelatedFeature() {
         if (relatedFeature == null) {
@@ -162,7 +162,7 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
         }
         return this.relatedFeature;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(super.toString());
@@ -192,9 +192,9 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -206,8 +206,8 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -217,11 +217,11 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
 
         @XmlElement(name = "FeatureRelationship", required = true)
         private FeatureRelationshipType featureRelationship;
-        
+
         public RelatedFeature() {
-            
+
         }
-        
+
         public RelatedFeature(final String target) {
             if (target != null) {
                 this.featureRelationship = new FeatureRelationshipType(target);
@@ -230,11 +230,11 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
 
         /**
          * Gets the value of the featureRelationship property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link FeatureRelationshipType }
-         *     
+         *
          */
         public FeatureRelationshipType getFeatureRelationship() {
             return featureRelationship;
@@ -242,16 +242,16 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
 
         /**
          * Sets the value of the featureRelationship property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link FeatureRelationshipType }
-         *     
+         *
          */
         public void setFeatureRelationship(FeatureRelationshipType value) {
             this.featureRelationship = value;
         }
-        
+
         @Override
         public String toString() {
             final StringBuilder sb = new StringBuilder("[RelatedFeature]");

@@ -25,9 +25,9 @@ import org.geotoolkit.se.xml.vext.RecolorType;
 
 /**
  * <p>Java class for ColorReplacementType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ColorReplacementType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import org.geotoolkit.se.xml.vext.RecolorType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,11 +57,11 @@ public class ColorReplacementType {
 
     /**
      * Gets the value of the recode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecodeType }
-     *     
+     *
      */
     public RecodeType getRecode() {
         return recode;
@@ -69,11 +69,11 @@ public class ColorReplacementType {
 
     /**
      * Sets the value of the recode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecodeType }
-     *     
+     *
      */
     public void setRecode(final RecodeType value) {
         this.recode = value;

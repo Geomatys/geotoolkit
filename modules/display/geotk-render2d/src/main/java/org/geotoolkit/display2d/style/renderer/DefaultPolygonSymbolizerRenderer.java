@@ -112,7 +112,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
                 shapes = (offset != 0) ? bufferDisplayGeometry(renderingContext, projectedGeometry, offset)
                                       : projectedGeometry.getDisplayShape();
             }else{
-                //NOTE : Java2d has issues when rendering shapes with large strokes when 
+                //NOTE : Java2d has issues when rendering shapes with large strokes when
                 //there is a given transform, we cheat by converting the geometry is
                 //display unit.
                 //
@@ -122,10 +122,10 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
                 //adjust displacement, displacement is expressed in pixel units
                 //final AffineTransform inverse = renderingContext.getDisplayToObjective();
                 //if(dispStep!=null) dispStep = inverse.deltaTransform(dispStep, dispStep);
-                
+
                 renderingContext.switchToDisplayCRS();
                 sizeCorrection = (float)XAffineTransform.getScale(renderingContext.getObjectiveToDisplay());
-                
+
                 if(offset!=0){
                     shapes = bufferDisplayGeometry(renderingContext, projectedGeometry, offset*sizeCorrection);
                 }else{
@@ -142,9 +142,9 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         }
 
         final float coeff = this.coeff * sizeCorrection;
-        
+
         for(Shape shape : shapes){
-        
+
             //we apply the displacement ---------------------------------------
             if(dispStep != null){
                 g2d.translate(dispStep.getX(), dispStep.getY());
@@ -297,12 +297,12 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
             //feature graphic is translucide, not selectable
             return false;
         }
-        
+
         Area area ;
         if(fillAlpha >= GO2Utilities.SELECTION_LOWER_ALPHA){
             for(Shape j2dShape : j2dShapes){
                 area = new Area(j2dShape);
-                
+
                 switch(filter){
                     case INTERSECTS :
                         area.intersect(new Area(CRSShape));

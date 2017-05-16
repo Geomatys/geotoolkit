@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2014, Geomatys
  *
@@ -28,11 +28,11 @@ import org.opengis.temporal.TemporalNode;
 /**
  * One dimensional topological primitive in time.
  * In other words it coresponds to a {@link Period}.
- * 
+ *
  * @author remi Marechal (Geomatys).
  */
 @XmlType(name = "TimeEdge_Type", propOrder = {
-    "start", 
+    "start",
     "end",
     "realization"
 })
@@ -43,24 +43,24 @@ public class DefaultTemporalEdge extends DefaultTemporalTopologicalPrimitive imp
      * Association that may link this {@link TemporalEdge} to its corresponding {@link Period}.
      */
     private Period realization;
-    
+
     /**
      * {@link TemporalNode} for which it is the {@link TemporalEdge} start.
      * A {@link TemporalEdge} may have one and only one start node.
      */
     private TemporalNode start;
-    
+
     /**
      * {@link TemporalNode} for which it is the {@link TemporalEdge} end.
      * A {@link TemporalEdge} may have one and only one end node.
      */
     private TemporalNode end;
-    
+
     /**
      * Creates a default {@link TemporalNode} implementation from the given properties and {@link Instant}.
      * The properties given in argument follow the same rules than for the
      * {@linkplain DefaultTemporalGeometricPrimitive#DefaultTemporalGeometricPrimitive(java.util.Map) )  super-class constructor}.
-     * 
+     *
      * <table class="referencingTemporal">
      *   <caption>Recognized properties (non exhaustive list)</caption>
      *   <tr>
@@ -87,12 +87,12 @@ public class DefaultTemporalEdge extends DefaultTemporalTopologicalPrimitive imp
      *     <td>{@link #getRemarks() }</td>
      *   </tr>
      * </table>
-     * 
+     *
      * @param properties The properties to be given to this object.
      * @param realization Association that may link this {@link TemporalEdge} to its corresponding {@link Period}, should be {@code null}.
      * @param start {@link TemporalNode} for which it is the {@link TemporalEdge} start.
      * @param end {@link TemporalNode} for which it is the {@link TemporalEdge} end.
-     * @throws NullArgumentException if properties, start or end are {@code null}. 
+     * @throws NullArgumentException if properties, start or end are {@code null}.
      * @throws IllegalArgumentException if remarks is not null.
      */
     public DefaultTemporalEdge(final Map<String, ?> properties, final Period realization, final TemporalNode start, final TemporalNode end) {
@@ -103,7 +103,7 @@ public class DefaultTemporalEdge extends DefaultTemporalTopologicalPrimitive imp
         this.start       = start;
         this.end         = end;
     }
-    
+
     /**
      * Constructs a new instance initialized with the values from the specified metadata object.
      * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
@@ -146,17 +146,17 @@ public class DefaultTemporalEdge extends DefaultTemporalTopologicalPrimitive imp
         }
         return new DefaultTemporalEdge(object);
     }
-    
+
     /**
      * Empty constructor only use for XML binding.
      */
     private DefaultTemporalEdge() {
         super();
     }
-    
+
     /**
      * Returns association that may link this {@link TemporalEdge} to its corresponding {@link Period}.
-     * 
+     *
      * @return association that may link this {@link TemporalEdge} to its corresponding {@link Period}.
      */
     @Override
@@ -167,7 +167,7 @@ public class DefaultTemporalEdge extends DefaultTemporalTopologicalPrimitive imp
 
     /**
      * Returns {@link TemporalNode} for which it is the {@link TemporalEdge} start.
-     * 
+     *
      * @return {@link TemporalNode} for which it is the {@link TemporalEdge} start.
      */
     @Override
@@ -178,7 +178,7 @@ public class DefaultTemporalEdge extends DefaultTemporalTopologicalPrimitive imp
 
     /**
      * Returns {@link TemporalNode} for which it is the {@link TemporalEdge} end.
-     * 
+     *
      * @return {@link TemporalNode} for which it is the {@link TemporalEdge} start.
      */
     @Override

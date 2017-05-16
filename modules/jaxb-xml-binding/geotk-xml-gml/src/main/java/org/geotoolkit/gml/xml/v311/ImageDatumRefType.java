@@ -25,12 +25,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Association to an image datum, either referencing or containing the definition of that datum. 
- * 
+ * Association to an image datum, either referencing or containing the definition of that datum.
+ *
  * <p>Java class for ImageDatumRefType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ImageDatumRefType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

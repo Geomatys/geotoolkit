@@ -70,7 +70,7 @@ import org.opengis.util.GenericName;
 
 /**
  * Utility classes to build a style editor tree.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class FXStyleTree {
@@ -217,7 +217,7 @@ public class FXStyleTree {
         }
 
     }
-    
+
     private static void hackClearSelection(){
         //bug in javafx JDK 8u20 : https://javafx-jira.kenai.com/browse/RT-24055
         //clear the selection rather then have an incorrect selection
@@ -461,7 +461,7 @@ public class FXStyleTree {
         public void setMapLayer(MapLayer mapLayer) {
             this.mapLayer = mapLayer;
         }
-        
+
         @Override
         public MenuItem init(List<? extends TreeItem> selectedItems) {
             super.init(selectedItems);

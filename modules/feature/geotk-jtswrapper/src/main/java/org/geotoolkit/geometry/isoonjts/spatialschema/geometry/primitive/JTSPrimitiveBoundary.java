@@ -27,10 +27,10 @@ import org.opengis.geometry.primitive.PrimitiveBoundary;
  * @module
  */
 public class JTSPrimitiveBoundary extends AbstractJTSBoundary implements PrimitiveBoundary {
-        
+
     /**
      * Creates a new {@code PrimitiveBoundaryImpl}.
-     * 
+     *
      */
     public JTSPrimitiveBoundary() {
         this(null);

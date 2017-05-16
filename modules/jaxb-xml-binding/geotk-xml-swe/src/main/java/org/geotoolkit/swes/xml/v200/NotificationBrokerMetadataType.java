@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for NotificationBrokerMetadataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="NotificationBrokerMetadataType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "NotificationBrokerMetadataType", propOrder = {
@@ -51,7 +51,7 @@ public class NotificationBrokerMetadataType extends NotificationProducerMetadata
 
     /**
      * Gets the value of the requiresRegistration property.
-     * 
+     *
      */
     public boolean isRequiresRegistration() {
         return requiresRegistration;
@@ -59,7 +59,7 @@ public class NotificationBrokerMetadataType extends NotificationProducerMetadata
 
     /**
      * Sets the value of the requiresRegistration property.
-     * 
+     *
      */
     public void setRequiresRegistration(boolean value) {
         this.requiresRegistration = value;

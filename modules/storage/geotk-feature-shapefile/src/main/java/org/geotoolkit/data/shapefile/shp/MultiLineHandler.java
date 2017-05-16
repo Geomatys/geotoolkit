@@ -47,7 +47,7 @@ public class MultiLineHandler extends AbstractShapeHandler {
     /**
      * Create a MultiLineHandler for one of: <br>
      * ShapeType.ARC,ShapeType.ARCM,ShapeType.ARCZ
-     * 
+     *
      * @param type The ShapeType to use.
      * @throws DataStoreException If the ShapeType is not correct (see constructor).
      */
@@ -296,14 +296,14 @@ public class MultiLineHandler extends AbstractShapeHandler {
             buffer.putInt(idx);
             idx += lines[i].size();
         }
-        
+
         for(int lineN = 0; lineN < lines.length; lineN++){
             final CoordinateSequence coords = lines[lineN];
             if (shapeType == ShapeType.ARCZ) {
                 JTS.zMinMax(coords, zExtreame);
             }
             final int ncoords = coords.size();
-            
+
             for (int t=0; t<ncoords; t++) {
                 buffer.putDouble(coords.getX(t));
                 buffer.putDouble(coords.getY(t));
@@ -322,7 +322,7 @@ public class MultiLineHandler extends AbstractShapeHandler {
             for(int lineN = 0; lineN < lines.length; lineN++){
                 final CoordinateSequence coords = lines[lineN];
                 final int ncoords = coords.size();
-                
+
                 for (int t = 0; t < ncoords; t++) {
                     final double z = coords.getOrdinate(t, 2);
                     if (Double.isNaN(z)) {

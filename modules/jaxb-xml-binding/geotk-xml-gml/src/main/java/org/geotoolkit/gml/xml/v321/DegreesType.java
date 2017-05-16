@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlValue;
 
 /**
  * <p>Java class for DegreesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DegreesType">
  *   &lt;simpleContent>
@@ -50,8 +50,8 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DegreesType", propOrder = {
@@ -66,7 +66,7 @@ public class DegreesType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      */
     public int getValue() {
         return value;
@@ -74,7 +74,7 @@ public class DegreesType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      */
     public void setValue(int value) {
         this.value = value;
@@ -82,11 +82,11 @@ public class DegreesType {
 
     /**
      * Gets the value of the direction property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDirection() {
         return direction;
@@ -94,11 +94,11 @@ public class DegreesType {
 
     /**
      * Sets the value of the direction property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDirection(String value) {
         this.direction = value;

@@ -22,11 +22,11 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * JTS geometry buffer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class BufferFunction extends AbstractFunction {
-    
+
     public BufferFunction(final Expression expr1, final Expression expr2) {
         super(GeometryFunctionFactory.BUFFER, new Expression[] {expr1, expr2}, null);
     }
@@ -45,7 +45,7 @@ public class BufferFunction extends AbstractFunction {
         }
 
         if(width==0) return geom;
-        
+
         final Geometry geomBuf = geom.buffer(width);
         geomBuf.setSRID(geom.getSRID());
         geomBuf.setUserData(geom.getUserData());

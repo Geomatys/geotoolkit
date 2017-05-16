@@ -27,7 +27,7 @@ package org.geotoolkit.data.shapefile.xml;
  * Discovery.search( QueryRequest ). When QueryRequest can actually handle
  * normal java beans we can remove this restrictions.
  * </p>
- * 
+ *
  * @author jgarnett
  * @module
  * @since 0.3

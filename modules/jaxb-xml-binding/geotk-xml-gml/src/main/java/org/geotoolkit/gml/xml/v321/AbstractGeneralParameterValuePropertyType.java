@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * gml:AbstractGeneralParameterValuePropertyType is a  property type for inline association roles to a parameter value or group of parameter values, always containing the values.
- * 
+ *
  * <p>Java class for AbstractGeneralParameterValuePropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractGeneralParameterValuePropertyType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractGeneralParameterValuePropertyType", propOrder = {
@@ -57,13 +57,13 @@ public class AbstractGeneralParameterValuePropertyType {
 
     /**
      * Gets the value of the abstractGeneralParameterValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractGeneralParameterValueType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ParameterValueType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ParameterValueGroupType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractGeneralParameterValueType> getAbstractGeneralParameterValue() {
         return abstractGeneralParameterValue;
@@ -71,13 +71,13 @@ public class AbstractGeneralParameterValuePropertyType {
 
     /**
      * Sets the value of the abstractGeneralParameterValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractGeneralParameterValueType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ParameterValueType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ParameterValueGroupType }{@code >}
-     *     
+     *
      */
     public void setAbstractGeneralParameterValue(JAXBElement<? extends AbstractGeneralParameterValueType> value) {
         this.abstractGeneralParameterValue = ((JAXBElement<? extends AbstractGeneralParameterValueType> ) value);

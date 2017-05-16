@@ -28,17 +28,17 @@ import org.apache.sis.util.ComparisonMode;
 
 
 /**
- * Curve is a 1-dimensional primitive. Curves are continuous, connected, and have a measurable length in terms of the coordinate system. 
- * A curve is composed of one or more curve segments. 
- * Each curve segment within a curve may be defined using a different interpolation method. 
- * The curve segments are connected to one another, 
+ * Curve is a 1-dimensional primitive. Curves are continuous, connected, and have a measurable length in terms of the coordinate system.
+ * A curve is composed of one or more curve segments.
+ * Each curve segment within a curve may be defined using a different interpolation method.
+ * The curve segments are connected to one another,
  * with the end point of each segment except the last being the start point of the next segment in the segment list.
  * The orientation of the curve is positive.
- * 
+ *
  * <p>Java class for CurveType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CurveType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,11 +72,11 @@ public class CurveType extends AbstractCurveType implements Curve {
 
     /**
      * This element encapsulates the segments of the curve.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurveSegmentArrayPropertyType }
-     *     
+     *
      */
     public CurveSegmentArrayPropertyType getSegments() {
         return segments;
@@ -84,11 +84,11 @@ public class CurveType extends AbstractCurveType implements Curve {
 
     /**
      * This element encapsulates the segments of the curve.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurveSegmentArrayPropertyType }
-     *     
+     *
      */
     public void setSegments(final CurveSegmentArrayPropertyType value) {
         this.segments = value;

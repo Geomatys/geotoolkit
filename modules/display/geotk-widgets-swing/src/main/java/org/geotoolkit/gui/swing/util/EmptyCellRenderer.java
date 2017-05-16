@@ -45,5 +45,5 @@ public class EmptyCellRenderer extends DefaultTableCellRenderer{
         candidate.setBorder(model.getBorder());
         candidate.setFont(model.getFont());
     }
-    
+
 }

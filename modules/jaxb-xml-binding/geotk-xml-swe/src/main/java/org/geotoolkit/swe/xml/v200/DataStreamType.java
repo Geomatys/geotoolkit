@@ -31,9 +31,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for DataStreamType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataStreamType">
  *   &lt;complexContent>
@@ -76,8 +76,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataStreamType", propOrder = {
@@ -100,11 +100,11 @@ public class DataStreamType
 
     /**
      * Gets the value of the elementCount property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataStreamType.ElementCount }
-     *     
+     *
      */
     public DataStreamType.ElementCount getElementCount() {
         return elementCount;
@@ -112,11 +112,11 @@ public class DataStreamType
 
     /**
      * Sets the value of the elementCount property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataStreamType.ElementCount }
-     *     
+     *
      */
     public void setElementCount(DataStreamType.ElementCount value) {
         this.elementCount = value;
@@ -124,11 +124,11 @@ public class DataStreamType
 
     /**
      * Gets the value of the elementType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataStreamType.ElementType }
-     *     
+     *
      */
     public DataStreamType.ElementType getElementType() {
         return elementType;
@@ -136,11 +136,11 @@ public class DataStreamType
 
     /**
      * Sets the value of the elementType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataStreamType.ElementType }
-     *     
+     *
      */
     public void setElementType(DataStreamType.ElementType value) {
         this.elementType = value;
@@ -148,11 +148,11 @@ public class DataStreamType
 
     /**
      * Gets the value of the encoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataStreamType.Encoding }
-     *     
+     *
      */
     public DataStreamType.Encoding getEncoding() {
         return encoding;
@@ -160,11 +160,11 @@ public class DataStreamType
 
     /**
      * Sets the value of the encoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataStreamType.Encoding }
-     *     
+     *
      */
     public void setEncoding(DataStreamType.Encoding value) {
         this.encoding = value;
@@ -172,11 +172,11 @@ public class DataStreamType
 
     /**
      * Gets the value of the values property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EncodedValuesPropertyType }
-     *     
+     *
      */
     public EncodedValuesPropertyType getValues() {
         return values;
@@ -184,11 +184,11 @@ public class DataStreamType
 
     /**
      * Sets the value of the values property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EncodedValuesPropertyType }
-     *     
+     *
      */
     public void setValues(EncodedValuesPropertyType value) {
         this.values = value;
@@ -197,9 +197,9 @@ public class DataStreamType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -211,8 +211,8 @@ public class DataStreamType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -225,11 +225,11 @@ public class DataStreamType
 
         /**
          * Gets the value of the count property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link CountType }
-         *     
+         *
          */
         public CountType getCount() {
             return count;
@@ -237,11 +237,11 @@ public class DataStreamType
 
         /**
          * Sets the value of the count property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link CountType }
-         *     
+         *
          */
         public void setCount(CountType value) {
             this.count = value;
@@ -252,9 +252,9 @@ public class DataStreamType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -264,8 +264,8 @@ public class DataStreamType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -280,11 +280,11 @@ public class DataStreamType
 
         /**
          * Gets the value of the name property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getName() {
             return name;
@@ -292,11 +292,11 @@ public class DataStreamType
 
         /**
          * Sets the value of the name property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setName(String value) {
             this.name = value;
@@ -307,9 +307,9 @@ public class DataStreamType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -321,8 +321,8 @@ public class DataStreamType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -335,14 +335,14 @@ public class DataStreamType
 
         /**
          * Gets the value of the abstractEncoding property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link JAXBElement }{@code <}{@link TextEncodingType }{@code >}
          *     {@link JAXBElement }{@code <}{@link XMLEncodingType }{@code >}
          *     {@link JAXBElement }{@code <}{@link BinaryEncodingType }{@code >}
          *     {@link JAXBElement }{@code <}{@link AbstractEncodingType }{@code >}
-         *     
+         *
          */
         public JAXBElement<? extends AbstractEncodingType> getAbstractEncoding() {
             return abstractEncoding;
@@ -350,14 +350,14 @@ public class DataStreamType
 
         /**
          * Sets the value of the abstractEncoding property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link JAXBElement }{@code <}{@link TextEncodingType }{@code >}
          *     {@link JAXBElement }{@code <}{@link XMLEncodingType }{@code >}
          *     {@link JAXBElement }{@code <}{@link BinaryEncodingType }{@code >}
          *     {@link JAXBElement }{@code <}{@link AbstractEncodingType }{@code >}
-         *     
+         *
          */
         public void setAbstractEncoding(JAXBElement<? extends AbstractEncodingType> value) {
             this.abstractEncoding = ((JAXBElement<? extends AbstractEncodingType> ) value);

@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for IndirectEntryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="IndirectEntryType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "IndirectEntryType", propOrder = {
@@ -54,11 +54,11 @@ public class IndirectEntryType {
 
     /**
      * Gets the value of the definitionProxy property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DefinitionProxyType }
-     *     
+     *
      */
     public DefinitionProxyType getDefinitionProxy() {
         return definitionProxy;
@@ -66,11 +66,11 @@ public class IndirectEntryType {
 
     /**
      * Sets the value of the definitionProxy property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DefinitionProxyType }
-     *     
+     *
      */
     public void setDefinitionProxy(DefinitionProxyType value) {
         this.definitionProxy = value;

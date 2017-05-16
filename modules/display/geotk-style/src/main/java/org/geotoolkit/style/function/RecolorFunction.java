@@ -48,7 +48,7 @@ import org.opengis.filter.expression.Literal;
  * <li>Literal: MapItem : value 2
  * </ol>
  * In reality any expression will do.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -59,7 +59,7 @@ public class RecolorFunction extends AbstractExpression implements Function {
 
     private final List<ColorItem> items;
     private final Literal fallback;
-    
+
     /**
      * Make the instance of FunctionName available in
      * a consistent spot.
@@ -137,12 +137,12 @@ public class RecolorFunction extends AbstractExpression implements Function {
                 buffer = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
                 buffer.getGraphics().drawImage(img, 0, 0, null);
             }
-            
+
         }else{
             buffer = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
             buffer.getGraphics().drawImage(img, 0, 0, null);
         }
-        
+
         for(ColorItem item : items){
             final int dataExp = item.getSourceColor().evaluate(null, Color.class).getRGB() & MASK_NO_ALPHA;
             final int resultExp = item.getTargetColor().evaluate(null, Color.class).getRGB() & MASK_NO_ALPHA;
@@ -168,5 +168,5 @@ public class RecolorFunction extends AbstractExpression implements Function {
     public Literal getFallbackValue() {
         return fallback;
     }
-    
+
 }

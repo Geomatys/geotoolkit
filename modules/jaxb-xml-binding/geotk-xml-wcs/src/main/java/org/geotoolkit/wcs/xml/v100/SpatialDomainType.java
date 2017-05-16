@@ -33,12 +33,12 @@ import org.geotoolkit.gml.xml.v311.RectifiedGridType;
 import org.geotoolkit.wcs.xml.SpatialDomain;
 
 /**
- * Definition of the spatial domain of a coverage. 
- * 
+ * Definition of the spatial domain of a coverage.
+ *
  * <p>Java class for SpatialDomainType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SpatialDomainType">
  *   &lt;complexContent>
@@ -54,7 +54,7 @@ import org.geotoolkit.wcs.xml.SpatialDomain;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -72,18 +72,18 @@ public class SpatialDomainType implements SpatialDomain {
 
     /**
      * WCS version 1.0.0 attribute
-     */ 
+     */
     @XmlElementRef(name = "Envelope", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private List<JAXBElement<? extends EnvelopeType>> envelope;
     @XmlElementRef(name = "Grid", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private List<JAXBElement<? extends GridType>> grid;
-    
-    
+
+
     /**
      * An empty constructor used by JAXB.
      */
     SpatialDomainType(){}
-    
+
     /**
      * Build a new light Spatial Domain type version 1.0.0
      *
@@ -94,7 +94,7 @@ public class SpatialDomainType implements SpatialDomain {
        this.envelope = new ArrayList<JAXBElement<? extends EnvelopeType>>();
        this.envelope.add(gmlFactory.createEnvelope(envelope));
     }
-    
+
     /**
      * Build a new light Spatial Domain type version 1.0.0
      */
@@ -132,7 +132,7 @@ public class SpatialDomainType implements SpatialDomain {
             }
         }
     }
-    
+
     /**
      * Build a new full Spatial Domain type version 1.0.0
      */
@@ -141,12 +141,12 @@ public class SpatialDomainType implements SpatialDomain {
        this.envelope = envelope;
        this.grid     = grid;
        this.polygon  = polygon;
-       
+
     }
-    
+
     /**
      * Gets the value of the envelope.
-     * 
+     *
      */
     public EnvelopeType getEnvelope() {
         if (envelope != null && envelope.size() >0) {
@@ -154,10 +154,10 @@ public class SpatialDomainType implements SpatialDomain {
         }
         return null;
     }
-    
+
     /**
      * Gets the value of the grid.
-     * 
+     *
      */
     public GridType getGrid() {
         if (grid != null && grid.size() >0) {
@@ -168,9 +168,9 @@ public class SpatialDomainType implements SpatialDomain {
 
     /**
      * Unordered list of polygons whose union (combined areas) covers the spatial domain of this coverage.
-     * Polygons are particularly useful for areas that are poorly approximated by a BoundingBox 
-     * (such as satellite image swaths, island groups, other non-convex areas). 
-     * 
+     * Polygons are particularly useful for areas that are poorly approximated by a BoundingBox
+     * (such as satellite image swaths, island groups, other non-convex areas).
+     *
      */
     public List<PolygonType> getPolygon() {
        return Collections.unmodifiableList(polygon);

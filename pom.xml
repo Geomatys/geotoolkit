@@ -160,7 +160,7 @@
         </plugins>
       </build>
     </profile>
-    
+
     <!--
         disable javadoc verifications. Required even with javadoc plugin
         configuration, to ensure it's used in all cases (javadoc:jar, site, etc.)
@@ -184,7 +184,7 @@
        =========================================================== -->
   <properties>
     <geoapi.version>4.0-M06</geoapi.version> <!-- Must be same than the version used by SIS. -->
-    <sis.version>0.8-jdk8-MC0006</sis.version>
+    <sis.version>0.8-jdk8-MC0007</sis.version>
     <sis.epsg.version>0.7</sis.epsg.version>
     <derby.version>10.12.1.1</derby.version>
     <netcdf.version>4.3.21</netcdf.version>
@@ -827,6 +827,61 @@
 
 
 
+  <!-- ==============================================================
+         Checkstype configuration.
+
+         Legal note: Checkstyle is under LGPL license, but it is okay
+         to use it only for the build (not included in distribution).
+       ============================================================== -->
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.17</version>
+        <dependencies>
+          <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>7.6.1</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <configuration>
+              <skip>${skipTests}</skip>             <!-- When skipping tests, skip also checkstyle verification. -->
+              <encoding>${project.build.sourceEncoding}</encoding>
+              <consoleOutput>true</consoleOutput>
+              <checkstyleRules>
+                <module name="Checker">
+                  <module name="BeforeExecutionExclusionFileFilter">
+                    <property name="fileNamePattern" value="[\\/]generated-sources[\\/]"/>
+                  </module>
+                  <!--
+                    Whether whitespaces should be present before or after various kind of tokens,
+                    and where line wraps are allowed or mandated.
+                  -->
+                  <module name="FileTabCharacter"/>                 <!-- No tab characters in the file. -->
+                  <module name="NewlineAtEndOfFile"/>               <!-- Newline at the end of each file. -->
+                  <module name="UniqueProperties"/>                 <!-- No duplicated keys in *.properties files. -->
+                  <module name="TreeWalker">
+                    <module name="NoLineWrap"/>                     <!-- Imports and package statements are not line-wrapped. -->
+                    <module name="RegexpSinglelineJava">
+                      <property name="format" value="\s+$"/>
+                      <property name="message" value="Trailing spaces not allowed."/>
+                    </module>
+                  </module>
+                </module>
+              </checkstyleRules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+
+
       <!-- ====================================================
              Build XHTML pages from the Docbook files.
              Can also be run from the command line as:
@@ -1087,14 +1142,17 @@
       <url>http://maven.geotoolkit.org</url>
     </repository>
     <repository>
-      <id>dev</id>
-      <name>Geomatys internal repository</name>
-      <url>http://dev.geomatys.com/nexus/content/repositories/releases</url>
+      <id>geomatys</id>
+      <name>Geomatys public repository</name>
+      <url>http://nexus.geomatys.com/repository/maven-public</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </repository>
     <repository>
       <id>unidata</id>
       <name>unidata</name>
-      <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
+      <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -1108,9 +1166,12 @@
       <url>http://maven.geotoolkit.org</url>
     </pluginRepository>
     <pluginRepository>
-      <id>dev</id>
-      <name>Geomatys internal repository</name>
-      <url>http://dev.geomatys.com/nexus/content/repositories/releases</url>
+      <id>geomatys</id>
+      <name>Geomatys public repository</name>
+      <url>http://nexus.geomatys.com/repository/maven-public</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </pluginRepository>
   </pluginRepositories>
 

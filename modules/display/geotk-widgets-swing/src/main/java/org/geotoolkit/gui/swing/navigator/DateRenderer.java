@@ -31,7 +31,7 @@ import static javax.swing.SwingConstants.SOUTH;
 
 /**
  * Model renderer displaying dates for JNavigator component.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -60,7 +60,7 @@ public class DateRenderer implements NavigatorRenderer{
 
         final int orientation = nav.getOrientation();
         final boolean horizontal = orientation == NORTH || orientation == SOUTH;
-                
+
         Color lineColor = Color.GRAY;
         Color textColor = Color.GRAY;
 

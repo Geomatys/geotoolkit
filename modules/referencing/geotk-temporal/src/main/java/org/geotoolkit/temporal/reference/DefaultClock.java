@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2014, Geomatys
  *
@@ -35,13 +35,13 @@ import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.temporal.CalendarEra;
 
 /**
- * A clock provides a basis for defining temporal position within a day. 
- * A clock shall be used with a calendar in order to provide a complete description 
- * of a temporal position within a specific day. 
+ * A clock provides a basis for defining temporal position within a day.
+ * A clock shall be used with a calendar in order to provide a complete description
+ * of a temporal position within a specific day.
  *
  * @author Mehdi Sidhoum (Geomatys)
  * @module
- * 
+ *
  * @version 4.0
  * @since   4.0
  */
@@ -58,23 +58,23 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
      * Provide the name or description of an event, such as solar noon or sunrise.
      */
     private InternationalString referenceEvent;
-    
+
     /**
      * Provides the time of day associated with the reference event expressed as a time of day  in the given clock.
      * <blockquote><font size="-1">The reference time is usually the origin of the clock scale.</font></blockquote>
      */
     private ClockTime referenceTime;
-    
+
     /**
      * This is the 24-hour local or UTC time that corresponds to the reference time.
      */
     private ClockTime utcReference;
-    
+
     /**
      * Collection of {@link Calendar} that use this {@link CalendarEra} as a reference for dating.
      */
     private Collection<Calendar> dateBasis;
-    
+
     /**
      * Create a new {@link Clock} implementation initialize with the given parameters.<br/>
      * The properties given in argument follow the same rules than for the
@@ -109,7 +109,7 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
      * @param referenceTime The time of day associated with the reference event expressed as a time of day  in the given clock.
      * @param utcReference The 24-hour local or UTC time that corresponds to the reference time.
      */
-    public DefaultClock(Map<String, ?> properties, 
+    public DefaultClock(Map<String, ?> properties,
             ClockTime referenceTime, ClockTime utcReference, Collection<Calendar> dateBasis) {
         super(properties);
         final Object ref = properties.get(Calendar.REFERENCE_EVENT_KEY);
@@ -128,7 +128,7 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
     private DefaultClock() {
         super();
     }
-    
+
     /**
      * Constructs a new instance initialized with the values from the specified metadata object.
      * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
@@ -147,7 +147,7 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
             this.utcReference   = object.getUTCReference();
             if (object instanceof DefaultClock) {
                 this.dateBasis = ((DefaultClock) object).getDateBasis();
-            }            
+            }
         }
     }
 
@@ -175,11 +175,11 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
         }
         return new DefaultClock(object);
     }
-    
+
     /**
      * Returns name or description of an event, such as solar noon or sunrise,
      * which fixes the position of the base scale of the clock.
-     * 
+     *
      * @return Event used as the datum for this clock.
      */
     @Override
@@ -191,17 +191,17 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
     /**
      * Returns time of day associated with the reference event expressed as a time of day in the given clock.
      * <blockquote><font size="-1">The reference time is usually the origin of the clock scale.</font></blockquote>
-     * 
+     *
      * @return Time of the reference event for this clock.
      */
     @Override
     public ClockTime getReferenceTime() {
         return referenceTime;
     }
-    
+
     /**
      * Returns String which represent {@link #referenceTime} object adapted for JAXB marshalling.
-     * 
+     *
      * @return String which represent {@link #referenceTime} object adapted for JAXB marshalling.
      */
     @XmlElement(name = "referenceTime", required = true)
@@ -217,17 +217,17 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
 
     /**
      * Returns 24-hour local or UTC time that corresponds to the reference time.
-     * 
+     *
      * @return UTC time of the reference event.
      */
     @Override
     public ClockTime getUTCReference() {
         return utcReference;
     }
-    
+
     /**
      * Returns String which represent {@link #utcReference} object adapted for JAXB marshalling.
-     * 
+     *
      * @return String which represent {@link #utcReference} object adapted for JAXB marshalling.
      */
     @XmlElement(name = "utcReference", required = true)
@@ -240,10 +240,10 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
         }
         return refs;
     }
-    
+
     /**
      * Returns Collection of {@link Calendar} that use this {@link CalendarEra} as a reference for dating.
-     * 
+     *
      * @return Collection of {@link Calendar} that use this {@link CalendarEra} as a reference for dating.
      */
     @XmlElement(name = "dateBasis")
@@ -254,7 +254,7 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
     /**
      * Returns convertion from a 24 hours local or UTC time and the equivalent time of day
      * expressed in terms of specified clock.
-     * 
+     *
      * @param uTime The 24 hours local or UTC time.
      * @return Convertion of UTC time to a time of this clock.
      */
@@ -264,9 +264,9 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
     }
 
     /**
-     * Returns a time of day expressed in terms from the specified clock and 
-     * the equivalent time of day in 24 hour or UTC time. 
-     * 
+     * Returns a time of day expressed in terms from the specified clock and
+     * the equivalent time of day in 24 hour or UTC time.
+     *
      * @param clkTime The time of day expressed in terms of the specified clock which will be converted.
      * @return UTC time from time on this clock to UTC time convertion.
      */
@@ -274,7 +274,7 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
     public ClockTime utcTrans(final ClockTime clkTime) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     /**
      * {@inheritDoc }
      */

@@ -48,11 +48,11 @@ public enum OSMVersion {
                 return vers;
             }
         }
-        
+
         try{
             return OSMVersion.valueOf(version);
         }catch(IllegalArgumentException ex){}
-        
+
         throw new IllegalArgumentException("The given string \""+ version +"\" is not " +
                 "a known version.");
     }

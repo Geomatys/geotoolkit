@@ -26,7 +26,7 @@ import org.opengis.filter.expression.Expression;
  * @author Alexis Manin (Geomatys)
  */
 public class FXGreaterOperator extends FXComparableOperator {
-    
+
     @Override
     public CharSequence getTitle() {
         return ">";

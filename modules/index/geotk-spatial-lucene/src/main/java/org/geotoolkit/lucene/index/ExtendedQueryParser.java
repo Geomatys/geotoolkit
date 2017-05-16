@@ -31,7 +31,7 @@ import org.apache.lucene.search.TermRangeQuery;
 public class ExtendedQueryParser extends QueryParser {
 
     private final Map<String, Character> numericFields;
-    
+
     public ExtendedQueryParser(final String field, final Analyzer a, final Map<String, Character> numericFields) {
         super(field, a);
         this.numericFields = numericFields;
@@ -58,10 +58,10 @@ public class ExtendedQueryParser extends QueryParser {
                                                                 Long.parseLong(part1),
                                                                 Long.parseLong(part2),
                                                                 startInclusive, endInclusive);
-                    
+
                 default: throw new IllegalArgumentException("Unexpected field type:" + field);
             }
-            
+
         } else {
             return (TermRangeQuery) super.getRangeQuery(field, part1, part2, startInclusive, endInclusive);
         }

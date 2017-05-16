@@ -18,7 +18,7 @@ package org.geotoolkit.wps.io;
 
 
 /**
- * MimeType list based on OGC 12-029 paper. 
+ * MimeType list based on OGC 12-029 paper.
  * (http://www.opengis.net/doc/wps1.0-best-practice-dp)
  *
  * @author Quentin Boileau (Geomatys)
@@ -42,7 +42,7 @@ public enum WPSMimeType {
     APP_NETCDF("application/netcdf"),
     APP_GRIB("application/x-ogc-grib"),
     APP_SLD("application/vnd.ogc.sld+xml"),
-    
+
     OGC_WFS("application/x-ogc-wfs"),
     OGC_WMS("application/x-ogc-wms"),
 

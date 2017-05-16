@@ -21,8 +21,8 @@ package org.geotoolkit.wms.xml;
  * @author Guilhem Legal
  */
 public interface AbstractStyleURL {
-    
+
     String getFormat();
-    
+
     AbstractOnlineResource getOnlineResource();
 }

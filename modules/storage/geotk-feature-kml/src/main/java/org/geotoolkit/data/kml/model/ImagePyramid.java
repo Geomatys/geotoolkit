@@ -71,7 +71,7 @@ public interface ImagePyramid extends AbstractObject {
     GridOrigin getGridOrigin();
 
     /**
-     * 
+     *
      * @param titleSize
      */
     void setTitleSize(int titleSize);

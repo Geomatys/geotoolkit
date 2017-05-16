@@ -18,7 +18,7 @@ package org.geotoolkit.gui.swing.shapefile;
 
 /**
  * A single field for a shapefile creation.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  */
 class Field {
@@ -40,5 +40,5 @@ class Field {
     void setType(final FieldType type) {
         this.type = type;
     }
-    
+
 }

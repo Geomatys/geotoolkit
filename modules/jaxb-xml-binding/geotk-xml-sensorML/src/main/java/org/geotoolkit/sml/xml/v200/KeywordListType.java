@@ -28,9 +28,9 @@ import org.geotoolkit.swe.xml.v200.Reference;
 
 /**
  * <p>Java class for KeywordListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="KeywordListType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.swe.xml.v200.Reference;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "KeywordListType", propOrder = {
@@ -61,11 +61,11 @@ public class KeywordListType
 
     /**
      * Gets the value of the codeSpace property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Reference }
-     *     
+     *
      */
     public Reference getCodeSpace() {
         return codeSpace;
@@ -73,11 +73,11 @@ public class KeywordListType
 
     /**
      * Sets the value of the codeSpace property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Reference }
-     *     
+     *
      */
     public void setCodeSpace(Reference value) {
         this.codeSpace = value;
@@ -85,25 +85,25 @@ public class KeywordListType
 
     /**
      * Gets the value of the keyword property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the keyword property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getKeyword().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getKeyword() {
         if (keyword == null) {

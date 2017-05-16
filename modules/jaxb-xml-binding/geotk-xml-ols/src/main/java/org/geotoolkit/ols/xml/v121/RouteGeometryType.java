@@ -26,11 +26,11 @@ import org.geotoolkit.gml.xml.v311.LineStringType;
 
 /**
  * Defines the geometry of a route.
- * 
+ *
  * <p>Java class for RouteGeometryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RouteGeometryType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.gml.xml.v311.LineStringType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RouteGeometryType", propOrder = {
@@ -58,11 +58,11 @@ public class RouteGeometryType
 
     /**
      * Gets the value of the lineString property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LineStringType }
-     *     
+     *
      */
     public LineStringType getLineString() {
         return lineString;
@@ -70,11 +70,11 @@ public class RouteGeometryType
 
     /**
      * Sets the value of the lineString property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LineStringType }
-     *     
+     *
      */
     public void setLineString(LineStringType value) {
         this.lineString = value;

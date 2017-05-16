@@ -28,14 +28,14 @@ import org.apache.sis.storage.DataStoreException;
  * @author Guilhem Legal (Geomatys)
  */
 public interface SensorReader {
-    
+
     /**
      * Return handled sensorML format by version.
-     * 
+     *
      * @return A map of SOS Version / sensorML formats
      */
     Map<String, List<String>> getAcceptedSensorMLFormats();
-    
+
     /**
      * Return the specified sensor description from the specified ID.
      *
@@ -56,25 +56,25 @@ public interface SensorReader {
 
     /**
      * Return informations about the implementation class.
-     * 
+     *
      * @return A String description of the used implementations.
      */
     String getInfos();
 
     /**
      * Return the number of sensors in the data source.
-     * 
+     *
      * @return The number of sensors.
      * @throws org.apache.sis.storage.DataStoreException
      */
     int getSensorCount() throws DataStoreException;
-    
+
     /**
      * Remove the specified sensor metadata from the cache.
-     * @param sensorID 
+     * @param sensorID
      */
     void removeFromCache(final String sensorID);
-    
+
     /**
      * Destroy and free the resource used by the reader.
      */

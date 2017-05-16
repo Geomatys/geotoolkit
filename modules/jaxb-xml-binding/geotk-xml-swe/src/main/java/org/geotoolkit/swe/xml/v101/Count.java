@@ -34,9 +34,9 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -79,7 +79,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
      * Empty constructor used by JAXB.
      */
     Count() {
-        
+
     }
 
     /**
@@ -175,7 +175,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
     public AllowedValuesPropertyType getConstraint() {
         return constraint;
     }
-    
+
     /**
      * Verify that the object is identical to the specified object.
      */

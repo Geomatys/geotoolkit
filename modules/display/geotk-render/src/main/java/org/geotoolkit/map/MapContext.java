@@ -68,7 +68,7 @@ public interface MapContext extends MapItem{
      * Return the envelope of all layers.
      */
     Envelope getBounds() throws IOException;
-    
+
     /**
      * Return the envelope of all layers.
      * @param onlyVisible true to include only visible items in the envelope

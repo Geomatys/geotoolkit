@@ -28,21 +28,21 @@ import org.opengis.filter.Filter;
 
 /**
  * Cached a resultset content.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class CachedResultSet {
-    
+
     private final List<Map> records = new ArrayList<Map>();
 
     public CachedResultSet() {
     }
-    
-    public CachedResultSet(ResultSet rs, String ... columns) throws SQLException {        
+
+    public CachedResultSet(ResultSet rs, String ... columns) throws SQLException {
         append(rs, columns);
     }
-    
-    public void append(ResultSet rs, String ... columns) throws SQLException {        
+
+    public void append(ResultSet rs, String ... columns) throws SQLException {
         while(rs.next()){
             final Map record = new HashMap();
             for(String col : columns){
@@ -52,10 +52,10 @@ public class CachedResultSet {
         }
         rs.close();
     }
-    
+
     public Iterator<Map> filter(Filter filter){
         return GenericFilterIterator.wrap(records.iterator(), filter);
     }
-    
-    
+
+
 }

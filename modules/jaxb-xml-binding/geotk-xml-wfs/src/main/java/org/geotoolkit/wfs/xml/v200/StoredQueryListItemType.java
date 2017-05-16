@@ -33,9 +33,9 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for StoredQueryListItemType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="StoredQueryListItemType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "StoredQueryListItemType", propOrder = {
@@ -68,7 +68,7 @@ public class StoredQueryListItemType {
     private String id;
 
     public StoredQueryListItemType() {
-        
+
     }
 
     public StoredQueryListItemType(final String id, final List<Title> title, final List<QName> returnFeatureType) {
@@ -76,13 +76,13 @@ public class StoredQueryListItemType {
         this.returnFeatureType = returnFeatureType;
         this.title = title;
     }
-    
+
     /**
      * Gets the value of the title property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Title }
-     * 
+     *
      */
     public List<Title> getTitle() {
         if (title == null) {
@@ -93,10 +93,10 @@ public class StoredQueryListItemType {
 
     /**
      * Gets the value of the returnFeatureType property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link QName }
-     * 
+     *
      */
     public List<QName> getReturnFeatureType() {
         if (returnFeatureType == null) {
@@ -107,11 +107,11 @@ public class StoredQueryListItemType {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -119,11 +119,11 @@ public class StoredQueryListItemType {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(String value) {
         this.id = value;

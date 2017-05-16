@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for RangeOfValuesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RangeOfValuesType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,7 +57,7 @@ public class RangeOfValuesType {
 
     /**
      * Gets the value of the minValue property.
-     * 
+     *
      */
     public Object getMinValue() {
         return minValue;
@@ -65,7 +65,7 @@ public class RangeOfValuesType {
 
     /**
      * Sets the value of the minValue property.
-     * 
+     *
      */
     public void setMinValue(final Object value) {
         this.minValue = value;
@@ -73,7 +73,7 @@ public class RangeOfValuesType {
 
     /**
      * Gets the value of the maxValue property.
-     * 
+     *
      */
     public Object getMaxValue() {
         return maxValue;

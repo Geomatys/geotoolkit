@@ -31,20 +31,20 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * IGN right management server
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class IGNRMClient extends AbstractClient {
-            
+
     public IGNRMClient(final URL serverURL){
         this(serverURL,null);
     }
-    
+
     public IGNRMClient(final URL serverURL, final ClientSecurity security){
         super(create(IGNRMClientFactory.PARAMETERS, serverURL, security));
     }
-    
+
     public IGNRMClient(final ParameterValueGroup params){
         super(params);
     }
@@ -53,26 +53,26 @@ public class IGNRMClient extends AbstractClient {
     public ClientFactory getFactory() {
         return (ClientFactory) DataStores.getFactoryById(IGNRMClientFactory.NAME);
     }
-    
+
     public GetTokenRequest createGetToken(){
         return new GetTokenRequest(this);
     }
-    
+
     public GetConfigRequest createGetConfig(){
         return new GetConfigRequest(this);
     }
-    
+
     public ReleaseTokenRequest createReleaseToken(){
         return new ReleaseTokenRequest(this);
     }
-    
+
     public Token getToken(final String key) throws IOException, XMLStreamException{
         final GetTokenRequest request = createGetToken();
         request.setKey(key);
-        
+
         final InputStream stream = request.getResponseStream();
         final TokenParser parser = new TokenParser(this, key);
-        try{            
+        try{
             parser.setInput(stream);
             return parser.read();
         }finally{
@@ -84,10 +84,10 @@ public class IGNRMClient extends AbstractClient {
     public TokenInformation getConfig(final Token token) throws IOException, XMLStreamException {
         final GetConfigRequest request = createGetConfig();
         request.setKey(token.getKey());
-        
+
         final InputStream stream = request.getResponseStream();
         final TokenInformationParser parser = new TokenInformationParser();
-        try{            
+        try{
             parser.setInput(stream);
             return parser.read();
         }finally{
@@ -95,16 +95,16 @@ public class IGNRMClient extends AbstractClient {
             stream.close();
         }
     }
-    
+
     public void releaseToken(final Token token) throws IOException{
         final ReleaseTokenRequest request = createReleaseToken();
         request.setToken(token);
-        
+
         final InputStream stream = request.getResponseStream();
-        try{            
+        try{
         }finally{
             stream.close();
         }
     }
-    
+
 }

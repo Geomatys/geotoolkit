@@ -25,15 +25,15 @@ import javax.xml.namespace.QName;
 
 
 /**
- * 
+ *
  *           itemType attribute and simpleType child are mutually
  *           exclusive, but one or other is required
- *         
- * 
+ *
+ *
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,11 +63,11 @@ public class List extends Annotated {
 
     /**
      * Gets the value of the simpleType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LocalSimpleType }
-     *     
+     *
      */
     public LocalSimpleType getSimpleType() {
         return simpleType;
@@ -75,11 +75,11 @@ public class List extends Annotated {
 
     /**
      * Sets the value of the simpleType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LocalSimpleType }
-     *     
+     *
      */
     public void setSimpleType(final LocalSimpleType value) {
         this.simpleType = value;
@@ -87,11 +87,11 @@ public class List extends Annotated {
 
     /**
      * Gets the value of the itemType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getItemType() {
         return itemType;
@@ -99,11 +99,11 @@ public class List extends Annotated {
 
     /**
      * Sets the value of the itemType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setItemType(final QName value) {
         this.itemType = value;

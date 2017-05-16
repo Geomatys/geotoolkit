@@ -34,9 +34,9 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -102,7 +102,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
             }
         }
     }
-    
+
     public QuantityType(final String definition, final UomPropertyType uom, final Double value) {
         super(definition);
         this.uom   = uom;

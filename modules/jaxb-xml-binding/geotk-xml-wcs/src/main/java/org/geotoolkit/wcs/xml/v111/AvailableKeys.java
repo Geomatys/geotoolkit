@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -61,7 +61,7 @@ public class AvailableKeys {
      */
     AvailableKeys() {
     }
-    
+
     /**
      * Build a new Available Keys
      */
@@ -70,7 +70,7 @@ public class AvailableKeys {
             key.add(element);
         }
     }
-    
+
     /**
      * Gets the value of the key property.
      */

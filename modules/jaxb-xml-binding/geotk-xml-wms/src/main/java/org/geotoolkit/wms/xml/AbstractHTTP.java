@@ -22,9 +22,9 @@ package org.geotoolkit.wms.xml;
  * @module
  */
 public interface AbstractHTTP {
-    
+
     AbstractProtocol getGet();
-    
+
     AbstractProtocol getPost();
 
 }

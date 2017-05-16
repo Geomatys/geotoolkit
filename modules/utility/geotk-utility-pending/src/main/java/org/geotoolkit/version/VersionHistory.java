@@ -22,25 +22,25 @@ import java.util.List;
 /**
  * Versioning api. allows to list and search available versions.
  * Inspired by JCR 2 part 15.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public interface VersionHistory {
-        
+
     /**
      * Unmodifiable list of versions available.
      * List is ordered by date ascending
      * @return List<Version>
      */
     List<Version> list() throws VersioningException;
-    
+
     /**
      * Find version for given label.
      * @param label
      * @return Version or null
      */
     Version getVersion(String label) throws VersioningException;
-    
+
     /**
      * Returns the version for for given date.
      * In case the date do not overlaps the closest version will be returned.
@@ -48,5 +48,5 @@ public interface VersionHistory {
      * @return Version
      */
     Version getVersion(Date date) throws VersioningException;
-        
+
 }

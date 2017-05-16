@@ -33,9 +33,9 @@ import org.geotoolkit.wfs.xml.v110.OperationsType;
 
 /**
  * <p>Java class for FeatureTypeListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FeatureTypeListType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.wfs.xml.v110.OperationsType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureTypeListType", propOrder = {
@@ -66,10 +66,10 @@ public class FeatureTypeListType implements FeatureTypeList {
     public FeatureTypeListType(final OperationsType operations, final List<FeatureTypeType> featureType) {
         this.featureType = featureType;
     }
-    
+
     /**
      * Gets the value of the featureType property.
-     * 
+     *
     */
     @Override
     public List<FeatureTypeType> getFeatureType() {
@@ -87,7 +87,7 @@ public class FeatureTypeListType implements FeatureTypeList {
             throw new IllegalArgumentException("unexpected version of the featureType object");
         }
     }
-    
+
     /**
      * Verify if this entry is identical to specified object.
      */

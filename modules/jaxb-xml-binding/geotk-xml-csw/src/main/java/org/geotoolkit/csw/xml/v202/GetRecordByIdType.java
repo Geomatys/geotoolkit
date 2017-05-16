@@ -35,12 +35,12 @@ import org.geotoolkit.csw.xml.GetRecordById;
  *         (or a result set if the catalogue supports persistent result sets).
  *
  *    ElementSetName - one of "brief, "summary", or "full"
- *          
- * 
+ *
+ *
  * <p>Java class for GetRecordByIdType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetRecordByIdType">
  *   &lt;complexContent>
@@ -55,8 +55,8 @@ import org.geotoolkit.csw.xml.GetRecordById;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -82,9 +82,9 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
      * An empty constructor used by JAXB
      */
      GetRecordByIdType(){
-         
+
      }
-     
+
      /**
      * An empty constructor used by JAXB
      */
@@ -96,7 +96,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
          this.outputSchema   = outputSchema;
          this.id             = id;
      }
-     
+
     /**
      * Gets the value of the id property.
      */
@@ -131,7 +131,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
     public String getOutputFormat() {
         return outputFormat;
     }
-    
+
     /**
      * Gets the value of the outputFormat property.
      */

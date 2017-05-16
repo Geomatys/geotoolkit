@@ -31,9 +31,9 @@ import org.geotoolkit.skos.xml.Concept;
 
 /**
  * <p>Java class for getConceptsMatchingKeywordResponse complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="getConceptsMatchingKeywordResponse">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.skos.xml.Concept;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getConceptsMatchingKeywordResponse", propOrder = {
@@ -62,7 +62,7 @@ public class GetConceptsMatchingKeywordResponse {
 
     @XmlElement(name = "label")
     private List<String> labels;
-    
+
     @XmlElement(name = "matching")
     private List<Match> matching;
 
@@ -80,7 +80,7 @@ public class GetConceptsMatchingKeywordResponse {
             }
         }
     }
-    
+
     /**
      * Gets the value of the return property.
      */
@@ -112,15 +112,15 @@ public class GetConceptsMatchingKeywordResponse {
     }
 
     private static class Match {
-        
+
         public String thesaurusURI;
-        
+
         public List<String> conceptURI;
-        
+
         public Match() {
-            
+
         }
-        
+
         public Match(final String thesaurusUri, final List<String> conceptURI) {
             this.conceptURI   = conceptURI;
             this.thesaurusURI = thesaurusUri;

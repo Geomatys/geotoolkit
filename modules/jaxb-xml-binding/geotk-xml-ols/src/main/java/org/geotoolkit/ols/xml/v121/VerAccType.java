@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for VerAccType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="VerAccType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "VerAccType", propOrder = {
@@ -53,11 +53,11 @@ public class VerAccType {
 
     /**
      * Gets the value of the distance property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DistanceType }
-     *     
+     *
      */
     public DistanceType getDistance() {
         return distance;
@@ -65,11 +65,11 @@ public class VerAccType {
 
     /**
      * Sets the value of the distance property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DistanceType }
-     *     
+     *
      */
     public void setDistance(DistanceType value) {
         this.distance = value;

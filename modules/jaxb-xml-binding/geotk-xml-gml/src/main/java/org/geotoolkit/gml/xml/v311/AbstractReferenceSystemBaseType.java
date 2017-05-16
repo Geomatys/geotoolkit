@@ -27,11 +27,11 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * Basic encoding for reference system objects, simplifying and restricting the DefinitionType as needed.
- * 
+ *
  * <p>Java class for AbstractReferenceSystemBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractReferenceSystemBaseType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * @author Guilhem Legal 
+ *
+ * @author Guilhem Legal
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

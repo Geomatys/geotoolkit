@@ -44,9 +44,9 @@ import org.geotoolkit.storage.FactoryMetadata;
  */
 public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
-    
-    
-    
+
+
+
     /** factory identification **/
     public static final String NAME = "csv";
     public static final DefaultServiceIdentification IDENTIFICATION;
@@ -57,9 +57,9 @@ public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
     /**
      * Optional - the separator character
      */
@@ -109,10 +109,10 @@ public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     public String[] getFileExtensions() {
         return new String[] {".csv"};
     }
- 
+
     @Override
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, GEOMS_ALL);
     }
-    
+
 }

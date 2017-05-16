@@ -28,20 +28,20 @@ import org.geotoolkit.ows.xml.BoundingBox;
 public interface FeatureType {
 
     QName getName();
-    
+
     void setName(final QName value);
-    
+
     String getDefaultCRS();
-            
+
     void setDefaultCRS(final String CRS);
-    
+
     void setOtherCRS(final List<String> otherCRS);
-    
+
     void setAbstract(final String value);
-    
+
     void addKeywords(final List<String> values);
-    
+
     void addMetadataURL(final String value, final String type, final String format);
-    
+
     List<? extends BoundingBox> getBoundingBox();
 }

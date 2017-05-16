@@ -46,14 +46,14 @@ public class TreeFeaturePresenter extends AbstractInformationPresenter {
     public static final int LABEL_WIDTH = 100;
     public static final int LABEL_HEIGHT = 23;
     public static Border DEFAULT_BORDER = BorderFactory.createEmptyBorder(4, 4, 4, 4);
-        
+
     public TreeFeaturePresenter() {
         super(0);
     }
 
     @Override
     public JComponent createComponent(Object graphic, RenderingContext2D context, SearchAreaJ2D area) {
-        
+
         final Object candidate;
         if (graphic instanceof ProjectedFeature) {
             final ProjectedFeature gra = (ProjectedFeature) graphic;
@@ -64,7 +64,7 @@ public class TreeFeaturePresenter extends AbstractInformationPresenter {
         } else {
             candidate = null;
         }
-        
+
         if (candidate instanceof Feature) {
             final TreeModel model = new FeatureTreeModel((Feature) candidate);
             final Outline tree = new Outline(DefaultOutlineModel.createOutlineModel(model, new FeatureRowModel()));
@@ -77,30 +77,30 @@ public class TreeFeaturePresenter extends AbstractInformationPresenter {
             tree.setShowHorizontalLines(false);
             tree.getColumnModel().getColumn(1).setCellRenderer(new ValueRenderer());
             final ClipCopy btnRenderer = new ClipCopy();
-            
+
             final TableColumn first  = tree.getColumnModel().getColumn(0);
             final TableColumn second = tree.getColumnModel().getColumn(1);
             final TableColumn third  = tree.getColumnModel().getColumn(2);
-            
+
             first.setResizable(true);
             first.setMinWidth(LABEL_WIDTH);
-            
+
             second.setResizable(true);
             second.setMinWidth(LABEL_WIDTH);
-            
+
             third.setCellRenderer(btnRenderer);
             third.setCellEditor(btnRenderer);
             third.setResizable(false);
             third.setMaxWidth(BTN_WIDTH);
             third.setMinWidth(BTN_WIDTH);
             third.setPreferredWidth(BTN_WIDTH);
-            
+
             return tree;
         }
         return null;
     }
 
-    
+
     public static class FeatureRowModel implements RowModel {
 
         @Override
@@ -144,8 +144,8 @@ public class TreeFeaturePresenter extends AbstractInformationPresenter {
             }
         }
     }
-    
-    
+
+
     public static class ValueRenderer implements TableCellRenderer {
 
         @Override
@@ -166,8 +166,8 @@ public class TreeFeaturePresenter extends AbstractInformationPresenter {
             return null;
         }
     }
-    
-    
+
+
     public static class ClipCopy extends AbstractCellEditor implements TableCellEditor, TableCellRenderer {
 
         final JButton button;
@@ -210,6 +210,6 @@ public class TreeFeaturePresenter extends AbstractInformationPresenter {
             return button;
         }
     }
-        
-    
+
+
 }

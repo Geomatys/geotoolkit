@@ -24,17 +24,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * Information about the spatial, vertical, and/or temporal extent of a reference system object. 
- * Constraints: At least one of the elements "description", "boundingBox", "boundingPolygon", "verticalExtent", 
- * and temporalExtent" must be included, but more that one can be included when appropriate. 
- * Furthermore, more than one "boundingBox", "boundingPolygon", "verticalExtent", and/or temporalExtent" element can be included, 
+ *
+ * Information about the spatial, vertical, and/or temporal extent of a reference system object.
+ * Constraints: At least one of the elements "description", "boundingBox", "boundingPolygon", "verticalExtent",
+ * and temporalExtent" must be included, but more that one can be included when appropriate.
+ * Furthermore, more than one "boundingBox", "boundingPolygon", "verticalExtent", and/or temporalExtent" element can be included,
  * with more than one meaning the union of the individual domains.
- * 
+ *
  * <p>Java class for ExtentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ExtentType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -74,7 +74,7 @@ public class ExtentType {
 
     /**
      * Description of spatial and/or temporal extent of this object.
-     * 
+     *
      */
     public StringOrRefType getDescription() {
         return description;
@@ -82,7 +82,7 @@ public class ExtentType {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
     */
     public void setDescription(final StringOrRefType value) {
         this.description = value;
@@ -91,7 +91,7 @@ public class ExtentType {
     /**
      * Unordered list of bounding boxes (or envelopes) whose union describes the spatial domain of this object.
      * Gets the value of the boundingBox property.
-     * 
+     *
      */
     public List<EnvelopeType> getBoundingBox() {
         if (boundingBox == null) {
@@ -103,7 +103,7 @@ public class ExtentType {
     /**
      * Unordered list of bounding polygons whose union describes the spatial domain of this object.
      * Gets the value of the boundingPolygon property.
-     * 
+     *
      */
     public List<PolygonType> getBoundingPolygon() {
         if (boundingPolygon == null) {
@@ -115,7 +115,7 @@ public class ExtentType {
     /**
      * Unordered list of vertical intervals whose union describes the spatial domain of this object.
      * Gets the value of the verticalExtent property.
-     * 
+     *
      */
     public List<EnvelopeType> getVerticalExtent() {
         if (verticalExtent == null) {
@@ -127,7 +127,7 @@ public class ExtentType {
     /**
      * Unordered list of time periods whose union describes the spatial domain of this object.
      * Gets the value of the temporalExtent property.
-     * 
+     *
      */
     public List<TimePeriodType> getTemporalExtent() {
         if (temporalExtent == null) {

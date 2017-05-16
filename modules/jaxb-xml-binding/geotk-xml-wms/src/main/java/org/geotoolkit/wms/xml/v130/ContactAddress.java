@@ -26,9 +26,9 @@ import org.geotoolkit.wms.xml.AbstractContactAddress;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -45,7 +45,7 @@ import org.geotoolkit.wms.xml.AbstractContactAddress;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  *  @author Guilhem Legal
  * @module
  */
@@ -92,7 +92,7 @@ public class ContactAddress implements AbstractContactAddress {
         this.postCode        = postCode;
         this.stateOrProvince = stateOrProvince;
     }
-    
+
     /**
      * Gets the value of the addressType property.
      */
@@ -109,7 +109,7 @@ public class ContactAddress implements AbstractContactAddress {
 
    /**
      * Gets the value of the city property.
-     * 
+     *
      */
     public String getCity() {
         return city;
@@ -124,7 +124,7 @@ public class ContactAddress implements AbstractContactAddress {
 
     /**
      * Gets the value of the postCode property.
-     * 
+     *
      */
     public String getPostCode() {
         return postCode;
@@ -132,7 +132,7 @@ public class ContactAddress implements AbstractContactAddress {
 
     /**
      * Gets the value of the country property.
-     * 
+     *
      */
     public String getCountry() {
         return country;

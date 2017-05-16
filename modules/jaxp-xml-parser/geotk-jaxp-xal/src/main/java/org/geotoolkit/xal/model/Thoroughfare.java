@@ -122,7 +122,7 @@ public interface Thoroughfare {
     List<ThoroughfareNumberSuffix> getThoroughfareNumberSuffixes();
 
     /**
-     * 
+     *
      * @param throughfareNumberSuffixes
      */
     void setThoroughfareNumberSuffixes(List<ThoroughfareNumberSuffix> throughfareNumberSuffixes);
@@ -153,13 +153,13 @@ public interface Thoroughfare {
 
     /**
      * <p>Specification of the name of a Thoroughfare (also dependant street name): street name, canal name, etc.</p>
-     * 
+     *
      * @return
      */
     List<GenericTypedGrPostal> getThoroughfareNames();
 
     /**
-     * 
+     *
      * @param thoroughfareNames
      */
     void setThoroughfareNames(List<GenericTypedGrPostal> thoroughfareNames);
@@ -171,7 +171,7 @@ public interface Thoroughfare {
     GenericTypedGrPostal getThoroughfareTrailingType();
 
     /**
-     * 
+     *
      * @param thoroughfareTrailingType
      */
     void setThoroughfareTrailingType(GenericTypedGrPostal thoroughfareTrailingType);
@@ -241,7 +241,7 @@ public interface Thoroughfare {
     void setFirm(Firm firm);
 
     /**
-     * 
+     *
      * @return
      */
     PostalCode getPostalCode();
@@ -308,16 +308,16 @@ public interface Thoroughfare {
      * @param dependentThoroughfaresConnector
      */
     void setDependentThoroughfaresConnector(String dependentThoroughfaresConnector);
-		
+
     /**
      * <p>TS in GEORGE and ADELAIDE STS, RDS IN A and B RDS, etc. Use only when both the street types are the same.</p>
-     * 
+     *
      * @return
      */
     String getDependentThoroughfaresType();
-	
+
     /**
-     * 
+     *
      * @param dependentThoroughfaresType
      */
     void setDependentThoroughfaresType(String dependentThoroughfaresType);

@@ -30,7 +30,7 @@ public class DefaultGenericTypedGrPostal implements GenericTypedGrPostal {
     public DefaultGenericTypedGrPostal(){}
 
     /**
-     * 
+     *
      * @param type
      * @param grPostal
      * @param content
@@ -40,9 +40,9 @@ public class DefaultGenericTypedGrPostal implements GenericTypedGrPostal {
         this.grPostal = grPostal;
         this.content = content;
     }
-    
+
     /**
-     * 
+     *
      * @{@inheritDoc }
      */
     @Override

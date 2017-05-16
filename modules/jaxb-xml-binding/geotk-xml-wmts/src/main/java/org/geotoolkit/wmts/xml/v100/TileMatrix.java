@@ -32,9 +32,9 @@ import org.geotoolkit.ows.xml.v110.DescriptionType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.ows.xml.v110.DescriptionType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -106,11 +106,11 @@ public class TileMatrix extends DescriptionType implements Comparable<TileMatrix
     /**
      * Tile matrix identifier.
      * Typically an abreviation of the ScaleDenominator value or its equivalent pixel size
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getIdentifier() {
         return identifier;
@@ -119,11 +119,11 @@ public class TileMatrix extends DescriptionType implements Comparable<TileMatrix
     /**
      * Tile matrix identifier.
      * Typically an abreviation of the ScaleDenominator value or its equivalent pixel size
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setIdentifier(final CodeType value) {
         this.identifier = value;
@@ -131,7 +131,7 @@ public class TileMatrix extends DescriptionType implements Comparable<TileMatrix
 
     /**
      * Gets the value of the scaleDenominator property.
-     * 
+     *
      */
     public double getScaleDenominator() {
         return scaleDenominator;
@@ -139,7 +139,7 @@ public class TileMatrix extends DescriptionType implements Comparable<TileMatrix
 
     /**
      * Sets the value of the scaleDenominator property.
-     * 
+     *
      */
     public void setScaleDenominator(final double value) {
         this.scaleDenominator = value;
@@ -147,8 +147,8 @@ public class TileMatrix extends DescriptionType implements Comparable<TileMatrix
 
     /**
      * Gets the value of the topLeftCorner property.
-     * 
-     * 
+     *
+     *
      */
     public List<Double> getTopLeftCorner() {
         if (topLeftCorner == null) {
@@ -159,11 +159,11 @@ public class TileMatrix extends DescriptionType implements Comparable<TileMatrix
 
     /**
      * Gets the value of the tileWidth property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getTileWidth() {
         return tileWidth;
@@ -171,11 +171,11 @@ public class TileMatrix extends DescriptionType implements Comparable<TileMatrix
 
     /**
      * Sets the value of the tileWidth property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setTileWidth(final Integer value) {
         this.tileWidth = value;
@@ -183,11 +183,11 @@ public class TileMatrix extends DescriptionType implements Comparable<TileMatrix
 
     /**
      * Gets the value of the tileHeight property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getTileHeight() {
         return tileHeight;
@@ -195,11 +195,11 @@ public class TileMatrix extends DescriptionType implements Comparable<TileMatrix
 
     /**
      * Sets the value of the tileHeight property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setTileHeight(final Integer value) {
         this.tileHeight = value;
@@ -211,14 +211,14 @@ public class TileMatrix extends DescriptionType implements Comparable<TileMatrix
             this.tileHeight = dim.height;
          }
     }
-    
+
     /**
      * Gets the value of the matrixWidth property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMatrixWidth() {
         return matrixWidth;
@@ -226,11 +226,11 @@ public class TileMatrix extends DescriptionType implements Comparable<TileMatrix
 
     /**
      * Sets the value of the matrixWidth property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMatrixWidth(final Integer value) {
         this.matrixWidth = value;
@@ -238,23 +238,23 @@ public class TileMatrix extends DescriptionType implements Comparable<TileMatrix
 
     /**
      * Gets the value of the matrixHeight property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMatrixHeight() {
         return matrixHeight;
     }
-    
+
     /**
      * Sets the value of the matrixHeight property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMatrixHeight(final Integer value) {
         this.matrixHeight = value;
@@ -266,7 +266,7 @@ public class TileMatrix extends DescriptionType implements Comparable<TileMatrix
             this.matrixHeight = dim.height;
          }
     }
-    
+
     /**
      * Vérifie que cette station est identique à l'objet spécifié
      */

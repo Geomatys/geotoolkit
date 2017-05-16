@@ -66,7 +66,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
     public XMLCoverageStore(Path root) throws URISyntaxException, IOException {
         this(root,true);
     }
-    
+
     public XMLCoverageStore(URL rootPath) throws URISyntaxException, IOException {
         this(rootPath, true);
     }
@@ -83,7 +83,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
     public XMLCoverageStore(URL rootPath, boolean cacheTileStateInMemory) throws URISyntaxException, IOException {
         this(toParameters(rootPath.toURI(), cacheTileStateInMemory));
     }
-        
+
     public XMLCoverageStore(ParameterValueGroup params) throws URISyntaxException, IOException {
         super(params);
         final URI rootPath = Parameters.value(XMLCoverageStoreFactory.PATH, params);
@@ -99,7 +99,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
         Parameters.getOrCreate(XMLCoverageStoreFactory.CACHE_TILE_STATE, params).setValue(cacheState);
         return params;
     }
-    
+
     @Override
     public CoverageStoreFactory getFactory() {
         return (CoverageStoreFactory) DataStores.getFactoryById(XMLCoverageStoreFactory.NAME);
@@ -182,12 +182,12 @@ public class XMLCoverageStore extends AbstractCoverageStore {
         name = NamesExt.create(getDefaultNamespace(), name.tip().toString());
         final Set<GenericName> names = getNames();
         if(names.contains(name)){
-            throw new DataStoreException("Name already used in store : " + name.tip().toString());
+            throw new DataStoreException("Name already used in store: " + name.tip());
         }
 
         final XMLPyramidSet set = new XMLPyramidSet();
         final XMLCoverageReference ref = new XMLCoverageReference(this,name,set);
-        ref.initialize(root.resolve(name.tip().toString()+".xml"));
+        ref.initialize(root.resolve(name.tip() + ".xml"));
 
         if (packMode != null) {
             ref.setPackMode(packMode);

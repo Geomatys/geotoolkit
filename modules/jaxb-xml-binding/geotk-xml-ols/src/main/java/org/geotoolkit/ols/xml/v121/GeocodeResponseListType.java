@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for GeocodeResponseListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeocodeResponseListType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeocodeResponseListType", propOrder = {
@@ -61,25 +61,25 @@ public class GeocodeResponseListType {
 
     /**
      * Gets the value of the geocodedAddress property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the geocodedAddress property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getGeocodedAddress().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link GeocodedAddressType }
-     * 
-     * 
+     *
+     *
      */
     public List<GeocodedAddressType> getGeocodedAddress() {
         if (geocodedAddress == null) {
@@ -90,11 +90,11 @@ public class GeocodeResponseListType {
 
     /**
      * Gets the value of the numberOfGeocodedAddresses property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getNumberOfGeocodedAddresses() {
         return numberOfGeocodedAddresses;
@@ -102,11 +102,11 @@ public class GeocodeResponseListType {
 
     /**
      * Sets the value of the numberOfGeocodedAddresses property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setNumberOfGeocodedAddresses(Integer value) {
         this.numberOfGeocodedAddresses = value;

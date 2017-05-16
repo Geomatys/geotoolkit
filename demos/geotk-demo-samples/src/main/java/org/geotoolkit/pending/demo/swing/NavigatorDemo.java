@@ -21,10 +21,10 @@ import org.geotoolkit.temporal.object.TemporalConstants;
 
 /**
  * Demonstration of the Navigation component.
- * 
+ *
  * Navigator is similar to what could be found in project management libraries
  * to display Gant schemas.
- * 
+ *
  */
 public class NavigatorDemo {
 
@@ -37,18 +37,18 @@ public class NavigatorDemo {
         for(int i=0;i<30;i++){
             guiNavigator.getBands().add(new TaskBand());
         }
-        
+
         //move to current date
         guiNavigator.getModel().scale(1f/TemporalConstants.HOUR_MS, 0);
         guiNavigator.getModel().translate(-System.currentTimeMillis());
-        
-        
+
+
         //set a popup menu on the gradient area (at the bottom of the componant)
         final JPopupMenu menu = new JPopupMenu("basemenu");
         menu.add(new JMenuItem("base action 1"));
-        menu.add(new JMenuItem("base action 2"));        
+        menu.add(new JMenuItem("base action 2"));
         guiNavigator.setComponentPopupMenu(menu);
-        
+
 
         final JFrame frm = new JFrame();
         frm.setSize(800, 600);
@@ -64,37 +64,37 @@ public class NavigatorDemo {
      */
     private static final class TaskBand extends JNavigatorBand implements MouseInputListener {
 
-        
+
         private final int tolerance = 3;
         private double start;
         private double end;
-        
+
         public TaskBand() {
             setPreferredSize(new Dimension(50, 30));
-            
+
             start = System.currentTimeMillis() + Math.random() * TemporalConstants.MONTH_MS;
             end = start + TemporalConstants.MONTH_MS;
-            
+
             //this band toolip
             setToolTipText(String.valueOf(Math.random()*1000));
-                        
+
             //this band popup actions
             final JPopupMenu menu = new JPopupMenu("");
             menu.add(new JMenuItem("action 1"));
             menu.add(new JMenuItem("action 2"));
             setComponentPopupMenu(menu);
-            
+
             //listen to move events to drag the bar around
             addMouseListener(this);
             addMouseMotionListener(this);
         }
-        
+
         private boolean isOver(int position){
             final double pos1 = getModel().getGraphicValueAt(start) - tolerance;
             final double pos2 = getModel().getGraphicValueAt(end) + tolerance;
             return position>=pos1 && position <=pos2;
         }
-        
+
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -134,20 +134,20 @@ public class NavigatorDemo {
         private int newMouseX = 0;
         private int newMouseY = 0;
         private boolean flagMove = false;
-        
+
         @Override
         public void mouseClicked(MouseEvent e) {
         }
 
         @Override
         public void mousePressed(MouseEvent e) {
-            
-            if(isOver(e.getX())){            
+
+            if(isOver(e.getX())){
                 flagMove = (e.getButton() == MouseEvent.BUTTON1);
                 newMouseX = e.getX();
                 newMouseY = e.getY();
                 lastMouseX = newMouseX;
-                lastMouseY = newMouseY;                
+                lastMouseY = newMouseY;
                 e.consume();
             }
         }
@@ -169,7 +169,7 @@ public class NavigatorDemo {
         @Override
         public void mouseDragged(MouseEvent e) {
             if(e.isConsumed()) return;
-            
+
             newMouseX = e.getX();
             newMouseY = e.getY();
 
@@ -179,14 +179,14 @@ public class NavigatorDemo {
                     final double scale = getModel().getScale();
                     final double tr = lastMouseX-newMouseX;
                     start -= 1/scale*tr;
-                    end -= 1/scale*tr;                    
+                    end -= 1/scale*tr;
                     e.consume();
                     repaint();
                 }
             }
-            
+
             lastMouseX = newMouseX;
-            lastMouseY = newMouseY;            
+            lastMouseY = newMouseY;
         }
 
         @Override

@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ArcByCenterPointType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ArcByCenterPointType">
  *   &lt;complexContent>
@@ -55,8 +55,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ArcByCenterPointType", propOrder = {
@@ -92,11 +92,11 @@ public class ArcByCenterPointType
 
     /**
      * Gets the value of the pos property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     public DirectPositionType getPos() {
         return pos;
@@ -104,11 +104,11 @@ public class ArcByCenterPointType
 
     /**
      * Sets the value of the pos property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     public void setPos(DirectPositionType value) {
         this.pos = value;
@@ -116,11 +116,11 @@ public class ArcByCenterPointType
 
     /**
      * Gets the value of the pointProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PointPropertyType }
-     *     
+     *
      */
     public PointPropertyType getPointProperty() {
         return pointProperty;
@@ -128,11 +128,11 @@ public class ArcByCenterPointType
 
     /**
      * Sets the value of the pointProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PointPropertyType }
-     *     
+     *
      */
     public void setPointProperty(PointPropertyType value) {
         this.pointProperty = value;
@@ -140,11 +140,11 @@ public class ArcByCenterPointType
 
     /**
      * Gets the value of the pointRep property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PointPropertyType }
-     *     
+     *
      */
     public PointPropertyType getPointRep() {
         return pointRep;
@@ -152,11 +152,11 @@ public class ArcByCenterPointType
 
     /**
      * Sets the value of the pointRep property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PointPropertyType }
-     *     
+     *
      */
     public void setPointRep(PointPropertyType value) {
         this.pointRep = value;
@@ -164,11 +164,11 @@ public class ArcByCenterPointType
 
     /**
      * Gets the value of the posList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public DirectPositionListType getPosList() {
         return posList;
@@ -176,11 +176,11 @@ public class ArcByCenterPointType
 
     /**
      * Sets the value of the posList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public void setPosList(DirectPositionListType value) {
         this.posList = value;
@@ -188,11 +188,11 @@ public class ArcByCenterPointType
 
     /**
      * Gets the value of the coordinates property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public CoordinatesType getCoordinates() {
         return coordinates;
@@ -200,11 +200,11 @@ public class ArcByCenterPointType
 
     /**
      * Sets the value of the coordinates property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public void setCoordinates(CoordinatesType value) {
         this.coordinates = value;
@@ -212,11 +212,11 @@ public class ArcByCenterPointType
 
     /**
      * Gets the value of the radius property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LengthType }
-     *     
+     *
      */
     public LengthType getRadius() {
         return radius;
@@ -224,11 +224,11 @@ public class ArcByCenterPointType
 
     /**
      * Sets the value of the radius property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LengthType }
-     *     
+     *
      */
     public void setRadius(LengthType value) {
         this.radius = value;
@@ -236,11 +236,11 @@ public class ArcByCenterPointType
 
     /**
      * Gets the value of the startAngle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AngleType }
-     *     
+     *
      */
     public AngleType getStartAngle() {
         return startAngle;
@@ -248,11 +248,11 @@ public class ArcByCenterPointType
 
     /**
      * Sets the value of the startAngle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AngleType }
-     *     
+     *
      */
     public void setStartAngle(AngleType value) {
         this.startAngle = value;
@@ -260,11 +260,11 @@ public class ArcByCenterPointType
 
     /**
      * Gets the value of the endAngle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AngleType }
-     *     
+     *
      */
     public AngleType getEndAngle() {
         return endAngle;
@@ -272,11 +272,11 @@ public class ArcByCenterPointType
 
     /**
      * Sets the value of the endAngle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AngleType }
-     *     
+     *
      */
     public void setEndAngle(AngleType value) {
         this.endAngle = value;
@@ -284,11 +284,11 @@ public class ArcByCenterPointType
 
     /**
      * Gets the value of the interpolation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public CurveInterpolationType getInterpolation() {
         if (interpolation == null) {
@@ -300,11 +300,11 @@ public class ArcByCenterPointType
 
     /**
      * Sets the value of the interpolation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public void setInterpolation(CurveInterpolationType value) {
         this.interpolation = value;
@@ -312,11 +312,11 @@ public class ArcByCenterPointType
 
     /**
      * Gets the value of the numArc property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getNumArc() {
         if (numArc == null) {
@@ -328,11 +328,11 @@ public class ArcByCenterPointType
 
     /**
      * Sets the value of the numArc property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setNumArc(Integer value) {
         this.numArc = value;

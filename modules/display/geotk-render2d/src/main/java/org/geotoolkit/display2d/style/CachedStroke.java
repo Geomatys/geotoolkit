@@ -26,7 +26,7 @@ import org.opengis.style.Stroke;
  * that evaluate the given symbol and cache every possible value.
  * It also provide Java2D methods to grab a Stroke,Paint and Composite
  * for a given feature.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */

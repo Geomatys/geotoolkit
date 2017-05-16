@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AbstractParametricCurveSurfaceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractParametricCurveSurfaceType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractParametricCurveSurfaceType")
@@ -56,11 +56,11 @@ public abstract class AbstractParametricCurveSurfaceType
 
     /**
      * Gets the value of the aggregationType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public AggregationType getAggregationType() {
         return aggregationType;
@@ -68,11 +68,11 @@ public abstract class AbstractParametricCurveSurfaceType
 
     /**
      * Sets the value of the aggregationType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public void setAggregationType(AggregationType value) {
         this.aggregationType = value;

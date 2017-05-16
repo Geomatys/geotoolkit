@@ -25,12 +25,12 @@ import org.geotoolkit.ows.xml.AbstractOnlineResourceType;
 
 
 /**
- * Reference to on-line resource from which data can be obtained. 
- * 
+ * Reference to on-line resource from which data can be obtained.
+ *
  * <p>Java class for OnlineResourceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OnlineResourceType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import org.geotoolkit.ows.xml.AbstractOnlineResourceType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,7 +81,7 @@ public class OnlineResourceType implements AbstractOnlineResourceType{
             this.title   = that.title;
         }
     }
-    
+
     public OnlineResourceType(final String href) {
         this.href = href;
     }
@@ -99,16 +99,16 @@ public class OnlineResourceType implements AbstractOnlineResourceType{
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      */
     @Override
     public String getHref() {
         return href;
     }
-    
+
     /**
      * Gets the value of the href property.
-     * 
+     *
      */
     @Override
     public void setHref(final String href) {
@@ -117,7 +117,7 @@ public class OnlineResourceType implements AbstractOnlineResourceType{
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      */
     public String getRole() {
         return role;
@@ -125,7 +125,7 @@ public class OnlineResourceType implements AbstractOnlineResourceType{
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
       */
     public String getArcrole() {
         return arcrole;
@@ -133,7 +133,7 @@ public class OnlineResourceType implements AbstractOnlineResourceType{
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      */
     public String getTitle() {
         return title;
@@ -148,7 +148,7 @@ public class OnlineResourceType implements AbstractOnlineResourceType{
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
     */
     public String getActuate() {
         return actuate;

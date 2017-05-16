@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ComponentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ComponentType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ComponentType")
@@ -68,11 +68,11 @@ public class ComponentType extends AbstractSWEType {
 
     /**
      * Gets the value of the encryption property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getEncryption() {
         return encryption;
@@ -80,11 +80,11 @@ public class ComponentType extends AbstractSWEType {
 
     /**
      * Sets the value of the encryption property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setEncryption(String value) {
         this.encryption = value;
@@ -92,11 +92,11 @@ public class ComponentType extends AbstractSWEType {
 
     /**
      * Gets the value of the significantBits property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getSignificantBits() {
         return significantBits;
@@ -104,11 +104,11 @@ public class ComponentType extends AbstractSWEType {
 
     /**
      * Sets the value of the significantBits property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setSignificantBits(BigInteger value) {
         this.significantBits = value;
@@ -116,11 +116,11 @@ public class ComponentType extends AbstractSWEType {
 
     /**
      * Gets the value of the bitLength property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getBitLength() {
         return bitLength;
@@ -128,11 +128,11 @@ public class ComponentType extends AbstractSWEType {
 
     /**
      * Sets the value of the bitLength property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setBitLength(BigInteger value) {
         this.bitLength = value;
@@ -140,11 +140,11 @@ public class ComponentType extends AbstractSWEType {
 
     /**
      * Gets the value of the byteLength property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getByteLength() {
         return byteLength;
@@ -152,11 +152,11 @@ public class ComponentType extends AbstractSWEType {
 
     /**
      * Sets the value of the byteLength property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setByteLength(BigInteger value) {
         this.byteLength = value;
@@ -164,11 +164,11 @@ public class ComponentType extends AbstractSWEType {
 
     /**
      * Gets the value of the dataType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDataType() {
         return dataType;
@@ -176,11 +176,11 @@ public class ComponentType extends AbstractSWEType {
 
     /**
      * Sets the value of the dataType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDataType(String value) {
         this.dataType = value;
@@ -188,11 +188,11 @@ public class ComponentType extends AbstractSWEType {
 
     /**
      * Gets the value of the ref property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRef() {
         return ref;
@@ -200,11 +200,11 @@ public class ComponentType extends AbstractSWEType {
 
     /**
      * Sets the value of the ref property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRef(String value) {
         this.ref = value;

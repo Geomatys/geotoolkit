@@ -30,11 +30,11 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * A MultiPolygon is defined by one or more Polygons, referenced through polygonMember elements. Deprecated with GML version 3.0. Use MultiSurfaceType instead.
- * 
+ *
  * <p>Java class for MultiPolygonType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MultiPolygonType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,21 +60,21 @@ public class MultiPolygonType extends AbstractGeometricAggregateType implements 
     private List<PolygonPropertyType> polygonMember;
 
     public MultiPolygonType() {
-        
+
     }
-    
+
     public MultiPolygonType(final String srsName, final List<PolygonPropertyType> polygonMember) {
         super(srsName);
         this.polygonMember = polygonMember;
     }
-    
+
     /**
      * Gets the value of the polygonMember property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link PolygonPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<PolygonPropertyType> getPolygonMember() {
         if (polygonMember == null) {

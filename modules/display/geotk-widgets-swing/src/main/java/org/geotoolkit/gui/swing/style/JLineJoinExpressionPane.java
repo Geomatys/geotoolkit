@@ -54,7 +54,7 @@ public class JLineJoinExpressionPane extends StyleElementEditor<Expression>{
         guiRound.setIcon(ICON_JOIN_ROUND);
         specialSize = guiSpecial.getPreferredSize();
     }
-    
+
     public void setExpressionVisible(boolean visible){
         guiSpecial.setPreferredSize( visible ? new Dimension(specialSize) : new Dimension(1, 1));
         guiSpecial.setVisible(visible);
@@ -65,7 +65,7 @@ public class JLineJoinExpressionPane extends StyleElementEditor<Expression>{
         super.setLayer(layer);
         guiSpecial.setLayer(layer);
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -202,7 +202,7 @@ private void guiBevelActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_g
             guiRound.setSelected(false);
             guiMiter.setSelected(false);
         }
-        
+
         guiBevel.setEnabled(guiSpecial.get()==null);
         guiBevel.setToolTipText(guiSpecial.getToolTipText());
         guiRound.setEnabled(guiSpecial.get()==null);
@@ -228,5 +228,5 @@ private void guiBevelActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_g
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
 }

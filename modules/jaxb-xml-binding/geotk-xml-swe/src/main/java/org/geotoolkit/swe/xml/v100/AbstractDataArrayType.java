@@ -28,9 +28,9 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for AbstractDataArrayType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractDataArrayType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -95,7 +95,7 @@ public abstract class AbstractDataArrayType extends AbstractDataComponentType im
         super(id, null, null);
         this.elementCount = new ElementCount(count);
     }
-    
+
     /**
      * Gets the value of the elementCount property.
      */
@@ -115,7 +115,7 @@ public abstract class AbstractDataArrayType extends AbstractDataComponentType im
     public void setElementCount(int count) {
         this.elementCount = new ElementCount(count);
     }
-    
+
     /**
      * Verify if this entry is identical to specified object.
      */

@@ -23,8 +23,8 @@ package org.geotoolkit.swe.xml;
 public interface AbstractCurve extends AbstractDataArray {
 
     SimpleDataRecordProperty getElementType();
-    
+
     BlockEncodingProperty getEncoding();
-    
+
     AbstractDataValueProperty getValues();
 }

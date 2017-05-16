@@ -98,13 +98,13 @@ public class DistanceBufferType extends SpatialOpsType implements DistanceBuffer
         this.distance         = new DistanceType(distance, unit);
         this.abstractGeometry = getCorrectJaxbElement(geometry);
     }
-    
+
     public DistanceBufferType(final DistanceBufferType that) {
         if (that != null) {
             if (that.propertyName != null) {
                 this.propertyName = new PropertyNameType(that.propertyName);
             }
-            
+
             if (that.abstractGeometry != null) {
                 try {
                     final AbstractGeometryType geom = that.abstractGeometry.getValue().clone();
@@ -112,7 +112,7 @@ public class DistanceBufferType extends SpatialOpsType implements DistanceBuffer
                     throw new IllegalArgumentException("Clone is not supported on type:" + that.abstractGeometry.getValue().getClass().getName());
                 }
             }
-            
+
             if (that.distance != null) {
                 this.distance = new DistanceType(that.distance.getValue(), that.distance.getUnits());
             }

@@ -19,7 +19,7 @@ package org.geotoolkit.filter.binding;
 
 /**
  * To test acessor order by priority.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class MockBinding1 extends AbstractBinding{
@@ -27,7 +27,7 @@ public final class MockBinding1 extends AbstractBinding{
     public MockBinding1() {
         super(Object.class, -2);
     }
-    
+
     @Override
     public boolean support(String xpath) {
         return false;

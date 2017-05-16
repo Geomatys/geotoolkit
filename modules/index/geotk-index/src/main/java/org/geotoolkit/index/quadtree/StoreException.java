@@ -21,7 +21,7 @@ import org.geotoolkit.util.Exceptions;
 
 /**
  * DOCUMENT ME!
- * 
+ *
  * @author Tommaso Nolli
  * @module
  */

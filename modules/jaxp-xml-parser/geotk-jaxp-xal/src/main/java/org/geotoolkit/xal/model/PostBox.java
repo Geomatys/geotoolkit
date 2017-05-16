@@ -59,7 +59,7 @@ import java.util.List;
 public interface PostBox {
 
     /**
-     * 
+     *
      * @return
      */
     List<GenericTypedGrPostal> getAddressLines();
@@ -163,7 +163,7 @@ public interface PostBox {
     void setType(String type);
 
     /**
-     * 
+     *
      * @param indicator
      */
     void setIndicator(String indicator);

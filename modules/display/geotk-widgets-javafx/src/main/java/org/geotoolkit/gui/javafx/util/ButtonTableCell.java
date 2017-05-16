@@ -41,28 +41,28 @@ import org.geotoolkit.internal.Loggers;
  * @author Johann Sorel (Geomatys)
  */
 public class ButtonTableCell<S,T> extends TableCell<S,T> {
-    
+
     private final Predicate<T> visiblePredicate;
     protected final Button button = new Button();
-        
-    public ButtonTableCell(final boolean decorated, 
-            final Node graphic, 
-            final Predicate<T> visiblePredicate, 
+
+    public ButtonTableCell(final boolean decorated,
+            final Node graphic,
+            final Predicate<T> visiblePredicate,
             final Function<T,T> onAction){
-        
+
         this.visiblePredicate = visiblePredicate;
         button.setGraphic(graphic);
         setGraphic(button);
         setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         setAlignment(Pos.CENTER);
-        
+
         if(!decorated){
             button.setBackground(Background.EMPTY);
             button.setBorder(Border.EMPTY);
             button.setPadding(Insets.EMPTY);
         }
         button.disableProperty().bind(editableProperty().not());
-                
+
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -71,7 +71,7 @@ public class ButtonTableCell<S,T> extends TableCell<S,T> {
                     if(!isEditing()) {
                         getTableView().edit(rowIndex, getTableColumn());
                     }
-                    
+
                     final T item = getTableColumn().getCellData(rowIndex);
                     final T res = onAction.apply(item);
                     if(!Objects.equals(res,item)){
@@ -86,7 +86,7 @@ public class ButtonTableCell<S,T> extends TableCell<S,T> {
                 }
             }
         });
-        
+
         button.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -98,7 +98,7 @@ public class ButtonTableCell<S,T> extends TableCell<S,T> {
                 table.getFocusModel().focus(row.getIndex());
             }
         });
-        
+
     }
 
 
@@ -107,11 +107,11 @@ public class ButtonTableCell<S,T> extends TableCell<S,T> {
         super.commitEdit(newValue);
         updateItem(newValue, false);
     }
-    
+
     @Override
     protected void updateItem(T item, boolean empty) {
         super.updateItem(item, empty);
         button.setVisible(!empty && (visiblePredicate==null || visiblePredicate.test(item)));
     }
-    
+
 }

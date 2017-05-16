@@ -27,12 +27,12 @@ import org.geotoolkit.wps.xml.Input;
 
 
 /**
- * Value of one input to a process. 
- * 
+ * Value of one input to a process.
+ *
  * <p>Java class for InputType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InputType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.wps.xml.Input;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,30 +73,30 @@ public class InputType implements Input{
     protected DataType data;
 
     public InputType() {
-        
+
     }
-    
+
     public InputType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, InputReferenceType reference) {
         this.identifier = identifier;
         this.title = title;
         this._abstract = _abstract;
         this.reference = reference;
     }
-    
+
     public InputType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, DataType data) {
         this.identifier = identifier;
         this.title = title;
         this._abstract = _abstract;
         this.data = data;
     }
-    
+
     /**
-     * Unambiguous identifier or name of a process, unique for this server, or unambiguous identifier or name of an output, unique for this process. 
-     * 
+     * Unambiguous identifier or name of a process, unique for this server, or unambiguous identifier or name of an output, unique for this process.
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     @Override
     public CodeType getIdentifier() {
@@ -104,24 +104,24 @@ public class InputType implements Input{
     }
 
     /**
-     * Unambiguous identifier or name of a process, unique for this server, or unambiguous identifier or name of an output, unique for this process. 
-     * 
+     * Unambiguous identifier or name of a process, unique for this server, or unambiguous identifier or name of an output, unique for this process.
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setIdentifier(final CodeType value) {
         this.identifier = value;
     }
 
     /**
-     * Title of a process or output, normally available for display to a human. 
-     * 
+     * Title of a process or output, normally available for display to a human.
+     *
      * @return
      *     possible object is
      *     {@link LanguageStringType }
-     *     
+     *
      */
     @Override
     public LanguageStringType getTitle() {
@@ -129,24 +129,24 @@ public class InputType implements Input{
     }
 
     /**
-     * Title of a process or output, normally available for display to a human. 
-     * 
+     * Title of a process or output, normally available for display to a human.
+     *
      * @param value
      *     allowed object is
      *     {@link LanguageStringType }
-     *     
+     *
      */
     public void setTitle(final LanguageStringType value) {
         this.title = value;
     }
 
     /**
-     * Brief narrative description of a process or output, normally available for display to a human. 
-     * 
+     * Brief narrative description of a process or output, normally available for display to a human.
+     *
      * @return
      *     possible object is
      *     {@link LanguageStringType }
-     *     
+     *
      */
     @Override
     public LanguageStringType getAbstract() {
@@ -154,12 +154,12 @@ public class InputType implements Input{
     }
 
     /**
-     * Brief narrative description of a process or output, normally available for display to a human. 
-     * 
+     * Brief narrative description of a process or output, normally available for display to a human.
+     *
      * @param value
      *     allowed object is
      *     {@link LanguageStringType }
-     *     
+     *
      */
     public void setAbstract(final LanguageStringType value) {
         this._abstract = value;
@@ -167,11 +167,11 @@ public class InputType implements Input{
 
     /**
      * Gets the value of the reference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link InputReferenceType }
-     *     
+     *
      */
     @Override
     public InputReferenceType getReference() {
@@ -180,11 +180,11 @@ public class InputType implements Input{
 
     /**
      * Sets the value of the reference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link InputReferenceType }
-     *     
+     *
      */
     public void setReference(final InputReferenceType value) {
         this.reference = value;
@@ -192,11 +192,11 @@ public class InputType implements Input{
 
     /**
      * Gets the value of the data property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataType }
-     *     
+     *
      */
     public DataType getData() {
         return data;
@@ -204,11 +204,11 @@ public class InputType implements Input{
 
     /**
      * Sets the value of the data property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataType }
-     *     
+     *
      */
     public void setData(final DataType value) {
         this.data = value;
@@ -234,7 +234,7 @@ public class InputType implements Input{
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

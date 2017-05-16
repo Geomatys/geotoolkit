@@ -27,7 +27,7 @@ import javafx.scene.input.ScrollEvent;
 
 /**
  * Zoom out Handler for FXMap.
- * 
+ *
  * @author Johann Sorel
  */
 public class FXZoomOutHandler extends AbstractNavigationHandler {
@@ -41,7 +41,7 @@ public class FXZoomOutHandler extends AbstractNavigationHandler {
     public FXZoomOutHandler() {
         super();
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -105,10 +105,10 @@ public class FXZoomOutHandler extends AbstractNavigationHandler {
             double endY = e.getY();
 
             decorationPane.setBuffer(null);
-            
+
             //right mouse button : pan action
             if (mousebutton == MouseButton.SECONDARY) {
-                
+
                 if(!isStateFull()){
                     decorationPane.setBuffer(null);
                     decorationPane.setFill(false);
@@ -129,7 +129,7 @@ public class FXZoomOutHandler extends AbstractNavigationHandler {
             startX = e.getX();
             startY = e.getY();
         }
-        
+
         @Override
         public void mouseWheelMoved(final ScrollEvent e) {
             final double rotate = -e.getDeltaY();

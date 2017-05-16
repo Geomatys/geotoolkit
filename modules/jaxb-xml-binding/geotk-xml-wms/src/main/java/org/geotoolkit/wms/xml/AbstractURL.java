@@ -23,7 +23,7 @@ package org.geotoolkit.wms.xml;
  * @module
  */
 public interface AbstractURL {
-    
+
     /**
      * Gets the value of the format property.
      */

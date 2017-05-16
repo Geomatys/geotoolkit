@@ -50,7 +50,7 @@ public class CreateMultiPointTool extends AbstractEditionTool{
                 GeotkFX.getI18NString(CreateMultiPointTool.class, "abstract"),
                 GeotkFX.ICON_ADD);
         }
-    
+
         @Override
         public boolean canHandle(Object candidate) {
             if(candidate instanceof FeatureMapLayer){
@@ -82,7 +82,7 @@ public class CreateMultiPointTool extends AbstractEditionTool{
 
     private MultiPoint geometry = null;
     private final List<Point> subGeometries =  new ArrayList<>();
-    
+
     public CreateMultiPointTool(FXMap map, FeatureMapLayer layer) {
         super(EditionHelper.getToolSpi("CreateMultiPoint"));
         this.layer = layer;

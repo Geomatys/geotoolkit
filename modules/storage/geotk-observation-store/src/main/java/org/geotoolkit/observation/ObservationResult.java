@@ -34,7 +34,7 @@ public class ObservationResult {
         this.endTime   = endTime;
         this.resultID  = resultID;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("[ObservationResult]\n");

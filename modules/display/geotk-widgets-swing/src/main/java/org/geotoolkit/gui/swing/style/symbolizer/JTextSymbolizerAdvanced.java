@@ -43,12 +43,12 @@ import org.opengis.style.TextSymbolizer;
 
 /**
  * Text Symbolizer edition panel
- * 
+ *
  * @author Johann Sorel
  * @module
  */
 public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> {
-    
+
     private MapLayer layer = null;
     private TextSymbolizer oldSymbolizer = null;
 
@@ -56,10 +56,10 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
     public JTextSymbolizerAdvanced() {
         super(TextSymbolizer.class);
         initComponents();
-        
+
         //align labels
         alignLabelColumnWidth(this);
-        
+
         //configure panel with a default symbolizer
         parse(getStyleFactory().textSymbolizer());
     }
@@ -97,16 +97,16 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
             name = oldSymbolizer.getName();
             desc = oldSymbolizer.getDescription();
         }
-        
+
         return getStyleFactory().textSymbolizer(
                 name,
                 guiGeom.create(),
                 desc,
                 guiUOM.create(),
-                guiLabel.create(), 
-                guiFont.create(), 
-                guiPlacement.create(), 
-                guiHalo.create(), 
+                guiLabel.create(),
+                guiFont.create(),
+                guiPlacement.create(),
+                guiHalo.create(),
                 guiFill.create() );
     }
 
@@ -121,12 +121,12 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
             guiUOM.parse(symbol.getUnitOfMeasure());
             guiLabel.parse(symbol.getLabel());
             guiFont.parse(symbol.getFont());
-            guiPlacement.parse(symbol.getLabelPlacement());    
-            guiHalo.parse(symbol.getHalo());   
-            guiFill.parse(symbol.getFill()); 
+            guiPlacement.parse(symbol.getLabelPlacement());
+            guiHalo.parse(symbol.getHalo());
+            guiFill.parse(symbol.getFill());
         }
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiUOM,guiGeom,guiLabelLabel,guiFont,guiFill,guiHalo,guiPlacement};
@@ -343,7 +343,7 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
         // TODO add your handling code here:
-        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());
         }
     }//GEN-LAST:event_propertyChange

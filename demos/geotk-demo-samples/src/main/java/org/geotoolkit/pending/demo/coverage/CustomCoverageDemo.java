@@ -22,37 +22,37 @@ import org.geotoolkit.style.StyleConstants;
 
 
 public class CustomCoverageDemo {
-    
+
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
-    
+
     public static void main(String[] args) throws Exception {
         Demos.init();
-        
+
         UIManager.setLookAndFeel(new MetalLookAndFeel());
-        
-        //first create an image        
-        final BufferedImage img = new BufferedImage(500, 500, BufferedImage.TYPE_INT_ARGB);        
+
+        //first create an image
+        final BufferedImage img = new BufferedImage(500, 500, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g2d = img.createGraphics();
         g2d.setColor(Color.GREEN);
         g2d.fillRect(0, 0, 500, 500);
-        
+
         //set it's envelope
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 0, 100);
         env.setRange(1, 0, 100);
-        
+
         //create the coverage
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setEnvelope(env);
         gcb.setRenderedImage(img);
         final GridCoverage2D coverage =gcb.getGridCoverage2D();
-                        
+
         //display it
         final MapContext context = MapBuilder.createContext();
         final CoverageMapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.layers().add(cl);
         JMap2DFrame.show(context);
-        
+
     }
-    
+
 }

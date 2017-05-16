@@ -43,29 +43,29 @@ public final class JParameterDescriptorPanel extends GeneralParameterDescriptorP
     private boolean mandatory;
     private Class type;
     private Object defaultValue;
-    
+
     /**
      * Create new JParameterDescriptorPanel
      * @param paramDesc ParameterDescritor to edit.
      * @param parent parent JParameterDescriptorGroupPanel.
      */
-    public JParameterDescriptorPanel(final ParameterDescriptor paramDesc, final JParameterDescriptorGroupPanel parent, 
+    public JParameterDescriptorPanel(final ParameterDescriptor paramDesc, final JParameterDescriptorGroupPanel parent,
             final EditableParameterFilter filter) {
         super(paramDesc, parent);
         initComponents();
-        
+
         this.editable = filter != null ? filter.isEditable(paramDesc) : true;
         this.removable = filter != null ? filter.isRemovable(paramDesc) : true;
-        
+
         this.mandatory = paramDesc.getMinimumOccurs() > 0;
         this.type = paramDesc.getValueClass();
         this.defaultValue = paramDesc.getDefaultValue();
-        
+
         guiRemoveParamBtn.setToolTipText(MessageBundle.format("parameters_removeParameter"));
-        
+
         //disable remove button if parameter not removable
         guiRemoveParamBtn.setEnabled(editable);
-        
+
         guiParameterNameLbl.setText(code);
         guiParameterNameLbl.setCursor(new Cursor(Cursor.HAND_CURSOR));
         guiParameterNameLbl.addMouseListener(this);
@@ -82,12 +82,12 @@ public final class JParameterDescriptorPanel extends GeneralParameterDescriptorP
         guiParameterNameLbl.setText(code);
         this.revalidate();
     }
-    
+
     @Override
     public void setBackgroundColor(final Color color) {
         this.setBackground(color);
     }
-    
+
     @Override
     public boolean isEditable() {
         return editable;
@@ -116,8 +116,8 @@ public final class JParameterDescriptorPanel extends GeneralParameterDescriptorP
     public void setDefaultValue(Object defaultValue) {
         this.defaultValue = defaultValue;
     }
-    
-    
+
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -160,13 +160,13 @@ public final class JParameterDescriptorPanel extends GeneralParameterDescriptorP
 
     /**
      * Fire event to parent JParameterDescriptorGroupPanel
-     * @param evt 
+     * @param evt
      */
     private void guiRemoveParamBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiRemoveParamBtnActionPerformed
         //new value boolean used to know if parameter is removed.
-        firePropertyChange(JParameterDescriptorsEditor.PARAMETER_REMOVED_EVENT, this, false); 
+        firePropertyChange(JParameterDescriptorsEditor.PARAMETER_REMOVED_EVENT, this, false);
     }//GEN-LAST:event_guiRemoveParamBtnActionPerformed
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel guiParameterNameLbl;
     private javax.swing.JButton guiRemoveParamBtn;

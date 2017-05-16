@@ -69,7 +69,7 @@ public class FXFontWeigthExpression extends FXExpression {
             }
         });
     }
-    
+
     @Override
     public Expression newValue() {
         return StyleConstants.FONT_WEIGHT_NORMAL;
@@ -82,7 +82,7 @@ public class FXFontWeigthExpression extends FXExpression {
 
     @Override
     protected boolean canHandle(Expression styleElement) {
-        
+
         final Toggle selected = group.getSelectedToggle();
         if(StyleConstants.FONT_WEIGHT_NORMAL.equals(styleElement)){
             if(selected!=uiNormal) group.selectToggle(uiNormal);
@@ -94,5 +94,5 @@ public class FXFontWeigthExpression extends FXExpression {
 
         return false;
     }
-    
+
 }

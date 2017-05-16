@@ -34,7 +34,7 @@ package org.geotoolkit.xal.model;
 public interface PostTownSuffix {
 
     /**
-     * 
+     *
      * @return
      */
     String getContent();

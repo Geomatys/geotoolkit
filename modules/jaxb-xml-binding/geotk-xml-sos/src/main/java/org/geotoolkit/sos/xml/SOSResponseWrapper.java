@@ -28,7 +28,7 @@ public class SOSResponseWrapper implements SOSResponse {
     private Object response;
 
     private String version;
-    
+
     public SOSResponseWrapper(final Object response, final String version) {
         this.response = response;
         this.version  = version;

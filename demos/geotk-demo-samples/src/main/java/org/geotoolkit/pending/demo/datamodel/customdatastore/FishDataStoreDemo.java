@@ -18,7 +18,7 @@ public class FishDataStoreDemo {
 
     public static void main(String[] args) throws DataStoreException, URISyntaxException {
         Demos.init();
-        
+
         Map<String,Serializable> params = new HashMap<String, Serializable>();
         params.put("path", FishDataStoreDemo.class.getResource("/data/fishes.fsh").toURI());
 

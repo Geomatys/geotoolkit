@@ -36,11 +36,11 @@ import org.geotoolkit.map.MapLayer;
  * @author Alexis Manin (Geomatys)
  */
 public class OpacityItem extends TreeMenuItem {
-    
+
     private final Slider slider = new Slider(0.0, 1.0, 1);
     private List<MapLayer> selectedLayers = new ArrayList<>();
 
-    public OpacityItem() {        
+    public OpacityItem() {
         slider.setOrientation(Orientation.HORIZONTAL);
         slider.setTooltip(new Tooltip(GeotkFX.getString(this,"opacity")));
         slider.setMin(0.0);
@@ -49,9 +49,9 @@ public class OpacityItem extends TreeMenuItem {
         slider.setMinorTickCount(3);
         slider.showTickLabelsProperty().set(true);
         slider.showTickMarksProperty().set(true);
-        
+
         menuItem = new CustomMenuItem(slider, false);
-        
+
         slider.valueProperty().addListener(this::updateOpacity);
     }
 
@@ -66,9 +66,9 @@ public class OpacityItem extends TreeMenuItem {
             return menuItem;
         }
     }
-    
+
     /**
-     * Update opacity of currently selected layers using {@link #slider}. 
+     * Update opacity of currently selected layers using {@link #slider}.
      * @param sliderProperty
      * @param oldOpacity The previous slider opacity.
      * @param newOpacity The new opacity value

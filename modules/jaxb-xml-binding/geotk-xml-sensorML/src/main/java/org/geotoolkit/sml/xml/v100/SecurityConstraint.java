@@ -26,9 +26,9 @@ import org.geotoolkit.sml.xml.AbstractSecurityConstraint;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import org.geotoolkit.sml.xml.AbstractSecurityConstraint;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -67,7 +67,7 @@ public class SecurityConstraint implements AbstractSecurityConstraint {
 
     /**
      * Gets the value of the security property.
-     * 
+     *
      * @return possible object is {@link Security }
      */
     @Override
@@ -77,7 +77,7 @@ public class SecurityConstraint implements AbstractSecurityConstraint {
 
     /**
      * Sets the value of the security property.
-     * 
+     *
      * @param value allowed object is {@link Security }
      */
     public void setSecurity(final Security value) {

@@ -27,16 +27,16 @@ import org.geotoolkit.ows.xml.v100.KeywordsType;
 
 
 /**
- * 
+ *
  *             An element of this type that describes a GML object in an
  *             application namespace shall have an xml xmlns specifier,
  *             e.g. xmlns:bo="http://www.BlueOx.org/BlueOx"
- *          
- * 
+ *
+ *
  * <p>Java class for GMLObjectTypeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GMLObjectTypeType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.ows.xml.v100.KeywordsType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -79,11 +79,11 @@ public class GMLObjectTypeType {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getName() {
         return name;
@@ -91,11 +91,11 @@ public class GMLObjectTypeType {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setName(final QName value) {
         this.name = value;
@@ -103,11 +103,11 @@ public class GMLObjectTypeType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -115,11 +115,11 @@ public class GMLObjectTypeType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -127,11 +127,11 @@ public class GMLObjectTypeType {
 
     /**
      * Gets the value of the abstract property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAbstract() {
         return _abstract;
@@ -139,11 +139,11 @@ public class GMLObjectTypeType {
 
     /**
      * Sets the value of the abstract property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAbstract(final String value) {
         this._abstract = value;
@@ -151,7 +151,7 @@ public class GMLObjectTypeType {
 
     /**
      * Gets the value of the keywords property.
-     * 
+     *
      */
     public List<KeywordsType> getKeywords() {
         if (keywords == null) {
@@ -162,11 +162,11 @@ public class GMLObjectTypeType {
 
     /**
      * Gets the value of the outputFormats property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OutputFormatListType }
-     *     
+     *
      */
     public OutputFormatListType getOutputFormats() {
         return outputFormats;
@@ -174,11 +174,11 @@ public class GMLObjectTypeType {
 
     /**
      * Sets the value of the outputFormats property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OutputFormatListType }
-     *     
+     *
      */
     public void setOutputFormats(final OutputFormatListType value) {
         this.outputFormats = value;

@@ -131,5 +131,5 @@ public final class ISOMultiPrimitiveIterator extends ISOGeometryIterator<MultiPr
             currentIterator.next();
         }
     }
-    
+
 }

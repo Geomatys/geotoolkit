@@ -31,9 +31,9 @@ import org.geotoolkit.wms.xml.AbstractURL;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -77,10 +77,10 @@ public class MetadataURL implements AbstractMetadataURL {
         this.onlineResource = new OnlineResource(href);
         this.type           = type;
     }
-    
+
     /**
      * Gets the value of the format property.
-     * 
+     *
      */
     @Override
     public String getFormat() {
@@ -89,7 +89,7 @@ public class MetadataURL implements AbstractMetadataURL {
 
     /**
      * Gets the value of the onlineResource property.
-     * 
+     *
      */
     @Override
     public OnlineResource getOnlineResource() {
@@ -98,7 +98,7 @@ public class MetadataURL implements AbstractMetadataURL {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      */
     @Override
     public String getType() {

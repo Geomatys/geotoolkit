@@ -88,7 +88,7 @@ public class SvgUtils {
         final TranscoderInput in = new TranscoderInput(svgfile);
         return read(in, dim, hints);
     }
-    
+
     public static Image read(final String svgfile, final Dimension dim, final RenderingHints hints) throws TranscoderException, IOException{
         final TranscoderInput in = new TranscoderInput(svgfile);
         return read(in, dim, hints);
@@ -149,7 +149,7 @@ public class SvgUtils {
             ctx.setDynamic(true);
             final GVTBuilder builder = new GVTBuilder();
             this.node = builder.build(ctx, doc);
-            
+
             final float docWidth  = (float)ctx.getDocumentSize().getWidth();
             final float docHeight = (float)ctx.getDocumentSize().getHeight();
             bounds = new Rectangle2D.Float(0, 0, docWidth, docHeight);

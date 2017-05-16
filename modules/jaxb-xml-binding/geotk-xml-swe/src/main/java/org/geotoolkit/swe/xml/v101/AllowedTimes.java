@@ -36,9 +36,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -58,8 +58,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -108,7 +108,7 @@ public class AllowedTimes {
 
     /**
      * Gets the value of the intervalOrValueList property.
-     * 
+     *
      */
     public List<JAXBElement<List<String>>> getIntervalOrValueList() {
         if (intervalOrValueList == null) {

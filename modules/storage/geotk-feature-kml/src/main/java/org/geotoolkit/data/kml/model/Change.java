@@ -43,7 +43,7 @@ public interface Change {
     List<Object> getObjects();
 
     /**
-     * 
+     *
      * @param objects
      */
     void setObjects(List<Object> objects);

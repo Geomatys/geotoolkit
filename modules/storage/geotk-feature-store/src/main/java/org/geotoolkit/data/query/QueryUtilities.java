@@ -335,8 +335,8 @@ public class QueryUtilities {
         }else{
             qb.setResolution(resFirst);
         }
-        
-        
+
+
         //mix versions, second query version takes precedence.
         if(original.getVersionDate()!=null) qb.setVersionDate(original.getVersionDate());
         if(original.getVersionLabel()!=null) qb.setVersionLabel(original.getVersionLabel());
@@ -439,13 +439,13 @@ public class QueryUtilities {
         builder.setMaxFeatures(maxFeatures);
         builder.setProperties(propNames);
         builder.setStartIndex(start);
-        
+
         //mix versions, second query version takes precedence.
         if(firstQuery.getVersionDate()!=null) builder.setVersionDate(firstQuery.getVersionDate());
         if(firstQuery.getVersionLabel()!=null) builder.setVersionLabel(firstQuery.getVersionLabel());
         if(secondQuery.getVersionDate()!=null) builder.setVersionDate(secondQuery.getVersionDate());
         if(secondQuery.getVersionLabel()!=null) builder.setVersionLabel(secondQuery.getVersionLabel());
-        
+
         return builder.buildQuery();
     }
 

@@ -25,15 +25,15 @@ import java.util.logging.Logger;
 
 /**
  * For internal use of JDBC modules.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public final class JDBCFeatureStoreUtilities {
-    
+
     private JDBCFeatureStoreUtilities(){
     }
-    
+
     /**
      * Utility method for closing a result set.
      * <p>
@@ -125,5 +125,5 @@ public final class JDBCFeatureStoreUtilities {
             }
         }
     }
-    
+
 }

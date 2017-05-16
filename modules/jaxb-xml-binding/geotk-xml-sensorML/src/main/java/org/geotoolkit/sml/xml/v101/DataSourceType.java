@@ -27,9 +27,9 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for DataSourceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataSourceType">
  *   &lt;complexContent>
@@ -74,8 +74,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -93,7 +93,7 @@ public class DataSourceType extends AbstractProcessType implements AbstractDataS
     public DataSourceType() {
 
     }
-    
+
     public DataSourceType(final DataDefinition dataDefinition, final Values values, final ObservationReference observationReference) {
         this.dataDefinition = dataDefinition;
         this.observationReference = observationReference;
@@ -117,11 +117,11 @@ public class DataSourceType extends AbstractProcessType implements AbstractDataS
 
     /**
      * Gets the value of the dataDefinition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataSourceType.DataDefinition }
-     *     
+     *
      */
     public DataDefinition getDataDefinition() {
         return dataDefinition;
@@ -129,11 +129,11 @@ public class DataSourceType extends AbstractProcessType implements AbstractDataS
 
     /**
      * Sets the value of the dataDefinition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataSourceType.DataDefinition }
-     *     
+     *
      */
     public void setDataDefinition(final DataDefinition value) {
         this.dataDefinition = value;
@@ -141,11 +141,11 @@ public class DataSourceType extends AbstractProcessType implements AbstractDataS
 
     /**
      * Gets the value of the values property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataSourceType.Values }
-     *     
+     *
      */
     public Values getValues() {
         return values;
@@ -153,11 +153,11 @@ public class DataSourceType extends AbstractProcessType implements AbstractDataS
 
     /**
      * Sets the value of the values property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataSourceType.Values }
-     *     
+     *
      */
     public void setValues(final Values value) {
         this.values = value;
@@ -165,11 +165,11 @@ public class DataSourceType extends AbstractProcessType implements AbstractDataS
 
     /**
      * Gets the value of the observationReference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataSourceType.ObservationReference }
-     *     
+     *
      */
     public ObservationReference getObservationReference() {
         return observationReference;
@@ -177,16 +177,16 @@ public class DataSourceType extends AbstractProcessType implements AbstractDataS
 
     /**
      * Sets the value of the observationReference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataSourceType.ObservationReference }
-     *     
+     *
      */
     public void setObservationReference(final ObservationReference value) {
         this.observationReference = value;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(super.toString());

@@ -28,9 +28,9 @@ import org.opengis.util.InternationalString;
 
 /**
  * <p>Java class for DefinitionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DefinitionType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.opengis.util.InternationalString;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DefinitionType", propOrder = {
@@ -66,24 +66,24 @@ public class DefinitionType
 
     /**
      * Gets the value of the remarks property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
-    @Override 
+    @Override
     public InternationalString getRemarks() {
         return new SimpleInternationalString(remarks);
     }
 
     /**
      * Sets the value of the remarks property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemarks(String value) {
         this.remarks = value;

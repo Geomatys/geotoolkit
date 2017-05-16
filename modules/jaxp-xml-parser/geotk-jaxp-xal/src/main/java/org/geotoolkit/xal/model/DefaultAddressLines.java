@@ -31,13 +31,13 @@ public class DefaultAddressLines implements AddressLines {
     public DefaultAddressLines(){
         this.addressLines = EMPTY_LIST;
     }
-    
+
     public DefaultAddressLines(List<GenericTypedGrPostal> addressLines){
         this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
     }
-    
+
     /**
-     * 
+     *
      * @{@inheritDoc }
      */
     @Override

@@ -39,7 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * <ul>
  *     <li>RESULT_OUT "result" merged metadata</li>
  * </ul>
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -85,13 +85,13 @@ public final class MergeDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Merged metadata")
             .setRequired(true)
             .create(Metadata.class, null);
-    
-    /** 
-     * Output Parameters 
+
+    /**
+     * Output Parameters
      */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_OUT);
-    
+
     public static final ProcessDescriptor INSTANCE = new MergeDescriptor();
 
     private MergeDescriptor() {
@@ -107,5 +107,5 @@ public final class MergeDescriptor extends AbstractProcessDescriptor {
     public Process createProcess(final ParameterValueGroup input) {
         return new Merge(input);
     }
-    
+
 }

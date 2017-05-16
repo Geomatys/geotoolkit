@@ -31,9 +31,9 @@ import org.w3c.dom.Element;
 
 /**
  * <p>Classe Java pour annotation-xml.model complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="annotation-xml.model">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "annotation-xml.model", propOrder = {
@@ -125,20 +125,20 @@ public class AnnotationXmlModel {
 
     /**
      * Gets the value of the applyOrBindOrCi property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the applyOrBindOrCi property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getApplyOrBindOrCi().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link Neq }{@code >}
@@ -317,8 +317,8 @@ public class AnnotationXmlModel {
      * {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}
      * {@link JAXBElement }{@code <}{@link Mo }{@code >}
      * {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<Object> getApplyOrBindOrCi() {
         if (applyOrBindOrCi == null) {

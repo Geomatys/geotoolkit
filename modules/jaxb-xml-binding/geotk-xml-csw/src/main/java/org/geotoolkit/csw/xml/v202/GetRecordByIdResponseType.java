@@ -28,13 +28,13 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.GetRecordByIdResponse;
 
 /**
- * Returns a representation of the matching entry. If there is no 
+ * Returns a representation of the matching entry. If there is no
  *          matching record, the response message must be empty.
- * 
+ *
  * <p>Java class for GetRecordByIdResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetRecordByIdResponseType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.csw.xml.GetRecordByIdResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

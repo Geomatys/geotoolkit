@@ -36,7 +36,7 @@ import org.opengis.filter.expression.Expression;
  * @param <F> Expression or subclass
  * @module
  */
-public abstract class AbstractBinaryComparisonOperator<E extends Expression,F extends Expression> 
+public abstract class AbstractBinaryComparisonOperator<E extends Expression,F extends Expression>
                                                 implements BinaryComparisonOperator,Serializable{
 
     protected final E left;
@@ -53,7 +53,7 @@ public abstract class AbstractBinaryComparisonOperator<E extends Expression,F ex
         this.matchAction = matchAction;
         ArgumentChecks.ensureNonNull("matchAction", matchAction);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -82,7 +82,7 @@ public abstract class AbstractBinaryComparisonOperator<E extends Expression,F ex
     public MatchAction getMatchAction() {
         return matchAction;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -180,7 +180,7 @@ public abstract class AbstractBinaryComparisonOperator<E extends Expression,F ex
             cal1.set(Calendar.MINUTE, 0);
             cal1.set(Calendar.SECOND, 0);
             cal1.set(Calendar.MILLISECOND, 0);
-            
+
             final Calendar cal2 = Calendar.getInstance();
             cal2.setTime((java.sql.Date)objright);
             cal2.set(Calendar.HOUR_OF_DAY, 0);

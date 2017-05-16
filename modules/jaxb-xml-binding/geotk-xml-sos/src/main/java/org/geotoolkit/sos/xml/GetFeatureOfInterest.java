@@ -25,16 +25,16 @@ import org.opengis.filter.Filter;
  * @author Guilhem Legal (Geomatys)
  */
 public interface GetFeatureOfInterest extends RequestBase {
-    
+
     List<Filter> getSpatialFilters();
-    
+
     List<Filter> getTemporalFilters();
-    
+
     List<String> getFeatureOfInterestId();
-    
+
     List<String> getProcedure();
-    
+
     List<String> getObservedProperty();
-    
+
     String getResponseFormat();
 }

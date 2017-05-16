@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Parameter", namespace = "http://www.geotoolkit.org/owc")
 public class ParameterType {
-    
+
     @XmlAttribute
     protected String key;
     @XmlAttribute
@@ -74,5 +74,5 @@ public class ParameterType {
     public void setValue(String value) {
         this.value = value;
     }
-    
+
 }

@@ -29,9 +29,9 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
 
 /**
  * <p>Java class for GetFeatureOfInterestResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetFeatureOfInterestResponseType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetFeatureOfInterestResponseType", propOrder = {
@@ -57,10 +57,10 @@ public class GetFeatureOfInterestResponseType extends ExtensibleResponseType {
 
     /**
      * Gets the value of the featureMember property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link FeaturePropertyType }
-     * 
+     *
      */
     public List<FeaturePropertyType> getFeatureMember() {
         if (featureMember == null) {

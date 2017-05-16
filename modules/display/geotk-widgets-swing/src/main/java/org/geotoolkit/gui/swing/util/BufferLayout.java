@@ -25,12 +25,12 @@ import java.awt.LayoutManager;
 /**
  * Specific Layout used for JLayeredPane, all added componant take
  * the complete size of the parent
- * 
+ *
  * @author Johann Sorel
  * @module
  */
 public class BufferLayout implements LayoutManager{
-    
+
     public BufferLayout() {}
 
     @Override
@@ -38,7 +38,7 @@ public class BufferLayout implements LayoutManager{
 
     @Override
     public void removeLayoutComponent(final Component comp) {}
-    
+
     @Override
     public Dimension preferredLayoutSize(final Container parent) {
         return new Dimension(0, 0);
@@ -48,17 +48,17 @@ public class BufferLayout implements LayoutManager{
     public Dimension minimumLayoutSize(final Container parent) {
         return new Dimension(0, 0);
     }
-    
+
     @Override
     public void layoutContainer(final Container parent) {
         int maxWidth = parent.getWidth();
         int maxHeight = parent.getHeight();
-        int nComps = parent.getComponentCount();    
-        
+        int nComps = parent.getComponentCount();
+
         for (int i = 0 ; i < nComps ; i++) {
-            Component c = parent.getComponent(i);                
+            Component c = parent.getComponent(i);
             c.setBounds(0, 0, maxWidth,maxHeight);
         }
     }
-    
+
 }

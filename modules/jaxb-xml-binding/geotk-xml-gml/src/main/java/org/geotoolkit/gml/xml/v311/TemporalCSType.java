@@ -22,14 +22,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * A one-dimensional coordinate system containing a single time axis, 
- * used to describe the temporal position of a point in the specified time units from a specified time origin. 
- * A TemporalCS shall have one usesAxis association. 
- * 
+ * A one-dimensional coordinate system containing a single time axis,
+ * used to describe the temporal position of a point in the specified time units from a specified time origin.
+ * A TemporalCS shall have one usesAxis association.
+ *
  * <p>Java class for TemporalCSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TemporalCSType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

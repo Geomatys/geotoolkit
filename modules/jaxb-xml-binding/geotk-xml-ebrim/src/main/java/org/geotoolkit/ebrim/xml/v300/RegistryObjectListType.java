@@ -29,9 +29,9 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for RegistryObjectListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RegistryObjectListType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,7 +55,7 @@ public class RegistryObjectListType {
 
     @XmlTransient
     private static ObjectFactory FACTORY = new ObjectFactory();
-    
+
     @XmlElementRef(name = "Identifiable", namespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", type = JAXBElement.class)
     private List<JAXBElement<? extends IdentifiableType>> identifiable;
 
@@ -68,85 +68,85 @@ public class RegistryObjectListType {
         }
         return this.identifiable;
     }
-    
+
     public void setIdentifiable(final List<JAXBElement<? extends IdentifiableType>> identifiable) {
         this.identifiable = identifiable;
     }
-    
+
     public void setIdentifiable(final IdentifiableType identifiable) {
         if (this.identifiable == null) {
             this.identifiable = new ArrayList<JAXBElement<? extends IdentifiableType>>();
         }
         this.identifiable.add(createIdentifiable(identifiable));
     }
-    
+
     private JAXBElement<? extends IdentifiableType> createIdentifiable(final IdentifiableType id) {
         if (id instanceof ObjectRefType) {
             return FACTORY.createObjectRef((ObjectRefType)id);
-        
+
         } else if (id instanceof ExtrinsicObjectType) {
             return FACTORY.createExtrinsicObject(( ExtrinsicObjectType)id);
-        
+
         } else if (id instanceof ClassificationSchemeType) {
             return FACTORY.createClassificationScheme((ClassificationSchemeType)id);
-        
+
         } else if (id instanceof ServiceType) {
             return FACTORY.createService((ServiceType)id);
-        
+
         } else if (id instanceof ClassificationNodeType) {
             return FACTORY.createClassificationNode((ClassificationNodeType)id);
-            
+
         } else if (id instanceof AssociationType) {
             return FACTORY.createAssociation((AssociationType)id);
-            
+
         } else if (id instanceof OrganizationType) {
             return FACTORY.createOrganization((OrganizationType)id);
-            
+
         } else if (id instanceof AdhocQueryType) {
             return FACTORY.createAdhocQuery((AdhocQueryType)id);
-            
+
         } else if (id instanceof RegistryType) {
             return FACTORY.createRegistry((RegistryType)id);
-            
+
         } else if (id instanceof ClassificationType) {
             return FACTORY.createClassification((ClassificationType)id);
-            
+
         } else if (id instanceof FederationType) {
             return FACTORY.createFederation((FederationType)id);
-            
+
         } else if (id instanceof ServiceBindingType) {
             return FACTORY.createServiceBinding((ServiceBindingType)id);
-            
+
         } else if (id instanceof RegistryPackageType) {
             return FACTORY.createRegistryPackage((RegistryPackageType)id);
-            
+
         } else if (id instanceof NotificationType) {
             return FACTORY.createNotification((NotificationType)id);
-            
+
         } else if (id instanceof SpecificationLinkType) {
             return FACTORY.createSpecificationLink((SpecificationLinkType)id);
-            
+
         } else if (id instanceof ExternalLinkType) {
             return FACTORY.createExternalLink((ExternalLinkType)id);
-            
+
         } else if (id instanceof AuditableEventType) {
             return FACTORY.createAuditableEvent((AuditableEventType)id);
-            
+
         } else if (id instanceof AuditableEventType) {
             return FACTORY.createAuditableEvent((AuditableEventType)id);
-            
+
         } else if (id instanceof SubscriptionType) {
             return FACTORY.createSubscription((SubscriptionType)id);
-            
+
         } else if (id instanceof ExternalIdentifierType) {
             return FACTORY.createExternalIdentifier((ExternalIdentifierType)id);
-            
+
         } else if (id instanceof UserType) {
             return FACTORY.createUser((UserType)id);
-        
+
         } else if (id instanceof PersonType) {
             return FACTORY.createPerson((PersonType)id);
-            
+
         } else {
             throw new IllegalArgumentException("unexpected type in registryObjectListType");
         }

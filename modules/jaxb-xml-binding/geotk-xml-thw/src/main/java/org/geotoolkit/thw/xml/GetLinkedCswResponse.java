@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "GetLinkedCswResponse", namespace = "http://ws.geotk.org/")
 public class GetLinkedCswResponse {
-    
+
     @XmlElement(name = "return")
     private List<String> response;
 

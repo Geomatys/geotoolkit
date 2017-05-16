@@ -41,7 +41,7 @@ public class DefaultThoroughfareNumberFrom implements ThoroughfareNumberFrom {
     }
 
     /**
-     * 
+     *
      * @param content
      * @return
      * @throws XalException

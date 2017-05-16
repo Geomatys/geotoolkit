@@ -28,12 +28,12 @@ import org.geotoolkit.gml.xml.CoordinateSystemRef;
 
 
 /**
- * Association to a coordinate system, either referencing or containing the definition of that coordinate system. 
- * 
+ * Association to a coordinate system, either referencing or containing the definition of that coordinate system.
+ *
  * <p>Java class for CoordinateSystemRefType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoordinateSystemRefType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.gml.xml.CoordinateSystemRef;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -89,7 +89,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     /**
      * Gets the value of the coordinateSystem property.
-     * 
+     *
      */
     public JAXBElement<? extends AbstractCoordinateSystemType> getCoordinateSystem() {
         return coordinateSystem;
@@ -97,7 +97,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     /**
      * Sets the value of the coordinateSystem property.
-     * 
+     *
      */
     public void setCoordinateSystem(final JAXBElement<? extends AbstractCoordinateSystemType> value) {
         this.coordinateSystem = ((JAXBElement<? extends AbstractCoordinateSystemType> ) value);
@@ -105,7 +105,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -113,7 +113,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -121,7 +121,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      */
     public String getType() {
         if (type == null) {
@@ -133,7 +133,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -141,7 +141,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      */
     public String getHref() {
         return href;
@@ -149,7 +149,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -157,7 +157,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      */
     public String getRole() {
         return role;
@@ -165,7 +165,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -173,7 +173,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -181,7 +181,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -189,7 +189,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      */
     public String getTitle() {
         return title;
@@ -197,7 +197,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -205,7 +205,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      */
     public String getShow() {
         return show;
@@ -213,7 +213,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -221,7 +221,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      */
     public String getActuate() {
         return actuate;
@@ -229,7 +229,7 @@ public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;

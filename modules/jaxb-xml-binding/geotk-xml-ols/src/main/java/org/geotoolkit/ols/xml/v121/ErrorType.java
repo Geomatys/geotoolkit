@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines the characteristics of a processing error.
- * 
+ *
  * <p>Java class for ErrorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ErrorType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ErrorType")
@@ -67,11 +67,11 @@ public class ErrorType {
 
     /**
      * Gets the value of the errorCode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ErrorCodeType }
-     *     
+     *
      */
     public ErrorCodeType getErrorCode() {
         return errorCode;
@@ -79,11 +79,11 @@ public class ErrorType {
 
     /**
      * Sets the value of the errorCode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ErrorCodeType }
-     *     
+     *
      */
     public void setErrorCode(ErrorCodeType value) {
         this.errorCode = value;
@@ -91,11 +91,11 @@ public class ErrorType {
 
     /**
      * Gets the value of the severity property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SeverityType }
-     *     
+     *
      */
     public SeverityType getSeverity() {
         if (severity == null) {
@@ -107,11 +107,11 @@ public class ErrorType {
 
     /**
      * Sets the value of the severity property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SeverityType }
-     *     
+     *
      */
     public void setSeverity(SeverityType value) {
         this.severity = value;
@@ -119,11 +119,11 @@ public class ErrorType {
 
     /**
      * Gets the value of the locationID property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Object }
-     *     
+     *
      */
     public Object getLocationID() {
         return locationID;
@@ -131,11 +131,11 @@ public class ErrorType {
 
     /**
      * Sets the value of the locationID property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Object }
-     *     
+     *
      */
     public void setLocationID(Object value) {
         this.locationID = value;
@@ -143,11 +143,11 @@ public class ErrorType {
 
     /**
      * Gets the value of the locationPath property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLocationPath() {
         return locationPath;
@@ -155,11 +155,11 @@ public class ErrorType {
 
     /**
      * Sets the value of the locationPath property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLocationPath(String value) {
         this.locationPath = value;
@@ -167,11 +167,11 @@ public class ErrorType {
 
     /**
      * Gets the value of the message property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMessage() {
         return message;
@@ -179,11 +179,11 @@ public class ErrorType {
 
     /**
      * Sets the value of the message property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMessage(String value) {
         this.message = value;

@@ -45,7 +45,7 @@ public class OWSExceptionCode extends CodeList<OWSExceptionCode> {
      * Invalid format.
      */
     public static final OWSExceptionCode INVALID_FORMAT = new OWSExceptionCode("InvalidFormat");
-    
+
     /**
      * Invalid request.
      */
@@ -70,7 +70,7 @@ public class OWSExceptionCode extends CodeList<OWSExceptionCode> {
      * Invalid parameter value.
      */
     public static final OWSExceptionCode INVALID_PARAMETER_VALUE = new OWSExceptionCode("InvalidParameterValue");
-    
+
     /**
      * Invalid parameter value.
      */
@@ -125,22 +125,22 @@ public class OWSExceptionCode extends CodeList<OWSExceptionCode> {
      * Invalid dimension value.
      */
     public static final OWSExceptionCode INVALID_DIMENSION_VALUE = new OWSExceptionCode("InvalidDimensionValue");
-    
+
     /**
      * Not Enough Storage.
      */
     public static final OWSExceptionCode NOT_ENOUGH_STORAGE = new OWSExceptionCode("NotEnoughStorage");
-    
+
     /**
      * Server Busy.
      */
     public static final OWSExceptionCode SERVER_BUSY = new OWSExceptionCode("ServerBusy");
-    
+
     /**
      * File Size Exceeded.
      */
     public static final OWSExceptionCode FILE_SIZE_EXCEEDED = new OWSExceptionCode("FileSizeExceeded");
-    
+
     /**
      * Storage Not Supported.
      */

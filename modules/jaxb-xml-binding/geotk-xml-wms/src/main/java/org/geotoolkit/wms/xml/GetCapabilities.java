@@ -36,9 +36,9 @@ public final class GetCapabilities implements RequestBase {
     private final String language;
 
     private Version version;
-    
+
     private String service;
-    
+
     private final String updateSequence;
 
     public GetCapabilities(final Version version) {
@@ -48,7 +48,7 @@ public final class GetCapabilities implements RequestBase {
     public GetCapabilities(final Version version, final String format, final String language) {
         this(version, format, language, null);
     }
-    
+
     public GetCapabilities(final Version version, final String format, final String language, final String updateSequence) {
         this.version        = version;
         this.format         = format;
@@ -104,7 +104,7 @@ public final class GetCapabilities implements RequestBase {
             this.version = null;
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */

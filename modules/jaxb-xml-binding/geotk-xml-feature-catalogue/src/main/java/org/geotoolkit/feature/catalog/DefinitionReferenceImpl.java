@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -24,17 +24,20 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.metadata.AbstractMetadata;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.DefinitionReference;
 import org.opengis.feature.catalog.DefinitionSource;
 
 
 /**
  * Class that links a data instance to the source of its definition.
- * 
+ *
  * <p>Java class for FC_DefinitionReference_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FC_DefinitionReference_Type">
  *   &lt;complexContent>
@@ -47,8 +50,8 @@ import org.opengis.feature.catalog.DefinitionSource;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,7 +60,7 @@ import org.opengis.feature.catalog.DefinitionSource;
     "definitionSource"
 })
 @XmlRootElement(name = "FC_DefinitionReference")
-public class DefinitionReferenceImpl implements DefinitionReference {
+public class DefinitionReferenceImpl extends AbstractMetadata implements DefinitionReference {
 
     private String sourceIdentifier;
     @XmlElement(required = true)
@@ -67,9 +70,9 @@ public class DefinitionReferenceImpl implements DefinitionReference {
      * An empty constructor used by JAXB
      */
     public DefinitionReferenceImpl() {
-        
+
     }
-    
+
     /**
      * Clone a DefinitionReference
      */
@@ -79,7 +82,7 @@ public class DefinitionReferenceImpl implements DefinitionReference {
             this.sourceIdentifier = feature.getSourceIdentifier();
         }
     }
-    
+
     /**
      *Build a new definition reference
      */
@@ -88,10 +91,10 @@ public class DefinitionReferenceImpl implements DefinitionReference {
         this.definitionSource = definitionSource;
         this.sourceIdentifier = sourceIdentifier;
     }
-    
+
     /**
      * Gets the value of the sourceIdentifier property.
-     * 
+     *
      */
     public String getSourceIdentifier() {
         return sourceIdentifier;
@@ -99,7 +102,7 @@ public class DefinitionReferenceImpl implements DefinitionReference {
 
     /**
      * Sets the value of the sourceIdentifier property.
-     * 
+     *
      */
     public void setSourceIdentifier(final String value) {
         this.sourceIdentifier = value;
@@ -107,7 +110,7 @@ public class DefinitionReferenceImpl implements DefinitionReference {
 
     /**
      * Gets the value of the definitionSource property.
-     * 
+     *
     */
     public DefinitionSource getDefinitionSource() {
         return definitionSource;
@@ -119,11 +122,11 @@ public class DefinitionReferenceImpl implements DefinitionReference {
     public void setDefinitionSource(final DefinitionSource value) {
         this.definitionSource = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[DefinitionReference]:").append('\n');
-        
+
         if (definitionSource != null) {
             s.append("definition source: ").append(definitionSource).append('\n');
         }
@@ -132,18 +135,18 @@ public class DefinitionReferenceImpl implements DefinitionReference {
         }
         return s.toString();
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
         if (object instanceof DefinitionReferenceImpl) {
             final DefinitionReferenceImpl that = (DefinitionReferenceImpl) object;
-         
+
             return Objects.equals(this.definitionSource, that.definitionSource) &&
                    Objects.equals(this.sourceIdentifier, that.sourceIdentifier);
         }
@@ -156,6 +159,11 @@ public class DefinitionReferenceImpl implements DefinitionReference {
         hash = 79 * hash + (this.sourceIdentifier != null ? this.sourceIdentifier.hashCode() : 0);
         hash = 79 * hash + (this.definitionSource != null ? this.definitionSource.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public MetadataStandard getStandard() {
+        return FeatureCatalogueStandard.ISO_19110;
     }
 
 }

@@ -117,7 +117,7 @@ public class ArrayEditor extends PropertyValueEditor implements ActionListener{
             final Class subClass = this.type.getValueClass().getComponentType();
             value = Array.newInstance(subClass, 0);
         }
-        
+
         return value;
     }
 
@@ -138,7 +138,7 @@ public class ArrayEditor extends PropertyValueEditor implements ActionListener{
         outline.setEdited(ca);
 
         final int res = JOptionDialog.show((Component)e.getSource(), new JScrollPane(outline), JOptionPane.OK_OPTION);
-        
+
         if(JOptionPane.OK_OPTION == res){
             value = ca.getPropertyValue("element");
         }

@@ -52,7 +52,7 @@ public interface AddressIdentifier {
      * @return
      */
     String getType();
-    
+
     /**
      *
      * @return
@@ -78,7 +78,7 @@ public interface AddressIdentifier {
     void setType(String type);
 
     /**
-     * 
+     *
      * @param grPostal
      */
     void setGrPostal(GrPostal grPostal);

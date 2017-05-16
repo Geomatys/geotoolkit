@@ -1,9 +1,9 @@
 /*
  *    GeotoolKit - The Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
- *    
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -24,7 +24,7 @@ import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.DefaultCoordinateSequenceFactory;
 
 /**
- * A CSBuilder that generates DefaultCoordinateSequence objects, that is, 
+ * A CSBuilder that generates DefaultCoordinateSequence objects, that is,
  * coordinate sequences backed by a Coordinate[] array.
  * @author wolf
  * @module

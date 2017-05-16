@@ -27,9 +27,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for UpperBoundaryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UpperBoundaryType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,7 +68,7 @@ public class UpperBoundaryType implements Expression {
         ObjectFactory factory = new ObjectFactory();
         this.expression = factory.createLiteral(literal);
     }
-    
+
     public UpperBoundaryType(final UpperBoundaryType that) {
         if (that != null && that.expression != null) {
             final ObjectFactory factory = new ObjectFactory();

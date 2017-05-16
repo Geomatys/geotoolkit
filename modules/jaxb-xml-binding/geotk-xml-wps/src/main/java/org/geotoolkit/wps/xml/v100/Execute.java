@@ -28,9 +28,9 @@ import org.geotoolkit.ows.xml.v110.CodeType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.ows.xml.v110.CodeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,23 +65,23 @@ public class Execute extends RequestBaseType implements org.geotoolkit.wps.xml.E
     protected ResponseFormType responseForm;
 
     public Execute() {
-        
+
     }
-    
+
     public Execute(final String language, final CodeType identifier, DataInputsType dataInputs, ResponseFormType responseForm) {
         super(language);
         this.identifier = identifier;
         this.dataInputs = dataInputs;
         this.responseForm = responseForm;
     }
-    
+
     /**
-     * Identifier of the Process to be executed. This Process identifier shall be as listed in the ProcessOfferings section of the WPS Capabilities document. 
-     * 
+     * Identifier of the Process to be executed. This Process identifier shall be as listed in the ProcessOfferings section of the WPS Capabilities document.
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     @Override
     public CodeType getIdentifier() {
@@ -89,12 +89,12 @@ public class Execute extends RequestBaseType implements org.geotoolkit.wps.xml.E
     }
 
     /**
-     * Identifier of the Process to be executed. This Process identifier shall be as listed in the ProcessOfferings section of the WPS Capabilities document. 
-     * 
+     * Identifier of the Process to be executed. This Process identifier shall be as listed in the ProcessOfferings section of the WPS Capabilities document.
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setIdentifier(final CodeType value) {
         this.identifier = value;
@@ -107,14 +107,14 @@ public class Execute extends RequestBaseType implements org.geotoolkit.wps.xml.E
     public void setIdentifier(String identifiers) {
         setIdentifier(new CodeType(identifiers));
     }
-    
+
     /**
      * Gets the value of the dataInputs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataInputsType }
-     *     
+     *
      */
     public DataInputsType getDataInputs() {
         return dataInputs;
@@ -130,14 +130,14 @@ public class Execute extends RequestBaseType implements org.geotoolkit.wps.xml.E
         }
         return results;
     }
-    
+
     /**
      * Sets the value of the dataInputs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataInputsType }
-     *     
+     *
      */
     public void setDataInputs(final DataInputsType value) {
         this.dataInputs = value;
@@ -145,16 +145,16 @@ public class Execute extends RequestBaseType implements org.geotoolkit.wps.xml.E
 
     /**
      * Gets the value of the responseForm property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ResponseFormType }
-     *     
+     *
      */
     public ResponseFormType getResponseForm() {
         return responseForm;
     }
-    
+
     @Override
     public List<OutputDefinitionType> getOutput() {
         List<OutputDefinitionType> results = new ArrayList<>();
@@ -165,7 +165,7 @@ public class Execute extends RequestBaseType implements org.geotoolkit.wps.xml.E
                 for (DocumentOutputDefinitionType out : responseForm.responseDocument.getOutput()) {
                     results.add(out);
                 }
-            } 
+            }
             return results;
         } else {
             return null;
@@ -174,11 +174,11 @@ public class Execute extends RequestBaseType implements org.geotoolkit.wps.xml.E
 
     /**
      * Sets the value of the responseForm property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ResponseFormType }
-     *     
+     *
      */
     public void setResponseForm(final ResponseFormType value) {
         this.responseForm = value;

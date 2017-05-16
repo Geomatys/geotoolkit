@@ -27,12 +27,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Specialization for standard 2D textures. "target" provides the linking to surface geometry. Only
  *                 gml:MultiSurface and decendants of gml:AbstractSurfaceType are valid targets. As property of the link, a texture
- *                 parameterization either as set of texture coordinates or transformation matrix is given. 
- * 
+ *                 parameterization either as set of texture coordinates or transformation matrix is given.
+ *
  * <p>Java class for ParameterizedTextureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ParameterizedTextureType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ParameterizedTextureType", propOrder = {
@@ -61,7 +61,7 @@ public class ParameterizedTextureType extends AbstractTextureType {
 
     /**
      * Gets the value of the target property.
-     * 
+     *
      */
     public List<TextureAssociationType> getTarget() {
         if (target == null) {
@@ -72,7 +72,7 @@ public class ParameterizedTextureType extends AbstractTextureType {
 
     /**
      * Gets the value of the genericApplicationPropertyOfParameterizedTexture property.
-     * 
+     *
      */
     public List<Object> getGenericApplicationPropertyOfParameterizedTexture() {
         if (genericApplicationPropertyOfParameterizedTexture == null) {

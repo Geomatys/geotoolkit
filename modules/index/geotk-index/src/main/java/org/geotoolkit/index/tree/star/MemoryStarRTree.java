@@ -31,7 +31,7 @@ public class MemoryStarRTree<E> extends StarRTree<E> {
 
     /**
      * Create a new {@link StarRTree} implementation which store Tree architecture in memory.
-     * 
+     *
      * @param maxElements maximum element number store in each {@link Node}.
      * @param crs Tree CoordinateReferenceSystem.
      * @param treeEltMap mapper which store tree identifiers and stored elements.

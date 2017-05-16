@@ -27,11 +27,11 @@ import org.apache.sis.util.Version;
 
 /**
  * WPS operation request base, for all WPS operations except GetCapabilities. In this XML encoding, no "request" parameter is included, since the element name specifies the specific operation.
- * 
+ *
  * <p>Java class for RequestBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RequestBaseType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.apache.sis.util.Version;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,25 +63,25 @@ public class RequestBaseType implements RequestBase {
     protected String language;
 
     public RequestBaseType() {
-        
+
     }
-    
+
     public RequestBaseType(String language) {
         this.language = language;
     }
-    
+
     public RequestBaseType(String service, String language) {
         this.language = language;
         this.service = service;
     }
-    
+
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getService() {
@@ -94,11 +94,11 @@ public class RequestBaseType implements RequestBase {
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setService(final String value) {
@@ -107,11 +107,11 @@ public class RequestBaseType implements RequestBase {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public Version getVersion() {
@@ -124,11 +124,11 @@ public class RequestBaseType implements RequestBase {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setVersion(final String value) {
@@ -137,11 +137,11 @@ public class RequestBaseType implements RequestBase {
 
     /**
      * Gets the value of the language property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLanguage() {
         return language;
@@ -149,11 +149,11 @@ public class RequestBaseType implements RequestBase {
 
     /**
      * Sets the value of the language property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLanguage(final String value) {
         this.language = value;

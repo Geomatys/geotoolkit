@@ -35,7 +35,7 @@ import org.opengis.style.SelectedChannelType;
 
 /**
  * SelectedChannel type panel
- * 
+ *
  * @author  Johann Sorel
  * @module
  */
@@ -44,13 +44,13 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
     private MapLayer layer = null;
     private SelectedChannelType channel = null;
 
-    /** 
-     * Creates new form JFillPanel 
+    /**
+     * Creates new form JFillPanel
      */
     public JSelectedChannelTypePane() {
         super(SelectedChannelType.class);
         initComponents();
-        
+
         //those are not used by geotk engine, hide them to avoid confusing the user
         guiContrast.setVisible(false);
     }
@@ -65,7 +65,7 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
     public MapLayer getLayer(){
         return layer;
     }
-    
+
     @Override
     public void parse(final SelectedChannelType channel) {
         this.channel = channel;
@@ -163,7 +163,7 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
-        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());
         }
     }//GEN-LAST:event_propertyChange

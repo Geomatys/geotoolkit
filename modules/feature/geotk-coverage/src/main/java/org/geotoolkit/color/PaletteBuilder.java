@@ -20,11 +20,11 @@ package org.geotoolkit.color;
 /**
  * TODO
  * Placeholder for future PaletteBuilder.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class PaletteBuilder {
-    
+
     private PaletteBuilder(){}
-        
+
 }

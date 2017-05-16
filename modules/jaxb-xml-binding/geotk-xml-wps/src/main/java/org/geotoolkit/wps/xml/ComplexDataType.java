@@ -23,14 +23,14 @@ import java.util.List;
  * @author guilhem
  */
 public interface ComplexDataType {
- 
+
     List<Object> getContent();
-    
+
     String getMimeType();
-    
+
     String getEncoding();
-    
+
     String getSchema();
-    
+
     void setSchema(String schema);
 }

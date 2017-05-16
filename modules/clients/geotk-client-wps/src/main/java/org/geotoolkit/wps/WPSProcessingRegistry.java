@@ -52,16 +52,16 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
      * A key for {@link ExtendedParameterDescriptor} user data map. Specify the form : literal/bbox/complex, using {FormatSupport} object.
      */
     static final String USE_FORM_KEY = "form";
-    
+
     private final WebProcessingClient client;
 
     //process descriptors
     private Map<String, ProcessDescriptor> descriptors;
-    
+
     private String storageDirectory;
     private String storageURL;
-    
-    
+
+
     public WPSProcessingRegistry(WebProcessingClient client) throws CapabilitiesException {
         this.client = client;
         client.getCapabilities();
@@ -116,7 +116,7 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
     public void setStorageURL(String storageURL) {
         this.storageURL = storageURL;
     }
-    
+
     private synchronized void checkDescriptors() {
         if (descriptors!=null) return;
 
@@ -147,7 +147,7 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
                     final ProcessDescriptor processDesc = WPS2ProcessDescriptor.create(this, (org.geotoolkit.wps.xml.v200.ProcessSummaryType)processBriefType);
                     descriptors.put(processDesc.getIdentifier().getCode(), processDesc);
                 }
-                
+
             } catch(UnsupportedParameterException ex) {
                 LOGGER.log(Level.INFO, ex.getMessage());
             } catch(Throwable ex) {

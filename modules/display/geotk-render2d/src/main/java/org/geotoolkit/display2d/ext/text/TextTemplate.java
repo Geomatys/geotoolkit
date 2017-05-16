@@ -35,5 +35,5 @@ public interface TextTemplate {
      * Text
      */
     String getText();
-    
+
 }

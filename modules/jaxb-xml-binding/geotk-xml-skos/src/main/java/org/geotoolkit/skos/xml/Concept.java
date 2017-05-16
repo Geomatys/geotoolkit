@@ -568,7 +568,7 @@ public class Concept implements Serializable {
         }
         return definition;
     }
-    
+
     public List<String> getDefinition(final String language) {
         final List<String> response = new ArrayList<>();
         if (definition != null) {

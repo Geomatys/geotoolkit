@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -35,20 +35,23 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.sis.internal.jaxb.gco.GO_GenericName;
+import org.apache.sis.metadata.AbstractMetadata;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.util.LocalName;
 import org.opengis.feature.catalog.Constraint;
 import org.opengis.feature.catalog.DefinitionReference;
 import org.opengis.feature.catalog.FeatureType;
 import org.opengis.feature.catalog.PropertyType;
-import org.geotoolkit.feature.catalog.util.Multiplicity;
+import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
 
 /**
  * Abstract class for feature properties.
- * 
+ *
  * <p>Java class for AbstractFC_PropertyType_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractFC_PropertyType_Type">
  *   &lt;complexContent>
@@ -65,8 +68,8 @@ import org.geotoolkit.feature.catalog.util.Multiplicity;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -83,8 +86,8 @@ import org.geotoolkit.feature.catalog.util.Multiplicity;
     FeatureOperationImpl.class,
     AssociationRoleImpl.class
 })
-@XmlRootElement(name= "FC_PropertyType")        
-public class PropertyTypeImpl implements PropertyType, Referenceable {
+@XmlRootElement(name= "FC_PropertyType")
+public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, Referenceable {
 
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -97,12 +100,12 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
     private LocalName memberName;
     private String definition;
     @XmlElement(required = true)
-    private Multiplicity cardinality;
+    private MultiplicityImpl cardinality;
     @XmlElement(required = true)
     private FeatureType featureType;
     private List<Constraint> constrainedBy;
     private DefinitionReference definitionReference;
-    
+
     @XmlTransient
     private boolean isReference = false;
     @XmlTransient
@@ -112,9 +115,9 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
      * An empty constructor used by JAXB
      */
     public PropertyTypeImpl() {
-        
+
     }
-    
+
     /**
      * Clone a FeatureAttribute
      */
@@ -126,14 +129,14 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
             this.constrainedBy       = feature.getConstrainedBy();
             this.definition          = feature.getDefinition();
             this.featureType         = feature.getFeatureType();
-            this.memberName          = feature.getMemberName(); 
+            this.memberName          = feature.getMemberName();
         }
     }
-    
+
     /**
      * Build a new PropertyTypeImpl
      */
-    public PropertyTypeImpl(final String id, final LocalName memberName, final String definition, final Multiplicity cardinality, 
+    public PropertyTypeImpl(final String id, final LocalName memberName, final String definition, final MultiplicityImpl cardinality,
             final FeatureType featureType, final List<Constraint> constrainedBy, final DefinitionReference definitionReference) {
         this.id                  = id;
         this.cardinality         = cardinality;
@@ -141,19 +144,20 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
         this.constrainedBy       = constrainedBy;
         this.definition          = definition;
         this.featureType         = featureType;
-        this.memberName          = memberName; 
+        this.memberName          = memberName;
     }
     /**
      * Gets the value of the memberName property.
-     * 
+     *
      */
+    @Override
     public LocalName getMemberName() {
         return memberName;
     }
 
     /**
      * Sets the value of the memberName property.
-     * 
+     *
      */
     public void setMemberName(final LocalName value) {
         this.memberName = value;
@@ -161,15 +165,16 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
 
     /**
      * Gets the value of the definition property.
-     * 
+     *
     */
+    @Override
     public String getDefinition() {
         return definition;
     }
 
     /**
      * Sets the value of the definition property.
-     * 
+     *
      */
     public void setDefinition(final String value) {
         this.definition = value;
@@ -177,31 +182,33 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
 
     /**
      * Gets the value of the cardinality property.
-     * 
+     *
      */
-    public Multiplicity getCardinality() {
+    @Override
+    public MultiplicityImpl getCardinality() {
         return cardinality;
     }
 
     /**
      * Sets the value of the cardinality property.
-     * 
+     *
     */
-    public void setCardinality(final Multiplicity value) {
+    public void setCardinality(final MultiplicityImpl value) {
         this.cardinality = value;
     }
 
     /**
      * Gets the value of the featureType property.
-     * 
+     *
      */
+    @Override
     public FeatureType getFeatureType() {
         return featureType;
     }
 
     /**
      * Sets the value of the featureType property.
-     * 
+     *
      */
     public void setFeatureType(final FeatureType value) {
         this.featureType = value;
@@ -210,16 +217,17 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
     /**
      * Gets the value of the constrainedBy property.
      */
+    @Override
     public List<Constraint> getConstrainedBy() {
         if (constrainedBy == null) {
-            constrainedBy = new ArrayList<Constraint>();
+            constrainedBy = new ArrayList<>();
         }
         return this.constrainedBy;
     }
-    
+
     public void setConstrainedBy(final Constraint constrainedBy) {
         if (this.constrainedBy == null) {
-            this.constrainedBy = new ArrayList<Constraint>();
+            this.constrainedBy = new ArrayList<>();
         }
         this.constrainedBy.add(constrainedBy);
     }
@@ -230,64 +238,69 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
 
     /**
      * Gets the value of the definitionReference property.
-     * 
+     *
     */
+    @Override
     public DefinitionReference getDefinitionReference() {
         return definitionReference;
     }
 
     /**
      * Sets the value of the definitionReference property.
-     * 
+     *
     */
     public void setDefinitionReference(final DefinitionReference value) {
         this.definitionReference = value;
     }
-    
+
     /**
      * set the catalogue in href mode
      */
+    @Override
     public void setReference(final boolean mode) {
         this.isReference = mode;
     }
-    
+
      /**
      * get the current catalogue href mode
      */
+    @Override
     public boolean isReference() {
         return isReference;
     }
-    
-    public PropertyTypeImpl getReference() {
+
+    @Override
+    public PropertyTypeImpl getReferenceableObject() {
         PropertyTypeImpl result = new PropertyTypeImpl(this);
         result.setReference(true);
         return result;
     }
 
+    @Override
     public String getId() {
         return id;
     }
-    
+
     public void setId(final String id) {
         this.id = id;
     }
-    
+
     public Map<String, Referenceable> beforeMarshal(Map<String, Referenceable> alreadySee) {
         if (id != null && !id.isEmpty()) {
             alreadySee.put(id, this);
         }
         rootElement = false;
-        
+
         if (featureType != null) {
             if (alreadySee.get(featureType.getId()) != null) {
-                featureType = ((FeatureTypeImpl)featureType).getReference();
+                featureType = ((FeatureTypeImpl)featureType).getReferenceableObject();
             } else {
                 alreadySee = ((FeatureTypeImpl)featureType).beforeMarshal(alreadySee);
             }
         }
         return alreadySee;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]:").append('\n');
@@ -315,18 +328,18 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
         }
         return s.toString();
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
         if (object instanceof PropertyTypeImpl) {
             final PropertyTypeImpl that = (PropertyTypeImpl) object;
-            
+
             return Objects.equals(this.cardinality,         that.cardinality)         &&
                    Objects.equals(this.constrainedBy,       that.constrainedBy)       &&
                    Objects.equals(this.definition,          that.definition)          &&
@@ -346,4 +359,8 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
         return hash;
     }
 
+    @Override
+    public MetadataStandard getStandard() {
+        return FeatureCatalogueStandard.ISO_19110;
+    }
 }

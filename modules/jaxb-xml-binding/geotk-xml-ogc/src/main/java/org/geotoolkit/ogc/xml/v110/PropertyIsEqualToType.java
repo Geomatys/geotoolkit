@@ -31,21 +31,21 @@ import org.opengis.filter.PropertyIsEqualTo;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsEqualTo")
 public class PropertyIsEqualToType extends BinaryComparisonOpType implements PropertyIsEqualTo {
-    
+
     /**
      * Empty constructor used by JAXB
      */
     public PropertyIsEqualToType() {
-        
+
     }
-    
+
     /**
      * Build a new Binary comparison operator
      */
     public PropertyIsEqualToType(final List<JAXBElement<?>> expression, final Boolean matchCase) {
         super(expression,matchCase);
     }
-    
+
     /**
      * Build a new Binary comparison operator
      */
@@ -56,7 +56,7 @@ public class PropertyIsEqualToType extends BinaryComparisonOpType implements Pro
     public PropertyIsEqualToType(final PropertyIsEqualToType that) {
         super(that);
     }
-    
+
     @Override
     public ComparisonOpsType getClone() {
         return new PropertyIsEqualToType(this);

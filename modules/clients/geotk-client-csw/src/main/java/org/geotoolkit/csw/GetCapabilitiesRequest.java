@@ -28,5 +28,5 @@ import org.geotoolkit.client.Request;
  * @module
  */
 public interface GetCapabilitiesRequest extends Request {
-    
+
 }

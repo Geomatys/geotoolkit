@@ -33,9 +33,9 @@ import org.geotoolkit.wfs.xml.UpdateElement;
 
 /**
  * <p>Java class for UpdateType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UpdateType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.wfs.xml.UpdateElement;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UpdateType", propOrder = {
@@ -83,10 +83,10 @@ public class UpdateType extends AbstractTransactionActionType implements UpdateE
         this.typeName = typeName;
         this.srsName  = srsName;
     }
-    
+
     /**
      * Gets the value of the property property.
-     * 
+     *
      */
     public List<PropertyType> getProperty() {
         if (property == null) {
@@ -97,11 +97,11 @@ public class UpdateType extends AbstractTransactionActionType implements UpdateE
 
     /**
      * Gets the value of the filter property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FilterType }
-     *     
+     *
      */
     public FilterType getFilter() {
         return filter;
@@ -109,11 +109,11 @@ public class UpdateType extends AbstractTransactionActionType implements UpdateE
 
     /**
      * Sets the value of the filter property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FilterType }
-     *     
+     *
      */
     public void setFilter(FilterType value) {
         this.filter = value;
@@ -121,11 +121,11 @@ public class UpdateType extends AbstractTransactionActionType implements UpdateE
 
     /**
      * Gets the value of the typeName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getTypeName() {
         return typeName;
@@ -133,11 +133,11 @@ public class UpdateType extends AbstractTransactionActionType implements UpdateE
 
     /**
      * Sets the value of the typeName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setTypeName(QName value) {
         this.typeName = value;
@@ -145,11 +145,11 @@ public class UpdateType extends AbstractTransactionActionType implements UpdateE
 
     /**
      * Gets the value of the inputFormat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getInputFormat() {
         if (inputFormat == null) {
@@ -161,11 +161,11 @@ public class UpdateType extends AbstractTransactionActionType implements UpdateE
 
     /**
      * Sets the value of the inputFormat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setInputFormat(String value) {
         this.inputFormat = value;
@@ -173,11 +173,11 @@ public class UpdateType extends AbstractTransactionActionType implements UpdateE
 
     /**
      * Gets the value of the srsName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSrsName() {
         return srsName;
@@ -185,11 +185,11 @@ public class UpdateType extends AbstractTransactionActionType implements UpdateE
 
     /**
      * Sets the value of the srsName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSrsName(String value) {
         this.srsName = value;

@@ -41,13 +41,13 @@ public interface ThoroughfareNumberSuffix extends GenericTypedGrPostal{
     /**
      * <p>NEAR, ADJACENT TO, etc</p>
      * <p>12-A where 12 is number and A is suffix and "-" is the separator</p>
-     * 
+     *
      * @return
      */
     String getNumberSuffixSeparator();
 
     /**
-     * 
+     *
      * @param numberSuffixSeparator
      */
     void setNumberSuffixSeparator(String numberSuffixSeparator);

@@ -26,12 +26,12 @@ import org.geotoolkit.ows.xml.ValueReference;
 
 
 /**
- * References an externally defined finite set of values and ranges for this input. 
- * 
+ * References an externally defined finite set of values and ranges for this input.
+ *
  * <p>Java class for ValuesReferenceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ValuesReferenceType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.ows.xml.ValueReference;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,11 +59,11 @@ public class ValuesReferenceType implements ValueReference {
 
     /**
      * Gets the value of the reference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getReference() {
@@ -72,11 +72,11 @@ public class ValuesReferenceType implements ValueReference {
 
     /**
      * Sets the value of the reference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setReference(final String value) {
@@ -85,11 +85,11 @@ public class ValuesReferenceType implements ValueReference {
 
     /**
      * Gets the value of the valuesForm property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValuesForm() {
         return valuesForm;
@@ -97,11 +97,11 @@ public class ValuesReferenceType implements ValueReference {
 
     /**
      * Sets the value of the valuesForm property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValuesForm(final String value) {
         this.valuesForm = value;
@@ -128,7 +128,7 @@ public class ValuesReferenceType implements ValueReference {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

@@ -172,7 +172,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
             try {
                 reader = ref.acquireReader();
                 List<GridSampleDimension> dims = reader.getSampleDimensions(ref.getImageIndex());
-                
+
                 final int nbdim;
                 if(dims==null){
                     //read a very low resolution image to extract bands from it
@@ -204,7 +204,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                 }
 
                 if(index>=nbdim) index = 0;
-                
+
                 uiBands.setValue(""+index);
 
                 //extract band min/max
@@ -215,7 +215,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                     min = sd.getMinimumValue();
                     max = sd.getMaximumValue();
                 }
-                
+
                 final DynamicRangeSymbolizer.DRBound boundMin = new DynamicRangeSymbolizer.DRBound();
                 boundMin.setMode(DynamicRangeSymbolizer.DRBound.MODE_EXPRESSION);
                 boundMin.setValue(GO2Utilities.FILTER_FACTORY.literal(min));
@@ -227,7 +227,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                 boundMax.setValue(GO2Utilities.FILTER_FACTORY.literal(max));
                 valueProperty().get().setUpper(boundMax);
                 uiUpper.valueProperty().setValue(boundMax);
-                
+
             } catch (CoverageStoreException ex) {
                 Logging.getLogger("org.geotoolkit.gui.javafx.style.dynamicrange").log(Level.SEVERE, null, ex);
             } finally{
@@ -235,5 +235,5 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
             }
         }
     }
-    
+
 }

@@ -32,9 +32,9 @@ import org.geotoolkit.swe.xml.v200.AbstractSWEType;
 
 /**
  * <p>Java class for ComponentListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ComponentListType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.swe.xml.v200.AbstractSWEType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ComponentListType", propOrder = {
@@ -70,25 +70,25 @@ public class ComponentListType
 
     /**
      * Gets the value of the component property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the component property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getComponent().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ComponentListType.Component }
-     * 
-     * 
+     *
+     *
      */
     public List<ComponentListType.Component> getComponent() {
         if (component == null) {
@@ -100,9 +100,9 @@ public class ComponentListType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -112,8 +112,8 @@ public class ComponentListType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -128,11 +128,11 @@ public class ComponentListType
 
         /**
          * Gets the value of the name property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getName() {
             return name;
@@ -140,11 +140,11 @@ public class ComponentListType
 
         /**
          * Sets the value of the name property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setName(String value) {
             this.name = value;

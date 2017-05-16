@@ -23,7 +23,7 @@ import org.opengis.sld.LayerStyle;
 
 /**
  * Mutable style.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -32,14 +32,14 @@ public interface MutableLayerStyle extends LayerStyle{
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
-    
+
     void addListener(StyleListener listener);
 
     void addListener(PropertyChangeListener listener);
-    
+
     void removeListener(PropertyChangeListener listener);
-    
+
     <T extends EventListener> T[] getListeners(final Class<T> listenerClass);
-    
+
     Object[] getListeners();
 }

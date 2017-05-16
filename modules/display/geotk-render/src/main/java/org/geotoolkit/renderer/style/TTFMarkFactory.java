@@ -28,7 +28,7 @@ import org.geotoolkit.display.PortrayalException;
 
 
 /**
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class TTFMarkFactory extends MarkFactory {
@@ -41,7 +41,7 @@ public class TTFMarkFactory extends MarkFactory {
     @Override
     public Shape evaluateShape(String format, Object markRef, int markIndex) throws PortrayalException {
         if(!(markRef instanceof String)) return null;
-        
+
         final String fontPath;
         if(format!=null && PROTOCOL_TTF.equalsIgnoreCase(format)){
             //direct glyph reference
@@ -70,12 +70,12 @@ public class TTFMarkFactory extends MarkFactory {
                 return null;
             }
         }
-        
+
         Font font = FontCache.getDefaultInsance().getFont(fontPath);
         if (font == null) {
             throw new PortrayalException("Unkown font "+fontPath);
         }
-        
+
         final GlyphVector glyph = font.createGlyphVector(FONT_RENDER_CONTEXT,new String(new int[]{markIndex}, 0, 1));
         final Shape shape = glyph.getOutline();
         final Rectangle2D bounds = shape.getBounds2D();
@@ -90,5 +90,5 @@ public class TTFMarkFactory extends MarkFactory {
                 -bounds.getCenterY()*scale);
         return atrs.createTransformedShape(shape);
     }
-    
+
 }

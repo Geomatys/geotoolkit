@@ -22,7 +22,7 @@ package org.geotoolkit.sml.xml;
  * @module
  */
 public interface AbstractDerivableComponent extends AbstractProcess {
-    
+
     public AbstractLocation getSMLLocation();
 
     public void setSMLLocation(AbstractLocation location);

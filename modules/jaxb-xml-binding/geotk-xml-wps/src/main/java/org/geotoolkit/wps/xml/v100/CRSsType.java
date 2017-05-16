@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Identifies a Coordinate Reference System (CRS) supported for this input or output.
- * 
+ *
  * <p>Java class for CRSsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CRSsType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,20 +59,20 @@ public class CRSsType {
     protected List<String> crs;
 
     public CRSsType() {
-        
+
     }
-    
+
     public CRSsType(List<String> crs) {
         this.crs = crs;
     }
-    
+
     /**
      * Gets the value of the crs property.
-     * 
+     *
      * @return Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getCRS() {
         if (crs == null) {

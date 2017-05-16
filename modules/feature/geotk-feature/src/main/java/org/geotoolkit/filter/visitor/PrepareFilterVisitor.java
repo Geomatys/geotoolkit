@@ -28,7 +28,7 @@ import org.opengis.filter.expression.PropertyName;
  * @author Johann Sorel (Geomatys)
  */
 public class PrepareFilterVisitor extends SimplifyingFilterVisitor{
-    
+
     private final Class clazz;
     private final FeatureType expectedType;
 

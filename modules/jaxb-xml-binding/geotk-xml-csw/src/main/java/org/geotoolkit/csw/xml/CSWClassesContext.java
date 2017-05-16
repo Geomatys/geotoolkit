@@ -24,7 +24,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.spi.ServiceRegistry;
 
-import org.geotoolkit.feature.catalog.util.Multiplicity;
 import org.geotoolkit.ows.xml.v100.ExceptionReport;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.util.logging.Logging;
@@ -110,7 +109,7 @@ public class CSWClassesContext {
                                         org.geotoolkit.feature.catalog.InheritanceRelationImpl.class,
                                         org.geotoolkit.feature.catalog.ListedValueImpl.class,
                                         org.geotoolkit.feature.catalog.PropertyTypeImpl.class,
-                                        Multiplicity.class));
+                                        org.geotoolkit.feature.catalog.util.MultiplicityImpl.class));
 
 
 

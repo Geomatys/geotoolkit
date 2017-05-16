@@ -32,23 +32,23 @@ import static org.geotoolkit.style.StyleConstants.*;
 
 /**
  * Immutable implementation of Types Polygon symbolizer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class DefaultPolygonSymbolizer extends AbstractSymbolizer implements PolygonSymbolizer{
 
     private final Stroke stroke;
-    
+
     private final Fill fill;
-    
+
     private final Displacement disp;
-    
+
     private final Expression offset;
-        
+
     /**
      * Create a default immutable polygon symbolizer.
-     * 
+     *
      * @param stroke : can be null
      * @param fill : can be null.
      * @param disp : if null will be replaced by default value.
@@ -66,7 +66,7 @@ public class DefaultPolygonSymbolizer extends AbstractSymbolizer implements Poly
         this.disp = (disp == null) ? DEFAULT_DISPLACEMENT : disp;
         this.offset = (offset == null) ? DEFAULT_POLYGON_OFFSET : offset;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -167,7 +167,7 @@ public class DefaultPolygonSymbolizer extends AbstractSymbolizer implements Poly
         builder.append(disp);
         builder.append(" Unit=");
         builder.append(uom);
-        
+
         if(geom != null){
             builder.append(" Geometry=");
             builder.append(geom);

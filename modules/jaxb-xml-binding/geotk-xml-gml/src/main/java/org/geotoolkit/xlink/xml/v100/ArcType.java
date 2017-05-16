@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for arcType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="arcType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "arcType", propOrder = {
@@ -71,10 +71,10 @@ public class ArcType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link TitleEltType }
-     * 
+     *
      */
     public List<TitleEltType> getTitle() {
         if (title == null) {
@@ -85,11 +85,11 @@ public class ArcType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TypeType }
-     *     
+     *
      */
     public TypeType getType() {
         if (type == null) {
@@ -101,11 +101,11 @@ public class ArcType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TypeType }
-     *     
+     *
      */
     public void setType(TypeType value) {
         this.type = value;
@@ -113,11 +113,11 @@ public class ArcType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -125,11 +125,11 @@ public class ArcType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -137,11 +137,11 @@ public class ArcType {
 
     /**
      * Gets the value of the titleTemp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitleTemp() {
         return titleTemp;
@@ -149,11 +149,11 @@ public class ArcType {
 
     /**
      * Sets the value of the titleTemp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitleTemp(String value) {
         this.titleTemp = value;
@@ -161,11 +161,11 @@ public class ArcType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShowType }
-     *     
+     *
      */
     public ShowType getShow() {
         return show;
@@ -173,11 +173,11 @@ public class ArcType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShowType }
-     *     
+     *
      */
     public void setShow(ShowType value) {
         this.show = value;
@@ -185,11 +185,11 @@ public class ArcType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public ActuateType getActuate() {
         return actuate;
@@ -197,11 +197,11 @@ public class ArcType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public void setActuate(ActuateType value) {
         this.actuate = value;
@@ -209,11 +209,11 @@ public class ArcType {
 
     /**
      * Gets the value of the from property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFrom() {
         return from;
@@ -221,25 +221,25 @@ public class ArcType {
 
     /**
      * Sets the value of the from property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFrom(String value) {
         this.from = value;
     }
 
     /**
-     * 
+     *
      *      from and to have default behavior when values are missing
-     *     
-     * 
+     *
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTo() {
         return to;
@@ -247,11 +247,11 @@ public class ArcType {
 
     /**
      * Sets the value of the to property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTo(String value) {
         this.to = value;

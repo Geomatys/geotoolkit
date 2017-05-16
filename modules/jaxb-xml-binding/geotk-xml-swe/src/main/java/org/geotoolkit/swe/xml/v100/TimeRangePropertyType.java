@@ -25,11 +25,11 @@ import org.geotoolkit.swe.xml.AbstractTimeRangeProperty;
 
 /**
  * TimeRange is a data-type so usually appears "by value" rather than by reference.
- * 
+ *
  * <p>Java class for TimeRangePropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeRangePropertyType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.swe.xml.AbstractTimeRangeProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,7 +63,7 @@ public class TimeRangePropertyType implements AbstractTimeRangeProperty {
             this.timeRange = new TimeRange(tr.getTimeRange());
         }
     }
-    
+
     /**
      * Gets the value of the timeRange property.
      */

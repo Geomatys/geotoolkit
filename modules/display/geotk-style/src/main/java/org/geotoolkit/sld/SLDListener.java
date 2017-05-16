@@ -30,7 +30,7 @@ import org.opengis.sld.SLDLibrary;
 
 /**
  * Listener for style layer descriptor.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -41,17 +41,17 @@ public interface SLDListener extends EventListener{
      * Same as a bean property change.
      */
     void propertyChange(PropertyChangeEvent event);
-    
+
     /**
      * Called when a change occurs in the living layer collection.
      */
     void layerChange(CollectionChangeEvent<MutableLayer> event);
-    
+
     /**
      * Called when a change occurs in the living SLDLibrary collection.
      */
     void libraryChange(CollectionChangeEvent<SLDLibrary> event);
-    
+
     /**
      * Weak SLD listener. Use it when you are not
      * sure that the listener will be correctly removed by your class.
@@ -124,5 +124,5 @@ public interface SLDListener extends EventListener{
         }
 
     }
-    
+
 }

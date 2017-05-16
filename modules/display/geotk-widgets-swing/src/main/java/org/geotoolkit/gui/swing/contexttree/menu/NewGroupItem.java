@@ -35,14 +35,14 @@ import org.geotoolkit.font.IconBuilder;
 
 /**
  * New MapItem menu item for JContextTree
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
 public class NewGroupItem extends AbstractTreePopupItem{
 
     private WeakReference<MapItem> pathRef;
-    
+
     /**
      * delete item for jcontexttree
      */
@@ -69,7 +69,7 @@ public class NewGroupItem extends AbstractTreePopupItem{
         }
         );
     }
-    
+
     @Override
     public boolean isValid(final TreePath[] selection) {
         if(selection.length > 1 || selection.length == 0) return false;

@@ -94,7 +94,7 @@ public class BinarySpatialOpType extends SpatialOpsType implements BinarySpatial
         }
 
     }
-    
+
     public BinarySpatialOpType(final BinarySpatialOpType that) {
         if (that != null) {
             final ObjectFactory factory = new ObjectFactory();
@@ -112,7 +112,7 @@ public class BinarySpatialOpType extends SpatialOpsType implements BinarySpatial
                     throw new IllegalArgumentException("Unexpected type for expression in BinarySpatialOpType:" + expression.getClass().getName());
                 }
             }
-            
+
             if (that.any != null) {
                 this.any = new ArrayList<Object>();
                 for (Object obj : that.any) {
@@ -124,11 +124,11 @@ public class BinarySpatialOpType extends SpatialOpsType implements BinarySpatial
                     }
                 }
             }
-            
+
             this.valueReference = that.valueReference;
         }
     }
-    
+
     /**
      * Gets the value of the valueReference property.
      *
@@ -262,7 +262,7 @@ public class BinarySpatialOpType extends SpatialOpsType implements BinarySpatial
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         throw new UnsupportedOperationException("Must be overriden in sub-class.");

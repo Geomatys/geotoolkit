@@ -34,9 +34,9 @@ import org.geotoolkit.wcs.xml.WCSResponse;
 
 /**
  * <p>Java class for CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CapabilitiesType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.wcs.xml.WCSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CapabilitiesType", propOrder = {
@@ -69,14 +69,14 @@ public class CapabilitiesType extends CapabilitiesBaseType implements GetCapabil
      * An empty constructor used by JAXB
      */
     CapabilitiesType(){}
-    
+
     /**
      * Build a new Capabilities document.
      */
     public CapabilitiesType(final String version, final String updateSequence) {
         super(null, null, null, version, updateSequence, null);
     }
-    
+
     /**
      * Build a new Capabilities document.
      */
@@ -87,14 +87,14 @@ public class CapabilitiesType extends CapabilitiesBaseType implements GetCapabil
         this.contents = contents;
         this.serviceMetadata = serviceMetadata;
     }
-    
+
     /**
      * Despite its name this element should not be confuse with the OWSServiceMetadata defined in OWS Common.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ServiceMetadataType }
-     *     
+     *
      */
     public ServiceMetadataType getServiceMetadata() {
         return serviceMetadata;
@@ -102,11 +102,11 @@ public class CapabilitiesType extends CapabilitiesBaseType implements GetCapabil
 
     /**
      * Sets the value of the serviceMetadata property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ServiceMetadataType }
-     *     
+     *
      */
     public void setServiceMetadata(ServiceMetadataType value) {
         this.serviceMetadata = value;
@@ -114,11 +114,11 @@ public class CapabilitiesType extends CapabilitiesBaseType implements GetCapabil
 
     /**
      * Gets the value of the contents property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ContentsType }
-     *     
+     *
      */
     @Override
     public ContentsType getContents() {
@@ -127,11 +127,11 @@ public class CapabilitiesType extends CapabilitiesBaseType implements GetCapabil
 
     /**
      * Sets the value of the contents property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ContentsType }
-     *     
+     *
      */
     public void setContents(ContentsType value) {
         this.contents = value;

@@ -57,7 +57,7 @@ public class BeanFeature extends AbstractFeature{
         this.bean = bean;
         this.mapping = mapping;
     }
-    
+
     public Object getBean(){
         return bean;
     }
@@ -86,7 +86,7 @@ public class BeanFeature extends AbstractFeature{
         }else{
             throw new IllegalArgumentException("Property "+string+" can not be set.");
         }
-        
+
     }
 
     public static class Mapping {
@@ -107,7 +107,12 @@ public class BeanFeature extends AbstractFeature{
         public Mapping(Class clazz, String namespace, CoordinateReferenceSystem crs, String idField, String defaultGeom, Predicate<java.beans.PropertyDescriptor> filter) {
             this.idField = idField;
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.setName(namespace,clazz.getSimpleName());
+            final String name = clazz.getSimpleName();
+            if (namespace != null) {
+                ftb.setName(namespace, name);
+            } else {
+                ftb.setName(name);
+            }
             try {
                 for (java.beans.PropertyDescriptor pd : Introspector.getBeanInfo(clazz).getPropertyDescriptors()) {
 
@@ -185,7 +190,7 @@ public class BeanFeature extends AbstractFeature{
         public GenericName getName() {
             return getType().getName();
         }
-        
+
         @Override
         public AttributeType getType() {
             return desc;

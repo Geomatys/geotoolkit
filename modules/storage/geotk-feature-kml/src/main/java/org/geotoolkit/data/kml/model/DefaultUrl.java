@@ -25,7 +25,7 @@ package org.geotoolkit.data.kml.model;
 public class DefaultUrl extends DefaultLink implements Url {
 
     /**
-     * 
+     *
      * @param link
      * @deprecated
      */

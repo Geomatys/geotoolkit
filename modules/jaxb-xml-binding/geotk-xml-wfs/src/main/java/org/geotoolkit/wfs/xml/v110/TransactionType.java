@@ -32,15 +32,15 @@ import org.geotoolkit.wfs.xml.Transaction;
 
 
 /**
- * The TransactionType defines the Transaction operation.  
+ * The TransactionType defines the Transaction operation.
  * A Transaction element contains one or more Insert, Update Delete and Native elements that allow a client application
  * to create, modify or remove feature instances from the feature repository that a Web Feature Service controls.
- *          
- * 
+ *
+ *
  * <p>Java class for TransactionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TransactionType">
  *   &lt;complexContent>
@@ -59,8 +59,8 @@ import org.geotoolkit.wfs.xml.Transaction;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -95,7 +95,7 @@ public class TransactionType extends BaseRequestType implements Transaction {
             this.insertOrUpdateOrDelete.add(delete);
         }
     }
-    
+
     public TransactionType(final String service, final String version, final String handle, final AllSomeType releaseAction, final InsertElementType insert) {
         super(service, version, handle);
         this.releaseAction = releaseAction;
@@ -104,7 +104,7 @@ public class TransactionType extends BaseRequestType implements Transaction {
             this.insertOrUpdateOrDelete.add(insert);
         }
     }
-    
+
     public TransactionType(final String service, final String version, final String handle, final AllSomeType releaseAction, final UpdateElementType udpate) {
         super(service, version, handle);
         this.releaseAction = releaseAction;
@@ -113,9 +113,9 @@ public class TransactionType extends BaseRequestType implements Transaction {
             this.insertOrUpdateOrDelete.add(udpate);
         }
     }
-    
+
     /**
-     * 
+     *
      * In order for a client application to operate upon locked feature instances,
      * the Transaction request must include the LockId element.
      * The content of this element must be the lock identifier the client application obtained from a previous
@@ -123,21 +123,21 @@ public class TransactionType extends BaseRequestType implements Transaction {
      *
      * If the correct lock identifier is specified the Web Feature Service knows that the client application may
      * operate upon the locked feature instances.
-     * 
+     *
      * No LockId element needs to be specified to operate upon unlocked features.
-     *                      
-     * 
+     *
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLockId() {
         return lockId;
     }
 
     /**
-     * 
+     *
      * In order for a client application to operate upon locked feature instances,
      * the Transaction request must include the LockId element.
      * The content of this element must be the lock identifier the client application obtained from a previous
@@ -147,12 +147,12 @@ public class TransactionType extends BaseRequestType implements Transaction {
      * operate upon the locked feature instances.
      *
      * No LockId element needs to be specified to operate upon unlocked features.
-     *                      
-     * 
+     *
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLockId(final String value) {
         this.lockId = value;
@@ -160,7 +160,7 @@ public class TransactionType extends BaseRequestType implements Transaction {
 
     /**
      * Gets the value of the insertOrUpdateOrDelete property.
-     * 
+     *
      */
     public List<Object> getInsertOrUpdateOrDelete() {
         if (insertOrUpdateOrDelete == null) {
@@ -168,7 +168,7 @@ public class TransactionType extends BaseRequestType implements Transaction {
         }
         return this.insertOrUpdateOrDelete;
     }
-    
+
     @Override
     public List<Object> getTransactionAction() {
         return getInsertOrUpdateOrDelete();
@@ -176,11 +176,11 @@ public class TransactionType extends BaseRequestType implements Transaction {
 
     /**
      * Gets the value of the releaseAction property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllSomeType }
-     *     
+     *
      */
     public AllSomeType getReleaseAction() {
         return releaseAction;
@@ -188,11 +188,11 @@ public class TransactionType extends BaseRequestType implements Transaction {
 
     /**
      * Sets the value of the releaseAction property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllSomeType }
-     *     
+     *
      */
     public void setReleaseAction(final AllSomeType value) {
         this.releaseAction = value;

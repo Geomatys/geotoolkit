@@ -24,20 +24,20 @@ package org.geotoolkit.swe.xml;
  * @module
  */
 public interface TextBlock extends AbstractEncoding {
-    
+
     /**
      * Max three characters to use as token separator
      */
     String getTokenSeparator();
-    
+
     /**
      * Max three characters to use as block separator
      */
     String getBlockSeparator();
-    
+
     /**
      * One character to use as a decimal separator
      */
     String getDecimalSeparator();
-    
+
 }

@@ -24,14 +24,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * A timeslice encapsulates the time-varying properties of a dynamic feature--it 
- *         must be extended to represent a timestamped projection of a feature. The dataSource 
+ * A timeslice encapsulates the time-varying properties of a dynamic feature--it
+ *         must be extended to represent a timestamped projection of a feature. The dataSource
  *         property describes how the temporal data was acquired.
- * 
+ *
  * <p>Java class for AbstractTimeSliceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractTimeSliceType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,11 +64,11 @@ public abstract class AbstractTimeSliceType extends AbstractGMLType {
 
     /**
      * Gets the value of the validTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimePrimitivePropertyType }
-     *     
+     *
      */
     public TimePrimitivePropertyType getValidTime() {
         return validTime;
@@ -76,11 +76,11 @@ public abstract class AbstractTimeSliceType extends AbstractGMLType {
 
     /**
      * Sets the value of the validTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimePrimitivePropertyType }
-     *     
+     *
      */
     public void setValidTime(final TimePrimitivePropertyType value) {
         this.validTime = value;
@@ -88,11 +88,11 @@ public abstract class AbstractTimeSliceType extends AbstractGMLType {
 
     /**
      * Gets the value of the dataSource property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public StringOrRefType getDataSource() {
         return dataSource;
@@ -100,11 +100,11 @@ public abstract class AbstractTimeSliceType extends AbstractGMLType {
 
     /**
      * Sets the value of the dataSource property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public void setDataSource(final StringOrRefType value) {
         this.dataSource = value;

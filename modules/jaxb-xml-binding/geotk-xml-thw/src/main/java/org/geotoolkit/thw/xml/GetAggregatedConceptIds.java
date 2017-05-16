@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 @XmlRootElement(name = "GetAggregatedConceptIds", namespace = "http://ws.geotk.org/")
 public class GetAggregatedConceptIds {
-    
+
     private String uri;
     private String language;
     private String outputFormat;
@@ -51,13 +51,13 @@ public class GetAggregatedConceptIds {
         this.language = language;
         this.uri      = uri;
     }
-    
+
     public GetAggregatedConceptIds(final String uri, final String language, final String outputFormat) {
         this.language = language;
         this.uri      = uri;
         this.outputFormat = outputFormat;
     }
-    
+
     public GetAggregatedConceptIds(final String uri, final String language, final String outputFormat, final String theme, final String thesaurusUri) {
         this.language     = language;
         this.uri          = uri;
@@ -75,11 +75,11 @@ public class GetAggregatedConceptIds {
 
     /**
      * Gets the value of the uri property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUri() {
         return uri;
@@ -87,11 +87,11 @@ public class GetAggregatedConceptIds {
 
     /**
      * Sets the value of the uri property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUri(String value) {
         this.uri = value;
@@ -99,11 +99,11 @@ public class GetAggregatedConceptIds {
 
     /**
      * Gets the value of the language property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLanguage() {
         return language;
@@ -111,11 +111,11 @@ public class GetAggregatedConceptIds {
 
     /**
      * Sets the value of the language property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLanguage(String value) {
         this.language = value;

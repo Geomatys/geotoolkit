@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for DisplacementType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DisplacementType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,11 +57,11 @@ public class DisplacementType {
 
     /**
      * Gets the value of the displacementX property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getDisplacementX() {
         return displacementX;
@@ -69,11 +69,11 @@ public class DisplacementType {
 
     /**
      * Sets the value of the displacementX property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setDisplacementX(final ParameterValueType value) {
         this.displacementX = value;
@@ -81,11 +81,11 @@ public class DisplacementType {
 
     /**
      * Gets the value of the displacementY property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getDisplacementY() {
         return displacementY;
@@ -93,11 +93,11 @@ public class DisplacementType {
 
     /**
      * Sets the value of the displacementY property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setDisplacementY(final ParameterValueType value) {
         this.displacementY = value;

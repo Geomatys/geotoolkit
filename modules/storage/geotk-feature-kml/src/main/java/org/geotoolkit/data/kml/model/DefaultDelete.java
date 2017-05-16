@@ -30,14 +30,14 @@ public class DefaultDelete implements Delete {
     private List<Feature> features;
 
     /**
-     * 
+     *
      */
     public DefaultDelete() {
         this.features = EMPTY_LIST;
     }
 
     /**
-     * 
+     *
      * @param features
      */
     public DefaultDelete(List<Feature> features) {

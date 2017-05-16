@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TimeNodeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeNodeType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeNodeType", propOrder = {
@@ -60,9 +60,9 @@ public class TimeNodeType extends AbstractTimeTopologyPrimitiveType implements S
     private TimeInstantPropertyType position;
 
     public TimeNodeType() {
-        
+
     }
-    
+
     public TimeNodeType(final TimeNodeType that) {
         super(that);
         if (that != null) {
@@ -87,11 +87,11 @@ public class TimeNodeType extends AbstractTimeTopologyPrimitiveType implements S
     }
     /**
      * Gets the value of the previousEdge property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link TimeEdgePropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<TimeEdgePropertyType> getPreviousEdge() {
         if (previousEdge == null) {
@@ -102,11 +102,11 @@ public class TimeNodeType extends AbstractTimeTopologyPrimitiveType implements S
 
     /**
      * Gets the value of the nextEdge property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link TimeEdgePropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<TimeEdgePropertyType> getNextEdge() {
         if (nextEdge == null) {
@@ -117,11 +117,11 @@ public class TimeNodeType extends AbstractTimeTopologyPrimitiveType implements S
 
     /**
      * Gets the value of the position property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimeInstantPropertyType }
-     *     
+     *
      */
     public TimeInstantPropertyType getPosition() {
         return position;
@@ -129,11 +129,11 @@ public class TimeNodeType extends AbstractTimeTopologyPrimitiveType implements S
 
     /**
      * Sets the value of the position property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimeInstantPropertyType }
-     *     
+     *
      */
     public void setPosition(TimeInstantPropertyType value) {
         this.position = value;

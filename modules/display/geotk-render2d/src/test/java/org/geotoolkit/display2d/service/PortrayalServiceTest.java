@@ -394,7 +394,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testCoverageOutofValidityArea() throws FactoryException, PortrayalException {
-        
+
         final double scale = 360.0 / 4320.0;
         final AffineTransform gridToCRS = new AffineTransform(scale, 0, 0, -scale, -180, 90);
         final BufferedImage img = new BufferedImage(4320, 2160, BufferedImage.TYPE_INT_ARGB);
@@ -402,7 +402,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         g.setColor(Color.BLUE);
         g.fillRect(0, 0, 4320, 2160);
         g.dispose();
-        
+
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName("world");
         gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
@@ -410,19 +410,19 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(img);
         final GridCoverage coverage = gcb.build();
-        
+
         final MapContext context = MapBuilder.createContext();
         final MapLayer layer = MapBuilder.createCoverageLayer(coverage);
         context.layers().add(layer);
-        
+
         final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:3857"));
         env.setRange(0, -20037508.342789244, 20037508.342789244);
         env.setRange(1, -20037508.342789244, 20037508.342789244);
-        
+
         final SceneDef scene = new SceneDef(context);
         final ViewDef view = new ViewDef(env);
         final CanvasDef canvas = new CanvasDef(new Dimension(256, 256),null);
-        
+
         final BufferedImage result = DefaultPortrayalService.portray(canvas, scene, view);
         final int color = Color.BLUE.getRGB();
         for (int y=0;y<256;y++) {
@@ -431,7 +431,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
             }
         }
     }
-    
+
     @Test
     public void testLongitudeFirst() throws Exception{
 

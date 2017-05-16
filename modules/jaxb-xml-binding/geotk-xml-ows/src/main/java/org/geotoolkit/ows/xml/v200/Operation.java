@@ -34,9 +34,9 @@ import org.geotoolkit.ows.xml.Range;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.ows.xml.Range;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -81,7 +81,7 @@ public class Operation implements AbstractOperation {
      */
     Operation(){
     }
-    
+
     public Operation(final Operation that){
         if (that != null) {
             if (that.constraint != null) {
@@ -112,7 +112,7 @@ public class Operation implements AbstractOperation {
             }
         }
     }
-    
+
     /**
      * Build a new Operation.
      */
@@ -124,12 +124,12 @@ public class Operation implements AbstractOperation {
         this.name       = name;
         this.parameter  = parameter;
     }
-    
+
     /**
      * Unordered list of Distributed Computing Platforms
      *             (DCPs) supported for this operation. At present, only the HTTP DCP
      *             is defined, so this element will appear only once.Gets the value of the dcp property.
-     * 
+     *
      */
     @Override
     public List<DCP> getDCP() {
@@ -141,7 +141,7 @@ public class Operation implements AbstractOperation {
 
     /**
      * Gets the value of the parameter property.
-     * 
+     *
      */
     @Override
     public List<DomainType> getParameter() {
@@ -150,7 +150,7 @@ public class Operation implements AbstractOperation {
         }
         return this.parameter;
     }
-    
+
     /**
      * Get a parameter from the specified parameter name
      */
@@ -184,7 +184,7 @@ public class Operation implements AbstractOperation {
             return null;
         }
     }
-    
+
     /**
      * Update the specified parameter with the list of values.
      */
@@ -196,7 +196,7 @@ public class Operation implements AbstractOperation {
             }
         }
     }
-    
+
     /**
      * Update the specified parameter with the specified range.
      */
@@ -204,14 +204,14 @@ public class Operation implements AbstractOperation {
     public void updateParameter(final String parameterName, final Range range) {
         for (DomainType dom: parameter) {
             if (dom.getName().equals(parameterName)) {
-                dom.setAllowedValues(new AllowedValues(new RangeType(range))); 
+                dom.setAllowedValues(new AllowedValues(new RangeType(range)));
             }
         }
     }
 
     /**
      * Gets the value of the constraint property.
-     * 
+     *
      */
     @Override
     public List<DomainType> getConstraint() {
@@ -220,7 +220,7 @@ public class Operation implements AbstractOperation {
         }
         return this.constraint;
     }
-    
+
     @Override
     public DomainType getConstraint(final String name) {
         if (constraint != null) {
@@ -254,12 +254,12 @@ public class Operation implements AbstractOperation {
      *             (Informative: This metadata might specify the operation request
      *             parameters or provide the XML Schemas for the operation
      *             request.) Gets the value of the metadata property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link MetadataType }{@code >}
      * {@link JAXBElement }{@code <}{@link AdditionalParametersType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends MetadataType>> getMetadata() {
         if (metadata == null) {
@@ -270,11 +270,11 @@ public class Operation implements AbstractOperation {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getName() {
@@ -283,11 +283,11 @@ public class Operation implements AbstractOperation {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;

@@ -31,19 +31,19 @@ import org.opengis.util.GenericName;
  */
 @XmlType(name="SamplingFeatureRelation")
 public class SamplingFeatureRelationType implements SamplingFeatureRelation {
-    
+
     @XmlJavaTypeAdapter(GO_GenericName.class)
     private GenericName role;
-    
+
     private SamplingFeatureType target;
-    
+
     @XmlTransient
     private String name;
     /**
      * Constructeur vide utilisé par JAXB
      */
     protected SamplingFeatureRelationType() {}
-    
+
     /**
      */
     public SamplingFeatureRelationType(final String name, final SamplingFeatureType target) {
@@ -51,7 +51,7 @@ public class SamplingFeatureRelationType implements SamplingFeatureRelation {
         //this.role   = role;
         this.target = target;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -63,7 +63,7 @@ public class SamplingFeatureRelationType implements SamplingFeatureRelation {
     public String getName() {
         return name;
     }
-    
+
     /**
      * {@inheritDoc}
      */

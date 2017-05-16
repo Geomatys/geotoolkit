@@ -34,9 +34,9 @@ import org.geotoolkit.swe.xml.PhenomenonProperty;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.swe.xml.PhenomenonProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,16 +68,16 @@ public class ObservationTemplate implements org.geotoolkit.swes.xml.ObservationT
      * An empty constructor used by JAXB
      */
     ObservationTemplate(){
-        
+
     }
-    
+
     /**
      * Build a new ObservationTemplate
      */
     public ObservationTemplate(final ObservationType observation){
         this.observation = observation;
     }
-    
+
     /**
      * Gets the value of the observation property.
      */
@@ -116,7 +116,7 @@ public class ObservationTemplate implements org.geotoolkit.swes.xml.ObservationT
             }
         }
     }
-    
+
     @Override
     public void setName(final String name) {
         if (name != null) {
@@ -125,7 +125,7 @@ public class ObservationTemplate implements org.geotoolkit.swes.xml.ObservationT
             }
         }
     }
-    
+
     @Override
     public List<String> getObservedProperties() {
         if (observation != null && observation.getObservedProperty() != null) {
@@ -133,7 +133,7 @@ public class ObservationTemplate implements org.geotoolkit.swes.xml.ObservationT
         }
         return new ArrayList<>();
     }
-    
+
     @Override
     public List<PhenomenonProperty> getFullObservedProperties() {
         if (observation != null && observation.getPropertyObservedProperty() != null) {
@@ -141,7 +141,7 @@ public class ObservationTemplate implements org.geotoolkit.swes.xml.ObservationT
         }
         return new ArrayList<>();
     }
-    
+
     @Override
     public String getFeatureOfInterest() {
         if (observation != null && observation.getFeatureOfInterest() != null) {
@@ -149,7 +149,7 @@ public class ObservationTemplate implements org.geotoolkit.swes.xml.ObservationT
         }
         return null;
     }
-    
+
     /**
      * Verifie si cette entree est identique a l'objet specifie.
      */

@@ -28,6 +28,6 @@ public interface AbstractFeature extends AbstractGML {
     BoundingShape getBoundedBy();
 
     LocationProperty getLocation();
-    
+
     List<String> getSrsName();
 }

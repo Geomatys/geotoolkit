@@ -43,7 +43,7 @@ public class ColorItemType extends ExpressionType {
 
     /**
      * Gets the value of the data property.
-     * 
+     *
      */
     public ParameterValueType getData() {
         return data;
@@ -51,7 +51,7 @@ public class ColorItemType extends ExpressionType {
 
     /**
      * Sets the value of the data property.
-     * 
+     *
      */
     public void setData(final ParameterValueType value) {
         this.data = value;
@@ -59,11 +59,11 @@ public class ColorItemType extends ExpressionType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getValue() {
         return value;
@@ -71,11 +71,11 @@ public class ColorItemType extends ExpressionType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setValue(final ParameterValueType value) {
         this.value = value;

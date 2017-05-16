@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Or")
 public class OrType extends BinaryLogicOpType {
-    
+
     public OrType() {
-        
+
     }
-    
+
     public OrType(final OrType that) {
         super(that);
     }
-    
+
     @Override
     public LogicOpsType getClone() {
         return new OrType(this);

@@ -48,7 +48,7 @@ public class Boundary {
     public Boundary(final NumberRange range){
         this.range = range;
     }
-    
+
     public void start(final int firstX, final int secondX, final int y){
         if(firstX == secondX) throw new IllegalArgumentException("bugging algorithm");
         final LinkedList<Coordinate> exterior = new LinkedList<Coordinate>();

@@ -1,9 +1,9 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2013, Geomatys
- *    
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -70,13 +70,13 @@ import org.opengis.filter.temporal.TEquals;
 import org.opengis.filter.temporal.TOverlaps;
 
 /**
- * Given a filter capability, this filter will divide a filter in a 
+ * Given a filter capability, this filter will divide a filter in a
  * pre and post filter.
  * The pre-filter can be used directly while the post-filter will have to
  * be handle in java.
- * 
+ *
  * TODO
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class FilterCapabilitiesSplitterVisitor implements FilterVisitor, ExpressionVisitor {
@@ -85,15 +85,15 @@ public class FilterCapabilitiesSplitterVisitor implements FilterVisitor, Express
 
     public FilterCapabilitiesSplitterVisitor(FilterCapabilities capabilities) {
         this.capabilities = capabilities;
-        
-        
+
+
     }
-    
-    
+
+
     ////////////////////////////////////////////////////////////////////////////
     // EXPRESSION EXPRESSION ///////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public Object visit(NilExpression candidate, Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -118,7 +118,7 @@ public class FilterCapabilitiesSplitterVisitor implements FilterVisitor, Express
     public Object visit(Literal candidate, Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     @Override
     public Object visit(Multiply candidate, Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -133,11 +133,11 @@ public class FilterCapabilitiesSplitterVisitor implements FilterVisitor, Express
     public Object visit(Subtract candidate, Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // FILTER EXPRESSION ///////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public Object visitNullFilter(Object candidate) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -347,5 +347,5 @@ public class FilterCapabilitiesSplitterVisitor implements FilterVisitor, Express
     public Object visit(TOverlaps candidate, Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
 }

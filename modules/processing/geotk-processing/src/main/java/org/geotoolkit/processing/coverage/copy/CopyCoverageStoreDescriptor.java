@@ -64,7 +64,7 @@ public class CopyCoverageStoreDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Erase type if already presents.")
             .setRequired(true)
             .create(Boolean.class, false);
-    
+
     /**
      * Optional - reduce to domain, true by default.
      */

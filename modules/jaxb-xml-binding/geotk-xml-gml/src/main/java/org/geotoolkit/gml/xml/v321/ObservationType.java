@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ObservationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ObservationType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ObservationType", propOrder = {
@@ -73,11 +73,11 @@ public class ObservationType
 
     /**
      * Gets the value of the validTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimePrimitivePropertyType }
-     *     
+     *
      */
     public TimePrimitivePropertyType getValidTime() {
         return validTime;
@@ -85,11 +85,11 @@ public class ObservationType
 
     /**
      * Sets the value of the validTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimePrimitivePropertyType }
-     *     
+     *
      */
     public void setValidTime(TimePrimitivePropertyType value) {
         this.validTime = value;
@@ -97,11 +97,11 @@ public class ObservationType
 
     /**
      * Gets the value of the using property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ProcedurePropertyType }
-     *     
+     *
      */
     public ProcedurePropertyType getUsing() {
         return using;
@@ -109,11 +109,11 @@ public class ObservationType
 
     /**
      * Sets the value of the using property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ProcedurePropertyType }
-     *     
+     *
      */
     public void setUsing(ProcedurePropertyType value) {
         this.using = value;
@@ -121,12 +121,12 @@ public class ObservationType
 
     /**
      * Gets the value of the target property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link TargetPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link TargetPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<TargetPropertyType> getTarget() {
         return target;
@@ -134,12 +134,12 @@ public class ObservationType
 
     /**
      * Sets the value of the target property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link TargetPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link TargetPropertyType }{@code >}
-     *     
+     *
      */
     public void setTarget(JAXBElement<TargetPropertyType> value) {
         this.target = ((JAXBElement<TargetPropertyType> ) value);
@@ -147,11 +147,11 @@ public class ObservationType
 
     /**
      * Gets the value of the resultOf property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ResultType }
-     *     
+     *
      */
     public ResultType getResultOf() {
         return resultOf;
@@ -159,11 +159,11 @@ public class ObservationType
 
     /**
      * Sets the value of the resultOf property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ResultType }
-     *     
+     *
      */
     public void setResultOf(ResultType value) {
         this.resultOf = value;

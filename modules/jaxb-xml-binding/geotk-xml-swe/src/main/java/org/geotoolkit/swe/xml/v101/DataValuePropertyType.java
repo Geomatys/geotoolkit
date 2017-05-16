@@ -34,11 +34,11 @@ import org.w3c.dom.Element;
 
 /**
  * Use to point or include data values inline
- * 
+ *
  * <p>Java class for DataValuePropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataValuePropertyType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -109,7 +109,7 @@ public class DataValuePropertyType implements AbstractDataValueProperty {
                     this.any.add(e);
                 }
             }
-            
+
         }
     }
 
@@ -251,7 +251,7 @@ public class DataValuePropertyType implements AbstractDataValueProperty {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      */
     public Map<QName, String> getOtherAttributes() {
         return otherAttributes;

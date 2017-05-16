@@ -38,7 +38,7 @@ public class TypeNames {
      * a QName for gmd:MD_Metadata type
      */
     public static final QName METADATA_QNAME = new QName("http://www.isotc211.org/2005/gmd", "MD_Metadata");
-    
+
     /**
      * a QName for gfc:MD_Metadata type
      */
@@ -138,7 +138,7 @@ public class TypeNames {
         if("gmd:MD_Metadata".equalsIgnoreCase(key)){
             return METADATA_QNAME;
         }
-	if("gfc:FC_FeatureCatalogue".equalsIgnoreCase(key)){
+    if("gfc:FC_FeatureCatalogue".equalsIgnoreCase(key)){
             return FEATCAT_QNAME;
         }
         if("gmd:Dataset".equalsIgnoreCase(key)){
@@ -153,7 +153,7 @@ public class TypeNames {
     static {
         ISO_TYPE_NAMES.add(METADATA_QNAME);
     }
-    
+
     //iso 19110 typeNames
     public static final List<QName> FC_TYPE_NAMES = new ArrayList<QName>();
     static {

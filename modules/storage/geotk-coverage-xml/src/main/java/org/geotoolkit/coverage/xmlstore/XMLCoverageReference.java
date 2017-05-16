@@ -56,7 +56,6 @@ import org.geotoolkit.image.color.ScaledColorSpace;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.internal.jdk8.JDK8;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.util.logging.Logging;
@@ -319,8 +318,8 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         } else {
             assert maxColorSampleValue != null;
             assert (colorModel.getColorSpace() instanceof ScaledColorSpace) : "with NOT NULL min and max sample value color space must be instance of ScaledColorSpace.";
-            assert JDK8.isFinite(minColorSampleValue) : "To write minColorSampleValue into XML Pyramid File, it should be finite. Found : "+minColorSampleValue;
-            assert JDK8.isFinite(maxColorSampleValue) : "To write maxColorSampleValue into XML Pyramid File, it should be finite. Found : "+maxColorSampleValue;
+            assert Double.isFinite(minColorSampleValue) : "To write minColorSampleValue into XML Pyramid File, it should be finite. Found : "+minColorSampleValue;
+            assert Double.isFinite(maxColorSampleValue) : "To write maxColorSampleValue into XML Pyramid File, it should be finite. Found : "+maxColorSampleValue;
         }
     }
 
@@ -491,8 +490,8 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
                 } else {
                     assert maxColorSampleValue != null;
                     assert (colorModel.getColorSpace() instanceof ScaledColorSpace) : "with NOT NULL min and max sample value color space must be instance of ScaledColorSpace.";
-                    assert JDK8.isFinite(minColorSampleValue) : "To write minColorSampleValue into XML Pyramid File, it should be finite. Found : "+minColorSampleValue;
-                    assert JDK8.isFinite(maxColorSampleValue) : "To write maxColorSampleValue into XML Pyramid File, it should be finite. Found : "+maxColorSampleValue;
+                    assert Double.isFinite(minColorSampleValue) : "To write minColorSampleValue into XML Pyramid File, it should be finite. Found : "+minColorSampleValue;
+                    assert Double.isFinite(maxColorSampleValue) : "To write maxColorSampleValue into XML Pyramid File, it should be finite. Found : "+maxColorSampleValue;
                 }
                 colorModel = ImageUtils.createColorModel(bitPerSample, nbBands,
                         (short) photometricInterpretation, (short) sampleFormat,

@@ -21,6 +21,6 @@ package org.geotoolkit.observation.xml;
  * @author Guilhem Legal (Geomatys).
  */
 public interface Process extends org.opengis.observation.Process {
-    
+
     String getHref();
 }

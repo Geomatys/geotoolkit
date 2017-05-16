@@ -30,12 +30,12 @@ import org.geotoolkit.gml.xml.v311.LengthType;
 
 
 /**
- * This is Modeled after GML ArcByCenterPointType. 
- * 
+ * This is Modeled after GML ArcByCenterPointType.
+ *
  * <p>Java class for CircularArcType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CircularArcType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.geotoolkit.gml.xml.v311.LengthType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CircularArcType", propOrder = {
@@ -83,11 +83,11 @@ public class CircularArcType extends AbstractGeometricPrimitiveType {
 
     /**
      * Gets the value of the pos property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     public DirectPositionType getPos() {
         return pos;
@@ -95,11 +95,11 @@ public class CircularArcType extends AbstractGeometricPrimitiveType {
 
     /**
      * Sets the value of the pos property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     public void setPos(DirectPositionType value) {
         this.pos = value;
@@ -107,11 +107,11 @@ public class CircularArcType extends AbstractGeometricPrimitiveType {
 
     /**
      * Gets the value of the innerRadius property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LengthType }
-     *     
+     *
      */
     public LengthType getInnerRadius() {
         return innerRadius;
@@ -119,11 +119,11 @@ public class CircularArcType extends AbstractGeometricPrimitiveType {
 
     /**
      * Sets the value of the innerRadius property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LengthType }
-     *     
+     *
      */
     public void setInnerRadius(LengthType value) {
         this.innerRadius = value;
@@ -131,11 +131,11 @@ public class CircularArcType extends AbstractGeometricPrimitiveType {
 
     /**
      * Gets the value of the outerRadius property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LengthType }
-     *     
+     *
      */
     public LengthType getOuterRadius() {
         return outerRadius;
@@ -143,11 +143,11 @@ public class CircularArcType extends AbstractGeometricPrimitiveType {
 
     /**
      * Sets the value of the outerRadius property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LengthType }
-     *     
+     *
      */
     public void setOuterRadius(LengthType value) {
         this.outerRadius = value;
@@ -155,11 +155,11 @@ public class CircularArcType extends AbstractGeometricPrimitiveType {
 
     /**
      * Gets the value of the startAngle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AngleType }
-     *     
+     *
      */
     public AngleType getStartAngle() {
         return startAngle;
@@ -167,11 +167,11 @@ public class CircularArcType extends AbstractGeometricPrimitiveType {
 
     /**
      * Sets the value of the startAngle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AngleType }
-     *     
+     *
      */
     public void setStartAngle(AngleType value) {
         this.startAngle = value;
@@ -179,11 +179,11 @@ public class CircularArcType extends AbstractGeometricPrimitiveType {
 
     /**
      * Gets the value of the endAngle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AngleType }
-     *     
+     *
      */
     public AngleType getEndAngle() {
         return endAngle;
@@ -191,11 +191,11 @@ public class CircularArcType extends AbstractGeometricPrimitiveType {
 
     /**
      * Sets the value of the endAngle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AngleType }
-     *     
+     *
      */
     public void setEndAngle(AngleType value) {
         this.endAngle = value;
@@ -203,11 +203,11 @@ public class CircularArcType extends AbstractGeometricPrimitiveType {
 
     /**
      * Gets the value of the interpolation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public CurveInterpolationType getInterpolation() {
         if (interpolation == null) {
@@ -219,11 +219,11 @@ public class CircularArcType extends AbstractGeometricPrimitiveType {
 
     /**
      * Sets the value of the interpolation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public void setInterpolation(CurveInterpolationType value) {
         this.interpolation = value;
@@ -231,11 +231,11 @@ public class CircularArcType extends AbstractGeometricPrimitiveType {
 
     /**
      * Gets the value of the numArc property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getNumArc() {
         if (numArc == null) {
@@ -247,11 +247,11 @@ public class CircularArcType extends AbstractGeometricPrimitiveType {
 
     /**
      * Sets the value of the numArc property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setNumArc(Integer value) {
         this.numArc = value;

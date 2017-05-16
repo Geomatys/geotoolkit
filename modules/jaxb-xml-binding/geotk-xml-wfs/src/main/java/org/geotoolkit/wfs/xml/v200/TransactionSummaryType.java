@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TransactionSummaryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TransactionSummaryType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TransactionSummaryType", propOrder = {
@@ -74,7 +74,7 @@ public class TransactionSummaryType {
         this.totalInserted = totalInserted;
         this.totalUpdated  = totalUpdated;
     }
-    
+
     public TransactionSummaryType(final Integer totalInserted, final Integer totalUpdated, final Integer totalDeleted, final Integer totalReplaced) {
         this.totalDeleted  = totalDeleted;
         this.totalInserted = totalInserted;
@@ -84,11 +84,11 @@ public class TransactionSummaryType {
 
     /**
      * Gets the value of the totalInserted property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link int }
-     *     
+     *
      */
     public int getTotalInserted() {
         return totalInserted;
@@ -96,11 +96,11 @@ public class TransactionSummaryType {
 
     /**
      * Sets the value of the totalInserted property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link int }
-     *     
+     *
      */
     public void setTotalInserted(int value) {
         this.totalInserted = value;
@@ -108,11 +108,11 @@ public class TransactionSummaryType {
 
     /**
      * Gets the value of the totalUpdated property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link int }
-     *     
+     *
      */
     public int getTotalUpdated() {
         return totalUpdated;
@@ -120,11 +120,11 @@ public class TransactionSummaryType {
 
     /**
      * Sets the value of the totalUpdated property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link int }
-     *     
+     *
      */
     public void setTotalUpdated(int value) {
         this.totalUpdated = value;
@@ -132,11 +132,11 @@ public class TransactionSummaryType {
 
     /**
      * Gets the value of the totalReplaced property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link int }
-     *     
+     *
      */
     public int getTotalReplaced() {
         return totalReplaced;
@@ -144,11 +144,11 @@ public class TransactionSummaryType {
 
     /**
      * Sets the value of the totalReplaced property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link int }
-     *     
+     *
      */
     public void setTotalReplaced(int value) {
         this.totalReplaced = value;
@@ -156,11 +156,11 @@ public class TransactionSummaryType {
 
     /**
      * Gets the value of the totalDeleted property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link int }
-     *     
+     *
      */
     public int getTotalDeleted() {
         return totalDeleted;
@@ -168,16 +168,16 @@ public class TransactionSummaryType {
 
     /**
      * Sets the value of the totalDeleted property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link int }
-     *     
+     *
      */
     public void setTotalDeleted(int value) {
         this.totalDeleted = value;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("[TransactionSummaryType]\n");

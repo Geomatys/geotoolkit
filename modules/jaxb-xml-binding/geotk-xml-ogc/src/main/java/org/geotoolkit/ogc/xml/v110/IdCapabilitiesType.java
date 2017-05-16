@@ -26,9 +26,9 @@ import org.opengis.filter.capability.IdCapabilities;
 
 /**
  * <p>Java class for Id_CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Id_CapabilitiesType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.opengis.filter.capability.IdCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -54,7 +54,7 @@ public class IdCapabilitiesType implements IdCapabilities {
 
     @XmlElement(name = "EID")
     private EID eid;
-    
+
     @XmlElement(name = "FID")
     private FID fid;
 
@@ -62,9 +62,9 @@ public class IdCapabilitiesType implements IdCapabilities {
      * Empty constructor used By JAXB
      */
      public IdCapabilitiesType() {
-        
+
      }
-     
+
     /**
      * Build a new ID capabilities
      */
@@ -74,14 +74,14 @@ public class IdCapabilitiesType implements IdCapabilities {
         if (fid)
             this.fid = new FID();
      }
-     
+
     /**
      * Gets the value of the eid property.
      */
     public EID getEID() {
         return eid;
     }
-    
+
     /**
      * Gets the value of the eid property.
      */
@@ -120,7 +120,7 @@ public class IdCapabilitiesType implements IdCapabilities {
 
        if (object instanceof IdCapabilitiesType) {
            final IdCapabilitiesType that = (IdCapabilitiesType) object;
-       
+
             return Objects.equals(this.eid, that.eid) &&
                    Objects.equals(this.fid, that.fid);
         }

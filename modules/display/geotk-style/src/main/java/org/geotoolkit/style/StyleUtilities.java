@@ -67,7 +67,7 @@ public final class StyleUtilities extends Static {
         copy.setName(sld.getName());
         copy.setVersion(sld.getVersion());
         copy.setDescription(sld.getDescription());
-        
+
         for(Layer layer : sld.layers()){
             if(layer instanceof UserLayer){
                 copy.layers().add(copy((UserLayer)layer));
@@ -75,10 +75,10 @@ public final class StyleUtilities extends Static {
                 //copy.layers().add(layer);
             }
         }
-        
+
         return copy;
     }
-    
+
     public static MutableUserLayer copy(final UserLayer layer){
         ArgumentChecks.ensureNonNull("layer", layer);
         final MutableUserLayer copy = SLDF.createUserLayer();
@@ -86,14 +86,14 @@ public final class StyleUtilities extends Static {
         //copy.setConstraints(layer.getConstraints());
         copy.setDescription(layer.getDescription());
         copy.setSource(layer.getSource());
-        
+
         for(Style style : layer.styles()){
             copy.styles().add(copy(style));
         }
-        
+
         return copy;
     }
-    
+
     public static MutableStyle copy(final Style style){
         return copy(style,1d);
     }

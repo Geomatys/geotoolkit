@@ -35,7 +35,7 @@ public class DefaultViewVolume extends DefaultAbstractObject implements ViewVolu
     private double near;
 
     /**
-     * 
+     *
      */
     public DefaultViewVolume() {
         this.leftFov = DEF_LEFT_FOV;
@@ -46,7 +46,7 @@ public class DefaultViewVolume extends DefaultAbstractObject implements ViewVolu
     }
 
     /**
-     * 
+     *
      * @param idAttributes
      * @param leftFov
      * @param rightFov
@@ -75,7 +75,7 @@ public class DefaultViewVolume extends DefaultAbstractObject implements ViewVolu
     }
 
     /**
-     * 
+     *
      * @{@inheritDoc }
      */
     @Override

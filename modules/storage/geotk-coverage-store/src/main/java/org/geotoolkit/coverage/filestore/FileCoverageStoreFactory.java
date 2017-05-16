@@ -138,7 +138,7 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
 
     /**
      * ONLY FOR INTERNAL USE.
-     * 
+     *
      * List all available formats.
      */
     public static LinkedList<String> getReaderTypeList() {
@@ -173,5 +173,5 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.GRID, true, true, true);
     }
-    
+
 }

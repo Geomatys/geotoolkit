@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for CoordinateSystemAxisType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoordinateSystemAxisType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
@@ -71,11 +71,11 @@ public class CoordinateSystemAxisType extends IdentifiedObjectType {
 
     /**
      * Gets the value of the axisAbbrev property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getAxisAbbrev() {
         return axisAbbrev;
@@ -83,11 +83,11 @@ public class CoordinateSystemAxisType extends IdentifiedObjectType {
 
     /**
      * Sets the value of the axisAbbrev property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setAxisAbbrev(CodeType value) {
         this.axisAbbrev = value;
@@ -95,11 +95,11 @@ public class CoordinateSystemAxisType extends IdentifiedObjectType {
 
     /**
      * Gets the value of the axisDirection property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeWithAuthorityType }
-     *     
+     *
      */
     public CodeWithAuthorityType getAxisDirection() {
         return axisDirection;
@@ -107,11 +107,11 @@ public class CoordinateSystemAxisType extends IdentifiedObjectType {
 
     /**
      * Sets the value of the axisDirection property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeWithAuthorityType }
-     *     
+     *
      */
     public void setAxisDirection(CodeWithAuthorityType value) {
         this.axisDirection = value;
@@ -119,11 +119,11 @@ public class CoordinateSystemAxisType extends IdentifiedObjectType {
 
     /**
      * Gets the value of the minimumValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMinimumValue() {
         return minimumValue;
@@ -131,11 +131,11 @@ public class CoordinateSystemAxisType extends IdentifiedObjectType {
 
     /**
      * Sets the value of the minimumValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMinimumValue(Double value) {
         this.minimumValue = value;
@@ -143,11 +143,11 @@ public class CoordinateSystemAxisType extends IdentifiedObjectType {
 
     /**
      * Gets the value of the maximumValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMaximumValue() {
         return maximumValue;
@@ -155,11 +155,11 @@ public class CoordinateSystemAxisType extends IdentifiedObjectType {
 
     /**
      * Sets the value of the maximumValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMaximumValue(Double value) {
         this.maximumValue = value;
@@ -167,11 +167,11 @@ public class CoordinateSystemAxisType extends IdentifiedObjectType {
 
     /**
      * Gets the value of the rangeMeaning property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeWithAuthorityType }
-     *     
+     *
      */
     public CodeWithAuthorityType getRangeMeaning() {
         return rangeMeaning;
@@ -179,11 +179,11 @@ public class CoordinateSystemAxisType extends IdentifiedObjectType {
 
     /**
      * Sets the value of the rangeMeaning property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeWithAuthorityType }
-     *     
+     *
      */
     public void setRangeMeaning(CodeWithAuthorityType value) {
         this.rangeMeaning = value;
@@ -191,11 +191,11 @@ public class CoordinateSystemAxisType extends IdentifiedObjectType {
 
     /**
      * Gets the value of the uom property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUom() {
         return uom;
@@ -203,11 +203,11 @@ public class CoordinateSystemAxisType extends IdentifiedObjectType {
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUom(String value) {
         this.uom = value;

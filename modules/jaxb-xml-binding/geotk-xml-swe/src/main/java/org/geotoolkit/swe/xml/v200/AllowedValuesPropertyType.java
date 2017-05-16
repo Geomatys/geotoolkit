@@ -73,13 +73,13 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
     private ActuateType actuate;
 
     public AllowedValuesPropertyType() {
-        
+
     }
-    
+
     public AllowedValuesPropertyType(AllowedValuesType allowedValues) {
         this.allowedValues = allowedValues;
     }
-    
+
     /**
      * Gets the value of the allowedValues property.
      *

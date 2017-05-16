@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AbstractGeometricAggregateType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractGeometricAggregateType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractGeometricAggregateType")
@@ -52,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
     MultiPointType.class
 })
 public abstract class AbstractGeometricAggregateType extends AbstractGeometryType {
-    
+
     public AbstractGeometricAggregateType(){
     }
 
@@ -65,11 +65,11 @@ public abstract class AbstractGeometricAggregateType extends AbstractGeometryTyp
 
     /**
      * Gets the value of the aggregationType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public AggregationType getAggregationType() {
         return aggregationType;
@@ -77,11 +77,11 @@ public abstract class AbstractGeometricAggregateType extends AbstractGeometryTyp
 
     /**
      * Sets the value of the aggregationType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public void setAggregationType(AggregationType value) {
         this.aggregationType = value;

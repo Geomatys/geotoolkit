@@ -28,9 +28,9 @@ import org.geotoolkit.gml.xml.v311.LengthType;
 
 /**
  * <p>Java class for EllipseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="EllipseType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.gml.xml.v311.LengthType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EllipseType", propOrder = {
@@ -68,11 +68,11 @@ public class EllipseType extends AbstractGeometricPrimitiveType {
 
     /**
      * Gets the value of the pos property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     public DirectPositionType getPos() {
         return pos;
@@ -80,11 +80,11 @@ public class EllipseType extends AbstractGeometricPrimitiveType {
 
     /**
      * Sets the value of the pos property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     public void setPos(DirectPositionType value) {
         this.pos = value;
@@ -92,11 +92,11 @@ public class EllipseType extends AbstractGeometricPrimitiveType {
 
     /**
      * Gets the value of the majorAxis property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LengthType }
-     *     
+     *
      */
     public LengthType getMajorAxis() {
         return majorAxis;
@@ -104,11 +104,11 @@ public class EllipseType extends AbstractGeometricPrimitiveType {
 
     /**
      * Sets the value of the majorAxis property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LengthType }
-     *     
+     *
      */
     public void setMajorAxis(LengthType value) {
         this.majorAxis = value;
@@ -116,11 +116,11 @@ public class EllipseType extends AbstractGeometricPrimitiveType {
 
     /**
      * Gets the value of the minorAxis property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LengthType }
-     *     
+     *
      */
     public LengthType getMinorAxis() {
         return minorAxis;
@@ -128,11 +128,11 @@ public class EllipseType extends AbstractGeometricPrimitiveType {
 
     /**
      * Sets the value of the minorAxis property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LengthType }
-     *     
+     *
      */
     public void setMinorAxis(LengthType value) {
         this.minorAxis = value;
@@ -140,11 +140,11 @@ public class EllipseType extends AbstractGeometricPrimitiveType {
 
     /**
      * Gets the value of the rotation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AngleType }
-     *     
+     *
      */
     public AngleType getRotation() {
         return rotation;
@@ -152,11 +152,11 @@ public class EllipseType extends AbstractGeometricPrimitiveType {
 
     /**
      * Sets the value of the rotation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AngleType }
-     *     
+     *
      */
     public void setRotation(AngleType value) {
         this.rotation = value;

@@ -50,7 +50,7 @@ public final class KrigingDescriptor extends AbstractProcessDescriptor{
             .setRemarks("points used to general the grid")
             .setRequired(true)
             .create(DirectPosition[].class,null);
-    
+
     /**
      * Mandatory - stepping for line generation.
      * use 0 or negative to not generate them
@@ -82,7 +82,7 @@ public final class KrigingDescriptor extends AbstractProcessDescriptor{
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName(NAME+"InputParameters").createGroup(
                 IN_POINTS, IN_CRS, IN_STEP, IN_DIMENSION);
-    
+
     /**
      * Output coverage.
      */
@@ -91,7 +91,7 @@ public final class KrigingDescriptor extends AbstractProcessDescriptor{
             .setRemarks("Coverage")
             .setRequired(false)
             .create(GridCoverage2D.class,null);
-    
+
     /**
      * Output lines.
      */
@@ -105,7 +105,7 @@ public final class KrigingDescriptor extends AbstractProcessDescriptor{
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName(NAME+"OutputParameters").createGroup(
                 OUT_COVERAGE,OUT_LINES);
-    
+
     public static final ProcessDescriptor INSTANCE = new KrigingDescriptor();
 
 

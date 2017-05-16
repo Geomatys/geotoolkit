@@ -31,9 +31,9 @@ import org.geotoolkit.wfs.xml.ReplaceElement;
 
 /**
  * <p>Java class for ReplaceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ReplaceType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.wfs.xml.ReplaceElement;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ReplaceType", propOrder = {
@@ -68,7 +68,7 @@ public class ReplaceType extends AbstractTransactionActionType implements Replac
     private String srsName;
 
     public ReplaceType() {
-        
+
     }
 
     public ReplaceType(final String handle, final FilterType filter, final Object any, final String inputFormat, final String srsName) {
@@ -81,16 +81,16 @@ public class ReplaceType extends AbstractTransactionActionType implements Replac
 
     /**
      * Gets the value of the any property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Object }
-     *     
+     *
      */
     public Object getAny() {
         return any;
     }
-    
+
     @Override
     public Object getFeature() {
         return any;
@@ -98,11 +98,11 @@ public class ReplaceType extends AbstractTransactionActionType implements Replac
 
     /**
      * Sets the value of the any property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Object }
-     *     
+     *
      */
     public void setAny(Object value) {
         this.any = value;
@@ -110,11 +110,11 @@ public class ReplaceType extends AbstractTransactionActionType implements Replac
 
     /**
      * Gets the value of the filter property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FilterType }
-     *     
+     *
      */
     @Override
     public FilterType getFilter() {
@@ -123,11 +123,11 @@ public class ReplaceType extends AbstractTransactionActionType implements Replac
 
     /**
      * Sets the value of the filter property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FilterType }
-     *     
+     *
      */
     public void setFilter(FilterType value) {
         this.filter = value;
@@ -135,11 +135,11 @@ public class ReplaceType extends AbstractTransactionActionType implements Replac
 
     /**
      * Gets the value of the inputFormat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getInputFormat() {
@@ -152,11 +152,11 @@ public class ReplaceType extends AbstractTransactionActionType implements Replac
 
     /**
      * Sets the value of the inputFormat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setInputFormat(String value) {
         this.inputFormat = value;
@@ -164,11 +164,11 @@ public class ReplaceType extends AbstractTransactionActionType implements Replac
 
     /**
      * Gets the value of the srsName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getSrsName() {
@@ -177,11 +177,11 @@ public class ReplaceType extends AbstractTransactionActionType implements Replac
 
     /**
      * Sets the value of the srsName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSrsName(String value) {
         this.srsName = value;

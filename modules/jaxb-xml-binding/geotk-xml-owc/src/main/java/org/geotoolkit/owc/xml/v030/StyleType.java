@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for StyleType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="StyleType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,11 +75,11 @@ public class StyleType {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -87,11 +87,11 @@ public class StyleType {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -99,11 +99,11 @@ public class StyleType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -111,11 +111,11 @@ public class StyleType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -123,11 +123,11 @@ public class StyleType {
 
     /**
      * Gets the value of the abstract property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAbstract() {
         return _abstract;
@@ -135,11 +135,11 @@ public class StyleType {
 
     /**
      * Sets the value of the abstract property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAbstract(final String value) {
         this._abstract = value;
@@ -147,11 +147,11 @@ public class StyleType {
 
     /**
      * Gets the value of the legendURL property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link URLType }
-     *     
+     *
      */
     public URLType getLegendURL() {
         return legendURL;
@@ -159,11 +159,11 @@ public class StyleType {
 
     /**
      * Sets the value of the legendURL property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link URLType }
-     *     
+     *
      */
     public void setLegendURL(final URLType value) {
         this.legendURL = value;
@@ -171,11 +171,11 @@ public class StyleType {
 
     /**
      * Gets the value of the sld property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SLDType }
-     *     
+     *
      */
     public SLDType getSLD() {
         return sld;
@@ -183,11 +183,11 @@ public class StyleType {
 
     /**
      * Sets the value of the sld property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SLDType }
-     *     
+     *
      */
     public void setSLD(final SLDType value) {
         this.sld = value;
@@ -195,11 +195,11 @@ public class StyleType {
 
     /**
      * Gets the value of the current property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isCurrent() {
         return current;
@@ -207,11 +207,11 @@ public class StyleType {
 
     /**
      * Sets the value of the current property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setCurrent(final Boolean value) {
         this.current = value;

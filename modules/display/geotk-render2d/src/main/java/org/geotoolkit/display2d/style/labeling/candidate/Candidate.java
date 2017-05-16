@@ -53,5 +53,5 @@ public abstract class Candidate<T extends LabelDescriptor> {
     public int getCost() {
         return cost;
     }
-    
+
 }

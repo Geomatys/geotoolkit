@@ -32,7 +32,7 @@ import org.geotoolkit.xlink.xml.v100.ShowType;
 
 /**
  *  The class 'NamedValue' provides for a generic soft-typed parameter
- * 				value. NamedValue shall support two attributes.
+ *              value. NamedValue shall support two attributes.
  *
  * <p>Java class for NamedValuePropertyType complex type.
  *

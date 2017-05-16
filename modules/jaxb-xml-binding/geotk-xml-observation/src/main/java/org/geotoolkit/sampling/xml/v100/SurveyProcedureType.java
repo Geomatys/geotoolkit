@@ -29,11 +29,11 @@ import org.geotoolkit.gml.xml.v311.TimePrimitivePropertyType;
 
 /**
  * Specialized procedure related to surveying positions and locations.
- * 
+ *
  * <p>Java class for SurveyProcedureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SurveyProcedureType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.geotoolkit.gml.xml.v311.TimePrimitivePropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,11 +84,11 @@ public class SurveyProcedureType extends AbstractFeatureType {
 
     /**
      * Gets the value of the operator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AnyOrReferenceType }
-     *     
+     *
      */
     public AnyOrReferenceType getOperator() {
         return operator;
@@ -96,11 +96,11 @@ public class SurveyProcedureType extends AbstractFeatureType {
 
     /**
      * Sets the value of the operator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AnyOrReferenceType }
-     *     
+     *
      */
     public void setOperator(final AnyOrReferenceType value) {
         this.operator = value;
@@ -108,11 +108,11 @@ public class SurveyProcedureType extends AbstractFeatureType {
 
     /**
      * Gets the value of the elevationDatum property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getElevationDatum() {
         return elevationDatum;
@@ -120,11 +120,11 @@ public class SurveyProcedureType extends AbstractFeatureType {
 
     /**
      * Sets the value of the elevationDatum property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setElevationDatum(final ReferenceType value) {
         this.elevationDatum = value;
@@ -132,35 +132,35 @@ public class SurveyProcedureType extends AbstractFeatureType {
 
     /**
      * Gets the value of the elevationMethod property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ProcessPropertyType }
-     *     
-    
+     *
+
     public ProcessPropertyType getElevationMethod() {
         return elevationMethod;
     }
 
     /**
      * Sets the value of the elevationMethod property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ProcessPropertyType }
-     *     
-     
+     *
+
     public void setElevationMethod(ProcessPropertyType value) {
         this.elevationMethod = value;
     }*/
 
     /**
      * Gets the value of the elevationAccuracy property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public MeasureType getElevationAccuracy() {
         return elevationAccuracy;
@@ -168,11 +168,11 @@ public class SurveyProcedureType extends AbstractFeatureType {
 
     /**
      * Sets the value of the elevationAccuracy property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public void setElevationAccuracy(final MeasureType value) {
         this.elevationAccuracy = value;
@@ -180,11 +180,11 @@ public class SurveyProcedureType extends AbstractFeatureType {
 
     /**
      * Gets the value of the geodeticDatum property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getGeodeticDatum() {
         return geodeticDatum;
@@ -192,11 +192,11 @@ public class SurveyProcedureType extends AbstractFeatureType {
 
     /**
      * Sets the value of the geodeticDatum property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setGeodeticDatum(final ReferenceType value) {
         this.geodeticDatum = value;
@@ -204,35 +204,35 @@ public class SurveyProcedureType extends AbstractFeatureType {
 
     /**
      * Gets the value of the positionMethod property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ProcessPropertyType }
-     *     
-     
+     *
+
     public ProcessPropertyType getPositionMethod() {
         return positionMethod;
     }
 
     /**
      * Sets the value of the positionMethod property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ProcessPropertyType }
-     *     
-     
+     *
+
     public void setPositionMethod(ProcessPropertyType value) {
         this.positionMethod = value;
     }*/
 
     /**
      * Gets the value of the positionAccuracy property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public MeasureType getPositionAccuracy() {
         return positionAccuracy;
@@ -240,11 +240,11 @@ public class SurveyProcedureType extends AbstractFeatureType {
 
     /**
      * Sets the value of the positionAccuracy property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public void setPositionAccuracy(final MeasureType value) {
         this.positionAccuracy = value;
@@ -252,11 +252,11 @@ public class SurveyProcedureType extends AbstractFeatureType {
 
     /**
      * Gets the value of the projection property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getProjection() {
         return projection;
@@ -264,11 +264,11 @@ public class SurveyProcedureType extends AbstractFeatureType {
 
     /**
      * Sets the value of the projection property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setProjection(final ReferenceType value) {
         this.projection = value;
@@ -276,11 +276,11 @@ public class SurveyProcedureType extends AbstractFeatureType {
 
     /**
      * Gets the value of the surveyTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimePrimitivePropertyType }
-     *     
+     *
      */
     public TimePrimitivePropertyType getSurveyTime() {
         return surveyTime;
@@ -288,11 +288,11 @@ public class SurveyProcedureType extends AbstractFeatureType {
 
     /**
      * Sets the value of the surveyTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimePrimitivePropertyType }
-     *     
+     *
      */
     public void setSurveyTime(final TimePrimitivePropertyType value) {
         this.surveyTime = value;

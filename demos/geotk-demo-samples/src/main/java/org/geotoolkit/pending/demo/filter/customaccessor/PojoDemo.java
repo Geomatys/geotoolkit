@@ -14,7 +14,7 @@ public class PojoDemo {
 
     public static void main(String[] args) {
         Demos.init();
-        
+
         final Pojo myPojo = new Pojo("squid", 1200, new Date());
 
         Expression exp = FF.property("family");

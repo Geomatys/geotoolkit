@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for GridFunctionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GridFunctionType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GridFunctionType", propOrder = {
@@ -59,11 +59,11 @@ public class GridFunctionType {
 
     /**
      * Gets the value of the sequenceRule property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SequenceRuleType }
-     *     
+     *
      */
     public SequenceRuleType getSequenceRule() {
         return sequenceRule;
@@ -71,11 +71,11 @@ public class GridFunctionType {
 
     /**
      * Sets the value of the sequenceRule property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SequenceRuleType }
-     *     
+     *
      */
     public void setSequenceRule(SequenceRuleType value) {
         this.sequenceRule = value;

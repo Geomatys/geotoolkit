@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  * Commun interface for WMS 1.1.0 and 1.3.0 Style class
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public interface Style {
@@ -40,9 +40,9 @@ public interface Style {
      * Gets the value of the abstract property.
      */
     String getAbstract();
-    
+
     AbstractStyleSheetURL getStyleSheetURL();
-    
+
     AbstractStyleURL getStyleURL();
 
     /**

@@ -23,22 +23,22 @@ import static org.opengis.annotation.Obligation.*;
 
 /**
  * Schema allowing definition of structure and encoding of sensor data.
- * 
+ *
  * @version $Id:
  * @author legal
  * @module
  */
 @UML(identifier="DataBlockDefinition", specification=UNSPECIFIED)
 public interface DataBlockDefinition {
-    
+
     @UML(identifier="id", obligation=OPTIONAL, specification=UNSPECIFIED)
     String getId();
-    
+
     @UML(identifier="components", obligation=MANDATORY, specification=UNSPECIFIED)
     Collection<? extends AbstractDataComponent> getComponents();
-    
+
     AbstractEncodingProperty getEncoding();
-    
-    
-    
+
+
+
 }

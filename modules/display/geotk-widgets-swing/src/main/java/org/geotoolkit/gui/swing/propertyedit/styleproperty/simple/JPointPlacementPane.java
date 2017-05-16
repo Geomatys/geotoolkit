@@ -34,15 +34,15 @@ import org.opengis.style.PointPlacement;
 
 /**
  * Point placement panel
- * 
+ *
  * @author Fabien Rétif (Geomatys)
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
-    
+
     private MapLayer layer = null;
-    
+
     /** Creates new form JPointPlacementPanel */
     public JPointPlacementPane() {
         super(PointPlacement.class);
@@ -51,7 +51,7 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
         guiDisplacementX.setExpressionVisible(false);
         guiDisplacementY.setExpressionVisible(false);
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -162,7 +162,7 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
     @Override
     public void setLayer(final MapLayer layer) {
         this.layer = layer;
-        guiAnchor.setLayer(layer);        
+        guiAnchor.setLayer(layer);
         guiRotation.setLayer(layer);
         guiDisplacementX.setLayer(layer);
         guiDisplacementY.setLayer(layer);
@@ -190,12 +190,12 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
                 getStyleFactory().displacement(guiDisplacementX.create(), guiDisplacementY.create()),
                 guiRotation.create());
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JAnchorPointPane guiAnchor;
     private JNumberExpressionPane guiDisplacementX;
@@ -205,5 +205,5 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
     private JLabel jLabel5;
     private JLabel jLabel6;
     // End of variables declaration//GEN-END:variables
-    
+
 }

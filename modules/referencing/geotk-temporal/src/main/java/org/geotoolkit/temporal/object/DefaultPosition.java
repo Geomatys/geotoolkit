@@ -1,7 +1,7 @@
 ///*
 // *    Geotoolkit - An Open Source Java GIS Toolkit
 // *    http://www.geotoolkit.org
-// * 
+// *
 // *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
 // *    (C) 2009, Geomatys
 // *
@@ -67,7 +67,7 @@
 //    public DefaultPosition(final Date date) {
 //        this.position = date;
 //    }
-//    
+//
 //    /**
 //     * Constructs a new instance initialized with the values from the specified metadata object.
 //     * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
@@ -141,7 +141,7 @@
 //     * May be used for describing temporal positions in ISO8601 format referenced to the
 //     * Gregorian calendar and UTC.
 //     * @return {@linkplain InternationalString}
-//     * 
+//     *
 //     * @todo all subtypes of TemporalPosition must be implemented.
 //     */
 //    @Override

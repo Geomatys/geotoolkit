@@ -40,7 +40,7 @@ public class DerbySqlScriptRunner extends ScriptRunner {
      * escape the postgres specific operation and replace the boolean by small int.
      *
      * the code of this method must be review.
-     * 
+     *
      * @param sb
      * @return
      * @throws SQLException
@@ -49,7 +49,7 @@ public class DerbySqlScriptRunner extends ScriptRunner {
     @Override
     protected int execute(final StringBuilder sb) throws SQLException, IOException {
         String query = sb.toString();
-        
+
         /*
          * we transform the boolean value in smallint value
          */
@@ -61,30 +61,30 @@ public class DerbySqlScriptRunner extends ScriptRunner {
         // remove the 2 line under
         query        = query.replace("'FALSE'", "'false'");
         query        = query.replace("'TRUE'", "'true'");
-        
+
         /*
          * we transform the boolean column in smallint one
          */
         query        = query.replace("boolean", "smallint");
-        
+
         /*
          * we remove the sequence part in column
          */
         if (query.contains("nextval(")) {
             query = query.replaceAll("DEFAULT nextval\\(.*regclass\\)", "");
         }
-        
+
         /*
-         * timestamp type can not be without timezone 
+         * timestamp type can not be without timezone
          */
         query = query.replace("timestamp without time zone", "timestamp");
-        
+
         /*
          * Postgis type does not work with derby
          * This is a dirty hack
          */
         query = query.replace("postgis.geometry", "character varying(40)");
-                
+
         if (!query.startsWith("SET check_function_bodies")
                 && !query.startsWith("SET client_min_messages")
                 && !query.startsWith("SET search_path")

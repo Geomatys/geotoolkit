@@ -26,18 +26,18 @@ import org.geotoolkit.wfs.xml.StoredQueries;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.wfs._2 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.wfs._2 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -82,14 +82,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.wfs._2
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link AdditionalValues }
-     * 
+     *
      */
     public AdditionalValues createAdditionalValues() {
         return new AdditionalValues();
@@ -97,7 +97,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ParameterExpressionType }
-     * 
+     *
      */
     public ParameterExpressionType createParameterExpressionType() {
         return new ParameterExpressionType();
@@ -105,7 +105,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MetadataURLType }
-     * 
+     *
      */
     public MetadataURLType createMetadataURLType() {
         return new MetadataURLType();
@@ -114,10 +114,10 @@ public class ObjectFactory {
     public StoredQueries createStoredQueries() {
         return new StoredQueries();
     }
-    
+
     /**
      * Create an instance of {@link DropStoredQuery }
-     * 
+     *
      */
     public DropStoredQueryType createDropStoredQuery() {
         return new DropStoredQueryType();
@@ -125,7 +125,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeatureCollectionType }
-     * 
+     *
      */
     public FeatureCollectionType createFeatureCollectionType() {
         return new FeatureCollectionType();
@@ -133,7 +133,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetFeatureType }
-     * 
+     *
      */
     public GetFeatureType createGetFeatureType() {
         return new GetFeatureType();
@@ -141,7 +141,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeaturesNotLockedType }
-     * 
+     *
      */
     public FeaturesNotLockedType createFeaturesNotLockedType() {
         return new FeaturesNotLockedType();
@@ -149,7 +149,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetFeatureWithLockType }
-     * 
+     *
      */
     public GetFeatureWithLockType createGetFeatureWithLockType() {
         return new GetFeatureWithLockType();
@@ -157,7 +157,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeaturesLockedType }
-     * 
+     *
      */
     public FeaturesLockedType createFeaturesLockedType() {
         return new FeaturesLockedType();
@@ -165,7 +165,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DeleteType }
-     * 
+     *
      */
     public DeleteType createDeleteType() {
         return new DeleteType();
@@ -173,7 +173,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CreateStoredQueryResponseType }
-     * 
+     *
      */
     public CreateStoredQueryResponseType createCreateStoredQueryResponseType() {
         return new CreateStoredQueryResponseType();
@@ -181,7 +181,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribeStoredQueriesType }
-     * 
+     *
      */
     public DescribeStoredQueriesType createDescribeStoredQueriesType() {
         return new DescribeStoredQueriesType();
@@ -189,7 +189,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MemberPropertyType }
-     * 
+     *
      */
     public MemberPropertyType createMemberPropertyType() {
         return new MemberPropertyType();
@@ -197,7 +197,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TransactionResponseType }
-     * 
+     *
      */
     public TransactionResponseType createTransactionResponseType() {
         return new TransactionResponseType();
@@ -205,7 +205,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EmptyType }
-     * 
+     *
      */
     public EmptyType createEmptyType() {
         return new EmptyType();
@@ -213,7 +213,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribeStoredQueriesResponseType }
-     * 
+     *
      */
     public DescribeStoredQueriesResponseType createDescribeStoredQueriesResponseType() {
         return new DescribeStoredQueriesResponseType();
@@ -221,7 +221,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribeFeatureTypeType }
-     * 
+     *
      */
     public DescribeFeatureTypeType createDescribeFeatureTypeType() {
         return new DescribeFeatureTypeType();
@@ -229,7 +229,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeatureTypeType }
-     * 
+     *
      */
     public FeatureTypeType createFeatureTypeType() {
         return new FeatureTypeType();
@@ -237,7 +237,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Title }
-     * 
+     *
      */
     public Title createTitle() {
         return new Title();
@@ -245,7 +245,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeatureTypeType.NoCRS }
-     * 
+     *
      */
     public FeatureTypeType.NoCRS createFeatureTypeTypeNoCRS() {
         return new FeatureTypeType.NoCRS();
@@ -253,7 +253,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StoredQueryDescriptionType }
-     * 
+     *
      */
     public StoredQueryDescriptionType createStoredQueryDescriptionType() {
         return new StoredQueryDescriptionType();
@@ -261,7 +261,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QueryType }
-     * 
+     *
      */
     public QueryType createQueryType() {
         return new QueryType();
@@ -269,7 +269,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LockFeatureResponseType }
-     * 
+     *
      */
     public LockFeatureResponseType createLockFeatureResponseType() {
         return new LockFeatureResponseType();
@@ -277,7 +277,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WFSCapabilitiesType.WSDL }
-     * 
+     *
      */
     public WFSCapabilitiesType.WSDL createWFSCapabilitiesTypeWSDL() {
         return new WFSCapabilitiesType.WSDL();
@@ -285,7 +285,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TransactionType }
-     * 
+     *
      */
     public TransactionType createTransactionType() {
         return new TransactionType();
@@ -293,7 +293,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PropertyType.ValueReference }
-     * 
+     *
      */
     public ValueReference createValueReference() {
         return new ValueReference();
@@ -301,7 +301,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NativeType }
-     * 
+     *
      */
     public NativeType createNativeType() {
         return new NativeType();
@@ -309,7 +309,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CreatedOrModifiedFeatureType }
-     * 
+     *
      */
     public CreatedOrModifiedFeatureType createCreatedOrModifiedFeatureType() {
         return new CreatedOrModifiedFeatureType();
@@ -317,7 +317,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ValueCollectionType }
-     * 
+     *
      */
     public ValueCollectionType createValueCollectionType() {
         return new ValueCollectionType();
@@ -325,7 +325,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TruncatedResponse }
-     * 
+     *
      */
     public TruncatedResponse createTruncatedResponse() {
         return new TruncatedResponse();
@@ -333,7 +333,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ListStoredQueriesType }
-     * 
+     *
      */
     public ListStoredQueriesType createListStoredQueriesType() {
         return new ListStoredQueriesType();
@@ -341,7 +341,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Abstract }
-     * 
+     *
      */
     public Abstract createAbstract() {
         return new Abstract();
@@ -349,7 +349,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QueryExpressionTextType }
-     * 
+     *
      */
     public QueryExpressionTextType createQueryExpressionTextType() {
         return new QueryExpressionTextType();
@@ -357,7 +357,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReplaceType }
-     * 
+     *
      */
     public ReplaceType createReplaceType() {
         return new ReplaceType();
@@ -365,7 +365,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PropertyName }
-     * 
+     *
      */
     public PropertyName createPropertyName() {
         return new PropertyName();
@@ -373,7 +373,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CreateStoredQueryType }
-     * 
+     *
      */
     public CreateStoredQueryType createCreateStoredQueryType() {
         return new CreateStoredQueryType();
@@ -381,7 +381,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SimpleFeatureCollectionType }
-     * 
+     *
      */
     public SimpleFeatureCollectionType createSimpleFeatureCollectionType() {
         return new SimpleFeatureCollectionType();
@@ -389,7 +389,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ParameterType }
-     * 
+     *
      */
     public ParameterType createParameterType() {
         return new ParameterType();
@@ -397,7 +397,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WFSCapabilitiesType }
-     * 
+     *
      */
     public WFSCapabilitiesType createWFSCapabilitiesType() {
         return new WFSCapabilitiesType();
@@ -405,7 +405,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InsertType }
-     * 
+     *
      */
     public InsertType createInsertType() {
         return new InsertType();
@@ -413,7 +413,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EnvelopePropertyType }
-     * 
+     *
      */
     public EnvelopePropertyType createEnvelopePropertyType() {
         return new EnvelopePropertyType();
@@ -421,7 +421,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TupleType }
-     * 
+     *
      */
     public TupleType createTupleType() {
         return new TupleType();
@@ -429,7 +429,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ElementType }
-     * 
+     *
      */
     public ElementType createElementType() {
         return new ElementType();
@@ -437,7 +437,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetPropertyValueType }
-     * 
+     *
      */
     public GetPropertyValueType createGetPropertyValueType() {
         return new GetPropertyValueType();
@@ -445,7 +445,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExecutionStatusType }
-     * 
+     *
      */
     public ExecutionStatusType createExecutionStatusType() {
         return new ExecutionStatusType();
@@ -453,7 +453,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StoredQueryListItemType }
-     * 
+     *
      */
     public StoredQueryListItemType createStoredQueryListItemType() {
         return new StoredQueryListItemType();
@@ -461,7 +461,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ActionResultsType }
-     * 
+     *
      */
     public ActionResultsType createActionResultsType() {
         return new ActionResultsType();
@@ -469,7 +469,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ValueListType }
-     * 
+     *
      */
     public ValueListType createValueListType() {
         return new ValueListType();
@@ -477,7 +477,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PropertyType }
-     * 
+     *
      */
     public PropertyType createPropertyType() {
         return new PropertyType();
@@ -485,7 +485,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetCapabilitiesType }
-     * 
+     *
      */
     public GetCapabilitiesType createGetCapabilitiesType() {
         return new GetCapabilitiesType();
@@ -493,7 +493,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StoredQueryType }
-     * 
+     *
      */
     public StoredQueryType createStoredQueryType() {
         return new StoredQueryType();
@@ -501,7 +501,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ListStoredQueriesResponseType }
-     * 
+     *
      */
     public ListStoredQueriesResponseType createListStoredQueriesResponseType() {
         return new ListStoredQueriesResponseType();
@@ -509,7 +509,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OutputFormatListType }
-     * 
+     *
      */
     public OutputFormatListType createOutputFormatListType() {
         return new OutputFormatListType();
@@ -517,7 +517,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UpdateType }
-     * 
+     *
      */
     public UpdateType createUpdateType() {
         return new UpdateType();
@@ -525,7 +525,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AdditionalObjects }
-     * 
+     *
      */
     public AdditionalObjects createAdditionalObjects() {
         return new AdditionalObjects();
@@ -533,7 +533,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExtendedDescriptionType }
-     * 
+     *
      */
     public ExtendedDescriptionType createExtendedDescriptionType() {
         return new ExtendedDescriptionType();
@@ -541,7 +541,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TransactionSummaryType }
-     * 
+     *
      */
     public TransactionSummaryType createTransactionSummaryType() {
         return new TransactionSummaryType();
@@ -549,7 +549,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LockFeatureType }
-     * 
+     *
      */
     public LockFeatureType createLockFeatureType() {
         return new LockFeatureType();
@@ -557,7 +557,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeatureTypeListType }
-     * 
+     *
      */
     public FeatureTypeListType createFeatureTypeListType() {
         return new FeatureTypeListType();
@@ -565,7 +565,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DropStoredQueryResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "DropStoredQueryResponse")
     public JAXBElement<DropStoredQueryResponseType> createDropStoredQueryResponse(DropStoredQueryResponseType value) {
@@ -574,7 +574,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LockFeatureType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "LockFeature")
     public JAXBElement<LockFeatureType> createLockFeature(LockFeatureType value) {
@@ -583,7 +583,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MemberPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "member")
     public JAXBElement<MemberPropertyType> createMember(MemberPropertyType value) {
@@ -592,7 +592,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DescribeFeatureTypeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "DescribeFeatureType")
     public JAXBElement<DescribeFeatureTypeType> createDescribeFeatureType(DescribeFeatureTypeType value) {
@@ -601,7 +601,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ElementType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "Element")
     public JAXBElement<ElementType> createElement(ElementType value) {
@@ -610,7 +610,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FeatureTypeListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "FeatureTypeList")
     public JAXBElement<FeatureTypeListType> createFeatureTypeList(FeatureTypeListType value) {
@@ -619,7 +619,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetFeatureWithLockType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "GetFeatureWithLock")
     public JAXBElement<GetFeatureWithLockType> createGetFeatureWithLock(GetFeatureWithLockType value) {
@@ -628,7 +628,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ListStoredQueriesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "ListStoredQueries")
     public JAXBElement<ListStoredQueriesType> createListStoredQueries(ListStoredQueriesType value) {
@@ -637,7 +637,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link StoredQueryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "StoredQuery", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "AbstractQueryExpression")
     public JAXBElement<StoredQueryType> createStoredQuery(StoredQueryType value) {
@@ -646,7 +646,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "Property")
     public JAXBElement<PropertyType> createProperty(PropertyType value) {
@@ -655,7 +655,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetPropertyValueType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "GetPropertyValue")
     public JAXBElement<GetPropertyValueType> createGetPropertyValue(GetPropertyValueType value) {
@@ -664,7 +664,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InsertType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "Insert", substitutionHeadNamespace = "http://www.opengis.net/wfs/2.0", substitutionHeadName = "AbstractTransactionAction")
     public JAXBElement<InsertType> createInsert(InsertType value) {
@@ -673,7 +673,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleFeatureCollectionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "SimpleFeatureCollection")
     public JAXBElement<SimpleFeatureCollectionType> createSimpleFeatureCollection(SimpleFeatureCollectionType value) {
@@ -682,7 +682,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetFeatureType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "GetFeature")
     public JAXBElement<GetFeatureType> createGetFeature(GetFeatureType value) {
@@ -691,7 +691,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LockFeatureResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "LockFeatureResponse")
     public JAXBElement<LockFeatureResponseType> createLockFeatureResponse(LockFeatureResponseType value) {
@@ -700,7 +700,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DescribeStoredQueriesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "DescribeStoredQueries")
     public JAXBElement<DescribeStoredQueriesType> createDescribeStoredQueries(DescribeStoredQueriesType value) {
@@ -709,7 +709,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ValueListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "ValueList")
     public JAXBElement<ValueListType> createValueList(ValueListType value) {
@@ -718,7 +718,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NativeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "Native", substitutionHeadNamespace = "http://www.opengis.net/wfs/2.0", substitutionHeadName = "AbstractTransactionAction")
     public JAXBElement<NativeType> createNative(NativeType value) {
@@ -727,7 +727,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ValueCollectionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "ValueCollection")
     public JAXBElement<ValueCollectionType> createValueCollection(ValueCollectionType value) {
@@ -736,7 +736,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WFSCapabilitiesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "WFS_Capabilities")
     public JAXBElement<WFSCapabilitiesType> createWFSCapabilities(WFSCapabilitiesType value) {
@@ -745,7 +745,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractTransactionActionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "AbstractTransactionAction")
     public JAXBElement<AbstractTransactionActionType> createAbstractTransactionAction(AbstractTransactionActionType value) {
@@ -754,7 +754,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link QueryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "Query", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "AbstractAdhocQueryExpression")
     public JAXBElement<QueryType> createQuery(QueryType value) {
@@ -763,7 +763,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UpdateType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "Update", substitutionHeadNamespace = "http://www.opengis.net/wfs/2.0", substitutionHeadName = "AbstractTransactionAction")
     public JAXBElement<UpdateType> createUpdate(UpdateType value) {
@@ -772,7 +772,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DescribeStoredQueriesResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "DescribeStoredQueriesResponse")
     public JAXBElement<DescribeStoredQueriesResponseType> createDescribeStoredQueriesResponse(DescribeStoredQueriesResponseType value) {
@@ -781,7 +781,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ListStoredQueriesResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "ListStoredQueriesResponse")
     public JAXBElement<ListStoredQueriesResponseType> createListStoredQueriesResponse(ListStoredQueriesResponseType value) {
@@ -790,7 +790,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TransactionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "Transaction")
     public JAXBElement<TransactionType> createTransaction(TransactionType value) {
@@ -799,7 +799,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetCapabilitiesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "GetCapabilities")
     public JAXBElement<GetCapabilitiesType> createGetCapabilities(GetCapabilitiesType value) {
@@ -808,7 +808,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ReplaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "Replace", substitutionHeadNamespace = "http://www.opengis.net/wfs/2.0", substitutionHeadName = "AbstractTransactionAction")
     public JAXBElement<ReplaceType> createReplace(ReplaceType value) {
@@ -817,7 +817,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CreateStoredQueryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "CreateStoredQuery")
     public JAXBElement<CreateStoredQueryType> createCreateStoredQuery(CreateStoredQueryType value) {
@@ -826,7 +826,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FeatureCollectionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "FeatureCollection", substitutionHeadNamespace = "http://www.opengis.net/wfs/2.0", substitutionHeadName = "SimpleFeatureCollection")
     public JAXBElement<FeatureCollectionType> createFeatureCollection(FeatureCollectionType value) {
@@ -835,7 +835,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DeleteType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "Delete", substitutionHeadNamespace = "http://www.opengis.net/wfs/2.0", substitutionHeadName = "AbstractTransactionAction")
     public JAXBElement<DeleteType> createDelete(DeleteType value) {
@@ -844,7 +844,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TupleType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "Tuple")
     public JAXBElement<TupleType> createTuple(TupleType value) {
@@ -853,7 +853,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CreateStoredQueryResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "CreateStoredQueryResponse")
     public JAXBElement<CreateStoredQueryResponseType> createCreateStoredQueryResponse(CreateStoredQueryResponseType value) {
@@ -862,7 +862,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TransactionResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "TransactionResponse")
     public JAXBElement<TransactionResponseType> createTransactionResponse(TransactionResponseType value) {
@@ -871,7 +871,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PropertyName }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "PropertyName", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "AbstractProjectionClause")
     public JAXBElement<PropertyName> createPropertyName(PropertyName value) {
@@ -880,7 +880,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "Value")
     public JAXBElement<Object> createValue(Object value) {
@@ -889,7 +889,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EnvelopePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "boundedBy")
     public JAXBElement<EnvelopePropertyType> createBoundedBy(EnvelopePropertyType value) {

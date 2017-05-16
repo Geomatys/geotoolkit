@@ -26,11 +26,11 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
  * Denotes the relation of an _AbstractBuilding to its building parts. The BuildingPartPropertyType
  *                 element must either carry a reference to a BuildingPart object or contain a BuildingPart object inline, but
  *                 neither both nor none.
- * 
+ *
  * <p>Java class for BuildingPartPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BuildingPartPropertyType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

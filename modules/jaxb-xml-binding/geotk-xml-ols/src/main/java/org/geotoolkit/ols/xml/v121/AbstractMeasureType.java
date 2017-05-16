@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AbstractMeasureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractMeasureType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractMeasureType")
@@ -59,11 +59,11 @@ public abstract class AbstractMeasureType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getValue() {
         return value;
@@ -71,11 +71,11 @@ public abstract class AbstractMeasureType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setValue(BigDecimal value) {
         this.value = value;
@@ -83,11 +83,11 @@ public abstract class AbstractMeasureType {
 
     /**
      * Gets the value of the accuracy property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getAccuracy() {
         return accuracy;
@@ -95,11 +95,11 @@ public abstract class AbstractMeasureType {
 
     /**
      * Sets the value of the accuracy property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setAccuracy(BigDecimal value) {
         this.accuracy = value;

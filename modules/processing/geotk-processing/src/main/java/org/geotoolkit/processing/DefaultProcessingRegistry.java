@@ -22,7 +22,7 @@ import org.opengis.metadata.identification.Identification;
 
 /**
  * A Default process registry.
- * 
+ *
  * @author Cédric Briançon (Geomatys)
  */
 public class DefaultProcessingRegistry extends AbstractProcessingRegistry {

@@ -33,9 +33,9 @@ import org.geotoolkit.swe.xml.AbstractQualityProperty;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.swe.xml.AbstractQualityProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -96,7 +96,7 @@ public class CountRange extends AbstractDataComponentType implements AbstractCou
             this.value = q.getValue();
         }
     }
-    
+
     /**
      * Gets the value of the constraint property.
      */
@@ -113,7 +113,7 @@ public class CountRange extends AbstractDataComponentType implements AbstractCou
 
     /**
      * Gets the value of the quality property.
-     * 
+     *
      */
     public List<QualityPropertyType> getQuality() {
         if (quality == null) {
@@ -134,7 +134,7 @@ public class CountRange extends AbstractDataComponentType implements AbstractCou
     public void setQuality(final List<QualityPropertyType> quality) {
         this.quality = quality;
     }
-    
+
     /**
      * Gets the value of the value property.
      */
@@ -163,7 +163,7 @@ public class CountRange extends AbstractDataComponentType implements AbstractCou
         }
         this.value.add(value);
     }
-    
+
     /**
      * Gets the value of the referenceFrame property.
      */

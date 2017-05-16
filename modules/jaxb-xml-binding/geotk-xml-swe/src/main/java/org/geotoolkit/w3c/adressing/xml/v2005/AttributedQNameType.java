@@ -29,9 +29,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for AttributedQNameType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AttributedQNameType">
  *   &lt;simpleContent>
@@ -41,8 +41,8 @@ import javax.xml.namespace.QName;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AttributedQNameType", propOrder = {
@@ -57,11 +57,11 @@ public class AttributedQNameType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getValue() {
         return value;
@@ -69,11 +69,11 @@ public class AttributedQNameType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setValue(QName value) {
         this.value = value;
@@ -81,7 +81,7 @@ public class AttributedQNameType {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * @return
      *     always non-null
      */

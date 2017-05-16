@@ -31,11 +31,11 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * Implicitly defines an unrectified grid, which is a network composed of two or more sets of equally spaced parallel lines in which the members of each set intersect the members of the other sets at right angles. This profile does not extend AbstractGeometryType, so it defines the srsName attribute.
- * 
+ *
  * <p>Java class for GridType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GridType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -76,7 +76,7 @@ public class GridType extends AbstractGeometryType {
      */
     GridType() {
     }
-    
+
     /**
      * Build a new GridType.
      */
@@ -85,7 +85,7 @@ public class GridType extends AbstractGeometryType {
         if (axisName != null) {
             dimension = axisName.size();
         }
-        this.limits = limits; 
+        this.limits = limits;
     }
 
     public GridType(final Grid grid) {
@@ -95,7 +95,7 @@ public class GridType extends AbstractGeometryType {
             this.limits    = new GridLimitsType(grid.getExtent());
         }
     }
-    
+
     /**
      * Gets the value of the limits property.
      */

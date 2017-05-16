@@ -61,11 +61,11 @@ public class HTTP implements AbstractHTTP {
         this.get  = get;
         this.post = post;
     }
-    
-    
+
+
     /**
      * Gets the value of the get property.
-     * 
+     *
      */
     public Get getGet() {
         return get;
@@ -73,7 +73,7 @@ public class HTTP implements AbstractHTTP {
 
     /**
      * Gets the value of the post property.
-     * 
+     *
      */
     public Post getPost() {
         return post;

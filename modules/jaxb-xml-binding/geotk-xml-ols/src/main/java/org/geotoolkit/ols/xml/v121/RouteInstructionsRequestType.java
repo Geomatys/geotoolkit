@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines the request parameters for turn-by-turn route instructions and travel advisories formatted for presentation.
- * 
+ *
  * <p>Java class for RouteInstructionsRequestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RouteInstructionsRequestType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RouteInstructionsRequestType")
@@ -57,11 +57,11 @@ public class RouteInstructionsRequestType {
 
     /**
      * Gets the value of the format property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFormat() {
         if (format == null) {
@@ -73,11 +73,11 @@ public class RouteInstructionsRequestType {
 
     /**
      * Sets the value of the format property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFormat(String value) {
         this.format = value;
@@ -85,11 +85,11 @@ public class RouteInstructionsRequestType {
 
     /**
      * Gets the value of the provideGeometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isProvideGeometry() {
         if (provideGeometry == null) {
@@ -101,11 +101,11 @@ public class RouteInstructionsRequestType {
 
     /**
      * Sets the value of the provideGeometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setProvideGeometry(Boolean value) {
         this.provideGeometry = value;
@@ -113,11 +113,11 @@ public class RouteInstructionsRequestType {
 
     /**
      * Gets the value of the provideBoundingBox property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isProvideBoundingBox() {
         if (provideBoundingBox == null) {
@@ -129,11 +129,11 @@ public class RouteInstructionsRequestType {
 
     /**
      * Sets the value of the provideBoundingBox property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setProvideBoundingBox(Boolean value) {
         this.provideBoundingBox = value;

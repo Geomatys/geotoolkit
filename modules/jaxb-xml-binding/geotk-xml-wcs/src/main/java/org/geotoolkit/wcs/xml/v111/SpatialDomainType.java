@@ -32,12 +32,12 @@ import org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType;
 import org.geotoolkit.wcs.xml.SpatialDomain;
 
 /**
- * Definition of the spatial domain of a coverage. 
- * 
+ * Definition of the spatial domain of a coverage.
+ *
  * <p>Java class for SpatialDomainType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SpatialDomainType">
  *   &lt;complexContent>
@@ -53,7 +53,7 @@ import org.geotoolkit.wcs.xml.SpatialDomain;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -69,7 +69,7 @@ public class SpatialDomainType implements SpatialDomain {
 
     /**
      * WCS version 1.1.1 attribute
-     */ 
+     */
     @XmlElementRef(name = "BoundingBox", namespace = "http://www.opengis.net/ows/1.1", type = JAXBElement.class)
     private List<JAXBElement<? extends BoundingBoxType>> boundingBox  = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
     @XmlElement(name = "GridCRS")
@@ -78,33 +78,33 @@ public class SpatialDomainType implements SpatialDomain {
     private AbstractCoordinateOperationType transformation;
     @XmlElement(name = "ImageCRS")
     private ImageCRSRefType imageCRS;
-    
+
     // for both version 1.0.0 et 1.1.1
     @XmlElement(name = "Polygon", namespace = "http://www.opengis.net/gml")
     private List<PolygonType> polygon = new ArrayList<PolygonType>();
 
-    
+
     /**
      * An empty constructor used by JAXB.
      */
     SpatialDomainType(){
     }
-    
+
     /**
      * Build a new light Spatial Domain type version 1.1.1
      */
     public SpatialDomainType(final JAXBElement<? extends BoundingBoxType> boundingBox) {
        this.boundingBox.add(boundingBox);
     }
-    
+
     /**
      * Build a new light Spatial Domain type version 1.1.1
      */
     public SpatialDomainType(final List<JAXBElement<? extends BoundingBoxType>> boundingBoxes) {
        this.boundingBox = boundingBoxes;
     }
-   
-    
+
+
     /**
      * Build a new full Spatial Domain type version 1.1.1
      */
@@ -116,7 +116,7 @@ public class SpatialDomainType implements SpatialDomain {
        this.polygon        = polygon;
        this.transformation = transformation;
     }
-    
+
     /**
      * Build a new full Spatial Domain type version 1.1.1
      */
@@ -135,32 +135,32 @@ public class SpatialDomainType implements SpatialDomain {
        this.polygon        = polygon;
        this.transformation = transformation;
     }
-    
-    
+
+
     /**
-     * The first bounding box shall exactly specify the spatial domain of the offered coverage in the CRS of that offered coverage, 
-     * thus specifying the available grid row and column indices. 
-     * For a georectified coverage (that has a GridCRS), 
-     * this bounding box shall specify the spatial domain in that GridCRS. 
-     * For an image that is not georectified, this bounding box shall specify the spatial domain in the ImageCRS of that image, 
-     * whether or not that image is georeferenced. 
+     * The first bounding box shall exactly specify the spatial domain of the offered coverage in the CRS of that offered coverage,
+     * thus specifying the available grid row and column indices.
+     * For a georectified coverage (that has a GridCRS),
+     * this bounding box shall specify the spatial domain in that GridCRS.
+     * For an image that is not georectified, this bounding box shall specify the spatial domain in the ImageCRS of that image,
+     * whether or not that image is georeferenced.
      * Additional bounding boxes, if any, shall specify the spatial domain in other CRSs.
      * One bounding box could simply duplicate the information in the ows:WGS84BoundingBox;
      * but the intent is to describe the spatial domain in more detail (e.g., in several different CRSs, or several rectangular areas instead of one overall bounding box).
      * Multiple bounding boxes with the same CRS shall be interpreted as an unordered list of bounding boxes whose union covers spatial domain of this coverage.
      * Notice that WCS use of this BoundingBox is further specified in specification Subclause 7.5.
-     * 
+     *
      */
     public List<JAXBElement<? extends BoundingBoxType>> getBoundingBox() {
         return boundingBox;
     }
 
     /**
-     * Definition of GridCRS of the stored coverage. 
+     * Definition of GridCRS of the stored coverage.
      * This GridCRS shall be included when this coverage is georectified and is thus stored in a GridCRS.
      * This GridCRS applies to this offered coverage, and specifies its spatial resolution.
      * The definition is included to inform clients of this GridCRS,
-     * for possible use in a GetCoverage operation request. 
+     * for possible use in a GetCoverage operation request.
      */
     public GridCrsType getGridCRS() {
         return gridCRS;
@@ -183,7 +183,7 @@ public class SpatialDomainType implements SpatialDomain {
 
     /**
      * Gets the value of the imageCRS property.
-     * 
+     *
      */
     public ImageCRSRefType getImageCRS() {
         return imageCRS;
@@ -192,12 +192,12 @@ public class SpatialDomainType implements SpatialDomain {
     public void setImageCRS(final ImageCRSRefType imageCRS) {
         this.imageCRS = imageCRS;
     }
-    
+
     /**
      * Unordered list of polygons whose union (combined areas) covers the spatial domain of this coverage.
-     * Polygons are particularly useful for areas that are poorly approximated by a BoundingBox 
-     * (such as satellite image swaths, island groups, other non-convex areas). 
-     * 
+     * Polygons are particularly useful for areas that are poorly approximated by a BoundingBox
+     * (such as satellite image swaths, island groups, other non-convex areas).
+     *
      */
     public List<PolygonType> getPolygon() {
        return polygon;

@@ -48,7 +48,7 @@ public class JStrokeControlPane extends StyleElementEditor<Stroke> {
             }
         }
     };
-    
+
     private final JButton guiStrokeButton = new JButton(strokeChange);
     private final JPreview guiStrokeLabel = new JPreview();
     private final JStrokePane paneStrokeChooser = new JStrokePane();
@@ -67,7 +67,7 @@ public class JStrokeControlPane extends StyleElementEditor<Stroke> {
                 strokeChange.actionPerformed(new ActionEvent(JStrokeControlPane.this, evt.getID(), PROPERTY_UPDATED));
             }
         });
-        
+
         add(guiStrokeLabel, BorderLayout.WEST);
         add(guiStrokeButton, BorderLayout.EAST);
     }
@@ -95,7 +95,7 @@ public class JStrokeControlPane extends StyleElementEditor<Stroke> {
     @Override
     public void parse(final Stroke stroke) {
         if (stroke != null) {
-            //Create the icon image            
+            //Create the icon image
             guiStrokeLabel.parse(stroke);
             // Set the tool pane
             paneStrokeChooser.parse(stroke);
@@ -114,7 +114,7 @@ public class JStrokeControlPane extends StyleElementEditor<Stroke> {
         guiStrokeButton.setEnabled(bool);
         guiStrokeLabel.setVisible(bool);
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};

@@ -31,19 +31,19 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 public class JWKTPanel extends javax.swing.JPanel {
 
     public static final String GEOMETRY_PROPERTY = "geometry";
-    
+
     private final WKTReader reader = new WKTReader();
     private final WKTWriter writer = new WKTWriter();
     private final JCQLTextPane guiText = new JCQLTextPane();
-    
+
     private Geometry original = null;
     private Geometry current = null;
-    
+
     public JWKTPanel() {
         initComponents();
         guiPane.add(BorderLayout.CENTER,guiText);
     }
-    
+
     public void setGeometry(Geometry geom){
         this.original = geom;
         if(original != null){
@@ -58,7 +58,7 @@ public class JWKTPanel extends javax.swing.JPanel {
         guiError.setText("");
         this.current = null;
     }
-    
+
     public Geometry getGeometry(){
         if(current == null){
             return original;
@@ -66,10 +66,10 @@ public class JWKTPanel extends javax.swing.JPanel {
             return current;
         }
     }
-    
+
     private boolean checkWKT(){
         String txt = guiText.getText().trim();
-        
+
         try {
             current = reader.read(txt);
             guiError.setText(null);
@@ -79,9 +79,9 @@ public class JWKTPanel extends javax.swing.JPanel {
             guiError.setText(ex.getLocalizedMessage());
             return false;
         }
-        
-    }    
-    
+
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

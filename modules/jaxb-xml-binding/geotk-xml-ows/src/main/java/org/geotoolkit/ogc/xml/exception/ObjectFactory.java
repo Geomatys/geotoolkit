@@ -32,10 +32,10 @@ import javax.xml.bind.annotation.XmlRegistry;
  */
 @XmlRegistry
 public final class ObjectFactory {
-    
+
     //private final static QName _Expression_QNAME = new QName("http://www.opengis.net/ogc", "expression");
-    
-    
+
+
     /**
      * Creates an instance of {@link ServiceExceptionType }
      */
@@ -52,13 +52,13 @@ public final class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ExpressionType }{@code >}}
-     * 
-     
+     *
+
     @XmlElementDecl(namespace = "http://www.opengis.net/ogc", name = "expression")
     public JAXBElement<ExpressionType> createExpression(ExpressionType value) {
         return new JAXBElement<ExpressionType>(_Expression_QNAME, ExpressionType.class, null, value);
     }
-     * 
+     *
      */
-    
+
 }

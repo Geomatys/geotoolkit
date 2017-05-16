@@ -25,12 +25,12 @@ import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 
 
 /**
- * Identifies the form of this input or output value, and provides supporting information. 
- * 
+ * Identifies the form of this input or output value, and provides supporting information.
+ *
  * <p>Java class for DataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.ows.xml.v110.BoundingBoxType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,30 +62,30 @@ public class DataType implements org.geotoolkit.wps.xml.DataType{
     protected LiteralDataType literalData;
     @XmlElement(name = "BoundingBoxData")
     protected BoundingBoxType boundingBoxData;
-    
+
     public DataType() {
-        
+
     }
-    
+
     public DataType(ComplexDataType complexData) {
         this.complexData = complexData;
     }
-    
+
     public DataType(LiteralDataType literalData) {
         this.literalData = literalData;
     }
-    
+
     public DataType(BoundingBoxType boundingBoxData) {
         this.boundingBoxData = boundingBoxData;
     }
 
     /**
      * Gets the value of the complexData property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ComplexDataType }
-     *     
+     *
      */
     @Override
     public ComplexDataType getComplexData() {
@@ -94,11 +94,11 @@ public class DataType implements org.geotoolkit.wps.xml.DataType{
 
     /**
      * Sets the value of the complexData property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ComplexDataType }
-     *     
+     *
      */
     public void setComplexData(final ComplexDataType value) {
         this.complexData = value;
@@ -106,11 +106,11 @@ public class DataType implements org.geotoolkit.wps.xml.DataType{
 
     /**
      * Gets the value of the literalData property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LiteralDataType }
-     *     
+     *
      */
     @Override
     public LiteralDataType getLiteralData() {
@@ -119,11 +119,11 @@ public class DataType implements org.geotoolkit.wps.xml.DataType{
 
     /**
      * Sets the value of the literalData property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LiteralDataType }
-     *     
+     *
      */
     public void setLiteralData(final LiteralDataType value) {
         this.literalData = value;
@@ -131,11 +131,11 @@ public class DataType implements org.geotoolkit.wps.xml.DataType{
 
     /**
      * Gets the value of the boundingBoxData property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BoundingBoxType }
-     *     
+     *
      */
     @Override
     public BoundingBoxType getBoundingBoxData() {
@@ -144,16 +144,16 @@ public class DataType implements org.geotoolkit.wps.xml.DataType{
 
     /**
      * Sets the value of the boundingBoxData property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BoundingBoxType }
-     *     
+     *
      */
     public void setBoundingBoxData(final BoundingBoxType value) {
         this.boundingBoxData = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
@@ -168,7 +168,7 @@ public class DataType implements org.geotoolkit.wps.xml.DataType{
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

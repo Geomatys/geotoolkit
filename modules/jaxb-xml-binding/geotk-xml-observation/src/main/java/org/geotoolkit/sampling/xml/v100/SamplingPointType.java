@@ -48,20 +48,20 @@ import org.opengis.observation.sampling.SamplingPoint;
 @XmlType(name = "SamplingPointType", namespace="http://www.opengis.net/sampling/1.0")
 @XmlSeeAlso({PointType.class})
 public class SamplingPointType extends SamplingFeatureType implements SamplingPoint {
-    
+
     /**
      * the station position.
      */
     @XmlElement(required = true)
     private PointPropertyType position;
-    
+
     /**
      * Constructor used by JAXB.
      */
     public SamplingPointType(){
     }
-            
-    /** 
+
+    /**
      * Build a new station localised.
      */
     public SamplingPointType(final String                              identifier,
@@ -87,11 +87,11 @@ public class SamplingPointType extends SamplingFeatureType implements SamplingPo
         final EnvelopeType envelope = new EnvelopeType(null, pos2, pos3, "urn:ogc:crs:espg:4326");
         this.setBoundedBy(envelope);
     }
-    
-     /** 
+
+     /**
       * Build an entry to the identifier of the spécified station .
       * adapted for the BRGM model.
-      * 
+      *
       */
     public SamplingPointType(final String                identifier,
                               final String               name,
@@ -129,7 +129,7 @@ public class SamplingPointType extends SamplingFeatureType implements SamplingPo
         super(identifier, name, null, new FeaturePropertyType(""));
         this.position = new PointPropertyType(new PointType(null, new DirectPositionType(srsName, coord.size(), coord)));
     }
-    
+
     /**
      * Return the station position.
      */
@@ -140,12 +140,12 @@ public class SamplingPointType extends SamplingFeatureType implements SamplingPo
         }
         return null;
     }
-    
+
     @Override
     public Geometry getGeometry() {
        return getPosition();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -156,9 +156,9 @@ public class SamplingPointType extends SamplingFeatureType implements SamplingPo
         }
         if (object instanceof SamplingFeatureType && super.equals(object, mode)) {
             final SamplingPointType that = (SamplingPointType) object;
-        
+
             return  Objects.equals(this.position, that.position);
-        } 
+        }
         return false;
     }
 
@@ -171,7 +171,7 @@ public class SamplingPointType extends SamplingFeatureType implements SamplingPo
             return super.hashCode();
         }
     }
-    
+
     /**
      * Return a String representing the station.
      */
@@ -182,5 +182,5 @@ public class SamplingPointType extends SamplingFeatureType implements SamplingPo
         return s.toString();
     }
 
-  
+
 }

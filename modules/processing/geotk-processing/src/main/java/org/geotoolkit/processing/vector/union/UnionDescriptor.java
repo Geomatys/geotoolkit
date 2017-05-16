@@ -71,7 +71,7 @@ public final class UnionDescriptor extends VectorDescriptor {
             .setRemarks("Union geometry property name")
             .setRequired(false)
             .create(String.class, null);
-    
+
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_IN, FEATURE_UNION, INPUT_GEOMETRY_NAME, UNION_GEOMETRY_NAME);

@@ -31,14 +31,14 @@ public class OfferingSamplingFeatureType implements Entry{
      * The offering identifier.
      */
     private String idOffering;
-    
+
     /**
      * La station associe a cet offering.
      */
     private ReferenceType component;
-    
+
     /**
-     * Cree une nouveau lien entre une Station et un offering. 
+     * Cree une nouveau lien entre une Station et un offering.
      */
     public OfferingSamplingFeatureType(final String idOffering, final ReferenceType component) {
         this.idOffering = idOffering;
@@ -50,7 +50,7 @@ public class OfferingSamplingFeatureType implements Entry{
         this.component  = new ReferenceType(null, componentRef);
     }
 
-    
+
     public String getName() {
         if (component != null) {
             return component.getId();

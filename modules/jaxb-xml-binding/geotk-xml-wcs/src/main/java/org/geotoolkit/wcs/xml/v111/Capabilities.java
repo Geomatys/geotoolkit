@@ -33,9 +33,9 @@ import org.geotoolkit.wcs.xml.WCSResponse;
 
 /**
  * <p>Root Document for a response to a getCapabilities request (WCS version 1.1.1).
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -47,7 +47,7 @@ import org.geotoolkit.wcs.xml.WCSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -65,14 +65,14 @@ public class Capabilities extends CapabilitiesBaseType implements GetCapabilitie
      * An empty constructor used by JAXB
      */
     Capabilities(){}
-    
+
     /**
      * Build a new Capabilities document.
      */
     public Capabilities(final String version, final String updateSequence) {
         super(null, null, null, version, updateSequence);
     }
-    
+
     /**
      * Build a new Capabilities document.
      */
@@ -81,16 +81,16 @@ public class Capabilities extends CapabilitiesBaseType implements GetCapabilitie
         super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
         this.contents = contents;
     }
-    
+
     /**
      * Gets the value of the contents property.
-     * 
+     *
      */
     @Override
     public Contents getContents() {
         return contents;
     }
-    
+
     public void setContents(final Contents contents) {
         this.contents = contents;
     }

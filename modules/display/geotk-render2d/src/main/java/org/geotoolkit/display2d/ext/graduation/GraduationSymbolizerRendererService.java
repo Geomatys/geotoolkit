@@ -58,29 +58,29 @@ public class GraduationSymbolizerRendererService extends AbstractSymbolizerRende
 
     @Override
     public void glyph(Graphics2D g, Rectangle2D rect, CachedGraduationSymbolizer symbol, MapLayer layer) {
-        
+
         final double stepMajor = rect.getWidth()/2;
         final double stepMinor = rect.getWidth()/10;
         final double minX = rect.getMinX();
         final double minY = rect.getMaxY();
         final double maxMajorY = minY - rect.getHeight()/2;
         final double maxMinorY = minY - rect.getHeight()/3;
-        
+
         //draw minor ticks
         g.setStroke(new BasicStroke(1));
-        g.setColor(Color.DARK_GRAY);        
+        g.setColor(Color.DARK_GRAY);
         for(int i=0;i<11;i++){
             final int x = (int)(minX + i*stepMinor);
             g.drawLine(x, (int)minY, x, (int)maxMinorY);
         }
-        
+
         //draw major ticks
         g.setStroke(new BasicStroke(2));
-        g.setColor(Color.RED);        
+        g.setColor(Color.RED);
         for(int i=0;i<3;i++){
             final int x = (int)(minX + i*stepMajor);
             g.drawLine(x, (int)minY, x, (int)maxMajorY);
         }
     }
-    
+
 }

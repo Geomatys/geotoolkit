@@ -29,14 +29,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
+ *
  * Mapping of the same named interface in ebRIM.
- * 			
- * 
+ *
+ *
  * <p>Java class for OrganizationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OrganizationType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,7 +62,7 @@ import javax.xml.bind.annotation.XmlType;
     "telephoneNumber",
     "emailAddress"
 })
-@XmlRootElement(name = "Organization")        
+@XmlRootElement(name = "Organization")
 public class OrganizationType extends RegistryObjectType {
 
     @XmlElement(name = "Address", required = true)
@@ -101,7 +101,7 @@ public class OrganizationType extends RegistryObjectType {
         }
         return this.telephoneNumber;
     }
-    
+
     /**
      * Sets the value of the telephoneNumber property.
      */
@@ -111,7 +111,7 @@ public class OrganizationType extends RegistryObjectType {
         }
         this.telephoneNumber.add(number);
     }
-    
+
     /**
      * Sets the value of the telephoneNumber property.
      */
@@ -128,7 +128,7 @@ public class OrganizationType extends RegistryObjectType {
         }
         return this.emailAddress;
     }
-    
+
     /**
      * Sets the value of the emailAddress property.
      */
@@ -138,7 +138,7 @@ public class OrganizationType extends RegistryObjectType {
         }
         this.emailAddress.add(email);
     }
-    
+
     /**
      * Sets the value of the emailAddress property.
      */

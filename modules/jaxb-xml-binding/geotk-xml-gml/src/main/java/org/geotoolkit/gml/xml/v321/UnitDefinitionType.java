@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for UnitDefinitionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UnitDefinitionType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UnitDefinitionType", propOrder = {
@@ -66,11 +66,11 @@ public class UnitDefinitionType
 
     /**
      * Gets the value of the quantityType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public StringOrRefType getQuantityType() {
         return quantityType;
@@ -78,11 +78,11 @@ public class UnitDefinitionType
 
     /**
      * Sets the value of the quantityType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public void setQuantityType(StringOrRefType value) {
         this.quantityType = value;
@@ -90,11 +90,11 @@ public class UnitDefinitionType
 
     /**
      * Gets the value of the quantityTypeReference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getQuantityTypeReference() {
         return quantityTypeReference;
@@ -102,11 +102,11 @@ public class UnitDefinitionType
 
     /**
      * Sets the value of the quantityTypeReference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setQuantityTypeReference(ReferenceType value) {
         this.quantityTypeReference = value;
@@ -114,11 +114,11 @@ public class UnitDefinitionType
 
     /**
      * Gets the value of the catalogSymbol property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getCatalogSymbol() {
         return catalogSymbol;
@@ -126,11 +126,11 @@ public class UnitDefinitionType
 
     /**
      * Sets the value of the catalogSymbol property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setCatalogSymbol(CodeType value) {
         this.catalogSymbol = value;

@@ -36,16 +36,16 @@ import org.geotoolkit.wps.xml.InputDescription;
 
 
 /**
- * Description of an input to a process. 
- * 
- * 
+ * Description of an input to a process.
+ *
+ *
  * In this use, the DescriptionType shall describe a process input.
- * 					
- * 
+ *
+ *
  * <p>Java class for InputDescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InputDescriptionType">
  *   &lt;complexContent>
@@ -59,8 +59,8 @@ import org.geotoolkit.wps.xml.InputDescription;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InputDescriptionType", propOrder = {
@@ -79,12 +79,12 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
     @XmlAttribute(name = "maxOccurs")
     @XmlSchemaType(name = "allNNI")
     protected String maxOccurs;
-    
+
     public InputDescriptionType() {
-        
+
     }
-    
-    public InputDescriptionType(CodeType identifier, List<LanguageStringType> title, List<LanguageStringType> _abstract, 
+
+    public InputDescriptionType(CodeType identifier, List<LanguageStringType> title, List<LanguageStringType> _abstract,
            List<KeywordsType>keywords, Integer minOccur, String maxOccur, DataDescription dataDescription) {
         super(identifier, title, _abstract, keywords);
         this.minOccurs = minOccur;
@@ -103,14 +103,14 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
 
     /**
      * Gets the value of the dataDescription property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link BoundingBoxData }{@code >}
      *     {@link JAXBElement }{@code <}{@link LiteralDataType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ComplexDataType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DataDescriptionType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends DataDescriptionType> getDataDescription() {
         return dataDescription;
@@ -118,14 +118,14 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
 
     /**
      * Sets the value of the dataDescription property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link BoundingBoxData }{@code >}
      *     {@link JAXBElement }{@code <}{@link LiteralDataType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ComplexDataType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DataDescriptionType }{@code >}
-     *     
+     *
      */
     public void setDataDescription(JAXBElement<? extends DataDescriptionType> value) {
         this.dataDescription = value;
@@ -133,11 +133,11 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
 
     /**
      * Gets the value of the input property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link InputDescriptionType }
-     * 
-     * 
+     *
+     *
      */
     public List<InputDescriptionType> getInput() {
         if (input == null) {
@@ -148,11 +148,11 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
 
     /**
      * Gets the value of the minOccurs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public Integer getMinOccurs() {
         if (minOccurs == null) {
@@ -164,11 +164,11 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
 
     /**
      * Sets the value of the minOccurs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setMinOccurs(Integer value) {
         this.minOccurs = value;
@@ -176,11 +176,11 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
 
     /**
      * Gets the value of the maxOccurs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMaxOccurs() {
         if (maxOccurs == null) {
@@ -192,11 +192,11 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
 
     /**
      * Sets the value of the maxOccurs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMaxOccurs(String value) {
         this.maxOccurs = value;

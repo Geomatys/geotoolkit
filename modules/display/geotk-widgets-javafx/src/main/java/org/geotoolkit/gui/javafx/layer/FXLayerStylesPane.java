@@ -38,26 +38,26 @@ import org.geotoolkit.map.MapLayer;
  * @author Johann Sorel (Geomatys)
  */
 public class FXLayerStylesPane extends FXPropertyPane{
-    
+
     private final BorderPane leftPane = new BorderPane();
     private final ListView listView = new ListView();
 
-    private final LinkedHashMap<String, List<FXLayerStylePane>> indexByCategory = new LinkedHashMap<>();    
-    private FXLayerStylePane currentEditor = null;    
+    private final LinkedHashMap<String, List<FXLayerStylePane>> indexByCategory = new LinkedHashMap<>();
+    private FXLayerStylePane currentEditor = null;
     private MapLayer candidate;
-    
+
     public FXLayerStylesPane(FXLayerStylePane ... styleEditors) {
         getStylesheets().add(GeotkFX.CSS_PATH);
-        
+
         setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-                        
+
         final ScrollPane scroll = new ScrollPane(listView);
         scroll.setFitToHeight(true);
         scroll.setFitToWidth(true);
         scroll.setMinSize(300, 250);
         leftPane.setCenter(scroll);
-        setLeft(leftPane);      
-        
+        setLeft(leftPane);
+
         //build index
         for(final FXLayerStylePane styleEditor : styleEditors){
             List<FXLayerStylePane> editorOfCategory = indexByCategory.get(styleEditor.getCategory());
@@ -67,15 +67,15 @@ public class FXLayerStylesPane extends FXPropertyPane{
             }
             editorOfCategory.add(styleEditor);
         }
-        
+
         final ObservableList itemCollection = FXCollections.observableArrayList();
         for(final Entry<String, List<FXLayerStylePane>> entry : indexByCategory.entrySet()){
             itemCollection.add(entry.getKey());
             itemCollection.addAll(entry.getValue());
         }
         listView.setItems(itemCollection);
-        
-                
+
+
         //listen to list selection
         listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         listView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener() {
@@ -89,12 +89,12 @@ public class FXLayerStylesPane extends FXPropertyPane{
                 }
             }
         });
-        
+
         //select first editor by default
         if(styleEditors.length>0){
             listView.getSelectionModel().selectFirst();
         }
-        
+
         listView.setCellFactory(new Callback() {
 
             @Override
@@ -102,7 +102,7 @@ public class FXLayerStylesPane extends FXPropertyPane{
                 return new EditorCell();
             }
         });
-                
+
     }
 
     @Override
@@ -136,12 +136,12 @@ public class FXLayerStylesPane extends FXPropertyPane{
 
         return true;
     }
-    
+
     /**
      * Controls the style of cells.
      */
     static private class EditorCell extends ListCell {
-        
+
         @Override
         protected void updateItem(Object item, boolean empty) {
             super.updateItem(item, empty);
@@ -160,5 +160,5 @@ public class FXLayerStylesPane extends FXPropertyPane{
         }
 
     }
-    
+
 }

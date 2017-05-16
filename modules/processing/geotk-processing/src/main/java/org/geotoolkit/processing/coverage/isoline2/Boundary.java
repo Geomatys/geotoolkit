@@ -20,31 +20,31 @@ import java.util.Collection;
 
 /**
  * Define a triangle as a line routing boundary.
- * 
+ *
  *     + ④
  *    /|
  *   + + ⑤
  *  /  |
  * +-+-+ ⑥
  *① ② ③
- * 
+ *
  * ① HLeft
  * ② HMiddle
  * ③ HRight
  * ④ VTop
  * ⑤ VMiddle
  * ⑥ VBottom
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class Boundary {
-    
+
     /**
      * Geometries in construction
      */
     public Construction.Edge HLeft, HMiddle, HRight;
     public Construction.Edge VTop, VMiddle, VBottom;
-    
+
     public void getConstructions(Collection<Construction> contructions){
         if(HLeft!=null) contructions.add(HLeft.getConstruction());
         if(HMiddle!=null) contructions.add(HMiddle.getConstruction());
@@ -53,7 +53,7 @@ public class Boundary {
         if(VMiddle!=null) contructions.add(VMiddle.getConstruction());
         if(VBottom!=null) contructions.add(VBottom.getConstruction());
     }
-    
+
     public void checkIncoherence(){
         if(HLeft!=null){
             if(HLeft==HMiddle || HLeft==HRight || HLeft==VTop || HLeft==VMiddle || HLeft==VBottom){
@@ -86,5 +86,5 @@ public class Boundary {
             }
         }
     }
-    
+
 }

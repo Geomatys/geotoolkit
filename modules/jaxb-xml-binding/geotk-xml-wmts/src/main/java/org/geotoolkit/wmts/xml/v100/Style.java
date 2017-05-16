@@ -30,9 +30,9 @@ import org.geotoolkit.ows.xml.v110.DescriptionType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.ows.xml.v110.DescriptionType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -75,11 +75,11 @@ public class Style extends DescriptionType {
 
     /**
      * An unambiguous reference to this style, identifying a specific version when needed, normally used by software
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getIdentifier() {
         return identifier;
@@ -87,11 +87,11 @@ public class Style extends DescriptionType {
 
     /**
      * An unambiguous reference to this style, identifying a specific version when needed, normally used by software
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setIdentifier(final CodeType value) {
         this.identifier = value;
@@ -109,11 +109,11 @@ public class Style extends DescriptionType {
 
     /**
      * Gets the value of the isDefault property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isIsDefault() {
         return isDefault;
@@ -121,11 +121,11 @@ public class Style extends DescriptionType {
 
     /**
      * Sets the value of the isDefault property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setIsDefault(final Boolean value) {
         this.isDefault = value;

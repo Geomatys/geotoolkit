@@ -26,7 +26,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
 
 /**
  * Color Decoration
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -37,7 +37,7 @@ public class ColorDecoration extends JPanel implements MapDecoration{
         setOpaque(true);
         setBackground(Color.WHITE);
     }
-    
+
     @Override
     public void refresh() {
         revalidate();
@@ -51,7 +51,7 @@ public class ColorDecoration extends JPanel implements MapDecoration{
 
     @Override
     public void setMap2D(final JMap2D map) {
-        
+
     }
 
     @Override

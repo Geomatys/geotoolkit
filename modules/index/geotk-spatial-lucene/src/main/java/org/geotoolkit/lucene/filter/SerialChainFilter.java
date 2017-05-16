@@ -36,16 +36,16 @@ import java.util.Objects;
 import static org.geotoolkit.index.LogicalFilterType.*;
 
 /**
- * 
+ *
  * Provide a serial chain filter, passing the bitset in with the
  * index reader to each of the filters in an ordered fashion.
- * 
+ *
  * Based off chain filter, but will some improvements to allow a narrowed down
  * filtering. Traditional filter required iteration through an IndexReader.
- * 
+ *
  * By implementing the ISerialChainFilter class, you can create a bits(IndexReader reader, BitSet bits)
- * 
- * 
+ *
+ *
  * @author Patrick O'Leary
  * @author Guilhem Legal
  * @module
@@ -58,7 +58,7 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
     private static final long serialVersionUID = -8132561537335553911L;
 
     private final List<Filter> chain;
-    
+
     private LogicalFilterType[] actionType;
 
     public SerialChainFilter(final List<Filter> chain) {
@@ -156,9 +156,9 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
 
     /**
      * Return the flag correspounding to the specified filterName.
-     * 
+     *
      * @param filterName A filter name : And, Or, Xor or Not.
-     * 
+     *
      * @return an int flag.
      */
     public static LogicalFilterType valueOf(final String filterName) {
@@ -178,10 +178,10 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
 
     /**
      * Return the filterName correspounding to the specified flag.
-     * 
+     *
      * @param flag an int flag.
-     * 
-     * @return A filter name : And, Or, Xor or Not. 
+     *
+     * @return A filter name : And, Or, Xor or Not.
      */
     public static String valueOf(final LogicalFilterType flag) {
         switch (flag) {
@@ -197,7 +197,7 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
                return "unknow";
         }
     }
-    
+
     @Override
     public void applyRtreeOnFilter(final Tree rTree, final boolean envelopeOnly) {
         for (Filter f : chain) {
@@ -207,10 +207,10 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
         }
     }
 
-    
-    /** 
+
+    /**
      * Returns true if <code>o</code> is equal to this.
-     * 
+     *
      * @see org.apache.lucene.search.RangeFilter#equals
      */
     @Override
@@ -249,18 +249,18 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
         hash = 37 * hash + Arrays.hashCode(this.actionType);
         return hash;
     }
-    
+
     @Override
     public String toString(String s) {
-    	final StringBuffer buf = new StringBuffer();
-    	buf.append("[SerialChainFilter]").append('\n');
+        final StringBuffer buf = new StringBuffer();
+        buf.append("[SerialChainFilter]").append('\n');
         if (chain != null && chain.size() == 1) {
             buf.append("NOT ").append('\n');
             buf.append('\t').append(chain.get(0));
-            
+
         } else if (chain != null && chain.size() > 0) {
             buf.append('\t').append(chain.get(0)).append('\n');
-            
+
             for (int i = 0; i < actionType.length; i++) {
                 switch(actionType[i]) {
                     case AND:
@@ -285,6 +285,6 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
             }
         }
         buf.append('\n');
-    	return buf.toString().trim();
+        return buf.toString().trim();
     }
 }

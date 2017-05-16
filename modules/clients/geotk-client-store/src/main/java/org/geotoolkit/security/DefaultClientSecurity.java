@@ -24,7 +24,7 @@ import java.net.URLConnection;
 /**
  * A security manager doing nothing, can be used as a base class for other
  * managers.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -34,7 +34,7 @@ public class DefaultClientSecurity implements ClientSecurity {
      * A security manager doing nothing.
      */
     public static final ClientSecurity NO_SECURITY = new DefaultClientSecurity();
-    
+
     @Override
     public URL secure(URL url) {
         return url;
@@ -54,5 +54,5 @@ public class DefaultClientSecurity implements ClientSecurity {
     public InputStream decrypt(InputStream stream) {
         return stream;
     }
-    
+
 }

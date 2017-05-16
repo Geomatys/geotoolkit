@@ -31,13 +31,13 @@ import org.opengis.feature.PropertyType;
 public abstract class FXComparableOperator implements FXFilterOperator {
 
     private static final WeakHashMap<Node, FXValueEditor> EDITORS_IN_USE = new WeakHashMap<>();
-    
+
     @Override
     public boolean canHandle(PropertyType target) {
         if (target instanceof AttributeType) {
             final Class valueClass = ((AttributeType) target).getValueClass();
             return valueClass.isPrimitive() || Comparable.class.isAssignableFrom(valueClass);
-        } 
+        }
         return false;
     }
 
@@ -65,12 +65,12 @@ public abstract class FXComparableOperator implements FXFilterOperator {
             return false;
         }
     }
-    
+
     /**
-     * Attempt to extract value to perform comparison against in filter. 
+     * Attempt to extract value to perform comparison against in filter.
      * @param editor The editor which has been used for comparison parameterization.
      * @return the object found in editor for comparison. Can be null.
-     * @throws IllegalArgumentException If input editor is null or has not been 
+     * @throws IllegalArgumentException If input editor is null or has not been
      * provided by current component.
      */
     protected Object getEditorValue(final Node editor) throws IllegalArgumentException {

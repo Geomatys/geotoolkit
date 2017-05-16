@@ -35,7 +35,7 @@ public class FXHalo extends FXStyleElementController<Halo>{
     protected FXFill uiFill;
     @FXML
     protected FXNumberExpression uiRadius;
-        
+
     @Override
     public Class<Halo> getEditedClass() {
         return Halo.class;
@@ -45,30 +45,30 @@ public class FXHalo extends FXStyleElementController<Halo>{
     public Halo newValue() {
         return getStyleFactory().halo(Color.WHITE, 1);
     }
-    
+
     @Override
     public void initialize() {
-        super.initialize();        
+        super.initialize();
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             value.set(getStyleFactory().halo(uiFill.valueProperty().get(), uiRadius.valueProperty().get()));
         };
-        
+
         uiFill.valueProperty().addListener(changeListener);
         uiRadius.valueProperty().addListener(changeListener);
     }
-    
+
     @Override
     public void setLayer(MapLayer layer) {
         super.setLayer(layer);
         uiFill.setLayer(layer);
         uiRadius.setLayer(layer);
     }
-    
+
     @Override
     protected void updateEditor(Halo styleElement) {
         uiFill.valueProperty().setValue(styleElement.getFill());
         uiRadius.valueProperty().setValue(styleElement.getRadius());
     }
-    
+
 }

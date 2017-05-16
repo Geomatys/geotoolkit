@@ -27,7 +27,7 @@ import java.util.Date;
  * @module
  */
 public class GPXFileMetadata {
-    
+
     private final long id;
     private final String name;
     private final String user;
@@ -109,7 +109,7 @@ public class GPXFileMetadata {
         }
         return true;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 3;
@@ -121,5 +121,5 @@ public class GPXFileMetadata {
         hash = 89 * hash + (this.time != null ? this.time.hashCode() : 0);
         return hash;
     }
-    
+
 }

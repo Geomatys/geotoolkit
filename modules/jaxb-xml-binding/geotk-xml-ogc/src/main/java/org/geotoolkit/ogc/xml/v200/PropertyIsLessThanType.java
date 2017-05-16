@@ -33,20 +33,20 @@ public class PropertyIsLessThanType extends BinaryComparisonOpType implements Pr
      * Empty constructor used by JAXB
      */
      public PropertyIsLessThanType() {
-        
+
      }
-    
+
     /**
      * Build a new Binary comparison operator
      */
     public  PropertyIsLessThanType(final LiteralType literal, final String propertyName, final Boolean matchCase) {
         super(literal, propertyName, matchCase);
     }
-    
+
     public PropertyIsLessThanType(final PropertyIsLessThanType that) {
         super(that);
     }
-    
+
     @Override
     public ComparisonOpsType getClone() {
         return new PropertyIsLessThanType(this);

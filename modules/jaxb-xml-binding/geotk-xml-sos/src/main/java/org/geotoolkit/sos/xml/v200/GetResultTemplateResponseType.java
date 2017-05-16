@@ -30,9 +30,9 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
 
 /**
  * <p>Java class for GetResultTemplateResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetResultTemplateResponseType">
  *   &lt;complexContent>
@@ -65,8 +65,8 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetResultTemplateResponseType", propOrder = {
@@ -82,21 +82,21 @@ public class GetResultTemplateResponseType extends ExtensibleResponseType implem
     private ResultEncoding resultEncoding;
 
     public GetResultTemplateResponseType() {
-        
+
     }
-    
+
     public GetResultTemplateResponseType(final AbstractDataComponentType resultStructure, final AbstractEncodingType encoding) {
         this.resultEncoding = new ResultEncoding(encoding);
         this.resultStructure = new ResultStructure(resultStructure);
     }
-    
+
     /**
      * Gets the value of the resultStructure property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GetResultTemplateResponseType.ResultStructure }
-     *     
+     *
      */
     public AbstractDataComponentType getResultStructure() {
         if (resultStructure != null) {
@@ -107,11 +107,11 @@ public class GetResultTemplateResponseType extends ExtensibleResponseType implem
 
     /**
      * Sets the value of the resultStructure property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GetResultTemplateResponseType.ResultStructure }
-     *     
+     *
      */
     public void setResultStructure(final AbstractDataComponentType value) {
         if (value != null) {
@@ -123,11 +123,11 @@ public class GetResultTemplateResponseType extends ExtensibleResponseType implem
 
     /**
      * Gets the value of the resultEncoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GetResultTemplateResponseType.ResultEncoding }
-     *     
+     *
      */
     public AbstractEncodingType getResultEncoding() {
         if (resultEncoding != null) {
@@ -138,11 +138,11 @@ public class GetResultTemplateResponseType extends ExtensibleResponseType implem
 
     /**
      * Sets the value of the resultEncoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GetResultTemplateResponseType.ResultEncoding }
-     *     
+     *
      */
     public void setResultEncoding(ResultEncoding value) {
         this.resultEncoding = value;

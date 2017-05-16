@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines a list of errors.
- * 
+ *
  * <p>Java class for ErrorListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ErrorListType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ErrorListType", propOrder = {
@@ -61,7 +61,7 @@ public class ErrorListType {
 
     /**
      * Gets the value of the error property.
-     * 
+     *
      */
     public List<ErrorType> getError() {
         if (error == null) {
@@ -72,11 +72,11 @@ public class ErrorListType {
 
     /**
      * Gets the value of the highestSeverity property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SeverityType }
-     *     
+     *
      */
     public SeverityType getHighestSeverity() {
         if (highestSeverity == null) {
@@ -88,11 +88,11 @@ public class ErrorListType {
 
     /**
      * Sets the value of the highestSeverity property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SeverityType }
-     *     
+     *
      */
     public void setHighestSeverity(SeverityType value) {
         this.highestSeverity = value;

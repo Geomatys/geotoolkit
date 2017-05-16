@@ -17,13 +17,13 @@
 package org.geotoolkit.image.interpolation;
 
 /**
- * An enum to stipulate to resampling procedure which comportement adopted 
- * when projected destination coordinates are out of validity pixel source area. 
- * 
+ * An enum to stipulate to resampling procedure which comportement adopted
+ * when projected destination coordinates are out of validity pixel source area.
+ *
  * {@linkplain #EXTRAPOLATION} : allow extrapolation.
  * {@linkplain #FILL_VALUE} : fill pixel which is out of expected source area, by the given array.
- * {@linkplain #CROP} : 
- * 
+ * {@linkplain #CROP} :
+ *
  *
  * @author Remi Marechal (Geomatys).
  */

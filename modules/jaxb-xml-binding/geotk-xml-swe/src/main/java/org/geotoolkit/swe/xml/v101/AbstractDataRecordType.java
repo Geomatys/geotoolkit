@@ -40,12 +40,12 @@ import org.apache.sis.util.ComparisonMode;
     AbstractVectorType.class,
     GeoLocationArea.class})
 public class AbstractDataRecordType extends AbstractDataComponentType implements AbstractDataRecord {
-    
+
     /**
      * constructor used by JAXB.
      */
     public AbstractDataRecordType() {}
-            
+
     /**
      * super-constructor called by sub-classes.
      */
@@ -66,7 +66,7 @@ public class AbstractDataRecordType extends AbstractDataComponentType implements
     public AbstractDataRecordType(final AbstractDataRecord record) {
         super(record);
     }
-    
+
     @Override
     public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {

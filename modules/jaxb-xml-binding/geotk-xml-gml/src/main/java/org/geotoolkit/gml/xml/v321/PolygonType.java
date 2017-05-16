@@ -29,9 +29,9 @@ import org.geotoolkit.gml.xml.Polygon;
 
 /**
  * <p>Java class for PolygonType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PolygonType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.gml.xml.Polygon;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PolygonType", propOrder = {
@@ -61,7 +61,7 @@ public class PolygonType extends AbstractSurfaceType implements Polygon {
     public PolygonType() {
 
     }
-    
+
     public PolygonType(final String srsName, final AbstractRingType exterior, final List<? extends AbstractRingType> interiors) {
         super(srsName);
         if (exterior != null) {
@@ -74,18 +74,18 @@ public class PolygonType extends AbstractSurfaceType implements Polygon {
             }
         }
     }
-    
+
     public PolygonType(final AbstractRingType exterior, final List<? extends AbstractRingType> interiors) {
         this(null, exterior, interiors);
     }
-    
+
     /**
      * Gets the value of the exterior property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AbstractRingPropertyType }
-     *     
+     *
      */
     @Override
     public AbstractRingPropertyType getExterior() {
@@ -94,11 +94,11 @@ public class PolygonType extends AbstractSurfaceType implements Polygon {
 
     /**
      * Sets the value of the exterior property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AbstractRingPropertyType }
-     *     
+     *
      */
     public void setExterior(AbstractRingPropertyType value) {
         this.exterior = value;
@@ -106,7 +106,7 @@ public class PolygonType extends AbstractSurfaceType implements Polygon {
 
     /**
      * Gets the value of the interior property.
-     * 
+     *
      */
     @Override
     public List<AbstractRingPropertyType> getInterior() {
@@ -125,7 +125,7 @@ public class PolygonType extends AbstractSurfaceType implements Polygon {
                 sb.append(s).append('\n');
             }
         }
-        
+
         if (exterior != null) {
             sb.append("exterior:").append(exterior).append('\n');
         }

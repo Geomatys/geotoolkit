@@ -69,7 +69,7 @@ public class JOpacitySlider extends JComponent implements MouseInputListener{
     @Override
     protected void paintComponent(final Graphics g) {
         super.paintComponent(g);
-        
+
         final Graphics2D g2 = (Graphics2D) g;
         final Dimension dim = getSize();
 
@@ -146,7 +146,7 @@ public class JOpacitySlider extends JComponent implements MouseInputListener{
     @Override
     public void mouseReleased(final MouseEvent e) {
         mouseDragged(e);
-        
+
         final ActionEvent event = new ActionEvent(this, -1, "opacity");
         for(ActionListener listener : listeners){
             listener.actionPerformed(event);

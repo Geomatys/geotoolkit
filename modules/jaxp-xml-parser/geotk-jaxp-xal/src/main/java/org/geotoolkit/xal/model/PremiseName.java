@@ -46,13 +46,13 @@ public interface PremiseName extends GenericTypedGrPostal {
 
     /**
      * <p>EGIS Building where EGIS occurs before Building, DES JARDINS occurs after COMPLEXE DES JARDINS.</p>
-     * 
+     *
      * @return
      */
     AfterBeforeEnum getTypeOccurrence();
 
     /**
-     * 
+     *
      * @param typeOccurrence
      */
     void setTypeOccurrence(AfterBeforeEnum typeOccurrence);

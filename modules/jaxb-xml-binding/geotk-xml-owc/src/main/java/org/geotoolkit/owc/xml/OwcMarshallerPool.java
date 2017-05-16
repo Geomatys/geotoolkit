@@ -30,11 +30,11 @@ import org.geotoolkit.sld.xml.JAXBSLDUtilities;
  * @author Johann Sorel (Geomatys)
  */
 public class OwcMarshallerPool {
-    
+
     public static final org.w3._2005.atom.ObjectFactory ATOM_FACTORY = new org.w3._2005.atom.ObjectFactory();
     public static final org.geotoolkit.owc.xml.v10.ObjectFactory OWC_FACTORY = new org.geotoolkit.owc.xml.v10.ObjectFactory();
     public static final org.geotoolkit.georss.xml.v100.ObjectFactory GEORSS_FACTORY = new org.geotoolkit.georss.xml.v100.ObjectFactory();
-    
+
     private static final MarshallerPool POOL;
     static {
         try {
@@ -47,17 +47,17 @@ public class OwcMarshallerPool {
             classes.add(org.w3._2005.atom.ObjectFactory.class);
             classes.add(org.geotoolkit.owc.xml.v10.ObjectFactory.class);
             classes.addAll(JAXBSLDUtilities.getSLD110PoolClasses());
-                        
+
             final JAXBContext jaxbCtxt = JAXBContext.newInstance(classes.toArray(new Class[classes.size()]));
             POOL = new MarshallerPool(jaxbCtxt, null);
         } catch (JAXBException ex) {
             // Should never happen, unless we have a build configuration problem.
-            throw new AssertionError(ex); 
+            throw new AssertionError(ex);
         }
     }
 
     public static MarshallerPool getPool() throws JAXBException{
         return POOL;
     }
-    
+
 }

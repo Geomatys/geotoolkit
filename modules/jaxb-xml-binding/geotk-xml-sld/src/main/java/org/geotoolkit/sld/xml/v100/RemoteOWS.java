@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,11 +59,11 @@ public class RemoteOWS {
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getService() {
         return service;
@@ -71,11 +71,11 @@ public class RemoteOWS {
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setService(final String value) {
         this.service = value;
@@ -83,11 +83,11 @@ public class RemoteOWS {
 
     /**
      * Gets the value of the onlineResource property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OnlineResource }
-     *     
+     *
      */
     public OnlineResource getOnlineResource() {
         return onlineResource;
@@ -95,11 +95,11 @@ public class RemoteOWS {
 
     /**
      * Sets the value of the onlineResource property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OnlineResource }
-     *     
+     *
      */
     public void setOnlineResource(final OnlineResource value) {
         this.onlineResource = value;

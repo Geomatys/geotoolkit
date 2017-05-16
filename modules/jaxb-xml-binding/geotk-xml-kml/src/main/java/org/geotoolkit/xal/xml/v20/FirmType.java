@@ -34,9 +34,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for FirmType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FirmType">
  *   &lt;complexContent>
@@ -63,8 +63,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -98,25 +98,25 @@ public class FirmType {
 
     /**
      * Gets the value of the addressLine property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the addressLine property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAddressLine().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AddressLine }
-     * 
-     * 
+     *
+     *
      */
     public List<AddressLine> getAddressLine() {
         if (addressLine == null) {
@@ -127,25 +127,25 @@ public class FirmType {
 
     /**
      * Gets the value of the firmName property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the firmName property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFirmName().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link FirmType.FirmName }
-     * 
-     * 
+     *
+     *
      */
     public List<FirmType.FirmName> getFirmName() {
         if (firmName == null) {
@@ -156,25 +156,25 @@ public class FirmType {
 
     /**
      * Gets the value of the department property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the department property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDepartment().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Department }
-     * 
-     * 
+     *
+     *
      */
     public List<Department> getDepartment() {
         if (department == null) {
@@ -185,11 +185,11 @@ public class FirmType {
 
     /**
      * Gets the value of the mailStop property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MailStopType }
-     *     
+     *
      */
     public MailStopType getMailStop() {
         return mailStop;
@@ -197,11 +197,11 @@ public class FirmType {
 
     /**
      * Sets the value of the mailStop property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MailStopType }
-     *     
+     *
      */
     public void setMailStop(final MailStopType value) {
         this.mailStop = value;
@@ -209,11 +209,11 @@ public class FirmType {
 
     /**
      * Gets the value of the postalCode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PostalCode }
-     *     
+     *
      */
     public PostalCode getPostalCode() {
         return postalCode;
@@ -221,11 +221,11 @@ public class FirmType {
 
     /**
      * Sets the value of the postalCode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PostalCode }
-     *     
+     *
      */
     public void setPostalCode(final PostalCode value) {
         this.postalCode = value;
@@ -233,25 +233,25 @@ public class FirmType {
 
     /**
      * Gets the value of the any property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the any property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAny().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getAny() {
         if (any == null) {
@@ -262,11 +262,11 @@ public class FirmType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -274,11 +274,11 @@ public class FirmType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -286,15 +286,15 @@ public class FirmType {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * <p>
-     * the map is keyed by the name of the attribute and 
+     * the map is keyed by the name of the attribute and
      * the value is the string value of the attribute.
-     * 
+     *
      * the map returned by this method is live, and you can add new attribute
      * by updating the map directly. Because of this design, there's no setter.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */
@@ -305,9 +305,9 @@ public class FirmType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -318,8 +318,8 @@ public class FirmType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -340,11 +340,11 @@ public class FirmType {
 
         /**
          * Gets the value of the content property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getContent() {
             return content;
@@ -352,11 +352,11 @@ public class FirmType {
 
         /**
          * Sets the value of the content property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setContent(final String value) {
             this.content = value;
@@ -364,11 +364,11 @@ public class FirmType {
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
             return type;
@@ -376,11 +376,11 @@ public class FirmType {
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -388,11 +388,11 @@ public class FirmType {
 
         /**
          * Gets the value of the code property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getCode() {
             return code;
@@ -400,11 +400,11 @@ public class FirmType {
 
         /**
          * Sets the value of the code property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setCode(final String value) {
             this.code = value;
@@ -412,15 +412,15 @@ public class FirmType {
 
         /**
          * Gets a map that contains attributes that aren't bound to any typed property on this class.
-         * 
+         *
          * <p>
-         * the map is keyed by the name of the attribute and 
+         * the map is keyed by the name of the attribute and
          * the value is the string value of the attribute.
-         * 
+         *
          * the map returned by this method is live, and you can add new attribute
          * by updating the map directly. Because of this design, there's no setter.
-         * 
-         * 
+         *
+         *
          * @return
          *     always non-null
          */

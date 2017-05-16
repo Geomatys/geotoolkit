@@ -39,9 +39,9 @@ import org.opengis.metadata.Identifier;
 
 /**
  * <p>Java class for ObservationOfferingType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ObservationOfferingType">
  *   &lt;complexContent>
@@ -88,8 +88,8 @@ import org.opengis.metadata.Identifier;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ObservationOfferingType", propOrder = {
@@ -113,16 +113,16 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
     private List<String> featureOfInterestType;
 
     public ObservationOfferingType() {
-        
+
     }
-    
+
     /**
      *  Build a new offering.
-     */ 
-    public ObservationOfferingType(final String id, final String identifier, final String name, final String description, final EnvelopeType observedArea, 
+     */
+    public ObservationOfferingType(final String id, final String identifier, final String name, final String description, final EnvelopeType observedArea,
             final TimePeriodType phenomenonTime, final String procedure, final List<String> observedProperty, final List<String> featureOfInterest,
             final List<String> responseFormat, final List<String> resultModel, final List<String> procedureDescriptionFormat) {
-        
+
         super(id, identifier, name, description, procedure, observedProperty, featureOfInterest, procedureDescriptionFormat);
         this.responseFormat    = responseFormat;
         this.observationType   = resultModel;
@@ -134,11 +134,11 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
 
     /**
      * Gets the value of the observedArea property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ObservationOfferingType.ObservedArea }
-     *     
+     *
      */
     @Override
     public EnvelopeType getObservedArea() {
@@ -150,11 +150,11 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
 
     /**
      * Sets the value of the observedArea property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ObservationOfferingType.ObservedArea }
-     *     
+     *
      */
     public void setObservedArea(ObservationOfferingType.ObservedArea value) {
         this.observedArea = value;
@@ -167,14 +167,14 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
         }
         return null;
     }
-    
+
     /**
      * Gets the value of the phenomenonTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ObservationOfferingType.PhenomenonTime }
-     *     
+     *
      */
     public ObservationOfferingType.PhenomenonTime getPhenomenonTime() {
         return phenomenonTime;
@@ -182,11 +182,11 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
 
     /**
      * Sets the value of the phenomenonTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ObservationOfferingType.PhenomenonTime }
-     *     
+     *
      */
     public void setPhenomenonTime(ObservationOfferingType.PhenomenonTime value) {
         this.phenomenonTime = value;
@@ -194,11 +194,11 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
 
     /**
      * Gets the value of the resultTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ObservationOfferingType.ResultTime }
-     *     
+     *
      */
     public ObservationOfferingType.ResultTime getResultTime() {
         return resultTime;
@@ -206,11 +206,11 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
 
     /**
      * Sets the value of the resultTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ObservationOfferingType.ResultTime }
-     *     
+     *
      */
     public void setResultTime(ObservationOfferingType.ResultTime value) {
         this.resultTime = value;
@@ -218,10 +218,10 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
 
     /**
      * Gets the value of the responseFormat property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     @Override
     public List<String> getResponseFormat() {
@@ -233,10 +233,10 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
 
     /**
      * Gets the value of the observationType property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getObservationType() {
         if (observationType == null) {
@@ -247,10 +247,10 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
 
     /**
      * Gets the value of the featureOfInterestType property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getFeatureOfInterestType() {
         if (featureOfInterestType == null) {
@@ -263,10 +263,10 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
     public List<String> getObservedProperties() {
         return getObservableProperty();
     }
-    
+
     /**
      * compatibility with SOS 1.0.0
-     */ 
+     */
     @Override
     public List<String> getProcedures() {
         if (getProcedure() != null) {
@@ -274,10 +274,10 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
         }
         return new ArrayList<>();
     }
-    
+
     /**
      * compatibility with SOS 1.0.0
-     */ 
+     */
     @Override
     public List<String> getSrsName() {
         return new ArrayList<>();
@@ -285,7 +285,7 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
 
     /**
      * compatibility with SOS 1.0.0
-     */ 
+     */
     @Override
     public List<String> getFeatureOfInterestIds() {
         final List<String> results = new ArrayList<>();
@@ -347,9 +347,9 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -361,8 +361,8 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -379,15 +379,15 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
             }
             return null;
         }
-        
+
         /**
          * Gets the value of the envelope property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link JAXBElement }{@code <}{@link EnvelopeWithTimePeriodType }{@code >}
          *     {@link JAXBElement }{@code <}{@link EnvelopeType }{@code >}
-         *     
+         *
          */
         public JAXBElement<? extends EnvelopeType> getJbEnvelope() {
             return envelope;
@@ -395,12 +395,12 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
 
         /**
          * Sets the value of the envelope property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link JAXBElement }{@code <}{@link EnvelopeWithTimePeriodType }{@code >}
          *     {@link JAXBElement }{@code <}{@link EnvelopeType }{@code >}
-         *     
+         *
          */
         public void setEnvelope(JAXBElement<? extends EnvelopeType> value) {
             this.envelope = ((JAXBElement<? extends EnvelopeType> ) value);
@@ -419,9 +419,9 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -433,8 +433,8 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -446,20 +446,20 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
         private TimePeriodType timePeriod;
 
         public PhenomenonTime() {
-        
+
         }
-        
+
         public PhenomenonTime(final TimePeriodType timePeriod) {
             this.timePeriod = timePeriod;
         }
-        
+
         /**
          * Gets the value of the timePeriod property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TimePeriodType }
-         *     
+         *
          */
         public TimePeriodType getTimePeriod() {
             return timePeriod;
@@ -467,11 +467,11 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
 
         /**
          * Sets the value of the timePeriod property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TimePeriodType }
-         *     
+         *
          */
         public void setTimePeriod(TimePeriodType value) {
             this.timePeriod = value;
@@ -490,9 +490,9 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -504,8 +504,8 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -518,11 +518,11 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
 
         /**
          * Gets the value of the timePeriod property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TimePeriodType }
-         *     
+         *
          */
         public TimePeriodType getTimePeriod() {
             return timePeriod;
@@ -530,11 +530,11 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
 
         /**
          * Sets the value of the timePeriod property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TimePeriodType }
-         *     
+         *
          */
         public void setTimePeriod(TimePeriodType value) {
             this.timePeriod = value;

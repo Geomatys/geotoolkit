@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Beyond")
 public class BeyondType extends DistanceBufferType {
- 
+
     public BeyondType() {
-        
+
     }
-    
+
     public BeyondType(final BeyondType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new BeyondType(this);

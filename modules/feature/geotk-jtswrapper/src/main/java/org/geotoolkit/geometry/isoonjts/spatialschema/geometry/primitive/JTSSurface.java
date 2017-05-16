@@ -169,7 +169,7 @@ public class JTSSurface extends AbstractJTSGeometry implements Surface {
     protected com.vividsolutions.jts.geom.Geometry computeJTSPeer() {
         if (patches.size() > 1) {
             //throw new UnsupportedOperationException("This implementation does not support surfaces with multiple patches.");
-            final com.vividsolutions.jts.geom.Polygon[] polygons = 
+            final com.vividsolutions.jts.geom.Polygon[] polygons =
                 new com.vividsolutions.jts.geom.Polygon[patches.size()];
             for (int i = 0; i < patches.size(); i++) {
                 final JTSGeometry jtsGeometry = (JTSGeometry) patches.get(i);

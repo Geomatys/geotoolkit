@@ -45,7 +45,7 @@ public interface PostalCodeNumberExtension extends GenericTypedGrPostal {
     String getNumberExtensionSeparator();
 
     /**
-     * 
+     *
      * @param numberExtensionSeparator
      */
     void setNumberExtensionSeparator(String numberExtensionSeparator);

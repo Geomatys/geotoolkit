@@ -43,7 +43,7 @@ public final class FilterUtilities extends Static {
      * Avoid instanciation.
      */
     private FilterUtilities() {}
-    
+
     /**
      * Prepare a filter against a given class.
      * @param filter : filter to optimize
@@ -73,7 +73,7 @@ public final class FilterUtilities extends Static {
     /**
      * Test if an expression is static.
      * Static is the way no expressions use the candidate object for evaluation.
-     * 
+     *
      * @param exp
      * @return true if expression is static
      */
@@ -93,7 +93,7 @@ public final class FilterUtilities extends Static {
      */
     public static Not orToAnd(final Or filter, FilterFactory ff) {
         if(ff==null) ff = FactoryFinder.getFilterFactory(null);
-        
+
         final List<Filter> children = filter.getChildren();
         final int size = children.size();
         final List<Filter> newChildren = new ArrayList<>(size);

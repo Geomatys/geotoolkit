@@ -43,9 +43,9 @@ public class FXLabelPlacement extends FXStyleElementController<LabelPlacement>{
     protected FXLinePlacement uiLine;
     @FXML
     protected FXPointPlacement uiPoint;
-    
+
     private ToggleGroup group;
-    
+
     @FXML
     void updateChoice(ActionEvent event){
         if(updating) return;
@@ -58,7 +58,7 @@ public class FXLabelPlacement extends FXStyleElementController<LabelPlacement>{
         }
         rebuildValue();
     }
-    
+
     private void rebuildValue(){
         if(uiLineCheck.isSelected()){
             value.set(uiLine.valueProperty().get());
@@ -66,7 +66,7 @@ public class FXLabelPlacement extends FXStyleElementController<LabelPlacement>{
             value.set(uiPoint.valueProperty().get());
         }
     }
-    
+
     @Override
     public Class<LabelPlacement> getEditedClass() {
         return LabelPlacement.class;
@@ -76,35 +76,35 @@ public class FXLabelPlacement extends FXStyleElementController<LabelPlacement>{
     public LabelPlacement newValue() {
         return getStyleFactory().labelPlacement();
     }
-    
+
     @Override
     public void initialize() {
-        super.initialize();   
+        super.initialize();
         group = new ToggleGroup();
         uiPointCheck.setToggleGroup(group);
         uiLineCheck.setToggleGroup(group);
-        
+
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             rebuildValue();
         };
-        
+
         uiPoint.valueProperty().addListener(changeListener);
         uiLine.valueProperty().addListener(changeListener);
     }
-    
+
     @Override
     public void setLayer(MapLayer layer) {
         super.setLayer(layer);
         uiLine.setLayer(layer);
         uiPoint.setLayer(layer);
     }
-    
+
     @Override
     protected void updateEditor(LabelPlacement styleElement) {
         uiLine.setVisible(styleElement instanceof LinePlacement);
         uiPoint.setVisible(!(styleElement instanceof LinePlacement));
-        
+
         if(styleElement instanceof LinePlacement){
             uiLineCheck.setSelected(true);
             uiPoint.valueProperty().setValue((PointPlacement)null);
@@ -115,5 +115,5 @@ public class FXLabelPlacement extends FXStyleElementController<LabelPlacement>{
             uiLine.valueProperty().setValue((LinePlacement)null);
         }
     }
-    
+
 }

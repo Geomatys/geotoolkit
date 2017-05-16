@@ -31,12 +31,12 @@ import org.geotoolkit.wcs.xml.v200.CoverageDescriptionType;
 
 
 /**
- * The gml:coverageFunction property is shifted "up" to this place in the inheritance hierarchy because it is included in both discrete and continuous coverages (i.e., all subtypes of AbstractCoverageType) and, hence, does not change syntax nor semantic in any way. It permits, however, coverages in the gmlcov:AbstractCoverage substitutionGroup to be used for either discrete and continuous coverages, in preparation for expected future elimination of this distinction. 
- * 
+ * The gml:coverageFunction property is shifted "up" to this place in the inheritance hierarchy because it is included in both discrete and continuous coverages (i.e., all subtypes of AbstractCoverageType) and, hence, does not change syntax nor semantic in any way. It permits, however, coverages in the gmlcov:AbstractCoverage substitutionGroup to be used for either discrete and continuous coverages, in preparation for expected future elimination of this distinction.
+ *
  * <p>Java class for AbstractCoverageType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractCoverageType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.wcs.xml.v200.CoverageDescriptionType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractCoverageType", propOrder = {
@@ -72,23 +72,23 @@ public class AbstractCoverageType extends org.geotoolkit.gml.xml.v321.AbstractCo
     private List<Metadata> metadata;
 
     public AbstractCoverageType() {
-        
+
     }
-    
+
     public AbstractCoverageType(CoverageDescriptionType covDesc, RangeSetType rangeSet) {
         super(covDesc, rangeSet, covDesc.getDomainSet());
         this.coverageFunction = covDesc.getCoverageFunction();
         this.rangeType        = covDesc.getRangeType();
         this.metadata         = covDesc.getMetadata();
     }
-    
+
     /**
      * Gets the value of the coverageFunction property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoverageFunctionType }
-     *     
+     *
      */
     public CoverageFunctionType getCoverageFunction() {
         return coverageFunction;
@@ -96,11 +96,11 @@ public class AbstractCoverageType extends org.geotoolkit.gml.xml.v321.AbstractCo
 
     /**
      * Sets the value of the coverageFunction property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoverageFunctionType }
-     *     
+     *
      */
     public void setCoverageFunction(CoverageFunctionType value) {
         this.coverageFunction = value;
@@ -108,11 +108,11 @@ public class AbstractCoverageType extends org.geotoolkit.gml.xml.v321.AbstractCo
 
     /**
      * Gets the value of the rangeType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataRecordPropertyType }
-     *     
+     *
      */
     public DataRecordPropertyType getRangeType() {
         return rangeType;
@@ -120,11 +120,11 @@ public class AbstractCoverageType extends org.geotoolkit.gml.xml.v321.AbstractCo
 
     /**
      * Sets the value of the rangeType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataRecordPropertyType }
-     *     
+     *
      */
     public void setRangeType(DataRecordPropertyType value) {
         this.rangeType = value;
@@ -132,7 +132,7 @@ public class AbstractCoverageType extends org.geotoolkit.gml.xml.v321.AbstractCo
 
     /**
      * Gets the value of the metadata property.
-     * 
+     *
      */
     public List<Metadata> getMetadata() {
         if (metadata == null) {

@@ -29,9 +29,9 @@ import org.geotoolkit.ows.xml.AbstractKeywords;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -44,7 +44,7 @@ import org.geotoolkit.ows.xml.AbstractKeywords;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -64,16 +64,16 @@ public class Keywords implements AbstractKeywords {
      * Empty constructor used by JAXB.
      */
     Keywords(){
-        
+
     }
-    
+
     /**
      * Build a new list of keywords.
      */
     public Keywords(final List<String> keyword) {
         this.keyword = keyword;
     }
-    
+
     /**
      * Build a new list of keywords with the element of the list in the parameters.
      */
@@ -83,7 +83,7 @@ public class Keywords implements AbstractKeywords {
             keyword.add(word);
         }
     }
-    
+
     /**
      * Gets the value of the keyword property.
      */

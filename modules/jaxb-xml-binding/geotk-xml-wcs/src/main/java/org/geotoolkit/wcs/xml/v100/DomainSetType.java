@@ -29,12 +29,12 @@ import org.geotoolkit.wcs.xml.CoverageDomain;
 
 
 /**
- * Defines the spatial-temporal domain set of a coverage offering. The domainSet shall include a SpatialDomain (describing the spatial locations for which coverages can be requested), a TemporalDomain (describing the time instants or inter-vals for which coverages can be requested), or both. 
- * 
+ * Defines the spatial-temporal domain set of a coverage offering. The domainSet shall include a SpatialDomain (describing the spatial locations for which coverages can be requested), a TemporalDomain (describing the time instants or inter-vals for which coverages can be requested), or both.
+ *
  * <p>Java class for DomainSetType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DomainSetType">
  *   &lt;complexContent>
@@ -50,7 +50,7 @@ import org.geotoolkit.wcs.xml.CoverageDomain;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -70,9 +70,9 @@ public class DomainSetType implements CoverageDomain {
      * Empty constructor used by JAXB.
      */
     DomainSetType() {
-        
+
     }
-    
+
     /**
      * Empty constructor used by JAXB.
      */
@@ -86,7 +86,7 @@ public class DomainSetType implements CoverageDomain {
             content.add(factory.createTemporalDomain(temporalDomain));
         }
     }
-    
+
     public DomainSetType(final SpatialDomainType spatialDomain, final List<Object> times) {
         ObjectFactory factory = new ObjectFactory();
         content = new ArrayList<JAXBElement<?>>();
@@ -97,12 +97,12 @@ public class DomainSetType implements CoverageDomain {
             content.add(factory.createTemporalDomain(new TimeSequenceType(times)));
         }
     }
-    
-    
-    
+
+
+
     /**
-     * Gets the rest of the content model. 
-     * 
+     * Gets the rest of the content model.
+     *
      */
     public List<JAXBElement<?>> getContent() {
         return Collections.unmodifiableList(content);

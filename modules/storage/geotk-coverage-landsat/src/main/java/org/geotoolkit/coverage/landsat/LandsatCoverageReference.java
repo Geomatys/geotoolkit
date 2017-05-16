@@ -84,7 +84,7 @@ public class LandsatCoverageReference extends AbstractCoverageReference {
         this.metadataParser = metadataParser;
 
         final String head     = name.tip().toString();
-        final int lastIndexOf = head.lastIndexOf("-");
+        final int lastIndexOf = head.lastIndexOf('-');
         final String refName  = head.substring(lastIndexOf+1, head.length());
         switch (refName) {
             case REFLECTIVE_LABEL   : imageIndex = 0; break;

@@ -69,7 +69,7 @@ public class GxUtilities {
      * @return angles values separated by spaces.
      */
     public static String toString(final Angles angles) {
-        
+
         final StringBuilder sb = new StringBuilder();
         sb.append(angles.getHeading());
         sb.append(' ');

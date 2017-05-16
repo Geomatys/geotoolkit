@@ -23,26 +23,26 @@ import org.geotoolkit.ows.xml.AbstractCodeType;
  * @author guilhem
  */
 public interface OutputDefinition {
-    
+
     AbstractCodeType getIdentifier();
-    
+
     String getMimeType();
-    
+
     void setMimeType(String value);
-    
+
     String getEncoding();
-    
+
     void setEncoding(String value);
-    
+
     String getSchema();
-    
+
     void setSchema(final String value);
-    
+
     String getUom();
-    
+
     void setUom(final String value);
-    
+
     boolean isReference();
-    
+
     DocumentOutputDefinition asDoc();
 }

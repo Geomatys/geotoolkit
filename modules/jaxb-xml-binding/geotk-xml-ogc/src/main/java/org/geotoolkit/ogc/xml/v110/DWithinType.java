@@ -29,9 +29,9 @@ public class DWithinType extends DistanceBufferType implements DWithin {
      * An empty constructor used by JAXB
      */
     public DWithinType() {
-        
+
     }
-    
+
     /**
      * Build a new DWithin Filter
      */
@@ -42,7 +42,7 @@ public class DWithinType extends DistanceBufferType implements DWithin {
     public DWithinType(final DWithinType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new DWithinType(this);

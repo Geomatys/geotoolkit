@@ -28,11 +28,11 @@ import org.geotoolkit.ows.xml.AbstractContact;
  * For OWS use in the service metadata document, the
  *       optional hoursOfService and contactInstructions elements were retained,
  *       as possibly being useful in the ServiceProvider section.
- * 
+ *
  * <p>Java class for ContactType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ContactType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.ows.xml.AbstractContact;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ContactType", propOrder = {
@@ -99,14 +99,14 @@ public class ContactType implements AbstractContact {
         this.hoursOfService      = hoursOfService;
         this.contactInstructions = contactInstructions;
     }
-    
+
     /**
      * Gets the value of the phone property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TelephoneType }
-     *     
+     *
      */
     @Override
     public TelephoneType getPhone() {
@@ -115,11 +115,11 @@ public class ContactType implements AbstractContact {
 
     /**
      * Sets the value of the phone property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TelephoneType }
-     *     
+     *
      */
     public void setPhone(TelephoneType value) {
         this.phone = value;
@@ -127,11 +127,11 @@ public class ContactType implements AbstractContact {
 
     /**
      * Gets the value of the address property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AddressType }
-     *     
+     *
      */
     @Override
     public AddressType getAddress() {
@@ -140,11 +140,11 @@ public class ContactType implements AbstractContact {
 
     /**
      * Sets the value of the address property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AddressType }
-     *     
+     *
      */
     public void setAddress(AddressType value) {
         this.address = value;
@@ -152,11 +152,11 @@ public class ContactType implements AbstractContact {
 
     /**
      * Gets the value of the onlineResource property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OnlineResourceType }
-     *     
+     *
      */
     @Override
     public OnlineResourceType getOnlineResource() {
@@ -165,11 +165,11 @@ public class ContactType implements AbstractContact {
 
     /**
      * Sets the value of the onlineResource property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OnlineResourceType }
-     *     
+     *
      */
     public void setOnlineResource(OnlineResourceType value) {
         this.onlineResource = value;
@@ -177,11 +177,11 @@ public class ContactType implements AbstractContact {
 
     /**
      * Gets the value of the hoursOfService property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getHoursOfService() {
@@ -190,11 +190,11 @@ public class ContactType implements AbstractContact {
 
     /**
      * Sets the value of the hoursOfService property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHoursOfService(String value) {
         this.hoursOfService = value;
@@ -202,11 +202,11 @@ public class ContactType implements AbstractContact {
 
     /**
      * Gets the value of the contactInstructions property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getContactInstructions() {
@@ -215,11 +215,11 @@ public class ContactType implements AbstractContact {
 
     /**
      * Sets the value of the contactInstructions property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setContactInstructions(String value) {
         this.contactInstructions = value;

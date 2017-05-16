@@ -38,7 +38,7 @@ import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
 
 /**
  * Wrapper for a Shapefile polygon.
- * 
+ *
  * @author aaime
  * @author Ian Schneider
  * @author Johann Sorel (Geomatys)
@@ -138,7 +138,7 @@ public class PolygonHandler extends AbstractShapeHandler {
         final LinearRing shell = GEOMETRY_FACTORY.createLinearRing(new ShapeCoordinateSequence2D(array, 5));
         return GEOMETRY_FACTORY.createMultiPolygon(new Polygon[] {GEOMETRY_FACTORY.createPolygon(shell, null)});
     }
-    
+
     @Override
     public Object read(final ByteBuffer buffer, final ShapeType type) {
         if (type == ShapeType.NULL) {
@@ -195,7 +195,7 @@ public class PolygonHandler extends AbstractShapeHandler {
                 }
                 coordIndex++;
             }
-            
+
             JTS.ensureClosed(points);
 
             final LinearRing ring = GEOMETRY_FACTORY.createLinearRing(points);
@@ -355,7 +355,7 @@ public class PolygonHandler extends AbstractShapeHandler {
         if (shellSize == 0) {
             for (int i=0; i<holeSize; i++) {
                 final LinearRing hole = holes.get(i);
-                polygons[i] = GEOMETRY_FACTORY.createPolygon(JTS.reverseRing(hole), 
+                polygons[i] = GEOMETRY_FACTORY.createPolygon(JTS.reverseRing(hole),
                         new LinearRing[0]);
             }
         }
@@ -365,7 +365,7 @@ public class PolygonHandler extends AbstractShapeHandler {
 
     /**
      * <b>Package private for testing</b>
-     * 
+     *
      * @param shells
      * @param holes
      */
@@ -443,19 +443,19 @@ public class PolygonHandler extends AbstractShapeHandler {
     @Override
     public void write(final ByteBuffer buffer, final Object geometry) {
         final MultiPolygon multi;
-        
+
         if (geometry instanceof MultiPolygon) {
           multi = (MultiPolygon) geometry;
         } else {
           multi = GEOMETRY_FACTORY.createMultiPolygon(new Polygon[] { (Polygon) geometry });
         }
-        
+
         final Envelope box = multi.getEnvelopeInternal();
         buffer.putDouble(box.getMinX());
         buffer.putDouble(box.getMinY());
         buffer.putDouble(box.getMaxX());
         buffer.putDouble(box.getMaxY());
-        
+
         //need to find the total number of rings and points
         final int nrings;
         final CoordinateSequence []coordinates;
@@ -470,34 +470,34 @@ public class PolygonHandler extends AbstractShapeHandler {
         }
         coordinates = (CoordinateSequence[])allCoords.toArray(new CoordinateSequence[allCoords.size()]);
         nrings = coordinates.length;
-        
-        final int npoints = multi.getNumPoints();        
+
+        final int npoints = multi.getNumPoints();
         buffer.putInt(nrings);
         buffer.putInt(npoints);
-        
+
         int count = 0;
         for (int t = 0; t < nrings; t++) {
           buffer.putInt(count);
           count = count + coordinates[t].size();
         }
-        
+
         final double[] zExtreame = {Double.NaN, Double.NaN};
-        
+
         //write out points here!.. and gather up min and max z values
         for (int ringN = 0; ringN < nrings; ringN++) {
             final CoordinateSequence coords = coordinates[ringN];
-            
+
             JTS.zMinMax(coords, zExtreame);
-            
+
             final int seqSize = coords.size();
             for(int coordN = 0; coordN < seqSize; coordN++){
                 buffer.putDouble(coords.getOrdinate(coordN, 0));
                 buffer.putDouble(coords.getOrdinate(coordN, 1));
             }
         }
-        
+
         if (shapeType == ShapeType.POLYGONZ) {
-          //z      
+          //z
           if (Double.isNaN(zExtreame[0])) {
             buffer.putDouble(0.0);
             buffer.putDouble(0.0);
@@ -505,10 +505,10 @@ public class PolygonHandler extends AbstractShapeHandler {
             buffer.putDouble(zExtreame[0]);
             buffer.putDouble(zExtreame[1]);
           }
-          
+
           for (int ringN = 0; ringN < nrings; ringN++) {
               final CoordinateSequence coords = coordinates[ringN];
-          
+
               final int seqSize = coords.size();
               for (int coordN = 0; coordN < seqSize; coordN++) {
                   final double z = coords.getOrdinate(coordN, 2);
@@ -520,12 +520,12 @@ public class PolygonHandler extends AbstractShapeHandler {
               }
           }
         }
-        
+
         if (shapeType == ShapeType.POLYGONM || shapeType == ShapeType.POLYGONZ) {
           //m
           buffer.putDouble(-10E40);
           buffer.putDouble(-10E40);
-          
+
           for (int t = 0; t < npoints; t++) {
             buffer.putDouble(-10E40);
           }

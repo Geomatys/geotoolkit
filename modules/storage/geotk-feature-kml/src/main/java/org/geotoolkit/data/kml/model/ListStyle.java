@@ -72,7 +72,7 @@ public interface ListStyle extends AbstractSubStyle {
      * @return
      */
     int getMaxSnippetLines();
-    
+
     /**
      *
      * @param listItem

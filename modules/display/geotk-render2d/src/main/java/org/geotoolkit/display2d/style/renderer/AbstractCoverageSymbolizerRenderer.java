@@ -73,6 +73,9 @@ import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
+import static org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer.LOGGER;
+import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.extractQuery;
+import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.fixEnvelopeWithQuery;
 
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
@@ -90,8 +93,6 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.utility.parameter.ParametersExt;
 
-import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.extractQuery;
-import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.fixEnvelopeWithQuery;
 
 /**
  * Abstract renderer for symbolizer which only apply on coverages data.

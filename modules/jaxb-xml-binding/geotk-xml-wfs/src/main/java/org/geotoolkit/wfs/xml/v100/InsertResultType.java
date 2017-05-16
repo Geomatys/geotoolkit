@@ -29,9 +29,9 @@ import org.geotoolkit.ogc.xml.v100.FeatureIdType;
 
 /**
  * <p>Java class for InsertResultType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InsertResultType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.ogc.xml.v100.FeatureIdType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InsertResultType", propOrder = {
@@ -61,7 +61,7 @@ public class InsertResultType {
     public InsertResultType() {
 
     }
-    
+
     public InsertResultType(final List<FeatureIdType> featureId, final String handle) {
         this.featureId = featureId;
         this.handle    = handle;
@@ -71,10 +71,10 @@ public class InsertResultType {
         this.featureId = Arrays.asList(featureId);
         this.handle    = handle;
     }
-    
+
     /**
      * Gets the value of the featureId property.
-     * 
+     *
      */
     public List<FeatureIdType> getFeatureId() {
         if (featureId == null) {
@@ -85,11 +85,11 @@ public class InsertResultType {
 
     /**
      * Gets the value of the handle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHandle() {
         return handle;
@@ -97,11 +97,11 @@ public class InsertResultType {
 
     /**
      * Sets the value of the handle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHandle(String value) {
         this.handle = value;

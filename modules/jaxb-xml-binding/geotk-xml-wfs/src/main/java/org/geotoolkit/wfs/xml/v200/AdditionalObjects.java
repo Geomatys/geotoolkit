@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -62,11 +62,11 @@ public class AdditionalObjects {
 
     /**
      * Gets the value of the valueCollection property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ValueCollectionType }
-     *     
+     *
      */
     public ValueCollectionType getValueCollection() {
         return valueCollection;
@@ -74,11 +74,11 @@ public class AdditionalObjects {
 
     /**
      * Sets the value of the valueCollection property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ValueCollectionType }
-     *     
+     *
      */
     public void setValueCollection(ValueCollectionType value) {
         this.valueCollection = value;
@@ -86,12 +86,12 @@ public class AdditionalObjects {
 
     /**
      * Gets the value of the simpleFeatureCollection property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link FeatureCollectionType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SimpleFeatureCollectionType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends SimpleFeatureCollectionType> getSimpleFeatureCollection() {
         return simpleFeatureCollection;
@@ -99,12 +99,12 @@ public class AdditionalObjects {
 
     /**
      * Sets the value of the simpleFeatureCollection property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link FeatureCollectionType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SimpleFeatureCollectionType }{@code >}
-     *     
+     *
      */
     public void setSimpleFeatureCollection(JAXBElement<? extends SimpleFeatureCollectionType> value) {
         this.simpleFeatureCollection = ((JAXBElement<? extends SimpleFeatureCollectionType> ) value);

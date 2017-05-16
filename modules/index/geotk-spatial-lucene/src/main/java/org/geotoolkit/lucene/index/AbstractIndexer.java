@@ -75,7 +75,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     protected static final String LOCK_SINGLE_MSG      = "LockObtainException while indexing document: ";
     protected static final String LOCK_MULTI_MSG       = "LockObtainException while indexing documents.";
     protected static final String IO_SINGLE_MSG        = "IOException while indexing document: ";
-    
+
     /**
      * A flag use in child constructor.
      */
@@ -95,7 +95,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * Map of fieldName / Number type.
      */
     private final Map<String, String> numericFields = new HashMap<>();
-    
+
     /**
      * Build a new Indexer witch create an index in the specified directory,
      * with the specified analyzer.
@@ -179,7 +179,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             }
         }
     }
-    
+
     protected abstract Collection<String> getAllIdentifiers() throws IndexingException;
 
     protected abstract Iterator<String> getIdentifierIterator() throws IndexingException;
@@ -187,9 +187,9 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     protected abstract Iterator<E> getEntryIterator() throws IndexingException;
 
     protected abstract boolean useEntryIterator();
-    
+
     protected abstract E getEntry(final String identifier) throws IndexingException;
-    
+
     /**
      * Create a new Index with the specified list of object.
      *
@@ -198,14 +198,14 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public void createIndex(final List<E> toIndex) throws IndexingException {
         LOGGER.log(logLevel, "Creating lucene index for please wait...");
-        
+
         final long time = System.currentTimeMillis();
         int nbEntries = 0;
         try {
             final IndexWriterConfig conf = new IndexWriterConfig(analyzer);
             final IndexWriter writer     = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
             final String serviceID       = getServiceID();
-            
+
             resetTree();
             nbEntries = toIndex.size();
             for (E entry : toIndex) {
@@ -222,7 +222,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
 
             // we store the numeric fields in a properties file int the index directory
             storeNumericFieldsFile();
-            
+
         } catch (IOException | StoreIndexException | SQLException ex) {
             LOGGER.log(Level.WARNING, IO_SINGLE_MSG, ex);
         }
@@ -252,11 +252,11 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
                 final Iterator<E> entries = getEntryIterator();
                 while (entries.hasNext()) {
                     if (!stopIndexing && !indexationToStop.contains(serviceID)) {
-                        
+
                         final E entry = entries.next();
                         indexDocument(writer, entry);
                         nbEntries++;
-                        
+
                     } else {
                          LOGGER.info("Index creation stopped after " + (System.currentTimeMillis() - time) + " ms for service:" + serviceID);
                          stopIndexation(writer, serviceID);
@@ -290,7 +290,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             }
             // writer.optimize(); no longer justified
             writer.close();
-            
+
             // we store the numeric fields in a properties file int the index directory
             storeNumericFieldsFile();
 
@@ -301,7 +301,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         LOGGER.log(logLevel, "Index creation process in " + (System.currentTimeMillis() - time) + " ms\n documents indexed: " + nbEntries + ".");
     }
 
-    
+
    /**
      * Index a document from the specified object with the specified index writer.
      * Used when indexing in line many document.
@@ -346,19 +346,19 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
 
     /**
      * Return the identifier of the metadata
-     * 
+     *
      * @param metadata
      * @return
      */
     protected abstract String getIdentifier(E metadata);
-    
+
     /**
      * This method stop all the current indexation running
      */
     public static void stopIndexation() {
         stopIndexing = true;
     }
-    
+
     private void stopIndexation(final IndexWriter writer, final String serviceID) throws IOException {
         // writer.optimize(); no longer justified
         writer.close();
@@ -370,7 +370,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             stopIndexing = false;
         }
     }
-    
+
     /**
      * Store the numeric fields in a properties file int the index directory
      */
@@ -384,21 +384,21 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Unable to store the numeric fields properties file.", ex);
         }
-        
+
     }
-    
+
     /**
      * Add a numeric fields to the current list.
-     * 
+     *
      * @param fieldName
-     * @param numberType 
+     * @param numberType
      */
     protected void addNumericField(final String fieldName, final Character numberType) {
         if (numericFields.get(fieldName) == null) {
             numericFields.put(fieldName, numberType.toString());
         }
     }
-    
+
     /**
      * This method remove index of lucene a document identified by identifier.
      *
@@ -427,7 +427,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
                     rTree.flush();
                 }
             }
-            
+
             final IndexWriterConfig config = new IndexWriterConfig(analyzer);
             final IndexWriter writer       = new IndexWriter(dir, config);
             writer.deleteDocuments(query);
@@ -435,7 +435,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
 
             writer.commit();
             writer.close();
-            
+
         } catch (CorruptIndexException ex) {
             LOGGER.log(Level.WARNING, "CorruptIndexException while indexing document: " + ex.getMessage(), ex);
         } catch (IOException ex) {
@@ -497,7 +497,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         doc.add(new StoredField(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(geom)));
         return namedBound;
     }
-    
+
     /**
      * Free the resources.
      */
@@ -520,7 +520,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
 
     /**
      * Return the service ID of this index or "" if there is not explicit service ID.
-     * 
+     *
      * @return the service ID of this index or "" if there is not explicit service ID.
      */
     protected String getServiceID() {

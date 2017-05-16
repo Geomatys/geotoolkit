@@ -26,11 +26,11 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * Extract end geometry point.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class EndPointFunction extends AbstractFunction {
-    
+
     public EndPointFunction(final Expression expr1) {
         super(GeometryFunctionFactory.ENDPOINT, new Expression[] {expr1}, null);
     }
@@ -44,7 +44,7 @@ public class EndPointFunction extends AbstractFunction {
         } catch (Exception e){
             throw new IllegalArgumentException("Invalid function parameter."+parameters.get(0));
         }
-        
+
         if(geom==null) return null;
         final Point pt = getPoint(geom);
         if(pt==null) return null;
@@ -52,7 +52,7 @@ public class EndPointFunction extends AbstractFunction {
         pt.setUserData(geom.getUserData());
         return pt;
     }
-    
+
     private static Point getPoint(Geometry geom){
         if(geom instanceof LineString){
             return ((LineString)geom).getEndPoint();
@@ -71,5 +71,5 @@ public class EndPointFunction extends AbstractFunction {
             return null;
         }
     }
-    
+
 }

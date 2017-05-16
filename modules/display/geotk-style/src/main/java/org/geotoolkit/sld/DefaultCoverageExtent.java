@@ -29,7 +29,7 @@ import org.opengis.sld.SLDVisitor;
 
 /**
  * Default imumutable coverage extent, thread safe.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -37,22 +37,22 @@ class DefaultCoverageExtent implements CoverageExtent{
 
     private final String timePeriod;
     private final List<RangeAxis> ranges;
-    
+
     DefaultCoverageExtent(final String timeperiod, final List<RangeAxis> ranges){
         if(timeperiod != null && ranges != null){
             throw new IllegalArgumentException("You can not have a timeperiod and range axis, only one allow");
         }
         this.timePeriod = timeperiod;
-        
+
         if(ranges != null){
             List<RangeAxis> copy = new ArrayList<RangeAxis>(ranges);
             this.ranges = Collections.unmodifiableList(copy);
         }else{
             this.ranges = null;
         }
-        
+
     }
-    
+
     @Override
     public List<RangeAxis> rangeAxis() {
         return ranges;
@@ -118,5 +118,5 @@ class DefaultCoverageExtent implements CoverageExtent{
         builder.append(']');
         return builder.toString();
     }
-    
+
 }

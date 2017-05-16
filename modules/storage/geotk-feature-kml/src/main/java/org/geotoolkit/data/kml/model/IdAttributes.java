@@ -44,7 +44,7 @@ public interface IdAttributes {
     String getTargetId();
 
     /**
-     * 
+     *
      * @param id
      */
     void setId(String id);

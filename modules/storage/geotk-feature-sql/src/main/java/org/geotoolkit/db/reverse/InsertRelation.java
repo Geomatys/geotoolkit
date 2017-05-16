@@ -22,13 +22,13 @@ import org.opengis.feature.Feature;
 /**
  * When inserting a complex feature in base. it must be divided in smaller elements.
  * Those flat insertions and relations are represented by this class.
- * 
+ *
  * @author Johann Sorel
  */
 public final class InsertRelation {
-    
+
     public Feature parent;
     public Feature child;
     public RelationMetaModel relation;
-    
+
 }

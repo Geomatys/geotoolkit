@@ -27,12 +27,12 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * This complexType is included as a convenience for schema authors who need to define a root or container element for all of the DC elements.
- *       
- * 
+ *
+ *
  * <p>Java class for elementContainer complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="elementContainer">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,7 +59,7 @@ public class ElementContainer {
 
     /**
      * Gets the value of the dcElement property.
-     * 
+     *
      */
     public List<JAXBElement<SimpleLiteral>> getDCElement() {
         if (dcElement == null) {

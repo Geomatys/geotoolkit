@@ -30,12 +30,12 @@ import org.geotoolkit.wfs.xml.BaseRequest;
 
 /**
  * XML encoded WFS operation request base, for all operations except GetCapabilities.
- *          
- * 
+ *
+ *
  * <p>Java class for BaseRequestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BaseRequestType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.wfs.xml.BaseRequest;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,7 +69,7 @@ public abstract class BaseRequestType implements BaseRequest {
     private String version;
     @XmlAttribute
     private String handle;
-    
+
     @XmlTransient
     private Map<String, String> prefixMapping;
 
@@ -85,11 +85,11 @@ public abstract class BaseRequestType implements BaseRequest {
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getService() {
         if (service == null) {
@@ -101,11 +101,11 @@ public abstract class BaseRequestType implements BaseRequest {
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setService(final String value) {
         this.service = value;
@@ -113,26 +113,26 @@ public abstract class BaseRequestType implements BaseRequest {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public Version getVersion() {
         if (version != null) {
             return new Version(version);
-        } 
+        }
         return null;
     }
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(final String value) {
         this.version = value;
@@ -140,11 +140,11 @@ public abstract class BaseRequestType implements BaseRequest {
 
     /**
      * Gets the value of the handle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHandle() {
         return handle;
@@ -152,16 +152,16 @@ public abstract class BaseRequestType implements BaseRequest {
 
     /**
      * Sets the value of the handle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHandle(final String value) {
         this.handle = value;
     }
-    
+
     /**
      * @return the prefixMapping
      */
@@ -175,7 +175,7 @@ public abstract class BaseRequestType implements BaseRequest {
     public void setPrefixMapping(Map<String, String> prefixMapping) {
         this.prefixMapping = prefixMapping;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']');

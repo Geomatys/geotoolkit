@@ -25,12 +25,12 @@ import org.geotoolkit.wcs.xml.Output;
 
 
 /**
- * Asks for the GetCoverage response to be expressed in a particular CRS and encoded in a particular format. Can also ask for the response coverage to be stored remotely from the client at a URL, instead of being returned in the operation response. 
- * 
+ * Asks for the GetCoverage response to be expressed in a particular CRS and encoded in a particular format. Can also ask for the response coverage to be stored remotely from the client at a URL, instead of being returned in the operation response.
+ *
  * <p>Java class for OutputType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OutputType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.wcs.xml.Output;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,9 +65,9 @@ public class OutputType implements Output {
      * Empty constructor used by JAXB
      */
     OutputType(){
-        
+
     }
-    
+
     /**
      * Build a new Output for a getCoevrage request.
      */
@@ -76,12 +76,12 @@ public class OutputType implements Output {
         this.gridCRS = gridCRS;
         this.format  = format;
     }
-    
+
     /**
      * Optional definition of the GridCRS in which the GetCoverage response shall be expressed.
      * When this GridCRS is not included,
-     * the output shall be in the ImageCRS of the stored image, 
-     * as identified in the CoverageDescription. 
+     * the output shall be in the ImageCRS of the stored image,
+     * as identified in the CoverageDescription.
      */
     public GridCrsType getGridCRS() {
         return gridCRS;

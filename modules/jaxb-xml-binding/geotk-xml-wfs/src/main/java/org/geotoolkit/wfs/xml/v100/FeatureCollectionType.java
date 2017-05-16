@@ -27,17 +27,17 @@ import org.geotoolkit.wfs.xml.WFSResponse;
 
 
 /**
- * This type defines a container for the response to a 
- * GetFeature or GetFeatureWithLock request.  
+ * This type defines a container for the response to a
+ * GetFeature or GetFeatureWithLock request.
  * If the request is GetFeatureWithLock, the lockId attribute
  * must be populated.
  * The lockId attribute can otherwise be safely ignored.
- *          
- * 
+ *
+ *
  * <p>Java class for FeatureCollectionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FeatureCollectionType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.wfs.xml.WFSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureCollectionType")
@@ -72,11 +72,11 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType  implem
 
     /**
      * Gets the value of the lockId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLockId() {
         return lockId;
@@ -84,11 +84,11 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType  implem
 
     /**
      * Sets the value of the lockId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLockId(String value) {
         this.lockId = value;

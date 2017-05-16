@@ -28,9 +28,9 @@ import org.geotoolkit.swes.xml.InsertSensorResponse;
 
 /**
  * <p>Java class for InsertSensorResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InsertSensorResponseType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.swes.xml.InsertSensorResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InsertSensorResponseType", propOrder = {
@@ -62,21 +62,21 @@ public class InsertSensorResponseType extends ExtensibleResponseType implements 
     private String assignedOffering;
 
     public InsertSensorResponseType() {
-        
+
     }
-    
+
     public InsertSensorResponseType(final String assignedProcedure, final String assignedOffering) {
         this.assignedProcedure = assignedProcedure;
         this.assignedOffering  = assignedOffering;
     }
-    
+
     /**
      * Gets the value of the assignedProcedure property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getAssignedProcedure() {
@@ -85,11 +85,11 @@ public class InsertSensorResponseType extends ExtensibleResponseType implements 
 
     /**
      * Sets the value of the assignedProcedure property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAssignedProcedure(String value) {
         this.assignedProcedure = value;
@@ -97,11 +97,11 @@ public class InsertSensorResponseType extends ExtensibleResponseType implements 
 
     /**
      * Gets the value of the assignedOffering property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getAssignedOffering() {
@@ -110,11 +110,11 @@ public class InsertSensorResponseType extends ExtensibleResponseType implements 
 
     /**
      * Sets the value of the assignedOffering property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAssignedOffering(String value) {
         this.assignedOffering = value;

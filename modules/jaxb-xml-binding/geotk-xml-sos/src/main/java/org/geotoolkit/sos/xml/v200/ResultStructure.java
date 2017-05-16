@@ -26,10 +26,10 @@ import org.geotoolkit.swe.xml.v200.AbstractDataComponentType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
 * <p>The following schema fragment specifies the expected content contained
  * within this class.
- * 
+ *
 * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,7 +41,7 @@ import org.geotoolkit.swe.xml.v200.AbstractDataComponentType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
 * @author Guilhem Legal (Geomatys)
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,7 +63,7 @@ public class ResultStructure {
     /**
      * Gets the value of the abstractDataComponent property.
      *
-     * @return possible object is      
+     * @return possible object is
      *     {@code <}{@link BooleanType }{@code >}
      *     {@code <}{@link VectorType }{@code >}
      *     {@code <}{@link TimeType }{@code >}

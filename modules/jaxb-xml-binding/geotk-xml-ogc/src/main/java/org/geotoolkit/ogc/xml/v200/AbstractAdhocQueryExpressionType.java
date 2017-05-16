@@ -104,7 +104,7 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
                 } else {
                     throw new IllegalArgumentException("Unexpected Selection type:" + value.getClass().getName());
                 }
-                
+
             }
             if (that.abstractSortingClause != null) {
                 final Object value = that.abstractSortingClause.getValue();
@@ -114,7 +114,7 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
                 } else {
                     throw new IllegalArgumentException("Unexpected Sorting type:" + value.getClass().getName());
                 }
-                
+
             }
         }
     }
@@ -142,9 +142,9 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
         }
         return this.abstractProjectionClause;
     }
-    
+
     protected  List<JAXBElement<?>> cloneProjectionClause(List<JAXBElement<?>> toClone) {
-        throw new UnsupportedOperationException("Must be overriden in sub-class"); 
+        throw new UnsupportedOperationException("Must be overriden in sub-class");
     }
 
     public List<Object> getPropertyNames() {
@@ -260,7 +260,7 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
         }
         return this.aliases;
     }
-    
+
     public void setAliases(final List<String> aliases) {
         this.aliases = aliases;
     }

@@ -37,7 +37,7 @@ public class DefaultLink extends DefaultAbstractObject implements Link {
     private String httpQuery;
 
     /**
-     * 
+     *
      */
     public DefaultLink() {
         this.refreshMode = DEF_REFRESH_MODE;
@@ -48,7 +48,7 @@ public class DefaultLink extends DefaultAbstractObject implements Link {
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param href

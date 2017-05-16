@@ -78,7 +78,7 @@ public class DefaultLegendTemplate implements LegendTemplate {
     public float getGapSize() {
         return gap;
     }
-    
+
     public boolean displayOnlyVisibleLayers() {
         return onlyVisibleLayers;
     }

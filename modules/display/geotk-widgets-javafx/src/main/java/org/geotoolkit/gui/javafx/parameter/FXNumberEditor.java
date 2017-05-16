@@ -40,14 +40,14 @@ import org.opengis.parameter.ParameterDescriptor;
 public class FXNumberEditor extends FXValueEditor {
 
     private final Spinner spinner = new Spinner();
-    
+
     public FXNumberEditor(Spi originatingSpi) {
         super(originatingSpi);
         currentAttributeType.addListener(this::updateValueFactory);
         currentParamDesc.addListener(this::updateValueFactory);
         updateValueFactory(null, null, null);
     }
-    
+
     @Override
     public Node getComponent() {
         return spinner;
@@ -61,14 +61,14 @@ public class FXNumberEditor extends FXValueEditor {
     @Override
     protected Class getValueClass() {
         Class valueClass = super.getValueClass();
-        if (valueClass.isPrimitive()) 
+        if (valueClass.isPrimitive())
             return Numbers.primitiveToWrapper(valueClass);
-        else if (Number.class.isAssignableFrom(valueClass)) 
+        else if (Number.class.isAssignableFrom(valueClass))
             return valueClass;
         else
             return Double.class;
     }
-    
+
     /**
      * Update spinner configuration according to given descriptor/ type.
      * @param observable Not used
@@ -85,11 +85,11 @@ public class FXNumberEditor extends FXValueEditor {
             minValue = desc.getMinimumValue();
             maxValue = desc.getMaximumValue();
             valueList = desc.getValidValues();
-            
+
         } else if (newValue instanceof AttributeType) {
             final AttributeType aType = (AttributeType) newValue;
             valueList = extractChoices(aType);
-            // TODO : extract min and max 
+            // TODO : extract min and max
             minValue = null;
             maxValue = null;
         } else {
@@ -97,11 +97,11 @@ public class FXNumberEditor extends FXValueEditor {
             maxValue = null;
             valueList = null;
         }
-        
+
         final SpinnerValueFactory factory;
         if (valueList != null && !valueList.isEmpty()) {
             factory = new SpinnerValueFactory.ListSpinnerValueFactory(FXCollections.observableArrayList(valueList));
-            
+
         } else if (Float.class.isAssignableFrom(valueClass)) {
             Float minF = (minValue == null? Float.NaN : ObjectConverters.convert(minValue, Float.class));
             Float maxF = (maxValue == null? Float.NaN : ObjectConverters.convert(maxValue, Float.class));
@@ -115,7 +115,7 @@ public class FXNumberEditor extends FXValueEditor {
             Integer maxI = (maxValue == null? Integer.MAX_VALUE : ObjectConverters.convert(maxValue, Integer.class));
             factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minI, maxI, 0);
         }
-        
+
         /* We try to get a converter to allow user to type text in the spinner.
          * If we fail at obtaining one, the spinner will not be editable.
          */
@@ -138,13 +138,13 @@ public class FXNumberEditor extends FXValueEditor {
             Loggers.JAVAFX.log(Level.FINE, null, e);
             spinner.setEditable(false);
         }
-        
+
         spinner.setValueFactory(factory);
     }
-    
-    
+
+
     public static final class Spi extends FXValueEditorSpi {
-    
+
         @Override
         public boolean canHandle(Class binding) {
             return Number.class.isAssignableFrom(binding)
@@ -155,10 +155,10 @@ public class FXNumberEditor extends FXValueEditor {
                     || float.class.equals(binding)
                     || double.class.equals(binding);
         }
-        
+
         @Override
         public FXValueEditor createEditor() {
             return new FXNumberEditor(this);
         }
-    }    
+    }
 }

@@ -33,16 +33,16 @@ import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 
 
 /**
- * 
+ *
  * This type defines a brief representation of the common record
  * format.  It extends AbstractRecordType to include only the
  * dc:identifier and dc:type properties.
- *          
- * 
+ *
+ *
  * <p>Java class for BriefRecordType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BriefRecordType">
  *   &lt;complexContent>
@@ -57,8 +57,8 @@ import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -85,29 +85,29 @@ public class BriefRecordType extends AbstractRecordType {
      */
     BriefRecordType() {
     }
-    
+
     /**
      * Build a new brief record.
-     * 
+     *
      * @param identifier
      * @param title
      * @param type
      * @param bbox
      */
     public BriefRecordType(SimpleLiteral identifier, SimpleLiteral title, final SimpleLiteral type, final List<BoundingBoxType> bboxes) {
-        
+
         if (identifier != null) {
             this.identifier = new ArrayList<>();
             this.identifier.add(identifier);
         }
-        
+
         if (title != null) {
             this.title = new ArrayList<>();
             this.title.add(title);
         }
-        
+
         this.type = type;
-        
+
         if (bboxes != null) {
             this.boundingBox = new ArrayList<>();
             final org.geotoolkit.ows.xml.v100.ObjectFactory owsFactory = new org.geotoolkit.ows.xml.v100.ObjectFactory();
@@ -147,7 +147,7 @@ public class BriefRecordType extends AbstractRecordType {
             }
         }
     }
-    
+
     /**
      * Gets the value of the identifier property.
      * (unmodifiable)

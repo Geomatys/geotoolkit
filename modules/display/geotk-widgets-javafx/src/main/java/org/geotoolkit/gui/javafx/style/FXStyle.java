@@ -33,20 +33,20 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel (Geomatys)
  */
 public class FXStyle extends FXStyleElementController<MutableStyle> {
-    
+
     @FXML
     protected TextField uiName;
-    
+
     @FXML
     protected TextField uiTitle;
-    
+
     @FXML
     protected TextField uiAbstract;
 
     @FXML
     protected CheckBox uiDefault;
 
-    
+
     @Override
     public Class<MutableStyle> getEditedClass() {
         return MutableStyle.class;
@@ -56,11 +56,11 @@ public class FXStyle extends FXStyleElementController<MutableStyle> {
     public MutableStyle newValue() {
         return getStyleFactory().style();
     }
-    
+
     @Override
     public void initialize() {
         super.initialize();
-        
+
         uiName.setOnKeyReleased((KeyEvent event) -> {
             value.get().setName(uiName.getText());
         });
@@ -80,7 +80,7 @@ public class FXStyle extends FXStyleElementController<MutableStyle> {
             value.get().setDefault(uiDefault.isSelected());
         });
     }
-    
+
     @Override
     protected void updateEditor(MutableStyle styleElement) {
         final Description desc = value.get().getDescription();
@@ -89,5 +89,5 @@ public class FXStyle extends FXStyleElementController<MutableStyle> {
         uiName.setText(value.get().getName());
         uiDefault.setSelected(value.get().isDefault());
     }
-    
+
 }

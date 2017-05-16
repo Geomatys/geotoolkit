@@ -36,9 +36,9 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -106,7 +106,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
             }
         }
     }
-    
+
     public QuantityRange(final UomPropertyType uom, final List<Double> value) {
         this.uom   = uom;
         this.value = value;
@@ -143,7 +143,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
 
     /**
      * Gets the value of the quality property.
-     * 
+     *
      */
     @Override
     public List<QualityPropertyType> getQuality() {
@@ -165,10 +165,10 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
     public void setQuality(final List<QualityPropertyType> quality) {
         this.quality = quality;
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      */
     @Override
     public List<Double> getValue() {
@@ -206,7 +206,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
 
     /**
      * Sets the value of the referenceFrame property.
-     * 
+     *
      */
     public void setReferenceFrame(final String value) {
         this.referenceFrame = value;

@@ -38,7 +38,7 @@ public class DefaultPostalRoute implements PostalRoute {
     }
 
     /**
-     * 
+     *
      * @param addressLines
      * @param localisation
      * @param postBox

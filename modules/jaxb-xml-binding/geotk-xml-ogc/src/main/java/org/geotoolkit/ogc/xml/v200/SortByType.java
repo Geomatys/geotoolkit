@@ -29,9 +29,9 @@ import org.geotoolkit.ogc.xml.SortBy;
 
 /**
  * <p>Java class for SortByType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SortByType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.ogc.xml.SortBy;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SortByType", propOrder = {
@@ -59,19 +59,19 @@ public class SortByType implements SortBy {
      * An empty constructor used by JAXB
      */
     public SortByType() {
-        
+
     }
-    
+
     /**
      * Build a new sort by list.
      */
     public SortByType(final List<SortPropertyType> sortProperty) {
         this.sortProperty = sortProperty;
     }
-    
+
     /**
      * Gets the value of the sortProperty property.
-     * 
+     *
      * {@link SortPropertyType }
      */
     @Override

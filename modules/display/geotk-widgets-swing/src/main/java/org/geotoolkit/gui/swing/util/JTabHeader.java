@@ -6,21 +6,21 @@ import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
 import java.awt.event.*;
 import org.apache.sis.util.ArgumentChecks;
- 
+
 /**
  * Closeable tab header.
  */
 public class JTabHeader extends JPanel {
-        
+
     private final JTabbedPane pane;
- 
+
     public JTabHeader(final JTabbedPane pane, ActionListener closeAction) {
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
         setOpaque(false);
-        
+
         ArgumentChecks.ensureNonNull("tabpane", pane);
         this.pane = pane;
-         
+
         //make JLabel read titles from JTabbedPane
         final JLabel label = new JLabel() {
             public String getText() {
@@ -31,7 +31,7 @@ public class JTabHeader extends JPanel {
                 return null;
             }
         };
-         
+
         add(label);
         //add more space between the label and the button
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
@@ -40,13 +40,13 @@ public class JTabHeader extends JPanel {
         add(button);
         //add more space to the top of the component
         setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
-        
+
         if(closeAction != null){
             button.addActionListener(closeAction);
         }
-        
+
     }
-    
+
     private class TabButton extends JButton implements ActionListener {
         public TabButton() {
             int size = 17;
@@ -67,18 +67,18 @@ public class JTabHeader extends JPanel {
             //Close the proper tab by clicking the button
             addActionListener(this);
         }
- 
+
         public void actionPerformed(ActionEvent e) {
             int i = pane.indexOfTabComponent(JTabHeader.this);
             if (i != -1) {
                 pane.remove(i);
             }
         }
- 
+
         //we don't want to update UI for this button
         public void updateUI() {
         }
- 
+
         //paint the cross
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -98,7 +98,7 @@ public class JTabHeader extends JPanel {
             g2.dispose();
         }
     }
- 
+
     private final static MouseListener buttonMouseListener = new MouseAdapter() {
         public void mouseEntered(MouseEvent e) {
             Component component = e.getComponent();
@@ -107,7 +107,7 @@ public class JTabHeader extends JPanel {
                 button.setBorderPainted(true);
             }
         }
- 
+
         public void mouseExited(MouseEvent e) {
             Component component = e.getComponent();
             if (component instanceof AbstractButton) {

@@ -49,8 +49,8 @@ import org.opengis.util.InternationalString;
 
 /**
  * All complexContent GML elements are directly or indirectly derived from this abstract supertype
- * 	to establish a hierarchy of GML types that may be distinguished from other XML types by their ancestry.
- * 	Elements in this hierarchy may have an ID and are thus referenceable.
+ *  to establish a hierarchy of GML types that may be distinguished from other XML types by their ancestry.
+ *  Elements in this hierarchy may have an ID and are thus referenceable.
  *
  * <p>Java class for AbstractGMLType complex type.
  *

@@ -23,7 +23,7 @@ import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.junit.Before;
 
 public abstract class FIDTestCase extends AbstractTestCaseSupport {
-    
+
     protected final String TYPE_NAME = "archsites";
 
     protected File backshp;
@@ -38,13 +38,13 @@ public abstract class FIDTestCase extends AbstractTestCaseSupport {
 
     @Before
     public void setUp() throws Exception {
-        
+
         backshp = copyShapefiles("shapes/" + TYPE_NAME + ".shp");
 
         backdbf = sibling(backshp, "dbf");
         backshx = sibling(backshp, "shx");
         backprj =  sibling(backshp, "prj");
-        backqix =  sibling(backshp, "qix");        
+        backqix =  sibling(backshp, "qix");
         fixFile =  sibling(backshp, "fix");
 
         shpFiles = new ShpFiles(backshx);

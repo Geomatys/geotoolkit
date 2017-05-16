@@ -27,9 +27,9 @@ import org.opengis.temporal.TemporalObject;
 
 /**
  * <p>Java class for AbstractTimeObjectType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractTimeObjectType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import org.opengis.temporal.TemporalObject;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractTimeObjectType")
@@ -50,16 +50,16 @@ import org.opengis.temporal.TemporalObject;
 public abstract class AbstractTimeObjectType extends AbstractGMLType implements TemporalObject {
 
     public AbstractTimeObjectType() {
-        
+
     }
-    
+
     public AbstractTimeObjectType(final String id) {
         super(id);
     }
-    
+
     public AbstractTimeObjectType(final AbstractTimeObjectType that) {
         super(that);
     }
-    
+
     public abstract AbstractTimeObjectType getClone();
 }

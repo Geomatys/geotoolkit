@@ -90,7 +90,7 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint>{
                 guiX.create(),
                 guiY.create());
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiLabelX,guiLabelY};

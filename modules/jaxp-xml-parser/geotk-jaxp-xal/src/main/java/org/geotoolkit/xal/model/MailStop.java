@@ -35,14 +35,14 @@ import java.util.List;
  *  &lt;xs:anyAttribute namespace="##other"/>
  * &lt;/xs:complexType>
  * </pre>
- * 
+ *
  * @author Samuel Andrés
  * @module
  */
 public interface MailStop {
 
     /**
-     * 
+     *
      * @return
      */
     List<GenericTypedGrPostal> getAddressLines();
@@ -56,7 +56,7 @@ public interface MailStop {
 
     /**
      * <p>Number of the Mail stop. eg. 123 in MS 123.</p>
-     * 
+     *
      * @return
      */
     MailStopNumber getMailStopNumber();
@@ -86,7 +86,7 @@ public interface MailStop {
     void setMailStopNumber(MailStopNumber mailStopNumber);
 
     /**
-     * 
+     *
      * @param type
      */
     void setType(String type);

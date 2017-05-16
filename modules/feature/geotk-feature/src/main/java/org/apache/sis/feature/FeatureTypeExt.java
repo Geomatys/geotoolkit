@@ -133,7 +133,7 @@ public final class FeatureTypeExt extends Static {
     }
 
     /**
-     * 
+     *
      * @param featureType
      * @param properties
      * @return true if property list contains all feature type properties.

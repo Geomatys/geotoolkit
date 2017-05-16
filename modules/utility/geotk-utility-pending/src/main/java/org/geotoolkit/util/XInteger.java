@@ -81,7 +81,7 @@ public final class XInteger {
         if (negative) {
             if (i > 1) {
                 return result;
-            } else {	/* Only got "-" */
+            } else {    /* Only got "-" */
                 throw new NumberFormatException("Unvalid integer string :" + str.subSequence(i, max));
             }
         } else {

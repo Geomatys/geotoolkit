@@ -66,5 +66,5 @@ public class BeanFeatureReader implements FeatureReader{
     public void remove() {
         throw new FeatureStoreRuntimeException("Remove not supported");
     }
-    
+
 }

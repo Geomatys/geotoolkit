@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * An Exception element describes one detected error that a
  *       server chooses to convey to the client.
- * 
+ *
  * <p>Java class for ExceptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ExceptionType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ExceptionType", propOrder = {
@@ -66,10 +66,10 @@ public class ExceptionType implements org.geotoolkit.ows.xml.ExceptionType {
      * Empty constructor used by JAXB.
      */
     public ExceptionType() {}
-    
+
     /**
      *  build a new Exception code.
-     * 
+     *
      * @param exceptionText
      * @param exceptionCode
      */
@@ -79,10 +79,10 @@ public class ExceptionType implements org.geotoolkit.ows.xml.ExceptionType {
         this.exceptionCode = exceptionCode;
         this.locator       = locator;
     }
-    
+
     /**
      * Gets the value of the exceptionText property.
-     * 
+     *
      */
     @Override
     public List<String> getExceptionText() {
@@ -94,11 +94,11 @@ public class ExceptionType implements org.geotoolkit.ows.xml.ExceptionType {
 
     /**
      * Gets the value of the exceptionCode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getExceptionCode() {
@@ -107,11 +107,11 @@ public class ExceptionType implements org.geotoolkit.ows.xml.ExceptionType {
 
     /**
      * Sets the value of the exceptionCode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setExceptionCode(String value) {
         this.exceptionCode = value;
@@ -119,11 +119,11 @@ public class ExceptionType implements org.geotoolkit.ows.xml.ExceptionType {
 
     /**
      * Gets the value of the locator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLocator() {
         return locator;
@@ -131,14 +131,14 @@ public class ExceptionType implements org.geotoolkit.ows.xml.ExceptionType {
 
     /**
      * Sets the value of the locator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLocator(String value) {
         this.locator = value;
     }
-    
+
 }

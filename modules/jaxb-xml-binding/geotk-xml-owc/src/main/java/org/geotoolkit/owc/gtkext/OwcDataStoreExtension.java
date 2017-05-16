@@ -60,7 +60,7 @@ public class OwcDataStoreExtension extends OwcExtension {
     //this parameter is part of factory parameter descriptors
     private static final String KEY_STOREFACTORY = "identifier";
     private static final String KEY_DATANAME = "dataName";
-    
+
     public OwcDataStoreExtension() {
         super(CODE, 0);
     }
@@ -73,7 +73,7 @@ public class OwcDataStoreExtension extends OwcExtension {
     @Override
     public MapLayer createLayer(OfferingType offering) throws DataStoreException {
         final List<Object> fields = offering.getOperationOrContentOrStyleSet();
-        
+
         //rebuild parameters map
         String factoryName = null;
         String typeName = null;
@@ -82,7 +82,7 @@ public class OwcDataStoreExtension extends OwcExtension {
             if(o instanceof JAXBElement){
                 o = ((JAXBElement)o).getValue();
             }
-            
+
             if(o instanceof ParameterType){
                 final ParameterType param = (ParameterType) o;
                 final String key = param.getKey();
@@ -94,7 +94,7 @@ public class OwcDataStoreExtension extends OwcExtension {
                 }
                 Object value = param.getValue();
                 value = ObjectConverters.convert(value, valClass);
-                
+
                 if(KEY_STOREFACTORY.equalsIgnoreCase(key)){
                     factoryName = (String)value;
                     params.put(key, factoryName);
@@ -105,7 +105,7 @@ public class OwcDataStoreExtension extends OwcExtension {
                 }
             }
         }
-        
+
         final DataStoreFactory ff = DataStores.getFactoryById(factoryName);
         if(ff!=null){
             final DataStore store = ff.open(params);
@@ -120,7 +120,7 @@ public class OwcDataStoreExtension extends OwcExtension {
                 return layer;
             }
         }
-        
+
         //unknown factory, may no be in the classpath
         return MapBuilder.createEmptyMapLayer();
     }
@@ -129,17 +129,17 @@ public class OwcDataStoreExtension extends OwcExtension {
     public OfferingType createOffering(MapLayer mapLayer) {
         final OfferingType offering = new OfferingType();
         offering.setCode(getCode());
-        
+
         //write the type name
         final List<Object> fieldList = offering.getOperationOrContentOrStyleSet();
         final String typeName = getTypeName(mapLayer);
         if(typeName!=null){
             fieldList.add(new ParameterType(KEY_DATANAME,String.class.getName(),typeName));
         }
-                       
+
         //write store creation parameters
         final ParameterValueGroup params = getParams(mapLayer);
-        
+
         final ParameterDescriptorGroup desc = params.getDescriptor();
         for(GeneralParameterDescriptor pdesc : desc.descriptors()){
             final GeneralParameterValue param = ParametersExt.getParameter(params, pdesc.getName().getCode());
@@ -148,17 +148,17 @@ public class OwcDataStoreExtension extends OwcExtension {
                 final Object value = ((ParameterValue)param).getValue();
                 if(value!=null){
                     fieldList.add(new ParameterType(
-                            pdesc.getName().getCode(), 
+                            pdesc.getName().getCode(),
                             pvdesc.getValueClass().getName(),
                             String.valueOf(value)));
                 }
             }
         }
-        
-        
+
+
         return offering;
     }
-    
+
     private static String getStoreFactoryName(MapLayer layer){
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
@@ -187,7 +187,7 @@ public class OwcDataStoreExtension extends OwcExtension {
         }
         return null;
     }
-    
+
     private static ParameterValueGroup getParams(MapLayer layer){
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
@@ -212,7 +212,7 @@ public class OwcDataStoreExtension extends OwcExtension {
         }
         return null;
     }
-    
+
     private static String getTypeName(MapLayer layer){
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
@@ -228,5 +228,5 @@ public class OwcDataStoreExtension extends OwcExtension {
         }
         return null;
     }
-    
+
 }

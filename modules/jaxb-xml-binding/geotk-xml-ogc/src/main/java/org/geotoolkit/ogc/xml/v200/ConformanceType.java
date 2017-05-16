@@ -30,9 +30,9 @@ import org.geotoolkit.ows.xml.v110.DomainType;
 
 /**
  * <p>Java class for ConformanceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ConformanceType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.ows.xml.v110.DomainType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ConformanceType", propOrder = {
@@ -57,19 +57,19 @@ public class ConformanceType implements Conformance {
     private List<DomainType> constraint;
 
     public ConformanceType() {
-        
+
     }
-    
+
     public ConformanceType(final List<DomainType> constraint) {
         this.constraint = constraint;
     }
-    
+
     /**
      * Gets the value of the constraint property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link DomainType }
-     * 
+     *
      */
     public List<DomainType> getConstraint() {
         if (constraint == null) {

@@ -71,7 +71,7 @@ public class ConnectionList implements AbstractConnectionList {
             }
         }
     }
-    
+
     /**
      * Gets the value of the connection property.
      */

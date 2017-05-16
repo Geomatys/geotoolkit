@@ -29,9 +29,9 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for AbstractMatrixType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractMatrixType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -71,7 +71,7 @@ public class AbstractMatrixType extends AbstractDataArrayType implements Abstrac
             this.referenceFrame = am.getReferenceFrame();
         }
     }
-    
+
     /**
      * Gets the value of the referenceFrame property.
      */

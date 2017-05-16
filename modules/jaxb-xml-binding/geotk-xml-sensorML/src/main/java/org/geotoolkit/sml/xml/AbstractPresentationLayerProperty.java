@@ -31,7 +31,7 @@ public interface AbstractPresentationLayerProperty {
     DataBlockDefinition getDataBlockDefinition();
 
     DataStreamDefinition getDataStreamDefinition();
-    
+
     public AbstractDataRecord getDataRecord();
 
     AbstractCategory getCategory();

@@ -52,9 +52,9 @@ import org.opengis.filter.expression.PropertyName;
 public final class CQL {
 
     private static final GeometryFactory GF = new GeometryFactory();
-    
+
     private CQL() {}
-    
+
     private static Object compileExpression(String cql) {
         try {
             //lexer splits input into tokens
@@ -65,12 +65,12 @@ public final class CQL {
             final CQLParser parser = new CQLParser(tokens);
             final ExpressionContext ctx = parser.expression();
             return ctx;
-            
+
         } catch (RecognitionException e) {
             throw new IllegalStateException("Recognition exception is never thrown, only declared.");
         }
     }
-    
+
     private static Object compileFilter(String cql) {
         try {
             //lexer splits input into tokens
@@ -80,14 +80,14 @@ public final class CQL {
             //parser generates abstract syntax tree
             final CQLParser parser = new CQLParser(tokens);
             final FilterContext retfilter = parser.filter();
-            
+
             return retfilter;
-            
+
         } catch (RecognitionException e) {
             throw new IllegalStateException("Recognition exception is never thrown, only declared.");
         }
     }
-    
+
     private static Object compileFilterOrExpression(String cql) {
         try {
             //lexer splits input into tokens
@@ -97,32 +97,32 @@ public final class CQL {
             //parser generates abstract syntax tree
             final CQLParser parser = new CQLParser(tokens);
             final FilterOrExpressionContext retfilter = parser.filterOrExpression();
-            
+
             return retfilter;
-            
+
         } catch (RecognitionException e) {
             throw new IllegalStateException("Recognition exception is never thrown, only declared.");
         }
     }
-    
+
     public static ParseTree compile(String cql) {
         final Object obj = compileFilterOrExpression(cql);
-        
+
         ParseTree tree = null;
         if(obj instanceof ParseTree){
             tree = (ParseTree)obj;
         }
-        
+
         return tree;
     }
-    
+
     public static Expression parseExpression(String cql) throws CQLException{
         return parseExpression(cql, null);
     }
-    
+
     public static Expression parseExpression(String cql, FilterFactory2 factory) throws CQLException{
         final Object obj = compileExpression(cql);
-        
+
         ParseTree tree = null;
         Expression result = null;
         if(obj instanceof ExpressionContext){
@@ -133,24 +133,24 @@ public final class CQL {
             }
             result = convertExpression(tree, factory);
         }
-        
+
         return result;
     }
-    
+
     public static Filter parseFilter(String cql) throws CQLException{
         return parseFilter(cql, null);
     }
-    
+
     public static Filter parseFilter(String cql, FilterFactory2 factory) throws CQLException{
         cql = cql.trim();
-        
+
         //bypass parsing for inclusive filter
         if(cql.isEmpty() || "*".equals(cql)){
             return Filter.INCLUDE;
         }
-        
+
         final Object obj = compileFilter(cql);
-        
+
         ParseTree tree = null;
         Filter result = null;
         if(obj instanceof FilterContext){
@@ -161,42 +161,42 @@ public final class CQL {
             }
             result = convertFilter(tree, factory);
         }
-        
+
         return result;
     }
-    
-    
+
+
     public static String write(Filter filter){
         if(filter == null) return "";
-        
+
         final StringBuilder sb = new StringBuilder();
         filter.accept(FilterToCQLVisitor.INSTANCE,sb);
         return sb.toString();
     }
-    
+
     public static String write(Expression exp){
         if(exp == null) return "";
-        
+
         final StringBuilder sb = new StringBuilder();
         exp.accept(FilterToCQLVisitor.INSTANCE,sb);
         return sb.toString();
     }
-    
+
     /**
      * Generate a nice looking tree representation of the tree.
      */
     public static String toString(ParseTree tree){
-        if(tree == null) return null;        
+        if(tree == null) return null;
         final DefaultMutableTreeNode node = explore(tree);
         return Trees.toString(node);
     }
-    
+
     /**
      * Create a TreeNode for the given tree. method is recursive.
      */
     private static DefaultMutableTreeNode explore(ParseTree tree){
         final DefaultMutableTreeNode node = new DefaultMutableTreeNode(tree);
-        
+
         final int nb = tree.getChildCount();
         for(int i=0;i<nb;i++){
             final DefaultMutableTreeNode n = explore((ParseTree)tree.getChild(i));
@@ -204,18 +204,18 @@ public final class CQL {
         }
         return node;
     }
-    
+
     /**
      * Convert the given tree in an Expression.
      */
     private static Expression convertExpression(ParseTree tree, FilterFactory2 ff) throws CQLException{
-                
+
         if(tree instanceof ExpressionContext){
             //: expression MULT expression
             //| expression UNARY expression
             //| expressionTerm
             if(tree.getChildCount()==3){
-                final String operand = tree.getChild(1).getText();            
+                final String operand = tree.getChild(1).getText();
                 final Expression left = convertExpression((ParseTree)tree.getChild(0), ff);
                 final Expression right = convertExpression((ParseTree)tree.getChild(2), ff);
                 if("*".equals(operand)){
@@ -246,8 +246,8 @@ public final class CQL {
             //| NAME (LPAREN expressionFctParam? RPAREN)?
             //| expressionGeometry
             //| LPAREN expression RPAREN
-            
-            
+
+
             //: TEXT
             //| expressionUnary
             //| PROPERTY_NAME
@@ -259,21 +259,21 @@ public final class CQL {
             if(exp.getChildCount()==1){
                 return convertExpression(tree.getChild(0), ff);
             }
-                        
+
             // LPAREN expression RPAREN
             if(exp.expression()!=null){
                 return convertExpression(exp.expression(), ff);
             }
-            
+
             // NAME (LPAREN expressionFctParam? RPAREN)?
             if(exp.NAME()!=null){
-                final String name = exp.NAME().getText();                
-                final ExpressionFctParamContext prm = exp.expressionFctParam();                
+                final String name = exp.NAME().getText();
+                final ExpressionFctParamContext prm = exp.expressionFctParam();
                 if(prm==null){
                     //handle as property name
                     return ff.property(name);
                 }
-                
+
                 //handle as a function
                 final List<ExpressionContext> params = prm.expression();
                 final List<Expression> exps = new ArrayList<Expression>();
@@ -282,12 +282,12 @@ public final class CQL {
                 }
                 return ff.function(name, exps.toArray(new Expression[exps.size()]));
             }
-            
+
         }else if(tree instanceof ExpressionUnaryContext){
             //: UNARY? expressionNum ;
             final ExpressionUnaryContext exp = (ExpressionUnaryContext) tree;
             return ff.literal(unaryAsNumber(exp));
-            
+
         }else if(tree instanceof ExpressionNumContext){
             //: INT | FLOAT ;
             return convertExpression(tree.getChild(0), ff);
@@ -326,7 +326,7 @@ public final class CQL {
             //| ENVELOPE ( EMPTY | (LPAREN expressionUnary COMMA expressionUnary COMMA expressionUnary COMMA expressionUnary RPAREN) )
             final ExpressionGeometryContext exp = (ExpressionGeometryContext) tree;
             final int type = ((TerminalNode)exp.getChild(0)).getSymbol().getType();
-            
+
             if(POINT == type){
                 final ParseTree st = (ParseTree) tree.getChild(1);
                 final CoordinateSequence cs;
@@ -348,7 +348,7 @@ public final class CQL {
                 final Geometry geom = GF.createLineString(cs);
                 return ff.literal(geom);
             }else if(POLYGON == type){
-                final ParseTree st = (ParseTree) tree.getChild(1);            
+                final ParseTree st = (ParseTree) tree.getChild(1);
                 final Geometry geom;
                 if(isEmptyToken(st)){
                     geom = GF.createPolygon(GF.createLinearRing(new Coordinate[0]),new LinearRing[0]);
@@ -362,7 +362,7 @@ public final class CQL {
                         holes[i-1] = GF.createLinearRing(parseSequence(subs.get(i)));
                     }
                     geom = GF.createPolygon(contour,holes);
-                }            
+                }
                 return ff.literal(geom);
             }else if(MPOINT == type){
                 final ParseTree st = (ParseTree) tree.getChild(1);
@@ -375,7 +375,7 @@ public final class CQL {
                 final Geometry geom = GF.createMultiPoint(cs);
                 return ff.literal(geom);
             }else if(MLINESTRING == type){
-                final ParseTree st = (ParseTree) tree.getChild(1);            
+                final ParseTree st = (ParseTree) tree.getChild(1);
                 final Geometry geom;
                 if(isEmptyToken(st)){
                     geom = GF.createMultiLineString(new LineString[0]);
@@ -386,12 +386,12 @@ public final class CQL {
                     final LineString[] strings = new LineString[n];
                     for(int i=0; i<n; i++){
                         strings[i] = GF.createLineString(parseSequence(subs.get(i)));
-                    }            
+                    }
                     geom = GF.createMultiLineString(strings);
-                }            
+                }
                 return ff.literal(geom);
             }else if(MPOLYGON == type){
-                final ParseTree st = (ParseTree) tree.getChild(1);            
+                final ParseTree st = (ParseTree) tree.getChild(1);
                 final Geometry geom;
                 if(isEmptyToken(st)){
                     geom = GF.createMultiPolygon(new Polygon[0]);
@@ -410,12 +410,12 @@ public final class CQL {
                         }
                         final Polygon poly = GF.createPolygon(contour,holes);
                         polygons[i] = poly;
-                    }            
+                    }
                     geom = GF.createMultiPolygon(polygons);
                 }
                 return ff.literal(geom);
             }else if(GEOMETRYCOLLECTION == type){
-                final ParseTree st = (ParseTree) tree.getChild(1);            
+                final ParseTree st = (ParseTree) tree.getChild(1);
                 final Geometry geom;
                 if(isEmptyToken(st)){
                     geom = GF.createGeometryCollection(new Geometry[0]);
@@ -427,12 +427,12 @@ public final class CQL {
                         final ParseTree subTree = eles.get(i);
                         final Geometry sub = (Geometry)convertExpression(subTree, ff).evaluate(null);
                         subs[i] = sub;
-                    }            
+                    }
                     geom = GF.createGeometryCollection(subs);
                 }
                 return ff.literal(geom);
             }else if(ENVELOPE == type){
-                final ParseTree st = (ParseTree) tree.getChild(1);            
+                final ParseTree st = (ParseTree) tree.getChild(1);
                 final Geometry geom;
                 if(isEmptyToken(st)){
                     geom = GF.createPolygon(GF.createLinearRing(new Coordinate[0]),new LinearRing[0]);
@@ -450,20 +450,20 @@ public final class CQL {
                         new Coordinate(west, north)
                     });
                     geom = GF.createPolygon(contour,new LinearRing[0]);
-                }            
+                }
                 return ff.literal(geom);
             }
-            
+
             return convertExpression(tree.getChild(0), ff);
         }
-        
+
         throw new CQLException("Unreconized expression : type=" + tree.getText());
     }
-    
+
     private static boolean isEmptyToken(ParseTree tree){
         return tree instanceof TerminalNode && ((TerminalNode)tree).getSymbol().getType() == EMPTY;
     }
-    
+
     private static final Number unaryAsNumber(ExpressionUnaryContext tree){
         //: UNARY? expressionNum ;
         final ExpressionUnaryContext exp = (ExpressionUnaryContext) tree;
@@ -477,7 +477,7 @@ public final class CQL {
             return negate ? -val : val;
         }
     }
-    
+
     private static CoordinateSequence parseSequence(ParseTree tree){
         final CoordinateSerieContext exp = (CoordinateSerieContext) tree;
         final List<CoordinateContext> lst = exp.coordinate();
@@ -491,22 +491,22 @@ public final class CQL {
         }
         return GF.getCoordinateSequenceFactory().create(coords);
     }
-    
-    
+
+
     /**
      * Convert the given tree in a Filter.
      */
     private static Filter convertFilter(ParseTree tree, FilterFactory2 ff) throws CQLException{
-        
+
         if(tree instanceof FilterContext){
             //: filter (AND filter)+
             //| filter (OR filter)+
             //| LPAREN filter RPAREN
             //| NOT filterTerm
             //| filterTerm
-            
+
             final FilterContext exp = (FilterContext) tree;
-            
+
             //| filterTerm
             if(exp.getChildCount()==1){
                 return convertFilter(tree.getChild(0), ff);
@@ -517,7 +517,7 @@ public final class CQL {
                 }else{
                     return ff.not(convertFilter(exp.filter(0), ff));
                 }
-                
+
             }else if(!exp.AND().isEmpty()){
                 //: filter (AND filter)+
                 final List<Filter> subs = new ArrayList<Filter>();
@@ -546,7 +546,7 @@ public final class CQL {
                 //| LPAREN filter RPAREN
                 return convertFilter(exp.filter(0), ff);
             }
-            
+
         }else if(tree instanceof FilterTermContext){
             //: expression
             //    (
@@ -572,10 +572,10 @@ public final class CQL {
             //            | TOVERLAPS expression
             //    )
             //| filterGeometry
-            
+
             final FilterTermContext exp = (FilterTermContext) tree;
             final List<ExpressionContext> exps = exp.expression();
-                        
+
             if(exp.COMPARE()!=null){
                 // expression COMPARE expression
                 final String text = exp.COMPARE().getText();
@@ -606,7 +606,7 @@ public final class CQL {
                 for(int i=0,n=params.size();i<n;i++){
                     subexps.add(convertExpression(params.get(i), ff));
                 }
-                
+
                 final int size = subexps.size();
                 final Filter selection;
                 if(size == 0){
@@ -632,9 +632,9 @@ public final class CQL {
                 final Expression exp2 = convertExpression(exps.get(1), ff);
                 final Expression exp3 = convertExpression(exps.get(2), ff);
                 return ff.between(exp1, exp2, exp3);
-                
+
             }else if(exp.LIKE()!=null){
-                // expression NOT? LIKE expression                
+                // expression NOT? LIKE expression
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 if(exp.NOT()!=null){
@@ -642,9 +642,9 @@ public final class CQL {
                 }else{
                     return ff.like(left, right.evaluate(null, String.class), "%", "_", "\\",true);
                 }
-                
+
             }else if(exp.ILIKE()!=null){
-                // expression NOT? LIKE expression                
+                // expression NOT? LIKE expression
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 if(exp.NOT()!=null){
@@ -652,7 +652,7 @@ public final class CQL {
                 }else{
                     return ff.like(left, right.evaluate(null, String.class), "%", "_", "\\",false);
                 }
-                
+
             }else if(exp.IS()!=null){
                 // expression IS NOT? NULL
                 final Expression exp1 = convertExpression(exps.get(0), ff);
@@ -661,96 +661,96 @@ public final class CQL {
                 }else{
                     return ff.isNull(exp1);
                 }
-                
+
             }else if(exp.AFTER()!=null){
                 // expression AFTER expression
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 return ff.after(left, right);
-                
+
             }else if(exp.ANYINTERACTS()!=null){
                 // expression ANYINTERACTS expression
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 return ff.anyInteracts(left, right);
-                
+
             }else if(exp.BEFORE()!=null){
                 // expression BEFORE expression
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 return ff.before(left, right);
-                
+
             }else if(exp.BEGINS()!=null){
                 // expression BEGINS expression
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 return ff.begins(left, right);
-                
+
             }else if(exp.BEGUNBY()!=null){
                 // expression BEGUNBY expression
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 return ff.begunBy(left, right);
-                
+
             }else if(exp.DURING()!=null){
                 // expression DURING expression
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 return ff.during(left, right);
-                
+
             }else if(exp.ENDEDBY()!=null){
                 // expression ENDEDBY expression
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 return ff.endedBy(left, right);
-                
+
             }else if(exp.ENDS()!=null){
                 // expression ENDS expression
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 return ff.ends(left, right);
-                
+
             }else if(exp.MEETS()!=null){
                 // expression MEETS expression
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 return ff.meets(left, right);
-                
+
             }else if(exp.METBY()!=null){
                 // expression METBY expression
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 return ff.metBy(left, right);
-                
+
             }else if(exp.OVERLAPPEDBY()!=null){
                 // expression OVERLAPPEDBY expression
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 return ff.overlappedBy(left, right);
-                
+
             }else if(exp.TCONTAINS()!=null){
                 // expression TCONTAINS expression
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 return ff.tcontains(left, right);
-                
+
             }else if(exp.TEQUALS()!=null){
                 // expression TEQUALS expression
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 return ff.tequals(left, right);
-                
+
             }else if(exp.TOVERLAPS()!=null){
                 // expression TOVERLAPS expression
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 return ff.toverlaps(left, right);
-                
+
             }else if(exp.filterGeometry()!=null){
                 //expression filterGeometry
                 return convertFilter(exp.filterGeometry(), ff);
             }
-            
+
         }else if(tree instanceof FilterGeometryContext){
             //: BBOX LPAREN (PROPERTY_NAME|NAME) COMMA expressionUnary COMMA expressionUnary COMMA expressionUnary COMMA expressionUnary (COMMA TEXT)? RPAREN
             //| BEYOND LPAREN expression COMMA expression COMMA expression COMMA expression RPAREN
@@ -763,10 +763,10 @@ public final class CQL {
             //| OVERLAPS LPAREN expression COMMA expression RPAREN
             //| TOUCHES LPAREN expression COMMA expression RPAREN
             //| WITHIN LPAREN expression COMMA expression RPAREN
-            
+
             final FilterGeometryContext exp = (FilterGeometryContext) tree;
             final List<ExpressionContext> exps = exp.expression();
-            
+
             if(exp.BBOX()!=null){
                 final Expression prop = convertExpression(exps.get(0),ff);
                 final double v1 = unaryAsNumber(exp.expressionUnary(0)).doubleValue();
@@ -776,15 +776,15 @@ public final class CQL {
                 String crs = null;
                 if(exp.TEXT()!=null){
                     crs = convertExpression(exp.TEXT(),ff).evaluate(null, String.class);
-                }            
+                }
                 return ff.bbox(prop, v1,v2,v3,v4,crs);
             }else if(exp.BEYOND()!=null){
                 final Expression exp1 = convertExpression(exps.get(0),ff);
                 final Expression exp2 = convertExpression(exps.get(1),ff);
                 final double distance = convertExpression(exps.get(2),ff).evaluate(null, Double.class);
                 final Expression unitExp = convertExpression(exps.get(3),ff);
-                final String unit     = (unitExp instanceof PropertyName) ? 
-                                            ((PropertyName)unitExp).getPropertyName() : 
+                final String unit     = (unitExp instanceof PropertyName) ?
+                                            ((PropertyName)unitExp).getPropertyName() :
                                             unitExp.evaluate(null, String.class);
                 return ff.beyond(exp1,exp2,distance,unit);
             }else if(exp.CONTAINS()!=null){
@@ -804,8 +804,8 @@ public final class CQL {
                 final Expression exp2 = convertExpression(exps.get(1),ff);
                 final double distance = convertExpression(exps.get(2),ff).evaluate(null, Double.class);
                 final Expression unitExp = convertExpression(exps.get(3),ff);
-                final String unit     = (unitExp instanceof PropertyName) ? 
-                                            ((PropertyName)unitExp).getPropertyName() : 
+                final String unit     = (unitExp instanceof PropertyName) ?
+                                            ((PropertyName)unitExp).getPropertyName() :
                                             unitExp.evaluate(null, String.class);
                 return ff.dwithin(exp1,exp2,distance,unit);
             }else if(exp.EQUALS()!=null){
@@ -829,11 +829,11 @@ public final class CQL {
                 final Expression exp2 = convertExpression(exps.get(1),ff);
                 return ff.within(exp1,exp2);
             }
-            
+
         }
-        
+
         throw new CQLException("Unreconized filter : type=" + tree.getText());
-        
+
     }
-    
+
 }

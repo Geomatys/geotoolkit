@@ -31,12 +31,12 @@ import javax.xml.bind.annotation.XmlType;
  * Class for defining constant surface properties. It is based on X3D's material definition. In
  *                 addition, "isSmooth" provides a hint for value interpolation. The link to surface geometry is established via the
  *                 "target"-property. Only gml:MultiSurface or decendants of gml:AbstractSurfaceType are valid targets.
- *             
- * 
+ *
+ *
  * <p>Java class for X3DMaterialType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="X3DMaterialType">
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "X3DMaterialType", propOrder = {
@@ -97,11 +97,11 @@ public class X3DMaterialType extends AbstractSurfaceDataType {
 
     /**
      * Gets the value of the ambientIntensity property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getAmbientIntensity() {
         return ambientIntensity;
@@ -109,11 +109,11 @@ public class X3DMaterialType extends AbstractSurfaceDataType {
 
     /**
      * Sets the value of the ambientIntensity property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setAmbientIntensity(Double value) {
         this.ambientIntensity = value;
@@ -121,7 +121,7 @@ public class X3DMaterialType extends AbstractSurfaceDataType {
 
     /**
      * Gets the value of the diffuseColor property.
-     * 
+     *
      */
     public List<Double> getDiffuseColor() {
         if (diffuseColor == null) {
@@ -132,7 +132,7 @@ public class X3DMaterialType extends AbstractSurfaceDataType {
 
     /**
      * Gets the value of the emissiveColor property.
-     * 
+     *
      */
     public List<Double> getEmissiveColor() {
         if (emissiveColor == null) {
@@ -143,7 +143,7 @@ public class X3DMaterialType extends AbstractSurfaceDataType {
 
     /**
      * Gets the value of the specularColor property.
-     * 
+     *
      */
     public List<Double> getSpecularColor() {
         if (specularColor == null) {
@@ -154,11 +154,11 @@ public class X3DMaterialType extends AbstractSurfaceDataType {
 
     /**
      * Gets the value of the shininess property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getShininess() {
         return shininess;
@@ -166,11 +166,11 @@ public class X3DMaterialType extends AbstractSurfaceDataType {
 
     /**
      * Sets the value of the shininess property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setShininess(Double value) {
         this.shininess = value;
@@ -178,11 +178,11 @@ public class X3DMaterialType extends AbstractSurfaceDataType {
 
     /**
      * Gets the value of the transparency property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getTransparency() {
         return transparency;
@@ -190,11 +190,11 @@ public class X3DMaterialType extends AbstractSurfaceDataType {
 
     /**
      * Sets the value of the transparency property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setTransparency(Double value) {
         this.transparency = value;
@@ -202,11 +202,11 @@ public class X3DMaterialType extends AbstractSurfaceDataType {
 
     /**
      * Gets the value of the isSmooth property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isIsSmooth() {
         return isSmooth;
@@ -214,11 +214,11 @@ public class X3DMaterialType extends AbstractSurfaceDataType {
 
     /**
      * Sets the value of the isSmooth property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setIsSmooth(Boolean value) {
         this.isSmooth = value;
@@ -226,7 +226,7 @@ public class X3DMaterialType extends AbstractSurfaceDataType {
 
     /**
      * Gets the value of the target property.
-     * 
+     *
      */
     public List<String> getTarget() {
         if (target == null) {
@@ -237,7 +237,7 @@ public class X3DMaterialType extends AbstractSurfaceDataType {
 
     /**
      * Gets the value of the genericApplicationPropertyOfX3DMaterial property.
-     * 
+     *
      */
     public List<Object> getGenericApplicationPropertyOfX3DMaterial() {
         if (genericApplicationPropertyOfX3DMaterial == null) {

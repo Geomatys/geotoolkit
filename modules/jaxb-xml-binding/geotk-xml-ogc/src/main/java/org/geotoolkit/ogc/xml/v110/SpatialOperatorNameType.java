@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * <p>Java class for SpatialOperatorNameType.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlEnum
 public enum SpatialOperatorNameType {

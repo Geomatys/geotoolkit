@@ -171,7 +171,7 @@ public interface NetworkLinkControl {
     void setView(AbstractView abstractView);
 
     /**
-     * 
+     *
      * @return
      */
     Extensions extensions();

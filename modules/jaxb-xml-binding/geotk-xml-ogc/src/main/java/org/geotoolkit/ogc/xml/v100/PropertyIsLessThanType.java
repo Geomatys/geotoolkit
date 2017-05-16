@@ -29,18 +29,18 @@ import org.opengis.filter.PropertyIsLessThan;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsLessThan")
 public class PropertyIsLessThanType extends BinaryComparisonOpType implements PropertyIsLessThan {
-    
+
     public PropertyIsLessThanType() {
-        
+
     }
-    
+
     /**
      * Build a new Binary comparison operator
      */
     public PropertyIsLessThanType(final LiteralType literal, final PropertyNameType propertyName) {
         super(literal, propertyName);
     }
-    
+
     public PropertyIsLessThanType(final PropertyIsLessThanType that) {
         super(that);
     }

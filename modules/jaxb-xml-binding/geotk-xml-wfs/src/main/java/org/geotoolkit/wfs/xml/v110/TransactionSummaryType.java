@@ -25,12 +25,12 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Reports the total number of features affected by some kind of write action (i.e, insert, update, delete).
- *          
- * 
+ *
+ *
  * <p>Java class for TransactionSummaryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TransactionSummaryType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,11 +75,11 @@ public class TransactionSummaryType {
 
     /**
      * Gets the value of the totalInserted property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getTotalInserted() {
         return totalInserted;
@@ -87,11 +87,11 @@ public class TransactionSummaryType {
 
     /**
      * Sets the value of the totalInserted property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setTotalInserted(final Integer value) {
         this.totalInserted = value;
@@ -99,11 +99,11 @@ public class TransactionSummaryType {
 
     /**
      * Gets the value of the totalUpdated property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getTotalUpdated() {
         return totalUpdated;
@@ -111,11 +111,11 @@ public class TransactionSummaryType {
 
     /**
      * Sets the value of the totalUpdated property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setTotalUpdated(final Integer value) {
         this.totalUpdated = value;
@@ -123,11 +123,11 @@ public class TransactionSummaryType {
 
     /**
      * Gets the value of the totalDeleted property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getTotalDeleted() {
         return totalDeleted;
@@ -135,11 +135,11 @@ public class TransactionSummaryType {
 
     /**
      * Sets the value of the totalDeleted property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setTotalDeleted(final Integer value) {
         this.totalDeleted = value;

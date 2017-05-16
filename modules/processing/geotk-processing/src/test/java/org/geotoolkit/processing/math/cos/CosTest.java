@@ -58,5 +58,5 @@ public class CosTest extends AbstractProcessTest {
 
         assertEquals(0.8020, result.doubleValue(), 0.0001);
     }
-    
+
 }

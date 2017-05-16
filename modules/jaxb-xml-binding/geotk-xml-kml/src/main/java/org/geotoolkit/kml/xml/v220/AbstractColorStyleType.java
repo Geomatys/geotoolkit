@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for AbstractColorStyleType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractColorStyleType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,11 +81,11 @@ public abstract class AbstractColorStyleType
 
     /**
      * Gets the value of the color property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public byte[] getColor() {
         return color;
@@ -93,11 +93,11 @@ public abstract class AbstractColorStyleType
 
     /**
      * Sets the value of the color property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setColor(final byte[] value) {
         this.color = ((byte[]) value);
@@ -105,11 +105,11 @@ public abstract class AbstractColorStyleType
 
     /**
      * Gets the value of the colorMode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ColorModeEnumType }
-     *     
+     *
      */
     public ColorModeEnumType getColorMode() {
         return colorMode;
@@ -117,11 +117,11 @@ public abstract class AbstractColorStyleType
 
     /**
      * Sets the value of the colorMode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ColorModeEnumType }
-     *     
+     *
      */
     public void setColorMode(final ColorModeEnumType value) {
         this.colorMode = value;
@@ -129,25 +129,25 @@ public abstract class AbstractColorStyleType
 
     /**
      * Gets the value of the abstractColorStyleSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the abstractColorStyleSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAbstractColorStyleSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getAbstractColorStyleSimpleExtensionGroup() {
         if (abstractColorStyleSimpleExtensionGroup == null) {
@@ -158,25 +158,25 @@ public abstract class AbstractColorStyleType
 
     /**
      * Gets the value of the abstractColorStyleObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the abstractColorStyleObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAbstractColorStyleObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getAbstractColorStyleObjectExtensionGroup() {
         if (abstractColorStyleObjectExtensionGroup == null) {

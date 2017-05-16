@@ -70,7 +70,7 @@ public interface DependentThoroughfare {
      * <p>Appears before the thoroughfare name.
      * Ed. Spanish: Avenida Aurora, where Avenida is the leading type /
      * French: Rue Moliere, where Rue is the leading type.</p>
-     * 
+     *
      * @return
      */
     GenericTypedGrPostal getThoroughfareLeadingType();
@@ -94,7 +94,7 @@ public interface DependentThoroughfare {
     /**
      * <p>221-bis Baker Street North, where North is the post-direction.
      * The post-direction appears after the name.</p>
-     * 
+     *
      * @return
      */
     GenericTypedGrPostal getThoroughfarePostDirection();
@@ -136,13 +136,13 @@ public interface DependentThoroughfare {
     void setThoroughfareTrailingType(GenericTypedGrPostal thoroughfareTrailingType);
 
     /**
-     * 
+     *
      * @param thoroughfarePostDirection
      */
     void setThoroughfarePostDirection(GenericTypedGrPostal thoroughfarePostDirection);
 
     /**
-     * 
+     *
      * @param type
      */
     void setType(String type);

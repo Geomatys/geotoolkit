@@ -48,7 +48,7 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
 
     private static final PreparedGeometryFactory PREPARED_FACTORY = new PreparedGeometryFactory();
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
-    
+
     private final Object[] buffer = new Object[metaData.length];
     private final PreparedGeometry boundingGeometry;
     //features must be within this bbox
@@ -67,7 +67,7 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
     private int geomAttIndex = 0;
 
     /**
-     * 
+     *
      * @param locker - to aquiere different readers and writers.
      * @param atts - the attributes that we are going to read.
      * @param read3D - for shp reader, read 3d coordinate or not.
@@ -75,14 +75,14 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
      * @param resample - for shp reader, decimate coordinates while reading
      * @param readDBF - true to open a dbf reader
      * @param charset - for dbf reader
-     * @param estimateRes - avoid reading geometry if under this resolution, 
+     * @param estimateRes - avoid reading geometry if under this resolution,
      *                      while return an approximate geometry
      */
-    public IndexedBBoxShapefileAttributeReader(final AccessManager locker,            
+    public IndexedBBoxShapefileAttributeReader(final AccessManager locker,
             final AttributeType[] atts, final boolean read3D, final boolean memoryMapped,
             final double[] resample, final boolean readDBF, final Charset charset,
             final double[] estimateRes, final CloseableCollection<ShpData> goodRec,
-            final LazyTyleSearchIterator.Buffered<ShpData> ite, final Envelope bbox, 
+            final LazyTyleSearchIterator.Buffered<ShpData> ite, final Envelope bbox,
             final boolean loose, final double[] minRes) throws IOException, DataStoreException {
         super(locker,atts,read3D,memoryMapped,resample,readDBF,charset,estimateRes,goodRec,ite);
         this.bboxMinX = bbox.getMinX();
@@ -194,5 +194,5 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
         Geometry geom = GEOMETRY_FACTORY.createPolygon(ring, new LinearRing[0]);
         return PREPARED_FACTORY.create(geom);
     }
-    
+
 }

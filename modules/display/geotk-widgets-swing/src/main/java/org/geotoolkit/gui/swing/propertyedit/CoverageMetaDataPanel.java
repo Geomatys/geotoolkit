@@ -45,7 +45,7 @@ public class CoverageMetaDataPanel extends IIOMetadataPanel implements PropertyP
     public boolean canHandle(Object target) {
         return target instanceof CoverageMapLayer;
     }
-    
+
     @Override
     public void apply() {
         //just metadata display, do not change anything
@@ -69,7 +69,7 @@ public class CoverageMetaDataPanel extends IIOMetadataPanel implements PropertyP
     public Image getPreview() {
         return null;
     }
-    
+
     @Override
     public String getToolTip() {
         return "Coverage metadatas";

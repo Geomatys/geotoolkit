@@ -28,9 +28,9 @@ import org.geotoolkit.gml.xml.v311.PolygonType;
 
 /**
  * <p>Java class for AreaOfInterestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AreaOfInterestType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.gml.xml.v311.PolygonType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AreaOfInterestType", propOrder = {
@@ -64,11 +64,11 @@ public class AreaOfInterestType extends AbstractDataType {
 
     /**
      * Gets the value of the circleByCenterPoint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CircleByCenterPointType }
-     *     
+     *
      */
     public CircleByCenterPointType getCircleByCenterPoint() {
         return circleByCenterPoint;
@@ -76,11 +76,11 @@ public class AreaOfInterestType extends AbstractDataType {
 
     /**
      * Sets the value of the circleByCenterPoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CircleByCenterPointType }
-     *     
+     *
      */
     public void setCircleByCenterPoint(CircleByCenterPointType value) {
         this.circleByCenterPoint = value;
@@ -88,11 +88,11 @@ public class AreaOfInterestType extends AbstractDataType {
 
     /**
      * Gets the value of the polygon property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PolygonType }
-     *     
+     *
      */
     public PolygonType getPolygon() {
         return polygon;
@@ -100,11 +100,11 @@ public class AreaOfInterestType extends AbstractDataType {
 
     /**
      * Sets the value of the polygon property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PolygonType }
-     *     
+     *
      */
     public void setPolygon(PolygonType value) {
         this.polygon = value;
@@ -112,11 +112,11 @@ public class AreaOfInterestType extends AbstractDataType {
 
     /**
      * Gets the value of the envelope property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EnvelopeType }
-     *     
+     *
      */
     public EnvelopeType getEnvelope() {
         return envelope;
@@ -124,11 +124,11 @@ public class AreaOfInterestType extends AbstractDataType {
 
     /**
      * Sets the value of the envelope property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EnvelopeType }
-     *     
+     *
      */
     public void setEnvelope(EnvelopeType value) {
         this.envelope = value;

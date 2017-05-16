@@ -26,12 +26,12 @@ import org.geotoolkit.ows.xml.AbstractAddress;
 
 
 /**
- * Location of the responsible individual or organization. 
- * 
+ * Location of the responsible individual or organization.
+ *
  * <p>Java class for AddressType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AddressType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.ows.xml.AbstractAddress;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -74,9 +74,9 @@ public class AddressType implements AbstractAddress {
      * Empty constructor used by JAXB
      */
     AddressType(){
-        
+
     }
-    
+
     /**
      * Build a new Adress.
      */
@@ -89,7 +89,7 @@ public class AddressType implements AbstractAddress {
         this.electronicMailAddress = electronicMailAddress;
         this.postalCode            = postalCode;
     }
-    
+
     /**
      * Build a simple new Adress.
      */
@@ -104,7 +104,7 @@ public class AddressType implements AbstractAddress {
         this.electronicMailAddress.add(electronicMailAddress);
         this.postalCode            = postalCode;
     }
-    
+
     /**
      * Gets the value of the deliveryPoint property.
      * (unmodifiable)

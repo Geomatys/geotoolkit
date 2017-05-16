@@ -51,15 +51,15 @@ import org.w3c.dom.Document;
  * @author Johann Sorel (Geomatys)
  */
 public final class MathMLVisitor implements ExpressionVisitor {
-    
+
     public static final MathMLVisitor INSTANCE = new MathMLVisitor();
     private static final ObjectFactory MLFactory = new ObjectFactory();
     private static final String MAGENTA = "#FF00FF";
     private static final String GREEN = "#009600";
     private static final String BLUE = "#0000FF";
-    
+
     private MathMLVisitor(){}
-    
+
     @Override
     public Object visit(NilExpression expression, Object extraData) {
         final String strVal = "NIL";
@@ -69,9 +69,9 @@ public final class MathMLVisitor implements ExpressionVisitor {
     }
 
     @Override
-    public Object visit(Add expression, Object extraData) {          
+    public Object visit(Add expression, Object extraData) {
         final Expression exp1 = expression.getExpression1();
-        final Expression exp2 = expression.getExpression2();  
+        final Expression exp2 = expression.getExpression2();
         final Mrow row = new Mrow();
         final Mo operator = new Mo();
         operator.getContent().add(" + ");
@@ -143,7 +143,7 @@ public final class MathMLVisitor implements ExpressionVisitor {
     }
 
     @Override
-    public Object visit(PropertyName expression, Object extraData) {            
+    public Object visit(PropertyName expression, Object extraData) {
         final String strVal = String.valueOf(expression.getPropertyName());
         final Mi prop = new Mi();
         prop.setMathvariant("bold");
@@ -175,18 +175,18 @@ public final class MathMLVisitor implements ExpressionVisitor {
             return MLFactory.createMfenced(fence);
         }
     }
-    
+
     public static Document toMathML(Expression exp) throws Exception{
-        
+
         final Object ele = exp.accept(INSTANCE, null);
-        
+
         final org.geotoolkit.mathml.xml.Math doc = new org.geotoolkit.mathml.xml.Math();
         doc.getMathExpression().add(ele);
-        
+
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         final DocumentBuilder builder = factory.newDocumentBuilder();
         final Document dom = builder.newDocument();
-        
+
         final MarshallerPool pool = MathMLUtilities.getMarshallerPool();
         final Marshaller marshaller = pool.acquireMarshaller();
         marshaller.marshal(doc, dom);
@@ -194,12 +194,12 @@ public final class MathMLVisitor implements ExpressionVisitor {
 
         return dom;
     }
-    
+
     public static BufferedImage toImage(Document doc) throws Exception {
         final MutableLayoutContext params = new LayoutContextImpl(LayoutContextImpl.getDefaultLayoutContext());
         params.setParameter(Parameter.MATHSIZE, 25f);
         return Converter.getConverter().render(doc, params);
     }
-    
-    
+
+
 }

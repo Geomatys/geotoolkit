@@ -18,7 +18,7 @@ package org.geotoolkit.tms.xml;
 
 /**
  * Root objects for TMS xml.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public interface TMSResponse {

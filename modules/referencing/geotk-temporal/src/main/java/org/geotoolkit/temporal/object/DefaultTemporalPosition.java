@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -33,7 +33,7 @@ import org.opengis.temporal.TemporalReferenceSystem;
 
 /**
  * Used for describing temporal positions referenced to other temporal reference systems.
- * 
+ *
  * @author Mehdi Sidhoum (Geomatys)
  * @author Remi Marechal (Geomatys).
  */
@@ -43,42 +43,42 @@ public class DefaultTemporalPosition implements TemporalPosition {
      * A default {@link TemporalReferenceSystem} if {@link #frame} is not specified assume Gregorian calendar.
      */
     private static final TemporalReferenceSystem GREGORIAN_CALENDAR;
-    
+
     static {
         final Map<String, Object> gregUTCProp = new HashMap<>();
         gregUTCProp.put(IdentifiedObject.NAME_KEY, "Default Gregorian calendar for position");
         gregUTCProp.put(IdentifiedObject.IDENTIFIERS_KEY, new NamedIdentifier(Citations.CRS, new SimpleInternationalString("Gregorian calendar")));
         GREGORIAN_CALENDAR = new DefaultTemporalReferenceSystem(gregUTCProp);
     }
-    
+
     /**
-     * This is the {@link TemporalReferenceSystem} associated with this {@link TemporalPosition}, 
+     * This is the {@link TemporalReferenceSystem} associated with this {@link TemporalPosition},
      * if not specified, it is assumed to be an association to the Gregorian calendar and UTC.
      */
     private final TemporalReferenceSystem frame;
-    
+
     /**
-     * Provide the only value for {@link TemporalPosition} 
+     * Provide the only value for {@link TemporalPosition}
      * unless a subtype of {@link TemporalPosition} is used as the data type, or {@code null} if none.
      */
     private IndeterminateValue indeterminatePosition;
 
     /**
-     * Create a default Geotk implementation of {@link TemporalPosition} with the 
-     * {@linkplain #frame associate Temporal Reference system} initialized by Gregorian calendar value. 
-     * 
-     * @param indeterminatePosition Provide the only value for {@link TemporalPosition} 
+     * Create a default Geotk implementation of {@link TemporalPosition} with the
+     * {@linkplain #frame associate Temporal Reference system} initialized by Gregorian calendar value.
+     *
+     * @param indeterminatePosition Provide the only value for {@link TemporalPosition}
      * unless a subtype of {@link TemporalPosition} is used as the data type, or {@code null}.
      */
     public DefaultTemporalPosition(final IndeterminateValue indeterminatePosition) {
         this(GREGORIAN_CALENDAR, indeterminatePosition);
     }
-    
+
     /**
      * Creates a new instance from a {@link TemporalReferenceSystem} and an {@link IndeterminateValue}.
-     * 
+     *
      * @param frame the associated {@link TemporalReferenceSystem}.
-     * @param indeterminatePosition Provide the only value for {@link TemporalPosition} 
+     * @param indeterminatePosition Provide the only value for {@link TemporalPosition}
      * unless a subtype of {@link TemporalPosition} is used as the data type, or {@code null} if none.
      * @throws NullArgumentException if frame is {@code null}.
      */

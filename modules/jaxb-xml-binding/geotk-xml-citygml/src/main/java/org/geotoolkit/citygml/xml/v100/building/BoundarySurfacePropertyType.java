@@ -28,12 +28,12 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
  *  _BoundarySurface object inline, but neither both nor none. There is no differentiation between interior surfaces
  * bounding rooms and outer ones bounding buildings (one reason is, that ClosureSurfaces belong to both types). It
  * has to be made sure by additional integrity constraints that, e.g. an _AbstractBuilding is not related to
- * CeilingSurfaces or a room not to RoofSurfaces. 
- * 
+ * CeilingSurfaces or a room not to RoofSurfaces.
+ *
  * <p>Java class for BoundarySurfacePropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BoundarySurfacePropertyType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

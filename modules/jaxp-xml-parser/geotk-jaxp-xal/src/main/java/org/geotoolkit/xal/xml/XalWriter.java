@@ -132,7 +132,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param xal The Xal object to write.
      * @throws XMLStreamException
      */
-    private void writeXal(Xal xal) 
+    private void writeXal(Xal xal)
             throws XMLStreamException, XalException {
 
         if (xal.getVersion() != null) {
@@ -148,7 +148,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param addressDetails
      * @throws XMLStreamException
      */
-    public void writeAddressDetails(AddressDetails addressDetails) 
+    public void writeAddressDetails(AddressDetails addressDetails)
             throws XMLStreamException, XalException {
 
         writer.writeStartElement(URI_XAL, TAG_ADDRESS_DETAILS);
@@ -204,7 +204,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param postalServiceElements
      * @throws XMLStreamException
      */
-    private void writePostalServiceElements(PostalServiceElements postalServiceElements) 
+    private void writePostalServiceElements(PostalServiceElements postalServiceElements)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_POSTAL_SERVICE_ELEMENTS);
@@ -249,7 +249,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param address
      * @throws XMLStreamException
      */
-    private void writeAddress(GenericTypedGrPostal address) 
+    private void writeAddress(GenericTypedGrPostal address)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_ADDRESS);
@@ -262,7 +262,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param data
      * @throws XMLStreamException
      */
-    private void writeSupplementaryPostalServiceData(GenericTypedGrPostal data) 
+    private void writeSupplementaryPostalServiceData(GenericTypedGrPostal data)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_SUPPLEMENTARY_POSTAL_SERVICE_DATA);
@@ -275,7 +275,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param address
      * @throws XMLStreamException
      */
-    private void writeAddressLongitude(GenericTypedGrPostal address) 
+    private void writeAddressLongitude(GenericTypedGrPostal address)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_ADDRESS_LONGITUDE);
@@ -288,7 +288,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param address
      * @throws XMLStreamException
      */
-    private void writeAddressLongitudeDirection(GenericTypedGrPostal address) 
+    private void writeAddressLongitudeDirection(GenericTypedGrPostal address)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_ADDRESS_LONGITUDE_DIRECTION);
@@ -296,7 +296,7 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeAddressLatitude(GenericTypedGrPostal address) 
+    private void writeAddressLatitude(GenericTypedGrPostal address)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_ADDRESS_LATITUDE);
@@ -309,7 +309,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param address
      * @throws XMLStreamException
      */
-    private void writeAddressLatitudeDirection(GenericTypedGrPostal address) 
+    private void writeAddressLatitudeDirection(GenericTypedGrPostal address)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_ADDRESS_LATITUDE_DIRECTION);
@@ -322,7 +322,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param barcode
      * @throws XMLStreamException
      */
-    private void writeBarcode(GenericTypedGrPostal barcode) 
+    private void writeBarcode(GenericTypedGrPostal barcode)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_BARCODE);
@@ -335,7 +335,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param lineCode
      * @throws XMLStreamException
      */
-    private void writeEndorsementLineCode(GenericTypedGrPostal lineCode) 
+    private void writeEndorsementLineCode(GenericTypedGrPostal lineCode)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_ENDORSEMENT_LINE_CODE);
@@ -348,7 +348,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param lineCode
      * @throws XMLStreamException
      */
-    private void writeKeyLineCode(GenericTypedGrPostal lineCode) 
+    private void writeKeyLineCode(GenericTypedGrPostal lineCode)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_KEY_LINE_CODE);
@@ -361,7 +361,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param addressLines
      * @throws XMLStreamException
      */
-    private void writeAddressLines(AddressLines addressLines) 
+    private void writeAddressLines(AddressLines addressLines)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_ADDRESS_LINES);
@@ -376,7 +376,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param addressline
      * @throws XMLStreamException
      */
-    private void writeAddressLine(GenericTypedGrPostal addressline) 
+    private void writeAddressLine(GenericTypedGrPostal addressline)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_ADDRESS_LINE);
@@ -389,7 +389,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param name
      * @throws XMLStreamException
      */
-    private void writeAdministrativeAreaName(GenericTypedGrPostal name) 
+    private void writeAdministrativeAreaName(GenericTypedGrPostal name)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_ADMINISTRATIVE_AREA_NAME);
@@ -402,7 +402,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param name
      * @throws XMLStreamException
      */
-    private void writeSubAdministrativeAreaName(GenericTypedGrPostal name) 
+    private void writeSubAdministrativeAreaName(GenericTypedGrPostal name)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_SUB_ADMINISTRATIVE_AREA_NAME);
@@ -416,7 +416,7 @@ public class XalWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws XalException
      */
-    private void writeCountry(Country country) 
+    private void writeCountry(Country country)
             throws XMLStreamException, XalException {
 
         writer.writeStartElement(URI_XAL, TAG_COUNTRY);
@@ -446,7 +446,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param countryName
      * @throws XMLStreamException
      */
-    private void writeCountryName(GenericTypedGrPostal countryName) 
+    private void writeCountryName(GenericTypedGrPostal countryName)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_COUNTRY_NAME);
@@ -459,7 +459,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param firmName
      * @throws XMLStreamException
      */
-    private void writeFirmName(GenericTypedGrPostal firmName) 
+    private void writeFirmName(GenericTypedGrPostal firmName)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_FIRM_NAME);
@@ -485,7 +485,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param mailStopName
      * @throws XMLStreamException
      */
-    private void writeMailStopName(GenericTypedGrPostal mailStopName) 
+    private void writeMailStopName(GenericTypedGrPostal mailStopName)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_MAIL_STOP_NAME);
@@ -498,7 +498,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param postalCodeNumber
      * @throws XMLStreamException
      */
-    private void writePostalCodeNumber(GenericTypedGrPostal postalCodeNumber) 
+    private void writePostalCodeNumber(GenericTypedGrPostal postalCodeNumber)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_POSTAL_CODE_NUMBER);
@@ -511,7 +511,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param localityName
      * @throws XMLStreamException
      */
-    private void writeLocalityName(GenericTypedGrPostal localityName) 
+    private void writeLocalityName(GenericTypedGrPostal localityName)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_LOCALITY_NAME);
@@ -524,7 +524,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param dependentLocalityName
      * @throws XMLStreamException
      */
-    private void writeDependentLocalityName(GenericTypedGrPostal dependentLocalityName) 
+    private void writeDependentLocalityName(GenericTypedGrPostal dependentLocalityName)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_DEPENDENT_LOCALITY_NAME);
@@ -537,7 +537,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param postTownName
      * @throws XMLStreamException
      */
-    private void writeTownName(GenericTypedGrPostal postTownName) 
+    private void writeTownName(GenericTypedGrPostal postTownName)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_POST_TOWN_NAME);
@@ -550,7 +550,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param postalRouteName
      * @throws XMLStreamException
      */
-    private void writePostalRouteName(GenericTypedGrPostal postalRouteName) 
+    private void writePostalRouteName(GenericTypedGrPostal postalRouteName)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_POSTAL_ROUTE_NAME);
@@ -563,7 +563,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param postOfficeName
      * @throws XMLStreamException
      */
-    private void writePostOfficeName(GenericTypedGrPostal postOfficeName) 
+    private void writePostOfficeName(GenericTypedGrPostal postOfficeName)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_POST_OFFICE_NAME);
@@ -576,7 +576,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param thoroughfarePostDirection
      * @throws XMLStreamException
      */
-    private void writeThoroughfarePostDirection(GenericTypedGrPostal thoroughfarePostDirection) 
+    private void writeThoroughfarePostDirection(GenericTypedGrPostal thoroughfarePostDirection)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_POST_DIRECTION);
@@ -589,7 +589,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param thoroughfarePreDirection
      * @throws XMLStreamException
      */
-    private void writeThoroughfarePreDirection(GenericTypedGrPostal thoroughfarePreDirection) 
+    private void writeThoroughfarePreDirection(GenericTypedGrPostal thoroughfarePreDirection)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_PRE_DIRECTION);
@@ -602,7 +602,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param name
      * @throws XMLStreamException
      */
-    private void writeThoroughfareName(GenericTypedGrPostal name) 
+    private void writeThoroughfareName(GenericTypedGrPostal name)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_NAME);
@@ -615,7 +615,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param thoroughfareTrailingType
      * @throws XMLStreamException
      */
-    private void writeThoroughfareTrailingType(GenericTypedGrPostal thoroughfareTrailingType) 
+    private void writeThoroughfareTrailingType(GenericTypedGrPostal thoroughfareTrailingType)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_TRAILING_TYPE);
@@ -628,7 +628,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param thoroughfareLeadingType
      * @throws XMLStreamException
      */
-    private void writeThoroughfareLeadingType(GenericTypedGrPostal thoroughfareLeadingType) 
+    private void writeThoroughfareLeadingType(GenericTypedGrPostal thoroughfareLeadingType)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_LEADING_TYPE);
@@ -641,7 +641,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param countryNameCode
      * @throws XMLStreamException
      */
-    private void writeCountryNameCode(CountryNameCode countryNameCode) 
+    private void writeCountryNameCode(CountryNameCode countryNameCode)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_COUNTRY_NAME_CODE);
@@ -663,7 +663,7 @@ public class XalWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws XalException
      */
-    private void writeAdministrativeArea(AdministrativeArea administrativeArea) 
+    private void writeAdministrativeArea(AdministrativeArea administrativeArea)
             throws XMLStreamException, XalException {
 
         writer.writeStartElement(URI_XAL, TAG_ADMINISTRATIVE_AREA);
@@ -701,7 +701,7 @@ public class XalWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws XalException
      */
-    private void writeDependentLocality(DependentLocality dependentLocality) 
+    private void writeDependentLocality(DependentLocality dependentLocality)
             throws XMLStreamException, XalException {
 
         writer.writeStartElement(URI_XAL, TAG_DEPENDENT_LOCALITY);
@@ -759,7 +759,7 @@ public class XalWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws XalException
      */
-    private void writeLocality(Locality locality) 
+    private void writeLocality(Locality locality)
             throws XMLStreamException, XalException {
 
         writer.writeStartElement(URI_XAL, TAG_LOCALITY);
@@ -810,7 +810,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param generic
      * @throws XMLStreamException
      */
-    private void writeGenericTypedGrPostal(GenericTypedGrPostal generic) 
+    private void writeGenericTypedGrPostal(GenericTypedGrPostal generic)
             throws XMLStreamException {
 
         if (generic.getType() != null) {
@@ -829,7 +829,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param sortingCode
      * @throws XMLStreamException
      */
-    private void writeSortingCode(SortingCode sortingCode) 
+    private void writeSortingCode(SortingCode sortingCode)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_SORTING_CODE);
@@ -847,7 +847,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param identifier
      * @throws XMLStreamException
      */
-    private void writeAddressIdentifier(AddressIdentifier identifier) 
+    private void writeAddressIdentifier(AddressIdentifier identifier)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_ADDRESS_IDENTIFIER);
@@ -871,7 +871,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param grPostal
      * @throws XMLStreamException
      */
-    private void writeGrPostal(GrPostal grPostal) 
+    private void writeGrPostal(GrPostal grPostal)
             throws XMLStreamException {
 
         if (grPostal.getCode() != null) {
@@ -885,7 +885,7 @@ public class XalWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws XalException
      */
-    private void writeSubAdministrativeArea(SubAdministrativeArea subAdministrativeArea) 
+    private void writeSubAdministrativeArea(SubAdministrativeArea subAdministrativeArea)
             throws XMLStreamException, XalException {
 
         writer.writeStartElement(URI_XAL, TAG_SUB_ADMINISTRATIVE_AREA);
@@ -919,7 +919,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param postBox
      * @throws XMLStreamException
      */
-    private void writePostBox(PostBox postBox) 
+    private void writePostBox(PostBox postBox)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_POST_BOX);
@@ -959,7 +959,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param postBoxNumber
      * @throws XMLStreamException
      */
-    private void writePostBoxNumber(PostBoxNumber postBoxNumber) 
+    private void writePostBoxNumber(PostBoxNumber postBoxNumber)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_POST_BOX_NUMBER);
@@ -977,7 +977,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param postBoxNumberPrefix
      * @throws XMLStreamException
      */
-    private void writePostBoxNumberPrefix(PostBoxNumberPrefix postBoxNumberPrefix) 
+    private void writePostBoxNumberPrefix(PostBoxNumberPrefix postBoxNumberPrefix)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_POST_BOX_NUMBER_PREFIX);
@@ -999,7 +999,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param postBoxNumberSuffix
      * @throws XMLStreamException
      */
-    private void writePostBoxNumberSuffix(PostBoxNumberSuffix postBoxNumberSuffix) 
+    private void writePostBoxNumberSuffix(PostBoxNumberSuffix postBoxNumberSuffix)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_POST_BOX_NUMBER_SUFFIX);
@@ -1021,7 +1021,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param postBoxNumberExtension
      * @throws XMLStreamException
      */
-    private void writePostBoxNumberExtension(PostBoxNumberExtension postBoxNumberExtension) 
+    private void writePostBoxNumberExtension(PostBoxNumberExtension postBoxNumberExtension)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_POST_BOX_NUMBER_EXTENSION);
@@ -1040,7 +1040,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param firm
      * @throws XMLStreamException
      */
-    private void writeFirm(Firm firm) 
+    private void writeFirm(Firm firm)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_FIRM);
@@ -1070,7 +1070,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param department
      * @throws XMLStreamException
      */
-    private void writeDepartment(Department department) 
+    private void writeDepartment(Department department)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_DEPARTMENT);
@@ -1097,7 +1097,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param mailStop
      * @throws XMLStreamException
      */
-    private void writeMailStop(MailStop mailStop) 
+    private void writeMailStop(MailStop mailStop)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_MAIL_STOP);
@@ -1121,7 +1121,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param mailStopNumber
      * @throws XMLStreamException
      */
-    private void writeMailStopNumber(MailStopNumber mailStopNumber) 
+    private void writeMailStopNumber(MailStopNumber mailStopNumber)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_MAIL_STOP_NUMBER);
@@ -1143,7 +1143,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param postOffice
      * @throws XMLStreamException
      */
-    private void writePostOffice(PostOffice postOffice) 
+    private void writePostOffice(PostOffice postOffice)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_POST_OFFICE);
@@ -1183,7 +1183,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param postalCode
      * @throws XMLStreamException
      */
-    private void writePostalCode(PostalCode postalCode) 
+    private void writePostalCode(PostalCode postalCode)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_POSTAL_CODE);
@@ -1210,7 +1210,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param postalCodeNumberExtension
      * @throws XMLStreamException
      */
-    private void writePostalCodeNumberExtension(PostalCodeNumberExtension postalCodeNumberExtension) 
+    private void writePostalCodeNumberExtension(PostalCodeNumberExtension postalCodeNumberExtension)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_POSTAL_CODE_NUMBER_EXTENSION);
@@ -1235,7 +1235,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param postTown
      * @throws XMLStreamException
      */
-    private void writePostTown(PostTown postTown) 
+    private void writePostTown(PostTown postTown)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_POST_TOWN);
@@ -1259,7 +1259,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param postTownSuffix
      * @throws XMLStreamException
      */
-    private void writeTownSuffix(PostTownSuffix postTownSuffix) 
+    private void writeTownSuffix(PostTownSuffix postTownSuffix)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_POST_TOWN_SUFFIX);
@@ -1278,7 +1278,7 @@ public class XalWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws XalException
      */
-    private void writeLargeMailUser(LargeMailUser largeMailUser) 
+    private void writeLargeMailUser(LargeMailUser largeMailUser)
             throws XMLStreamException, XalException {
 
         writer.writeStartElement(URI_XAL, TAG_LARGE_MAIL_USER);
@@ -1317,7 +1317,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param largeMailUserName
      * @throws XMLStreamException
      */
-    private void writeLargeMailUserName(LargeMailUserName largeMailUserName) 
+    private void writeLargeMailUserName(LargeMailUserName largeMailUserName)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_LARGE_MAIL_USER_NAME);
@@ -1338,7 +1338,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param largeMailUserIdentifier
      * @throws XMLStreamException
      */
-    private void writeLargeMailUserIdentifier(LargeMailUserIdentifier largeMailUserIdentifier) 
+    private void writeLargeMailUserIdentifier(LargeMailUserIdentifier largeMailUserIdentifier)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_LARGE_MAIL_USER_IDENTIFIER);
@@ -1362,7 +1362,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param buildingName
      * @throws XMLStreamException
      */
-    private void writeBuildingName(BuildingName buildingName) 
+    private void writeBuildingName(BuildingName buildingName)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_BUILDING_NAME);
@@ -1387,7 +1387,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param premiseName
      * @throws XMLStreamException
      */
-    private void writePremiseName(PremiseName premiseName) 
+    private void writePremiseName(PremiseName premiseName)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_PREMISE_NAME);
@@ -1412,7 +1412,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param premiseLocation
      * @throws XMLStreamException
      */
-    private void writePremiseLocation(PremiseLocation premiseLocation) 
+    private void writePremiseLocation(PremiseLocation premiseLocation)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_PREMISE_LOCATION);
@@ -1430,7 +1430,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param subPremiseName
      * @throws XMLStreamException
      */
-    private void writeSubPremiseName(SubPremiseName subPremiseName) 
+    private void writeSubPremiseName(SubPremiseName subPremiseName)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_SUB_PREMISE_NAME);
@@ -1455,7 +1455,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param subPremiseLocation
      * @throws XMLStreamException
      */
-    private void writeSubPremiseLocation(SubPremiseLocation subPremiseLocation) 
+    private void writeSubPremiseLocation(SubPremiseLocation subPremiseLocation)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_SUB_PREMISE_LOCATION);
@@ -1473,7 +1473,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param postalRoute
      * @throws XMLStreamException
      */
-    private void writePostalRoute(PostalRoute postalRoute) 
+    private void writePostalRoute(PostalRoute postalRoute)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_POSTAL_ROUTE);
@@ -1500,7 +1500,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param postalRouteNumber
      * @throws XMLStreamException
      */
-    private void writePostalRouteNumber(PostalRouteNumber postalRouteNumber) 
+    private void writePostalRouteNumber(PostalRouteNumber postalRouteNumber)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_POSTAL_ROUTE_NUMBER);
@@ -1518,7 +1518,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param postOfficeNumber
      * @throws XMLStreamException
      */
-    private void writePostOfficeNumber(PostOfficeNumber postOfficeNumber) 
+    private void writePostOfficeNumber(PostOfficeNumber postOfficeNumber)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_POST_OFFICE_NUMBER);
@@ -1543,7 +1543,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param dependentLocalityNumber
      * @throws XMLStreamException
      */
-    private void writeDependentLocalityNumber(DependentLocalityNumber dependentLocalityNumber) 
+    private void writeDependentLocalityNumber(DependentLocalityNumber dependentLocalityNumber)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_DEPENDENT_LOCALITY_NUMBER);
@@ -1565,7 +1565,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param premise
      * @throws XMLStreamException
      */
-    private void writePremise(Premise premise) 
+    private void writePremise(Premise premise)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_PREMISE);
@@ -1629,7 +1629,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param premiseNumber
      * @throws XMLStreamException
      */
-    private void writePremiseNumber(PremiseNumber premiseNumber) 
+    private void writePremiseNumber(PremiseNumber premiseNumber)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_PREMISE_NUMBER);
@@ -1662,7 +1662,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param subPremiseNumber
      * @throws XMLStreamException
      */
-    private void writeSubPremiseNumber(SubPremiseNumber subPremiseNumber) 
+    private void writeSubPremiseNumber(SubPremiseNumber subPremiseNumber)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_SUB_PREMISE_NUMBER);
@@ -1695,7 +1695,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param premiseNumberRange
      * @throws XMLStreamException
      */
-    private void writePremiseNumberRange(PremiseNumberRange premiseNumberRange) 
+    private void writePremiseNumberRange(PremiseNumberRange premiseNumberRange)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_PREMISE_NUMBER_RANGE);
@@ -1733,7 +1733,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param premiseNumberRangeFrom
      * @throws XMLStreamException
      */
-    private void writePremiseNumberRangeFrom(PremiseNumberRangeFrom premiseNumberRangeFrom) 
+    private void writePremiseNumberRangeFrom(PremiseNumberRangeFrom premiseNumberRangeFrom)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_PREMISE_NUMBER_RANGE_FROM);
@@ -1757,7 +1757,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param premiseNumberRangeTo
      * @throws XMLStreamException
      */
-    private void writePremiseNumberRangeTo(PremiseNumberRangeTo premiseNumberRangeTo) 
+    private void writePremiseNumberRangeTo(PremiseNumberRangeTo premiseNumberRangeTo)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_PREMISE_NUMBER_RANGE_TO);
@@ -1781,7 +1781,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param premiseNumberPrefix
      * @throws XMLStreamException
      */
-    private void writePremiseNumberPrefix(PremiseNumberPrefix premiseNumberPrefix) 
+    private void writePremiseNumberPrefix(PremiseNumberPrefix premiseNumberPrefix)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_PREMISE_NUMBER_PREFIX);
@@ -1806,7 +1806,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param premiseNumberSuffix
      * @throws XMLStreamException
      */
-    private void writePremiseNumberSuffix(PremiseNumberSuffix premiseNumberSuffix) 
+    private void writePremiseNumberSuffix(PremiseNumberSuffix premiseNumberSuffix)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_PREMISE_NUMBER_SUFFIX);
@@ -1831,7 +1831,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param subPremiseNumberPrefix
      * @throws XMLStreamException
      */
-    private void writeSubPremiseNumberPrefix(SubPremiseNumberPrefix subPremiseNumberPrefix) 
+    private void writeSubPremiseNumberPrefix(SubPremiseNumberPrefix subPremiseNumberPrefix)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_SUB_PREMISE_NUMBER_PREFIX);
@@ -1856,7 +1856,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param subPremiseNumberSuffix
      * @throws XMLStreamException
      */
-    private void writeSubPremiseNumberSuffix(SubPremiseNumberSuffix subPremiseNumberSuffix) 
+    private void writeSubPremiseNumberSuffix(SubPremiseNumberSuffix subPremiseNumberSuffix)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_SUB_PREMISE_NUMBER_SUFFIX);
@@ -1881,7 +1881,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param subPremise
      * @throws XMLStreamException
      */
-    private void writeSubPremise(SubPremise subPremise) 
+    private void writeSubPremise(SubPremise subPremise)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_SUB_PREMISE);
@@ -1930,7 +1930,7 @@ public class XalWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws XalException
      */
-    private void writeThoroughfare(Thoroughfare thoroughfare) 
+    private void writeThoroughfare(Thoroughfare thoroughfare)
             throws XMLStreamException, XalException {
 
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE);
@@ -2011,7 +2011,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param thoroughfareNumber
      * @throws XMLStreamException
      */
-    private void writeThoroughfareNumber(ThoroughfareNumber thoroughfareNumber) 
+    private void writeThoroughfareNumber(ThoroughfareNumber thoroughfareNumber)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_NUMBER);
@@ -2048,7 +2048,7 @@ public class XalWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws XalException
      */
-    private void writeThoroughfareNumberRange(ThoroughfareNumberRange thoroughfareNumberRange) 
+    private void writeThoroughfareNumberRange(ThoroughfareNumberRange thoroughfareNumberRange)
             throws XMLStreamException, XalException {
 
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_NUMBER_RANGE);
@@ -2093,7 +2093,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param suffix
      * @throws XMLStreamException
      */
-    private void writeThoroughfareNumberSuffix(ThoroughfareNumberSuffix suffix) 
+    private void writeThoroughfareNumberSuffix(ThoroughfareNumberSuffix suffix)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_NUMBER_SUFFIX);
@@ -2118,7 +2118,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param prefix
      * @throws XMLStreamException
      */
-    private void writeThoroughfareNumberPrefix(ThoroughfareNumberPrefix prefix) 
+    private void writeThoroughfareNumberPrefix(ThoroughfareNumberPrefix prefix)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_NUMBER_PREFIX);
@@ -2144,7 +2144,7 @@ public class XalWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws XalException
      */
-    private void writeThoroughfareNumberFrom(ThoroughfareNumberFrom thoroughfareNumberFrom) 
+    private void writeThoroughfareNumberFrom(ThoroughfareNumberFrom thoroughfareNumberFrom)
             throws XMLStreamException, XalException {
 
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_NUMBER_FROM);
@@ -2175,7 +2175,7 @@ public class XalWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws XalException
      */
-    private void writeThoroughfareNumberTo(ThoroughfareNumberTo thoroughfareNumberTo) 
+    private void writeThoroughfareNumberTo(ThoroughfareNumberTo thoroughfareNumberTo)
             throws XMLStreamException, XalException {
 
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_NUMBER_TO);
@@ -2202,13 +2202,13 @@ public class XalWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param thoroughfare
      * @throws XMLStreamException
      */
-    private void writeDependentThoroughfare(DependentThoroughfare thoroughfare) 
+    private void writeDependentThoroughfare(DependentThoroughfare thoroughfare)
             throws XMLStreamException {
-        
+
         writer.writeStartElement(URI_XAL, TAG_DEPENDENT_THOROUGHFARE);
         if (thoroughfare.getType() != null) {
             writer.writeAttribute(ATT_TYPE, thoroughfare.getType());

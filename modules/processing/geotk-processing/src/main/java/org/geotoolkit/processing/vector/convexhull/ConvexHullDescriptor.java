@@ -64,7 +64,7 @@ public final class ConvexHullDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Geometry used")
             .setRequired(false)
             .create(String.class, null);
-    
+
     public static final ParameterDescriptor<Geometry> GEOMETRY_OUT = new ParameterBuilder()
             .addName("geometry_out")
             .setRemarks("Convex Hull geometry")

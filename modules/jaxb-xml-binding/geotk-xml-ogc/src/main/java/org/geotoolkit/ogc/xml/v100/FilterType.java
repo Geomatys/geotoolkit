@@ -29,9 +29,9 @@ import org.opengis.filter.FilterVisitor;
 
 /**
  * <p>Java class for FilterType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FilterType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.opengis.filter.FilterVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -70,17 +70,17 @@ public class FilterType implements Filter, XMLFilter {
 
     @XmlTransient
     private Map<String, String> prefixMapping;
-    
+
     @XmlTransient
     private static ObjectFactory FACTORY = new ObjectFactory();
-    
+
     /**
      * An empty constructor used by JAXB
      */
     public FilterType() {
-        
+
     }
-    
+
     /**
      * build a new FilterType with the specified logical operator
      */
@@ -90,21 +90,21 @@ public class FilterType implements Filter, XMLFilter {
         this.logicOps = logicOps;
         this.spatialOps = spatialOps;
     }
-    
+
     /**
      * build a new FilterType with the specified logical operator
      */
     public FilterType(final Object obj) {
-        
+
         // comparison operator
         if (obj instanceof ComparisonOpsType) {
             this.comparisonOps = createComparisonOps((ComparisonOpsType) obj);
-            
-        // logical operator    
+
+        // logical operator
         } else if (obj instanceof LogicOpsType) {
             this.logicOps = createLogicOps((LogicOpsType) obj);
-            
-        // spatial operator    
+
+        // spatial operator
         } else if (obj instanceof SpatialOpsType) {
             this.spatialOps = createSpatialOps((SpatialOpsType) obj);
 
@@ -113,7 +113,7 @@ public class FilterType implements Filter, XMLFilter {
             this.featureId = new ArrayList<FeatureIdType>();
             this.featureId.add((FeatureIdType) obj);
 
-        // clone    
+        // clone
         } else if (obj instanceof FilterType) {
             final FilterType that = (FilterType) obj;
             if (that.comparisonOps != null) {
@@ -137,14 +137,14 @@ public class FilterType implements Filter, XMLFilter {
                     this.featureId.add(new FeatureIdType(fid.getFid()));
                 }
             }
-            
+
         } else {
             throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
         }
     }
-    
+
      public static JAXBElement<? extends ComparisonOpsType> createComparisonOps(final ComparisonOpsType operator) {
-        
+
         if (operator instanceof PropertyIsLessThanOrEqualToType) {
             return FACTORY.createPropertyIsLessThanOrEqualTo((PropertyIsLessThanOrEqualToType) operator);
         } else if (operator instanceof PropertyIsLessThanType) {
@@ -165,13 +165,13 @@ public class FilterType implements Filter, XMLFilter {
             return FACTORY.createPropertyIsLike((PropertyIsLikeType) operator);
         } else if (operator instanceof ComparisonOpsType) {
             return FACTORY.createComparisonOps((ComparisonOpsType) operator);
-        } else { 
+        } else {
             return null;
         }
     }
-    
+
     public static JAXBElement<? extends LogicOpsType> createLogicOps(final LogicOpsType operator) {
-        
+
         if (operator instanceof OrType) {
             return FACTORY.createOr((OrType) operator);
         } else if (operator instanceof NotType) {
@@ -184,9 +184,9 @@ public class FilterType implements Filter, XMLFilter {
             return null;
         }
     }
-    
+
     public static JAXBElement<? extends SpatialOpsType> createSpatialOps(final SpatialOpsType operator) {
-        
+
         if (operator instanceof BeyondType) {
             return FACTORY.createBeyond((BeyondType) operator);
         } else if (operator instanceof DWithinType) {
@@ -215,10 +215,10 @@ public class FilterType implements Filter, XMLFilter {
             return null;
         }
     }
-    
+
     /**
      * Gets the value of the spatialOps property.
-     * 
+     *
      */
     public JAXBElement<? extends SpatialOpsType> getSpatialOps() {
         return spatialOps;
@@ -226,7 +226,7 @@ public class FilterType implements Filter, XMLFilter {
 
     /**
      * Sets the value of the spatialOps property.
-     *     
+     *
      */
     public void setSpatialOps(final JAXBElement<? extends SpatialOpsType> value) {
         this.spatialOps = ((JAXBElement<? extends SpatialOpsType> ) value);
@@ -234,7 +234,7 @@ public class FilterType implements Filter, XMLFilter {
 
     /**
      * Gets the value of the comparisonOps property.
-     * 
+     *
      */
     public JAXBElement<? extends ComparisonOpsType> getComparisonOps() {
         return comparisonOps;
@@ -249,7 +249,7 @@ public class FilterType implements Filter, XMLFilter {
 
     /**
      * Gets the value of the logicOps property.
-     * 
+     *
      */
     public JAXBElement<? extends LogicOpsType> getLogicOps() {
         return logicOps;
@@ -257,7 +257,7 @@ public class FilterType implements Filter, XMLFilter {
 
     /**
      * Sets the value of the logicOps property.
-     * 
+     *
      */
     public void setLogicOps(final JAXBElement<? extends LogicOpsType> value) {
         this.logicOps = ((JAXBElement<? extends LogicOpsType> ) value);
@@ -265,7 +265,7 @@ public class FilterType implements Filter, XMLFilter {
 
     /**
      * Gets the value of the featureId property.
-     * 
+     *
      */
     public List<FeatureIdType> getFeatureId() {
         if (featureId == null) {
@@ -273,7 +273,7 @@ public class FilterType implements Filter, XMLFilter {
         }
         return this.featureId;
     }
-    
+
     @Override
     public Object getFilterObject() {
         if (comparisonOps != null) {
@@ -287,7 +287,7 @@ public class FilterType implements Filter, XMLFilter {
         }
         return null;
     }
-    
+
      /**
      * @return the prefixMapping
      */
@@ -303,7 +303,7 @@ public class FilterType implements Filter, XMLFilter {
     public void setPrefixMapping(Map<String, String> prefixMapping) {
         this.prefixMapping = prefixMapping;
     }
-    
+
     @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");

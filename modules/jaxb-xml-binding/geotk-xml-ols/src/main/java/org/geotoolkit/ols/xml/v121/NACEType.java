@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for NACEType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="NACEType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "NACEType")
@@ -58,11 +58,11 @@ public class NACEType extends AbstractNamedReferenceSystem {
 
     /**
      * Gets the value of the division property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDivision() {
         return division;
@@ -70,11 +70,11 @@ public class NACEType extends AbstractNamedReferenceSystem {
 
     /**
      * Sets the value of the division property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDivision(String value) {
         this.division = value;
@@ -82,11 +82,11 @@ public class NACEType extends AbstractNamedReferenceSystem {
 
     /**
      * Gets the value of the group property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getGroup() {
         return group;
@@ -94,11 +94,11 @@ public class NACEType extends AbstractNamedReferenceSystem {
 
     /**
      * Sets the value of the group property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setGroup(String value) {
         this.group = value;
@@ -106,11 +106,11 @@ public class NACEType extends AbstractNamedReferenceSystem {
 
     /**
      * Gets the value of the clazz property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getClazz() {
         return clazz;
@@ -118,11 +118,11 @@ public class NACEType extends AbstractNamedReferenceSystem {
 
     /**
      * Sets the value of the clazz property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setClazz(String value) {
         this.clazz = value;
@@ -130,11 +130,11 @@ public class NACEType extends AbstractNamedReferenceSystem {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDescription() {
         return description;
@@ -142,11 +142,11 @@ public class NACEType extends AbstractNamedReferenceSystem {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDescription(String value) {
         this.description = value;

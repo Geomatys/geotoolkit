@@ -36,19 +36,19 @@ import org.geotoolkit.display2d.style.labeling.candidate.PointCandidate;
 /**
  * Label renderer that apply a simple decimation on labels to remove all
  * overlaping labels and labels partly visible on the map edges.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class DecimationLabelRenderer extends DefaultLabelRenderer{
-    
+
     private final SortedSet<Candidate> candidates = new TreeSet<Candidate>(LabelingUtilities.XY_COMPARATOR);
 
     private final List<LabelLayer> layers = new ArrayList<LabelLayer>();
 
     private PointLabelCandidateRenderer pointRenderer;
     private LinearLabelCandidateRenderer LinearRenderer;
-    
+
     public DecimationLabelRenderer() {
     }
 
@@ -69,29 +69,29 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
 
     /**
      * {@inheritDoc }
-     */ 
+     */
     @Override
     public RenderingContext2D getRenderingContext() {
         return context;
     }
-    
+
     /**
      * {@inheritDoc }
-     */ 
+     */
     @Override
     public void append(final LabelLayer layer) {
         layers.add(layer);
     }
-    
+
     /**
      * {@inheritDoc }
-     */ 
+     */
     @Override
     public void portrayLabels(){
         final Graphics2D g2 = context.getGraphics();
         //enable antialiasing for labels
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        
+
         //paint the remaining candidates
         for(Candidate candidate : candidates){
             if(candidate instanceof PointCandidate){
@@ -100,7 +100,7 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
                 LinearRenderer.render(candidate);
             }
         }
-        
+
         layers.clear();
     }
 

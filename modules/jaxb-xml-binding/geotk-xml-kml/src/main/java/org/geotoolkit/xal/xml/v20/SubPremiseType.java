@@ -36,9 +36,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for SubPremiseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SubPremiseType">
  *   &lt;complexContent>
@@ -136,8 +136,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -189,25 +189,25 @@ public class SubPremiseType {
 
     /**
      * Gets the value of the addressLine property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the addressLine property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAddressLine().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AddressLine }
-     * 
-     * 
+     *
+     *
      */
     public List<AddressLine> getAddressLine() {
         if (addressLine == null) {
@@ -218,25 +218,25 @@ public class SubPremiseType {
 
     /**
      * Gets the value of the subPremiseName property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the subPremiseName property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSubPremiseName().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link SubPremiseType.SubPremiseName }
-     * 
-     * 
+     *
+     *
      */
     public List<SubPremiseType.SubPremiseName> getSubPremiseName() {
         if (subPremiseName == null) {
@@ -247,11 +247,11 @@ public class SubPremiseType {
 
     /**
      * Gets the value of the subPremiseLocation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SubPremiseType.SubPremiseLocation }
-     *     
+     *
      */
     public SubPremiseType.SubPremiseLocation getSubPremiseLocation() {
         return subPremiseLocation;
@@ -259,11 +259,11 @@ public class SubPremiseType {
 
     /**
      * Sets the value of the subPremiseLocation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SubPremiseType.SubPremiseLocation }
-     *     
+     *
      */
     public void setSubPremiseLocation(final SubPremiseType.SubPremiseLocation value) {
         this.subPremiseLocation = value;
@@ -271,25 +271,25 @@ public class SubPremiseType {
 
     /**
      * Gets the value of the subPremiseNumber property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the subPremiseNumber property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSubPremiseNumber().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link SubPremiseType.SubPremiseNumber }
-     * 
-     * 
+     *
+     *
      */
     public List<SubPremiseType.SubPremiseNumber> getSubPremiseNumber() {
         if (subPremiseNumber == null) {
@@ -300,25 +300,25 @@ public class SubPremiseType {
 
     /**
      * Gets the value of the subPremiseNumberPrefix property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the subPremiseNumberPrefix property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSubPremiseNumberPrefix().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link SubPremiseType.SubPremiseNumberPrefix }
-     * 
-     * 
+     *
+     *
      */
     public List<SubPremiseType.SubPremiseNumberPrefix> getSubPremiseNumberPrefix() {
         if (subPremiseNumberPrefix == null) {
@@ -329,25 +329,25 @@ public class SubPremiseType {
 
     /**
      * Gets the value of the subPremiseNumberSuffix property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the subPremiseNumberSuffix property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSubPremiseNumberSuffix().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link SubPremiseType.SubPremiseNumberSuffix }
-     * 
-     * 
+     *
+     *
      */
     public List<SubPremiseType.SubPremiseNumberSuffix> getSubPremiseNumberSuffix() {
         if (subPremiseNumberSuffix == null) {
@@ -358,25 +358,25 @@ public class SubPremiseType {
 
     /**
      * Gets the value of the buildingName property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the buildingName property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getBuildingName().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link BuildingNameType }
-     * 
-     * 
+     *
+     *
      */
     public List<BuildingNameType> getBuildingName() {
         if (buildingName == null) {
@@ -387,11 +387,11 @@ public class SubPremiseType {
 
     /**
      * Gets the value of the firm property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FirmType }
-     *     
+     *
      */
     public FirmType getFirm() {
         return firm;
@@ -399,11 +399,11 @@ public class SubPremiseType {
 
     /**
      * Sets the value of the firm property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FirmType }
-     *     
+     *
      */
     public void setFirm(final FirmType value) {
         this.firm = value;
@@ -411,11 +411,11 @@ public class SubPremiseType {
 
     /**
      * Gets the value of the mailStop property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MailStopType }
-     *     
+     *
      */
     public MailStopType getMailStop() {
         return mailStop;
@@ -423,11 +423,11 @@ public class SubPremiseType {
 
     /**
      * Sets the value of the mailStop property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MailStopType }
-     *     
+     *
      */
     public void setMailStop(final MailStopType value) {
         this.mailStop = value;
@@ -435,11 +435,11 @@ public class SubPremiseType {
 
     /**
      * Gets the value of the postalCode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PostalCode }
-     *     
+     *
      */
     public PostalCode getPostalCode() {
         return postalCode;
@@ -447,11 +447,11 @@ public class SubPremiseType {
 
     /**
      * Sets the value of the postalCode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PostalCode }
-     *     
+     *
      */
     public void setPostalCode(final PostalCode value) {
         this.postalCode = value;
@@ -459,11 +459,11 @@ public class SubPremiseType {
 
     /**
      * Gets the value of the subPremise property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SubPremiseType }
-     *     
+     *
      */
     public SubPremiseType getSubPremise() {
         return subPremise;
@@ -471,11 +471,11 @@ public class SubPremiseType {
 
     /**
      * Sets the value of the subPremise property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SubPremiseType }
-     *     
+     *
      */
     public void setSubPremise(final SubPremiseType value) {
         this.subPremise = value;
@@ -483,25 +483,25 @@ public class SubPremiseType {
 
     /**
      * Gets the value of the any property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the any property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAny().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getAny() {
         if (any == null) {
@@ -512,11 +512,11 @@ public class SubPremiseType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -524,11 +524,11 @@ public class SubPremiseType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -536,15 +536,15 @@ public class SubPremiseType {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * <p>
-     * the map is keyed by the name of the attribute and 
+     * the map is keyed by the name of the attribute and
      * the value is the string value of the attribute.
-     * 
+     *
      * the map returned by this method is live, and you can add new attribute
      * by updating the map directly. Because of this design, there's no setter.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */
@@ -555,9 +555,9 @@ public class SubPremiseType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -567,8 +567,8 @@ public class SubPremiseType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -584,11 +584,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the content property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getContent() {
             return content;
@@ -596,11 +596,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the content property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setContent(final String value) {
             this.content = value;
@@ -608,11 +608,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the code property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getCode() {
             return code;
@@ -620,11 +620,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the code property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setCode(final String value) {
             this.code = value;
@@ -635,9 +635,9 @@ public class SubPremiseType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -656,8 +656,8 @@ public class SubPremiseType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -681,11 +681,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the content property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getContent() {
             return content;
@@ -693,11 +693,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the content property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setContent(final String value) {
             this.content = value;
@@ -705,11 +705,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
             return type;
@@ -717,11 +717,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -729,11 +729,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the typeOccurrence property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getTypeOccurrence() {
             return typeOccurrence;
@@ -741,11 +741,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the typeOccurrence property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setTypeOccurrence(final String value) {
             this.typeOccurrence = value;
@@ -753,11 +753,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the code property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getCode() {
             return code;
@@ -765,11 +765,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the code property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setCode(final String value) {
             this.code = value;
@@ -777,15 +777,15 @@ public class SubPremiseType {
 
         /**
          * Gets a map that contains attributes that aren't bound to any typed property on this class.
-         * 
+         *
          * <p>
-         * the map is keyed by the name of the attribute and 
+         * the map is keyed by the name of the attribute and
          * the value is the string value of the attribute.
-         * 
+         *
          * the map returned by this method is live, and you can add new attribute
          * by updating the map directly. Because of this design, there's no setter.
-         * 
-         * 
+         *
+         *
          * @return
          *     always non-null
          */
@@ -798,9 +798,9 @@ public class SubPremiseType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -829,8 +829,8 @@ public class SubPremiseType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -863,11 +863,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the content property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getContent() {
             return content;
@@ -875,11 +875,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the content property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setContent(final String value) {
             this.content = value;
@@ -887,11 +887,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the indicator property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getIndicator() {
             return indicator;
@@ -899,11 +899,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the indicator property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setIndicator(final String value) {
             this.indicator = value;
@@ -911,11 +911,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the indicatorOccurrence property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getIndicatorOccurrence() {
             return indicatorOccurrence;
@@ -923,11 +923,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the indicatorOccurrence property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setIndicatorOccurrence(final String value) {
             this.indicatorOccurrence = value;
@@ -935,11 +935,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the numberTypeOccurrence property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getNumberTypeOccurrence() {
             return numberTypeOccurrence;
@@ -947,11 +947,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the numberTypeOccurrence property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setNumberTypeOccurrence(final String value) {
             this.numberTypeOccurrence = value;
@@ -959,11 +959,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the premiseNumberSeparator property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getPremiseNumberSeparator() {
             return premiseNumberSeparator;
@@ -971,11 +971,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the premiseNumberSeparator property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setPremiseNumberSeparator(final String value) {
             this.premiseNumberSeparator = value;
@@ -983,11 +983,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
             return type;
@@ -995,11 +995,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -1007,11 +1007,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the code property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getCode() {
             return code;
@@ -1019,11 +1019,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the code property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setCode(final String value) {
             this.code = value;
@@ -1031,15 +1031,15 @@ public class SubPremiseType {
 
         /**
          * Gets a map that contains attributes that aren't bound to any typed property on this class.
-         * 
+         *
          * <p>
-         * the map is keyed by the name of the attribute and 
+         * the map is keyed by the name of the attribute and
          * the value is the string value of the attribute.
-         * 
+         *
          * the map returned by this method is live, and you can add new attribute
          * by updating the map directly. Because of this design, there's no setter.
-         * 
-         * 
+         *
+         *
          * @return
          *     always non-null
          */
@@ -1052,9 +1052,9 @@ public class SubPremiseType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -1066,8 +1066,8 @@ public class SubPremiseType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -1091,11 +1091,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the content property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getContent() {
             return content;
@@ -1103,11 +1103,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the content property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setContent(final String value) {
             this.content = value;
@@ -1115,11 +1115,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the numberPrefixSeparator property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getNumberPrefixSeparator() {
             return numberPrefixSeparator;
@@ -1127,11 +1127,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the numberPrefixSeparator property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setNumberPrefixSeparator(final String value) {
             this.numberPrefixSeparator = value;
@@ -1139,11 +1139,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
             return type;
@@ -1151,11 +1151,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -1163,11 +1163,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the code property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getCode() {
             return code;
@@ -1175,11 +1175,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the code property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setCode(final String value) {
             this.code = value;
@@ -1187,15 +1187,15 @@ public class SubPremiseType {
 
         /**
          * Gets a map that contains attributes that aren't bound to any typed property on this class.
-         * 
+         *
          * <p>
-         * the map is keyed by the name of the attribute and 
+         * the map is keyed by the name of the attribute and
          * the value is the string value of the attribute.
-         * 
+         *
          * the map returned by this method is live, and you can add new attribute
          * by updating the map directly. Because of this design, there's no setter.
-         * 
-         * 
+         *
+         *
          * @return
          *     always non-null
          */
@@ -1208,9 +1208,9 @@ public class SubPremiseType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -1222,8 +1222,8 @@ public class SubPremiseType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -1247,11 +1247,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the content property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getContent() {
             return content;
@@ -1259,11 +1259,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the content property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setContent(final String value) {
             this.content = value;
@@ -1271,11 +1271,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the numberSuffixSeparator property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getNumberSuffixSeparator() {
             return numberSuffixSeparator;
@@ -1283,11 +1283,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the numberSuffixSeparator property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setNumberSuffixSeparator(final String value) {
             this.numberSuffixSeparator = value;
@@ -1295,11 +1295,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
             return type;
@@ -1307,11 +1307,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -1319,11 +1319,11 @@ public class SubPremiseType {
 
         /**
          * Gets the value of the code property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getCode() {
             return code;
@@ -1331,11 +1331,11 @@ public class SubPremiseType {
 
         /**
          * Sets the value of the code property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setCode(final String value) {
             this.code = value;
@@ -1343,15 +1343,15 @@ public class SubPremiseType {
 
         /**
          * Gets a map that contains attributes that aren't bound to any typed property on this class.
-         * 
+         *
          * <p>
-         * the map is keyed by the name of the attribute and 
+         * the map is keyed by the name of the attribute and
          * the value is the string value of the attribute.
-         * 
+         *
          * the map returned by this method is live, and you can add new attribute
          * by updating the map directly. Because of this design, there's no setter.
-         * 
-         * 
+         *
+         *
          * @return
          *     always non-null
          */

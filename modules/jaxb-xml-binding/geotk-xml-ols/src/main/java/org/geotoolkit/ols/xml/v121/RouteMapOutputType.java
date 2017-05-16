@@ -28,11 +28,11 @@ import org.geotoolkit.gml.xml.v311.EnvelopeType;
 
 /**
  * Defines the rendered route map output parameters.
- * 
+ *
  * <p>Java class for RouteMapOutputType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RouteMapOutputType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.gml.xml.v311.EnvelopeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RouteMapOutputType", propOrder = {
@@ -78,11 +78,11 @@ public class RouteMapOutputType {
 
     /**
      * Gets the value of the bBoxContext property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EnvelopeType }
-     *     
+     *
      */
     public EnvelopeType getBBoxContext() {
         return bBoxContext;
@@ -90,11 +90,11 @@ public class RouteMapOutputType {
 
     /**
      * Sets the value of the bBoxContext property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EnvelopeType }
-     *     
+     *
      */
     public void setBBoxContext(EnvelopeType value) {
         this.bBoxContext = value;
@@ -102,11 +102,11 @@ public class RouteMapOutputType {
 
     /**
      * Gets the value of the width property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getWidth() {
         return width;
@@ -114,11 +114,11 @@ public class RouteMapOutputType {
 
     /**
      * Sets the value of the width property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setWidth(Integer value) {
         this.width = value;
@@ -126,11 +126,11 @@ public class RouteMapOutputType {
 
     /**
      * Gets the value of the height property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getHeight() {
         return height;
@@ -138,11 +138,11 @@ public class RouteMapOutputType {
 
     /**
      * Sets the value of the height property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setHeight(Integer value) {
         this.height = value;
@@ -150,11 +150,11 @@ public class RouteMapOutputType {
 
     /**
      * Gets the value of the format property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFormat() {
         return format;
@@ -162,11 +162,11 @@ public class RouteMapOutputType {
 
     /**
      * Sets the value of the format property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFormat(String value) {
         this.format = value;
@@ -174,11 +174,11 @@ public class RouteMapOutputType {
 
     /**
      * Gets the value of the bGcolor property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getBGcolor() {
         return bGcolor;
@@ -186,11 +186,11 @@ public class RouteMapOutputType {
 
     /**
      * Sets the value of the bGcolor property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setBGcolor(String value) {
         this.bGcolor = value;
@@ -198,11 +198,11 @@ public class RouteMapOutputType {
 
     /**
      * Gets the value of the transparent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isTransparent() {
         return transparent;
@@ -210,11 +210,11 @@ public class RouteMapOutputType {
 
     /**
      * Sets the value of the transparent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setTransparent(Boolean value) {
         this.transparent = value;
@@ -222,11 +222,11 @@ public class RouteMapOutputType {
 
     /**
      * Gets the value of the style property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RouteMapStyleType }
-     *     
+     *
      */
     public RouteMapStyleType getStyle() {
         return style;
@@ -234,11 +234,11 @@ public class RouteMapOutputType {
 
     /**
      * Sets the value of the style property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RouteMapStyleType }
-     *     
+     *
      */
     public void setStyle(RouteMapStyleType value) {
         this.style = value;

@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * List of URLs that give access to translation of capabilties document at hand.
- * 
+ *
  * <p>Java class for TranslatedCapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TranslatedCapabilitiesType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -70,7 +70,7 @@ public class TranslatedCapabilitiesType {
             }
         }
     }
-    
+
     public TranslatedCapabilitiesType(final List<DocumentType> document) {
         this.document = document;
     }

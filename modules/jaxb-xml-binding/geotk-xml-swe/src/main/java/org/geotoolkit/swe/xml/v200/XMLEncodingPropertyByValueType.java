@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for XMLEncodingPropertyByValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="XMLEncodingPropertyByValueType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "XMLEncodingPropertyByValueType", propOrder = {
@@ -53,11 +53,11 @@ public class XMLEncodingPropertyByValueType {
 
     /**
      * Gets the value of the xmlEncoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLEncodingType }
-     *     
+     *
      */
     public XMLEncodingType getXMLEncoding() {
         return xmlEncoding;
@@ -65,11 +65,11 @@ public class XMLEncodingPropertyByValueType {
 
     /**
      * Sets the value of the xmlEncoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLEncodingType }
-     *     
+     *
      */
     public void setXMLEncoding(XMLEncodingType value) {
         this.xmlEncoding = value;

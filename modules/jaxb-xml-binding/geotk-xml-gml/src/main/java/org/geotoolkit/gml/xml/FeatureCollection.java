@@ -25,8 +25,8 @@ import java.util.List;
  * @module
  */
 public interface FeatureCollection extends AbstractFeature {
-    
+
     void computeBounds();
-    
+
     List<? extends FeatureProperty> getFeatureMember();
 }

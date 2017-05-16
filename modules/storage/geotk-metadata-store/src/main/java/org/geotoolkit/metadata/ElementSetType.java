@@ -21,7 +21,7 @@ package org.geotoolkit.metadata;
 
 /**
  * This class is a copy of the enum in csw xml binding in order to use it without havinf to import all the dependencies of this module.
- * 
+ *
  * @author Guilhem Legal
  */
 @Deprecated

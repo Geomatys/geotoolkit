@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines a spatial filter which selects POIs located within a specified bounding area.
- * 
+ *
  * <p>Java class for WithinBoundaryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="WithinBoundaryType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WithinBoundaryType", propOrder = {
@@ -55,11 +55,11 @@ public class WithinBoundaryType {
 
     /**
      * Gets the value of the aoi property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AreaOfInterestType }
-     *     
+     *
      */
     public AreaOfInterestType getAOI() {
         return aoi;
@@ -67,11 +67,11 @@ public class WithinBoundaryType {
 
     /**
      * Sets the value of the aoi property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AreaOfInterestType }
-     *     
+     *
      */
     public void setAOI(AreaOfInterestType value) {
         this.aoi = value;

@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ViewVolumeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ViewVolumeType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,11 +81,11 @@ public class ViewVolumeType extends AbstractObjectType {
 
     /**
      * Gets the value of the leftFov property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getLeftFov() {
         return leftFov;
@@ -93,11 +93,11 @@ public class ViewVolumeType extends AbstractObjectType {
 
     /**
      * Sets the value of the leftFov property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setLeftFov(final Double value) {
         this.leftFov = value;
@@ -105,11 +105,11 @@ public class ViewVolumeType extends AbstractObjectType {
 
     /**
      * Gets the value of the rightFov property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getRightFov() {
         return rightFov;
@@ -117,11 +117,11 @@ public class ViewVolumeType extends AbstractObjectType {
 
     /**
      * Sets the value of the rightFov property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setRightFov(final Double value) {
         this.rightFov = value;
@@ -129,11 +129,11 @@ public class ViewVolumeType extends AbstractObjectType {
 
     /**
      * Gets the value of the bottomFov property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getBottomFov() {
         return bottomFov;
@@ -141,11 +141,11 @@ public class ViewVolumeType extends AbstractObjectType {
 
     /**
      * Sets the value of the bottomFov property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setBottomFov(final Double value) {
         this.bottomFov = value;
@@ -153,11 +153,11 @@ public class ViewVolumeType extends AbstractObjectType {
 
     /**
      * Gets the value of the topFov property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getTopFov() {
         return topFov;
@@ -165,11 +165,11 @@ public class ViewVolumeType extends AbstractObjectType {
 
     /**
      * Sets the value of the topFov property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setTopFov(final Double value) {
         this.topFov = value;
@@ -177,11 +177,11 @@ public class ViewVolumeType extends AbstractObjectType {
 
     /**
      * Gets the value of the near property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getNear() {
         return near;
@@ -189,11 +189,11 @@ public class ViewVolumeType extends AbstractObjectType {
 
     /**
      * Sets the value of the near property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setNear(final Double value) {
         this.near = value;
@@ -201,25 +201,25 @@ public class ViewVolumeType extends AbstractObjectType {
 
     /**
      * Gets the value of the viewVolumeSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the viewVolumeSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getViewVolumeSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getViewVolumeSimpleExtensionGroup() {
         if (viewVolumeSimpleExtensionGroup == null) {
@@ -230,25 +230,25 @@ public class ViewVolumeType extends AbstractObjectType {
 
     /**
      * Gets the value of the viewVolumeObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the viewVolumeObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getViewVolumeObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getViewVolumeObjectExtensionGroup() {
         if (viewVolumeObjectExtensionGroup == null) {

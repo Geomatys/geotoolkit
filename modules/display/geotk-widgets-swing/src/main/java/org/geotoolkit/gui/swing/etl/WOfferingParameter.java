@@ -66,7 +66,7 @@ public class WOfferingParameter extends LabelWidget{
             str = str.substring(0, 20);
         }
         setLabel(JClassCellRenderer.getShortSymbol(cst.getType()) +" : "+ str);
-            
+
         if (editable) {
             getActions().addAction(ActionFactory.createConnectAction(scene.getActionLayer(), new ProviderParameterConnect(scene)));
         }

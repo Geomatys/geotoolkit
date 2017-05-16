@@ -124,7 +124,7 @@ public class WElementManuel extends Widget implements WPositionable {
         manualIntervention.setX(getLocation().x);
         manualIntervention.setY(getLocation().y);
     }
-    
+
     private class ManualInterventionEditor implements EditProvider {
 
         @Override

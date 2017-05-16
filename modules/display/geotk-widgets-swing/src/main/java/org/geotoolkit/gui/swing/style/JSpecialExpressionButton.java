@@ -43,23 +43,23 @@ public class JSpecialExpressionButton extends JPanel{
     private static final Icon ICON_EXP_NO = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL, 16, FontAwesomeIcons.DISABLE_COLOR);
     private static final Icon ICON_EXP_YES = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final Icon ICON_ERASE = IconBuilder.createIcon(FontAwesomeIcons.ICON_ERASER, 16, FontAwesomeIcons.DEFAULT_COLOR);
-    
+
     private Expression exp = null;
     private MapLayer layer = null;
 
     private final JButton guiEdit = new JButton();
     private final JButton guiErase = new JButton();
-    
+
     public JSpecialExpressionButton(){
         super(new FlowLayout());
         add(guiEdit);
         add(guiErase);
-        
+
         guiEdit.setBorderPainted(false);
         guiEdit.setContentAreaFilled(false);
         guiEdit.setBorder(null);
         guiEdit.setIcon(ICON_EXP_NO);
-        
+
         guiErase.setBorderPainted(false);
         guiErase.setContentAreaFilled(false);
         guiErase.setBorder(null);
@@ -80,7 +80,7 @@ public class JSpecialExpressionButton extends JPanel{
                 }
             }
         });
-        
+
         guiErase.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -89,7 +89,7 @@ public class JSpecialExpressionButton extends JPanel{
                 JSpecialExpressionButton.this.firePropertyChange(EXPRESSION_PROPERTY, oldExp, null);
             }
         });
-        
+
     }
 
     public void setLayer(final MapLayer layer){
@@ -111,7 +111,7 @@ public class JSpecialExpressionButton extends JPanel{
             guiErase.setVisible(true);
             tooltip = CQL.write(exp);
         }
-        
+
         setToolTipText(tooltip);
         guiEdit.setToolTipText(tooltip);
         guiErase.setToolTipText(tooltip);

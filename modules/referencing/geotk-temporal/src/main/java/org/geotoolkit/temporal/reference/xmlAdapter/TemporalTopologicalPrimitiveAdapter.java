@@ -36,7 +36,7 @@ public class TemporalTopologicalPrimitiveAdapter extends PropertyType<TemporalTo
     private TemporalTopologicalPrimitiveAdapter(final TemporalTopologicalPrimitive ttp) {
         super(ttp);
     }
-    
+
     /**
      * Invoked by JAXB at marshalling time for getting the actual element to write
      * inside the {@code <gml:OrdinalEra>} XML element.
@@ -49,13 +49,13 @@ public class TemporalTopologicalPrimitiveAdapter extends PropertyType<TemporalTo
         if (metadata instanceof DefaultTemporalEdge) return DefaultTemporalEdge.castOrCopy((TemporalEdge) metadata);
         return null;
     }
-    
+
     @XmlElement(name = "TimeNode", namespace = Namespaces.GML)
     public DefaultTemporalNode getElement2() {
         if (metadata instanceof DefaultTemporalNode) return DefaultTemporalNode.castOrCopy((TemporalNode) metadata);
         return null;
     }
-    
+
     /**
      * Invoked by JAXB at marshalling time for getting the actual element to write
      * inside the {@code <gml:TemporalTopologicalPrimitive>} XML element.
@@ -79,7 +79,7 @@ public class TemporalTopologicalPrimitiveAdapter extends PropertyType<TemporalTo
     protected TemporalTopologicalPrimitiveAdapter wrap(TemporalTopologicalPrimitive ttp) {
         return new TemporalTopologicalPrimitiveAdapter(ttp);
     }
-    
+
     /**
      * Invoked by JAXB at unmarshalling time for storing the result temporarily.
      *
@@ -87,9 +87,9 @@ public class TemporalTopologicalPrimitiveAdapter extends PropertyType<TemporalTo
      */
     public void setElement(final DefaultTemporalEdge primitive) {
         metadata = primitive;
-    } 
-    
+    }
+
     public void setElement2(final DefaultTemporalNode primitive) {
         metadata = primitive;
-    } 
+    }
 }

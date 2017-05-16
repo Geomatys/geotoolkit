@@ -26,10 +26,10 @@ import org.geotoolkit.ows.xml.RequestBase;
  * @author Guilhem Legal (Geomatys)
  */
 public interface GetObservationById extends RequestBase {
- 
+
      List<String> getObservation();
-     
+
      QName getResultModel();
-     
+
      String getResponseFormat();
 }

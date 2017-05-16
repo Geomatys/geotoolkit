@@ -27,9 +27,9 @@ import org.geotoolkit.tms.xml.TMSResponse;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.tms.xml.TMSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -84,11 +84,11 @@ public class TileMapService implements TMSResponse {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -96,11 +96,11 @@ public class TileMapService implements TMSResponse {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -108,11 +108,11 @@ public class TileMapService implements TMSResponse {
 
     /**
      * Gets the value of the abstract property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAbstract() {
         return _abstract;
@@ -120,11 +120,11 @@ public class TileMapService implements TMSResponse {
 
     /**
      * Sets the value of the abstract property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAbstract(String value) {
         this._abstract = value;
@@ -132,11 +132,11 @@ public class TileMapService implements TMSResponse {
 
     /**
      * Gets the value of the keywordList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getKeywordList() {
         return keywordList;
@@ -144,11 +144,11 @@ public class TileMapService implements TMSResponse {
 
     /**
      * Sets the value of the keywordList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setKeywordList(String value) {
         this.keywordList = value;
@@ -156,11 +156,11 @@ public class TileMapService implements TMSResponse {
 
     /**
      * Gets the value of the contactInformation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ContactInformationType }
-     *     
+     *
      */
     public ContactInformationType getContactInformation() {
         return contactInformation;
@@ -168,11 +168,11 @@ public class TileMapService implements TMSResponse {
 
     /**
      * Sets the value of the contactInformation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ContactInformationType }
-     *     
+     *
      */
     public void setContactInformation(ContactInformationType value) {
         this.contactInformation = value;
@@ -180,11 +180,11 @@ public class TileMapService implements TMSResponse {
 
     /**
      * Gets the value of the tileMaps property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TileMapsType }
-     *     
+     *
      */
     public TileMapsType getTileMaps() {
         return tileMaps;
@@ -192,11 +192,11 @@ public class TileMapService implements TMSResponse {
 
     /**
      * Sets the value of the tileMaps property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TileMapsType }
-     *     
+     *
      */
     public void setTileMaps(TileMapsType value) {
         this.tileMaps = value;
@@ -204,11 +204,11 @@ public class TileMapService implements TMSResponse {
 
     /**
      * Gets the value of the titleAtt property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitleAtt() {
         return titleAtt;
@@ -216,11 +216,11 @@ public class TileMapService implements TMSResponse {
 
     /**
      * Sets the value of the titleAtt property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitleAtt(String value) {
         this.titleAtt = value;
@@ -228,11 +228,11 @@ public class TileMapService implements TMSResponse {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         return version;
@@ -240,11 +240,11 @@ public class TileMapService implements TMSResponse {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(String value) {
         this.version = value;
@@ -252,11 +252,11 @@ public class TileMapService implements TMSResponse {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -264,11 +264,11 @@ public class TileMapService implements TMSResponse {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -276,11 +276,11 @@ public class TileMapService implements TMSResponse {
 
     /**
      * Gets the value of the services property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getServices() {
         return services;
@@ -288,11 +288,11 @@ public class TileMapService implements TMSResponse {
 
     /**
      * Sets the value of the services property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setServices(String value) {
         this.services = value;

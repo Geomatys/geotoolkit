@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.jaxen.FunctionCallException;
 import org.jaxen.JaxenConstants;
@@ -204,7 +205,7 @@ final class JaxenFeatureNavigator implements Navigator{
     @Override
     public String getElementStringValue(Object o) {
         if(o instanceof Fake) o = ((Fake)o).value;
-        
+
         if(o instanceof Property){
             final Property candidate = (Property) o;
             if(candidate instanceof Attribute && ((Attribute)candidate).getType().getMaximumOccurs()>1){
@@ -267,7 +268,7 @@ final class JaxenFeatureNavigator implements Navigator{
     @Override
     public Iterator getChildAxisIterator(Object o) throws UnsupportedAxisException {
         if(o instanceof Fake) o = ((Fake)o).value;
-        
+
         if(o instanceof Feature){
             final Feature candidate = (Feature) o;
             return new PropIterator(candidate,false);
@@ -328,7 +329,7 @@ final class JaxenFeatureNavigator implements Navigator{
     @Override
     public Iterator getAttributeAxisIterator(Object o) throws UnsupportedAxisException {
         if(o instanceof Fake) o = ((Fake)o).value;
-        
+
         if(o instanceof Feature){
             final Feature att = (Feature) o;
             return new PropIterator(att, true);
@@ -344,7 +345,6 @@ final class JaxenFeatureNavigator implements Navigator{
             final FeatureType ct = (FeatureType) o;
             return new PropTypeIterator(ct.getProperties(true).iterator(), true);
         }
-
         return JaxenConstants.EMPTY_ITERATOR;
     }
 
@@ -437,28 +437,19 @@ final class JaxenFeatureNavigator implements Navigator{
         }
 
         private void findNext(){
-            while(ite.hasNext() && next==null){
+            while (ite.hasNext() && next == null) {
                 final Object candidate = ite.next();
-
-                GenericName name = null;
-                if(candidate instanceof PropertyType){
-                    name = ((PropertyType)candidate).getName();
-                }
-
-                if(name!=null){
-                    if(attributes){
-                        next = name.tip().toString().startsWith("@") ? candidate : null;
-                    }else{
-                        next = !name.tip().toString().startsWith("@") ? candidate : null;
+                if (candidate instanceof PropertyType) {
+                    final GenericName name = ((PropertyType)candidate).getName();
+                    if (name != null && (AttributeConvention.contains(name) || name.tip().toString().startsWith("@")) == attributes) {
+                        next = candidate;
                     }
                 }
-
             }
         }
-        
     }
 
-    
+
     private static class PropIterator implements Iterator{
 
         private final Feature feature;
@@ -467,36 +458,33 @@ final class JaxenFeatureNavigator implements Navigator{
 
         public PropIterator(Feature f, boolean attributes) {
             this.feature = f;
-            
+
             //we must unloop multi-attributes and multi-association
-            final List props = new ArrayList<>();
+            final List<Object> props = new ArrayList<>();
             final Iterator<? extends PropertyType> pite = f.getType().getProperties(true).iterator();
-            while(pite.hasNext() && next==null){
+            while (pite.hasNext() && next == null) {
                 final PropertyType candidate = pite.next();
                 final GenericName gname = candidate.getName();
-                final String name = candidate.getName().toString();
-                
-                final boolean isAtt = candidate.getName().tip().toString().startsWith("@");
-                if((attributes && !isAtt) || (!attributes && isAtt)){
+                if ((AttributeConvention.contains(gname) || gname.tip().toString().startsWith("@")) != attributes) {
                     continue;
                 }
-                
+
 //                if(candidate instanceof AttributeType && ((AttributeType)candidate).getMaximumOccurs()>1){
 //                    for(Object o : ((Collection)values)){
 //                        props.add(new Fake(gname,o));
 //                    }
-//                }else 
-                if(candidate instanceof FeatureAssociationRole && ((FeatureAssociationRole)candidate).getMaximumOccurs()>1){
-                    final FeatureAssociation complete = (FeatureAssociation)feature.getProperty(name);
-                    final Collection<? extends Feature> values = (Collection)complete.getValues();
-                    for(Feature o : values){
-                        props.add(new Fake(complete,gname,o));
+//                }else
+                final String name = gname.toString();
+                if (candidate instanceof FeatureAssociationRole && ((FeatureAssociationRole)candidate).getMaximumOccurs() > 1) {
+                    final FeatureAssociation complete = (FeatureAssociation) feature.getProperty(name);
+                    final Collection<? extends Feature> values = complete.getValues();
+                    for (Feature o : values) {
+                        props.add(new Fake(complete, gname, o));
                     }
-                }else{
+                } else {
                     props.add(feature.getProperty(name));
-                }                
+                }
             }
-            
             ite = props.iterator();
         }
 
@@ -513,9 +501,8 @@ final class JaxenFeatureNavigator implements Navigator{
         @Override
         public void remove() {
         }
-
     }
-    
+
     public static final class Fake{
         public final GenericName name;
         public final Feature value;
@@ -526,7 +513,5 @@ final class JaxenFeatureNavigator implements Navigator{
             this.name = name;
             this.value = value;
         }
-        
     }
-    
 }

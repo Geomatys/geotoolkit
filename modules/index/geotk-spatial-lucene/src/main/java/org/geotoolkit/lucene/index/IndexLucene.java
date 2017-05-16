@@ -182,7 +182,7 @@ public abstract class IndexLucene {
         }
         return null;
     }
-    
+
     /**
      * Return true if the specified file is a directory and if its name start
      * with the serviceID + 'index-'.

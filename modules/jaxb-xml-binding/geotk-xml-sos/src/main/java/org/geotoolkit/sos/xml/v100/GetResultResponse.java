@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlValue;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -51,7 +51,7 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -69,18 +69,18 @@ public class GetResultResponse extends ResponseBaseType implements org.geotoolki
      * An empty constructor used by jaxB
      */
      GetResultResponse(){}
-     
+
      /**
      * Build a new Response to a getResult request.
      */
      public GetResultResponse(final GetResultResponse.Result result){
          this.result = result;
      }
-     
+
      public GetResultResponse(final String value, final String rs){
          this.result = new GetResultResponse.Result(value, rs);
      }
-     
+
     /**
      * Return the value of the result property.
      */
@@ -109,7 +109,7 @@ public class GetResultResponse extends ResponseBaseType implements org.geotoolki
         hash = 71 * hash + (this.result != null ? this.result.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         if (result != null) {
@@ -121,10 +121,10 @@ public class GetResultResponse extends ResponseBaseType implements org.geotoolki
 
     /**
      * RS attribute points to the description of the reference system of the result.
-     * The description will contain all information necessary to understand 
-     * what is provided within the result response. 
+     * The description will contain all information necessary to understand
+     * what is provided within the result response.
      * The most simple case would be a single value.
-     * 
+     *
      * @author Guilhem Legal
      */
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -143,7 +143,7 @@ public class GetResultResponse extends ResponseBaseType implements org.geotoolki
          * An empty constructor used by jaxB
          */
         Result(){}
-        
+
         /**
          * Build a new Result
          */
@@ -151,10 +151,10 @@ public class GetResultResponse extends ResponseBaseType implements org.geotoolki
             this.rs    = rs;
             this.value = value;
         }
-     
+
         /**
          * Return the value of the value property.
-         * 
+         *
          */
         public String getValue() {
             return value;
@@ -162,7 +162,7 @@ public class GetResultResponse extends ResponseBaseType implements org.geotoolki
 
         /**
          * Return the value of the rs property.
-         * 
+         *
          */
         public String getRS() {
             return rs;
@@ -191,7 +191,7 @@ public class GetResultResponse extends ResponseBaseType implements org.geotoolki
             hash = 17 * hash + (this.rs != null ? this.rs.hashCode() : 0);
             return hash;
         }
-        
+
         @Override
         public String toString() {
             return " rs=" + rs + " value=" + value;

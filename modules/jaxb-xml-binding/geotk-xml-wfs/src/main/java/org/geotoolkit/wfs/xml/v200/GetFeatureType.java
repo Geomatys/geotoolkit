@@ -109,7 +109,7 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
         this.outputFormat = outputformat;
     }
 
-    public GetFeatureType(final String service, final String version, final String handle, final List<StoredQueryType> query, 
+    public GetFeatureType(final String service, final String version, final String handle, final List<StoredQueryType> query,
             final Integer startIndex, final Integer maxFeatures, final ResultTypeType resultType, final String outputformat) {
         super(service, version, handle);
         if (maxFeatures !=  null) {

@@ -56,7 +56,7 @@ import org.opengis.util.ScopedName;
 /**
  * FeatureType implementation which define a reprojected view of a reference
  * feature type.
- * 
+ *
  *
  * @author Johann Sorel (Geomatys)
  * @module
@@ -81,7 +81,7 @@ public class TransformFeatureType implements DecoratedFeatureType {
     private final Map<String,PropertyType> names = new HashMap<>();
     private final GeometryTransformer transformer;
     private boolean isSimple;
-    
+
     private final Map<CoordinateReferenceSystem,GeometryCSTransformer> cache = new HashMap<>();
 
     /**
@@ -121,7 +121,7 @@ public class TransformFeatureType implements DecoratedFeatureType {
             } else if(property instanceof Operation) {
                 property = new DecoratedOperation((Operation) property);
             }
-            
+
 
             final GenericName fullName = property.getName();
             fullNames.add(fullName);
@@ -241,7 +241,7 @@ public class TransformFeatureType implements DecoratedFeatureType {
      *
      * Returns {@code true} if this type is same or a super-type of the given type.
      * The check is based mainly on the feature type {@linkplain #getName() name}, which should be unique.
-     * 
+     *
      * <div class="note"><b>Analogy:</b>
      * if we compare {@code FeatureType} to {@link Class} in the Java language, then this method is equivalent
      * to {@link Class#isAssignableFrom(Class)}.</div>
@@ -291,14 +291,14 @@ public class TransformFeatureType implements DecoratedFeatureType {
     private Geometry transform(Geometry val) throws FactoryException, TransformException {
         if (val == null) return val;
         return transformer.transform(val);
-        
+
     }
 
     @Override
     public String toString() {
         return FeatureFormat.sharedFormat(this);
     }
-    
+
     private class TransformOperation implements Operation {
 
         private final PropertyType base;

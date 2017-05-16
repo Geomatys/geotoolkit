@@ -25,9 +25,9 @@ import org.geotoolkit.swe.xml.AbstractEnvelope;
 
 /**
  * <p>Java class for EnvelopeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="EnvelopeType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.swe.xml.AbstractEnvelope;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,14 +77,14 @@ public class EnvelopeType extends AbstractVectorType implements AbstractEnvelope
             }
         }
     }
-    
+
     /**
      * Gets the value of the time property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimeRangePropertyType }
-     *     
+     *
      */
     public TimeRangePropertyType getTime() {
         return time;
@@ -92,11 +92,11 @@ public class EnvelopeType extends AbstractVectorType implements AbstractEnvelope
 
     /**
      * Sets the value of the time property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimeRangePropertyType }
-     *     
+     *
      */
     public void setTime(final TimeRangePropertyType value) {
         this.time = value;
@@ -104,11 +104,11 @@ public class EnvelopeType extends AbstractVectorType implements AbstractEnvelope
 
     /**
      * Gets the value of the lowerCorner property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link VectorPropertyType }
-     *     
+     *
      */
     public VectorPropertyType getLowerCorner() {
         return lowerCorner;
@@ -116,11 +116,11 @@ public class EnvelopeType extends AbstractVectorType implements AbstractEnvelope
 
     /**
      * Sets the value of the lowerCorner property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link VectorPropertyType }
-     *     
+     *
      */
     public void setLowerCorner(final VectorPropertyType value) {
         this.lowerCorner = value;
@@ -128,11 +128,11 @@ public class EnvelopeType extends AbstractVectorType implements AbstractEnvelope
 
     /**
      * Gets the value of the upperCorner property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link VectorPropertyType }
-     *     
+     *
      */
     public VectorPropertyType getUpperCorner() {
         return upperCorner;
@@ -140,11 +140,11 @@ public class EnvelopeType extends AbstractVectorType implements AbstractEnvelope
 
     /**
      * Sets the value of the upperCorner property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link VectorPropertyType }
-     *     
+     *
      */
     public void setUpperCorner(final VectorPropertyType value) {
         this.upperCorner = value;

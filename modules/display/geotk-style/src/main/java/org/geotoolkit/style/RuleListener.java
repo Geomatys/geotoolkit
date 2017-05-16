@@ -30,12 +30,12 @@ import org.opengis.style.Symbolizer;
 
 /**
  * Listener for Rule.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public interface RuleListener extends PropertyChangeListener{
-    
+
     /**
      * Called when a change occurs in the living symbolizer collection.
      */

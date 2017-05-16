@@ -34,9 +34,9 @@ import org.opengis.filter.Filter;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -72,8 +72,8 @@ import org.opengis.filter.Filter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -92,9 +92,9 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
     @XmlElement(name = "FeatureOfInterestId")
     @XmlSchemaType(name = "anyURI")
     private List<String> featureOfInterestId;
-    
+
     private GetFeatureOfInterest.Location location;
-    
+
      /**
      * Allows a client to request targets from a specific instant, multiple instances or periods of time in the past, present and future.
      * This is useful for dynamic sensors for which the properties of the target are time-dependent.
@@ -130,7 +130,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
             this.location = new Location(location);
         }
      }
-     
+
      public GetFeatureOfInterest(final String version, final String service, final List<String> featureId, final Filter location) {
         super(version, service);
         this.featureOfInterestId = featureId;
@@ -149,7 +149,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
         }
         return featureOfInterestId;
     }
-    
+
     /**
      * Gets the value of the eventTime property.
      * (unmodifiable)
@@ -160,7 +160,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
         }
         return eventTime;
     }
-    
+
     /**
      * Gets the value of the featureOfInterestLocation property.
      *
@@ -176,7 +176,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
     public void setLocation(final GetFeatureOfInterest.Location location) {
         this.location = location;
     }
-    
+
     @Override
     public List<Filter> getSpatialFilters() {
         final List<Filter> results = new ArrayList<>();
@@ -185,7 +185,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
         }
         return results;
     }
-    
+
     @Override
     public List<Filter> getTemporalFilters() {
         final List<Filter> results = new ArrayList<>();
@@ -196,7 +196,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
         }
         return results;
     }
-    
+
     @Override
     public List<String> getProcedure() {
         return new ArrayList<>(); // no procedure filter in v 1.0.0
@@ -206,12 +206,12 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
     public List<String> getObservedProperty() {
         return new ArrayList<>(); // no observedProperty filter in v 1.0.0
     }
-    
+
     @Override
     public String getResponseFormat() {
         return "text/xml";
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -225,7 +225,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
             return Objects.equals(this.eventTime,           that.eventTime)           &&
                    Objects.equals(this.featureOfInterestId, that.featureOfInterestId) &&
                    Objects.equals(this.location,            that.location);
-        } 
+        }
         return false;
     }
 
@@ -241,9 +241,9 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -255,8 +255,8 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -289,7 +289,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
             }
             return null;
         }
-        
+
         /**
          * Gets the value of the spatialOps property.
          */
@@ -303,7 +303,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
         public void setSpatialOps(final JAXBElement<? extends SpatialOpsType> spatialOps) {
             this.spatialOps = spatialOps;
         }
-        
+
         /**
           * Verify if this entry is identical to the specified object.
           */

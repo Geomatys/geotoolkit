@@ -38,7 +38,7 @@ public class DefaultLabelStyle extends DefaultAbstractColorStyle implements Labe
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractSubStyleSimpleExtensions

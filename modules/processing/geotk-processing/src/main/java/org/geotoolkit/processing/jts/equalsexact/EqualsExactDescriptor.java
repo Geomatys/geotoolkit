@@ -33,10 +33,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class EqualsExactDescriptor extends AbstractProcessDescriptor {
-        
+
     /**Process name : equals2d */
     public static final String NAME = "jts:equals2d";
-    
+
     /**
      * Input parameters
      */
@@ -55,10 +55,10 @@ public class EqualsExactDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Toleranec used")
             .setRequired(false)
             .create(Double.class, null);
-    
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(GEOM1,GEOM2,TOLERANCE);
-    
+
     /**
      * OutputParameters
      */
@@ -67,7 +67,7 @@ public class EqualsExactDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Equals2d result")
             .setRequired(true)
             .create(Boolean.class, null);
-    
+
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT);
 
@@ -84,5 +84,5 @@ public class EqualsExactDescriptor extends AbstractProcessDescriptor {
     public Process createProcess(final ParameterValueGroup input) {
         return new EqualsExactProcess(input);
     }
-    
+
 }

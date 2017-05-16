@@ -121,5 +121,5 @@ public class DbaseFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, DefaultFactoryMetadata.GEOMS_NONE);
     }
-    
+
 }

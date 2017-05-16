@@ -27,7 +27,7 @@ import org.opengis.filter.Id;
 
 /**
  * Makes all queries in JDBC transaction.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class JDBCModifyDelta extends ModifyDelta {
@@ -43,5 +43,5 @@ public class JDBCModifyDelta extends ModifyDelta {
         jdbcstore.updateFeatures(type, filter, values, cnx);
         return null;
     }
-    
+
 }

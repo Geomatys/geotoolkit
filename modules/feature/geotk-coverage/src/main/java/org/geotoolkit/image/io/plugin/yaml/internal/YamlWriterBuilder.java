@@ -26,10 +26,10 @@ import org.opengis.coverage.SampleDimension;
  * @since 4.0
  */
 public interface YamlWriterBuilder {
-    
+
     /**
      * Set some {@link SampleDimension} which will be written into yaml files.
-     * 
+     *
      * @param sampleDimensions shortly written sampleDimensions.
      */
     public void setSampleDimensions(final List<SampleDimension> sampleDimensions);

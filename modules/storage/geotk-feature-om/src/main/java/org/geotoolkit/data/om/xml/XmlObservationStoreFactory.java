@@ -53,9 +53,9 @@ public class XmlObservationStoreFactory extends AbstractObservationStoreFactory 
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
     /**
      * url to the file.
      */
@@ -65,11 +65,11 @@ public class XmlObservationStoreFactory extends AbstractObservationStoreFactory 
             .setRemarks(Bundle.formatInternational(Bundle.Keys.paramURLRemarks))
             .setRequired(true)
             .create(URI.class, null);
-    
+
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("ObservationXmlFileParameters").createGroup(
                 IDENTIFIER,NAMESPACE,FILE_PATH);
-    
+
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
@@ -102,5 +102,5 @@ public class XmlObservationStoreFactory extends AbstractObservationStoreFactory 
             throw new DataStoreException(e.getLocalizedMessage(), e);
         }
     }
-    
+
 }

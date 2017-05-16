@@ -23,6 +23,6 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  */
 public interface DescribeStoredQueries extends BaseRequest {
-    
+
     List<String> getStoredQueryId();
 }

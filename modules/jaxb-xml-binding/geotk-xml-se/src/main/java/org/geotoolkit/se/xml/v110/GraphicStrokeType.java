@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for GraphicStrokeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GraphicStrokeType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,11 +61,11 @@ public class GraphicStrokeType {
 
     /**
      * Gets the value of the graphic property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GraphicType }
-     *     
+     *
      */
     public GraphicType getGraphic() {
         return graphic;
@@ -73,11 +73,11 @@ public class GraphicStrokeType {
 
     /**
      * Sets the value of the graphic property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GraphicType }
-     *     
+     *
      */
     public void setGraphic(final GraphicType value) {
         this.graphic = value;
@@ -85,11 +85,11 @@ public class GraphicStrokeType {
 
     /**
      * Gets the value of the initialGap property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getInitialGap() {
         return initialGap;
@@ -97,11 +97,11 @@ public class GraphicStrokeType {
 
     /**
      * Sets the value of the initialGap property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setInitialGap(final ParameterValueType value) {
         this.initialGap = value;
@@ -109,11 +109,11 @@ public class GraphicStrokeType {
 
     /**
      * Gets the value of the gap property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getGap() {
         return gap;
@@ -121,11 +121,11 @@ public class GraphicStrokeType {
 
     /**
      * Sets the value of the gap property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setGap(final ParameterValueType value) {
         this.gap = value;

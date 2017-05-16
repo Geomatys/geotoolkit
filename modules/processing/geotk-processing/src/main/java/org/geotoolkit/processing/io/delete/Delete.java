@@ -49,14 +49,14 @@ public class Delete extends AbstractProcess {
         fireProcessStarted("Start deletion");
 
         Object path = getOrCreate(PATH_IN, inputParameters).getValue();
-        
+
         getOrCreate(RESULT_OUT, outputParameters).setValue(Boolean.FALSE);
-        
+
         try {
             if(!(path instanceof Path)){
                 path = IOUtilities.tryToPath(path);
             }
-            
+
             if(path instanceof Path){
                 IOUtilities.deleteRecursively((Path) path);
                 getOrCreate(RESULT_OUT, outputParameters).setValue(Boolean.TRUE);
@@ -67,7 +67,7 @@ public class Delete extends AbstractProcess {
             fireProcessFailed("Failed to delete file : "+path, ex);
             return;
         }
-        
+
         fireProcessCompleted("Deletion done.");
     }
 

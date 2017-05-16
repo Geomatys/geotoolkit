@@ -26,7 +26,7 @@ import org.geotoolkit.wms.xml.AbstractProtocol;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -51,14 +51,14 @@ public class Get implements AbstractProtocol {
             this.onlineResource = new OnlineResource(that.onlineResource);
         }
     }
-     
+
     /**
      * Build a new Contact person primary object.
      */
     public Get(final OnlineResource onlineResource) {
         this.onlineResource = onlineResource;
     }
-    
+
     /**
      * Gets the value of the onlineResource property.
      */

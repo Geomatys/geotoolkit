@@ -29,12 +29,12 @@ import org.geotoolkit.ows.xml.AbstractDomain;
 
 
 /**
- * Valid domain (or set of values) of one parameter or other quantity used by this server. A non-parameter quantity may not be explicitly represented in the server software. (Informative: An example is the outputFormat parameter of a WFS. Each WFS server should provide a Parameter element for the outputFormat parameter that lists the supported output formats, such as GML2, GML3, etc. as the allowed "Value" elements.) 
- * 
+ * Valid domain (or set of values) of one parameter or other quantity used by this server. A non-parameter quantity may not be explicitly represented in the server software. (Informative: An example is the outputFormat parameter of a WFS. Each WFS server should provide a Parameter element for the outputFormat parameter that lists the supported output formats, such as GML2, GML3, etc. as the allowed "Value" elements.)
+ *
  * <p>Java class for DomainType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DomainType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.ows.xml.AbstractDomain;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,13 +62,13 @@ public class DomainType implements AbstractDomain {
 
     @XmlElement(name = "Value", required = true)
     private List<String> value;
-    
+
     /**
      * This attribute has been added for compatibility with other CSW.
      */
     @XmlElement(name = "DefaultValue", required = true)
     private String defaultValue;
-    
+
     @XmlElement(name = "Metadata")
     private List<MetadataType> metadata;
     @XmlAttribute(required = true)
@@ -78,9 +78,9 @@ public class DomainType implements AbstractDomain {
      * An empty constructor used by JAXB.
      */
     public DomainType() {
-        
+
     }
-    
+
     public DomainType(final DomainType that){
         if (that != null) {
             this.name         = that.name;
@@ -106,7 +106,7 @@ public class DomainType implements AbstractDomain {
         this.name  = name;
         this.value = value;
     }
-    
+
     /**
      * Build a new Domain with the a single value.
      * @param name
@@ -119,7 +119,7 @@ public class DomainType implements AbstractDomain {
             this.value.add(value);
         }
     }
-    
+
     /**
      * return the default value for this domain
      */
@@ -143,14 +143,14 @@ public class DomainType implements AbstractDomain {
         }
         return value;
     }
-    
+
     @Override
     public void setValue(final List<String> value) {
         this.value = value;
     }
-    
+
     /**
-     * Optional unordered list of additional metadata about this parameter. 
+     * Optional unordered list of additional metadata about this parameter.
      * A list of required and optional metadata elements for this domain should be specified in the Implementation Specification for this service.
      * (Informative: This metadata might specify the meanings of the valid values.) Gets the value of the metadata property.
      * (unmodifiable)

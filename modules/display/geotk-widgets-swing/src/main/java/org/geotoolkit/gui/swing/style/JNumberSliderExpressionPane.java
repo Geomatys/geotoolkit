@@ -63,11 +63,11 @@ public class JNumberSliderExpressionPane extends StyleElementEditor<Expression> 
         guiNumber.setModel(value, min, max, step);
         guiSlider.setModel(new DefaultBoundedRangeModel(value, step, min, max));
     }
-    
+
     public void setExpressionVisible(boolean visible){
         guiNumber.setExpressionVisible(visible);
-    }  
-    
+    }
+
     @Override
     public void setLayer(final MapLayer layer) {
         super.setLayer(layer);
@@ -135,10 +135,10 @@ public class JNumberSliderExpressionPane extends StyleElementEditor<Expression> 
     public Expression create() {
         return guiNumber.create();
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
 }

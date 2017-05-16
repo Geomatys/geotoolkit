@@ -31,11 +31,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * Defines a list of route instructions.
- * 
+ *
  * <p>Java class for RouteInstructionsListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RouteInstructionsListType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RouteInstructionsListType", propOrder = {
@@ -69,25 +69,25 @@ public class RouteInstructionsListType extends AbstractDataType {
 
     /**
      * Gets the value of the routeInstruction property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the routeInstruction property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRouteInstruction().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link RouteInstructionType }
-     * 
-     * 
+     *
+     *
      */
     public List<RouteInstructionType> getRouteInstruction() {
         if (routeInstruction == null) {
@@ -98,11 +98,11 @@ public class RouteInstructionsListType extends AbstractDataType {
 
     /**
      * Gets the value of the format property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFormat() {
         if (format == null) {
@@ -114,11 +114,11 @@ public class RouteInstructionsListType extends AbstractDataType {
 
     /**
      * Sets the value of the format property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFormat(String value) {
         this.format = value;
@@ -126,11 +126,11 @@ public class RouteInstructionsListType extends AbstractDataType {
 
     /**
      * Specifies the language in which the instructions are given.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLang() {
         return lang;
@@ -138,11 +138,11 @@ public class RouteInstructionsListType extends AbstractDataType {
 
     /**
      * Sets the value of the lang property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLang(String value) {
         this.lang = value;

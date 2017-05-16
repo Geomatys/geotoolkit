@@ -31,15 +31,15 @@ import org.geotoolkit.gui.javafx.render2d.data.FXAddServerStoreAction;
  * @author Johann Sorel (Geomatys)
  */
 public class FXAddDataBar extends ToolBar {
-    
+
     private static final String LEFT   = "buttongroup-left";
     private static final String CENTER = "buttongroup-center";
     private static final String RIGHT  = "buttongroup-right";
     private static final String SINGLE = "buttongroup-single";
-    
+
     public FXAddDataBar(FXMap map, boolean singleButon) {
         getStylesheets().add("/org/geotoolkit/gui/javafx/buttonbar.css");
-        
+
         if(singleButon){
             final Button butStore = new FXAddDataStoreAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
             butStore.getStyleClass().add(SINGLE);
@@ -56,6 +56,6 @@ public class FXAddDataBar extends ToolBar {
             getItems().add(hboxAction);
         }
     }
-    
-    
+
+
 }

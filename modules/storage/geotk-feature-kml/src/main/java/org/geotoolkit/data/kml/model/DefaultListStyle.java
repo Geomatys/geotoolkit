@@ -35,7 +35,7 @@ public class DefaultListStyle extends DefaultAbstractSubStyle implements ListSty
     private int maxSnippetLines;
 
     /**
-     * 
+     *
      */
     public DefaultListStyle() {
         this.bgColor = DEF_BG_COLOR;

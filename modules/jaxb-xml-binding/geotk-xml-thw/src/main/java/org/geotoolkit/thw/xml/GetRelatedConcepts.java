@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for getRelatedConcepts complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="getRelatedConcepts">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getRelatedConcepts", propOrder = {
@@ -74,11 +74,11 @@ public class GetRelatedConcepts {
 
     /**
      * Gets the value of the concept property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getConcept() {
         return concept;
@@ -86,11 +86,11 @@ public class GetRelatedConcepts {
 
     /**
      * Sets the value of the concept property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setConcept(String value) {
         this.concept = value;
@@ -98,11 +98,11 @@ public class GetRelatedConcepts {
 
     /**
      * Gets the value of the relation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRelation() {
         return relation;
@@ -110,11 +110,11 @@ public class GetRelatedConcepts {
 
     /**
      * Sets the value of the relation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRelation(String value) {
         this.relation = value;
@@ -122,11 +122,11 @@ public class GetRelatedConcepts {
 
     /**
      * Gets the value of the language property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLanguage() {
         return language;
@@ -134,11 +134,11 @@ public class GetRelatedConcepts {
 
     /**
      * Sets the value of the language property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLanguage(String value) {
         this.language = value;

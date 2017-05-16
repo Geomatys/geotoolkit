@@ -29,27 +29,27 @@ import org.geotoolkit.index.tree.TreeElementMapper;
 
 /**
  * HilbertRTree : Tree implementation.<br/><br/>
- * 
+ *
  * It's a Tree implementation with a long duration insertion but the most search action.<br/>
- * If stored datas are rarely updated, which mean few insertions or removes action after Tree already filled, 
+ * If stored datas are rarely updated, which mean few insertions or removes action after Tree already filled,
  * it's a Tree implementation which respond to this criteria.<br/><br/>
- * 
- * Note : insertion action is more longer than other Trees, because in case of overfully Node, 
+ *
+ * Note : insertion action is more longer than other Trees, because in case of overfully Node,
  * a re-insertion of all data over 33% distance near Node centroid is effectuate.<br/>
  * In some case this re-insertion action permit to avoid node splitting which is expensive resource in terms.<br/>
- * Moreover insertion in leaf Node need some additionnal calculates to define in which cell data will be store. 
+ * Moreover insertion in leaf Node need some additionnal calculates to define in which cell data will be store.
  *
  * @author Remi Marechal (Geomatys).
  * @see HilbertNode
  */
 public strictfp class HilbertRTree<E> extends AbstractTree<E> {
-    
+
     /**
      * Create a Hilbert RTree implementation.
-     * 
+     *
      * @param treeAccess object in which all Tree information are stored.
      * @param treeEltMap object in which data and tree identifier are stored.
-     * @throws StoreIndexException 
+     * @throws StoreIndexException
      * @see TreeAccess
      * @see TreeElementMapper
      */
@@ -60,11 +60,11 @@ public strictfp class HilbertRTree<E> extends AbstractTree<E> {
         super.setRoot(treeAccess.getRoot());
         treeIdentifier = treeAccess.getTreeIdentifier();
     }
-    
+
     /**
      * {@inheritDoc }.<br/><br/>
-     * Note : in this implementation, a fully leaf Node is split before be overflowed 
-     * whereas in other tree implementation Node is overflow and after splitted.  
+     * Note : in this implementation, a fully leaf Node is split before be overflowed
+     * whereas in other tree implementation Node is overflow and after splitted.
      */
     @Override
     protected Node nodeInsert(Node candidate, int identifier, double... coordinates) throws IOException{
@@ -86,7 +86,7 @@ public strictfp class HilbertRTree<E> extends AbstractTree<E> {
                     Node lsp1 = (Node) lSp[1];
                     assert lsp0.checkInternal() : "insertNode : just after split.lsp0";
                     assert lsp1.checkInternal() : "insertNode : just after split.lsp1";
-                    
+
                     if (fileCandidate.getParentId() != 0) {
                         Node parentCandidate = treeAccess.readNode(fileCandidate.getParentId());
                         final int lsp0Id = lsp0.getNodeId();
@@ -108,10 +108,10 @@ public strictfp class HilbertRTree<E> extends AbstractTree<E> {
                         nodeInsert(fileCandidate, identifier, coordinates);
                         assert fileCandidate.checkInternal() : "insertNode : split with parent not null.";
                         candidate.clear();
-                        
+
                         lsp0 = treeAccess.readNode(lsp0Id);
                         lsp1 = treeAccess.readNode(lsp1Id);
-                        
+
                         assert lsp0.checkInternal() : "insertNode : split with parent not null.lsp0";
                         assert lsp1.checkInternal() : "insertNode : split with parent not null.lsp1";
                         parentCandidate.removeChild(fileCandidate);
@@ -144,7 +144,7 @@ public strictfp class HilbertRTree<E> extends AbstractTree<E> {
             assert fileCandidate.checkInternal() : "nodeInsert : Node before insert.";
             subCandidateParent = nodeInsert(chooseSubtree(fileCandidate, coordinates), identifier, coordinates);
             add(fileCandidate.getBoundary(), coordinates);
-            
+
             /**
              * Currently candidate was modified from precedently sub-Insert() call.
              * Affect candidate object with new candidate from sub-Insert method.
@@ -152,12 +152,12 @@ public strictfp class HilbertRTree<E> extends AbstractTree<E> {
             if (subCandidateParent != null) {
                 fileCandidate = subCandidateParent;
             }
-            treeAccess.writeNode(fileCandidate); 
+            treeAccess.writeNode(fileCandidate);
             assert fileCandidate.checkInternal() : "nodeInsert : after insert.";
 
             if (fileCandidate.getChildCount() > getMaxElements()) {
                 assert fileCandidate.checkInternal() : "nodeInsert : before Branch grafting.";
-                
+
     //            /*********************** Branch grafting **************************/
     //            if (fileCandidate.isLeaf() && fileCandidate.getParentId() != 0) {
     //                /**
@@ -184,7 +184,7 @@ public strictfp class HilbertRTree<E> extends AbstractTree<E> {
     //                }
     //            }
     //            /******************************************************************/
-                
+
                 assert fileCandidate.checkInternal() : "nodeInsert : after Branch grafting.";
                 // split
                 final Node[] splitTable = splitNode(fileCandidate);
@@ -192,12 +192,12 @@ public strictfp class HilbertRTree<E> extends AbstractTree<E> {
                 final Node split2 = (Node)splitTable[1];
 
                 final int candidateParentID = fileCandidate.getParentId();
-                if (candidateParentID == 0) { 
+                if (candidateParentID == 0) {
                     // on clear le candidate
                     assert fileCandidate.getSiblingId() == 0 : "nodeInsert : split root : root should not have sibling.";
                     fileCandidate.clear();
                     fileCandidate.addChild(split1);
-                    fileCandidate.addChild(split2);     
+                    fileCandidate.addChild(split2);
                     assert split1.checkInternal() : "nodeInsert : split1.";
                     assert split2.checkInternal() : "nodeInsert : split2.";
                     assert fileCandidate.checkInternal() : "nodeInsert : split root.";
@@ -216,7 +216,7 @@ public strictfp class HilbertRTree<E> extends AbstractTree<E> {
                 }
             }
         }
-                    
+
         /**
          * If last travel up (on Root Node) and currently candidate was changed,
          * return currently Node else return null.
@@ -268,7 +268,7 @@ public strictfp class HilbertRTree<E> extends AbstractTree<E> {
              treeAccess.writeNode(candidate);
             assert candidate.checkInternal() : "trim : candidate not conform";
         }
-            
+
         if (candidate.getParentId()!= 0) {
             trim (treeAccess.readNode(candidate.getParentId()));
         } else {
@@ -289,5 +289,5 @@ public strictfp class HilbertRTree<E> extends AbstractTree<E> {
         } else {
             assert (reinsertListObjects == null) : "trim : listObjects should be null.";
         }
-    }    
+    }
 }

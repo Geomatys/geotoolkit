@@ -36,9 +36,9 @@ import org.geotoolkit.swes.xml.SOSResponse;
 
 /**
  * <p>Java class for CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CapabilitiesType">
  *   &lt;complexContent>
@@ -72,8 +72,8 @@ import org.geotoolkit.swes.xml.SOSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CapabilitiesType", propOrder = {
@@ -92,12 +92,12 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
      * An empty constructor used by JAXB
      */
     public CapabilitiesType() {}
-    
+
     public CapabilitiesType(final String version, final String updateSequence) {
         super(version, updateSequence);
-                    
+
     }
-    
+
     public CapabilitiesType(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
             final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final FilterCapabilities filterCapabilities,
             final ContentsType contents, final List<InsertionCapabilitiesPropertyType> extension) {
@@ -108,14 +108,14 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
         this.filterCapabilities = filterCapabilities;
         this.extension          = extension;
     }
-    
+
     /**
      * Gets the value of the extension property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<InsertionCapabilitiesPropertyType> getExtension() {
         if (extension == null) {
@@ -126,11 +126,11 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
 
     /**
      * Gets the value of the filterCapabilities property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CapabilitiesType.FilterCapabilities }
-     *     
+     *
      */
     @Override
     public FilterCapabilities getFilterCapabilities() {
@@ -139,11 +139,11 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
 
     /**
      * Sets the value of the filterCapabilities property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CapabilitiesType.FilterCapabilities }
-     *     
+     *
      */
     public void setFilterCapabilities(FilterCapabilities value) {
         this.filterCapabilities = value;
@@ -151,11 +151,11 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
 
     /**
      * Gets the value of the contents property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CapabilitiesType.Contents }
-     *     
+     *
      */
     @Override
     public CapabilitiesType.Contents getContents() {
@@ -164,11 +164,11 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
 
     /**
      * Sets the value of the contents property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CapabilitiesType.Contents }
-     *     
+     *
      */
     public void setContents(CapabilitiesType.Contents value) {
         this.contents = value;
@@ -216,12 +216,12 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
         // we build and normalize the document
         return new CapabilitiesType(si, sp, om, "2.0.0", getUpdateSequence(), fc, cont, extension);
     }
-    
+
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -233,8 +233,8 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -246,20 +246,20 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
         private ContentsType contents;
 
         public Contents() {
-            
+
         }
-        
+
         public Contents(final ContentsType contents) {
             this.contents = contents;
         }
-        
+
         /**
          * Gets the value of the contents property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link ContentsType }
-         *     
+         *
          */
         public ContentsType getContents() {
             return contents;
@@ -267,11 +267,11 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
 
         /**
          * Sets the value of the contents property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link ContentsType }
-         *     
+         *
          */
         public void setContents(ContentsType value) {
             this.contents = value;

@@ -23,15 +23,15 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
 
 
 /**
- * Denotes the relation of an _CityObject to its addresses. 
+ * Denotes the relation of an _CityObject to its addresses.
  * The AddressPropertyType element must either carry a reference to an Address object or contain an Address object inline,
  * but neither both nor none.
- *             
- * 
+ *
+ *
  * <p>Java class for AddressPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AddressPropertyType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

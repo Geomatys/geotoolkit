@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Unordered list of one or more groups of references to
  *       remote and/or local resources.
- * 
+ *
  * <p>Java class for ManifestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ManifestType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ManifestType", propOrder = {
@@ -58,7 +58,7 @@ public class ManifestType extends BasicIdentificationType {
 
     /**
      * Gets the value of the referenceGroup property.
-     * 
+     *
      */
     public List<ReferenceGroupType> getReferenceGroup() {
         if (referenceGroup == null) {

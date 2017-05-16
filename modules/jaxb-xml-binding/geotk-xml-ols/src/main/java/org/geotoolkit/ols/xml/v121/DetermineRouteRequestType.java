@@ -26,11 +26,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines the Determine Route request parameters.
- * 
+ *
  * <p>Java class for DetermineRouteRequestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DetermineRouteRequestType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DetermineRouteRequestType", propOrder = {
@@ -80,11 +80,11 @@ public class DetermineRouteRequestType extends AbstractRequestParametersType {
 
     /**
      * Reference to a proviously determined route stored at the Route Determination Service server.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RouteHandleType }
-     *     
+     *
      */
     public RouteHandleType getRouteHandle() {
         return routeHandle;
@@ -92,11 +92,11 @@ public class DetermineRouteRequestType extends AbstractRequestParametersType {
 
     /**
      * Sets the value of the routeHandle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RouteHandleType }
-     *     
+     *
      */
     public void setRouteHandle(RouteHandleType value) {
         this.routeHandle = value;
@@ -104,11 +104,11 @@ public class DetermineRouteRequestType extends AbstractRequestParametersType {
 
     /**
      * Gets the value of the routePlan property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RoutePlanType }
-     *     
+     *
      */
     public RoutePlanType getRoutePlan() {
         return routePlan;
@@ -116,11 +116,11 @@ public class DetermineRouteRequestType extends AbstractRequestParametersType {
 
     /**
      * Sets the value of the routePlan property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RoutePlanType }
-     *     
+     *
      */
     public void setRoutePlan(RoutePlanType value) {
         this.routePlan = value;
@@ -128,11 +128,11 @@ public class DetermineRouteRequestType extends AbstractRequestParametersType {
 
     /**
      * Request parameters for turn-by-turn route directions and advisories formatted for presentation.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RouteInstructionsRequestType }
-     *     
+     *
      */
     public RouteInstructionsRequestType getRouteInstructionsRequest() {
         return routeInstructionsRequest;
@@ -140,11 +140,11 @@ public class DetermineRouteRequestType extends AbstractRequestParametersType {
 
     /**
      * Sets the value of the routeInstructionsRequest property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RouteInstructionsRequestType }
-     *     
+     *
      */
     public void setRouteInstructionsRequest(RouteInstructionsRequestType value) {
         this.routeInstructionsRequest = value;
@@ -152,11 +152,11 @@ public class DetermineRouteRequestType extends AbstractRequestParametersType {
 
     /**
      * Request parameters for route geometry.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RouteGeometryRequestType }
-     *     
+     *
      */
     public RouteGeometryRequestType getRouteGeometryRequest() {
         return routeGeometryRequest;
@@ -164,11 +164,11 @@ public class DetermineRouteRequestType extends AbstractRequestParametersType {
 
     /**
      * Sets the value of the routeGeometryRequest property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RouteGeometryRequestType }
-     *     
+     *
      */
     public void setRouteGeometryRequest(RouteGeometryRequestType value) {
         this.routeGeometryRequest = value;
@@ -176,11 +176,11 @@ public class DetermineRouteRequestType extends AbstractRequestParametersType {
 
     /**
      * Gets the value of the routeMapRequest property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RouteMapRequestType }
-     *     
+     *
      */
     public RouteMapRequestType getRouteMapRequest() {
         return routeMapRequest;
@@ -188,11 +188,11 @@ public class DetermineRouteRequestType extends AbstractRequestParametersType {
 
     /**
      * Sets the value of the routeMapRequest property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RouteMapRequestType }
-     *     
+     *
      */
     public void setRouteMapRequest(RouteMapRequestType value) {
         this.routeMapRequest = value;
@@ -200,11 +200,11 @@ public class DetermineRouteRequestType extends AbstractRequestParametersType {
 
     /**
      * Gets the value of the provideRouteHandle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isProvideRouteHandle() {
         if (provideRouteHandle == null) {
@@ -216,11 +216,11 @@ public class DetermineRouteRequestType extends AbstractRequestParametersType {
 
     /**
      * Sets the value of the provideRouteHandle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setProvideRouteHandle(Boolean value) {
         this.provideRouteHandle = value;
@@ -228,11 +228,11 @@ public class DetermineRouteRequestType extends AbstractRequestParametersType {
 
     /**
      * Gets the value of the distanceUnit property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DistanceUnitType }
-     *     
+     *
      */
     public DistanceUnitType getDistanceUnit() {
         if (distanceUnit == null) {
@@ -244,11 +244,11 @@ public class DetermineRouteRequestType extends AbstractRequestParametersType {
 
     /**
      * Sets the value of the distanceUnit property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DistanceUnitType }
-     *     
+     *
      */
     public void setDistanceUnit(DistanceUnitType value) {
         this.distanceUnit = value;

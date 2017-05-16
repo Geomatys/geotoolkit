@@ -207,36 +207,36 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
      */
     @Override
     public LineString asLineString(final double maxSpacing, final double maxOffset) {
-    	int count = curveSegments.size();
-    	if (count == 1) {
-    		Object segment1 = curveSegments.get(0);
-    		if (segment1 instanceof LineString) {
-    			return (LineString) segment1;
-    		}
-    	} else if (count > 0) {
-			boolean allLineString = true;
-			JTSLineString lsi = new JTSLineString();
-			LineString ls = null;
-			List retList = lsi.getControlPoints().positions();
-			Object lastPoint = null;
-			List segList = null;
-			for (int i = 0; i < count && allLineString; i++) {
-	    		Object segment = curveSegments.get(0);
-	    		if (segment instanceof LineString) {
-	    			segList = ((LineString) segment).getControlPoints().positions();
-	    			if (segList.get(0).equals(lastPoint)) {
-	    				retList.remove(retList.size() - 1);
-	    			}
-	    			retList.addAll(segList);
-	    			lastPoint = retList.get(retList.size() - 1);
-	    		} else {
-	    			allLineString = false;
-	    		}
-			}
-			if (allLineString) {
-				return lsi;
-			}
-    	}
+        int count = curveSegments.size();
+        if (count == 1) {
+            Object segment1 = curveSegments.get(0);
+            if (segment1 instanceof LineString) {
+                return (LineString) segment1;
+            }
+        } else if (count > 0) {
+            boolean allLineString = true;
+            JTSLineString lsi = new JTSLineString();
+            LineString ls = null;
+            List retList = lsi.getControlPoints().positions();
+            Object lastPoint = null;
+            List segList = null;
+            for (int i = 0; i < count && allLineString; i++) {
+                Object segment = curveSegments.get(0);
+                if (segment instanceof LineString) {
+                    segList = ((LineString) segment).getControlPoints().positions();
+                    if (segList.get(0).equals(lastPoint)) {
+                        retList.remove(retList.size() - 1);
+                    }
+                    retList.addAll(segList);
+                    lastPoint = retList.get(retList.size() - 1);
+                } else {
+                    allLineString = false;
+                }
+            }
+            if (allLineString) {
+                return lsi;
+            }
+        }
         return null;
     }
 

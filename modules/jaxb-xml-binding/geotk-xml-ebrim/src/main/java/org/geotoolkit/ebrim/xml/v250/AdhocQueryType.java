@@ -22,14 +22,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
+ *
  * The common base type for all types of Adh hoc queries.
- * 			
- * 
+ *
+ *
  * <p>Java class for AdhocQueryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AdhocQueryType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

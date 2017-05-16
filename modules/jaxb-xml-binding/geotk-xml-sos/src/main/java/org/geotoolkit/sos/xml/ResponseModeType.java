@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for responseModeType.
- * 
+ *
  */
 @XmlType(name = "responseModeType")
 @XmlEnum

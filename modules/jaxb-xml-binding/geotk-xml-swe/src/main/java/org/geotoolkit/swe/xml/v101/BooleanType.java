@@ -44,7 +44,7 @@ public class BooleanType extends AbstractDataComponentType  implements AbstractB
      * A empty contructor used by JAXB
      */
     public BooleanType() {
-        
+
     }
 
     /**
@@ -66,9 +66,9 @@ public class BooleanType extends AbstractDataComponentType  implements AbstractB
     public BooleanType(final String definition, final java.lang.Boolean value) {
         super(null, definition, null);
         this.value = value;
-        
+
     }
-    
+
     /**
      * Gets the value of the value property.
      */
@@ -115,7 +115,7 @@ public class BooleanType extends AbstractDataComponentType  implements AbstractB
         hash = 11 * hash + (this.referenceFrame != null ? this.referenceFrame.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString(){
         StringBuilder s = new StringBuilder();
@@ -126,7 +126,7 @@ public class BooleanType extends AbstractDataComponentType  implements AbstractB
             s.append("referenceFrame:").append(referenceFrame).append('\n');
         if (value != null)
             s.append("value:").append(value).append('\n');
-        
+
         return s.toString();
     }
 

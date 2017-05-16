@@ -17,7 +17,7 @@ public class OSMDemo {
 
     public static void main(String[] args) throws DataStoreException, URISyntaxException {
         Demos.init();
-        
+
         final Map<String,Serializable> parameters = new HashMap<String,Serializable>();
         parameters.put("path", OSMDemo.class.getResource("/data/sampleOSM.osm").toURI());
 

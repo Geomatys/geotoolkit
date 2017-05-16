@@ -18,7 +18,7 @@ package org.geotoolkit.display;
 
 /**
  * Exception that may be thrown by a portraying operation.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @module
@@ -27,7 +27,7 @@ public final class PortrayalException extends Exception{
 
     private static final String ERROR = "Portrayal exception : ";
     private static final long serialVersionUID = 3200411272785006830L;
-    
+
     public PortrayalException(final String message){
         super(ERROR+ message);
         if(message == null || message.isEmpty()){
@@ -38,7 +38,7 @@ public final class PortrayalException extends Exception{
     public PortrayalException(final Throwable throwable){
         super(ERROR + ((throwable.getMessage()==null)? "No message" : throwable.getMessage()), throwable);
     }
-    
+
     public PortrayalException(final String message, final Throwable throwable){
         super(ERROR + ((message != null) ? message : "no message"), throwable);
         if(message == null || message.isEmpty()){

@@ -34,16 +34,16 @@ import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 
 
 /**
- * 
+ *
  * This type extends DCMIRecordType to add ows:BoundingBox;
  * it may be used to specify a spatial envelope for the
  * catalogued resource.
- *          
- * 
+ *
+ *
  * <p>Java class for RecordType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RecordType">
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,29 +77,29 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
      * An empty constructor used by JAXB
      */
     public RecordType() {
-        
+
     }
-    
+
     /**
      * Build a new Record TODO add contributor, source , spatial, right, relation
      */
-    public RecordType(final SimpleLiteral identifier, 
-                      final SimpleLiteral title, 
-                      final SimpleLiteral type, 
-                      final List<SimpleLiteral> subject, 
-                      final SimpleLiteral format, 
+    public RecordType(final SimpleLiteral identifier,
+                      final SimpleLiteral title,
+                      final SimpleLiteral type,
+                      final List<SimpleLiteral> subject,
+                      final SimpleLiteral format,
                       final SimpleLiteral modified,
                       final SimpleLiteral date,
                       final SimpleLiteral _abstract,
-                      final List<BoundingBoxType> bboxes, 
-                      final SimpleLiteral creator, 
-                      final SimpleLiteral distributor, 
-                      final SimpleLiteral language, 
+                      final List<BoundingBoxType> bboxes,
+                      final SimpleLiteral creator,
+                      final SimpleLiteral distributor,
+                      final SimpleLiteral language,
                       final SimpleLiteral spatial,
                       final SimpleLiteral references) {
-        
+
         super(identifier, title,type, subject, format, modified, date, _abstract, creator, distributor, language, spatial, references);
-        
+
         this.boundingBox = new ArrayList<>();
         if (bboxes != null) {
             final org.geotoolkit.ows.xml.v100.ObjectFactory owsFactory = new org.geotoolkit.ows.xml.v100.ObjectFactory();
@@ -111,27 +111,27 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
                 }
             }
         }
-        
+
     }
-    
+
     /**
      * Build a new Record TODO add contributor, source , spatial, right, relation
      */
-    public RecordType(final SimpleLiteral identifier, 
-                      final SimpleLiteral title, 
-                      final SimpleLiteral type, 
-                      final List<SimpleLiteral> subject, 
-                      final List<SimpleLiteral> formats, 
+    public RecordType(final SimpleLiteral identifier,
+                      final SimpleLiteral title,
+                      final SimpleLiteral type,
+                      final List<SimpleLiteral> subject,
+                      final List<SimpleLiteral> formats,
                       final SimpleLiteral modified,
                       final SimpleLiteral date,
                       final List<SimpleLiteral> _abstract,
-                      final List<BoundingBoxType> bboxes, 
-                      final List<SimpleLiteral> creator, 
-                      final SimpleLiteral distributor, 
-                      final SimpleLiteral language, 
+                      final List<BoundingBoxType> bboxes,
+                      final List<SimpleLiteral> creator,
+                      final SimpleLiteral distributor,
+                      final SimpleLiteral language,
                       final SimpleLiteral spatial,
                       final SimpleLiteral references) {
-        
+
         super(identifier, title,type, subject, formats, modified, date, _abstract, creator, distributor, language, spatial, references, null);
 
         if (bboxes != null) {
@@ -146,7 +146,7 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
             }
         }
     }
-    
+
     /**
      * Gets the value of the anyText property.
      * (unmodifiable)
@@ -168,7 +168,7 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
         }
         return boundingBox;
     }
-    
+
     public void setBoundingBox(final BoundingBoxType bbox) {
         if (boundingBox == null) {
             this.boundingBox = new ArrayList<>();
@@ -196,11 +196,11 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
             }
         }
     }
-    
+
     public void setBoundingBox(final List<JAXBElement<? extends BoundingBoxType>> bboxes) {
         this.boundingBox = bboxes;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
@@ -210,20 +210,20 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
                 s.append(e.toString()).append('\n');
             }
         }
-        
+
         if (boundingBox != null && !boundingBox.isEmpty()) {
             s.append("bounding box(").append(boundingBox.size()).append("): \n");
             for (JAXBElement<? extends BoundingBoxType> jb : boundingBox) {
                 s.append(jb.getValue()).append('\n');
             }
         }
-        
+
         return s.toString();
     }
-    
+
     /**
      * Transform the recordType into a SummaryRecordType.
-     * 
+     *
      * @return
      */
     @Override
@@ -234,10 +234,10 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
         }
         return new SummaryRecordType(getIdentifier(), getTitle(), getType(), bboxes, getSubject(), getFormat(), getModified(), getAbstract());
     }
-    
+
     /**
      * Transform the recordType into a BriefRecordType.
-     * 
+     *
      * @return
      */
     @Override
@@ -248,7 +248,7 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
         }
         return new BriefRecordType(getIdentifier(), getTitle(), getType(), bboxes);
     }
-    
+
      /**
      * Verify if this entry is identical to the specified object.
      */
@@ -259,15 +259,15 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
         }
         if (object instanceof RecordType && super.equals(object)) {
             final RecordType that = (RecordType) object;
-            
+
             boolean bbox = this.getBoundingBox().size() == that.getBoundingBox().size();
-            
+
             //we verify that the two list contains the same object
             List<BoundingBoxType> obj = new ArrayList<>();
             for (JAXBElement<? extends BoundingBoxType> jb: boundingBox) {
                 obj.add(jb.getValue());
             }
-        
+
             for (JAXBElement<? extends BoundingBoxType> jb: that.boundingBox) {
                 if (!obj.contains(jb.getValue())) {
                     bbox = false;

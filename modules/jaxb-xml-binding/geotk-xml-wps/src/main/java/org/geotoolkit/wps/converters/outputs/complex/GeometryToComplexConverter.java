@@ -81,9 +81,9 @@ public final class GeometryToComplexConverter extends AbstractComplexOutputConve
         if (wpsVersion == null) {
             LOGGER.warning("No WPS version set using default 1.0.0");
             wpsVersion = "1.0.0";
-        } 
+        }
         final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(wpsVersion, (String) params.get(ENCODING),(String) params.get(MIME), (String) params.get(SCHEMA));
-        
+
         String gmlVersion = (String) params.get(GMLVERSION);
         if (gmlVersion == null) {
             gmlVersion = "3.1.1";

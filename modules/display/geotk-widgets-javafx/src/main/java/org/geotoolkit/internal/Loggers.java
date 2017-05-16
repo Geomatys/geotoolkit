@@ -22,15 +22,15 @@ import org.apache.sis.util.logging.Logging;
 
 /**
  * Common loggers for javafx widgets.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class Loggers {
-    
+
     public static final Logger JAVAFX = Logging.getLogger("geotk.javafx");
     public static final Logger REFERENCING = Logging.getLogger("geotk.referencing");
     public static final Logger DATA = Logging.getLogger("geotk.data");
-    
+
     private Loggers(){}
-    
+
 }

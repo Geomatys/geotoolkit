@@ -40,7 +40,7 @@ public class DefaultLod extends DefaultAbstractObject implements Lod {
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param minLodPixels

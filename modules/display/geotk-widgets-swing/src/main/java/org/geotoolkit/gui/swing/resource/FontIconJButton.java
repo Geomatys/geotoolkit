@@ -25,8 +25,8 @@ import javax.swing.border.EmptyBorder;
 
 /**
  * Extend swing JButton with FontAwesome icon.
- * 
- * These button have by default : 
+ *
+ * These button have by default :
  * <ul>
  *  <li>No border</li>
  *  <li>No margin</li>
@@ -37,7 +37,7 @@ import javax.swing.border.EmptyBorder;
  *  <li>focusable to false</li>
  *  <li>size/preferredSize as font size</li>
  * </ul>
- * 
+ *
  * @author Quentin Boileau (Geomatys)
  */
 public class FontIconJButton extends JButton {
@@ -45,7 +45,7 @@ public class FontIconJButton extends JButton {
 
     public FontIconJButton(final String charStr, final int fontSize, final Color fontColor) {
         super(IconBuilder.createIcon(charStr, fontSize, fontColor));
-        
+
         getInsets().set(0, 0, 0, 0);
         getMargin().set(0, 0, 0, 0);
         setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -53,9 +53,9 @@ public class FontIconJButton extends JButton {
         setContentAreaFilled(false);
         setCursor(new Cursor(Cursor.HAND_CURSOR));
         setFocusable(false);
-        
+
         setPreferredSize(new Dimension(fontSize, fontSize));
         setSize(new Dimension(fontSize, fontSize));
     }
-    
+
 }

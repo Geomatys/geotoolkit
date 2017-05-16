@@ -30,9 +30,9 @@ import org.geotoolkit.swes.xml.v200.AbstractOfferingType;
 
 /**
  * <p>Java class for ContentsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ContentsType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.swes.xml.v200.AbstractOfferingType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ContentsType", propOrder = {
@@ -65,13 +65,13 @@ public class ContentsType extends AbstractContentsType implements org.geotoolkit
     private List<String> featureOfInterestType;
 
     public ContentsType() {
-        
+
     }
-    
+
     public ContentsType(final List<ObservationOfferingType> offerings) {
         super(buildJAXBList(offerings));
     }
-    
+
     private static List<JAXBElement<? extends AbstractOfferingType>> buildJAXBList(final List<ObservationOfferingType> offerings) {
         final ObjectFactory factory = new ObjectFactory();
         final List<JAXBElement<? extends AbstractOfferingType>> result = new ArrayList<JAXBElement<? extends AbstractOfferingType>>();
@@ -80,13 +80,13 @@ public class ContentsType extends AbstractContentsType implements org.geotoolkit
         }
         return result;
     }
-    
+
     /**
      * Gets the value of the responseFormat property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getResponseFormat() {
         if (responseFormat == null) {
@@ -97,10 +97,10 @@ public class ContentsType extends AbstractContentsType implements org.geotoolkit
 
     /**
      * Gets the value of the observationType property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getObservationType() {
         if (observationType == null) {
@@ -111,10 +111,10 @@ public class ContentsType extends AbstractContentsType implements org.geotoolkit
 
     /**
      * Gets the value of the featureOfInterestType property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getFeatureOfInterestType() {
         if (featureOfInterestType == null) {

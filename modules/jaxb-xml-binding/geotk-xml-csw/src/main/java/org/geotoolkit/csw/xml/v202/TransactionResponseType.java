@@ -33,12 +33,12 @@ import org.geotoolkit.csw.xml.TransactionResponse;
  * The response for a transaction request that was successfully completed.
  * If the transaction failed for any reason, a service exception report
  * indicating a TransactionFailure is returned instead.
- *          
- * 
+ *
+ *
  * <p>Java class for TransactionResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TransactionResponseType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.csw.xml.TransactionResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,9 +75,9 @@ public class TransactionResponseType implements TransactionResponse {
      * An empty constructor used by JAXB
      */
     TransactionResponseType() {
-        
+
     }
-    
+
     /**
      * Build a new response to a transaction
      */
@@ -87,7 +87,7 @@ public class TransactionResponseType implements TransactionResponse {
         this.insertResult       = insertResult;
         this.version            = version;
     }
-    
+
     /**
      * Gets the value of the transactionSummary property.
      */

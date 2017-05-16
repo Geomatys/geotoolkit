@@ -34,12 +34,12 @@ import org.geotoolkit.citygml.xml.v100.AbstractCityObjectType;
  * surfaces: two rooms are connected if both use the same opening object or the same closure surface. The thematic
  * surfaces bounding a room are referenced by the boundedBy property. As subclass of _CityObject, a Room inherits all
  * attributes and relations, in particular an id, names, external references, and generalization relations.
- *             
- * 
+ *
+ *
  * <p>Java class for RoomType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RoomType">
  *   &lt;complexContent>
@@ -59,8 +59,8 @@ import org.geotoolkit.citygml.xml.v100.AbstractCityObjectType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -85,7 +85,7 @@ public class RoomType
     private List<JAXBElement<?>> rest;
 
     /**
-     * Gets the rest of the content model. 
+     * Gets the rest of the content model.
      */
     public List<JAXBElement<?>> getRest() {
         if (rest == null) {

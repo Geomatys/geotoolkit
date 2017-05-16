@@ -66,7 +66,7 @@ public interface Update {
     List<Object> getUpdateOpExtensions();
 
     /**
-     * 
+     *
      * @return
      */
     List<Object> getUpdateExtensions();
@@ -78,7 +78,7 @@ public interface Update {
     void setTargetHref(URI targetHref);
 
     /**
-     * 
+     *
      * @param updates
      */
     void setUpdates(List<Object> updates);
@@ -90,7 +90,7 @@ public interface Update {
     void setUpdateOpExtensions(List<Object> updateOpEXtensions);
 
     /**
-     * 
+     *
      * @param updateExtensions
      */
     void setUpdateExtensions(List<Object> updateExtensions);

@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -33,17 +33,20 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.sis.metadata.AbstractMetadata;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.FeatureType;
 import org.opengis.feature.catalog.InheritanceRelation;
 
 
 /**
  * FC_InheritanceRelation realizes GF_InheritanceRelation.  - [ocl] - FC_InheritanceRelation always assumes that its GF_InheritanceRelation::uniqueInstance is TRUE. - [/ocl]
- * 
+ *
  * <p>Java class for FC_InheritanceRelation_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FC_InheritanceRelation_Type">
  *   &lt;complexContent>
@@ -60,8 +63,8 @@ import org.opengis.feature.catalog.InheritanceRelation;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,15 +75,15 @@ import org.opengis.feature.catalog.InheritanceRelation;
     "subtype",
     "supertype"
 })
-@XmlRootElement(name = "FC_InheritanceRelation")        
-public class InheritanceRelationImpl implements InheritanceRelation, Referenceable {
+@XmlRootElement(name = "FC_InheritanceRelation")
+public class InheritanceRelationImpl extends AbstractMetadata implements InheritanceRelation, Referenceable {
 
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     @XmlSchemaType(name = "ID")
     private String id;
-    
+
     private String name;
     @XmlElement(required = true)
     private String description;
@@ -90,20 +93,20 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
     private FeatureType subtype;
     @XmlElement(required = true)
     private FeatureType supertype;
-    
+
     @XmlTransient
     private boolean isReference = false;
     @XmlTransient
     protected boolean rootElement = true;
-    
-    
+
+
     /**
      * An empty constructor used by JAXB
      */
     public InheritanceRelationImpl() {
-        
+
     }
-    
+
     /**
      * Clone a InheritanceRelation
      */
@@ -117,7 +120,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
             this.uniqueInstance = relation.getUniqueInstance();
         }
     }
-    
+
     /**
      * Clone a InheritanceRelation
      */
@@ -128,18 +131,19 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
         this.supertype      = supertype;
         this.uniqueInstance = uniqueInstance;
     }
-    
+
     /**
      * Gets the value of the name property.
-     * 
+     *
      */
+    @Override
     public String getName() {
         return name;
     }
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -147,15 +151,16 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      */
+    @Override
     public String getDescription() {
         return description;
     }
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      */
     public void setDescription(final String value) {
         this.description = value;
@@ -163,15 +168,16 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
 
     /**
      * Gets the value of the uniqueInstance property.
-     * 
+     *
      */
+    @Override
     public Boolean getUniqueInstance() {
         return uniqueInstance;
     }
 
     /**
      * Sets the value of the uniqueInstance property.
-     * 
+     *
      */
     public void setUniqueInstance(final Boolean value) {
         this.uniqueInstance = value;
@@ -180,6 +186,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
     /**
      * Gets the value of the subtype property.
      */
+    @Override
     public FeatureType getSubtype() {
         return subtype;
     }
@@ -193,81 +200,86 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
 
     /**
      * Gets the value of the supertype property.
-     * 
+     *
      */
+    @Override
     public FeatureType getSupertype() {
         return supertype;
     }
 
     /**
      * Sets the value of the supertype property.
-     * 
+     *
      */
     public void setSupertype(final FeatureType value) {
         this.supertype = value;
     }
-    
+
     /**
      * Return the identifier of the relation
      */
+    @Override
     public String getId() {
         return this.id;
     }
-    
+
     public void setId(final String id) {
         this.id = id;
     }
-    
+
     /**
      * set the feature in reference mode
      */
+    @Override
     public void setReference(final boolean mode) {
         this.isReference = mode;
     }
-    
+
      /**
      * get the current feature in reference mode
      */
+    @Override
     public boolean isReference() {
         return isReference;
     }
-    
-    public InheritanceRelationImpl getReference() {
+
+    @Override
+    public InheritanceRelationImpl getReferenceableObject() {
         InheritanceRelationImpl result = new InheritanceRelationImpl(this);
         result.setReference(true);
         return result;
     }
-    
+
     private void beforeMarshal(final Marshaller marshaller) {
         if (rootElement) {
-            beforeMarshal(new HashMap<String, Referenceable>());
+            beforeMarshal(new HashMap<>());
         }
     }
-    
+
      public Map<String, Referenceable> beforeMarshal(Map<String, Referenceable> alreadySee) {
         if (id != null && !id.isEmpty()) {
            alreadySee.put(id, this);
         }
         rootElement = false;
-        
+
         if (subtype != null) {
             if (alreadySee.get(subtype.getId()) != null) {
-                subtype = ((FeatureTypeImpl)subtype).getReference();
+                subtype = ((FeatureTypeImpl)subtype).getReferenceableObject();
             } else {
                 alreadySee = ((FeatureTypeImpl)subtype).beforeMarshal(alreadySee);
             }
         }
-        
+
         if (supertype != null) {
             if (alreadySee.get(supertype.getId()) != null) {
-                supertype = ((FeatureTypeImpl)supertype).getReference();
+                supertype = ((FeatureTypeImpl)supertype).getReferenceableObject();
             } else {
                alreadySee = ((FeatureTypeImpl)supertype).beforeMarshal(alreadySee);
             }
         }
         return alreadySee;
      }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[InheritanceRelation]:").append('\n');
@@ -296,18 +308,18 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
         }
         return s.toString();
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
         if (object instanceof InheritanceRelationImpl) {
             final InheritanceRelationImpl that = (InheritanceRelationImpl) object;
-            
+
             return Objects.equals(this.description,    that.description) &&
                    Objects.equals(this.id,             that.id)          &&
                    Objects.equals(this.name,           that.name)        &&
@@ -324,5 +336,10 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
         hash = 79 * hash + (this.id   != null ? this.id.hashCode()   : 0);
         hash = 79 * hash + (this.name != null ? this.name.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public MetadataStandard getStandard() {
+        return FeatureCatalogueStandard.ISO_19110;
     }
 }

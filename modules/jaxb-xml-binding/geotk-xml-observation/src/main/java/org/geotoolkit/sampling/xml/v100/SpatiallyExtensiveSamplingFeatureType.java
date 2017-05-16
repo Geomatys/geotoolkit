@@ -25,11 +25,11 @@ import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 
 /**
  * SpatiallyExtensiveSamplingFeature is the root class for sampling manifolds that are extensive in 1- 2- or 3-D.
- * 
+ *
  * <p>Java class for SpatiallyExtensiveSamplingFeatureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SpatiallyExtensiveSamplingFeatureType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -52,7 +52,7 @@ import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 public class SpatiallyExtensiveSamplingFeatureType extends SamplingFeatureType {
 
     public SpatiallyExtensiveSamplingFeatureType() {
-        
+
     }
 
     public SpatiallyExtensiveSamplingFeatureType(final String id, final String name, final String description,final FeaturePropertyType sampledFeature) {

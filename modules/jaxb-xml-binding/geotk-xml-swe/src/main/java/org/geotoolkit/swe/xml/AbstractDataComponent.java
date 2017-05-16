@@ -22,20 +22,20 @@ import static org.opengis.annotation.Specification.*;
 import static org.opengis.annotation.Obligation.*;
 
 /**
- * Base type for all data components. 
+ * Base type for all data components.
  *
  * @author legal
  * @module
  */
 @UML(identifier="AbstractDataComponent", specification=UNSPECIFIED)
 public interface AbstractDataComponent extends AbstractGML {
-    
+
     /**
      * Points to semantics information defining the precise nature of the component
      */
     @UML(identifier="definition", obligation=OPTIONAL, specification=UNSPECIFIED )
     String getDefinition();
-    
+
     /**
      * Specifies if the value of a component stays fixed in time or is variable. Default is variable.
      */

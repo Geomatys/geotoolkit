@@ -29,9 +29,9 @@ import org.geotoolkit.gml.xml.v321.TimePeriodType;
 
 /**
  * <p>Java class for TimeInstantOrPeriodPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeInstantOrPeriodPropertyType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.gml.xml.v321.TimePeriodType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeInstantOrPeriodPropertyType", propOrder = {
@@ -78,11 +78,11 @@ public class TimeInstantOrPeriodPropertyType {
 
     /**
      * Gets the value of the timePeriod property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimePeriodType }
-     *     
+     *
      */
     public TimePeriodType getTimePeriod() {
         return timePeriod;
@@ -90,11 +90,11 @@ public class TimeInstantOrPeriodPropertyType {
 
     /**
      * Sets the value of the timePeriod property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimePeriodType }
-     *     
+     *
      */
     public void setTimePeriod(TimePeriodType value) {
         this.timePeriod = value;
@@ -102,11 +102,11 @@ public class TimeInstantOrPeriodPropertyType {
 
     /**
      * Gets the value of the timeInstant property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimeInstantType }
-     *     
+     *
      */
     public TimeInstantType getTimeInstant() {
         return timeInstant;
@@ -114,11 +114,11 @@ public class TimeInstantOrPeriodPropertyType {
 
     /**
      * Sets the value of the timeInstant property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimeInstantType }
-     *     
+     *
      */
     public void setTimeInstant(TimeInstantType value) {
         this.timeInstant = value;
@@ -126,11 +126,11 @@ public class TimeInstantOrPeriodPropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -142,11 +142,11 @@ public class TimeInstantOrPeriodPropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -154,11 +154,11 @@ public class TimeInstantOrPeriodPropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -166,11 +166,11 @@ public class TimeInstantOrPeriodPropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -178,11 +178,11 @@ public class TimeInstantOrPeriodPropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -190,11 +190,11 @@ public class TimeInstantOrPeriodPropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -202,11 +202,11 @@ public class TimeInstantOrPeriodPropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -214,11 +214,11 @@ public class TimeInstantOrPeriodPropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -226,11 +226,11 @@ public class TimeInstantOrPeriodPropertyType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -238,11 +238,11 @@ public class TimeInstantOrPeriodPropertyType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -250,11 +250,11 @@ public class TimeInstantOrPeriodPropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -262,11 +262,11 @@ public class TimeInstantOrPeriodPropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(String value) {
         this.show = value;
@@ -274,11 +274,11 @@ public class TimeInstantOrPeriodPropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -286,11 +286,11 @@ public class TimeInstantOrPeriodPropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(String value) {
         this.actuate = value;

@@ -28,9 +28,9 @@ import org.geotoolkit.ebrim.xml.EbrimInternationalString;
 
 /**
  * <p>Java class for InternationalStringType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InternationalStringType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.ebrim.xml.EbrimInternationalString;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -79,19 +79,19 @@ public class InternationalStringType implements EbrimInternationalString {
         }
         return this.localizedString;
     }
-    
+
     /**
      * Set the values of localizedString.
-     * 
+     *
      * @param localizedString
      */
     public void setLocalizedString(final List<LocalizedStringType> localizedString) {
         this.localizedString = localizedString;
     }
-    
+
     /**
      * Add a singleton value to the localizedString list.
-     * 
+     *
      * @param localizedString
      */
     public void setLocalizedString(final LocalizedStringType localizedString) {

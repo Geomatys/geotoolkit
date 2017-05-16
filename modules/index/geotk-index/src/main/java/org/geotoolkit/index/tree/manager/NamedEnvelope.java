@@ -96,7 +96,7 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
     public void setNbEnv(int nbEnv) {
         this.nbEnv = nbEnv;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -154,7 +154,7 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
         }
         return false;
     }
-    
+
     @Override
     public String toString() {
         return "ID: " + id + " nb envelope: " + nbEnv + ". " + super.toString();

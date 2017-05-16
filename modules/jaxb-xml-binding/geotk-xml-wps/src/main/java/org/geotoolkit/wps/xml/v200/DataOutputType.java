@@ -30,14 +30,14 @@ import org.geotoolkit.wps.xml.DataOutput;
 
 
 /**
- * 
+ *
  * This type describes a process output in the execute response.
- * 			
- * 
+ *
+ *
  * <p>Java class for DataOutputType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataOutputType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.wps.xml.DataOutput;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataOutputType", propOrder = {
@@ -76,25 +76,25 @@ public class DataOutputType implements DataOutput {
     protected String id;
 
     public DataOutputType() {
-        
+
     }
-    
+
     public DataOutputType(String id, ReferenceType reference) {
         this.id = id;
         this.reference = reference;
     }
-    
+
     public DataOutputType(String id, Data data) {
         this.id = id;
         this.data = data;
     }
     /**
      * Gets the value of the data property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Data }
-     *     
+     *
      */
     public Data getData() {
         return data;
@@ -102,11 +102,11 @@ public class DataOutputType implements DataOutput {
 
     /**
      * Sets the value of the data property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Data }
-     *     
+     *
      */
     public void setData(Data value) {
         this.data = value;
@@ -114,11 +114,11 @@ public class DataOutputType implements DataOutput {
 
     /**
      * Gets the value of the reference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getReference() {
         return reference;
@@ -126,11 +126,11 @@ public class DataOutputType implements DataOutput {
 
     /**
      * Sets the value of the reference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setReference(ReferenceType value) {
         this.reference = value;
@@ -138,11 +138,11 @@ public class DataOutputType implements DataOutput {
 
     /**
      * Gets the value of the output property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataOutputType }
-     *     
+     *
      */
     public DataOutputType getOutput() {
         return output;
@@ -150,11 +150,11 @@ public class DataOutputType implements DataOutput {
 
     /**
      * Sets the value of the output property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataOutputType }
-     *     
+     *
      */
     public void setOutput(DataOutputType value) {
         this.output = value;
@@ -162,16 +162,16 @@ public class DataOutputType implements DataOutput {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
     }
-    
+
     @Override
     public AbstractCodeType getIdentifier() {
         return new CodeType(id);
@@ -179,16 +179,16 @@ public class DataOutputType implements DataOutput {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(String value) {
         this.id = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
@@ -206,7 +206,7 @@ public class DataOutputType implements DataOutput {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

@@ -29,9 +29,9 @@ import org.geotoolkit.wfs.xml.DropStoredQuery;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.wfs.xml.DropStoredQuery;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
@@ -54,21 +54,21 @@ public class DropStoredQueryType extends BaseRequestType implements DropStoredQu
     private String id;
 
     public DropStoredQueryType() {
-        
+
     }
-    
+
     public DropStoredQueryType(final String service, final String version, final String handle, final String id) {
         super(service, version, handle);
         this.id = id;
     }
-    
+
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -76,11 +76,11 @@ public class DropStoredQueryType extends BaseRequestType implements DropStoredQu
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(String value) {
         this.id = value;

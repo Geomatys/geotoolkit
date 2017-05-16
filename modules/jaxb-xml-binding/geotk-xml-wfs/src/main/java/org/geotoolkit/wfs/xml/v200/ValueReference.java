@@ -48,9 +48,9 @@ public class ValueReference {
     private UpdateActionType action;
 
     public ValueReference() {
-        
+
     }
-    
+
     public ValueReference(final String value, final UpdateActionType action) {
         this.action = action;
         this.value = value;

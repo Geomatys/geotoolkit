@@ -26,12 +26,12 @@ import org.geotoolkit.gml.xml.v311.ImageCRSType;
 
 
 /**
- * Association to an image coordinate reference system, either referencing or containing the definition of that reference system. 
- * 
+ * Association to an image coordinate reference system, either referencing or containing the definition of that reference system.
+ *
  * <p>Java class for ImageCRSRefType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ImageCRSRefType">
  *   &lt;complexContent>
@@ -44,7 +44,7 @@ import org.geotoolkit.gml.xml.v311.ImageCRSType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -82,11 +82,11 @@ public class ImageCRSRefType {
      */
     ImageCRSRefType() {
     }
-    
+
      /**
      * build a new reference of imageCRS
      */
-    public ImageCRSRefType(final ImageCRSType imageCRS, final String remoteSchema, final String type, 
+    public ImageCRSRefType(final ImageCRSType imageCRS, final String remoteSchema, final String type,
             final String href, final String role, final String arcrole, final String title, final String show, final String actuate) {
         this.actuate      = actuate;
         this.arcrole      = arcrole;
@@ -97,12 +97,12 @@ public class ImageCRSRefType {
         this.show         = show;
         this.title        = title;
         this.type         = type;
-             
+
     }
-    
+
     /**
      * Gets the value of the imageCRS property.
-     * 
+     *
      */
     public ImageCRSType getImageCRS() {
         return imageCRS;
@@ -110,7 +110,7 @@ public class ImageCRSRefType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -118,7 +118,7 @@ public class ImageCRSRefType {
 
    /**
     * Gets the value of the type property.
-    * 
+    *
     */
     public String getType() {
         if (type == null) {
@@ -130,7 +130,7 @@ public class ImageCRSRefType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      */
     public String getHref() {
         return href;
@@ -145,7 +145,7 @@ public class ImageCRSRefType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      */
     public String getArcrole() {
         return arcrole;

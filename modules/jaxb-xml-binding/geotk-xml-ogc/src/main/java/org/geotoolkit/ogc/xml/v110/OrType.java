@@ -29,20 +29,20 @@ import org.opengis.filter.Or;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Or")
 public class OrType extends  BinaryLogicOpType implements Or  {
-    
+
      /**
      * An empty constructor used by JAXB
      */
      public OrType() {
-         
+
      }
-     
+
      /**
-      * Build a new Binary logic operator 
+      * Build a new Binary logic operator
       */
      public OrType(final Object... operators) {
          super(operators);
-         
+
      }
 
      public OrType(final BinaryLogicOpType that) {

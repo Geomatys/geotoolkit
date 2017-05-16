@@ -73,9 +73,9 @@ class DefaultQuery implements Query {
                 null,
                 null);
     }
-    
+
     DefaultQuery(final Source source, final Filter filter, final String[] attributs, final SortBy[] sort,
-            final CoordinateReferenceSystem crs, final int startIndex, final Integer MaxFeature, 
+            final CoordinateReferenceSystem crs, final int startIndex, final Integer MaxFeature,
             final double[] resolution, final Object version, final Hints hints){
 
         ensureNonNull("query source", source);
@@ -118,7 +118,7 @@ class DefaultQuery implements Query {
         this.resolution = null;
         this.version = null;
     }
-    
+
     /**
      * A custom query statement in the given language.
      */
@@ -332,7 +332,7 @@ class DefaultQuery implements Query {
         }
         return null;
     }
-    
+
     /**
      * {@inheritDoc }
      */

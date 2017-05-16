@@ -33,12 +33,12 @@ public class TreeAccessMemory extends TreeAccess {
      * {@link TreeAccessMemory#tabNode} current length.
      */
     private int tabNodeLength;
-    
+
     /**
      * Table which contains current stored {@link Node} from {@link Tree}.
      */
     private Node[] tabNode;
-    
+
     /**
      * {@code true} if {@link TreeAccessMemory#close() } has already been called.
      */
@@ -54,11 +54,11 @@ public class TreeAccessMemory extends TreeAccess {
         this.splitMade  = splitMade;
         this.isClose    = false;
     }
-    
+
     public TreeAccessMemory(final int maxElements, final CoordinateReferenceSystem crs) {
         this(maxElements, null, crs);
     }
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -84,7 +84,7 @@ public class TreeAccessMemory extends TreeAccess {
             }
         }
     }
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -120,7 +120,7 @@ public class TreeAccessMemory extends TreeAccess {
 
     /**
      * {@inheritDoc }
-     * 
+     *
      * @throws IOException no exception in this implementation.
      */
     @Override
@@ -132,7 +132,7 @@ public class TreeAccessMemory extends TreeAccess {
 
     /**
      * Do Nothing.
-     * @throws IOException 
+     * @throws IOException
      */
     @Override
     public synchronized void close() throws IOException {

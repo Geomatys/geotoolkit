@@ -31,14 +31,14 @@ public class DefaultLineStyle extends DefaultAbstractColorStyle implements LineS
     private double width;
 
     /**
-     * 
+     *
      */
     public DefaultLineStyle() {
         this.width = DEF_WIDTH;
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractSubStyleSimpleExtensions

@@ -27,7 +27,7 @@ import org.geotoolkit.data.shapefile.lock.AccessManager;
 import static org.junit.Assert.*;
 
 public class FidIndexerTest extends FIDTestCase {
-    
+
 
     /*
      * Test method for 'org.geotoolkit.index.fid.FidIndexer.generate(URL)'

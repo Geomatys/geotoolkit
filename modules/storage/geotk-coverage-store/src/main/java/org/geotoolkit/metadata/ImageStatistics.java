@@ -245,23 +245,23 @@ public class ImageStatistics implements Serializable{
 
     /**
      * Create {@link ImageStatistics} from {@link CoverageDescription}.<br/>
-     * Moreover travel all existing {@link SampleDimension} from {@link CoverageDescription} 
+     * Moreover travel all existing {@link SampleDimension} from {@link CoverageDescription}
      * to define appropriate statistics.
-     * 
+     *
      * @param covdesc Description of the studied {@link Coverage}.
-     * @return {@link ImageStatistics} or {@code null} if it is impossible to define 
+     * @return {@link ImageStatistics} or {@code null} if it is impossible to define
      * statistic for each bands, or {@link CoverageDescription#getAttributeGroups() } is {@code null} or empty,
      * or also if internaly {@link AttributeGroup#getAttributes()} is {@code null} or empty.
      */
     public static ImageStatistics transform(final CoverageDescription covdesc) {
         ArgumentChecks.ensureNonNull("CoverageDescription", covdesc);
-        
+
         final Collection<? extends AttributeGroup> attributeGroups = covdesc.getAttributeGroups();
-        if (attributeGroups == null || attributeGroups.isEmpty()) 
+        if (attributeGroups == null || attributeGroups.isEmpty())
             return null;
 
         final List<Band> bands = new ArrayList<>();
-        
+
         //search for band statistics
         for (AttributeGroup attg : attributeGroups) {
             final Collection<? extends RangeDimension> attributes = attg.getAttributes();
@@ -276,7 +276,7 @@ public class ImageStatistics implements Serializable{
                 band.setMax(sd.getMaxValue());
                 band.setStd(sd.getStandardDeviation());
                 band.setMean(sd.getMeanValue());
-                
+
                 if (sd instanceof DefaultSampleDimensionExt) {
                     final DefaultSampleDimensionExt ext = (DefaultSampleDimensionExt) sd;
                     band.setHistogram(ext.getHistogram());

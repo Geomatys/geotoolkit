@@ -27,5 +27,5 @@ import static org.opengis.annotation.Specification.*;
  */
 @UML(identifier="AbstractDataRecord", specification=UNSPECIFIED)
 public interface AbstractDataRecord extends AbstractDataComponent {
-    
+
 }

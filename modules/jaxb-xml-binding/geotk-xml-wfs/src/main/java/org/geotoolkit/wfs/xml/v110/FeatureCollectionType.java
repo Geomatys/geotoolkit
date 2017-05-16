@@ -32,12 +32,12 @@ import org.geotoolkit.wfs.xml.WFSResponse;
  * This type defines a container for the response to a GetFeature or GetFeatureWithLock request.
  * If the request is GetFeatureWithLock, the lockId attribute must be populated.
  * The lockId attribute can otherwise be safely ignored.
- *          
- * 
+ *
+ *
  * <p>Java class for FeatureCollectionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FeatureCollectionType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.wfs.xml.WFSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -74,7 +74,7 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType impleme
         this.numberOfFeatures = numberOfFeatures;
         this.timeStamp        = timeStamp;
     }
-    
+
     public FeatureCollectionType(final String id, final Integer numberOfFeatures, final XMLGregorianCalendar timeStamp) {
         super(id);
         this.numberOfFeatures = numberOfFeatures;
@@ -88,11 +88,11 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType impleme
 
     /**
      * Gets the value of the lockId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLockId() {
         return lockId;
@@ -100,11 +100,11 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType impleme
 
     /**
      * Sets the value of the lockId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLockId(final String value) {
         this.lockId = value;
@@ -112,11 +112,11 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType impleme
 
     /**
      * Gets the value of the timeStamp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getTimeStamp() {
         return timeStamp;
@@ -124,11 +124,11 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType impleme
 
     /**
      * Sets the value of the timeStamp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setTimeStamp(final XMLGregorianCalendar value) {
         this.timeStamp = value;
@@ -136,11 +136,11 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType impleme
 
     /**
      * Gets the value of the numberOfFeatures property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getNumberOfFeatures() {
         return numberOfFeatures;
@@ -148,11 +148,11 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType impleme
 
     /**
      * Sets the value of the numberOfFeatures property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setNumberOfFeatures(final Integer value) {
         this.numberOfFeatures = value;

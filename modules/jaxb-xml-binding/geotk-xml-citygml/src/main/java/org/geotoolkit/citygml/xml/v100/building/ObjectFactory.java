@@ -31,18 +31,18 @@ import org.geotoolkit.gml.xml.v311.SolidPropertyType;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.citygml.building._1 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.citygml.building._1 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  * @module
  */
 @XmlRegistry
@@ -121,14 +121,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.citygml.building._1
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link CeilingSurfaceType }
-     * 
+     *
      */
     public CeilingSurfaceType createCeilingSurfaceType() {
         return new CeilingSurfaceType();
@@ -136,7 +136,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GroundSurfaceType }
-     * 
+     *
      */
     public GroundSurfaceType createGroundSurfaceType() {
         return new GroundSurfaceType();
@@ -144,7 +144,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BuildingPartPropertyType }
-     * 
+     *
      */
     public BuildingPartPropertyType createBuildingPartPropertyType() {
         return new BuildingPartPropertyType();
@@ -152,7 +152,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BuildingPartType }
-     * 
+     *
      */
     public BuildingPartType createBuildingPartType() {
         return new BuildingPartType();
@@ -160,7 +160,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RoomType }
-     * 
+     *
      */
     public RoomType createRoomType() {
         return new RoomType();
@@ -168,7 +168,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BuildingInstallationType }
-     * 
+     *
      */
     public BuildingInstallationType createBuildingInstallationType() {
         return new BuildingInstallationType();
@@ -176,7 +176,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InteriorRoomPropertyType }
-     * 
+     *
      */
     public InteriorRoomPropertyType createInteriorRoomPropertyType() {
         return new InteriorRoomPropertyType();
@@ -184,7 +184,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BoundarySurfacePropertyType }
-     * 
+     *
      */
     public BoundarySurfacePropertyType createBoundarySurfacePropertyType() {
         return new BoundarySurfacePropertyType();
@@ -192,7 +192,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RoofSurfaceType }
-     * 
+     *
      */
     public RoofSurfaceType createRoofSurfaceType() {
         return new RoofSurfaceType();
@@ -200,7 +200,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link IntBuildingInstallationType }
-     * 
+     *
      */
     public IntBuildingInstallationType createIntBuildingInstallationType() {
         return new IntBuildingInstallationType();
@@ -208,7 +208,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ClosureSurfaceType }
-     * 
+     *
      */
     public ClosureSurfaceType createClosureSurfaceType() {
         return new ClosureSurfaceType();
@@ -216,7 +216,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BuildingType }
-     * 
+     *
      */
     public BuildingType createBuildingType() {
         return new BuildingType();
@@ -224,7 +224,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorType }
-     * 
+     *
      */
     public DoorType createDoorType() {
         return new DoorType();
@@ -232,7 +232,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InteriorWallSurfaceType }
-     * 
+     *
      */
     public InteriorWallSurfaceType createInteriorWallSurfaceType() {
         return new InteriorWallSurfaceType();
@@ -240,7 +240,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WallSurfaceType }
-     * 
+     *
      */
     public WallSurfaceType createWallSurfaceType() {
         return new WallSurfaceType();
@@ -248,7 +248,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BuildingInstallationPropertyType }
-     * 
+     *
      */
     public BuildingInstallationPropertyType createBuildingInstallationPropertyType() {
         return new BuildingInstallationPropertyType();
@@ -256,7 +256,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link IntBuildingInstallationPropertyType }
-     * 
+     *
      */
     public IntBuildingInstallationPropertyType createIntBuildingInstallationPropertyType() {
         return new IntBuildingInstallationPropertyType();
@@ -264,7 +264,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OpeningPropertyType }
-     * 
+     *
      */
     public OpeningPropertyType createOpeningPropertyType() {
         return new OpeningPropertyType();
@@ -272,7 +272,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WindowType }
-     * 
+     *
      */
     public WindowType createWindowType() {
         return new WindowType();
@@ -280,7 +280,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BuildingFurnitureType }
-     * 
+     *
      */
     public BuildingFurnitureType createBuildingFurnitureType() {
         return new BuildingFurnitureType();
@@ -288,7 +288,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InteriorFurniturePropertyType }
-     * 
+     *
      */
     public InteriorFurniturePropertyType createInteriorFurniturePropertyType() {
         return new InteriorFurniturePropertyType();
@@ -296,7 +296,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FloorSurfaceType }
-     * 
+     *
      */
     public FloorSurfaceType createFloorSurfaceType() {
         return new FloorSurfaceType();
@@ -304,7 +304,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_GenericApplicationPropertyOfInteriorWallSurface")
     public JAXBElement<Object> createGenericApplicationPropertyOfInteriorWallSurface(final Object value) {
@@ -313,7 +313,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GroundSurfaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "GroundSurface", substitutionHeadNamespace = "http://www.opengis.net/citygml/building/1.0", substitutionHeadName = "_BoundarySurface")
     public JAXBElement<GroundSurfaceType> createGroundSurface(final GroundSurfaceType value) {
@@ -322,7 +322,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "Door", substitutionHeadNamespace = "http://www.opengis.net/citygml/building/1.0", substitutionHeadName = "_Opening")
     public JAXBElement<DoorType> createDoor(final DoorType value) {
@@ -331,7 +331,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_GenericApplicationPropertyOfRoom")
     public JAXBElement<Object> createGenericApplicationPropertyOfRoom(final Object value) {
@@ -340,7 +340,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_GenericApplicationPropertyOfRoofSurface")
     public JAXBElement<Object> createGenericApplicationPropertyOfRoofSurface(final Object value) {
@@ -349,7 +349,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BuildingType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "Building", substitutionHeadNamespace = "http://www.opengis.net/citygml/building/1.0", substitutionHeadName = "_AbstractBuilding")
     public JAXBElement<BuildingType> createBuilding(final BuildingType value) {
@@ -358,7 +358,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_GenericApplicationPropertyOfBoundarySurface")
     public JAXBElement<Object> createGenericApplicationPropertyOfBoundarySurface(final Object value) {
@@ -367,7 +367,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CeilingSurfaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "CeilingSurface", substitutionHeadNamespace = "http://www.opengis.net/citygml/building/1.0", substitutionHeadName = "_BoundarySurface")
     public JAXBElement<CeilingSurfaceType> createCeilingSurface(final CeilingSurfaceType value) {
@@ -376,7 +376,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FloorSurfaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "FloorSurface", substitutionHeadNamespace = "http://www.opengis.net/citygml/building/1.0", substitutionHeadName = "_BoundarySurface")
     public JAXBElement<FloorSurfaceType> createFloorSurface(final FloorSurfaceType value) {
@@ -385,7 +385,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_GenericApplicationPropertyOfIntBuildingInstallation")
     public JAXBElement<Object> createGenericApplicationPropertyOfIntBuildingInstallation(final Object value) {
@@ -394,7 +394,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BuildingPartType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "BuildingPart", substitutionHeadNamespace = "http://www.opengis.net/citygml/building/1.0", substitutionHeadName = "_AbstractBuilding")
     public JAXBElement<BuildingPartType> createBuildingPart(final BuildingPartType value) {
@@ -403,7 +403,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RoomType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "Room", substitutionHeadNamespace = "http://www.opengis.net/citygml/1.0", substitutionHeadName = "_CityObject")
     public JAXBElement<RoomType> createRoom(final RoomType value) {
@@ -412,7 +412,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractOpeningType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_Opening", substitutionHeadNamespace = "http://www.opengis.net/citygml/1.0", substitutionHeadName = "_CityObject")
     public JAXBElement<AbstractOpeningType> createOpening(final AbstractOpeningType value) {
@@ -421,7 +421,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WallSurfaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "WallSurface", substitutionHeadNamespace = "http://www.opengis.net/citygml/building/1.0", substitutionHeadName = "_BoundarySurface")
     public JAXBElement<WallSurfaceType> createWallSurface(final WallSurfaceType value) {
@@ -430,7 +430,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_GenericApplicationPropertyOfWindow")
     public JAXBElement<Object> createGenericApplicationPropertyOfWindow(final Object value) {
@@ -439,7 +439,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ClosureSurfaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "ClosureSurface", substitutionHeadNamespace = "http://www.opengis.net/citygml/building/1.0", substitutionHeadName = "_BoundarySurface")
     public JAXBElement<ClosureSurfaceType> createClosureSurface(final ClosureSurfaceType value) {
@@ -448,7 +448,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InteriorWallSurfaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "InteriorWallSurface", substitutionHeadNamespace = "http://www.opengis.net/citygml/building/1.0", substitutionHeadName = "_BoundarySurface")
     public JAXBElement<InteriorWallSurfaceType> createInteriorWallSurface(final InteriorWallSurfaceType value) {
@@ -457,7 +457,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_GenericApplicationPropertyOfBuildingFurniture")
     public JAXBElement<Object> createGenericApplicationPropertyOfBuildingFurniture(final Object value) {
@@ -466,7 +466,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_GenericApplicationPropertyOfCeilingSurface")
     public JAXBElement<Object> createGenericApplicationPropertyOfCeilingSurface(final Object value) {
@@ -475,7 +475,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_GenericApplicationPropertyOfGroundSurface")
     public JAXBElement<Object> createGenericApplicationPropertyOfGroundSurface(final Object value) {
@@ -484,7 +484,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BuildingInstallationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "BuildingInstallation", substitutionHeadNamespace = "http://www.opengis.net/citygml/1.0", substitutionHeadName = "_CityObject")
     public JAXBElement<BuildingInstallationType> createBuildingInstallation(final BuildingInstallationType value) {
@@ -493,7 +493,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_GenericApplicationPropertyOfBuilding")
     public JAXBElement<Object> createGenericApplicationPropertyOfBuilding(final Object value) {
@@ -502,7 +502,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractBoundarySurfaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_BoundarySurface", substitutionHeadNamespace = "http://www.opengis.net/citygml/1.0", substitutionHeadName = "_CityObject")
     public JAXBElement<AbstractBoundarySurfaceType> createBoundarySurface(final AbstractBoundarySurfaceType value) {
@@ -511,7 +511,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_GenericApplicationPropertyOfFloorSurface")
     public JAXBElement<Object> createGenericApplicationPropertyOfFloorSurface(final Object value) {
@@ -520,7 +520,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RoofSurfaceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "RoofSurface", substitutionHeadNamespace = "http://www.opengis.net/citygml/building/1.0", substitutionHeadName = "_BoundarySurface")
     public JAXBElement<RoofSurfaceType> createRoofSurface(final RoofSurfaceType value) {
@@ -529,7 +529,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_GenericApplicationPropertyOfBuildingInstallation")
     public JAXBElement<Object> createGenericApplicationPropertyOfBuildingInstallation(final Object value) {
@@ -538,7 +538,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_GenericApplicationPropertyOfClosureSurface")
     public JAXBElement<Object> createGenericApplicationPropertyOfClosureSurface(final Object value) {
@@ -547,7 +547,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BuildingFurnitureType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "BuildingFurniture", substitutionHeadNamespace = "http://www.opengis.net/citygml/1.0", substitutionHeadName = "_CityObject")
     public JAXBElement<BuildingFurnitureType> createBuildingFurniture(final BuildingFurnitureType value) {
@@ -556,7 +556,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_GenericApplicationPropertyOfBuildingPart")
     public JAXBElement<Object> createGenericApplicationPropertyOfBuildingPart(final Object value) {
@@ -565,7 +565,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractBuildingType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_AbstractBuilding", substitutionHeadNamespace = "http://www.opengis.net/citygml/1.0", substitutionHeadName = "_Site")
     public JAXBElement<AbstractBuildingType> createAbstractBuilding(final AbstractBuildingType value) {
@@ -574,7 +574,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link IntBuildingInstallationType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "IntBuildingInstallation", substitutionHeadNamespace = "http://www.opengis.net/citygml/1.0", substitutionHeadName = "_CityObject")
     public JAXBElement<IntBuildingInstallationType> createIntBuildingInstallation(final IntBuildingInstallationType value) {
@@ -583,7 +583,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_GenericApplicationPropertyOfDoor")
     public JAXBElement<Object> createGenericApplicationPropertyOfDoor(final Object value) {
@@ -592,7 +592,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_GenericApplicationPropertyOfWallSurface")
     public JAXBElement<Object> createGenericApplicationPropertyOfWallSurface(final Object value) {
@@ -601,7 +601,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_GenericApplicationPropertyOfOpening")
     public JAXBElement<Object> createGenericApplicationPropertyOfOpening(final Object value) {
@@ -610,7 +610,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WindowType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "Window", substitutionHeadNamespace = "http://www.opengis.net/citygml/building/1.0", substitutionHeadName = "_Opening")
     public JAXBElement<WindowType> createWindow(final WindowType value) {
@@ -619,7 +619,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "_GenericApplicationPropertyOfAbstractBuilding")
     public JAXBElement<Object> createGenericApplicationPropertyOfAbstractBuilding(final Object value) {
@@ -628,7 +628,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link IntBuildingInstallationPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "roomInstallation", scope = RoomType.class)
     public JAXBElement<IntBuildingInstallationPropertyType> createRoomTypeRoomInstallation(final IntBuildingInstallationPropertyType value) {
@@ -637,7 +637,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SolidPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "lod4Solid", scope = RoomType.class)
     public JAXBElement<SolidPropertyType> createRoomTypeLod4Solid(final SolidPropertyType value) {
@@ -646,7 +646,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "usage", scope = RoomType.class)
     public JAXBElement<String> createRoomTypeUsage(final String value) {
@@ -655,7 +655,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InteriorFurniturePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "interiorFurniture", scope = RoomType.class)
     public JAXBElement<InteriorFurniturePropertyType> createRoomTypeInteriorFurniture(final InteriorFurniturePropertyType value) {
@@ -664,7 +664,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "class", scope = RoomType.class)
     public JAXBElement<String> createRoomTypeClass(final String value) {
@@ -673,7 +673,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "function", scope = RoomType.class)
     public JAXBElement<String> createRoomTypeFunction(final String value) {
@@ -682,7 +682,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiSurfacePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "lod4MultiSurface", scope = RoomType.class)
     public JAXBElement<MultiSurfacePropertyType> createRoomTypeLod4MultiSurface(final MultiSurfacePropertyType value) {
@@ -691,7 +691,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BoundarySurfacePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "boundedBy", scope = RoomType.class)
     public JAXBElement<BoundarySurfacePropertyType> createRoomTypeBoundedBy(final BoundarySurfacePropertyType value) {
@@ -700,7 +700,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiCurvePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "lod4TerrainIntersection", scope = AbstractBuildingType.class)
     public JAXBElement<MultiCurvePropertyType> createAbstractBuildingTypeLod4TerrainIntersection(final MultiCurvePropertyType value) {
@@ -709,7 +709,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiCurvePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "lod4MultiCurve", scope = AbstractBuildingType.class)
     public JAXBElement<MultiCurvePropertyType> createAbstractBuildingTypeLod4MultiCurve(final MultiCurvePropertyType value) {
@@ -718,7 +718,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BigInteger }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "storeysAboveGround", scope = AbstractBuildingType.class)
     public JAXBElement<BigInteger> createAbstractBuildingTypeStoreysAboveGround(final BigInteger value) {
@@ -727,7 +727,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiSurfacePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "lod1MultiSurface", scope = AbstractBuildingType.class)
     public JAXBElement<MultiSurfacePropertyType> createAbstractBuildingTypeLod1MultiSurface(final MultiSurfacePropertyType value) {
@@ -736,7 +736,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiCurvePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "lod2MultiCurve", scope = AbstractBuildingType.class)
     public JAXBElement<MultiCurvePropertyType> createAbstractBuildingTypeLod2MultiCurve(final MultiCurvePropertyType value) {
@@ -745,7 +745,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiCurvePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "lod1TerrainIntersection", scope = AbstractBuildingType.class)
     public JAXBElement<MultiCurvePropertyType> createAbstractBuildingTypeLod1TerrainIntersection(final MultiCurvePropertyType value) {
@@ -754,7 +754,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link IntBuildingInstallationPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "interiorBuildingInstallation", scope = AbstractBuildingType.class)
     public JAXBElement<IntBuildingInstallationPropertyType> createAbstractBuildingTypeInteriorBuildingInstallation(final IntBuildingInstallationPropertyType value) {
@@ -763,7 +763,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "function", scope = AbstractBuildingType.class)
     public JAXBElement<String> createAbstractBuildingTypeFunction(final String value) {
@@ -772,7 +772,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link XMLGregorianCalendar }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "yearOfDemolition", scope = AbstractBuildingType.class)
     public JAXBElement<XMLGregorianCalendar> createAbstractBuildingTypeYearOfDemolition(final XMLGregorianCalendar value) {
@@ -781,7 +781,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiSurfacePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "lod3MultiSurface", scope = AbstractBuildingType.class)
     public JAXBElement<MultiSurfacePropertyType> createAbstractBuildingTypeLod3MultiSurface(final MultiSurfacePropertyType value) {
@@ -790,7 +790,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BuildingPartPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "consistsOfBuildingPart", scope = AbstractBuildingType.class)
     public JAXBElement<BuildingPartPropertyType> createAbstractBuildingTypeConsistsOfBuildingPart(final BuildingPartPropertyType value) {
@@ -799,7 +799,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiCurvePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "lod3MultiCurve", scope = AbstractBuildingType.class)
     public JAXBElement<MultiCurvePropertyType> createAbstractBuildingTypeLod3MultiCurve(final MultiCurvePropertyType value) {
@@ -808,7 +808,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SolidPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "lod3Solid", scope = AbstractBuildingType.class)
     public JAXBElement<SolidPropertyType> createAbstractBuildingTypeLod3Solid(final SolidPropertyType value) {
@@ -817,7 +817,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "usage", scope = AbstractBuildingType.class)
     public JAXBElement<String> createAbstractBuildingTypeUsage(final String value) {
@@ -826,7 +826,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiCurvePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "lod2TerrainIntersection", scope = AbstractBuildingType.class)
     public JAXBElement<MultiCurvePropertyType> createAbstractBuildingTypeLod2TerrainIntersection(final MultiCurvePropertyType value) {
@@ -835,7 +835,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BuildingInstallationPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "outerBuildingInstallation", scope = AbstractBuildingType.class)
     public JAXBElement<BuildingInstallationPropertyType> createAbstractBuildingTypeOuterBuildingInstallation(final BuildingInstallationPropertyType value) {
@@ -844,7 +844,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiSurfacePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "lod4MultiSurface", scope = AbstractBuildingType.class)
     public JAXBElement<MultiSurfacePropertyType> createAbstractBuildingTypeLod4MultiSurface(final MultiSurfacePropertyType value) {
@@ -853,7 +853,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LengthType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "measuredHeight", scope = AbstractBuildingType.class)
     public JAXBElement<LengthType> createAbstractBuildingTypeMeasuredHeight(final LengthType value) {
@@ -862,7 +862,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SolidPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "lod2Solid", scope = AbstractBuildingType.class)
     public JAXBElement<SolidPropertyType> createAbstractBuildingTypeLod2Solid(final SolidPropertyType value) {
@@ -871,7 +871,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SolidPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "lod1Solid", scope = AbstractBuildingType.class)
     public JAXBElement<SolidPropertyType> createAbstractBuildingTypeLod1Solid(final SolidPropertyType value) {
@@ -880,7 +880,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BoundarySurfacePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "boundedBy", scope = AbstractBuildingType.class)
     public JAXBElement<BoundarySurfacePropertyType> createAbstractBuildingTypeBoundedBy(final BoundarySurfacePropertyType value) {
@@ -889,7 +889,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link XMLGregorianCalendar }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "yearOfConstruction", scope = AbstractBuildingType.class)
     public JAXBElement<XMLGregorianCalendar> createAbstractBuildingTypeYearOfConstruction(final XMLGregorianCalendar value) {
@@ -898,7 +898,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AddressPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "address", scope = AbstractBuildingType.class)
     public JAXBElement<AddressPropertyType> createAbstractBuildingTypeAddress(final AddressPropertyType value) {
@@ -907,7 +907,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SolidPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "lod4Solid", scope = AbstractBuildingType.class)
     public JAXBElement<SolidPropertyType> createAbstractBuildingTypeLod4Solid(final SolidPropertyType value) {
@@ -916,7 +916,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BigInteger }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "storeysBelowGround", scope = AbstractBuildingType.class)
     public JAXBElement<BigInteger> createAbstractBuildingTypeStoreysBelowGround(final BigInteger value) {
@@ -925,7 +925,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "class", scope = AbstractBuildingType.class)
     public JAXBElement<String> createAbstractBuildingTypeClass(final String value) {
@@ -934,7 +934,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "roofType", scope = AbstractBuildingType.class)
     public JAXBElement<String> createAbstractBuildingTypeRoofType(final String value) {
@@ -943,7 +943,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MeasureOrNullListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "storeyHeightsAboveGround", scope = AbstractBuildingType.class)
     public JAXBElement<MeasureOrNullListType> createAbstractBuildingTypeStoreyHeightsAboveGround(final MeasureOrNullListType value) {
@@ -952,7 +952,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InteriorRoomPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "interiorRoom", scope = AbstractBuildingType.class)
     public JAXBElement<InteriorRoomPropertyType> createAbstractBuildingTypeInteriorRoom(final InteriorRoomPropertyType value) {
@@ -961,7 +961,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiSurfacePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "lod2MultiSurface", scope = AbstractBuildingType.class)
     public JAXBElement<MultiSurfacePropertyType> createAbstractBuildingTypeLod2MultiSurface(final MultiSurfacePropertyType value) {
@@ -970,7 +970,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiCurvePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "lod3TerrainIntersection", scope = AbstractBuildingType.class)
     public JAXBElement<MultiCurvePropertyType> createAbstractBuildingTypeLod3TerrainIntersection(final MultiCurvePropertyType value) {
@@ -979,7 +979,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MeasureOrNullListType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/building/1.0", name = "storeyHeightsBelowGround", scope = AbstractBuildingType.class)
     public JAXBElement<MeasureOrNullListType> createAbstractBuildingTypeStoreyHeightsBelowGround(final MeasureOrNullListType value) {

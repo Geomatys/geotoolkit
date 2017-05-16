@@ -29,11 +29,11 @@ import org.geotoolkit.gml.xml.AbstractRingProperty;
 
 /**
  * A property with the content model of gml:AbstractRingPropertyType encapsulates a ring to represent the surface boundary property of a surface.
- * 
+ *
  * <p>Java class for AbstractRingPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractRingPropertyType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.gml.xml.AbstractRingProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractRingPropertyType", propOrder = {
@@ -71,16 +71,16 @@ public class AbstractRingPropertyType implements AbstractRingProperty {
             }
         }
     }
-    
+
     /**
      * Gets the value of the abstractRing property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link LinearRingType }{@code >}
      *     {@link JAXBElement }{@code <}{@link RingType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractRingType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractRingType> getJbAbstractRing() {
         return abstractRing;
@@ -88,13 +88,13 @@ public class AbstractRingPropertyType implements AbstractRingProperty {
 
     /**
      * Sets the value of the abstractRing property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link LinearRingType }{@code >}
      *     {@link JAXBElement }{@code <}{@link RingType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractRingType }{@code >}
-     *     
+     *
      */
     public void setAbstractRing(JAXBElement<? extends AbstractRingType> value) {
         this.abstractRing = ((JAXBElement<? extends AbstractRingType> ) value);

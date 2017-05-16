@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ContrastEnhancementType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ContrastEnhancementType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,11 +63,11 @@ public class ContrastEnhancementType {
 
     /**
      * Gets the value of the normalize property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link NormalizeType }
-     *     
+     *
      */
     public NormalizeType getNormalize() {
         return normalize;
@@ -75,11 +75,11 @@ public class ContrastEnhancementType {
 
     /**
      * Sets the value of the normalize property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link NormalizeType }
-     *     
+     *
      */
     public void setNormalize(final NormalizeType value) {
         this.normalize = value;
@@ -87,11 +87,11 @@ public class ContrastEnhancementType {
 
     /**
      * Gets the value of the histogram property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link HistogramType }
-     *     
+     *
      */
     public HistogramType getHistogram() {
         return histogram;
@@ -99,11 +99,11 @@ public class ContrastEnhancementType {
 
     /**
      * Sets the value of the histogram property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link HistogramType }
-     *     
+     *
      */
     public void setHistogram(final HistogramType value) {
         this.histogram = value;
@@ -111,11 +111,11 @@ public class ContrastEnhancementType {
 
     /**
      * Gets the value of the gammaValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getGammaValue() {
         return gammaValue;
@@ -123,11 +123,11 @@ public class ContrastEnhancementType {
 
     /**
      * Sets the value of the gammaValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setGammaValue(final Double value) {
         this.gammaValue = value;

@@ -82,7 +82,7 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  */
 public class FXStyleClassifRangePane extends FXLayerStylePane {
-    
+
     private static final PaletteFactory PF = PaletteFactory.getDefault();
     private static final List<IntervalPalette> PALETTES;
     private static final Dimension GLYPH_DIMENSION = new Dimension(30, 20);
@@ -99,13 +99,13 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
             }
         }
     }
-    
+
     @FXML private ComboBox<PropertyName> uiProperty;
     @FXML private ComboBox<IntervalStyleBuilder.METHOD> uiMethod;
     @FXML private ComboBox<PropertyName> uiNormalize;
     @FXML private SplitMenuButton uiTemplate;
     @FXML private FXNumberSpinner uiClasses;
-    @FXML private ComboBox<Object> uiPalette;    
+    @FXML private ComboBox<Object> uiPalette;
     @FXML private TableView<MutableRule> uiTable;
     @FXML private Button uiCombineFilter;
     //this is the target style element where we must generate the rules
@@ -115,7 +115,7 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
 
     private final IntervalStyleBuilder analyze = new IntervalStyleBuilder();
     private FeatureMapLayer layer;
-    
+
     public FXStyleClassifRangePane() {
         GeotkFX.loadJRXML(this,FXStyleClassifRangePane.class);
     }
@@ -131,12 +131,12 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
         final PropertyName prop = uiNormalize.getSelectionModel().getSelectedItem();
         analyze.setNormalize(prop);
     }
-    
+
     @FXML
     private void methodChange(ActionEvent event) {
         analyze.setMethod(uiMethod.getSelectionModel().getSelectedItem());
     }
-    
+
     @FXML
     private void editTemplate(ActionEvent event) {
         final Symbolizer template = FXPropertyPane.showSymbolizerDialog(this, analyze.getTemplate(), layer);
@@ -168,7 +168,7 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
 
     @FXML
     private void invertValues(ActionEvent event) {
-        
+
         final List<MutableRule> rules = new ArrayList<>(uiTable.getItems());
         final Symbolizer[] symbols = new Symbolizer[rules.size()];
 
@@ -180,7 +180,7 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
             rules.get(i).symbolizers().clear();
             rules.get(i).symbolizers().add(symbols[i]);
         }
-        
+
         uiTable.getItems().clear();
         uiTable.getItems().setAll(rules);
     }
@@ -217,30 +217,30 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
     public String getTitle() {
         return GeotkFX.getString(this,"title");
     }
-    
+
     @Override
     public String getCategory() {
         return GeotkFX.getString(this,"category");
     }
-    
+
     /**
      * Called by FXMLLoader after creating controller.
      */
     public void initialize(){
-        uiPalette.setItems(FXCollections.observableArrayList(PALETTES));        
+        uiPalette.setItems(FXCollections.observableArrayList(PALETTES));
         uiPalette.setCellFactory((ListView<Object> param) -> new FXPaletteCell());
         uiPalette.setButtonCell((new FXPaletteCell()));
         uiPalette.setEditable(false);
         uiPalette.getSelectionModel().selectFirst();
-        
+
         uiProperty.setCellFactory((ListView<PropertyName> param) -> new FXPropertyCell());
         uiProperty.setButtonCell((new FXPropertyCell()));
         uiProperty.setEditable(false);
-        
+
         uiNormalize.setCellFactory((ListView<PropertyName> param) -> new FXPropertyCell());
         uiNormalize.setButtonCell((new FXPropertyCell()));
         uiNormalize.setEditable(false);
-        
+
         uiMethod.setEditable(false);
         uiMethod.getItems().clear();
         uiMethod.getItems().add(IntervalStyleBuilder.METHOD.EL);
@@ -250,13 +250,13 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
         uiClasses.valueProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
             analyze.setNbClasses(uiClasses.valueProperty().get().intValue());
         });
-        
+
         uiTable.setItems(FXCollections.observableArrayList());
         uiTable.getColumns().add(new GlyphColumn());
         uiTable.getColumns().add(new NameColumn());
         uiTable.getColumns().add(new FilterColumn());
         uiTable.getColumns().add(new FXDeleteTableColumn(false));
-        
+
         //this will cause the column width to fit the view area
         uiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
@@ -282,7 +282,7 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
 
         uiCombineFilter.setGraphic(new ImageView(GeotkFX.ICON_FILTER));
     }
-    
+
     @Override
     public boolean init(MapLayer candidate, Object styleElement) {
         if(!(candidate instanceof FeatureMapLayer)) return false;
@@ -292,7 +292,7 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
 
         this.layer = (FeatureMapLayer) candidate;
         analyze.setLayer(layer);
-        
+
         uiTable.getItems().clear();
 
         if(styleElement instanceof MutableStyle){
@@ -304,7 +304,7 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
                 uiTable.getItems().addAll( ((MutableFeatureTypeStyle)styleElement).rules());
             }
         }
-        
+
         final List<PropertyName> props = analyze.getProperties();
         uiProperty.setItems(FXCollections.observableArrayList(props));
         uiProperty.getSelectionModel().selectFirst();
@@ -314,7 +314,7 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
 
         uiMethod.getSelectionModel().select(analyze.getMethod());
         uiClasses.valueProperty().set(analyze.getNbClasses());
-        
+
         return true;
     }
 
@@ -349,7 +349,7 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
             uiTemplate.setText("");
         }
     }
-    
+
     @Override
     public MutableStyle getMutableStyle() {
         final MutableStyle style = GeotkFX.getStyleFactory().style();
@@ -358,8 +358,8 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
         fts.rules().addAll(uiTable.getItems());
         return style;
     }
-        
-    
+
+
     private static final class FXPropertyCell extends ListCell<PropertyName>{
 
         @Override
@@ -372,7 +372,7 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
             }
         }
     }
-    
+
     private final class GlyphColumn extends TableColumn<MutableRule,Symbolizer>{
 
         public GlyphColumn() {
@@ -420,7 +420,7 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
             });
         }
     }
-    
+
     private static final class NameColumn extends TableColumn<MutableRule,String>{
 
         public NameColumn() {
@@ -447,7 +447,7 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
             });
         }
     }
-    
+
     private final class FilterColumn extends TableColumn<MutableRule,Filter>{
 
         public FilterColumn() {
@@ -490,5 +490,5 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
             });
         }
     }
-    
+
 }

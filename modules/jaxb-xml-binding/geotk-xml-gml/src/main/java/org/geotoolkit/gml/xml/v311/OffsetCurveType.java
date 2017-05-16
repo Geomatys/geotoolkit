@@ -24,14 +24,14 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * An offset curve is a curve at a constant
- * 		 distance from the basis curve. They can be useful as a cheap
- * 		 and simple alternative to constructing curves that are offsets	
- * 		 by definition.
- * 
+ *       distance from the basis curve. They can be useful as a cheap
+ *       and simple alternative to constructing curves that are offsets
+ *       by definition.
+ *
  * <p>Java class for OffsetCurveType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OffsetCurveType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -67,11 +67,11 @@ public class OffsetCurveType
 
     /**
      * Gets the value of the offsetBase property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurvePropertyType }
-     *     
+     *
      */
     public CurvePropertyType getOffsetBase() {
         return offsetBase;
@@ -79,11 +79,11 @@ public class OffsetCurveType
 
     /**
      * Sets the value of the offsetBase property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurvePropertyType }
-     *     
+     *
      */
     public void setOffsetBase(final CurvePropertyType value) {
         this.offsetBase = value;
@@ -91,11 +91,11 @@ public class OffsetCurveType
 
     /**
      * Gets the value of the distance property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LengthType }
-     *     
+     *
      */
     public LengthType getDistance() {
         return distance;
@@ -103,11 +103,11 @@ public class OffsetCurveType
 
     /**
      * Sets the value of the distance property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LengthType }
-     *     
+     *
      */
     public void setDistance(final LengthType value) {
         this.distance = value;
@@ -115,11 +115,11 @@ public class OffsetCurveType
 
     /**
      * Gets the value of the refDirection property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link VectorType }
-     *     
+     *
      */
     public VectorType getRefDirection() {
         return refDirection;
@@ -127,11 +127,11 @@ public class OffsetCurveType
 
     /**
      * Sets the value of the refDirection property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link VectorType }
-     *     
+     *
      */
     public void setRefDirection(final VectorType value) {
         this.refDirection = value;

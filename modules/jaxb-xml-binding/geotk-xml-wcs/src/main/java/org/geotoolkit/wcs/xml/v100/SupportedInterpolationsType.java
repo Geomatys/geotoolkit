@@ -26,12 +26,12 @@ import org.geotoolkit.wcs.xml.SupportedInterpolations;
 
 
 /**
- * Unordered list of interpolation methods supported. 
- * 
+ * Unordered list of interpolation methods supported.
+ *
  * <p>Java class for SupportedInterpolationsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SupportedInterpolationsType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.wcs.xml.SupportedInterpolations;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,14 +58,14 @@ public class SupportedInterpolationsType implements SupportedInterpolations {
     private List<InterpolationMethod> interpolationMethod;
     @XmlAttribute(name = "default")
     private InterpolationMethod _default;
-    
+
     /**
      * Empty constructor used by JAXB
      */
     SupportedInterpolationsType(){
-        
+
     }
-    
+
     /**
      * Build a new List of supported interpolation.
      */
@@ -83,7 +83,7 @@ public class SupportedInterpolationsType implements SupportedInterpolations {
 
     /**
      * Gets the value of the default property.
-     * 
+     *
      */
     public InterpolationMethod getDefault() {
         if (_default == null) {

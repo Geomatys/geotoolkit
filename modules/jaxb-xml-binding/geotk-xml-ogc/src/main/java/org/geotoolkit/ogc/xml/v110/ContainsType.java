@@ -30,27 +30,27 @@ public class ContainsType extends BinarySpatialOpType implements Contains {
      * An empty constructor used by JAXB
      */
     public ContainsType() {
-        
+
     }
-    
+
     /**
      * Build a new Beyond Type
      */
     public ContainsType(final String propertyName, final AbstractGeometryType geometry) {
         super(propertyName, geometry);
     }
-    
+
     /**
      * Build a new Beyond Type
      */
     public ContainsType(final PropertyNameType propertyName, final Object geometry) {
         super(propertyName, geometry);
     }
-    
+
     public ContainsType(final ContainsType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new ContainsType(this);

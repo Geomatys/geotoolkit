@@ -32,26 +32,26 @@ import org.geotoolkit.csw.xml.SearchResults;
 
 /**
  *  Returns representations of result set members if maxRecords > 0.
- * 
+ *
  *      resultSetId       - id of the result set (a URI).
- *      
+ *
  *      elementSet        - The element set that has been returned (i.e., "brief", "summary", "full")
- * 
+ *
  *      recordSchema      - schema reference for included records(URI)
- * 
+ *
  *      numberOfRecordsMatched  - number of records matched by the query
- * 
+ *
  *      numberOfRecordsReturned - number of records returned to client
- * 
+ *
  *      nextRecord        - position of next record in the result set (0 if no records remain).
- * 
+ *
  *      expires           - the time instant when the result set expires and is discarded (ISO 8601 format)
- *          
- * 
+ *
+ *
  * <p>Java class for SearchResultsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SearchResultsType">
  *   &lt;complexContent>
@@ -70,8 +70,8 @@ import org.geotoolkit.csw.xml.SearchResults;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -82,7 +82,7 @@ public class SearchResultsType implements SearchResults {
 
     @XmlAnyElement(lax = true)
     private List<Object> any;
-    
+
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     private String resultSetId;
@@ -105,14 +105,14 @@ public class SearchResultsType implements SearchResults {
 
     @XmlTransient
     private ObjectFactory factory = new ObjectFactory();
-    
+
     /**
-     * An empty constructor used by JAXB 
+     * An empty constructor used by JAXB
      */
     SearchResultsType() {
-        
+
     }
-    
+
     /**
      * build a new search results (HITS MODE).
      */
@@ -121,13 +121,13 @@ public class SearchResultsType implements SearchResults {
         this.elementSet             = elementSet;
         this.numberOfRecordsMatched = numberOfResultMatched;
         this.nextRecord             = nextRecord;
-       
-        
+
+
     }
-    
+
     /**
      * build a new search results. (RESULTS mode - OGCCORE mode).
-     * 
+     *
      */
     public SearchResultsType(final String resultSetId, final ElementSetType elementSet, final int numberOfResultMatched,
             final List<Object> records, final Integer numberOfRecordsReturned, final int nextRecord) {
@@ -138,7 +138,7 @@ public class SearchResultsType implements SearchResults {
         this.nextRecord              = nextRecord;
         this.any                     = records;
     }
-    
+
     /**
      * Gets the value of the any property.
      */
@@ -152,7 +152,7 @@ public class SearchResultsType implements SearchResults {
 
     /**
      * Gets the value of the resultSetId property.
-     * 
+     *
      */
     @Override
     public String getResultSetId() {
@@ -161,7 +161,7 @@ public class SearchResultsType implements SearchResults {
 
     /**
      * Sets the value of the resultSetId property.
-     * 
+     *
     */
     @Override
     public void setResultSetId(final String value) {
@@ -170,7 +170,7 @@ public class SearchResultsType implements SearchResults {
 
     /**
      * Gets the value of the elementSet property.
-     * 
+     *
      */
     @Override
     public ElementSetType getElementSet() {
@@ -179,7 +179,7 @@ public class SearchResultsType implements SearchResults {
 
     /**
      * Sets the value of the elementSet property.
-     * 
+     *
      */
     public void setElementSet(final ElementSetType value) {
         this.elementSet = value;
@@ -187,7 +187,7 @@ public class SearchResultsType implements SearchResults {
 
     /**
      * Gets the value of the recordSchema property.
-     * 
+     *
      */
     @Override
     public String getRecordSchema() {
@@ -196,7 +196,7 @@ public class SearchResultsType implements SearchResults {
 
     /**
      * Sets the value of the recordSchema property.
-     * 
+     *
      */
     @Override
     public void setRecordSchema(final String value) {
@@ -205,7 +205,7 @@ public class SearchResultsType implements SearchResults {
 
     /**
      * Gets the value of the numberOfRecordsMatched property.
-     * 
+     *
      */
     @Override
     public int getNumberOfRecordsMatched() {
@@ -214,7 +214,7 @@ public class SearchResultsType implements SearchResults {
 
     /**
      * Sets the value of the numberOfRecordsMatched property.
-     * 
+     *
      */
     @Override
     public void setNumberOfRecordsMatched(final int value) {
@@ -223,7 +223,7 @@ public class SearchResultsType implements SearchResults {
 
     /**
      * Gets the value of the numberOfRecordsReturned property.
-     * 
+     *
      */
     @Override
     public int getNumberOfRecordsReturned() {
@@ -232,7 +232,7 @@ public class SearchResultsType implements SearchResults {
 
     /**
      * Sets the value of the numberOfRecordsReturned property.
-     * 
+     *
      */
     @Override
     public void setNumberOfRecordsReturned(final int value) {
@@ -241,7 +241,7 @@ public class SearchResultsType implements SearchResults {
 
     /**
      * Gets the value of the nextRecord property.
-     * 
+     *
      */
     @Override
     public int getNextRecord() {
@@ -250,7 +250,7 @@ public class SearchResultsType implements SearchResults {
 
     /**
      * Sets the value of the nextRecord property.
-     * 
+     *
      */
     @Override
     public void setNextRecord(final int value) {
@@ -259,7 +259,7 @@ public class SearchResultsType implements SearchResults {
 
     /**
      * Gets the value of the expires property.
-     * 
+     *
      */
     @Override
     public XMLGregorianCalendar getExpires() {
@@ -268,7 +268,7 @@ public class SearchResultsType implements SearchResults {
 
     /**
      * Sets the value of the expires property.
-     * 
+     *
      */
     @Override
     public void setExpires(final XMLGregorianCalendar value) {
@@ -284,14 +284,14 @@ public class SearchResultsType implements SearchResults {
             s.append("elementSet:").append(elementSet.value()).append('\n');
         if (recordSchema != null)
             s.append("recordShema: ").append(recordSchema).append('\n');
-        
+
         s.append("nbRec Matched = ").append(numberOfRecordsMatched).append(" ").append("nbRec Returned = ").append(numberOfRecordsReturned);
         s.append("next record = ").append(nextRecord).append('\n');
-        
+
         if (expires != null) {
             s.append("expires at: ").append(expires);
         }
-        
+
         if (any != null && !any.isEmpty()) {
             s.append("nb records: ").append(any.size());
         }

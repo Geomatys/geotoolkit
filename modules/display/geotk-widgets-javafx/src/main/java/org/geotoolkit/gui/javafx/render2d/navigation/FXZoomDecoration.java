@@ -28,15 +28,15 @@ import javafx.scene.shape.Rectangle;
  * Zoom pan decoration
  *
  * TODO : use buffer
- * 
+ *
  * @author Johann Sorel
  */
 public class FXZoomDecoration extends Pane implements FXMapDecoration{
 
     private final Color TRS = new Color(1, 1, 1, 0.1);
-    
+
     private final Rectangle rectangle = new Rectangle();
-    
+
     private Image buffer = null;
     private FXMap map = null;
     private boolean draw = false;
@@ -56,8 +56,8 @@ public class FXZoomDecoration extends Pane implements FXMapDecoration{
     }
 
     public void setCoord(double sx, double sy, double ex, double ey, final boolean draw){
-        this.draw = draw;  
-        
+        this.draw = draw;
+
         if(ex<sx){
             double d = ex;
             ex = sx;
@@ -68,7 +68,7 @@ public class FXZoomDecoration extends Pane implements FXMapDecoration{
             ey = sy;
             sy = d;
         }
-        
+
         rectangle.setX(sx);
         rectangle.setY(sy);
         rectangle.setWidth(ex-sx);

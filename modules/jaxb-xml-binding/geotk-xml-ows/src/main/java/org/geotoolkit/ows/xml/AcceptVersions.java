@@ -25,7 +25,7 @@ import java.util.List;
 public interface AcceptVersions {
 
     List<String> getVersion();
-    
+
     void addVersion(final String version);
 
 }

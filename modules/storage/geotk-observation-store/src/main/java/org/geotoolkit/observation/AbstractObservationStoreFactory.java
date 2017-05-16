@@ -34,11 +34,11 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Abstract Observation Store Factory.
- * 
+ *
  * @author Guilhem Legal (Geomatys)
  */
 public abstract class AbstractObservationStoreFactory extends AbstractDataStoreFactory implements ObservationStoreFactory {
- 
+
     /**
      * Identifier, Mandatory.
      * Subclasses should redeclared this parameter with a different default value.
@@ -60,7 +60,7 @@ public abstract class AbstractObservationStoreFactory extends AbstractDataStoreF
             .setRemarks(Bundle.formatInternational(Bundle.Keys.paramNamespaceRemarks))
             .setRequired(false)
             .create(String.class, null);
-    
+
     /**
      * {@inheritDoc }
      */
@@ -68,7 +68,7 @@ public abstract class AbstractObservationStoreFactory extends AbstractDataStoreF
     public CharSequence getDescription() {
         return getDisplayName();
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -161,7 +161,7 @@ public abstract class AbstractObservationStoreFactory extends AbstractDataStoreF
         final ConformanceResult result = Parameters.isValid(params, desc);
         return (result != null) && Boolean.TRUE.equals(result.pass());
     }
-        
+
     /**
      * Create the identifier descriptor, and set only one valid value, the one in parameter.
      *

@@ -26,25 +26,25 @@ import org.opengis.filter.spatial.Disjoint;
  * @module
  */
 public class DisjointType extends BinarySpatialOpType implements Disjoint {
-    
+
     /**
      * An empty constructor used by JAXB
      */
     public DisjointType() {
-        
+
     }
-    
+
     /**
      * Build a new Disjoint Type
      */
     public DisjointType(final String propertyName, final AbstractGeometryType geometry) {
         super(propertyName, geometry);
     }
-    
+
     public DisjointType(final DisjointType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new DisjointType(this);

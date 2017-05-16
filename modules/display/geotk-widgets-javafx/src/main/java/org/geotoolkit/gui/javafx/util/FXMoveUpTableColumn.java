@@ -33,7 +33,7 @@ import org.geotoolkit.internal.GeotkFX;
  */
 public class FXMoveUpTableColumn extends TableColumn{
 
-    
+
     public FXMoveUpTableColumn() {
         super("Up");
         setSortable(false);
@@ -42,14 +42,14 @@ public class FXMoveUpTableColumn extends TableColumn{
         setMinWidth(24);
         setMaxWidth(24);
         setGraphic(new ImageView(GeotkFX.ICON_MOVEUP));
-        
+
         setCellValueFactory(new Callback<TableColumn.CellDataFeatures, ObservableValue>() {
                 @Override
                 public ObservableValue call(TableColumn.CellDataFeatures param) {
                     return new SimpleObjectProperty<>(param.getValue());
                 }
             });
-        
+
         setCellFactory(new Callback<TableColumn, TableCell>() {
             @Override
             public TableCell call(final TableColumn param) {
@@ -66,17 +66,17 @@ public class FXMoveUpTableColumn extends TableColumn{
                             }
                             return t;
                         }
-                    }); 
+                    });
             }
         });
-        
+
     }
-    
+
     private static int identityIndex(Object obj, List lst){
         for(int i=0,n=lst.size();i<n;i++){
             if(lst.get(i)==obj)return i;
         }
         return -1;
     }
-    
+
 }

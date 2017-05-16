@@ -23,14 +23,14 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
 
 
 /**
- * Denotes the relation of an _BondarySurface to its openings (doors, windows). 
+ * Denotes the relation of an _BondarySurface to its openings (doors, windows).
  * The OpeningPropertyType element must either carry a reference to an _Opening
  * object or contain an _Opening object inline, but neither both nor none.
- * 
+ *
  * <p>Java class for OpeningPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OpeningPropertyType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -28,12 +28,12 @@ import org.geotoolkit.wcs.xml.DomainSubset;
 
 
 /**
- * Definition of the desired subset of the domain of the coverage. Contains a spatial BoundingBox and optionally a TemporalSubset. 
- * 
+ * Definition of the desired subset of the domain of the coverage. Contains a spatial BoundingBox and optionally a TemporalSubset.
+ *
  * <p>Java class for DomainSubsetType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DomainSubsetType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.wcs.xml.DomainSubset;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -66,9 +66,9 @@ public class DomainSubsetType implements DomainSubset  {
      * Empty constructor used by JAXB.
      */
      DomainSubsetType(){
-         
+
      }
-     
+
      /**
       * Build a new Domain Subset.
       */
@@ -77,22 +77,22 @@ public class DomainSubsetType implements DomainSubset  {
          org.geotoolkit.ows.xml.v110.ObjectFactory facto = new org.geotoolkit.ows.xml.v110.ObjectFactory();
          this.boundingBox = facto.createBoundingBox(boundingBox);
      }
-    
+
     /**
-     * Definition of desired spatial subset of a coverage domain. 
-     * When the entire spatial extent of this coverage is desired, 
-     * this BoundingBox can be copied from the Domain part of the Coverage Description. 
-     * However, the entire spatial extent may be larger than a WCS server can output, 
-     * in which case the server shall respond with an error message. 
-     * Notice that WCS use of this BoundingBox is further specified in specification Subclause 7.5. 
+     * Definition of desired spatial subset of a coverage domain.
+     * When the entire spatial extent of this coverage is desired,
+     * this BoundingBox can be copied from the Domain part of the Coverage Description.
+     * However, the entire spatial extent may be larger than a WCS server can output,
+     * in which case the server shall respond with an error message.
+     * Notice that WCS use of this BoundingBox is further specified in specification Subclause 7.5.
      */
     public JAXBElement<? extends BoundingBoxType> getBoundingBox() {
         return boundingBox;
     }
 
     /**
-     * Optional definition of desired temporal subset of a coverage domain. 
-     * If this data structure is omitted, the entire Temporal domain shall be output. 
+     * Optional definition of desired temporal subset of a coverage domain.
+     * If this data structure is omitted, the entire Temporal domain shall be output.
      */
     public TimeSequenceType getTemporalSubset() {
         return temporalSubset;

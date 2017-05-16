@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.XmlType;
  *    co-ordinate reference systems may be used to interpolate
  *    other positions. Any other point in the controlPoint array
  *    must fall on this geodesic.
- * 
+ *
  * <p>Java class for GeodesicType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeodesicType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

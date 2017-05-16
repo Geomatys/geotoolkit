@@ -19,16 +19,16 @@ package org.geotoolkit.color;
 
 /**
  * TODO
- * 
+ *
  * Placeholder to regroup classes :
  * - Geotk ColorRamp
  * - Geotk Palette
  * - Pending Palette
  * - Pending ColorMap
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class Palette {
-    
-    
+
+
 }

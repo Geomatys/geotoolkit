@@ -21,8 +21,8 @@ package org.geotoolkit.ows.xml;
  * @author Guilhem Legal (Geomatys)
  */
 public interface AbstractCapabilitiesCore {
-    
+
      AbstractCapabilitiesCore applySections(final Sections sections);
-     
+
      void updateURL(final String url);
 }

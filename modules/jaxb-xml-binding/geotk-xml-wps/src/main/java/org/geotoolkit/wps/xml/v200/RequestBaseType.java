@@ -30,18 +30,18 @@ import org.geotoolkit.ows.xml.RequestBase;
 
 
 /**
- * 
+ *
  * WPS operation request base, for all WPS operations, except GetCapabilities.
  * In this XML encoding, no "request" parameter is included, since the element
  * name specifies the specific operation.
  * An 'Extension' element provides a placeholder for extra request parameters
  * that might be defined by WPS extension standards.
- * 			
- * 
+ *
+ *
  * <p>Java class for RequestBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RequestBaseType">
  *   &lt;complexContent>
@@ -55,8 +55,8 @@ import org.geotoolkit.ows.xml.RequestBase;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RequestBaseType", propOrder = {
@@ -79,20 +79,20 @@ public abstract class RequestBaseType implements RequestBase {
     protected String version;
 
     public RequestBaseType() {
-        
+
     }
-    
+
     public RequestBaseType(String service) {
         this.service = service;
     }
-    
+
     /**
      * Gets the value of the extension property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getExtension() {
         if (extension == null) {
@@ -103,11 +103,11 @@ public abstract class RequestBaseType implements RequestBase {
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getService() {
@@ -116,11 +116,11 @@ public abstract class RequestBaseType implements RequestBase {
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setService(String value) {
@@ -129,11 +129,11 @@ public abstract class RequestBaseType implements RequestBase {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public Version getVersion() {
@@ -146,11 +146,11 @@ public abstract class RequestBaseType implements RequestBase {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(String value) {
         this.version = value;

@@ -38,7 +38,7 @@ package org.geotoolkit.data.kml.model;
  * &lt;element name="LabelStyleSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
  * &lt;element name="LabelStyleObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
  * </pre>
- * 
+ *
  * @author Samuel Andrés
  * @module
  */

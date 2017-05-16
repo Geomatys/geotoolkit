@@ -64,5 +64,5 @@ public final class DecimateJTSGeomCollectionIterator extends JTSGeomCollectionIt
             currentIterator = JTSEmptyIterator.INSTANCE;
         }
     }
-    
+
 }

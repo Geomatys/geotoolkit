@@ -37,15 +37,15 @@ import org.geotoolkit.map.MapLayer;
  */
 public class FXAddFeatureStoreAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(GeotkFX.getBufferedImage("add-vector", new Dimension(16, 16)), null);
-    
+
     public FXAddFeatureStoreAction(FXMap map) {
         super(map,GeotkFX.getString(FXAddFeatureStoreAction.class,"label"),
                 GeotkFX.getString(FXAddFeatureStoreAction.class,"label"),ICON);
     }
-    
+
     @Override
     public void accept(ActionEvent event) {
-        
+
         try {
             final List<MapLayer> layers = FXStoreChooser.showLayerDialog(null,FXStoreChooser.FEATUREFACTORY_ONLY);
 
@@ -57,7 +57,7 @@ public class FXAddFeatureStoreAction extends FXMapAction {
         } catch (DataStoreException ex) {
             Loggers.DATA.log(Level.WARNING, ex.getMessage(), ex);
         }
-        
+
     }
-    
+
 }

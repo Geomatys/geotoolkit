@@ -31,7 +31,7 @@ import org.geotoolkit.internal.GeotkFX;
  */
 public final class FXRepaintAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_REFRESH, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
-    
+
     public FXRepaintAction(FXMap map) {
         super(map,GeotkFX.getString(FXRepaintAction.class,"refresh"),GeotkFX.getString(FXRepaintAction.class,"refresh"),ICON);
     }
@@ -42,5 +42,5 @@ public final class FXRepaintAction extends FXMapAction {
             map.getCanvas().repaint();
         }
     }
-    
+
 }

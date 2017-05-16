@@ -26,7 +26,7 @@ public class DefaultSubPremiseName extends DefaultGenericTypedGrPostal implement
     private AfterBeforeEnum typeOccurrence;
 
     public DefaultSubPremiseName(){}
-    
+
     /**
      *
      * @param type

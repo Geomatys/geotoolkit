@@ -33,9 +33,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -73,8 +73,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -109,11 +109,11 @@ public class ThoroughfareNumber {
 
     /**
      * Gets the value of the content property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getContent() {
         return content;
@@ -121,11 +121,11 @@ public class ThoroughfareNumber {
 
     /**
      * Sets the value of the content property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setContent(final String value) {
         this.content = value;
@@ -133,11 +133,11 @@ public class ThoroughfareNumber {
 
     /**
      * Gets the value of the numberType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getNumberType() {
         return numberType;
@@ -145,11 +145,11 @@ public class ThoroughfareNumber {
 
     /**
      * Sets the value of the numberType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setNumberType(final String value) {
         this.numberType = value;
@@ -157,11 +157,11 @@ public class ThoroughfareNumber {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -169,11 +169,11 @@ public class ThoroughfareNumber {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -181,11 +181,11 @@ public class ThoroughfareNumber {
 
     /**
      * Gets the value of the indicator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIndicator() {
         return indicator;
@@ -193,11 +193,11 @@ public class ThoroughfareNumber {
 
     /**
      * Sets the value of the indicator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIndicator(final String value) {
         this.indicator = value;
@@ -205,11 +205,11 @@ public class ThoroughfareNumber {
 
     /**
      * Gets the value of the indicatorOccurrence property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIndicatorOccurrence() {
         return indicatorOccurrence;
@@ -217,11 +217,11 @@ public class ThoroughfareNumber {
 
     /**
      * Sets the value of the indicatorOccurrence property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIndicatorOccurrence(final String value) {
         this.indicatorOccurrence = value;
@@ -229,11 +229,11 @@ public class ThoroughfareNumber {
 
     /**
      * Gets the value of the numberOccurrence property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getNumberOccurrence() {
         return numberOccurrence;
@@ -241,11 +241,11 @@ public class ThoroughfareNumber {
 
     /**
      * Sets the value of the numberOccurrence property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setNumberOccurrence(final String value) {
         this.numberOccurrence = value;
@@ -253,11 +253,11 @@ public class ThoroughfareNumber {
 
     /**
      * Gets the value of the code property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCode() {
         return code;
@@ -265,11 +265,11 @@ public class ThoroughfareNumber {
 
     /**
      * Sets the value of the code property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCode(final String value) {
         this.code = value;
@@ -277,15 +277,15 @@ public class ThoroughfareNumber {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * <p>
-     * the map is keyed by the name of the attribute and 
+     * the map is keyed by the name of the attribute and
      * the value is the string value of the attribute.
-     * 
+     *
      * the map returned by this method is live, and you can add new attribute
      * by updating the map directly. Because of this design, there's no setter.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */

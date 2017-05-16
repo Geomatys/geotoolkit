@@ -34,13 +34,13 @@ public class DefaultAtomFactory implements AtomFactory {
     private static final AtomFactory ATOMF = new DefaultAtomFactory();
 
     private DefaultAtomFactory(){}
-    
+
     public static AtomFactory getInstance(){
         return ATOMF;
     }
 
     /**
-     * 
+     *
      * @{@inheritDoc }
      */
     @Override

@@ -32,9 +32,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Classe Java pour anonymous complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -57,8 +57,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -145,20 +145,20 @@ public class Declare {
 
     /**
      * Gets the value of the contExp property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the contExp property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getContExp().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link Neq }{@code >}
@@ -303,8 +303,8 @@ public class Declare {
      * {@link JAXBElement }{@code <}{@link ConstantSetClass }{@code >}
      * {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}
      * {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<Object> getContExp() {
         if (contExp == null) {
@@ -315,11 +315,11 @@ public class Declare {
 
     /**
      * Obtient la valeur de la propriété type.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -327,11 +327,11 @@ public class Declare {
 
     /**
      * Définit la valeur de la propriété type.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -339,11 +339,11 @@ public class Declare {
 
     /**
      * Obtient la valeur de la propriété scope.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getScope() {
         return scope;
@@ -351,11 +351,11 @@ public class Declare {
 
     /**
      * Définit la valeur de la propriété scope.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setScope(String value) {
         this.scope = value;
@@ -363,11 +363,11 @@ public class Declare {
 
     /**
      * Obtient la valeur de la propriété nargs.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getNargs() {
         return nargs;
@@ -375,11 +375,11 @@ public class Declare {
 
     /**
      * Définit la valeur de la propriété nargs.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setNargs(BigInteger value) {
         this.nargs = value;
@@ -387,11 +387,11 @@ public class Declare {
 
     /**
      * Obtient la valeur de la propriété occurrence.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOccurrence() {
         return occurrence;
@@ -399,11 +399,11 @@ public class Declare {
 
     /**
      * Définit la valeur de la propriété occurrence.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOccurrence(String value) {
         this.occurrence = value;
@@ -411,11 +411,11 @@ public class Declare {
 
     /**
      * Obtient la valeur de la propriété encoding.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getEncoding() {
         return encoding;
@@ -423,11 +423,11 @@ public class Declare {
 
     /**
      * Définit la valeur de la propriété encoding.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setEncoding(String value) {
         this.encoding = value;
@@ -435,11 +435,11 @@ public class Declare {
 
     /**
      * Obtient la valeur de la propriété definitionURL.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDefinitionURL() {
         return definitionURL;
@@ -447,11 +447,11 @@ public class Declare {
 
     /**
      * Définit la valeur de la propriété definitionURL.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDefinitionURL(String value) {
         this.definitionURL = value;

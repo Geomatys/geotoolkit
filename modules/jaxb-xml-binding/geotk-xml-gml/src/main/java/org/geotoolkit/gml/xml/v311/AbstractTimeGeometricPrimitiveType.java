@@ -29,15 +29,15 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
 
 /**
  * The abstract supertype for temporal geometric primitives.
- *        A temporal geometry must be associated with a temporal reference system via URI. 
- *        The Gregorian calendar with UTC is the default reference system, following ISO 
- *        8601. Other reference systems in common use include the GPS calendar and the 
+ *        A temporal geometry must be associated with a temporal reference system via URI.
+ *        The Gregorian calendar with UTC is the default reference system, following ISO
+ *        8601. Other reference systems in common use include the GPS calendar and the
  *        Julian calendar.
- * 
+ *
  * <p>Java class for AbstractTimeGeometricPrimitiveType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractTimeGeometricPrimitiveType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,27 +64,27 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
     private String frame;
 
     public AbstractTimeGeometricPrimitiveType() {
-        
+
     }
-    
+
     public AbstractTimeGeometricPrimitiveType(final String id) {
         super(id);
     }
-    
+
     public AbstractTimeGeometricPrimitiveType(TemporalGeometricPrimitive that) {
         super(that);
         if (that instanceof AbstractTimeGeometricPrimitiveType) {
             this.frame = ((AbstractTimeGeometricPrimitiveType)that).frame;
         }
     }
-    
+
     /**
      * Gets the value of the frame property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFrame() {
         return frame;
@@ -92,11 +92,11 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
 
     /**
      * Sets the value of the frame property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFrame(final String value) {
         this.frame = value;
@@ -111,7 +111,7 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
     public Duration length() {
         return null;
     }
-    
+
     @Override
     public Object evaluate(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");

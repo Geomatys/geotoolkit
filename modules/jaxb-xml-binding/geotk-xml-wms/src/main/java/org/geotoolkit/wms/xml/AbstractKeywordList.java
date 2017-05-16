@@ -24,7 +24,7 @@ import java.util.List;
  * @module
  */
 public interface AbstractKeywordList {
-    
+
     /**
      * Gets the value of the keyword property.
      */

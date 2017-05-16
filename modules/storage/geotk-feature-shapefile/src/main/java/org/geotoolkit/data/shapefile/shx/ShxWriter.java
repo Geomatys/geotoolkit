@@ -44,7 +44,7 @@ public class ShxWriter implements Closeable{
 
     /**
      * Returns the underlying channel. Use with caution.
-     * 
+     *
      * @return the underlying channel
      */
     public FileChannel getChannel() {
@@ -107,7 +107,7 @@ public class ShxWriter implements Closeable{
     public boolean isClosed() {
         return !channel.isOpen();
     }
-    
+
     /**
      * Drain buffer into underlying channel.
      */

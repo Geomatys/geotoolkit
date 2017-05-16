@@ -51,7 +51,7 @@ public final class TilingDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Coverage to tile.")
             .setRequired(true)
             .create(File.class,null);
-    
+
     public static final ParameterDescriptor<ImageReader> IN_SOURCE_READER = new ParameterBuilder()
             .addName("sourceReader")
             .setRemarks("An image reader for the input")
@@ -103,7 +103,7 @@ public final class TilingDescriptor extends AbstractProcessDescriptor {
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName(NAME+"OutputParameters").createGroup(
                 OUT_TILE_MANAGER,OUT_CRS);
-    
+
     public static final ProcessDescriptor INSTANCE = new TilingDescriptor();
 
 

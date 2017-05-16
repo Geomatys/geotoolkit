@@ -23,15 +23,15 @@ package org.geotoolkit.wms.xml;
  * @module
  */
 public interface AbstractRequest {
-    
+
     AbstractOperation getGetCapabilities();
-     
+
     AbstractOperation getGetMap();
-     
+
     AbstractOperation getGetFeatureInfo();
 
     void updateURL(String url);
-    
+
     AbstractRequest clone();
 
 }

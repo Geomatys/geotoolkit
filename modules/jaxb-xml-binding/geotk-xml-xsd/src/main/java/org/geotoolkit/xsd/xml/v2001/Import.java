@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,7 +64,7 @@ public class Import extends Annotated {
         this.namespace      = namespace;
         this.schemaLocation = schemaLocation;
     }
-    
+
     /**
      * Gets the value of the namespace property.
      */
@@ -88,7 +88,7 @@ public class Import extends Annotated {
 
     /**
      * Sets the value of the schemaLocation property.
-     * 
+     *
      */
     public void setSchemaLocation(final String value) {
         this.schemaLocation = value;

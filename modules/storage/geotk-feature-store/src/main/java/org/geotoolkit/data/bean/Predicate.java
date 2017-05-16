@@ -18,11 +18,11 @@ package org.geotoolkit.data.bean;
 
 /**
  * TODO : replace by JDK8 Predicate when min geotk version is jdk8.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public interface Predicate<T> {
-    
+
     boolean test(T t);
-    
+
 }

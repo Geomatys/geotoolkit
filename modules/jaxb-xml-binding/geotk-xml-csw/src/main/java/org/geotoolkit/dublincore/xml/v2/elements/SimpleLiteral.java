@@ -30,15 +30,15 @@ import org.geotoolkit.dublincore.xml.AbstractSimpleLiteral;
 
 
 /**
- * This is the default type for all of the DC elements. 
- * It defines a complexType SimpleLiteral which permits mixed content but disallows child elements by use of minOcccurs/maxOccurs. 
- * However, this complexType does permit the derivation of other types which would permit child elements. 
+ * This is the default type for all of the DC elements.
+ * It defines a complexType SimpleLiteral which permits mixed content but disallows child elements by use of minOcccurs/maxOccurs.
+ * However, this complexType does permit the derivation of other types which would permit child elements.
  * The scheme attribute may be used as a qualifier to reference an encoding scheme that describes the value domain for a given property.
- * 
+ *
  * <p>Java class for SimpleLiteral complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SimpleLiteral">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.dublincore.xml.AbstractSimpleLiteral;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -71,9 +71,9 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
      * An empty constructor used by JAXB
      */
     public SimpleLiteral() {
-        
+
     }
-    
+
     /**
      * Build a new Simple literal
      */
@@ -81,7 +81,7 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
         this.content = new ArrayList<String>();
         this.content.add(content);
     }
-    
+
     /**
      * Build a new Simple literal
      */
@@ -90,7 +90,7 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
         this.content = new ArrayList<>();
         this.content.add(content);
     }
-    
+
     /**
      * Build a new Simple literal
      */
@@ -98,14 +98,14 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
         this.scheme  = scheme;
         this.content = content;
     }
-    
+
     /**
-     * This is the default type for all of the DC elements. 
-     * It defines a complexType SimpleLiteral which permits mixed content but disallows child elements by use of minOcccurs/maxOccurs. 
+     * This is the default type for all of the DC elements.
+     * It defines a complexType SimpleLiteral which permits mixed content but disallows child elements by use of minOcccurs/maxOccurs.
      * However, this complexType does permit the derivation of other types which would permit child elements.
      * The scheme attribute may be used as a qualifier to reference an encoding scheme that describes the value domain for a given property.
      * Gets the value of the content property.
-     * 
+     *
      */
     @Override
     public List<String> getContent() {
@@ -114,7 +114,7 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
         }
         return content;
     }
-    
+
     @Override
     public String getFirstValue() {
         if (content != null && !content.isEmpty()) {
@@ -122,11 +122,11 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
         }
         return null;
     }
-    
+
     public void setContent(final List<String> content) {
         this.content = content;
     }
-    
+
     public void setContent(final String content) {
         if (this.content == null) {
             this.content = new ArrayList<>();
@@ -141,11 +141,11 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
     public String getScheme() {
         return scheme;
     }
-    
+
     public void setScheme(final String scheme){
         this.scheme = scheme;
     }
-    
+
      /**
      * Verify if this entry is identical to the specified object.
      */
@@ -169,12 +169,12 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
         hash = 61 * hash + (this.scheme != null ? this.scheme.hashCode() : 0);
         return hash;
     }
-    
-    
+
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-        
+
         if (scheme != null) {
             s.append(scheme).append(':');
         }

@@ -31,20 +31,20 @@ import org.geotoolkit.map.MapContext;
 
 /**
  * Context general panel
- * 
+ *
  * @author Johann Sorel
  * @module
  */
 public class ContextGeneralPanel extends AbstractPropertyPane {
-    
+
     private MapContext context = null;
-    
+
     /** Creates new form ContextGeneralPanel */
     public ContextGeneralPanel() {
         super("General",null,null,"General");
         initComponents();
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -88,8 +88,8 @@ public class ContextGeneralPanel extends AbstractPropertyPane {
             gui_jtf_name.setText("");
         }
     }
-    
-    
+
+
     @Override
     public void setTarget(final Object target) {
         if(target instanceof MapContext){
@@ -118,10 +118,10 @@ public class ContextGeneralPanel extends AbstractPropertyPane {
     public boolean canHandle(Object target) {
         return true;
     }
-        
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JTextField gui_jtf_name;
     private JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
-    
+
 }

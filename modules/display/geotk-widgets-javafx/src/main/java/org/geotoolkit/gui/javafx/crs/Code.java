@@ -44,7 +44,7 @@ final class Code {
      * Will be extracted only when first needed.
      */
     private String name;
-    
+
     private String description;
 
     /**
@@ -69,18 +69,18 @@ final class Code {
 
     /**
      * Create the Object identified by code.
-     * 
+     *
      * @return IdentifiedObject
-     * @throws FactoryException 
+     * @throws FactoryException
      */
     public IdentifiedObject createObject() throws FactoryException{
         return factory.createObject(code);
     }
-    
+
     /**
      * Returns a description of the object.
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getDescription(){
         if (description == null) try {
@@ -90,7 +90,7 @@ final class Code {
         }
         return description;
     }
-    
+
     /**
      * Returns the name for this code.
      *

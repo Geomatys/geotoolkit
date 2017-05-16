@@ -28,14 +28,14 @@ import org.geotoolkit.gml.xml.Polygon;
 
 
 /**
- * A Polygon is a special surface that is defined by a single surface patch. 
+ * A Polygon is a special surface that is defined by a single surface patch.
  * The boundary of this patch is coplanar and the polygon uses planar interpolation in its interior.
  * It is backwards compatible with the Polygon of GML 2, GM_Polygon of ISO 19107 is implemented by PolygonPatch.
- * 
+ *
  * <p>Java class for PolygonType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PolygonType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.gml.xml.Polygon;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,7 +68,7 @@ public class PolygonType extends AbstractSurfaceType implements Polygon {
     public PolygonType() {
 
     }
-    
+
     public PolygonType(final String srsName, final AbstractRingType exterior, final List<? extends AbstractRingType> interiors) {
         super(srsName);
         ObjectFactory factory = new ObjectFactory();
@@ -82,7 +82,7 @@ public class PolygonType extends AbstractSurfaceType implements Polygon {
             }
         }
     }
-    
+
     public PolygonType(final AbstractRingType exterior, final List<? extends AbstractRingType> interiors) {
         this(null, exterior, interiors);
     }
@@ -105,11 +105,11 @@ public class PolygonType extends AbstractSurfaceType implements Polygon {
 
     /**
      * Gets the value of the exterior property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<AbstractRingPropertyType> getJbExterior() {
         return exterior;
@@ -127,11 +127,11 @@ public class PolygonType extends AbstractSurfaceType implements Polygon {
 
     /**
      * Sets the value of the exterior property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
-     *     
+     *
      */
     public void setJbExterior(final JAXBElement<AbstractRingPropertyType> value) {
         this.exterior = ((JAXBElement<AbstractRingPropertyType> ) value);
@@ -159,12 +159,12 @@ public class PolygonType extends AbstractSurfaceType implements Polygon {
 
     /**
      * Gets the value of the interior property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<AbstractRingPropertyType>> getJbInterior() {
         if (interior == null) {

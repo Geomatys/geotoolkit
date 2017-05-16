@@ -24,18 +24,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.samplingspatial._2 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.samplingspatial._2 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -45,14 +45,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.samplingspatial._2
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link SFSpatialSamplingFeaturePropertyType }
-     * 
+     *
      */
     public SFSpatialSamplingFeaturePropertyType createSFSpatialSamplingFeaturePropertyType() {
         return new SFSpatialSamplingFeaturePropertyType();
@@ -60,7 +60,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SFSpatialSamplingFeatureType }
-     * 
+     *
      */
     public SFSpatialSamplingFeatureType createSFSpatialSamplingFeatureType() {
         return new SFSpatialSamplingFeatureType();
@@ -68,7 +68,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ShapeType }
-     * 
+     *
      */
     public ShapeType createShapeType() {
         return new ShapeType();
@@ -76,7 +76,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ShapeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/samplingSpatial/2.0", name = "shape")
     public JAXBElement<ShapeType> createShape(ShapeType value) {
@@ -85,7 +85,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SFSpatialSamplingFeatureType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/samplingSpatial/2.0", name = "SF_SpatialSamplingFeature", substitutionHeadNamespace = "http://www.opengis.net/sampling/2.0", substitutionHeadName = "SF_SamplingFeature")
     public JAXBElement<SFSpatialSamplingFeatureType> createSFSpatialSamplingFeature(SFSpatialSamplingFeatureType value) {

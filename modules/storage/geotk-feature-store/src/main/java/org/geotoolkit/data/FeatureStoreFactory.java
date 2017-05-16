@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -28,8 +28,8 @@ import org.geotoolkit.storage.DataStoreFactory;
  * <code>META-INF/services/org.geotoolkit.storage.DataStoreFactory</code>
  * And contain a single line :<br/>
  * <code>x.y.XYFeatureStoreFactory</code>
- * 
- * 
+ *
+ *
  * @author Johann Sorel (Geomatys)
  */
 public interface FeatureStoreFactory extends DataStoreFactory {

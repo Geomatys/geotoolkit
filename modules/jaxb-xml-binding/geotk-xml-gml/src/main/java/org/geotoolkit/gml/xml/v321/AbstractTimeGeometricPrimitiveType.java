@@ -32,9 +32,9 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
 
 /**
  * <p>Java class for AbstractTimeGeometricPrimitiveType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractTimeGeometricPrimitiveType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractTimeGeometricPrimitiveType")
@@ -60,27 +60,27 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
     private String frame;
 
     public AbstractTimeGeometricPrimitiveType() {
-        
+
     }
-    
+
     public AbstractTimeGeometricPrimitiveType(final String id) {
         super(id);
     }
-    
+
     public AbstractTimeGeometricPrimitiveType(final AbstractTimeGeometricPrimitiveType that) {
         super(that);
         if (that != null) {
             this.frame = that.frame;
         }
     }
-    
+
     /**
      * Gets the value of the frame property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFrame() {
         if (frame == null) {
@@ -92,11 +92,11 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
 
     /**
      * Sets the value of the frame property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFrame(String value) {
         this.frame = value;
@@ -111,7 +111,7 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
     public Duration length() {
         return null;
     }
-    
+
     @Override
     public Object evaluate(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");

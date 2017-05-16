@@ -115,7 +115,7 @@ public class ParameterValueReader extends StaxStreamReader {
         if(desc instanceof ParameterDescriptor){
             Class targetClass = ((ParameterDescriptor) desc).getValueClass();
             Object converted = null;
-            
+
             //HACK for Path support
             // we don't use ObjectConverters to convert Path from a String because
             // there is an already existing converter that doesn't use protocol (URI scheme)
@@ -168,7 +168,7 @@ public class ParameterValueReader extends StaxStreamReader {
             } else {
                 result = null;
             }
-            
+
         } else if(desc instanceof ParameterDescriptorGroup){
             result = this.readValueGroup();
         } else {

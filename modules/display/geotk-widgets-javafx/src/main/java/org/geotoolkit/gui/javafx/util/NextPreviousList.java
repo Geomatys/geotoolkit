@@ -27,7 +27,7 @@ import javafx.beans.property.SimpleObjectProperty;
  * @author Johann Sorel (Geomatys)
  */
 public class NextPreviousList<T> {
-    
+
     private final List<T> list = new ArrayList<>();
     private final int cacheSize;
     /** index points on the current map transform */
@@ -39,12 +39,12 @@ public class NextPreviousList<T> {
     public NextPreviousList(int cacheSize) {
         this.cacheSize = cacheSize;
     }
-    
+
     private T get(int index){
         if(index<0 || index>=list.size()) return null;
         return list.get(index);
     }
-    
+
     public synchronized void put(T object){
         //check if it's the next or previous value
         if(Objects.equals(get(index+1),object)){
@@ -58,35 +58,35 @@ public class NextPreviousList<T> {
             list.add(object);
             index = list.size()-1;
         }
-        
+
         //do not store too much elements
         while(list.size()>cacheSize){
             list.remove(0);
             index = Math.max(0,index-1);
         }
-        
+
         update();
     }
-    
+
     private void update(){
         previousProperty.set(get(index-1));
         nextProperty.set(get(index+1));
     }
-    
+
     public void next(){
         if(index<list.size()){
             index++;
         }
         update();
     }
-    
+
     public void previous(){
         if(index>=0){
             index--;
         }
         update();
     }
-    
+
     public ObjectProperty<T> nextProperty() {
         return nextProperty;
     }
@@ -94,5 +94,5 @@ public class NextPreviousList<T> {
     public ObjectProperty<T> previousProperty() {
         return previousProperty;
     }
-        
+
 }

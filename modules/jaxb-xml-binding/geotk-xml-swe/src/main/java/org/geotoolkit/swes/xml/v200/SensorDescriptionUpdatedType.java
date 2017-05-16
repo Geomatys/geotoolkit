@@ -29,9 +29,9 @@ import org.geotoolkit.gml.xml.v321.TimePeriodType;
 
 /**
  * <p>Java class for SensorDescriptionUpdatedType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SensorDescriptionUpdatedType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.geotoolkit.gml.xml.v321.TimePeriodType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SensorDescriptionUpdatedType", propOrder = {
@@ -66,11 +66,11 @@ public class SensorDescriptionUpdatedType extends SensorChangedType {
 
     /**
      * Gets the value of the validTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SensorDescriptionUpdatedType.ValidTime }
-     *     
+     *
      */
     public SensorDescriptionUpdatedType.ValidTime getValidTime() {
         return validTime;
@@ -78,11 +78,11 @@ public class SensorDescriptionUpdatedType extends SensorChangedType {
 
     /**
      * Sets the value of the validTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SensorDescriptionUpdatedType.ValidTime }
-     *     
+     *
      */
     public void setValidTime(SensorDescriptionUpdatedType.ValidTime value) {
         this.validTime = value;
@@ -91,9 +91,9 @@ public class SensorDescriptionUpdatedType extends SensorChangedType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -105,8 +105,8 @@ public class SensorDescriptionUpdatedType extends SensorChangedType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -119,13 +119,13 @@ public class SensorDescriptionUpdatedType extends SensorChangedType {
 
         /**
          * Gets the value of the abstractTimeGeometricPrimitive property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link JAXBElement }{@code <}{@link TimePeriodType }{@code >}
          *     {@link JAXBElement }{@code <}{@link TimeInstantType }{@code >}
          *     {@link JAXBElement }{@code <}{@link AbstractTimeGeometricPrimitiveType }{@code >}
-         *     
+         *
          */
         public JAXBElement<? extends AbstractTimeGeometricPrimitiveType> getAbstractTimeGeometricPrimitive() {
             return abstractTimeGeometricPrimitive;
@@ -133,13 +133,13 @@ public class SensorDescriptionUpdatedType extends SensorChangedType {
 
         /**
          * Sets the value of the abstractTimeGeometricPrimitive property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link JAXBElement }{@code <}{@link TimePeriodType }{@code >}
          *     {@link JAXBElement }{@code <}{@link TimeInstantType }{@code >}
          *     {@link JAXBElement }{@code <}{@link AbstractTimeGeometricPrimitiveType }{@code >}
-         *     
+         *
          */
         public void setAbstractTimeGeometricPrimitive(JAXBElement<? extends AbstractTimeGeometricPrimitiveType> value) {
             this.abstractTimeGeometricPrimitive = ((JAXBElement<? extends AbstractTimeGeometricPrimitiveType> ) value);

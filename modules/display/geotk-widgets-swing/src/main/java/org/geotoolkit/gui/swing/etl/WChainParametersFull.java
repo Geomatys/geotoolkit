@@ -34,7 +34,7 @@ public class WChainParametersFull extends WChainParametersBasic {
 
     public WChainParametersFull(final ChainScene scene, final String name, final int id, final boolean editable) {
         super(scene, name, id, editable);
-        
+
         final Widget w_params = new Widget(scene);
         addChild(w_params);
 

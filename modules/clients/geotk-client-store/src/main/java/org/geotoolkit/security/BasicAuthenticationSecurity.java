@@ -22,7 +22,7 @@ import org.apache.sis.util.ArgumentChecks;
 
 /**
  * Basic authentication security.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -30,14 +30,14 @@ public class BasicAuthenticationSecurity extends DefaultClientSecurity{
 
     private final String user;
     private final String password;
-    
+
     public BasicAuthenticationSecurity(final String user, final String password){
         ArgumentChecks.ensureNonNull("user", user);
         ArgumentChecks.ensureNonNull("password", password);
         this.user = user;
         this.password = password;
     }
-    
+
     @Override
     public URLConnection secure(URLConnection cnx) {
         cnx = super.secure(cnx);
@@ -46,5 +46,5 @@ public class BasicAuthenticationSecurity extends DefaultClientSecurity{
         cnx.setRequestProperty ("Authorization", "Basic " + encoding);
         return cnx;
     }
-    
+
 }

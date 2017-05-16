@@ -56,7 +56,7 @@ import org.apache.sis.util.ArraysExt;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.collection.FrequencySortedSet;
+import org.apache.sis.util.collection.FrequencySortedSet;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.Interpolator2D;

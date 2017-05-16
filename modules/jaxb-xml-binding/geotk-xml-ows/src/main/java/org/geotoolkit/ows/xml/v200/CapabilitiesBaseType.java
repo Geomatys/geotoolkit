@@ -45,11 +45,11 @@ import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
  *       GetCapabilities operation request. This base type shall be extended by
  *       each specific OWS to include the additional contents
  *       needed.
- * 
+ *
  * <p>Java class for CapabilitiesBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CapabilitiesBaseType">
  *   &lt;complexContent>
@@ -76,8 +76,8 @@ import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CapabilitiesBaseType", propOrder = {
@@ -105,15 +105,15 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
      * Empty constructor used by JAXB.
      */
     protected CapabilitiesBaseType() {
-    }   
-    
+    }
+
     /**
      * Build the base of a Capabilities document.
      */
     public CapabilitiesBaseType(final String version, final String updateSequence) {
         this(null, null, null, version, updateSequence, null);
     }
-    
+
     /**
      * Build the base of a Capabilities document.
      */
@@ -125,15 +125,15 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
         this.updateSequence        = updateSequence;
         this.version               = version;
         this.languages = languages;
-    }   
-    
+    }
+
     /**
      * Gets the value of the serviceIdentification property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ServiceIdentification }
-     *     
+     *
      */
     @Override
     public ServiceIdentification getServiceIdentification() {
@@ -142,11 +142,11 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
 
     /**
      * Sets the value of the serviceIdentification property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ServiceIdentification }
-     *     
+     *
      */
     public void setServiceIdentification(ServiceIdentification value) {
         this.serviceIdentification = value;
@@ -154,11 +154,11 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
 
     /**
      * Gets the value of the serviceProvider property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ServiceProvider }
-     *     
+     *
      */
     @Override
     public ServiceProvider getServiceProvider() {
@@ -167,11 +167,11 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
 
     /**
      * Sets the value of the serviceProvider property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ServiceProvider }
-     *     
+     *
      */
     public void setServiceProvider(ServiceProvider value) {
         this.serviceProvider = value;
@@ -179,11 +179,11 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
 
     /**
      * Gets the value of the operationsMetadata property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OperationsMetadata }
-     *     
+     *
      */
     @Override
     public OperationsMetadata getOperationsMetadata() {
@@ -192,11 +192,11 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
 
     /**
      * Sets the value of the operationsMetadata property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OperationsMetadata }
-     *     
+     *
      */
     public void setOperationsMetadata(OperationsMetadata value) {
         this.operationsMetadata = value;
@@ -208,14 +208,14 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
             this.operationsMetadata.updateURL(url);
         }
     }
-    
+
     /**
      * Gets the value of the languages property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CapabilitiesBaseType.Languages }
-     *     
+     *
      */
     public CapabilitiesBaseType.Languages getLanguages() {
         return languages;
@@ -223,11 +223,11 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
 
     /**
      * Sets the value of the languages property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CapabilitiesBaseType.Languages }
-     *     
+     *
      */
     public void setLanguages(CapabilitiesBaseType.Languages value) {
         this.languages = value;
@@ -235,11 +235,11 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getVersion() {
@@ -248,11 +248,11 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(String value) {
         this.version = value;
@@ -260,11 +260,11 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
 
     /**
      * Gets the value of the updateSequence property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getUpdateSequence() {
@@ -273,11 +273,11 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
 
     /**
      * Sets the value of the updateSequence property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUpdateSequence(String value) {
         this.updateSequence = value;
@@ -286,9 +286,9 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -300,8 +300,8 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -310,13 +310,13 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
     public static class Languages implements org.geotoolkit.ows.xml.Languages {
 
         public Languages() {
-            
+
         }
-        
+
         public Languages(List<String> language) {
             this.language = language;
         }
-        
+
         @XmlElement(name = "Language", required = true)
         @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
         @XmlSchemaType(name = "language")
@@ -324,7 +324,7 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
 
         /**
          * Gets the value of the language property.
-         * 
+         *
          */
         public List<String> getLanguage() {
             if (language == null) {

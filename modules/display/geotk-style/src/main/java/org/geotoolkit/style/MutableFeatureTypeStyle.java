@@ -26,7 +26,7 @@ import org.opengis.style.FeatureTypeStyle;
 
 /**
  * Mutable interface of geoAPI FeatureTypeStyle.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -36,13 +36,13 @@ public interface MutableFeatureTypeStyle extends FeatureTypeStyle{
     public static final String DESCRIPTION_PROPERTY = "description";
     public static final String IDS_PROPERTY = "ids";
     public static final String ONLINE_PROPERTY = "online";
-    
+
     /**
      * Set the name of the feature type style.
      * This method is thread safe.
      */
     void setName(String name);
-    
+
     /**
      * Set the Description of the feature type style.
      * @param desc : Description can't be null
@@ -53,7 +53,7 @@ public interface MutableFeatureTypeStyle extends FeatureTypeStyle{
      * Set the feature ids.
      */
     void setFeatureInstanceIDs(Id id);
-    
+
     /**
      * {@inheritDoc }
      * @return List<Rule> : This is the "living" List.
@@ -66,19 +66,19 @@ public interface MutableFeatureTypeStyle extends FeatureTypeStyle{
      * The onlineResource must be an xml file containing this fts.
      */
     void setOnlineResource(OnlineResource online);
-    
+
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
-    
+
     void addListener(FeatureTypeStyleListener listener);
 
     void addListener(PropertyChangeListener listener);
-    
+
     void removeListener(PropertyChangeListener listener);
 
     void addPropertyChangeListener(PropertyChangeListener listener);
 
     void removePropertyChangeListener(PropertyChangeListener listener);
-    
+
 }

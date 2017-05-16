@@ -26,22 +26,22 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for SlotListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SlotListType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{urn:oasis:names:tc:ebxml-regrep:rim:xsd:2.5}Slot" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence> 
+ *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,7 +62,7 @@ public class SlotListType {
         }
         return this.slot;
     }
-    
+
     /**
      * Sets the value of the slot property.
      */
@@ -72,7 +72,7 @@ public class SlotListType {
         }
         this.slot.add(slot);
     }
-    
+
      /**
      * Sets the value of the slot property.
      */

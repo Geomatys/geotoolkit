@@ -25,15 +25,15 @@ import org.geotoolkit.ogc.xml.SortBy;
  * @author Guilhem Legal (Geomatys)
  */
 public interface Query extends AbstractQuery {
-    
+
     ElementSetName getElementSetName();
-    
+
     List<QName> getElementName();
-    
+
     QueryConstraint getConstraint();
-    
+
     SortBy getSortBy();
-    
+
     List<QName> getTypeNames();
-    
+
 }

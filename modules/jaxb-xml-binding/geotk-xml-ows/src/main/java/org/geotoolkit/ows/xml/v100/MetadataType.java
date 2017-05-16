@@ -27,16 +27,16 @@ import org.geotoolkit.ows.xml.AbstractMetadata;
 
 
 /**
- * This element either references or contains more metadata about the element that includes this element. 
+ * This element either references or contains more metadata about the element that includes this element.
  * To reference metadata stored remotely, at least the xlinks:href attribute in xlink:simpleLink shall be included.
  * Either at least one of the attributes in xlink:simpleLink or a substitute for the AbstractMetaData element shall be included, but not both.
  * An Implementation Specification can restrict the contents of this element to always be a reference or always contain metadata.
  * (Informative: This element was adapted from the metaDataProperty element in GML 3.0.)
- * 
+ *
  * <p>Java class for MetadataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MetadataType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.ows.xml.AbstractMetadata;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,9 +84,9 @@ public class MetadataType implements AbstractMetadata {
     private String actuate;
 
     public MetadataType() {
-        
+
     }
-    
+
     public MetadataType(final MetadataType that) {
         if (that != null) {
             this.href    = that.href;
@@ -101,7 +101,7 @@ public class MetadataType implements AbstractMetadata {
             this.abstractMetaData = that.abstractMetaData;
         }
     }
-    
+
     /**
      * Gets the value of the abstractMetaData property.
      */
@@ -148,7 +148,7 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      */
     @Override
     public String getArcrole() {
@@ -157,7 +157,7 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      */
     @Override
     public String getTitle() {
@@ -166,7 +166,7 @@ public class MetadataType implements AbstractMetadata {
 
    /**
     * Gets the value of the show property.
-    * 
+    *
     */
     @Override
     public String getShow() {

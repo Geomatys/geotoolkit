@@ -34,10 +34,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class CentroidDescriptor extends AbstractProcessDescriptor {
-        
+
     /**Process name : centroid */
     public static final String NAME = "jts:centroid";
-    
+
     /**
      * Input parameters
      */
@@ -46,10 +46,10 @@ public class CentroidDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Geometry JTS")
             .setRequired(true)
             .create(Geometry.class, null);
-    
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(GEOM);
-    
+
     /**
      * OutputParameters
      */
@@ -58,7 +58,7 @@ public class CentroidDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Geometry centroid result")
             .setRequired(true)
             .create(Point.class, null);
-    
+
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_GEOM);
 
@@ -75,5 +75,5 @@ public class CentroidDescriptor extends AbstractProcessDescriptor {
     public Process createProcess(final ParameterValueGroup input) {
         return new CentroidProcess(input);
     }
-    
+
 }

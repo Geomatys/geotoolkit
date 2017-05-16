@@ -16,7 +16,7 @@ public class MemoryFeatureStoreDemo {
 
     public static void main(String[] args) throws DataStoreException {
         Demos.init();
-        
+
         //create the datastore
         final MemoryFeatureStore store = new MemoryFeatureStore();
 

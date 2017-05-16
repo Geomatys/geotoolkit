@@ -77,7 +77,7 @@ public final class GetLegendGraphic implements RequestBase {
     private final Double scale;
 
     private Version version;
-    
+
     private String service;
 
     /**
@@ -190,7 +190,7 @@ public final class GetLegendGraphic implements RequestBase {
     public final Version getVersion() {
         return version;
     }
-    
+
     @Override
     public void setService(final String value) {
         this.service = value;

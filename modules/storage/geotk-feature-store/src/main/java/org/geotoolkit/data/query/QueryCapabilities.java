@@ -47,5 +47,5 @@ public interface QueryCapabilities {
      * @return true if versioning is supported.
      */
     boolean handleVersioning();
-    
+
 }

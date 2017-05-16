@@ -36,7 +36,7 @@ public class TimeEndsType extends BinaryTemporalOpType implements Ends {
     public TimeEndsType(final String propertyName, final Object temporal) {
         super(propertyName, temporal);
     }
-    
+
     public TimeEndsType(final TimeEndsType that) {
         super(that);
     }

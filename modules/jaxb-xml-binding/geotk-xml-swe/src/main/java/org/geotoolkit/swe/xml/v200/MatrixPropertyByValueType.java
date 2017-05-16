@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for MatrixPropertyByValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MatrixPropertyByValueType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MatrixPropertyByValueType", propOrder = {
@@ -53,11 +53,11 @@ public class MatrixPropertyByValueType {
 
     /**
      * Gets the value of the matrix property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MatrixType }
-     *     
+     *
      */
     public MatrixType getMatrix() {
         return matrix;
@@ -65,11 +65,11 @@ public class MatrixPropertyByValueType {
 
     /**
      * Sets the value of the matrix property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MatrixType }
-     *     
+     *
      */
     public void setMatrix(MatrixType value) {
         this.matrix = value;

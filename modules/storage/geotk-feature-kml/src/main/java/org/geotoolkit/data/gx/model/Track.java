@@ -100,7 +100,7 @@ public interface Track extends AbstractGeometry {
     void setModel(Model model);
 
     /**
-     * 
+     *
      * @param extendedData
      */
     void setExtendedData(ExtendedData extendedData);

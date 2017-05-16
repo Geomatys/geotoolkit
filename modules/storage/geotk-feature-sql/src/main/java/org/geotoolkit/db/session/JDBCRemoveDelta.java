@@ -27,7 +27,7 @@ import org.opengis.filter.Id;
 
 /**
  * Makes all queries in JDBC transaction.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class JDBCRemoveDelta extends RemoveDelta {
@@ -35,7 +35,7 @@ public class JDBCRemoveDelta extends RemoveDelta {
     public JDBCRemoveDelta(Session session, String typeName, Id filter) {
         super(session, typeName, filter);
     }
-    
+
     @Override
     public Map<String, String> commit(FeatureStore store) throws DataStoreException {
         final DefaultJDBCFeatureStore jdbcstore = (DefaultJDBCFeatureStore) store;
@@ -43,5 +43,5 @@ public class JDBCRemoveDelta extends RemoveDelta {
         jdbcstore.removeFeatures(type, removedIds, cnx);
         return null;
     }
-    
+
 }

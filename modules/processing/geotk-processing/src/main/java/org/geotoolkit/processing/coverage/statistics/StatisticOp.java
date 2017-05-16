@@ -91,7 +91,7 @@ public class StatisticOp extends Static {
     /**
      * Analyse image to return min and max value per bands.
      * @param image
-     * @return A Map with two Entry. 
+     * @return A Map with two Entry.
      * Each Entry have a name ("min", "max") and values are an double[] for each bands.
      * @deprecated use {@link Statistics#analyse(java.awt.image.RenderedImage, boolean)}
      */
@@ -103,7 +103,7 @@ public class StatisticOp extends Static {
             throw new CoverageStoreException(e.getMessage(), e);
         }
     }
-    
+
     /**
      * Convert an ImageStatistics object into StatisticOp output Map.
      * @param analyse

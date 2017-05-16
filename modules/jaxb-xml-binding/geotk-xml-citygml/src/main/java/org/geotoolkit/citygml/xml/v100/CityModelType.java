@@ -31,11 +31,11 @@ import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
  * Type describing the "root" element of any city model file.
  * It is a collection whose members are restricted to be features of a city model.
  * All features are included as cityObjectMember.
- * 
+ *
  * <p>Java class for CityModelType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CityModelType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,9 +61,9 @@ public class CityModelType extends AbstractFeatureCollectionType {
 
     @XmlElement(name = "_GenericApplicationPropertyOfCityModel")
     private List<Object> genericApplicationPropertyOfCityModel;
-    
+
     private List<FeaturePropertyType> cityObjectMember;
-    
+
     /**
      * Gets the value of the genericApplicationPropertyOfCityModel property.
      */
@@ -73,7 +73,7 @@ public class CityModelType extends AbstractFeatureCollectionType {
         }
         return this.genericApplicationPropertyOfCityModel;
     }
-    
+
     /**
      * @return the cityObjectMember
      */
@@ -90,7 +90,7 @@ public class CityModelType extends AbstractFeatureCollectionType {
     public void setCityObjectMember(List<FeaturePropertyType> cityObjectMember) {
         this.cityObjectMember = cityObjectMember;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());

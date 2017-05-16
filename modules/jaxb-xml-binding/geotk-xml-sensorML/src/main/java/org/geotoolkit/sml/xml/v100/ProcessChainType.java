@@ -25,11 +25,11 @@ import org.geotoolkit.sml.xml.AbstractProcessChain;
 
 /**
  * Complex Type for process chains
- * 
+ *
  * <p>Java class for ProcessChainType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ProcessChainType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.sml.xml.AbstractProcessChain;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,7 +73,7 @@ public class ProcessChainType extends AbstractPureProcessType implements Abstrac
             }
         }
     }
-    
+
     /**
      * Gets the value of the components property.
      */
@@ -90,7 +90,7 @@ public class ProcessChainType extends AbstractPureProcessType implements Abstrac
 
     /**
      * Gets the value of the connections property.
-     *     
+     *
      */
     public Connections getConnections() {
         return connections;

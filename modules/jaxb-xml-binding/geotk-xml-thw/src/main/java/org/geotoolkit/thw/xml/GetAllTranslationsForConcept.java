@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for getAllTranslationsForConcept complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="getAllTranslationsForConcept">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getAllTranslationsForConcept", propOrder = {
@@ -79,11 +79,11 @@ public class GetAllTranslationsForConcept {
 
     /**
      * Gets the value of the conceptUri property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getConceptUri() {
         return conceptUri;
@@ -91,11 +91,11 @@ public class GetAllTranslationsForConcept {
 
     /**
      * Sets the value of the conceptUri property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setConceptUri(String value) {
         this.conceptUri = value;
@@ -103,11 +103,11 @@ public class GetAllTranslationsForConcept {
 
     /**
      * Gets the value of the propertyUri property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPropertyUri() {
         return propertyUri;
@@ -115,11 +115,11 @@ public class GetAllTranslationsForConcept {
 
     /**
      * Sets the value of the propertyUri property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPropertyUri(String value) {
         this.propertyUri = value;

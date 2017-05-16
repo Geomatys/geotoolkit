@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * A property that has a geometric complex as its value domain may either be an appropriate geometry element encapsulated in an element of this type or an XLink reference to a remote geometry element (where remote includes geometry elements located elsewhere in the same document). Either the reference or the contained element shall be given, but neither both nor none.
- * 
+ *
  * <p>Java class for GeometricComplexPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeometricComplexPropertyType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeometricComplexPropertyType", propOrder = {
@@ -100,11 +100,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Gets the value of the geometricComplex property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeometricComplexType }
-     *     
+     *
      */
     public GeometricComplexType getGeometricComplex() {
         return geometricComplex;
@@ -112,11 +112,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Sets the value of the geometricComplex property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeometricComplexType }
-     *     
+     *
      */
     public void setGeometricComplex(GeometricComplexType value) {
         this.geometricComplex = value;
@@ -124,11 +124,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Gets the value of the compositeCurve property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CompositeCurveType }
-     *     
+     *
      */
     public CompositeCurveType getCompositeCurve() {
         return compositeCurve;
@@ -136,11 +136,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Sets the value of the compositeCurve property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CompositeCurveType }
-     *     
+     *
      */
     public void setCompositeCurve(CompositeCurveType value) {
         this.compositeCurve = value;
@@ -148,11 +148,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Gets the value of the compositeSurface property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CompositeSurfaceType }
-     *     
+     *
      */
     public CompositeSurfaceType getCompositeSurface() {
         return compositeSurface;
@@ -160,11 +160,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Sets the value of the compositeSurface property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CompositeSurfaceType }
-     *     
+     *
      */
     public void setCompositeSurface(CompositeSurfaceType value) {
         this.compositeSurface = value;
@@ -172,11 +172,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Gets the value of the compositeSolid property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CompositeSolidType }
-     *     
+     *
      */
     public CompositeSolidType getCompositeSolid() {
         return compositeSolid;
@@ -184,11 +184,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Sets the value of the compositeSolid property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CompositeSolidType }
-     *     
+     *
      */
     public void setCompositeSolid(CompositeSolidType value) {
         this.compositeSolid = value;
@@ -196,11 +196,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Gets the value of the owns property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public boolean isOwns() {
         if (owns == null) {
@@ -212,11 +212,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Sets the value of the owns property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public void setOwns(java.lang.Boolean value) {
         this.owns = value;
@@ -224,25 +224,25 @@ public class GeometricComplexPropertyType {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the nilReason property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNilReason().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
@@ -253,11 +253,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -265,11 +265,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(String value) {
         this.remoteSchema = value;
@@ -277,11 +277,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -293,11 +293,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -305,11 +305,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -317,11 +317,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -329,11 +329,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -341,11 +341,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -353,11 +353,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -365,11 +365,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -377,11 +377,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -389,11 +389,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -401,11 +401,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -413,11 +413,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(String value) {
         this.show = value;
@@ -425,11 +425,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -437,11 +437,11 @@ public class GeometricComplexPropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(String value) {
         this.actuate = value;

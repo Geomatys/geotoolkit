@@ -25,9 +25,9 @@ import org.opengis.filter.Filter;
 
 /**
  * <p>Java class for SpatialOpsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SpatialOpsType">
  *   &lt;complexContent>
@@ -36,8 +36,8 @@ import org.opengis.filter.Filter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

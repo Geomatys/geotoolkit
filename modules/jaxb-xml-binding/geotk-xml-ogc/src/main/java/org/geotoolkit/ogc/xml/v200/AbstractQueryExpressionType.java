@@ -29,9 +29,9 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for AbstractQueryExpressionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractQueryExpressionType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractQueryExpressionType")
@@ -56,26 +56,26 @@ public abstract class AbstractQueryExpressionType {
     private String handle;
 
     public AbstractQueryExpressionType() {
-        
+
     }
-    
+
     public AbstractQueryExpressionType(final String handle) {
         this.handle = handle;
     }
-    
+
     public AbstractQueryExpressionType(final AbstractQueryExpressionType that) {
         if (that != null) {
             this.handle = that.handle;
         }
     }
-    
+
     /**
      * Gets the value of the handle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHandle() {
         return handle;
@@ -83,11 +83,11 @@ public abstract class AbstractQueryExpressionType {
 
     /**
      * Sets the value of the handle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHandle(String value) {
         this.handle = value;
@@ -116,7 +116,7 @@ public abstract class AbstractQueryExpressionType {
         return hash;
     }
 
-   
+
 
     @Override
     public String toString() {

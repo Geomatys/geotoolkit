@@ -19,11 +19,11 @@ package org.geotoolkit.filter.binding;
 import java.io.Serializable;
 
 /**
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public abstract class AbstractBinding<C> implements Binding<C>,Serializable{
-    
+
     protected final Class<C> bindedClass;
     protected final int priority;
 
@@ -41,5 +41,5 @@ public abstract class AbstractBinding<C> implements Binding<C>,Serializable{
     public int getPriority() {
         return priority;
     }
-    
+
 }

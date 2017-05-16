@@ -47,9 +47,9 @@ public class LocalDateTimeToNumberConverter extends SimpleConverter<LocalDateTim
             final Instant instant = Instant.ofEpochMilli(object.longValue());
             return LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
         }
-            
+
     };
-    
+
     @Override
     public Class<LocalDateTime> getSourceClass() {
         return LocalDateTime.class;
@@ -70,5 +70,5 @@ public class LocalDateTimeToNumberConverter extends SimpleConverter<LocalDateTim
     public ObjectConverter<Double, LocalDateTime> inverse() throws UnsupportedOperationException {
         return inverse;
     }
-    
+
 }

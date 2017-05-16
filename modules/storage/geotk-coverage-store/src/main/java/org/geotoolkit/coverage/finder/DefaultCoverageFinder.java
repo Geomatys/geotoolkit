@@ -37,7 +37,7 @@ import org.opengis.util.FactoryException;
  */
 @Deprecated
 public class DefaultCoverageFinder extends CoverageFinder {
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -51,7 +51,7 @@ public class DefaultCoverageFinder extends CoverageFinder {
         for (GridMosaic candidate : mosaics) {
             //check the mosaic intersect the searched envelope
             final GeneralEnvelope clip = new GeneralEnvelope(candidate.getEnvelope());
-            if (!clip.intersects(env)) continue;
+            if (!clip.intersects(env, true)) continue;
             //calculate the intersection, will be used to determinate the number of tiles used.
             clip.intersect(env);
 
@@ -80,7 +80,7 @@ public class DefaultCoverageFinder extends CoverageFinder {
                     //continue on other axes
                 }
             }
-            
+
             //check if it will not require too much tiles
             final Dimension tileSize = candidate.getTileSize();
             double nbtileX = clip.getSpan(0) / (tileSize.width * scale);

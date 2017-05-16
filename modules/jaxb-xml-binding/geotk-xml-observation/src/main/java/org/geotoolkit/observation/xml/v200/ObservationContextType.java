@@ -27,11 +27,11 @@ import org.geotoolkit.gml.xml.v321.ReferenceType;
 
 /**
  *  Some observations depend on other observations to provide context which
- * 				is important, sometimes essential, in understanding the result. These dependencies
- * 				are stronger than mere spatiotemporal coincidences, requiring explicit
- * 				representation. If present, the association class ObservationContext (Figure 2)
- * 				shall link a OM_Observation to another OM_Observation, with the role name
- * 				relatedObservation for the target.
+ *              is important, sometimes essential, in understanding the result. These dependencies
+ *              are stronger than mere spatiotemporal coincidences, requiring explicit
+ *              representation. If present, the association class ObservationContext (Figure 2)
+ *              shall link a OM_Observation to another OM_Observation, with the role name
+ *              relatedObservation for the target.
  *
  * <p>Java class for ObservationContextType complex type.
  *

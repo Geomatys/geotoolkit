@@ -28,5 +28,5 @@ import org.opengis.referencing.operation.TransformException;
 public interface GeometryTransformer extends CoordinateSequenceTransformer{
 
     Geometry transform(Geometry geom) throws TransformException;
-    
+
 }

@@ -33,9 +33,9 @@ import org.geotoolkit.sos.xml.ResponseModeType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -51,7 +51,7 @@ import org.geotoolkit.sos.xml.ResponseModeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -90,7 +90,7 @@ public class GetObservationById extends RequestBaseType implements org.geotoolki
         this.responseMode = responseMode;
         this.srsName = srsName;
     }
-    
+
     /**
      * Build a new full GetObservationById request
      */
@@ -112,7 +112,7 @@ public class GetObservationById extends RequestBaseType implements org.geotoolki
         }
         return new ArrayList<String>();
     }
-    
+
     /**
      * Gets the value of the observationId property.
      */

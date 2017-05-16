@@ -102,7 +102,7 @@ public class JBankView <T> extends StyleElementEditor<T> {
 
         return (T) selectedObject;
     }
-    
+
     public void clearSelectedTarget() {
         for (JComponent c : componentMap.values()) {
             c.setBorder(null);
@@ -112,10 +112,10 @@ public class JBankView <T> extends StyleElementEditor<T> {
     }
 
     public void setCandidates(List<T> candidates) {
-            
+
         componentMap.clear();
         guiCandidates.removeAll();
-        
+
          MouseListener mouseListener = new MouseListener() {
             public void mousePressed(MouseEvent me) {
             }
@@ -125,8 +125,8 @@ public class JBankView <T> extends StyleElementEditor<T> {
 
             public void mouseEntered(MouseEvent evt) {
 
-                 JPreview label = (JPreview) evt.getSource();   
-                 
+                 JPreview label = (JPreview) evt.getSource();
+
                  if(!label.getTarget().equals(selectedObject)) {
                     label.setBorder(new LineBorder(Color.LIGHT_GRAY));
                 }
@@ -134,7 +134,7 @@ public class JBankView <T> extends StyleElementEditor<T> {
 
             public void mouseExited(MouseEvent evt) {
 
-                 JPreview label = (JPreview) evt.getSource();  
+                 JPreview label = (JPreview) evt.getSource();
 
                  if(!label.getTarget().equals(selectedObject)) {
                     label.setBorder(null);
@@ -142,19 +142,19 @@ public class JBankView <T> extends StyleElementEditor<T> {
             }
 
             public void mouseClicked(MouseEvent evt) {
-                
-                JPreview label = (JPreview) evt.getSource(); 
-                
+
+                JPreview label = (JPreview) evt.getSource();
+
                 for(JComponent c : componentMap.values()) {
                     c.setBorder(null);
                 }
-                
-                selectedObject  = (T) label.getTarget();  
-                label.setBorder(new LineBorder(Color.DARK_GRAY));               
+
+                selectedObject  = (T) label.getTarget();
+                label.setBorder(new LineBorder(Color.DARK_GRAY));
 
             }
         };
-                
+
 
         for (T m : candidates) {
 
@@ -189,11 +189,11 @@ public class JBankView <T> extends StyleElementEditor<T> {
 
             componentMap.put(m, previewLabel);
         }
-        
+
         guiCandidates.updateUI();
-        
+
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
@@ -221,5 +221,5 @@ public class JBankView <T> extends StyleElementEditor<T> {
     private javax.swing.JPanel guiCandidates;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
-  
+
 }

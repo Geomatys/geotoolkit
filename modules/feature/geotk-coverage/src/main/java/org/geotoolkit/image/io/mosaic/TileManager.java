@@ -40,7 +40,7 @@ import org.apache.sis.util.logging.Logging;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.coverage.grid.ImageGeometry;
-import org.geotoolkit.util.collection.FrequencySortedSet;
+import org.apache.sis.util.collection.FrequencySortedSet;
 import org.apache.sis.internal.referencing.j2d.ImmutableAffineTransform;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;
@@ -248,7 +248,7 @@ public abstract class TileManager implements Serializable {
     }
 
     /**
-     * Returns all image reader providers used by the tiles. The set will typically contains
+     * Returns all image reader providers used by the tiles. The set will typically contain
      * only one element, but more are allowed. In the later case, the entries in the set are
      * sorted from the most frequently used provider to the less frequently used.
      *

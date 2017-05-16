@@ -27,21 +27,21 @@ import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types point placement.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class DefaultPointPlacement implements PointPlacement{
 
     private final AnchorPoint anchor;
-    
+
     private final Displacement disp;
-    
+
     private final Expression rotation;
-    
+
     /**
      * Create a default immutable Point placement.
-     * 
+     *
      * @param anchor : if null will be replaced by default value.
      * @param disp : if null will be replaced by default value.
      * @param rotation : if null or Expression.NIL will be replaced by default value.
@@ -51,7 +51,7 @@ public class DefaultPointPlacement implements PointPlacement{
         this.disp = (disp == null) ? DEFAULT_DISPLACEMENT : disp;
         this.rotation = (rotation == null || rotation == NIL) ? DEFAULT_POINTPLACEMENT_ROTATION : rotation;
     }
-    
+
     /**
      * {@inheritDoc }
      */

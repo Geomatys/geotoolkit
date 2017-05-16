@@ -26,9 +26,9 @@ import org.geotoolkit.sld.xml.v100.StyledLayerDescriptor;
 
 /**
  * <p>Java class for SLDType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SLDType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.sld.xml.v100.StyledLayerDescriptor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,11 +77,11 @@ public class SLDType {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -89,11 +89,11 @@ public class SLDType {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -101,11 +101,11 @@ public class SLDType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -113,11 +113,11 @@ public class SLDType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -125,11 +125,11 @@ public class SLDType {
 
     /**
      * Gets the value of the legendURL property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link URLType }
-     *     
+     *
      */
     public URLType getLegendURL() {
         return legendURL;
@@ -137,11 +137,11 @@ public class SLDType {
 
     /**
      * Sets the value of the legendURL property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link URLType }
-     *     
+     *
      */
     public void setLegendURL(final URLType value) {
         this.legendURL = value;
@@ -149,11 +149,11 @@ public class SLDType {
 
     /**
      * Gets the value of the onlineResource property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OnlineResourceType }
-     *     
+     *
      */
     public OnlineResourceType getOnlineResource() {
         return onlineResource;
@@ -161,11 +161,11 @@ public class SLDType {
 
     /**
      * Sets the value of the onlineResource property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OnlineResourceType }
-     *     
+     *
      */
     public void setOnlineResource(final OnlineResourceType value) {
         this.onlineResource = value;
@@ -173,11 +173,11 @@ public class SLDType {
 
     /**
      * Gets the value of the styledLayerDescriptor property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StyledLayerDescriptor }
-     *     
+     *
      */
     public StyledLayerDescriptor getStyledLayerDescriptor() {
         return styledLayerDescriptor;
@@ -185,11 +185,11 @@ public class SLDType {
 
     /**
      * Sets the value of the styledLayerDescriptor property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StyledLayerDescriptor }
-     *     
+     *
      */
     public void setStyledLayerDescriptor(final StyledLayerDescriptor value) {
         this.styledLayerDescriptor = value;
@@ -197,11 +197,11 @@ public class SLDType {
 
     /**
      * Gets the value of the featureTypeStyle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FeatureTypeStyle }
-     *     
+     *
      */
     public FeatureTypeStyle getFeatureTypeStyle() {
         return featureTypeStyle;
@@ -209,11 +209,11 @@ public class SLDType {
 
     /**
      * Sets the value of the featureTypeStyle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FeatureTypeStyle }
-     *     
+     *
      */
     public void setFeatureTypeStyle(final FeatureTypeStyle value) {
         this.featureTypeStyle = value;

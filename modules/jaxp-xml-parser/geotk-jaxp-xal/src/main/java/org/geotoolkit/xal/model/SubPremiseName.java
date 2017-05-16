@@ -36,13 +36,13 @@ public interface SubPremiseName extends GenericTypedGrPostal {
 
     /**
      * <p>EGIS Building where EGIS occurs before Building.</p>
-     * 
+     *
      * @return
      */
     AfterBeforeEnum getTypeOccurrence();
 
     /**
-     * 
+     *
      * @param typeOccurrence
      */
     void setTypeOccurrence(AfterBeforeEnum typeOccurrence);

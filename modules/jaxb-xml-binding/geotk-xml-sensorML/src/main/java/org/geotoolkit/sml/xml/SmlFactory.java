@@ -278,7 +278,7 @@ public class SmlFactory {
 
             } else if (oldMember.getRealProcess() instanceof AbstractDataSource) {
                 newProcess = new org.geotoolkit.sml.xml.v101.DataSourceType();
-                
+
             } else if (oldMember.getRealProcess() instanceof AbstractProcessModel) {
                 newProcess = new org.geotoolkit.sml.xml.v101.ProcessModelType();
 
@@ -450,11 +450,11 @@ public class SmlFactory {
                     newAbsPuProc.setParameters(new org.geotoolkit.sml.xml.v101.Parameters(oldAbsPuProc.getParameters()));
                 }
             }
-            
+
             if (oldMember.getRealProcess() instanceof System) {
                 SystemType oldSystem = (SystemType) oldMember.getRealProcess();
                 org.geotoolkit.sml.xml.v101.SystemType newSystem = (org.geotoolkit.sml.xml.v101.SystemType) newProcess;
-                
+
                 // components
                 if (oldSystem.getComponents() != null) {
                     newSystem.setComponents(new org.geotoolkit.sml.xml.v101.Components(oldSystem.getComponents()));
@@ -500,7 +500,7 @@ public class SmlFactory {
                 if (oldProcessModel.getMethod() != null) {
                     newProcessModel.setMethod(new org.geotoolkit.sml.xml.v101.MethodPropertyType(oldProcessModel.getMethod()));
                 }
-                
+
 
             } else if (oldMember.getRealProcess() instanceof AbstractProcessChain) {
                 ProcessChainType oldProcessChain = (ProcessChainType) oldMember.getRealProcess();

@@ -101,7 +101,7 @@ public final class NamesExt extends Static {
         if(ns==null || ns.isEmpty()){
             return name.toString();
         }else{
-            return new StringBuilder(ns).append(':').append(name.tip().toString()).toString();
+            return new StringBuilder(ns).append(':').append(name.tip()).toString();
         }
     }
 
@@ -110,7 +110,7 @@ public final class NamesExt extends Static {
         if(ns==null){
             return name.tip().toString();
         }else{
-            return new StringBuilder("{").append(ns).append('}').append(name.tip().toString()).toString();
+            return new StringBuilder("{").append(ns).append('}').append(name.tip()).toString();
         }
     }
 

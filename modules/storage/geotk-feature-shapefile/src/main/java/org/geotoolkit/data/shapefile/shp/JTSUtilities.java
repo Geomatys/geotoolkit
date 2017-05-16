@@ -31,7 +31,7 @@ import org.apache.sis.storage.DataStoreException;
 
 /**
  * A collection of utility methods for use with JTS and the shapefile package.
- * 
+ *
  * @author aaime
  * @author Ian Schneider
  * @module
@@ -48,7 +48,7 @@ public final class JTSUtilities {
      * 2 for 2d (default) <br>
      * 4 for 3d - one of the oordinates has a non-NaN z value <br>
      * (3 is for x,y,m but thats not supported yet) <br>
-     * 
+     *
      * @param cs The array of Coordinates to search.
      * @return The dimension.
      */
@@ -111,7 +111,7 @@ public final class JTSUtilities {
 
     /**
      * Determine the best ShapeType for a geometry with the given dimension.
-     * 
+     *
      * @param geom
      *                The Geometry to examine.
      * @param shapeFileDimentions

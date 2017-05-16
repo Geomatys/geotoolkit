@@ -24,18 +24,18 @@ import org.geotoolkit.ows.xml.AbstractMetadata;
  * @author Guilhem Legal (Geomatys)
  */
 public interface StoredQueryDescription {
-    
+
     String getId();
-            
+
     List<? extends Title> getTitle();
-    
+
     List<? extends Abstract> getAbstract();
-    
+
     List<? extends AbstractMetadata> getMetadata();
-    
+
     List<? extends ParameterExpression> getParameter();
-    
+
     List<String> getParameterNames();
-    
+
     List<? extends QueryExpressionText> getQueryExpressionText();
 }

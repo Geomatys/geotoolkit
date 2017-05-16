@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,9 +72,9 @@ public class Languages implements org.geotoolkit.ows.xml.Languages {
     private LanguagesType supported;
 
     public Languages() {
-        
+
     }
-    
+
     public Languages(final String _default,  final List<String> supported) {
         if (_default != null) {
             this._default = new Default(_default);
@@ -83,14 +83,14 @@ public class Languages implements org.geotoolkit.ows.xml.Languages {
             this.supported = new LanguagesType(supported);
         }
     }
-    
+
     /**
      * Gets the value of the default property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Languages.Default }
-     *     
+     *
      */
     public Languages.Default getDefault() {
         return _default;
@@ -98,11 +98,11 @@ public class Languages implements org.geotoolkit.ows.xml.Languages {
 
     /**
      * Sets the value of the default property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Languages.Default }
-     *     
+     *
      */
     public void setDefault(final Languages.Default value) {
         this._default = value;
@@ -110,11 +110,11 @@ public class Languages implements org.geotoolkit.ows.xml.Languages {
 
     /**
      * Gets the value of the supported property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LanguagesType }
-     *     
+     *
      */
     public LanguagesType getSupported() {
         return supported;
@@ -122,11 +122,11 @@ public class Languages implements org.geotoolkit.ows.xml.Languages {
 
     /**
      * Sets the value of the supported property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LanguagesType }
-     *     
+     *
      */
     public void setSupported(final LanguagesType value) {
         this.supported = value;
@@ -135,9 +135,9 @@ public class Languages implements org.geotoolkit.ows.xml.Languages {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -149,8 +149,8 @@ public class Languages implements org.geotoolkit.ows.xml.Languages {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -164,20 +164,20 @@ public class Languages implements org.geotoolkit.ows.xml.Languages {
         private String language;
 
         public Default() {
-           
+
         }
-        
+
         public Default(final String language) {
            this.language = language;
         }
-        
+
         /**
          * Identifier of the default language supported by the service.  This language identifier shall be as specified in IETF RFC 4646.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getLanguage() {
             return language;
@@ -185,11 +185,11 @@ public class Languages implements org.geotoolkit.ows.xml.Languages {
 
         /**
          * Identifier of the default language supported by the service.  This language identifier shall be as specified in IETF RFC 4646.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setLanguage(final String value) {
             this.language = value;

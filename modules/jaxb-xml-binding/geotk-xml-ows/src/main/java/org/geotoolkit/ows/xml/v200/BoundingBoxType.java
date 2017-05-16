@@ -207,7 +207,7 @@ public class BoundingBoxType implements BoundingBox {
     public void setDimensions(Integer value) {
         this.dimensions = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
@@ -231,7 +231,7 @@ public class BoundingBoxType implements BoundingBox {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */

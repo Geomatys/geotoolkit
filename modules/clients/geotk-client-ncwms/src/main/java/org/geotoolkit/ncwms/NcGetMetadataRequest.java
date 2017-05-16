@@ -21,76 +21,76 @@ import org.geotoolkit.client.Request;
 
 /**
  * Interface for GetMetadata requests
- * 
+ *
  * @author Olivier Terral (Geomatys)
  * @module
  */
-public interface NcGetMetadataRequest extends Request {    
-    
+public interface NcGetMetadataRequest extends Request {
+
     /**
      * Returns the layer name.
      */
     String getLayerName();
-    
+
     /**
      * Sets the layer name.
      */
     void setLayerName(final String name);
-    
+
     /**
      * Returns an id representing which informations you want.
      */
     String getItem();
 
     /**
-     * Sets the type of the GetMetadata request.    
-     * 
+     * Sets the type of the GetMetadata request.
+     *
      * @param item The type of the GetMetadata request. Possible values
      * are 'menu', 'layerDetails', 'timesteps', 'minmax', 'animationTimesteps'
      */
     void setItem(final String item);
-    
+
     /**
      * Returns the day in ISO8601 format.
      */
     String getDay();
-    
+
     /**
      * Sets the day in ISO8601 format.
      */
     void setDay(final String day);
-    
-    
+
+
     /**
      * Returns the start date of an animation in ISO8601 format.
      */
     String getStart();
-    
+
     /**
      * Sets the start date of an animation in ISO8601 format.
      */
     void setStart(final String start);
-    
+
     /**
      * Returns the end date of an animation in ISO8601 format.
      */
     String getEnd();
-    
+
     /**
      * Sets the end date of an animation in ISO8601 format.
      */
     void setEnd(final String end);
-    
+
     /**
      * Returns the Time in ISO8601 format.
      */
     String getTime();
-    
+
     /**
      * Sets the Time in ISO8601 format.
      */
     void setTime(final String time);
-    
+
     /**
      * Gets the Elevation.
      */

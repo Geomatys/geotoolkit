@@ -17,7 +17,7 @@ public class GPXDemo {
 
     public static void main(String[] args) throws DataStoreException, URISyntaxException {
         Demos.init();
-        
+
         final Map<String,Serializable> parameters = new HashMap<String,Serializable>();
         parameters.put("path", GPXDemo.class.getResource("/data/sampleGPX.gpx").toURI());
 

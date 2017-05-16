@@ -53,16 +53,16 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
 
 /**
  * The {@code GeometryFactoryImpl} class/interface...
- * 
+ *
  * @author SYS Technologies
  * @author crossley
  * @version $Revision $
  * @module
  */
 public class JTSGeometryFactory extends Factory implements GeometryFactory {
-    
+
     private final CoordinateReferenceSystem crs;
-    
+
     /**
      * No argument constructor for FactorySPI
      */
@@ -80,7 +80,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     //*************************************************************************
     //  implement the GeometryFactory interface
     //*************************************************************************
-    
+
     /**
      * {@inheritDoc }
      */
@@ -88,7 +88,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         return crs;
     }
-    
+
 
     public Position createPosition( final DirectPosition point ) {
         return new GeneralDirectPosition( point );
@@ -101,7 +101,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     public DirectPosition createDirectPosition() {
         return new GeneralDirectPosition(crs);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -111,13 +111,13 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
         pos.setCoordinateReferenceSystem(crs);
         return pos;
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
     public Envelope createEnvelope(
-            final DirectPosition lowerCorner, 
+            final DirectPosition lowerCorner,
             final DirectPosition upperCorner) {
         return new JTSEnvelope(lowerCorner, upperCorner);
     }
@@ -130,7 +130,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
         JTSLineSegment line = new JTSLineSegment();
         line.getControlPoints().add( startPoint );
         line.getControlPoints().add( endPoint );
-        
+
         return line;
     }
 
@@ -183,8 +183,8 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      */
     @Override
     public Arc createArc(
-            final Position startPoint, 
-            final Position midPoint, 
+            final Position startPoint,
+            final Position midPoint,
             final Position endPoint) {
         return null;
     }
@@ -194,9 +194,9 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      */
     @Override
     public Arc createArc(
-            final Position startPoint, 
-            final Position endPoint, 
-            final double bulge, 
+            final Position startPoint,
+            final Position endPoint,
+            final double bulge,
             final double[] normal) {
         return null;
     }
@@ -214,9 +214,9 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      */
     @Override
     public ArcByBulge createArcByBulge(
-            final Position startPoint, 
-            final Position endPoint, 
-            final double bulge, 
+            final Position startPoint,
+            final Position endPoint,
+            final double bulge,
             final double[] normal) {
         return null;
     }
@@ -226,12 +226,12 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      */
     @Override
     public ArcStringByBulge createArcStringByBulge(
-            final List/*<Position>*/ points, 
+            final List/*<Position>*/ points,
             final double[] bulges,
             final List/*<double[]>*/ normals) {
         return null;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -251,7 +251,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
         JTSPolygon result = new JTSPolygon(boundary);
         return result;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -282,7 +282,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     public SurfaceBoundary createSurfaceBoundary(final Ring exterior, final List interiors) throws MismatchedReferenceSystemException {
         return new JTSSurfaceBoundary(crs, exterior, (Ring []) interiors.toArray(new Ring[interiors.size()]));
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -290,8 +290,8 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     public MultiPrimitive createMultiPrimitive() {
         return new JTSMultiPrimitive();
     }
-    
-    
+
+
     /**
      * {@inheritDoc }
      */

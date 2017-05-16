@@ -34,7 +34,7 @@ public class DefaultBalloonStyle extends DefaultAbstractSubStyle implements Ball
     private DisplayMode displayMode;
 
     /**
-     * 
+     *
      */
     public DefaultBalloonStyle() {
         this.bgColor = DEF_BG_COLOR;
@@ -43,7 +43,7 @@ public class DefaultBalloonStyle extends DefaultAbstractSubStyle implements Ball
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractSubStyleSimpleExtensions

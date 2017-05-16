@@ -34,7 +34,7 @@ public abstract class DefaultAbstractLatLonBox extends DefaultAbstractObject imp
     protected double west;
 
     /**
-     * 
+     *
      */
     protected DefaultAbstractLatLonBox() {
         this.north = DEF_NORTH;
@@ -44,7 +44,7 @@ public abstract class DefaultAbstractLatLonBox extends DefaultAbstractObject imp
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param north

@@ -39,18 +39,18 @@ public class ProcessType implements Process, Entry {
      * Pour compatibilités entre les enregistrements binaires de différentes versions.
      */
     private static final long serialVersionUID = -1370011712794916454L;
-    
+
     /**
      * Le nom/identifiant du capteur.
      */
     @XmlAttribute(required= true, namespace = "http://www.w3.org/1999/xlink")
     private String href;
-    
+
     /**
      * Constructeur vide utilisé par JAXB.
      */
     private ProcessType(){}
-    
+
     /**
      * Construit une nouvelle procédure du nom spécifié.
      *
@@ -58,7 +58,7 @@ public class ProcessType implements Process, Entry {
      */
     public ProcessType(final String name) {
         this.href = name;
-        
+
     }
 
     /**
@@ -80,7 +80,7 @@ public class ProcessType implements Process, Entry {
     public String getIdentifier() {
         return href;
     }
-    
+
      /**
      * Verifie si cette entree est identique a l'objet specifie.
      */

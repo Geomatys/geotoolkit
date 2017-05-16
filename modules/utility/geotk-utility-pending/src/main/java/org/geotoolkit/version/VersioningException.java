@@ -18,7 +18,7 @@ package org.geotoolkit.version;
 
 /**
  * Versioning exceptions.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class VersioningException extends Exception {
@@ -34,5 +34,5 @@ public class VersioningException extends Exception {
     public VersioningException(String message, Throwable cause) {
         super(message, cause);
     }
-    
+
 }

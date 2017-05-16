@@ -28,11 +28,11 @@ import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 
 /**
  * Identifies a UOM supported for this input or output.
- * 
+ *
  * <p>Java class for UOMsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UOMsType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.ows.xml.v110.DomainMetadataType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,20 +58,20 @@ public class UOMsType {
     protected List<DomainMetadataType> uom;
 
     public UOMsType() {
-        
+
     }
-    
+
     public UOMsType(List<DomainMetadataType> uom) {
         this.uom = uom;
     }
-    
+
     /**
      * Reference to a UOM supported for this input or output. Gets the value of the uom property.
-     * 
+     *
      * @return Objects of the following type(s) are allowed in the list
      * {@link DomainMetadataType }
-     * 
-     * 
+     *
+     *
      */
     public List<DomainMetadataType> getUOM() {
         if (uom == null) {

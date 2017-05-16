@@ -40,7 +40,7 @@ public enum SingleRangeEnum {
     private String singleRange;
 
     /**
-     * 
+     *
      * @param singleRange
      */
     private SingleRangeEnum(String singleRange){

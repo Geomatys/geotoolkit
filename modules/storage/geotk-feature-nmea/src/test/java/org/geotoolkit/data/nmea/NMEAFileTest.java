@@ -49,7 +49,7 @@ public class NMEAFileTest extends org.geotoolkit.test.TestBase {
                             f.getProperty("Location").getValue());
         assertEquals(61.7d, f.getProperty("Altitude").getValue());
         assertEquals(null, f.getProperty("Sea-depth").getValue());
-        
+
         // datetime fields : 280511  092751.000
         final Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, 2011);

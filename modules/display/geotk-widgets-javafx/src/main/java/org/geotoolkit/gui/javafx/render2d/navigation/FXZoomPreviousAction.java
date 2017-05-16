@@ -33,18 +33,18 @@ import org.geotoolkit.internal.GeotkFX;
  */
 public final class FXZoomPreviousAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_CHEVRON_LEFT, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
-    
+
     public FXZoomPreviousAction(FXMap map) {
         super(map,GeotkFX.getString(FXZoomPreviousAction.class,"zoom_previous"),GeotkFX.getString(FXZoomPreviousAction.class,"zoom_previous"),ICON);
     }
-    
+
     @Override
     public void setMap(FXMap map) {
         super.setMap(map);
         disabledProperty().unbind();
         disabledProperty().bind(map.getNextPreviousList().previousProperty().isNull());
     }
-    
+
     @Override
     public void accept(ActionEvent event) {
         if (map != null) {
@@ -53,5 +53,5 @@ public final class FXZoomPreviousAction extends FXMapAction {
             map.getNextPreviousList().previous();
         }
     }
-    
+
 }

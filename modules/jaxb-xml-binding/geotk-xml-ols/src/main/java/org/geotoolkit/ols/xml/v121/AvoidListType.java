@@ -29,11 +29,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines the list of areas, locations, and types of features in which the route should avoid passing through.
- * 
+ *
  * <p>Java class for AvoidListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AvoidListType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AvoidListType", propOrder = {
@@ -67,7 +67,7 @@ public class AvoidListType {
 
     /**
      * List of geographic areas to avoid.Gets the value of the aoi property.
-     * 
+     *
      */
     public List<AreaOfInterestType> getAOI() {
         if (aoi == null) {
@@ -78,7 +78,7 @@ public class AvoidListType {
 
     /**
      * List of locations to avoid.Gets the value of the location property.
-     * 
+     *
      */
     public List<JAXBElement<? extends AbstractLocationType>> getLocation() {
         if (location == null) {

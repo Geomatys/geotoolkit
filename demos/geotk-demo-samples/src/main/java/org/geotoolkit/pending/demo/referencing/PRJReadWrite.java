@@ -18,7 +18,7 @@ public class PRJReadWrite {
      */
     public static void main(String[] args) throws Exception {
         Demos.init();
-        
+
         final InputStream stream = PRJReadWrite.class.getResourceAsStream("/projection.prj");
         final CoordinateReferenceSystem crs = PrjFiles.read(stream,true);
         System.out.println(crs);

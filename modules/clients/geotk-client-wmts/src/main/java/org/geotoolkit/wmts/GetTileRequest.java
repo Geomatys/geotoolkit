@@ -40,7 +40,7 @@ public interface GetTileRequest extends Request {
     void setFormat(String format);
 
     String getTileMatrixSet();
-    
+
     void setTileMatrixSet(String env);
 
     String getTileMatrix();

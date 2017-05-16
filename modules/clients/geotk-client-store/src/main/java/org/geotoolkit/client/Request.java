@@ -54,5 +54,5 @@ public interface Request {
      * @throws IOException if an exception occurs while getting the output stream.
      */
     InputStream getResponseStream() throws IOException;
-    
+
 }

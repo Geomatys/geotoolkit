@@ -36,8 +36,8 @@ import org.opengis.feature.Property;
 import org.opengis.util.InternationalString;
 
 /**
- * Edit a single property. 
- * When value in property editor change, JAttributeEditor will fire a 
+ * Edit a single property.
+ * When value in property editor change, JAttributeEditor will fire a
  * property change event with property name <code>#VALUE_CHANGE_EVENT</code>
  *
  * @author Johann Sorel (Geomatys)
@@ -48,7 +48,7 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
 
     //Event name fired in PropertyChange
     public static final String VALUE_CHANGE_EVENT = "value";
-    
+
     /*
      * Not supported text gived to notSupported TextField.
      */
@@ -76,10 +76,10 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
 
     /**
      * Constructor with a provided editor in parameter.
-     * If provided editor is not null, JAttributeEditor will by-pass 
+     * If provided editor is not null, JAttributeEditor will by-pass
      * editor search from available editors and use it.
      * If provided editor is null JAttributeEditor will have a standard behavior.
-     * 
+     *
      * @param providedEditor editor to use regardless of property set. Can be null.
      */
     public JAttributeEditor(final PropertyValueEditor providedEditor){
@@ -93,7 +93,7 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
             useProvidedEditor = true;
         }
     }
-    
+
     public Property getProperty() {
         if(editor instanceof Attribute){
             ((Attribute)property).setValue(editor.getValue());
@@ -102,24 +102,24 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
     }
 
     public void setProperty(Property property) {
-        
+
         this.property = property;
         if (editor != null) {
             editor.removePropertyChangeListener(this);
         }
         removeAll();
-            
+
         if (useProvidedEditor) {
-            
+
             if (this.property != null) {
                 editor.setValue(FeatureExt.getType(property), property.getValue());
             }
             editor.addPropertyChangeListener(this);
             editor.addFocusListener(this);
             add(BorderLayout.CENTER,editor);
-            
+
         } else {
-            
+
             if (this.property != null) {
                 editor = getEditor(editors, (AttributeType) FeatureExt.getType(this.property));
                 if(editor != null){
@@ -132,7 +132,7 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
                 }
             }
         }
-        
+
         revalidate();
         repaint();
     }
@@ -186,7 +186,7 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
 
     /**
      * Transfer enable request to editor.
-     * @param enabled 
+     * @param enabled
      */
     @Override
     public void setEnabled(boolean enabled) {
@@ -194,15 +194,15 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
             editor.setEnabled(enabled);
         }
     }
-    
+
     @Override
     public boolean isEnabled() {
         if (editor != null) {
            return editor.isEnabled();
-        } 
+        }
         return false;
     }
-    
+
     /**
      * @return true if an editor is found, or false otherwise.
      */
@@ -212,7 +212,7 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
 
     /**
      * Forward focus gained event.
-     * @param e 
+     * @param e
      */
     @Override
     public void focusGained(FocusEvent e) {
@@ -223,7 +223,7 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
 
     /**
      * Forward focus lost event.
-     * @param e 
+     * @param e
      */
     @Override
     public void focusLost(FocusEvent e) {

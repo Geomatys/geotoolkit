@@ -59,7 +59,7 @@ public class CoordinateSequenceWrapTransformer implements CoordinateSequenceTran
         this.worldspan = worldspan;
         this.wrapdistance = new double[]{worldspan[0]/2.0,worldspan[1]/2.0};
         this.translation = worldspan.clone();
-        
+
         wrapOnX = (wrapdistance[0] != 0);
     }
 
@@ -76,13 +76,13 @@ public class CoordinateSequenceWrapTransformer implements CoordinateSequenceTran
 
             if(previous != null){
                 final double distance = Math.abs( wrapOnX ? current.x-previous.x : current.y-previous.y);
-                
+
                 //we test distance < worldspan[0], to avoid the case of lines which make a full world wrap
                 if(wrapOnX && distance>=wrapdistance[0] && distance < worldspan[0] ){
-                    
+
                     //assume it crosses the antimeridian
                     wrap = !wrap;
-                    
+
                     //this is the first warp we found, check in which direction we fix it
                     //the objective is to regroup the points so the wrap distance must be smaller then the base distance
                     if(!directionChecked){
@@ -94,10 +94,10 @@ public class CoordinateSequenceWrapTransformer implements CoordinateSequenceTran
                             translation[1] = -translation[1];
                         }
                     }
-                    
+
                 }else if(!wrapOnX && distance>=wrapdistance[1] && distance < worldspan[1]){
                     wrap = !wrap;
-                    
+
                     if(!directionChecked){
                         directionChecked = true;
                         final double test = Math.abs((current.y+translation[1])-previous.y);
@@ -107,9 +107,9 @@ public class CoordinateSequenceWrapTransformer implements CoordinateSequenceTran
                             translation[1] = -translation[1];
                         }
                     }
-                }                
+                }
             }
-            
+
             previous = current;
             if(wrap){
                 tcs[i] = new Coordinate(current.x+translation[0], current.y+translation[1], current.z);

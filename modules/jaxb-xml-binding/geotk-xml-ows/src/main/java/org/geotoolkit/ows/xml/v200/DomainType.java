@@ -28,11 +28,11 @@ import org.geotoolkit.ows.xml.AbstractDomain;
 /**
  * Valid domain (or allowed set of values) of one quantity,
  *       with its name or identifier.
- * 
+ *
  * <p>Java class for DomainType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DomainType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.ows.xml.AbstractDomain;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DomainType")
@@ -57,7 +57,7 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
      */
     public DomainType(){
     }
-    
+
     public DomainType(final DomainType that){
         super(that);
         if (that != null) {
@@ -93,14 +93,14 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
         super(values);
         this.name = name;
     }
-    
+
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getName() {
@@ -109,11 +109,11 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -126,7 +126,7 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
         }
         return null;
     }
-    
+
     @Override
     public void setValue(final List<String> values) {
         if (values != null) {

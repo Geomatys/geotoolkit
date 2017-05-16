@@ -33,14 +33,14 @@ import org.opengis.style.Description;
 
 /**
  * Abstract implementation of a MapItem.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public abstract class AbstractMapItem implements MapItem {
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.map");
-    
+
     protected final EventListenerList listeners = new EventListenerList();
 
     private final Map<String,Object> parameters = new HashMap<>();
@@ -48,7 +48,7 @@ public abstract class AbstractMapItem implements MapItem {
     protected String name = null;
 
     protected Description desc = null;
-    
+
     protected boolean visible = true;
 
     /**
@@ -57,7 +57,7 @@ public abstract class AbstractMapItem implements MapItem {
     protected AbstractMapItem(){
         this.desc = StyleConstants.DEFAULT_DESCRIPTION;
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -83,7 +83,7 @@ public abstract class AbstractMapItem implements MapItem {
         }
         firePropertyChange(NAME_PROPERTY, oldName, this.name);
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -100,7 +100,7 @@ public abstract class AbstractMapItem implements MapItem {
     @Override
     public void setDescription(final Description desc){
         ensureNonNull("description", desc);
-        
+
         final Description oldDesc;
         synchronized (this) {
             oldDesc = this.desc;
@@ -163,7 +163,7 @@ public abstract class AbstractMapItem implements MapItem {
     public Map<String, Object> getUserProperties() {
         return parameters;
     }
-    
+
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
@@ -226,7 +226,7 @@ public abstract class AbstractMapItem implements MapItem {
 
     protected void firePropertyChange(final String propertyName, final Object oldValue, final Object newValue){
         //TODO make fire property change thread safe, preserve fire order
-        
+
         final ItemListener[] listIs = listeners.getListeners(ItemListener.class);
         final PropertyChangeListener[] listPs = listeners.getListeners(PropertyChangeListener.class);
         if(listIs.length==0 && listPs.length==0) return;
@@ -240,7 +240,7 @@ public abstract class AbstractMapItem implements MapItem {
             listener.propertyChange(event);
         }
     }
-        
+
     @Override
     public String toString() {
         final StringBuilder buf = new StringBuilder();
@@ -249,7 +249,7 @@ public abstract class AbstractMapItem implements MapItem {
             buf.append(" (");
             buf.append(name);
             buf.append(") ");
-        }        
+        }
         if(desc != null){
             buf.append(desc);
         }

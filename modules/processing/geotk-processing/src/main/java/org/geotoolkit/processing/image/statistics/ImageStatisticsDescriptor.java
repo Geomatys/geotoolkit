@@ -36,9 +36,9 @@ import org.opengis.parameter.ParameterValueGroup;
 public class ImageStatisticsDescriptor extends AbstractProcessDescriptor {
 
     public static final String NAME = "image:statistics";
-    
+
     public static final String INPUT_IMAGE_PARAM_NAME = "image_in";
-    
+
     /**
      * Input image.
      */
@@ -47,9 +47,9 @@ public class ImageStatisticsDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Input image")
             .setRequired(true)
             .create(RenderedImage.class, null);
-    
+
     public static final String OUTPUT_STATS_PARAM_NAME = "statistic_out";
-    
+
     /**
      * Output statistic object.
      */
@@ -58,25 +58,25 @@ public class ImageStatisticsDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Output statistic")
             .setRequired(true)
             .create(Statistics[].class, null);
-    
-    
+
+
     /**
-     * Input parameters. 
+     * Input parameters.
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(INPUT_IMAGE);
-    
+
     /**
      * Output parameters.
      */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(OUTPUT_STATS);
-    
+
     /**
      * Instance.
      */
     public static final ProcessDescriptor INSTANCE = new ImageStatisticsDescriptor();
-    
+
     /**
      * Default constructor.
      */
@@ -85,7 +85,7 @@ public class ImageStatisticsDescriptor extends AbstractProcessDescriptor {
                 new SimpleInternationalString("Parameter description of Image to get its Statistics."),
                 INPUT_DESC, OUTPUT_DESC);
     }
-    
+
     /**
      * {@inheritDoc }.
      */

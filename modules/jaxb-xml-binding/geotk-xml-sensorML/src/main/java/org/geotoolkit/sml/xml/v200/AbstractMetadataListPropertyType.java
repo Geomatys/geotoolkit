@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AbstractMetadataListPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractMetadataListPropertyType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractMetadataListPropertyType", propOrder = {
@@ -73,7 +73,7 @@ public class AbstractMetadataListPropertyType {
 
     /**
      * Gets the value of the abstractMetadataList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link KeywordListType }{@code >}
@@ -86,7 +86,7 @@ public class AbstractMetadataListPropertyType {
      *     {@link JAXBElement }{@code <}{@link CapabilityListType }{@code >}
      *     {@link JAXBElement }{@code <}{@link FeatureListType }{@code >}
      *     {@link JAXBElement }{@code <}{@link IdentifierListType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractMetadataListType> getAbstractMetadataList() {
         return abstractMetadataList;
@@ -94,7 +94,7 @@ public class AbstractMetadataListPropertyType {
 
     /**
      * Sets the value of the abstractMetadataList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link KeywordListType }{@code >}
@@ -107,7 +107,7 @@ public class AbstractMetadataListPropertyType {
      *     {@link JAXBElement }{@code <}{@link CapabilityListType }{@code >}
      *     {@link JAXBElement }{@code <}{@link FeatureListType }{@code >}
      *     {@link JAXBElement }{@code <}{@link IdentifierListType }{@code >}
-     *     
+     *
      */
     public void setAbstractMetadataList(JAXBElement<? extends AbstractMetadataListType> value) {
         this.abstractMetadataList = value;
@@ -115,11 +115,11 @@ public class AbstractMetadataListPropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -131,11 +131,11 @@ public class AbstractMetadataListPropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -143,11 +143,11 @@ public class AbstractMetadataListPropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -155,11 +155,11 @@ public class AbstractMetadataListPropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -167,11 +167,11 @@ public class AbstractMetadataListPropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -179,11 +179,11 @@ public class AbstractMetadataListPropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -191,11 +191,11 @@ public class AbstractMetadataListPropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -203,11 +203,11 @@ public class AbstractMetadataListPropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -215,11 +215,11 @@ public class AbstractMetadataListPropertyType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -227,11 +227,11 @@ public class AbstractMetadataListPropertyType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -239,11 +239,11 @@ public class AbstractMetadataListPropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -251,11 +251,11 @@ public class AbstractMetadataListPropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(String value) {
         this.show = value;
@@ -263,11 +263,11 @@ public class AbstractMetadataListPropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -275,11 +275,11 @@ public class AbstractMetadataListPropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(String value) {
         this.actuate = value;

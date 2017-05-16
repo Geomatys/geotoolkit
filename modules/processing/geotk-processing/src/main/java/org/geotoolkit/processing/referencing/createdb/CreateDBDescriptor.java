@@ -41,27 +41,27 @@ public final class CreateDBDescriptor extends AbstractProcessDescriptor{
             .setRemarks("Database JDBC URL.")
             .setRequired(true)
             .create(String.class,"jdbc:postgresql://localhost:5432/epsg");
-    
+
     public static final ParameterDescriptor<String> USER = new ParameterBuilder()
             .addName("user")
             .setRemarks("Database user.")
             .setRequired(true)
             .create(String.class,"user");
-    
+
     public static final ParameterDescriptor<String> PASSWORD = new ParameterBuilder()
             .addName("password")
             .setRemarks("Database password.")
             .setRequired(true)
             .create(String.class,"password");
-    
-        
+
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName(NAME+"InputParameters").createGroup(DBURL,USER,PASSWORD);
 
 
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName(NAME+"OutputParameters").createGroup();
-    
+
     public static final ProcessDescriptor INSTANCE = new CreateDBDescriptor();
 
 

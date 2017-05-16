@@ -129,8 +129,7 @@ Downloading Geotoolkit.org Binaries
 |                                        | • slf4j-jdk14.jar                  |                           |
 *----------------------------------------+------------------------------------+---------------------------+
 | <<<geotk-bundle-storage.pack.gz>>>     | <All the coverage pack plus:>\     | • Java 7\                 |
-|                                        | • geotk-metadata-sql.jar\          | • Java Advanced Imaging   |
-|                                        | • geotk-coverage-sql.jar\          |                           |
+|                                        | • geotk-coverage-sql.jar\          | • Java Advanced Imaging   |
 |                                        | • derby.jar\                       |                           |
 |                                        | • derbyLocale_*.jar\               |                           |
 |                                        | • postgresql.jar                   |                           |

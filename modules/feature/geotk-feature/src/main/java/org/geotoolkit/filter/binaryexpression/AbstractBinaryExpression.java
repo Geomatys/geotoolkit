@@ -32,7 +32,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * @param <F> Expression or subclass
  * @module
  */
-public abstract class AbstractBinaryExpression<E extends Expression,F extends Expression> 
+public abstract class AbstractBinaryExpression<E extends Expression,F extends Expression>
                                     extends AbstractExpression implements BinaryExpression{
 
     protected final E left;

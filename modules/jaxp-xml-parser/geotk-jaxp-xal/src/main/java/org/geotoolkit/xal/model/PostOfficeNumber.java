@@ -55,7 +55,7 @@ public interface PostOfficeNumber {
     AfterBeforeEnum getIndicatorOccurrence();
 
     /**
-     * 
+     *
      * @return
      */
     GrPostal getGrPostal();
@@ -79,7 +79,7 @@ public interface PostOfficeNumber {
     void setIndicatorOccurrence(AfterBeforeEnum indicatorOccurrence);
 
     /**
-     * 
+     *
      * @param grPostal
      */
     void setGrPostal(GrPostal grPostal);

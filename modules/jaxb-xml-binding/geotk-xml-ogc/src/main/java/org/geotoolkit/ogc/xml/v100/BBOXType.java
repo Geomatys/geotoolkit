@@ -27,9 +27,9 @@ import org.geotoolkit.gml.xml.v212.CoordType;
 
 /**
  * <p>Java class for BBOXType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BBOXType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.gml.xml.v212.CoordType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,9 +62,9 @@ public class BBOXType extends SpatialOpsType {
      * An empty constructor used by JAXB
      */
     public BBOXType() {
-        
+
     }
-    
+
     /**
      * build a new BBox with an envelope.
      */
@@ -73,9 +73,9 @@ public class BBOXType extends SpatialOpsType {
         final CoordType lower = new CoordType(minx, miny);
         final CoordType upper = new CoordType(maxx, maxy);
         this.box = new BoxType(Arrays.asList(lower, upper), srs);
-        
+
     }
-    
+
     public BBOXType(final BBOXType that) {
         if (that != null) {
             if (that.propertyName != null) {
@@ -88,7 +88,7 @@ public class BBOXType extends SpatialOpsType {
     }
     /**
      * Gets the value of the propertyName property.
-     * 
+     *
      */
     public PropertyNameType getPropertyName() {
         return propertyName;
@@ -96,7 +96,7 @@ public class BBOXType extends SpatialOpsType {
 
     /**
      * Sets the value of the propertyName property.
-     * 
+     *
      */
     public void setPropertyName(final PropertyNameType value) {
         this.propertyName = value;
@@ -104,7 +104,7 @@ public class BBOXType extends SpatialOpsType {
 
     /**
      * Gets the value of the box property.
-     * 
+     *
      */
     public BoxType getBox() {
         return box;
@@ -112,7 +112,7 @@ public class BBOXType extends SpatialOpsType {
 
     /**
      * Sets the value of the box property.
-     * 
+     *
      */
     public void setBox(final BoxType value) {
         this.box = value;

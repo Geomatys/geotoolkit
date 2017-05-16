@@ -32,18 +32,18 @@ import org.opengis.feature.FeatureType;
 
 /**
  * Feature writer for insertion only.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements FeatureWriter {
 
     private boolean batchInsert;
     private Collection<Feature> toAdd;
-    
+
     //private String id;
     private Feature last;
 
-    public JDBCFeatureWriterInsert(final DefaultJDBCFeatureStore store, final String sql, 
+    public JDBCFeatureWriterInsert(final DefaultJDBCFeatureStore store, final String sql,
             final FeatureType type, Connection cnx, boolean release, final Hints hints)
             throws SQLException, IOException, DataStoreException {
         super(store, sql, type, cnx, release, hints);
@@ -54,7 +54,7 @@ public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements Featur
         super(other);
         init();
     }
-    
+
     private void init(){
         last = type.newInstance();
         if(hints != null){
@@ -64,7 +64,7 @@ public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements Featur
         }
         toAdd = (batchInsert) ? new ArrayList<Feature>() : null;
     }
-    
+
     @Override
     public boolean hasNext() throws FeatureStoreRuntimeException {
         return false;
@@ -83,7 +83,7 @@ public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements Featur
 
     @Override
     public void write() throws FeatureStoreRuntimeException {
-        
+
         if(batchInsert){
             toAdd.add(last);
             last = type.newInstance();
@@ -122,7 +122,7 @@ public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements Featur
             }
             toAdd.clear();
         }
-        
+
         super.close();
     }
 }

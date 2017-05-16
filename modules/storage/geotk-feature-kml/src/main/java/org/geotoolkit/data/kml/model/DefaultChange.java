@@ -29,7 +29,7 @@ public class DefaultChange implements Change {
     private List<Object> objects;
 
     /**
-     * 
+     *
      */
     public DefaultChange() {
         this.objects = EMPTY_LIST;

@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TransactionResultType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TransactionResultType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TransactionResultType", propOrder = {
@@ -64,11 +64,11 @@ public class TransactionResultType {
 
     /**
      * Gets the value of the status property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StatusType }
-     *     
+     *
      */
     public StatusType getStatus() {
         return status;
@@ -76,11 +76,11 @@ public class TransactionResultType {
 
     /**
      * Sets the value of the status property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StatusType }
-     *     
+     *
      */
     public void setStatus(StatusType value) {
         this.status = value;
@@ -88,11 +88,11 @@ public class TransactionResultType {
 
     /**
      * Gets the value of the locator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLocator() {
         return locator;
@@ -100,11 +100,11 @@ public class TransactionResultType {
 
     /**
      * Sets the value of the locator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLocator(String value) {
         this.locator = value;
@@ -112,11 +112,11 @@ public class TransactionResultType {
 
     /**
      * Gets the value of the message property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMessage() {
         return message;
@@ -124,11 +124,11 @@ public class TransactionResultType {
 
     /**
      * Sets the value of the message property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMessage(String value) {
         this.message = value;
@@ -136,11 +136,11 @@ public class TransactionResultType {
 
     /**
      * Gets the value of the handle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHandle() {
         return handle;
@@ -148,11 +148,11 @@ public class TransactionResultType {
 
     /**
      * Sets the value of the handle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHandle(String value) {
         this.handle = value;

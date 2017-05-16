@@ -24,18 +24,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the org.w3._2005._08.addressing package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the org.w3._2005._08.addressing package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -57,14 +57,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.w3._2005._08.addressing
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link ProblemActionType }
-     * 
+     *
      */
     public ProblemActionType createProblemActionType() {
         return new ProblemActionType();
@@ -72,7 +72,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AttributedUnsignedLongType }
-     * 
+     *
      */
     public AttributedUnsignedLongType createAttributedUnsignedLongType() {
         return new AttributedUnsignedLongType();
@@ -80,7 +80,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RelatesToType }
-     * 
+     *
      */
     public RelatesToType createRelatesToType() {
         return new RelatesToType();
@@ -88,7 +88,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AttributedURIType }
-     * 
+     *
      */
     public AttributedURIType createAttributedURIType() {
         return new AttributedURIType();
@@ -96,7 +96,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EndpointReferenceType }
-     * 
+     *
      */
     public EndpointReferenceType createEndpointReferenceType() {
         return new EndpointReferenceType();
@@ -104,7 +104,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MetadataType }
-     * 
+     *
      */
     public MetadataType createMetadataType() {
         return new MetadataType();
@@ -112,7 +112,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AttributedQNameType }
-     * 
+     *
      */
     public AttributedQNameType createAttributedQNameType() {
         return new AttributedQNameType();
@@ -120,7 +120,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AttributedAnyType }
-     * 
+     *
      */
     public AttributedAnyType createAttributedAnyType() {
         return new AttributedAnyType();
@@ -128,7 +128,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReferenceParametersType }
-     * 
+     *
      */
     public ReferenceParametersType createReferenceParametersType() {
         return new ReferenceParametersType();
@@ -136,7 +136,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AttributedAnyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2005/08/addressing", name = "ProblemHeader")
     public JAXBElement<AttributedAnyType> createProblemHeader(AttributedAnyType value) {
@@ -145,7 +145,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AttributedURIType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2005/08/addressing", name = "MessageID")
     public JAXBElement<AttributedURIType> createMessageID(AttributedURIType value) {
@@ -154,7 +154,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AttributedQNameType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2005/08/addressing", name = "ProblemHeaderQName")
     public JAXBElement<AttributedQNameType> createProblemHeaderQName(AttributedQNameType value) {
@@ -163,7 +163,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AttributedURIType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2005/08/addressing", name = "To")
     public JAXBElement<AttributedURIType> createTo(AttributedURIType value) {
@@ -172,7 +172,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EndpointReferenceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2005/08/addressing", name = "From")
     public JAXBElement<EndpointReferenceType> createFrom(EndpointReferenceType value) {
@@ -181,7 +181,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AttributedURIType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2005/08/addressing", name = "Action")
     public JAXBElement<AttributedURIType> createAction(AttributedURIType value) {
@@ -190,7 +190,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MetadataType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2005/08/addressing", name = "Metadata")
     public JAXBElement<MetadataType> createMetadata(MetadataType value) {
@@ -199,7 +199,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ProblemActionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2005/08/addressing", name = "ProblemAction")
     public JAXBElement<ProblemActionType> createProblemAction(ProblemActionType value) {
@@ -208,7 +208,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AttributedURIType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2005/08/addressing", name = "ProblemIRI")
     public JAXBElement<AttributedURIType> createProblemIRI(AttributedURIType value) {
@@ -217,7 +217,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EndpointReferenceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2005/08/addressing", name = "EndpointReference")
     public JAXBElement<EndpointReferenceType> createEndpointReference(EndpointReferenceType value) {
@@ -226,7 +226,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EndpointReferenceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2005/08/addressing", name = "ReplyTo")
     public JAXBElement<EndpointReferenceType> createReplyTo(EndpointReferenceType value) {
@@ -235,7 +235,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EndpointReferenceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2005/08/addressing", name = "FaultTo")
     public JAXBElement<EndpointReferenceType> createFaultTo(EndpointReferenceType value) {
@@ -244,7 +244,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RelatesToType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2005/08/addressing", name = "RelatesTo")
     public JAXBElement<RelatesToType> createRelatesTo(RelatesToType value) {
@@ -253,7 +253,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AttributedUnsignedLongType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2005/08/addressing", name = "RetryAfter")
     public JAXBElement<AttributedUnsignedLongType> createRetryAfter(AttributedUnsignedLongType value) {

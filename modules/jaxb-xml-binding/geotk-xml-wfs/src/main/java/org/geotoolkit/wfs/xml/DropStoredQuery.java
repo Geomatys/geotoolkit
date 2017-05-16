@@ -21,6 +21,6 @@ package org.geotoolkit.wfs.xml;
  * @author Guilhem Legal (Geomatys)
  */
 public interface DropStoredQuery extends BaseRequest {
-    
+
     String getId();
 }

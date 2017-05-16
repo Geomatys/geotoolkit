@@ -107,7 +107,7 @@ public abstract class CoverageFinder {
         for (GridMosaic candidate : mosaics) {
             //-- check the mosaic intersect the searched envelope
             final GeneralEnvelope clip = new GeneralEnvelope(candidate.getEnvelope());
-            if (!clip.intersects(env)) {
+            if (!clip.intersects(env, true)) {
                 notIntersected++;
                 continue;
             }

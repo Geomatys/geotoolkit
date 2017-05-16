@@ -33,9 +33,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ArcStringByBulgeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ArcStringByBulgeType">
  *   &lt;complexContent>
@@ -59,8 +59,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ArcStringByBulgeType", propOrder = {
@@ -96,27 +96,27 @@ public class ArcStringByBulgeType
 
     /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the posOrPointPropertyOrPointRep property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPosOrPointPropertyOrPointRep().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link DirectPositionType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<?>> getPosOrPointPropertyOrPointRep() {
         if (posOrPointPropertyOrPointRep == null) {
@@ -127,11 +127,11 @@ public class ArcStringByBulgeType
 
     /**
      * Gets the value of the posList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public DirectPositionListType getPosList() {
         return posList;
@@ -139,11 +139,11 @@ public class ArcStringByBulgeType
 
     /**
      * Sets the value of the posList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public void setPosList(DirectPositionListType value) {
         this.posList = value;
@@ -151,11 +151,11 @@ public class ArcStringByBulgeType
 
     /**
      * Gets the value of the coordinates property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public CoordinatesType getCoordinates() {
         return coordinates;
@@ -163,11 +163,11 @@ public class ArcStringByBulgeType
 
     /**
      * Sets the value of the coordinates property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public void setCoordinates(CoordinatesType value) {
         this.coordinates = value;
@@ -175,25 +175,25 @@ public class ArcStringByBulgeType
 
     /**
      * Gets the value of the bulge property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the bulge property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getBulge().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Double }
-     * 
-     * 
+     *
+     *
      */
     public List<Double> getBulge() {
         if (bulge == null) {
@@ -204,25 +204,25 @@ public class ArcStringByBulgeType
 
     /**
      * Gets the value of the normal property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the normal property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNormal().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link VectorType }
-     * 
-     * 
+     *
+     *
      */
     public List<VectorType> getNormal() {
         if (normal == null) {
@@ -233,11 +233,11 @@ public class ArcStringByBulgeType
 
     /**
      * Gets the value of the interpolation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public CurveInterpolationType getInterpolation() {
         if (interpolation == null) {
@@ -249,11 +249,11 @@ public class ArcStringByBulgeType
 
     /**
      * Sets the value of the interpolation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public void setInterpolation(CurveInterpolationType value) {
         this.interpolation = value;
@@ -261,11 +261,11 @@ public class ArcStringByBulgeType
 
     /**
      * Gets the value of the numArc property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getNumArc() {
         return numArc;
@@ -273,11 +273,11 @@ public class ArcStringByBulgeType
 
     /**
      * Sets the value of the numArc property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setNumArc(Integer value) {
         this.numArc = value;

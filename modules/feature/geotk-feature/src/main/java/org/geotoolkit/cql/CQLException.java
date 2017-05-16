@@ -20,7 +20,7 @@ import org.geotoolkit.util.Exceptions;
 
 /**
  * CQL exception.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class CQLException extends Exception{
@@ -34,5 +34,5 @@ public class CQLException extends Exception{
         super(message, cause);
         assert Exceptions.isValidMessage(message) : message;
     }
-    
+
 }

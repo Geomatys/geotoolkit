@@ -22,7 +22,7 @@ import org.opengis.geometry.Geometry;
 
 /**
  * Simple abstract path iterator for ISO Geometry.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -30,7 +30,7 @@ public abstract class ISOGeometryIterator<T extends Geometry> implements PathIte
 
     private static final AffineTransform IDENTITY = new AffineTransform();
 
-	protected double[] dcoords = new double[2];
+    protected double[] dcoords = new double[2];
     protected AffineTransform transform;
     protected final T geometry;
 
@@ -39,16 +39,16 @@ public abstract class ISOGeometryIterator<T extends Geometry> implements PathIte
         this.transform = (trs == null) ? IDENTITY : trs;
     }
 
-	/**
+    /**
      * {@inheritDoc }
      */
     @Override
-	public int currentSegment(final float[] coords) {
-		int result = currentSegment(dcoords);
-		coords[0] = (float) dcoords[0];
-		coords[1] = (float) dcoords[1];
-		return result;
-	}
+    public int currentSegment(final float[] coords) {
+        int result = currentSegment(dcoords);
+        coords[0] = (float) dcoords[0];
+        coords[1] = (float) dcoords[1];
+        return result;
+    }
 
     public void setTransform(final AffineTransform trs){
         this.transform = (trs == null) ? IDENTITY : trs;

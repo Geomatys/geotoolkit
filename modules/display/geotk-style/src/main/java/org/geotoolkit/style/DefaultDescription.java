@@ -23,19 +23,19 @@ import org.opengis.util.InternationalString;
 
 /**
  * Immutable implementation of Types description.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class DefaultDescription implements Description{
 
     private final InternationalString title;
-    
+
     private final InternationalString desc;
-        
+
     /**
      * Create a default immutable description.
-     * 
+     *
      * @param title : can be null
      * @param desc : can be null
      */
@@ -43,15 +43,15 @@ public class DefaultDescription implements Description{
         this.title = title;
         this.desc = desc;
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
     public InternationalString getTitle() {
         return title;
-    }    
-    
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -113,5 +113,5 @@ public class DefaultDescription implements Description{
         builder.append(']');
         return builder.toString();
     }
-    
+
 }

@@ -87,7 +87,7 @@ public class DefaultId implements Id,Serializable{
             //but the real type might be different
             return keys.containsKey(k) || keys.containsKey(String.valueOf(k));
         }
-        
+
     }
 
     /**

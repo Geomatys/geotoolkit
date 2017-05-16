@@ -29,9 +29,9 @@ import org.geotoolkit.swe.xml.AbstractQuantityRange;
 
 /**
  * <p>Java class for QuantityRangeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="QuantityRangeType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.swe.xml.AbstractQuantityRange;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "QuantityRangeType", propOrder = {
@@ -64,21 +64,21 @@ public class QuantityRangeType extends AbstractSimpleComponentType implements Ab
     private List<Double> value;
 
     public QuantityRangeType() {
-        
+
     }
-    
+
     public QuantityRangeType(final String definition, final List<Double> value) {
         super(null, definition, null);
         this.value = value;
     }
-    
+
     /**
      * Gets the value of the uom property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link UnitReference }
-     *     
+     *
      */
     @Override
     public UnitReference getUom() {
@@ -87,11 +87,11 @@ public class QuantityRangeType extends AbstractSimpleComponentType implements Ab
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link UnitReference }
-     *     
+     *
      */
     public void setUom(UnitReference value) {
         this.uom = value;
@@ -99,11 +99,11 @@ public class QuantityRangeType extends AbstractSimpleComponentType implements Ab
 
     /**
      * Gets the value of the constraint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedValuesPropertyType }
-     *     
+     *
      */
     @Override
     public AllowedValuesPropertyType getConstraint() {
@@ -112,11 +112,11 @@ public class QuantityRangeType extends AbstractSimpleComponentType implements Ab
 
     /**
      * Sets the value of the constraint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedValuesPropertyType }
-     *     
+     *
      */
     public void setConstraint(AllowedValuesPropertyType value) {
         this.constraint = value;
@@ -124,11 +124,11 @@ public class QuantityRangeType extends AbstractSimpleComponentType implements Ab
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Double }
-     * 
-     * 
+     *
+     *
      */
     @Override
     public List<Double> getValue() {

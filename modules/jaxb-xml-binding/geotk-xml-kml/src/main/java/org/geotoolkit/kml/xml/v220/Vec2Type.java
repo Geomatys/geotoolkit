@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for vec2Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="vec2Type">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,11 +58,11 @@ public class Vec2Type {
 
     /**
      * Gets the value of the x property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public double getX() {
         if (x == null) {
@@ -74,11 +74,11 @@ public class Vec2Type {
 
     /**
      * Sets the value of the x property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setX(final Double value) {
         this.x = value;
@@ -86,11 +86,11 @@ public class Vec2Type {
 
     /**
      * Gets the value of the y property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public double getY() {
         if (y == null) {
@@ -102,11 +102,11 @@ public class Vec2Type {
 
     /**
      * Sets the value of the y property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setY(final Double value) {
         this.y = value;
@@ -114,11 +114,11 @@ public class Vec2Type {
 
     /**
      * Gets the value of the xunits property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link UnitsEnumType }
-     *     
+     *
      */
     public UnitsEnumType getXunits() {
         if (xunits == null) {
@@ -130,11 +130,11 @@ public class Vec2Type {
 
     /**
      * Sets the value of the xunits property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link UnitsEnumType }
-     *     
+     *
      */
     public void setXunits(final UnitsEnumType value) {
         this.xunits = value;
@@ -142,11 +142,11 @@ public class Vec2Type {
 
     /**
      * Gets the value of the yunits property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link UnitsEnumType }
-     *     
+     *
      */
     public UnitsEnumType getYunits() {
         if (yunits == null) {
@@ -158,11 +158,11 @@ public class Vec2Type {
 
     /**
      * Sets the value of the yunits property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link UnitsEnumType }
-     *     
+     *
      */
     public void setYunits(final UnitsEnumType value) {
         this.yunits = value;

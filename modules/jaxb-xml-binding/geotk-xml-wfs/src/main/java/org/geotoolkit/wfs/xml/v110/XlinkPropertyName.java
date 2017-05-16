@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlValue;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;simpleContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,9 +61,9 @@ public class XlinkPropertyName {
     private BigInteger traverseXlinkExpiry;
 
     public XlinkPropertyName() {
-        
+
     }
-    
+
     public XlinkPropertyName(final XlinkPropertyName that) {
         if (that != null) {
             this.value               = that.value;
@@ -71,14 +71,14 @@ public class XlinkPropertyName {
             this.traverseXlinkExpiry = that.traverseXlinkExpiry;
         }
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValue() {
         return value;
@@ -86,11 +86,11 @@ public class XlinkPropertyName {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(final String value) {
         this.value = value;
@@ -98,11 +98,11 @@ public class XlinkPropertyName {
 
     /**
      * Gets the value of the traverseXlinkDepth property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTraverseXlinkDepth() {
         return traverseXlinkDepth;
@@ -110,11 +110,11 @@ public class XlinkPropertyName {
 
     /**
      * Sets the value of the traverseXlinkDepth property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTraverseXlinkDepth(final String value) {
         this.traverseXlinkDepth = value;
@@ -122,11 +122,11 @@ public class XlinkPropertyName {
 
     /**
      * Gets the value of the traverseXlinkExpiry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getTraverseXlinkExpiry() {
         return traverseXlinkExpiry;
@@ -134,11 +134,11 @@ public class XlinkPropertyName {
 
     /**
      * Sets the value of the traverseXlinkExpiry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setTraverseXlinkExpiry(final BigInteger value) {
         this.traverseXlinkExpiry = value;

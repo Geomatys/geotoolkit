@@ -29,9 +29,9 @@ import org.geotoolkit.ows.xml.v110.Operation;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.ows.xml.v110.Operation;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -66,7 +66,7 @@ public class Operations {
     private List<DomainType> constraint;
 
     /**
-     * Metadata for unordered list of all the (requests for) operations that this resource. 
+     * Metadata for unordered list of all the (requests for) operations that this resource.
      * The list of required and optional operations implemented for this service.
      * Gets the value of the operation property.
      */

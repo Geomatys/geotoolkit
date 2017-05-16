@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for getAvailableThesauriResponse complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="getAvailableThesauriResponse">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getAvailableThesauriResponse", propOrder = {
@@ -65,7 +65,7 @@ public class GetAvailableThesauriResponse {
 
     /**
      * Gets the value of the return property.
-     * 
+     *
      */
     public List<XmlThesaurus> getReturn() {
         if (response == null) {

@@ -16,7 +16,7 @@ public class CQLDemo {
 
     public static void main(String[] args) throws CQLException {
         Demos.init();
-        
+
         final String filterTxt = "name = sorel and age > 20";
         Filter filter = CQL.parseFilter(filterTxt);
         System.out.println(filter);
@@ -34,7 +34,7 @@ public class CQLDemo {
         System.out.println(CQL.parseExpression("NAME"));
         System.out.println(CQL.parseExpression("QUANTITY * 2"));
         System.out.println(CQL.parseExpression("strConcat(NAME, 'suffix')"));
-        
+
         String cqlfilter = CQL.write(filter);
         String cqlexpression = CQL.write(FF.literal("hello"));
 

@@ -28,5 +28,5 @@ public class MySQLFeatureStore extends DefaultJDBCFeatureStore{
     public MySQLFeatureStore(ParameterValueGroup params, String factoryId) {
         super(params, factoryId);
     }
-    
+
 }

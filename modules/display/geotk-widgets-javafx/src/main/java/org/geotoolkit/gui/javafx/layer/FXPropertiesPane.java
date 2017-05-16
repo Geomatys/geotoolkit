@@ -27,12 +27,12 @@ import org.geotoolkit.map.MapItem;
  * @author Johann Sorel (Geomatys)
  */
 public class FXPropertiesPane extends BorderPane{
-    
+
     private final TabPane tabPane = new TabPane();
 
     public FXPropertiesPane(MapItem item, FXPropertyPane ... propertyPanes) {
         setCenter(tabPane);
-        
+
         for(FXPropertyPane pane : propertyPanes){
             if(pane.init(item)){
                 final Tab tab = new Tab(pane.getTitle());
@@ -41,7 +41,7 @@ public class FXPropertiesPane extends BorderPane{
                 tabPane.getTabs().add(tab);
             }
         }
-        
+
     }
-    
+
 }

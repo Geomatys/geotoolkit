@@ -37,9 +37,9 @@ import org.geotoolkit.swe.xml.ByteOrder;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -92,8 +92,8 @@ import org.geotoolkit.swe.xml.ByteOrder;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -131,7 +131,7 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
             this.byteOrder    = bb.getByteOrder();
         }
     }
-    
+
     /**
      * Gets the value of the member property.
      */
@@ -187,9 +187,9 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -229,8 +229,8 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -259,7 +259,7 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
             }
 
         }
-        
+
         /**
          * Gets the value of the component property.
          */
@@ -291,9 +291,9 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -308,8 +308,8 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "")
@@ -350,14 +350,14 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
                 }
 
             }
-            
+
             /**
              * Gets the value of the ref property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getRef() {
                 return ref;
@@ -365,11 +365,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Sets the value of the ref property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setRef(final String value) {
                 this.ref = value;
@@ -377,11 +377,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Gets the value of the byteLength property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link Integer }
-             *     
+             *
              */
             public Integer getByteLength() {
                 return byteLength;
@@ -389,11 +389,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Sets the value of the byteLength property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link Integer }
-             *     
+             *
              */
             public void setByteLength(final Integer value) {
                 this.byteLength = value;
@@ -401,11 +401,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Gets the value of the paddingBytesBefore property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link Integer }
-             *     
+             *
              */
             public Integer getPaddingBytesBefore() {
                 if (paddingBytesBefore == null) {
@@ -417,11 +417,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Sets the value of the paddingBytesBefore property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link Integer }
-             *     
+             *
              */
             public void setPaddingBytesBefore(final Integer value) {
                 this.paddingBytesBefore = value;
@@ -429,11 +429,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Gets the value of the paddingBytesAfter property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link Integer }
-             *     
+             *
              */
             public Integer getPaddingBytesAfter() {
                 if (paddingBytesAfter == null) {
@@ -445,11 +445,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Sets the value of the paddingBytesAfter property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link Integer }
-             *     
+             *
              */
             public void setPaddingBytesAfter(final Integer value) {
                 this.paddingBytesAfter = value;
@@ -457,11 +457,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Gets the value of the encryption property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getEncryption() {
                 return encryption;
@@ -469,11 +469,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Sets the value of the encryption property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setEncryption(final String value) {
                 this.encryption = value;
@@ -481,11 +481,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Gets the value of the compression property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getCompression() {
                 return compression;
@@ -493,11 +493,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Sets the value of the compression property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setCompression(final String value) {
                 this.compression = value;
@@ -508,9 +508,9 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -526,8 +526,8 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "")
@@ -573,11 +573,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
             }
             /**
              * Gets the value of the ref property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getRef() {
                 return ref;
@@ -585,11 +585,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Sets the value of the ref property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setRef(final String value) {
                 this.ref = value;
@@ -597,11 +597,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Gets the value of the dataType property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getDataType() {
                 return dataType;
@@ -609,11 +609,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Sets the value of the dataType property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setDataType(final String value) {
                 this.dataType = value;
@@ -621,11 +621,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Gets the value of the significantBits property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link Integer }
-             *     
+             *
              */
             public Integer getSignificantBits() {
                 return significantBits;
@@ -633,11 +633,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Sets the value of the significantBits property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link Integer }
-             *     
+             *
              */
             public void setSignificantBits(final Integer value) {
                 this.significantBits = value;
@@ -645,11 +645,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Gets the value of the bitLength property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link Integer }
-             *     
+             *
              */
             public Integer getBitLength() {
                 return bitLength;
@@ -657,11 +657,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Sets the value of the bitLength property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link Integer }
-             *     
+             *
              */
             public void setBitLength(final Integer value) {
                 this.bitLength = value;
@@ -669,11 +669,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Gets the value of the paddingBitsBefore property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link Integer }
-             *     
+             *
              */
             public Integer getPaddingBitsBefore() {
                 if (paddingBitsBefore == null) {
@@ -685,11 +685,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Sets the value of the paddingBitsBefore property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link Integer }
-             *     
+             *
              */
             public void setPaddingBitsBefore(final Integer value) {
                 this.paddingBitsBefore = value;
@@ -697,11 +697,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Gets the value of the paddingBitsAfter property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link Integer }
-             *     
+             *
              */
             public Integer getPaddingBitsAfter() {
                 if (paddingBitsAfter == null) {
@@ -713,11 +713,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Sets the value of the paddingBitsAfter property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link Integer }
-             *     
+             *
              */
             public void setPaddingBitsAfter(final Integer value) {
                 this.paddingBitsAfter = value;
@@ -725,11 +725,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Gets the value of the encryption property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getEncryption() {
                 return encryption;
@@ -737,11 +737,11 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
 
             /**
              * Sets the value of the encryption property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setEncryption(final String value) {
                 this.encryption = value;

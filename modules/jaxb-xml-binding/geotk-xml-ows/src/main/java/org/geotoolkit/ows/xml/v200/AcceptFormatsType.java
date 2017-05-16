@@ -32,11 +32,11 @@ import org.geotoolkit.ows.xml.AcceptFormats;
  *       listed first. Each response format shall be identified by its MIME type.
  *       See AcceptFormats parameter use subclause for more
  *       information.
- * 
+ *
  * <p>Java class for AcceptFormatsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AcceptFormatsType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.ows.xml.AcceptFormats;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AcceptFormatsType", propOrder = {
@@ -65,14 +65,14 @@ public class AcceptFormatsType implements AcceptFormats {
      */
     AcceptFormatsType() {
     }
-    
+
     /**
      * Build a new Accepted format.
      */
     public AcceptFormatsType(final List<String> outputFormat) {
         this.outputFormat = outputFormat;
     }
-    
+
     /**
      * Build a new Accepted format.
      */
@@ -83,10 +83,10 @@ public class AcceptFormatsType implements AcceptFormats {
                 this.outputFormat.add(element);
         }
     }
-    
+
     /**
      * Gets the value of the outputFormat property.
-     * 
+     *
      */
     @Override
     public List<String> getOutputFormat() {

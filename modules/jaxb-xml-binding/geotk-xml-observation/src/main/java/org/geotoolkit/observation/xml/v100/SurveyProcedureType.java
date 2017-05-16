@@ -41,8 +41,8 @@ import org.opengis.util.GenericName;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SurveyProcedure")
 public class SurveyProcedureType implements SurveyProcedure, Entry {
-    
-    
+
+
     /**
      */
     @XmlTransient
@@ -50,28 +50,28 @@ public class SurveyProcedureType implements SurveyProcedure, Entry {
 
     @XmlTransient
     private String name;
-    
+
     // JAXB issue  private Datum elevationDatum;
-    
+
     private ProcessType elevationMethod;
-    
+
     private MeasureType elevationAccuracy;
-    
+
     // JAXB issue  private Datum geodeticDatum;
-    
+
     private ProcessType positionMethod;
-    
+
     private MeasureType positionAccuracy;
-    
+
     // JAXB ISSUE private GenericNameType projection;
-    
+
     private AbstractTimeGeometricPrimitiveType surveyTime;
-    
+
     /**
      * Constructeur utilisé par JAXB
      */
     private SurveyProcedureType() {}
-    
+
     /** Creates a new instance of SurveyProcedureType */
     public SurveyProcedureType( final String name,
             final DefaultResponsibleParty operator,
@@ -82,7 +82,7 @@ public class SurveyProcedureType implements SurveyProcedure, Entry {
             final ProcessType positionMethod,
             final MeasureType positionAccuracy,
             final GenericName projection,
-            final AbstractTimeGeometricPrimitiveType surveyTime) 
+            final AbstractTimeGeometricPrimitiveType surveyTime)
     {
         this.name  = name;
         this.operator = operator;
@@ -91,10 +91,10 @@ public class SurveyProcedureType implements SurveyProcedure, Entry {
         this.elevationAccuracy = elevationAccuracy;
         // JAXB issue this.geodeticDatum = geodeticDatum;
         this.positionMethod = positionMethod;
-        this.positionAccuracy = positionAccuracy; 
+        this.positionAccuracy = positionAccuracy;
          // JAXB issue this.projection = projection;
         this.surveyTime = surveyTime;
-                
+
     }
 
     /**
@@ -107,48 +107,48 @@ public class SurveyProcedureType implements SurveyProcedure, Entry {
     public String getIdentifier() {
         return name;
     }
-    
+
     public ResponsibleParty getOperator() {
         return operator;
     }
-        
+
     public Datum getElevationDatum() {
         throw new UnsupportedOperationException("Not supported yet.");
         //return elevationDatum;
     }
-    
+
     public org.opengis.observation.Process getElevationMethod() {
         return elevationMethod;
     }
-    
+
     public Measure getElevationAccuracy() {
         throw new UnsupportedOperationException("Not supported yet.");
         //return elevationAccuracy;
     }
-    
+
     public Datum getGeodeticDatum() {
         throw new UnsupportedOperationException("Not supported yet.");
         //return geodeticDatum;
     }
-    
+
     public org.opengis.observation.Process getPositionMethod() {
     return positionMethod;
     }
-    
+
     public Measure getPositionAccuracy() {
         throw new UnsupportedOperationException("Not supported yet.");
         //return positionAccuracy;
     }
-    
+
     public GenericName getProjection() {
         throw new UnsupportedOperationException("Not supported yet.");
         //return projection;
     }
-    
+
     public TemporalObject getSurveyTime() {
         return (TemporalObject) surveyTime;
     }
-    
+
      /**
      * Retourne le code numérique identifiant cette entrée.
      */
@@ -156,7 +156,7 @@ public class SurveyProcedureType implements SurveyProcedure, Entry {
     public int hashCode() {
         return getName().hashCode();
     }
-    
+
     /**
      * Vérifie que cette procedure est identique à l'objet spécifié
      */
@@ -168,7 +168,7 @@ public class SurveyProcedureType implements SurveyProcedure, Entry {
         if (object instanceof SurveyProcedureType && super.equals(object)) {
             final SurveyProcedureType that = (SurveyProcedureType) object;
             return Objects.equals(this.operator,          that.operator)   &&
-                   //Objects.equals(this.elevationDatum,    that.elevationDatum)   && 
+                   //Objects.equals(this.elevationDatum,    that.elevationDatum)   &&
                    Objects.equals(this.elevationMethod,   that.elevationMethod) &&
                    Objects.equals(this.elevationAccuracy, that.elevationAccuracy) &&
                    Objects.equals(this.positionAccuracy,  that.positionAccuracy) &&

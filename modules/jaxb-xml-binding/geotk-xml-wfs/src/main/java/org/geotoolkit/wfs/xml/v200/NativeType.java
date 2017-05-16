@@ -31,9 +31,9 @@ import org.w3c.dom.Element;
 
 /**
  * <p>Java class for NativeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="NativeType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "NativeType", propOrder = {
@@ -66,27 +66,27 @@ public class NativeType {
 
     /**
      * Gets the value of the content property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the content property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getContent().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Element }
      * {@link Object }
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getContent() {
         if (content == null) {
@@ -97,11 +97,11 @@ public class NativeType {
 
     /**
      * Gets the value of the vendorId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVendorId() {
         return vendorId;
@@ -109,11 +109,11 @@ public class NativeType {
 
     /**
      * Sets the value of the vendorId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVendorId(String value) {
         this.vendorId = value;
@@ -121,7 +121,7 @@ public class NativeType {
 
     /**
      * Gets the value of the safeToIgnore property.
-     * 
+     *
      */
     public boolean isSafeToIgnore() {
         return safeToIgnore;
@@ -129,7 +129,7 @@ public class NativeType {
 
     /**
      * Sets the value of the safeToIgnore property.
-     * 
+     *
      */
     public void setSafeToIgnore(boolean value) {
         this.safeToIgnore = value;

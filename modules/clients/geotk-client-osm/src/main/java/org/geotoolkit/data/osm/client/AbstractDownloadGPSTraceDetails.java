@@ -43,5 +43,5 @@ public abstract class AbstractDownloadGPSTraceDetails extends AbstractRequest im
     public void setTraceID(final int id) {
         this.id = id;
     }
-    
+
 }

@@ -29,7 +29,7 @@ public class AttributeBinding extends AbstractBinding<Object>{
     public AttributeBinding() {
         super(Object.class, 25);
     }
-    
+
     @Override
     public boolean support(String xpath) {
         return ".".equalsIgnoreCase(xpath);
@@ -38,7 +38,7 @@ public class AttributeBinding extends AbstractBinding<Object>{
     @Override
     public <T> T get(Object candidate, String xpath, Class<T> target) throws IllegalArgumentException {
         if(candidate==null)return null;
-        
+
         if(candidate instanceof Attribute){
             if(Property.class.isAssignableFrom(target)){
                 return (T) candidate;
@@ -46,9 +46,9 @@ public class AttributeBinding extends AbstractBinding<Object>{
                 return (T) ((Attribute)candidate).getValue();
             }
         }
-        
+
         return (T) candidate;
-        
+
     }
 
     @Override
@@ -57,7 +57,7 @@ public class AttributeBinding extends AbstractBinding<Object>{
             ((Attribute)candidate).setValue(value);
         }
     }
-    
+
     /**
      * We strip off namespace prefix, we need new feature model to do this
      * property
@@ -65,7 +65,7 @@ public class AttributeBinding extends AbstractBinding<Object>{
      * <li>BEFORE: foo:bar
      * <li>AFTER: bar
      * </ul>
-     * 
+     *
      * @param xpath
      * @return xpath with any XML prefixes removed
      */
@@ -75,5 +75,5 @@ public class AttributeBinding extends AbstractBinding<Object>{
         }
         return xpath;
     }
-    
+
 }

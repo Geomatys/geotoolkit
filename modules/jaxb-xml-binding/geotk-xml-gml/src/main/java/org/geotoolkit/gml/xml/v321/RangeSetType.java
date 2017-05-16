@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for RangeSetType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RangeSetType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RangeSetType", propOrder = {
@@ -70,25 +70,25 @@ public class RangeSetType {
 
     /**
      * Gets the value of the valueArray property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the valueArray property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getValueArray().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ValueArrayType }
-     * 
-     * 
+     *
+     *
      */
     public List<ValueArrayType> getValueArray() {
         if (valueArray == null) {
@@ -99,20 +99,20 @@ public class RangeSetType {
 
     /**
      * Gets the value of the abstractScalarValueList property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the abstractScalarValueList property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAbstractScalarValueList().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link Object }{@code >}
@@ -120,8 +120,8 @@ public class RangeSetType {
      * {@link JAXBElement }{@code <}{@link List }{@code <}{@link String }{@code >}{@code >}
      * {@link JAXBElement }{@code <}{@link MeasureOrNilReasonListType }{@code >}
      * {@link JAXBElement }{@code <}{@link List }{@code <}{@link String }{@code >}{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<?>> getAbstractScalarValueList() {
         if (abstractScalarValueList == null) {
@@ -132,11 +132,11 @@ public class RangeSetType {
 
     /**
      * Gets the value of the dataBlock property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataBlockType }
-     *     
+     *
      */
     public DataBlockType getDataBlock() {
         return dataBlock;
@@ -144,11 +144,11 @@ public class RangeSetType {
 
     /**
      * Sets the value of the dataBlock property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataBlockType }
-     *     
+     *
      */
     public void setDataBlock(DataBlockType value) {
         this.dataBlock = value;
@@ -156,11 +156,11 @@ public class RangeSetType {
 
     /**
      * Gets the value of the file property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FileType }
-     *     
+     *
      */
     public FileType getFile() {
         return file;
@@ -168,11 +168,11 @@ public class RangeSetType {
 
     /**
      * Sets the value of the file property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FileType }
-     *     
+     *
      */
     public void setFile(FileType value) {
         this.file = value;

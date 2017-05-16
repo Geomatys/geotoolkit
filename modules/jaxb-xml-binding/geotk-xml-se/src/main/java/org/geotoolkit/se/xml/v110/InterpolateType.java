@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for InterpolateType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InterpolateType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,11 +68,11 @@ public class InterpolateType
 
     /**
      * Gets the value of the lookupValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getLookupValue() {
         return lookupValue;
@@ -80,11 +80,11 @@ public class InterpolateType
 
     /**
      * Sets the value of the lookupValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setLookupValue(final ParameterValueType value) {
         this.lookupValue = value;
@@ -92,25 +92,25 @@ public class InterpolateType
 
     /**
      * Gets the value of the interpolationPoint property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the interpolationPoint property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getInterpolationPoint().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link InterpolationPointType }
-     * 
-     * 
+     *
+     *
      */
     public List<InterpolationPointType> getInterpolationPoint() {
         if (interpolationPoint == null) {
@@ -121,11 +121,11 @@ public class InterpolateType
 
     /**
      * Gets the value of the mode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ModeType }
-     *     
+     *
      */
     public ModeType getMode() {
         return mode;
@@ -133,11 +133,11 @@ public class InterpolateType
 
     /**
      * Sets the value of the mode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ModeType }
-     *     
+     *
      */
     public void setMode(final ModeType value) {
         this.mode = value;
@@ -145,11 +145,11 @@ public class InterpolateType
 
     /**
      * Gets the value of the method property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MethodType }
-     *     
+     *
      */
     public MethodType getMethod() {
         return method;
@@ -157,11 +157,11 @@ public class InterpolateType
 
     /**
      * Sets the value of the method property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MethodType }
-     *     
+     *
      */
     public void setMethod(final MethodType value) {
         this.method = value;

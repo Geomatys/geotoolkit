@@ -25,11 +25,11 @@ import org.geotoolkit.swe.xml.AbstractCategoryProperty;
 
 /**
  * Category is a data-type so usually appears "by value" rather than by reference.
- * 
+ *
  * <p>Java class for CategoryPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CategoryPropertyType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.swe.xml.AbstractCategoryProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -66,11 +66,11 @@ public class CategoryPropertyType implements AbstractCategoryProperty {
 
     /**
      * Gets the value of the category property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Category }
-     *     
+     *
      */
     public Category getCategory() {
         return category;
@@ -78,11 +78,11 @@ public class CategoryPropertyType implements AbstractCategoryProperty {
 
     /**
      * Sets the value of the category property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Category }
-     *     
+     *
      */
     public void setCategory(final Category value) {
         this.category = value;

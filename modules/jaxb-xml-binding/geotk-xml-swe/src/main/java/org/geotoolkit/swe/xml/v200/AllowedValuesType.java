@@ -31,9 +31,9 @@ import org.geotoolkit.swe.xml.AbstractAllowedValues;
 
 /**
  * <p>Java class for AllowedValuesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AllowedValuesType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.swe.xml.AbstractAllowedValues;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AllowedValuesType", propOrder = {
@@ -66,10 +66,10 @@ public class AllowedValuesType extends AbstractSWEType implements AbstractAllowe
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Double }
-     * 
+     *
      */
     public List<Double> getValue() {
         if (value == null) {
@@ -89,13 +89,13 @@ public class AllowedValuesType extends AbstractSWEType implements AbstractAllowe
         }
         return null;
     }
-    
+
     /**
      * Gets the value of the interval property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link List }{@code <}{@link Double }{@code >}{@code >}
-     * 
+     *
      */
     public List<JAXBElement<List<Double>>> getJbInterval() {
         if (interval == null) {
@@ -106,11 +106,11 @@ public class AllowedValuesType extends AbstractSWEType implements AbstractAllowe
 
     /**
      * Gets the value of the significantFigures property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getSignificantFigures() {
         return significantFigures;
@@ -118,11 +118,11 @@ public class AllowedValuesType extends AbstractSWEType implements AbstractAllowe
 
     /**
      * Sets the value of the significantFigures property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setSignificantFigures(BigInteger value) {
         this.significantFigures = value;
@@ -147,7 +147,7 @@ public class AllowedValuesType extends AbstractSWEType implements AbstractAllowe
             final ObjectFactory factory = new ObjectFactory();
             interval = new ArrayList<>();
             interval.add(factory.createAllowedValuesTypeInterval(i));
-            
+
         } else if (!i.isEmpty()) {
             i.set(0, value);
         } else {
@@ -175,7 +175,7 @@ public class AllowedValuesType extends AbstractSWEType implements AbstractAllowe
             final ObjectFactory factory = new ObjectFactory();
             interval = new ArrayList<>();
             interval.add(factory.createAllowedValuesTypeInterval(i));
-            
+
         } else if (!i.isEmpty() && i.size() > 1) {
             i.set(1, value);
         } else if (!i.isEmpty() && i.size() == 1) {

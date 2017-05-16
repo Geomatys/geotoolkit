@@ -33,9 +33,9 @@ import org.geotoolkit.gml.xml.v321.ReferenceType;
 
 /**
  * <p>Java class for AbstractProcessType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractProcessType">
  *   &lt;complexContent>
@@ -114,8 +114,8 @@ import org.geotoolkit.gml.xml.v321.ReferenceType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractProcessType", propOrder = {
@@ -149,11 +149,11 @@ public abstract class AbstractProcessType
 
     /**
      * Gets the value of the typeOf property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getTypeOf() {
         return typeOf;
@@ -161,11 +161,11 @@ public abstract class AbstractProcessType
 
     /**
      * Sets the value of the typeOf property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setTypeOf(ReferenceType value) {
         this.typeOf = value;
@@ -173,11 +173,11 @@ public abstract class AbstractProcessType
 
     /**
      * Gets the value of the configuration property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AbstractProcessType.Configuration }
-     *     
+     *
      */
     public AbstractProcessType.Configuration getConfiguration() {
         return configuration;
@@ -185,11 +185,11 @@ public abstract class AbstractProcessType
 
     /**
      * Sets the value of the configuration property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AbstractProcessType.Configuration }
-     *     
+     *
      */
     public void setConfiguration(AbstractProcessType.Configuration value) {
         this.configuration = value;
@@ -197,11 +197,11 @@ public abstract class AbstractProcessType
 
     /**
      * Gets the value of the featuresOfInterest property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AbstractProcessType.FeaturesOfInterest }
-     *     
+     *
      */
     public AbstractProcessType.FeaturesOfInterest getFeaturesOfInterest() {
         return featuresOfInterest;
@@ -209,11 +209,11 @@ public abstract class AbstractProcessType
 
     /**
      * Sets the value of the featuresOfInterest property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AbstractProcessType.FeaturesOfInterest }
-     *     
+     *
      */
     public void setFeaturesOfInterest(AbstractProcessType.FeaturesOfInterest value) {
         this.featuresOfInterest = value;
@@ -221,11 +221,11 @@ public abstract class AbstractProcessType
 
     /**
      * Gets the value of the inputs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AbstractProcessType.Inputs }
-     *     
+     *
      */
     public AbstractProcessType.Inputs getInputs() {
         return inputs;
@@ -233,11 +233,11 @@ public abstract class AbstractProcessType
 
     /**
      * Sets the value of the inputs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AbstractProcessType.Inputs }
-     *     
+     *
      */
     public void setInputs(AbstractProcessType.Inputs value) {
         this.inputs = value;
@@ -245,11 +245,11 @@ public abstract class AbstractProcessType
 
     /**
      * Gets the value of the outputs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AbstractProcessType.Outputs }
-     *     
+     *
      */
     public AbstractProcessType.Outputs getOutputs() {
         return outputs;
@@ -257,11 +257,11 @@ public abstract class AbstractProcessType
 
     /**
      * Sets the value of the outputs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AbstractProcessType.Outputs }
-     *     
+     *
      */
     public void setOutputs(AbstractProcessType.Outputs value) {
         this.outputs = value;
@@ -269,11 +269,11 @@ public abstract class AbstractProcessType
 
     /**
      * Gets the value of the parameters property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AbstractProcessType.Parameters }
-     *     
+     *
      */
     public AbstractProcessType.Parameters getParameters() {
         return parameters;
@@ -281,11 +281,11 @@ public abstract class AbstractProcessType
 
     /**
      * Sets the value of the parameters property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AbstractProcessType.Parameters }
-     *     
+     *
      */
     public void setParameters(AbstractProcessType.Parameters value) {
         this.parameters = value;
@@ -293,25 +293,25 @@ public abstract class AbstractProcessType
 
     /**
      * Gets the value of the modes property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the modes property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getModes().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractProcessType.Modes }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractProcessType.Modes> getModes() {
         if (modes == null) {
@@ -322,11 +322,11 @@ public abstract class AbstractProcessType
 
     /**
      * Gets the value of the definition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDefinition() {
         return definition;
@@ -334,11 +334,11 @@ public abstract class AbstractProcessType
 
     /**
      * Sets the value of the definition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDefinition(String value) {
         this.definition = value;
@@ -347,9 +347,9 @@ public abstract class AbstractProcessType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -361,8 +361,8 @@ public abstract class AbstractProcessType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -375,12 +375,12 @@ public abstract class AbstractProcessType
 
         /**
          * Gets the value of the abstractSettings property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link JAXBElement }{@code <}{@link SettingsType }{@code >}
          *     {@link JAXBElement }{@code <}{@link AbstractSettingsType }{@code >}
-         *     
+         *
          */
         public JAXBElement<? extends AbstractSettingsType> getAbstractSettings() {
             return abstractSettings;
@@ -388,12 +388,12 @@ public abstract class AbstractProcessType
 
         /**
          * Sets the value of the abstractSettings property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link JAXBElement }{@code <}{@link SettingsType }{@code >}
          *     {@link JAXBElement }{@code <}{@link AbstractSettingsType }{@code >}
-         *     
+         *
          */
         public void setAbstractSettings(JAXBElement<? extends AbstractSettingsType> value) {
             this.abstractSettings = value;
@@ -404,9 +404,9 @@ public abstract class AbstractProcessType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -418,8 +418,8 @@ public abstract class AbstractProcessType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -432,11 +432,11 @@ public abstract class AbstractProcessType
 
         /**
          * Gets the value of the featureList property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link FeatureListType }
-         *     
+         *
          */
         public FeatureListType getFeatureList() {
             return featureList;
@@ -444,11 +444,11 @@ public abstract class AbstractProcessType
 
         /**
          * Sets the value of the featureList property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link FeatureListType }
-         *     
+         *
          */
         public void setFeatureList(FeatureListType value) {
             this.featureList = value;
@@ -459,9 +459,9 @@ public abstract class AbstractProcessType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -473,8 +473,8 @@ public abstract class AbstractProcessType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -487,11 +487,11 @@ public abstract class AbstractProcessType
 
         /**
          * Gets the value of the inputList property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link InputListType }
-         *     
+         *
          */
         public InputListType getInputList() {
             return inputList;
@@ -499,11 +499,11 @@ public abstract class AbstractProcessType
 
         /**
          * Sets the value of the inputList property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link InputListType }
-         *     
+         *
          */
         public void setInputList(InputListType value) {
             this.inputList = value;
@@ -514,9 +514,9 @@ public abstract class AbstractProcessType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -528,8 +528,8 @@ public abstract class AbstractProcessType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -542,12 +542,12 @@ public abstract class AbstractProcessType
 
         /**
          * Gets the value of the abstractModes property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link JAXBElement }{@code <}{@link AbstractModesType }{@code >}
          *     {@link JAXBElement }{@code <}{@link ModeChoiceType }{@code >}
-         *     
+         *
          */
         public JAXBElement<? extends AbstractModesType> getAbstractModes() {
             return abstractModes;
@@ -555,12 +555,12 @@ public abstract class AbstractProcessType
 
         /**
          * Sets the value of the abstractModes property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link JAXBElement }{@code <}{@link AbstractModesType }{@code >}
          *     {@link JAXBElement }{@code <}{@link ModeChoiceType }{@code >}
-         *     
+         *
          */
         public void setAbstractModes(JAXBElement<? extends AbstractModesType> value) {
             this.abstractModes = value;
@@ -571,9 +571,9 @@ public abstract class AbstractProcessType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -585,8 +585,8 @@ public abstract class AbstractProcessType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -599,11 +599,11 @@ public abstract class AbstractProcessType
 
         /**
          * Gets the value of the outputList property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link OutputListType }
-         *     
+         *
          */
         public OutputListType getOutputList() {
             return outputList;
@@ -611,11 +611,11 @@ public abstract class AbstractProcessType
 
         /**
          * Sets the value of the outputList property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link OutputListType }
-         *     
+         *
          */
         public void setOutputList(OutputListType value) {
             this.outputList = value;
@@ -626,9 +626,9 @@ public abstract class AbstractProcessType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -640,8 +640,8 @@ public abstract class AbstractProcessType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -654,11 +654,11 @@ public abstract class AbstractProcessType
 
         /**
          * Gets the value of the parameterList property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link ParameterListType }
-         *     
+         *
          */
         public ParameterListType getParameterList() {
             return parameterList;
@@ -666,11 +666,11 @@ public abstract class AbstractProcessType
 
         /**
          * Sets the value of the parameterList property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link ParameterListType }
-         *     
+         *
          */
         public void setParameterList(ParameterListType value) {
             this.parameterList = value;

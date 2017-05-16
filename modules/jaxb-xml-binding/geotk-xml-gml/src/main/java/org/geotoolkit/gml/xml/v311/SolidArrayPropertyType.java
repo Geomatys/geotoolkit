@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * A container for an array of solids. The elements are always contained in the array property, referencing geometry elements or arrays of geometry elements is not supported.
- * 
+ *
  * <p>Java class for SolidArrayPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SolidArrayPropertyType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,7 +62,7 @@ public class SolidArrayPropertyType {
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractSolidType }{@code >}
      * {@link JAXBElement }{@code <}{@link SolidType }{@code >}
-     * 
+     *
      */
     public List<JAXBElement<? extends AbstractSolidType>> getJbAbstractSolid() {
         if (abstractSolid == null) {

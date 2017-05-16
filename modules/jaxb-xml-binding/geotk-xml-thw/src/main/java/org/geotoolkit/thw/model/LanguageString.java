@@ -77,7 +77,7 @@ public class LanguageString {
         }
         return sb.toString();
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) {

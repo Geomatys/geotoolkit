@@ -19,7 +19,6 @@ package org.geotoolkit.data.shapefile.indexed;
 import org.junit.Test;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -136,8 +135,8 @@ public class FidQueryTest extends FIDTestCase {
         try {
             feature = features.next();
             for(PropertyType desc : schema.getProperties(true)){
-                final Object value = feature.getPropertyValue(desc.getName().tip().toString());
-                final Object newValue = newFeature.getPropertyValue(desc.getName().tip().toString());
+                final Object value = feature.getPropertyValue(desc.getName().toString());
+                final Object newValue = newFeature.getPropertyValue(desc.getName().toString());
 
                 if (value instanceof Geometry) {
                     assertTrue(((Geometry) newValue).equals((Geometry) value));

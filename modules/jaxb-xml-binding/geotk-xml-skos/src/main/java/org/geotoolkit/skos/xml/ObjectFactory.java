@@ -27,22 +27,22 @@ public class ObjectFactory {
 
    /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.sld
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link UserDefinedSymbolization }
-     * 
+     *
      */
     public RDF createRDF() {
         return new RDF();
     }
-    
+
     /**
      * Create an instance of {@link DescribeLayerResponseType }
-     * 
+     *
      */
     public Concept  createConcept() {
         return new Concept();

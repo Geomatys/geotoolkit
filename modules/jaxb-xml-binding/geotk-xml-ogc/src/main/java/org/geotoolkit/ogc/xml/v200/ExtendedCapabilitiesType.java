@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for Extended_CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Extended_CapabilitiesType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Extended_CapabilitiesType", propOrder = {
@@ -54,11 +54,11 @@ public class ExtendedCapabilitiesType {
 
     /**
      * Gets the value of the additionalOperators property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AdditionalOperatorsType }
-     *     
+     *
      */
     public AdditionalOperatorsType getAdditionalOperators() {
         return additionalOperators;
@@ -66,11 +66,11 @@ public class ExtendedCapabilitiesType {
 
     /**
      * Sets the value of the additionalOperators property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AdditionalOperatorsType }
-     *     
+     *
      */
     public void setAdditionalOperators(AdditionalOperatorsType value) {
         this.additionalOperators = value;

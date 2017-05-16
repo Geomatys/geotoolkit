@@ -31,16 +31,16 @@ import org.geotoolkit.dublincore.xml.v2.elements.SimpleLiteral;
 
 
 /**
- * 
+ *
  * This type encapsulates all of the standard DCMI metadata terms,
  * including the Dublin Core refinements; these terms may be mapped
  * to the profile-specific information model.
- *          
- * 
+ *
+ *
  * <p>Java class for DCMIRecordType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DCMIRecordType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.dublincore.xml.v2.elements.SimpleLiteral;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -66,7 +66,7 @@ import org.geotoolkit.dublincore.xml.v2.elements.SimpleLiteral;
     "language"    ,
     "creator"     ,
     "modified"    ,
-    "date"        ,    
+    "date"        ,
     "_abstract"   ,
     "references"  ,
     "spatial"     ,
@@ -113,50 +113,50 @@ import org.geotoolkit.dublincore.xml.v2.elements.SimpleLiteral;
     "accrualMethod",
     "accrualPeriodicity",
     "accrualPolicy",
-    "dcElement"   
+    "dcElement"
 })
 @XmlSeeAlso({
     RecordType.class
 })
-@XmlRootElement(name="DCMIRecord") 
+@XmlRootElement(name="DCMIRecord")
 public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
 
     @XmlElement(name = "identifier", namespace = "http://purl.org/dc/elements/1.1/")
     private SimpleLiteral identifier;
-    
+
     @XmlElement(name = "title", namespace = "http://purl.org/dc/elements/1.1/")
     private SimpleLiteral title;
-    
+
     @XmlElement(name = "type", namespace = "http://purl.org/dc/elements/1.1/")
     private SimpleLiteral type;
-    
+
     @XmlElement(name = "subject", namespace = "http://purl.org/dc/elements/1.1/")
     private List<SimpleLiteral> subject;
-    
+
     @XmlElement(name = "format", namespace = "http://purl.org/dc/elements/1.1/")
     private List<SimpleLiteral> format;
-    
+
     @XmlElement(name = "language", namespace = "http://purl.org/dc/elements/1.1/")
     private SimpleLiteral language;
-    
+
     @XmlElement(name = "creator", namespace = "http://purl.org/dc/elements/1.1/")
     private List<SimpleLiteral> creator;
-    
+
     @XmlElementRef(name = "DC-element", namespace = "http://purl.org/dc/elements/1.1/", type = JAXBElement.class)
     private List<JAXBElement<SimpleLiteral>> dcElement;
 
     @XmlElement(name = "modified", namespace = "http://purl.org/dc/terms/")
     private SimpleLiteral modified;
-    
+
     @XmlElement(name = "date", namespace = "http://purl.org/dc/elements/1.1/")
     private SimpleLiteral date;
-    
+
     @XmlElement(name = "abstract", namespace = "http://purl.org/dc/terms/")
     private List<SimpleLiteral> _abstract;
-    
+
     @XmlElement(name = "spatial", namespace = "http://purl.org/dc/terms/")
     private SimpleLiteral spatial;
-    
+
     @XmlElement(name = "references", namespace = "http://purl.org/dc/terms/")
     private SimpleLiteral references;
 
@@ -282,10 +282,10 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
 
     @XmlElement(name = "accrualMethod", namespace = "http://purl.org/dc/terms/")
     private List<SimpleLiteral> accrualMethod;
-    
+
     @XmlElement(name = "accrualPeriodicity", namespace = "http://purl.org/dc/terms/")
     private List<SimpleLiteral> accrualPeriodicity;
-    
+
     @XmlElement(name = "accrualPolicy", namespace = "http://purl.org/dc/terms/")
     private List<SimpleLiteral> accrualPolicy;
     /**
@@ -294,13 +294,13 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     DCMIRecordType() {
         this.dcElement = new ArrayList<>();
     }
-        
-    
-    public DCMIRecordType(final SimpleLiteral identifier, final SimpleLiteral title, final SimpleLiteral type, 
+
+
+    public DCMIRecordType(final SimpleLiteral identifier, final SimpleLiteral title, final SimpleLiteral type,
             final List<SimpleLiteral> subjects, final SimpleLiteral format, final SimpleLiteral modified, final SimpleLiteral date, final SimpleLiteral _abstract,
             final SimpleLiteral creator, final SimpleLiteral publisher, final SimpleLiteral language, final SimpleLiteral spatial,
             final SimpleLiteral references) {
-        
+
         this.identifier = identifier;
         this.title      = title;
         this.type       = type;
@@ -310,7 +310,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         }
         this.date      = date;
         this.dcElement = new ArrayList<>();
-        
+
         this.subject     = subjects;
         if (creator != null) {
             this.creator = new ArrayList<>();
@@ -328,22 +328,22 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         }
         this.spatial     = spatial;
         this.references  = references;
-        
+
     }
-    
-    public DCMIRecordType(final SimpleLiteral identifier, final SimpleLiteral title, final SimpleLiteral type, 
+
+    public DCMIRecordType(final SimpleLiteral identifier, final SimpleLiteral title, final SimpleLiteral type,
             final List<SimpleLiteral> subjects, final List<SimpleLiteral> format, final SimpleLiteral modified, final SimpleLiteral date, final List<SimpleLiteral> _abstract,
             final List<SimpleLiteral> creator, final SimpleLiteral publisher, final SimpleLiteral language, final SimpleLiteral spatial,
             final SimpleLiteral references, final List<SimpleLiteral> relation) {
-        
+
         this.identifier = identifier;
         this.title      = title;
         this.type       = type;
         this.format     = format;
         this.date       = date;
-        
+
         this.dcElement = new ArrayList<>();
-        
+
         this.subject     = subjects;
         this.creator     = creator;
         if (publisher != null) {
@@ -355,9 +355,9 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         this.spatial     = spatial;
         this.references  = references;
         this.relation    = relation;
-        
+
     }
-    
+
     /**
      * Gets the value of the dcElement property.
      */
@@ -368,16 +368,16 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         }
         return dcElement;
     }
-    
+
     public void setIdentifier(final SimpleLiteral identifier) {
         this.identifier = identifier;
     }
-    
+
     @Override
     public SimpleLiteral getIdentifier() {
         return identifier;
     }
-    
+
     @Override
     public String getIdentifierStringValue() {
         if (identifier != null) {
@@ -385,16 +385,16 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         }
         return null;
     }
-    
+
     public void setTitle(final SimpleLiteral title) {
         this.title = title;
     }
-    
+
     @Override
     public SimpleLiteral getTitle() {
         return title;
     }
-    
+
     @Override
     public String getTitleStringValue() {
         if (title != null) {
@@ -402,16 +402,16 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         }
         return null;
     }
-    
+
     public void setType(final SimpleLiteral type) {
         this.type = type;
     }
-    
+
     @Override
     public SimpleLiteral getType() {
         return type;
     }
-    
+
     @Override
     public String getTypeStringValue() {
         if (type != null) {
@@ -419,18 +419,18 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         }
         return null;
     }
-    
+
     public void setSubject(final List<SimpleLiteral> subjects) {
         this.subject = subjects;
     }
-    
+
     public void setSubject(final SimpleLiteral subject) {
         if (this.subject == null) {
             this.subject = new ArrayList<>();
         }
         this.subject.add(subject);
     }
-    
+
     @Override
     public List<SimpleLiteral> getSubject() {
         if (subject == null) {
@@ -438,38 +438,38 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         }
         return subject;
     }
-    
+
     public void setFormat(final SimpleLiteral format) {
         this.format = Arrays.asList(format);
     }
-    
+
     public void setFormat(final List<SimpleLiteral> format) {
         this.format = format;
     }
-    
+
     @Override
     public List<SimpleLiteral> getFormat() {
         return format;
     }
-    
+
     public void setModified(final SimpleLiteral modified) {
         this.modified = modified;
     }
-    
+
     @Override
     public SimpleLiteral getModified() {
         return modified;
     }
-    
+
     public void setDate(final SimpleLiteral date) {
         this.date = date;
     }
-    
+
     @Override
     public SimpleLiteral getDate() {
         return date;
     }
-    
+
     @Override
     public String getDateStringValue() {
         if (date != null) {
@@ -477,20 +477,20 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         }
         return null;
     }
-    
+
     public void setAbstract(final SimpleLiteral _abstract) {
         this._abstract = Arrays.asList(_abstract);
     }
-    
+
     public void setAbstract(final List<SimpleLiteral> _abstract) {
         this._abstract =_abstract;
     }
-    
+
     @Override
     public List<SimpleLiteral> getAbstract() {
         return _abstract;
     }
-    
+
     @Override
     public String getAbstractStringValue() {
         if (_abstract != null && !_abstract.isEmpty()) {
@@ -498,20 +498,20 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         }
         return null;
     }
-    
+
     public void setCreator(final SimpleLiteral creator) {
         this.creator = Arrays.asList(creator);
     }
-    
+
     public void setCreator(final List<SimpleLiteral> creator) {
         this.creator = creator;
     }
-    
+
     @Override
     public List<SimpleLiteral> getCreator() {
         return creator;
     }
-    
+
     @Override
     public String getCreatorStringValue() {
         if (creator != null && !creator.isEmpty()) {
@@ -519,16 +519,16 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         }
         return null;
     }
-    
+
     public void setLanguage(final SimpleLiteral language) {
         this.language = language;
     }
-    
+
     @Override
     public SimpleLiteral getLanguage() {
         return language;
     }
-    
+
     public void setRelation(final SimpleLiteral relation) {
         if (this.relation == null) {
             this.relation = new ArrayList<>();
@@ -539,12 +539,12 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     public void setRelation(final List<SimpleLiteral> relation) {
         this.relation = relation;
     }
-    
+
     @Override
     public List<SimpleLiteral> getRelation() {
         return relation;
     }
-    
+
     public void setSource(final SimpleLiteral source) {
         if (this.source == null) {
             this.source = new ArrayList<>();
@@ -555,7 +555,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     public void setSource(final List<SimpleLiteral> source) {
         this.source = source;
     }
-    
+
     @Override
     public List<SimpleLiteral> getSource() {
        return source;
@@ -571,12 +571,12 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     public void setCoverage(final List<SimpleLiteral> coverage) {
         this.coverage = coverage;
     }
-    
+
     @Override
     public List<SimpleLiteral> getCoverage() {
         return coverage;
     }
-    
+
     public void setRights(final SimpleLiteral rights) {
         if (this.rights == null) {
             this.rights = new ArrayList<>();
@@ -589,30 +589,30 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     public void setRights(final List<SimpleLiteral> rights) {
         this.rights = rights;
     }
-    
+
     @Override
     public List<SimpleLiteral> getRights() {
         return rights;
     }
-    
+
     public void setSpatial(final SimpleLiteral spatial) {
         this.spatial = spatial;
     }
-    
+
     @Override
     public SimpleLiteral getSpatial() {
          return spatial;
     }
-    
+
     public void setReferences(final SimpleLiteral references) {
         this.references = references;
     }
-    
+
     @Override
     public SimpleLiteral getReferences() {
         return references;
     }
-    
+
     public void setPublisher(final List<SimpleLiteral> publisher) {
         this.publisher = publisher;
     }
@@ -623,12 +623,12 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         }
         this.publisher.add(publisher);
     }
-    
+
     @Override
     public List<SimpleLiteral> getPublisher() {
         return publisher;
     }
-    
+
     @Override
     public String getPublisherStringValue() {
         if (publisher != null && !publisher.isEmpty()) {
@@ -636,7 +636,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         }
         return null;
     }
-    
+
     public void setContributor(final List<SimpleLiteral> contributor) {
         this.contributor = contributor;
     }
@@ -647,12 +647,12 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         }
         this.contributor.add(contributor);
     }
-    
+
     @Override
     public List<SimpleLiteral> getContributor() {
         return contributor;
     }
-    
+
     @Override
     public String getContributorStringValue() {
         if (contributor != null && !contributor.isEmpty()) {
@@ -660,23 +660,23 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         }
         return null;
     }
-    
+
     public void setDescription(final List<SimpleLiteral> description) {
         this.description = description;
     }
-    
+
     public void setDescription(final SimpleLiteral description) {
         if (this.description == null) {
             this.description = new ArrayList<>();
         }
         this.description.add(description);
     }
-    
+
     @Override
     public List<SimpleLiteral> getDescription() {
         return description;
     }
-    
+
     @Override
     public String getDescriptionStringValue() {
         if (description != null && !description.isEmpty()) {
@@ -684,7 +684,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         }
         return null;
     }
-    
+
     @Override
     public List<String> getDescriptionStringValues() {
         if (description != null && !description.isEmpty()) {
@@ -700,7 +700,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     public SimpleLiteral getTemporal() {
         return temporal;
     }
-    
+
     /**
      * if the attribute have not been fill by JAXB we search in DCelement
      */
@@ -712,7 +712,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         }
         return null;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']');
@@ -786,7 +786,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         }
         return s.toString();
     }
-    
+
      /**
      * Verify if this entry is identical to the specified object.
      */
@@ -799,13 +799,13 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
             final DCMIRecordType that = (DCMIRecordType) object;
 
             boolean dcelement = this.dcElement.size() == that.dcElement.size();
-        
+
             //we verify that the two list contains the same object
             List<SimpleLiteral> obj = new ArrayList<>();
             for (JAXBElement<SimpleLiteral> jb: dcElement) {
                 obj.add(jb.getValue());
             }
-        
+
             for (JAXBElement<SimpleLiteral> jb: that.dcElement) {
                 if (!obj.contains(jb.getValue())) {
                     dcelement = false;
@@ -1682,7 +1682,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         }
         this.accrualPolicy.add(instructionalPolicy);
     }
-    
+
     @Override
     public AbstractSimpleLiteral getDCProperty(final String property) {
         if (dcElement != null) {

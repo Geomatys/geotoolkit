@@ -22,7 +22,7 @@ package org.geotoolkit.sos.netcdf;
  * @author Guilhem Legal (Geomatys)
  */
 public enum Type {
-    
+
     DOUBLE,
     STRING,
     DATE,

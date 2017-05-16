@@ -24,7 +24,7 @@ import javax.swing.ImageIcon;
 
 /**
  * property panel interface
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -36,21 +36,21 @@ public interface PropertyPane {
     public static final String RELOAD = "reload";
 
     public boolean canHandle(Object target);
-    
+
     public void setTarget(Object target);
-    
+
     public void apply();
-    
+
     public void reset();
-    
+
     public String getTitle();
-    
+
     public ImageIcon getIcon();
-    
+
     public Image getPreview();
-    
+
     public String getToolTip();
-    
+
     public Component getComponent();
-    
+
 }

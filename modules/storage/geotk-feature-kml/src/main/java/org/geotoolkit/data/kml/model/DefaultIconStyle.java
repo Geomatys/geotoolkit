@@ -35,7 +35,7 @@ public class DefaultIconStyle extends DefaultAbstractColorStyle implements IconS
     private Vec2 hotSpot;
 
     /**
-     * 
+     *
      */
     public DefaultIconStyle() {
         this.scale = DEF_SCALE;
@@ -43,7 +43,7 @@ public class DefaultIconStyle extends DefaultAbstractColorStyle implements IconS
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractSubStyleSimpleExtensions

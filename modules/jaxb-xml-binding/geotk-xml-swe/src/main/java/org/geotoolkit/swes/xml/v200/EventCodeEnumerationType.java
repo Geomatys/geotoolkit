@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for EventCodeEnumerationType.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "EventCodeEnumerationType")
 @XmlEnum
@@ -47,35 +47,35 @@ public enum EventCodeEnumerationType {
 
     /**
      * A property inside the service&rsquo;s Capabilities document was added, removed or changed its value. If multiple changes happen at the same time (or in a time interval sufficiently small for a service to recognize them as belonging together) then they constitute one capabilities changed event.
-     * 
+     *
      */
     @XmlEnumValue("CapabilitiesChanged")
     CAPABILITIES_CHANGED("CapabilitiesChanged"),
 
     /**
      * A new offering - as defined by the SWE Service Model - was added to the service.
-     * 
+     *
      */
     @XmlEnumValue("OfferingAdded")
     OFFERING_ADDED("OfferingAdded"),
 
     /**
      * An offering- as defined by the SWE Service Model - was deleted from the service.
-     * 
+     *
      */
     @XmlEnumValue("OfferingDeleted")
     OFFERING_DELETED("OfferingDeleted"),
 
     /**
      * The description of a sensor was updated, meaning that information contained in the current and / or previous versions of the sensor's description was added, removed or modified.
-     * 
+     *
      */
     @XmlEnumValue("SensorDescriptionUpdated")
     SENSOR_DESCRIPTION_UPDATED("SensorDescriptionUpdated"),
 
     /**
      * A sensor was inserted at the service, resulting in a new offering - as defined by the SWE Service Model - having been added to the service.
-     * 
+     *
      */
     @XmlEnumValue("SensorInserted")
     SENSOR_INSERTED("SensorInserted");

@@ -28,7 +28,7 @@ import org.geotoolkit.wms.xml.AbstractOperation;
 
 
 /**
- * 
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -47,7 +47,7 @@ public class GetMap implements AbstractOperation {
     public GetMap() {
 
     }
-    
+
     public GetMap(final GetMap that) {
         if (that.format != null) {
             this.format = new ArrayList<Format>();
@@ -75,7 +75,7 @@ public class GetMap implements AbstractOperation {
             this.dcpType.addAll(Arrays.asList(dcpList));
         }
     }
-    
+
     /**
      * Gets the value of the format property.
      */
@@ -85,14 +85,14 @@ public class GetMap implements AbstractOperation {
         }
         return this.format;
     }
-    
+
     /**
      * Gets the string values of the available formats.
      */
     public List<String> getFormats() {
         final List<String> formats = new ArrayList<String>();
         final List<Format> list = getFormat();
-        
+
         for (final Format curr : list) {
             formats.add(curr.getvalue());
         }
@@ -101,7 +101,7 @@ public class GetMap implements AbstractOperation {
 
     /**
      * Gets the value of the dcpType property.
-     * 
+     *
      */
     public List<DCPType> getDCPType() {
         if (dcpType == null) {

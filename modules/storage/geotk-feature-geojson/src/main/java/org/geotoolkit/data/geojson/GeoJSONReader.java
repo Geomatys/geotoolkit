@@ -165,7 +165,7 @@ public class GeoJSONReader implements FeatureReader {
         final Feature feature = featureType.newInstance();
         feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), featureId);
         feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
-        
+
         //recursively fill other properties
         final Map<String, Object> properties = jsonFeature.getProperties();
         fillFeature(feature, properties);

@@ -26,12 +26,12 @@ import org.geotoolkit.wcs.xml.Output;
 
 
 /**
- * Asks for the GetCoverage response to be expressed in a particular Coordinate Reference System (crs) and encoded in a particular format. 
- * 
+ * Asks for the GetCoverage response to be expressed in a particular Coordinate Reference System (crs) and encoded in a particular format.
+ *
  * <p>Java class for OutputType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OutputType">
  *   &lt;complexContent>
@@ -44,7 +44,7 @@ import org.geotoolkit.wcs.xml.Output;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -66,7 +66,7 @@ public class OutputType implements Output {
      * An empty constructor used by JAXB
      */
     OutputType(){}
-    
+
     /**
      * Build a new Output Type with the specified format and response CRS
      */
@@ -82,7 +82,7 @@ public class OutputType implements Output {
         this.crs = new CodeType(crs);
         this.resolutions = resolutions;
     }
-    
+
     /**
      * Gets the value of the crs property.
      */

@@ -20,7 +20,7 @@ import java.util.Date;
 
 /**
  * Abstract Version control, override methods to support edition.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public abstract class AbstractVersionControl extends AbstractVersionHistory implements VersionControl {
@@ -28,17 +28,17 @@ public abstract class AbstractVersionControl extends AbstractVersionHistory impl
     /**
      * Overwrite to enable versioning edition.
      * @return false
-     * @throws VersioningException 
+     * @throws VersioningException
      */
     @Override
     public boolean isEditable() {
         return false;
     }
-    
+
     /**
      * Overwrite to enable automatic edition.
      * @return false
-     * @throws VersioningException 
+     * @throws VersioningException
      */
     @Override
     public boolean isAutomatic(){
@@ -48,7 +48,7 @@ public abstract class AbstractVersionControl extends AbstractVersionHistory impl
     /**
      * Overwrite to enable manual edition.
      * @return false
-     * @throws VersioningException 
+     * @throws VersioningException
      */
     @Override
     public Version createVersion(Date date) throws VersioningException {
@@ -58,27 +58,27 @@ public abstract class AbstractVersionControl extends AbstractVersionHistory impl
     /**
      * Overwrite to enable manual edition.
      * @return false
-     * @throws VersioningException 
+     * @throws VersioningException
      */
     @Override
     public void dropVersion(Version version) throws VersioningException {
         throw new VersioningException("Versioning edition not supported.");
     }
-    
+
     /**
      * Overwrite to enable versioning edition.
-     * @param version 
-     * @throws VersioningException 
+     * @param version
+     * @throws VersioningException
      */
     @Override
     public void trim(Version version) throws VersioningException {
         trim(version.getDate());
     }
-    
+
     /**
      * Overwrite to enable versioning edition.
-     * @param version 
-     * @throws VersioningException 
+     * @param version
+     * @throws VersioningException
      */
     @Override
     public void trim(Date date) throws VersioningException {
@@ -87,27 +87,27 @@ public abstract class AbstractVersionControl extends AbstractVersionHistory impl
 
     /**
      * Overwrite to enable versioning edition.
-     * @param version 
-     * @throws VersioningException 
+     * @param version
+     * @throws VersioningException
      */
     @Override
     public void revert(Version version) throws VersioningException {
         revert(version.getDate());
     }
-    
+
     /**
      * Overwrite to enable versioning edition.
-     * @param version 
-     * @throws VersioningException 
+     * @param version
+     * @throws VersioningException
      */
     @Override
     public void revert(Date date) throws VersioningException {
         throw new VersioningException("Versioning edition not supported.");
     }
-    
+
     /**
      * Overwrite to enable versioning edition.
-     * @throws VersioningException 
+     * @throws VersioningException
      */
     @Override
     public void startVersioning() throws VersioningException {
@@ -116,11 +116,11 @@ public abstract class AbstractVersionControl extends AbstractVersionHistory impl
 
     /**
      * Overwrite to enable versioning edition.
-     * @throws VersioningException 
+     * @throws VersioningException
      */
     @Override
     public void dropVersioning() throws VersioningException {
         throw new VersioningException("Versioning edition not supported.");
     }
-    
+
 }

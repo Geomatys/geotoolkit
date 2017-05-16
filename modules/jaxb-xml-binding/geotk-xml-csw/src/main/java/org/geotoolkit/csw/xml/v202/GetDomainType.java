@@ -27,13 +27,13 @@ import org.geotoolkit.csw.xml.GetDomain;
 
 
 /**
- * Requests the actual values of some specified request parameter 
+ * Requests the actual values of some specified request parameter
  *         or other data element.
- * 
+ *
  * <p>Java class for GetDomainType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetDomainType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.csw.xml.GetDomain;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -71,13 +71,13 @@ public class GetDomainType extends RequestBaseType implements GetDomain {
      * An empty constructor used by JAXB
      */
     public GetDomainType() {
-        
+
     }
-    
+
     /**
      * Build a new GetDomain request.
      * One of propertyName or parameterName must be null
-     * 
+     *
      * @param service
      * @param version
      * @param propertyName
@@ -90,7 +90,7 @@ public class GetDomainType extends RequestBaseType implements GetDomain {
         this.propertyName  = propertyName;
         this.parameterName = parameterName;
     }
-    
+
     /**
      * Gets the value of the propertyName property.
      */

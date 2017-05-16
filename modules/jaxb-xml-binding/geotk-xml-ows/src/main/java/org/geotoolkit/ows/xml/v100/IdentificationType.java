@@ -27,12 +27,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * General metadata identifying and describing a set of data. This type shall be extended if needed for each specific OWS to include additional metadata for each type of dataset. If needed, this type should first be restricted for each specific OWS to change the multiplicity (or optionality) of some elements. 
- * 
+ * General metadata identifying and describing a set of data. This type shall be extended if needed for each specific OWS to include additional metadata for each type of dataset. If needed, this type should first be restricted for each specific OWS to change the multiplicity (or optionality) of some elements.
+ *
  * <p>Java class for IdentificationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="IdentificationType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -74,14 +74,14 @@ public class IdentificationType extends DescriptionType {
     private List<MetadataType> metadata;
 
     /**
-     * Optional unique identifier or name of this dataset. 
+     * Optional unique identifier or name of this dataset.
      */
     public CodeType getIdentifier() {
         return identifier;
     }
 
     /**
-     * Unordered list of zero or more bounding boxes whose union describes the extent of this dataset. 
+     * Unordered list of zero or more bounding boxes whose union describes the extent of this dataset.
      * Gets the value of the boundingBox property.
      */
     public List<JAXBElement<? extends BoundingBoxType>> getBoundingBox() {
@@ -94,7 +94,7 @@ public class IdentificationType extends DescriptionType {
     /**
      * Unordered list of zero or more references to data formats supported for server outputs.
      * Gets the value of the outputFormat property.
-     * 
+     *
      */
     public List<String> getOutputFormat() {
         if (outputFormat == null) {
@@ -104,9 +104,9 @@ public class IdentificationType extends DescriptionType {
     }
 
     /**
-     * Unordered list of zero or more available coordinate reference systems. 
+     * Unordered list of zero or more available coordinate reference systems.
      * Gets the value of the availableCRS property.
-     * 
+     *
      */
     public List<JAXBElement<String>> getAvailableCRS() {
         if (availableCRS == null) {
@@ -116,11 +116,11 @@ public class IdentificationType extends DescriptionType {
     }
 
     /**
-     * Optional unordered list of additional metadata about this data(set). 
-     * A list of optional metadata elements for this data identification 
-     * could be specified in the Implementation Specification for this service. 
+     * Optional unordered list of additional metadata about this data(set).
+     * A list of optional metadata elements for this data identification
+     * could be specified in the Implementation Specification for this service.
      * Gets the value of the metadata property.
-     * 
+     *
      */
     public List<MetadataType> getMetadata() {
         if (metadata == null) {

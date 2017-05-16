@@ -34,9 +34,9 @@ import org.geotoolkit.ows.xml.ExceptionResponse;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.ows.xml.ExceptionResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -74,11 +74,11 @@ public class ExceptionReport implements ExceptionResponse {
      * Empty constructor used by JAXB.
      */
     ExceptionReport() {}
-    
+
     /**
      * Build a new full exception with the specified text, code and locator.
-     * 
-     * @param exceptionText 
+     *
+     * @param exceptionText
      * @param exceptionCode
      */
     public ExceptionReport(final String exceptionText, final String exceptionCode, final String locator, final String version) {
@@ -87,10 +87,10 @@ public class ExceptionReport implements ExceptionResponse {
         if (version != null)
             this.version = version.toString();
     }
-    
+
     /**
-     * Unordered list of one or more Exception elements that each describes an error. 
-     * These Exception elements shall be interpreted by clients as being independent of one another (not hierarchical). 
+     * Unordered list of one or more Exception elements that each describes an error.
+     * These Exception elements shall be interpreted by clients as being independent of one another (not hierarchical).
      * Gets the value of the exception property.
      * (unmodifiable)
      */
@@ -143,7 +143,7 @@ public class ExceptionReport implements ExceptionResponse {
 
     /**
      * Return a String representation of the exception report.
-     * 
+     *
      * @return A String representation of the exception report.
      */
     @Override

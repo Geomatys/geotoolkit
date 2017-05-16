@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -45,7 +45,7 @@ import org.opengis.util.InternationalString;
  *
  * @author Mehdi Sidhoum (Geomatys)
  * @module
- * 
+ *
  * @version 4.0
  * @since   4.0
  */
@@ -59,36 +59,36 @@ import org.opengis.util.InternationalString;
 public class DefaultCalendarEra extends AbstractIdentifiedObject implements CalendarEra {
 
     private static NumberFormat NUMBER_FORMAT;
-    
+
     static {
         DecimalFormatSymbols dfs = new DecimalFormatSymbols();
         dfs.setDecimalSeparator('.');
         NUMBER_FORMAT = new DecimalFormat("#", dfs);
         NUMBER_FORMAT.setMinimumFractionDigits(9);
     }
-    
+
     /**
      * Provide the name or description of a mythical or historic event which fixes the position of the base scale of the calendar era.
      */
     private InternationalString referenceEvent;
-    
+
     /**
      * provide the date of the reference referenceEvent expressed as a date in the given calendar.
      * In most calendars, this date is the origin (i.e the first day) of the scale, but this is not always true.
      */
     private CalendarDate referenceDate;
-    
+
     /**
      * Provide the Julian date that corresponds to the reference date.
      */
     private JulianDate julianReference;
-    
+
     /**
-     * Identify the {@link Period} for which the calendar era was used as a basis for dating, 
+     * Identify the {@link Period} for which the calendar era was used as a basis for dating,
      * the datatype for {@link Period#getBeginning() } and {@link Period#getEnding() } shall be JulianDate.
      */
     private Period epochOfUse;
-    
+
     /**
      * Collection of {@link Calendar} that use this {@link CalendarEra} as a reference for dating.
      */
@@ -128,7 +128,7 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
      * @param referenceTime The time of day associated with the reference event expressed as a time of day  in the given clock.
      * @param utcReference The 24-hour local or UTC time that corresponds to the reference time.
      */
-    public DefaultCalendarEra(Map<String, ?> properties, 
+    public DefaultCalendarEra(Map<String, ?> properties,
             final CalendarDate referenceDate, final JulianDate julianReference, final Period epochOfUse) {
         super(properties);
         final Object ref = properties.get(Calendar.REFERENCE_EVENT_KEY);
@@ -143,14 +143,14 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
         this.julianReference = julianReference;
         this.epochOfUse      = epochOfUse;
     }
-    
+
     /**
      * Empty constructor only use for XML binding.
      */
     private DefaultCalendarEra() {
         super(NilReferencingObject.INSTANCE);
     }
-    
+
     /**
      * Constructs a new instance initialized with the values from the specified metadata object.
      * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
@@ -159,7 +159,7 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
      * @param object The CalendarEra to copy values from, or {@code null} if none.
      *
      * @see #castOrCopy(CalendarEra)
-     * @throws NullArgumentException if referenceEvent, referenceDate, julianReference or epochOfUse is {@code null}. 
+     * @throws NullArgumentException if referenceEvent, referenceDate, julianReference or epochOfUse is {@code null}.
      */
     private DefaultCalendarEra(final CalendarEra object) {
         super(object);
@@ -174,7 +174,7 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
             ArgumentChecks.ensureNonNull("julianReference", julianReference);
             if (object instanceof DefaultCalendarEra) {
                 this.datingSystem = ((DefaultCalendarEra) object).getDatingSystem();
-            }            
+            }
         }
     }
 
@@ -206,7 +206,7 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
     /**
      * Returns the name or description of a mythical or historic event which fixes the position
      * of the base scale of the calendar era.
-     * 
+     *
      * @return Event used as the datum for this calendar era.
      */
     @Override
@@ -219,7 +219,7 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
      * Returns the date of the reference event expressed as a date in the given calendar.
      * <blockquote><font size="-1">In most calendars, this date is the origin (i.e., the first day)
      * of the scale, but this is not always {@code true}.</font></blockquote>
-     * 
+     *
      * @return Date of the reference event in the calendar being described.
      */
     @Override
@@ -229,7 +229,7 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
 
     /**
      * Returns {@link #referenceDate} adapted for JAXB Marshalling.
-     * 
+     *
      * @return {@link #referenceDate} adapted for JAXB Marshalling.
      */
     @XmlElement(name = "referenceDate", required = true)
@@ -243,20 +243,20 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
         }
         return str;
     }
-    
+
     /**
      * Returns the {@linkplain JulianDate julian date} that corresponds to the reference date.
-     * 
+     *
      * @return {@linkplain JulianDate julian date} of the reference event.
      */
     @Override
     public JulianDate getJulianReference() {
         return julianReference;
     }
-    
+
     /**
      * Returns {@link #julianReference} adapted for JAXB Marshalling.
-     * 
+     *
      * @return {@link #julianReference} adapted for JAXB Marshalling.
      */
     @XmlElement(name = "julianReference", required = true)
@@ -276,20 +276,20 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
     public Period getEpochOfUse() {
         return epochOfUse;
     }
-    
+
     /**
      * Returns a collection of {@link Calendar} that use this {@link CalendarEra} as a reference for dating.
-     * 
+     *
      * @return collection of {@link Calendar} that use this {@link CalendarEra} as a reference for dating.
      */
     public Collection<Calendar> getDatingSystem() {
         return datingSystem;
     }
-    
+
     /**
      * Set a new name or description of a mythical or historic event which fixes the position
      * of the base scale of the calendar era.
-     * 
+     *
      * @param referenceEvent The new event used as the datum for this calendar era.
      */
     public void setReferenceEvent(final InternationalString referenceEvent) {
@@ -299,7 +299,7 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
 
     /**
      * Set a new date of the reference event expressed as a date in the given calendar.
-     * 
+     *
      * @param referenceDate The new date of the reference event in the calendar being described.
      */
     public void setReferenceDate(final CalendarDate referenceDate) {
@@ -309,7 +309,7 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
 
     /**
      * Set a new {@linkplain JulianDate julian date} that corresponds to the reference date.
-     * 
+     *
      * @param julianReference The new {@linkplain JulianDate julian date} of the reference event.
      */
     public void setJulianReference(final JulianDate julianReference) {
@@ -320,7 +320,7 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
     /**
      * Set a new {@linkplain Period period} for which the calendar era
      * was used as a reference for dating.
-     * 
+     *
      * @param epochOfUse The new period, where the data type for {@linkplain Period#getBegin begin}
      *         and {@link Period#getEnd end} is {@link JulianDate}.
      */
@@ -328,10 +328,10 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
         ArgumentChecks.ensureNonNull("epochOfUse", epochOfUse);
         this.epochOfUse = epochOfUse;
     }
-    
+
     /**
      * Set a new collection of {@link Calendar} that use this {@link CalendarEra} as a reference for dating.
-     * 
+     *
      * @param newValues The new collection of {@link Calendar} that use this {@link CalendarEra} as a reference for dating.
      */
     public void setDatingSystem(final Collection<Calendar> newValues) {

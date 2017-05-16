@@ -18,7 +18,7 @@ package org.apache.sis.feature;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import org.apache.sis.internal.feature.Predicate;
+import java.util.function.Predicate;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.PropertyType;

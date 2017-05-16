@@ -38,7 +38,7 @@ import org.opengis.filter.expression.Literal;
  */
 @XmlElement("Categorize")
 public interface Categorize extends Function{
-    
+
     /**
      * Get lookup value.
      *

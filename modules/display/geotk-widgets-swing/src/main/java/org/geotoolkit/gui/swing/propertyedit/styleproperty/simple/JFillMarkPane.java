@@ -50,12 +50,12 @@ public class JFillMarkPane extends StyleElementEditor<Mark> {
      */
     public JFillMarkPane() {
         super(new BorderLayout(),Mark.class);
-        
+
         guiMarkColorChooser.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("color")));
 
         guiMarkPane.setCandidates(model.getCandidates(new StyleBank.ByClassComparator(Mark.class)));
         guiMarkPane.setBorder(new TitledBorder("Forme"));
-        
+
         add(guiMarkPane, BorderLayout.NORTH);
         add(guiMarkColorChooser, BorderLayout.CENTER);
     }
@@ -117,10 +117,10 @@ public class JFillMarkPane extends StyleElementEditor<Mark> {
             return getStyleFactory().mark(StyleConstants.MARK_SQUARE, markFill, getStyleFactory().stroke());
         }
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
 }

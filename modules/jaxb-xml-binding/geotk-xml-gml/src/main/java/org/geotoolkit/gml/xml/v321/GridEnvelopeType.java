@@ -30,9 +30,9 @@ import org.opengis.coverage.grid.GridEnvelope;
 
 /**
  * <p>Java class for GridEnvelopeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GridEnvelopeType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.opengis.coverage.grid.GridEnvelope;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GridEnvelopeType", propOrder = {
@@ -63,9 +63,9 @@ public class GridEnvelopeType {
     private List<Integer> high;
 
     public GridEnvelopeType() {
-        
+
     }
-    
+
     public GridEnvelopeType(final GridEnvelope gridEnv) {
         if (gridEnv != null) {
             final int dimension = gridEnv.getDimension();
@@ -79,10 +79,10 @@ public class GridEnvelopeType {
     }
     /**
      * Gets the value of the low property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Integer }
-     * 
+     *
      */
     public List<Integer> getLow() {
         if (low == null) {
@@ -93,10 +93,10 @@ public class GridEnvelopeType {
 
     /**
      * Gets the value of the high property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Integer }
-     * 
+     *
      */
     public List<Integer> getHigh() {
         if (high == null) {

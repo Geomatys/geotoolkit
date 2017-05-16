@@ -54,7 +54,7 @@ public interface Schema {
     String getName();
 
     /**
-     * 
+     *
      * @return
      */
     String getId();
@@ -84,7 +84,7 @@ public interface Schema {
     void setId(String id);
 
     /**
-     * 
+     *
      * @param schemaExtensions
      */
     void setSchemaExtensions(List<Object> schemaExtensions);

@@ -23,7 +23,7 @@ import org.opengis.coverage.Coverage;
 /**
  * Generalized version of the GridCoverageWriter for possible none grid and
  * multi-dimensional coverages.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public interface CoverageWriter<T extends Coverage> {

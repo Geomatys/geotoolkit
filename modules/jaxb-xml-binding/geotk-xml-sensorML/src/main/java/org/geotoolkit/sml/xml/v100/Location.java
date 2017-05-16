@@ -39,9 +39,9 @@ import org.geotoolkit.sml.xml.AbstractLocation;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -55,8 +55,8 @@ import org.geotoolkit.sml.xml.AbstractLocation;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -127,7 +127,7 @@ public class Location implements AbstractLocation {
             }
         }
     }
-    
+
     @Override
     public AbstractGeometry getGeometry() {
         if (point != null) {
@@ -137,7 +137,7 @@ public class Location implements AbstractLocation {
         }
         return null;
     }
-    
+
     /**
      * Gets the value of the point property.
      */
@@ -168,7 +168,7 @@ public class Location implements AbstractLocation {
 
     /**
      * Sets the value of the abstractCurve property.
-     * 
+     *
      */
     public void setAbstractCurve(final JAXBElement<? extends AbstractCurveType> value) {
         this.abstractCurve = value;

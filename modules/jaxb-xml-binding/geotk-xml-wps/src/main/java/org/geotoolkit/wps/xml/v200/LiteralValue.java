@@ -27,16 +27,16 @@ import org.geotoolkit.ows.xml.v200.ValueType;
 
 
 /**
- * 
+ *
  * Representation of a simple literal value (such as an integer, a real number, or a string).
- * 
+ *
  * String representation of the actual value (e.g., "49").
- * 						
- * 
+ *
+ *
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;simpleContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.ows.xml.v200.ValueType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
@@ -63,22 +63,22 @@ public class LiteralValue extends ValueType implements org.geotoolkit.wps.xml.Li
     protected String uom;
 
     public LiteralValue() {
-        
+
     }
-    
+
     public LiteralValue(final String value, final String dataType, final String uom) {
         super(value);
         this.dataType = dataType;
         this.uom      = uom;
     }
-    
+
     /**
      * Gets the value of the dataType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getDataType() {
@@ -87,11 +87,11 @@ public class LiteralValue extends ValueType implements org.geotoolkit.wps.xml.Li
 
     /**
      * Sets the value of the dataType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setDataType(String value) {
@@ -100,11 +100,11 @@ public class LiteralValue extends ValueType implements org.geotoolkit.wps.xml.Li
 
     /**
      * Gets the value of the uom property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getUom() {
@@ -113,11 +113,11 @@ public class LiteralValue extends ValueType implements org.geotoolkit.wps.xml.Li
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setUom(String value) {

@@ -32,15 +32,15 @@ import org.geotoolkit.wfs.xml.LockFeature;
 /**
  * This type defines the LockFeature operation.
  * The LockFeature element contains one or more Lock elements that define which
- * features of a particular type should be locked.  
+ * features of a particular type should be locked.
  * A lock identifier (lockId) is returned to the client application which
  * can be used by subsequent operations to reference the locked features.
- *          
- * 
+ *
+ *
  * <p>Java class for LockFeatureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LockFeatureType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.wfs.xml.LockFeature;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -83,7 +83,7 @@ public class LockFeatureType extends BaseRequestType implements LockFeature {
         this.lock       = lock;
         this.lockAction = lockAction;
     }
-    
+
     /**
      * Gets the value of the lock property.
      */
@@ -96,11 +96,11 @@ public class LockFeatureType extends BaseRequestType implements LockFeature {
 
     /**
      * Gets the value of the expiry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getExpiry() {
         if (expiry == null) {
@@ -112,11 +112,11 @@ public class LockFeatureType extends BaseRequestType implements LockFeature {
 
     /**
      * Sets the value of the expiry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setExpiry(final Integer value) {
         this.expiry = value;
@@ -124,11 +124,11 @@ public class LockFeatureType extends BaseRequestType implements LockFeature {
 
     /**
      * Gets the value of the lockAction property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllSomeType }
-     *     
+     *
      */
     public AllSomeType getLockAction() {
         if (lockAction == null) {
@@ -140,11 +140,11 @@ public class LockFeatureType extends BaseRequestType implements LockFeature {
 
     /**
      * Sets the value of the lockAction property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllSomeType }
-     *     
+     *
      */
     public void setLockAction(final AllSomeType value) {
         this.lockAction = value;

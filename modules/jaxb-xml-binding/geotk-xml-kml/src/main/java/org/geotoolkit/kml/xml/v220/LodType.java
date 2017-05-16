@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for LodType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LodType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,11 +77,11 @@ public class LodType extends AbstractObjectType {
 
     /**
      * Gets the value of the minLodPixels property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMinLodPixels() {
         return minLodPixels;
@@ -89,11 +89,11 @@ public class LodType extends AbstractObjectType {
 
     /**
      * Sets the value of the minLodPixels property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMinLodPixels(final Double value) {
         this.minLodPixels = value;
@@ -101,11 +101,11 @@ public class LodType extends AbstractObjectType {
 
     /**
      * Gets the value of the maxLodPixels property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMaxLodPixels() {
         return maxLodPixels;
@@ -113,11 +113,11 @@ public class LodType extends AbstractObjectType {
 
     /**
      * Sets the value of the maxLodPixels property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMaxLodPixels(final Double value) {
         this.maxLodPixels = value;
@@ -125,11 +125,11 @@ public class LodType extends AbstractObjectType {
 
     /**
      * Gets the value of the minFadeExtent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMinFadeExtent() {
         return minFadeExtent;
@@ -137,11 +137,11 @@ public class LodType extends AbstractObjectType {
 
     /**
      * Sets the value of the minFadeExtent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMinFadeExtent(final Double value) {
         this.minFadeExtent = value;
@@ -149,11 +149,11 @@ public class LodType extends AbstractObjectType {
 
     /**
      * Gets the value of the maxFadeExtent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMaxFadeExtent() {
         return maxFadeExtent;
@@ -161,11 +161,11 @@ public class LodType extends AbstractObjectType {
 
     /**
      * Sets the value of the maxFadeExtent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMaxFadeExtent(final Double value) {
         this.maxFadeExtent = value;
@@ -173,25 +173,25 @@ public class LodType extends AbstractObjectType {
 
     /**
      * Gets the value of the lodSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the lodSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLodSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getLodSimpleExtensionGroup() {
         if (lodSimpleExtensionGroup == null) {
@@ -202,25 +202,25 @@ public class LodType extends AbstractObjectType {
 
     /**
      * Gets the value of the lodObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the lodObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLodObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getLodObjectExtensionGroup() {
         if (lodObjectExtensionGroup == null) {

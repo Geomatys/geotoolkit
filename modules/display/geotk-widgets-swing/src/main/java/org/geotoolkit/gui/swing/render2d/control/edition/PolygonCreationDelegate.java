@@ -55,7 +55,7 @@ public class PolygonCreationDelegate extends AbstractFeatureEditionDelegate {
         final int button = e.getButton();
 
         if(button == MouseEvent.BUTTON1){
-            
+
             if(justCreated){
                 justCreated = false;
                 //we must modify the second point since two point where added at the start
@@ -78,9 +78,9 @@ public class PolygonCreationDelegate extends AbstractFeatureEditionDelegate {
 
             geometry = EditionHelper.createPolygon(coords);
             decoration.setGeometries(Collections.singleton(geometry));
-                    
+
         }else if(button == MouseEvent.BUTTON3){
-            
+
             justCreated = false;
             helper.sourceAddGeometry(geometry);
             reset();

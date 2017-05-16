@@ -24,7 +24,7 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  */
 public interface CompositePhenomenon extends Phenomenon, org.opengis.observation.CompositePhenomenon {
-    
+
     List<? extends PhenomenonProperty> getRealComponent();
-    
+
 }

@@ -31,9 +31,9 @@ import org.geotoolkit.csw.xml.ElementSetType;
 
 /**
  * <p>Java class for ElementSetNameType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ElementSetNameType">
  *   &lt;simpleContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.csw.xml.ElementSetType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,9 +62,9 @@ public class ElementSetNameType implements ElementSetName {
      * An empty constructor used by JAXB
      */
     ElementSetNameType(){
-        
+
     }
-    
+
     /**
      * Build a elementSetName with only the elementSet value (no typeNames).
      */
@@ -80,9 +80,9 @@ public class ElementSetNameType implements ElementSetName {
             }
         }
     }
-    
+
     /**
-     * Named subsets of catalogue object properties; 
+     * Named subsets of catalogue object properties;
      * these views are bound to a specific information model and are defined within an application profile.
      */
     public ElementSetType getValue() {
@@ -90,7 +90,7 @@ public class ElementSetNameType implements ElementSetName {
     }
 
     /**
-     * Named subsets of catalogue object properties; 
+     * Named subsets of catalogue object properties;
      * these views are bound to a specific information model and are defined within an application profile.
      */
     public void setValue(final ElementSetType value) {
@@ -99,7 +99,7 @@ public class ElementSetNameType implements ElementSetName {
 
     /**
      * Gets the value of the typeNames property.
-     * 
+     *
      */
     public List<QName> getTypeNames() {
         if (typeNames == null) {

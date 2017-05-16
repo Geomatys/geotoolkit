@@ -22,13 +22,13 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Restricts the outer or inner boundary of a polygon instance 
- * 			to being a LinearRing.
- * 
+ * Restricts the outer or inner boundary of a polygon instance
+ *          to being a LinearRing.
+ *
  * <p>Java class for LinearRingMemberType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LinearRingMemberType">
  *   &lt;complexContent>
@@ -41,22 +41,22 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LinearRingMemberType")
 public class LinearRingMemberType extends GeometryAssociationType {
-    
+
     public LinearRingMemberType() {
-        
+
     }
-    
+
     public LinearRingMemberType(final LinearRingMemberType that) {
         super(that);
     }
-    
+
     @Override
     public GeometryAssociationType getClone() {
         return new LinearRingMemberType(this);

@@ -90,7 +90,7 @@ public interface AddressDetails {
     GenericTypedGrPostal getAddress();
 
     /**
-     * 
+     *
      * @param address
      */
     void setAddress(GenericTypedGrPostal address);
@@ -114,7 +114,7 @@ public interface AddressDetails {
     Country getCountry();
 
     /**
-     * 
+     *
      * @param country
      */
     void setCountry(Country country);
@@ -126,7 +126,7 @@ public interface AddressDetails {
     AdministrativeArea getAdministrativeArea();
 
     /**
-     * 
+     *
      * @param administrativeArea
      */
     void setAdministrativeArea(AdministrativeArea administrativeArea);
@@ -138,7 +138,7 @@ public interface AddressDetails {
     Locality getLocality();
 
     /**
-     * 
+     *
      * @param locality
      */
     void setLocality(Locality locality);
@@ -150,7 +150,7 @@ public interface AddressDetails {
     Thoroughfare getThoroughfare();
 
     /**
-     * 
+     *
      * @param throughfare
      */
     void setThoroughfare(Thoroughfare throughfare);
@@ -163,7 +163,7 @@ public interface AddressDetails {
 
     /**
      * <p>Type of address. Example: Postal, residential,business, primary, secondary, etc.</p>
-     * 
+     *
      * @return
      */
     String getAddressType();
@@ -194,7 +194,7 @@ public interface AddressDetails {
     String getValidFromDate();
 
     /**
-     * 
+     *
      * @param validFromDate
      */
     void setValidFromDate(String validFromDate);
@@ -207,20 +207,20 @@ public interface AddressDetails {
     String getValidToDate();
 
     /**
-     * 
+     *
      * @param validToDate
      */
     void setValidToDate(String validToDate);
 
     /**
      * <p>Communication, Contact, etc.</p>
-     * 
+     *
      * @return
      */
     String getUsage();
 
     /**
-     * 
+     *
      * @param usage
      */
     void setUsage(String usage);
@@ -232,7 +232,7 @@ public interface AddressDetails {
     GrPostal getGrPostal();
 
     /**
-     * 
+     *
      * @param grPostal
      */
     void setGrPostal(GrPostal grPostal);
@@ -246,9 +246,9 @@ public interface AddressDetails {
      * @return
      */
     String getAddressDetailsKey();
-    
+
     /**
-     * 
+     *
      * @param addressDetailsKey
      */
     void setAddressDetailsKey(String addressDetailsKey);

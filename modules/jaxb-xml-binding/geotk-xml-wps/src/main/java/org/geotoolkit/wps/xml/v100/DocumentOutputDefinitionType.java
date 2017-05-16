@@ -28,14 +28,14 @@ import org.geotoolkit.wps.xml.DocumentOutputDefinition;
 
 
 /**
- * Definition of a format, encoding,  schema, and unit-of-measure for an output to be returned from a process. 
- * 
- * In this use, the DescriptionType shall describe this process input or output. 
- * 
+ * Definition of a format, encoding,  schema, and unit-of-measure for an output to be returned from a process.
+ *
+ * In this use, the DescriptionType shall describe this process input or output.
+ *
  * <p>Java class for DocumentOutputDefinitionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DocumentOutputDefinitionType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.wps.xml.DocumentOutputDefinition;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,28 +68,28 @@ public class DocumentOutputDefinitionType extends OutputDefinitionType implement
     protected Boolean asReference;
 
     public DocumentOutputDefinitionType() {
-        
+
     }
-    
+
     public DocumentOutputDefinitionType(CodeType identifier, Boolean asReference) {
         super(identifier);
         this.asReference = asReference;
     }
-    
+
     public DocumentOutputDefinitionType(CodeType identifier, String uom, String mimeType, String encoding, String schema) {
         super(identifier, uom, mimeType, encoding, schema);
     }
-    
-    
+
+
     /**
-     * Title of the process output, normally available for display to a human. 
+     * Title of the process output, normally available for display to a human.
      * This element should be used if the client wishes to customize the Title in the execute response.
-     * This element should not be used if the Title provided for this output in the ProcessDescription is adequate. 
-     * 
+     * This element should not be used if the Title provided for this output in the ProcessDescription is adequate.
+     *
      * @return
      *     possible object is
      *     {@link LanguageStringType }
-     *     
+     *
      */
     @Override
     public LanguageStringType getTitle() {
@@ -97,28 +97,28 @@ public class DocumentOutputDefinitionType extends OutputDefinitionType implement
     }
 
     /**
-     * Title of the process output, normally available for display to a human. 
-     * This element should be used if the client wishes to customize the Title in the execute response. 
-     * This element should not be used if the Title provided for this output in the ProcessDescription is adequate. 
-     * 
+     * Title of the process output, normally available for display to a human.
+     * This element should be used if the client wishes to customize the Title in the execute response.
+     * This element should not be used if the Title provided for this output in the ProcessDescription is adequate.
+     *
      * @param value
      *     allowed object is
      *     {@link LanguageStringType }
-     *     
+     *
      */
     public void setTitle(final LanguageStringType value) {
         this.title = value;
     }
 
     /**
-     * Brief narrative description of a process output, normally available for display to a human. 
-     * This element should be used if the client wishes to customize the Abstract in the execute response. 
-     * This element should not be used if the Abstract provided for this output in the ProcessDescription is adequate. 
-     * 
+     * Brief narrative description of a process output, normally available for display to a human.
+     * This element should be used if the client wishes to customize the Abstract in the execute response.
+     * This element should not be used if the Abstract provided for this output in the ProcessDescription is adequate.
+     *
      * @return
      *     possible object is
      *     {@link LanguageStringType }
-     *     
+     *
      */
     @Override
     public LanguageStringType getAbstract() {
@@ -126,14 +126,14 @@ public class DocumentOutputDefinitionType extends OutputDefinitionType implement
     }
 
     /**
-     * Brief narrative description of a process output, normally available for display to a human. 
-     * This element should be used if the client wishes to customize the Abstract in the execute response. 
-     * This element should not be used if the Abstract provided for this output in the ProcessDescription is adequate. 
-     * 
+     * Brief narrative description of a process output, normally available for display to a human.
+     * This element should be used if the client wishes to customize the Abstract in the execute response.
+     * This element should not be used if the Abstract provided for this output in the ProcessDescription is adequate.
+     *
      * @param value
      *     allowed object is
      *     {@link LanguageStringType }
-     *     
+     *
      */
     public void setAbstract(final LanguageStringType value) {
         this._abstract = value;
@@ -141,11 +141,11 @@ public class DocumentOutputDefinitionType extends OutputDefinitionType implement
 
     /**
      * Gets the value of the asReference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isAsReference() {
         if (asReference == null) {
@@ -157,17 +157,17 @@ public class DocumentOutputDefinitionType extends OutputDefinitionType implement
 
     /**
      * Sets the value of the asReference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     @Override
     public void setAsReference(final Boolean value) {
         this.asReference = value;
     }
-    
+
     @Override
     public boolean isReference() {
         if (asReference == null) {
@@ -181,7 +181,7 @@ public class DocumentOutputDefinitionType extends OutputDefinitionType implement
     public DocumentOutputDefinition asDoc() {
         return this;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString()).append("\n");
@@ -196,7 +196,7 @@ public class DocumentOutputDefinitionType extends OutputDefinitionType implement
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

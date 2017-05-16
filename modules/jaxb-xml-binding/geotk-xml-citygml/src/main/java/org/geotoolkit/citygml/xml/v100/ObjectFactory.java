@@ -24,18 +24,18 @@ import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.citygml._1 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.citygml._1 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  * @module
  */
 @XmlRegistry
@@ -54,14 +54,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.citygml._1
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link ExternalReferenceType }
-     * 
+     *
      */
     public ExternalReferenceType createExternalReferenceType() {
         return new ExternalReferenceType();
@@ -69,7 +69,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExternalObjectReferenceType }
-     * 
+     *
      */
     public ExternalObjectReferenceType createExternalObjectReferenceType() {
         return new ExternalObjectReferenceType();
@@ -77,7 +77,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ImplicitRepresentationPropertyType }
-     * 
+     *
      */
     public ImplicitRepresentationPropertyType createImplicitRepresentationPropertyType() {
         return new ImplicitRepresentationPropertyType();
@@ -85,7 +85,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AddressPropertyType }
-     * 
+     *
      */
     public AddressPropertyType createAddressPropertyType() {
         return new AddressPropertyType();
@@ -93,7 +93,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ImplicitGeometryType }
-     * 
+     *
      */
     public ImplicitGeometryType createImplicitGeometryType() {
         return new ImplicitGeometryType();
@@ -101,7 +101,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CityModelType }
-     * 
+     *
      */
     public CityModelType createCityModelType() {
         return new CityModelType();
@@ -109,7 +109,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AddressType }
-     * 
+     *
      */
     public AddressType createAddressType() {
         return new AddressType();
@@ -117,7 +117,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GeneralizationRelationType }
-     * 
+     *
      */
     public GeneralizationRelationType createGeneralizationRelationType() {
         return new GeneralizationRelationType();
@@ -125,7 +125,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link XalAddressPropertyType }
-     * 
+     *
      */
     public XalAddressPropertyType createXalAddressPropertyType() {
         return new XalAddressPropertyType();
@@ -133,7 +133,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "_GenericApplicationPropertyOfSite")
     public JAXBElement<Object> createGenericApplicationPropertyOfSite(final Object value) {
@@ -142,7 +142,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FeaturePropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "cityObjectMember", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "featureMember")
     public JAXBElement<FeaturePropertyType> createCityObjectMember(final FeaturePropertyType value) {
@@ -151,7 +151,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractSiteType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "_Site", substitutionHeadNamespace = "http://www.opengis.net/citygml/1.0", substitutionHeadName = "_CityObject")
     public JAXBElement<AbstractSiteType> createSite(final AbstractSiteType value) {
@@ -160,7 +160,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "_GenericApplicationPropertyOfAddress")
     public JAXBElement<Object> createGenericApplicationPropertyOfAddress(final Object value) {
@@ -169,7 +169,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CityModelType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "CityModel", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeatureCollection")
     public JAXBElement<CityModelType> createCityModel(final CityModelType value) {
@@ -178,7 +178,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ImplicitGeometryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "ImplicitGeometry", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
     public JAXBElement<ImplicitGeometryType> createImplicitGeometry(final ImplicitGeometryType value) {
@@ -187,7 +187,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractCityObjectType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "_CityObject", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
     public JAXBElement<AbstractCityObjectType> createCityObject(final AbstractCityObjectType value) {
@@ -196,7 +196,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "_GenericApplicationPropertyOfCityObject")
     public JAXBElement<Object> createGenericApplicationPropertyOfCityObject(final Object value) {
@@ -205,7 +205,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AddressType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "Address", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
     public JAXBElement<AddressType> createAddress(final AddressType value) {
@@ -214,7 +214,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "_GenericApplicationPropertyOfCityModel")
     public JAXBElement<Object> createGenericApplicationPropertyOfCityModel(final Object value) {

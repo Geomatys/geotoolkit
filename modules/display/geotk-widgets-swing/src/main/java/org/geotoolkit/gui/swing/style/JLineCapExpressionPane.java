@@ -37,7 +37,7 @@ public class JLineCapExpressionPane extends StyleElementEditor<Expression>{
     private static final ImageIcon ICON_CAP_SQUARE = IconBundle.getIcon("16_linecap_square");
     private static final ImageIcon ICON_CAP_BUTT = IconBundle.getIcon("16_linecap_butt");
     private final Dimension specialSize;
-    
+
     /** Creates new form JColorExpressionPane */
     public JLineCapExpressionPane() {
         super(Expression.class);
@@ -47,7 +47,7 @@ public class JLineCapExpressionPane extends StyleElementEditor<Expression>{
         guiButt.setIcon(ICON_CAP_BUTT);
         specialSize = guiSpecial.getPreferredSize();
     }
-    
+
     public void setExpressionVisible(boolean visible){
         guiSpecial.setPreferredSize( visible ? new Dimension(specialSize) : new Dimension(1, 1));
         guiSpecial.setVisible(visible);
@@ -58,7 +58,7 @@ public class JLineCapExpressionPane extends StyleElementEditor<Expression>{
         super.setLayer(layer);
         guiSpecial.setLayer(layer);
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -195,7 +195,7 @@ private void guiButtActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_gu
             guiRound.setSelected(false);
             guiSquare.setSelected(false);
         }
-        
+
         guiButt.setEnabled(guiSpecial.get()==null);
         guiButt.setToolTipText(guiSpecial.getToolTipText());
         guiRound.setEnabled(guiSpecial.get()==null);
@@ -221,5 +221,5 @@ private void guiButtActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_gu
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
 }

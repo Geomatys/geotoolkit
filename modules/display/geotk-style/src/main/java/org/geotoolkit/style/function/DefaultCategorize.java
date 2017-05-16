@@ -90,7 +90,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
             }else{
                 final double d1 = exp1.evaluate(null, Double.class);
                 final double d2 = exp2.evaluate(null, Double.class);
-                
+
                 //put NaN at the end
                 if(Double.isNaN(d1)) return +1;
                 if(Double.isNaN(d2)) return -1;

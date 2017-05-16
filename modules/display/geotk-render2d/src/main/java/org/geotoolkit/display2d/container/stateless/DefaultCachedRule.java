@@ -82,5 +82,5 @@ public final class DefaultCachedRule {
         }
         return f;
     }
-    
+
 }

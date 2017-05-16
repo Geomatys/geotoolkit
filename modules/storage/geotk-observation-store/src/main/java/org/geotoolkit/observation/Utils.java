@@ -42,13 +42,13 @@ import org.opengis.observation.Observation;
 
 /**
  * Utility methods for SOS / Sensor.
- * 
+ *
  * @author Guilhem Legal (Geomatys)
  */
 public class Utils {
-    
+
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.observation");
-    
+
     /**
      * Return the physical ID of a sensor.
      * This ID is found into a "Identifier" mark with the name 'supervisorCode'
@@ -73,10 +73,10 @@ public class Utils {
         }
         return null;
     }
-    
+
     /**
      * Return the position of a sensor.
-     * 
+     *
      * @param sensor
      * @return
      */
@@ -96,12 +96,12 @@ public class Utils {
         LOGGER.warning("there is no sensor position in the specified sensorML");
         return null;
     }
-    
+
     /**
      * return a SQL formatted timestamp
      *
      * @param time a GML time position object.
-     * @return 
+     * @return
      * @throws org.geotoolkit.observation.ObservationStoreException
      */
     public static String getTimeValue(final Date time) throws ObservationStoreException {
@@ -109,7 +109,7 @@ public class Utils {
              try {
                  DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS");
                  final String value = df.format(time);
-                 
+
                  //here t is not used but it allow to verify the syntax of the timestamp
                  final ISODateParser parser = new ISODateParser();
                  final Date d = parser.parseToDate(value);
@@ -120,7 +120,7 @@ public class Utils {
                 throw new ObservationStoreException("Unable to parse the value: " + time.toString() + '\n' +
                                                "Bad format of timestamp:\n" + e.getMessage(),
                                                INVALID_PARAMETER_VALUE, "eventTime");
-             } 
+             }
           } else {
             String locator;
             if (time == null) {
@@ -132,7 +132,7 @@ public class Utils {
                                               MISSING_PARAMETER_VALUE, "eventTime");
           }
     }
-    
+
     /**
      * Return an envelope containing all the Observation member of the collection.
      *

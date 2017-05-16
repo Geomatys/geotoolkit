@@ -23,14 +23,14 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  */
 public interface InsertElement {
- 
+
     String getHandle();
-    
+
     String getInputFormat();
-    
+
     String getSrsName();
-    
+
     IdentifierGenerationOptionType getIdgen();
-    
+
     List getFeature();
 }

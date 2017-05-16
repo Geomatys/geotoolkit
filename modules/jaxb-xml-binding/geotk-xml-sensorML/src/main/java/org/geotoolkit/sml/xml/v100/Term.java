@@ -32,9 +32,9 @@ import org.geotoolkit.swe.xml.v100.CodeSpacePropertyType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.swe.xml.v100.CodeSpacePropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -86,19 +86,19 @@ public class Term implements AbstractTerm {
             }
         }
     }
-    
+
     public Term(final CodeSpacePropertyType codeSpace, final String value, final URI definition) {
         this.codeSpace  = codeSpace;
         this.definition = definition;
         this.value      = value;
     }
-    
+
     public Term(final CodeSpacePropertyType codeSpace, final String value, final String definition) {
         this.codeSpace  = codeSpace;
         this.definition = URI.create(definition);
         this.value      = value;
     }
-    
+
     public Term(final String codeSpace, final String value, final String definition) {
         this.codeSpace  = new CodeSpacePropertyType(codeSpace);
         this.definition = URI.create(definition);

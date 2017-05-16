@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ResultType.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "ResultType")
 @XmlEnum
@@ -44,14 +44,14 @@ public enum ResultType {
 
     /**
      * Include results in the response.
-     * 
+     *
      */
     @XmlEnumValue("results")
     RESULTS("results"),
 
     /**
      * Provide a result set summary, but no results.
-     * 
+     *
      */
     @XmlEnumValue("hits")
     HITS("hits"),
@@ -59,7 +59,7 @@ public enum ResultType {
     /**
      * Validate the request and return an Acknowledgement message if it is valid.
      * Continue processing the request asynchronously.
-     * 
+     *
      */
     @XmlEnumValue("validate")
     VALIDATE("validate");

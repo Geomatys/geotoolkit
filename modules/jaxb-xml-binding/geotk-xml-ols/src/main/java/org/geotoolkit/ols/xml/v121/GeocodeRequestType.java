@@ -27,12 +27,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Geocode Request. 
- * 
+ * Geocode Request.
+ *
  * <p>Java class for GeocodeRequestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeocodeRequestType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeocodeRequestType", propOrder = {
@@ -61,7 +61,7 @@ public class GeocodeRequestType extends AbstractRequestParametersType {
 
     /**
      * Gets the value of the address property.
-     * 
+     *
      */
     public List<AddressType> getAddress() {
         if (address == null) {
@@ -72,11 +72,11 @@ public class GeocodeRequestType extends AbstractRequestParametersType {
 
     /**
      * Gets the value of the returnFreeForm property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isReturnFreeForm() {
         if (returnFreeForm == null) {
@@ -88,11 +88,11 @@ public class GeocodeRequestType extends AbstractRequestParametersType {
 
     /**
      * Sets the value of the returnFreeForm property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setReturnFreeForm(Boolean value) {
         this.returnFreeForm = value;

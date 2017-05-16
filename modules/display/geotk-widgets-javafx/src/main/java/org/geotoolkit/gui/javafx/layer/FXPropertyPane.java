@@ -34,20 +34,20 @@ public class FXPropertyPane extends BorderPane{
     public FXPropertyPane() {
         setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
     }
-    
+
     public String getTitle(){
         return "";
     }
-    
+
     public Image getIcon(){
         return null;
     }
-    
+
     public boolean init(Object candidate){
         return true;
     }
- 
-    
+
+
     public static Symbolizer showSymbolizerDialog(Object parent, final Symbolizer symbol, final Object target){
         return showSymbolizerDialog(parent, symbol, false, target);
     }
@@ -55,14 +55,14 @@ public class FXPropertyPane extends BorderPane{
     public static Symbolizer showSymbolizerDialog(Object parent, final Symbolizer symbol, final boolean allowTypeChange, final Object target){
 
         final BorderPane container = new BorderPane();
-        
+
         final FXStyleElementController editor = FXStyleElementEditor.findEditor(symbol);
         editor.valueProperty().set(symbol);
         if(target instanceof MapLayer){
             editor.setLayer((MapLayer)target);
         }
         container.setCenter(editor);
-        
+
 //        if(allowTypeChange){
 //            final JComboBox box = new JComboBox(
 //                    new Object[]{
@@ -115,6 +115,6 @@ public class FXPropertyPane extends BorderPane{
 
         return (Symbolizer) editor.valueProperty().get();
     }
-    
-    
+
+
 }

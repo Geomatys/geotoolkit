@@ -36,15 +36,15 @@ import org.opengis.style.Font;
 
 /**
  * Font panel
- * 
+ *
  * @author Johann Sorel
  * @module
  */
 public class JFontPane extends StyleElementEditor<Font>{
-    
+
     private MapLayer layer = null;
     private final Literal[] fontFamilies;
-    
+
     /** Creates new form JfontPanel */
     public JFontPane() {
         super(Font.class);
@@ -63,7 +63,7 @@ public class JFontPane extends StyleElementEditor<Font>{
 
         init();
     }
-    
+
     private void init(){
         guiSize.setModel(12d, 0d, Double.POSITIVE_INFINITY, 1d);
         guiStyle.setModel(
@@ -78,10 +78,10 @@ public class JFontPane extends StyleElementEditor<Font>{
         guiFamily.setSize(200, guiFamily.getPreferredSize().height);
 //        guiFamily.setPrototypeDisplayValueToFirstItem();
     }
-    
+
     @Override
-    public void parse(final Font font){        
-        
+    public void parse(final Font font){
+
         if(font != null){
             if(!font.getFamily().isEmpty()){
                 guiFamily.parse(font.getFamily().get(0));
@@ -93,16 +93,16 @@ public class JFontPane extends StyleElementEditor<Font>{
             guiWeight.parse(font.getWeight());
         }
     }
-    
+
     @Override
     public Font create(){
         return getStyleFactory().font(
-                guiFamily.create(), 
-                guiStyle.create(), 
-                guiWeight.create(), 
+                guiFamily.create(),
+                guiStyle.create(),
+                guiWeight.create(),
                 guiSize.create());
     }
-    
+
     @Override
     public void setLayer(final MapLayer layer){
         guiFamily.setLayer(layer);
@@ -111,7 +111,7 @@ public class JFontPane extends StyleElementEditor<Font>{
         guiWeight.setLayer(layer);
         this.layer = layer;
     }
-    
+
     @Override
     public MapLayer getLayer(){
         return layer;
@@ -128,7 +128,7 @@ public class JFontPane extends StyleElementEditor<Font>{
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiLabelFamily,guiLabelSize,guiLabelStyle,guiLabelWeight};
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -239,12 +239,12 @@ public class JFontPane extends StyleElementEditor<Font>{
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
         // TODO add your handling code here:
-        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());
         }
     }//GEN-LAST:event_propertyChange
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JComboExpressionPane guiFamily;
     private JLabel guiLabelFamily;
@@ -255,5 +255,5 @@ public class JFontPane extends StyleElementEditor<Font>{
     private JComboExpressionPane guiStyle;
     private JComboExpressionPane guiWeight;
     // End of variables declaration//GEN-END:variables
-    
+
 }

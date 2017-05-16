@@ -32,9 +32,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.ArrayFeature;
-import org.apache.sis.internal.feature.BiFunction;
+import java.util.function.BiFunction;
 import org.apache.sis.internal.feature.FeatureLoop;
-import org.apache.sis.internal.feature.Predicate;
+import java.util.function.Predicate;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.Static;
@@ -76,6 +76,8 @@ import org.apache.sis.internal.system.DefaultFactories;
 
 import static org.apache.sis.feature.AbstractIdentifiedType.NAME_KEY;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.geotoolkit.geometry.jts.JTS;
+import org.opengis.util.FactoryException;
 
 /**
  * NOTE : merge with Apache SIS 'org.apache.sis.feature.Features' class.
@@ -215,10 +217,17 @@ public final class FeatureExt extends Static {
                     final com.vividsolutions.jts.geom.Envelope env = geom.getEnvelopeInternal();
                     if (env != null && !env.isNull()) {
                         // extract geometry enveloppe
-                        // TODO: take CRS in account.
                         CoordinateReferenceSystem crs = FeatureExt.getCRS(pt);
+                        if (crs == null) {
+                            try {
+                                crs = JTS.findCoordinateReferenceSystem(geom);
+                            } catch (FactoryException ex) {
+                                //do nothing, we have try
+                            }
+                        }
+
                         final GeneralEnvelope genv;
-                        if (crs!=null) {
+                        if (crs != null) {
                             genv = new GeneralEnvelope(crs);
                         } else {
                             genv = new GeneralEnvelope(2);

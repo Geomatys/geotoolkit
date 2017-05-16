@@ -108,7 +108,7 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
     public SpatialCapabilitiesType getSpatialCapabilities() {
         return spatialCapabilities;
     }
-    
+
     public void setSpatialCapabilities(final SpatialCapabilitiesType spatialCapabilities) {
         this.spatialCapabilities = spatialCapabilities;
     }
@@ -120,7 +120,7 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
     public TemporalCapabilitiesType getTemporalCapabilities() {
         return temporalCapabilities;
     }
-    
+
     public void setTemporalCapabilities(final TemporalCapabilitiesType temporalCapabilities) {
         this.temporalCapabilities = temporalCapabilities;
     }
@@ -135,7 +135,7 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
     public void setExistenceCapabilities(final ExistenceCapabilitiesType existenceCapabilities) {
         this.existenceCapabilities = existenceCapabilities;
     }
-    
+
     /**
      * Gets the value of the classificationCapabilities property.
      */
@@ -146,7 +146,7 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
     public void setClassificationCapabilities(final ClassificationCapabilitiesType classificationCapabilities) {
         this.classificationCapabilities = classificationCapabilities;
     }
-    
+
     /**
      * Gets the value of the scalarCapabilities property.
      */
@@ -154,7 +154,7 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
     public ScalarCapabilitiesType getScalarCapabilities() {
         return scalarCapabilities;
     }
-    
+
     public void setScalarCapabilities(final ScalarCapabilitiesType scalarCapabilities) {
         this.scalarCapabilities = scalarCapabilities;
     }
@@ -166,7 +166,7 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
     public IdCapabilitiesType getIdCapabilities() {
         return idCapabilities;
     }
-    
+
     public void setIdCapabilities(final IdCapabilitiesType idCapabilities) {
         this.idCapabilities = idCapabilities;
     }
@@ -211,8 +211,8 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
        if (object instanceof FilterCapabilities) {
            final FilterCapabilities that = (FilterCapabilities) object;
-       
-            
+
+
             return Objects.equals(this.classificationCapabilities, that.classificationCapabilities) &&
                    Objects.equals(this.existenceCapabilities,      that.existenceCapabilities)      &&
                    Objects.equals(this.idCapabilities,             that.idCapabilities)             &&

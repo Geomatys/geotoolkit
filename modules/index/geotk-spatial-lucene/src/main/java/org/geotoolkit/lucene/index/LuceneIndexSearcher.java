@@ -53,7 +53,7 @@ import org.geotoolkit.index.SpatialQuery;
 
 /**
  * An Lucene index searcher. allowing to perform query on the index.
- * 
+ *
  * @author Guilhem legal (Geomatys)
  * @module
  */
@@ -88,12 +88,12 @@ public class LuceneIndexSearcher extends IndexLucene {
      * A Map of DocID -> metadata ID .
      */
     private final Map<Integer, String> identifiers = new HashMap<>();
-    
+
     /**
      * A list of numeric fields names.
      */
     private Map<String, Character> numericFields;
-    
+
     /**
      * A flag indicating if all the geometry indexed are envelope.
      * if set, no JTS filter will be applied on geometry search (only R-tree search)
@@ -124,7 +124,7 @@ public class LuceneIndexSearcher extends IndexLucene {
     public LuceneIndexSearcher(final Path configDir, final String serviceID, final Analyzer analyzer) throws IndexingException {
         this(configDir, serviceID, analyzer, false);
     }
-    
+
     /**
      * Build a new index searcher.
      *
@@ -132,7 +132,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      * @param serviceID the "ID" of the service (allow multiple index in the same directory). The value "" is allowed.
      * @param analyzer  A lucene Analyzer (Default is ClassicAnalyzer)
      * @param envelopeOnly A flag indicating if all the geometry indexed are envelope.
-     * 
+     *
      * @throws org.geotoolkit.lucene.IndexingException
      */
     public LuceneIndexSearcher(final Path configDir, final String serviceID, final Analyzer analyzer, final boolean envelopeOnly) throws IndexingException {
@@ -186,7 +186,7 @@ public class LuceneIndexSearcher extends IndexLucene {
         } catch (IOException ex) {
             throw new IndexingException("IO Exception during index searcher creation", ex);
         }
-        
+
     }
 
     /**
@@ -198,7 +198,7 @@ public class LuceneIndexSearcher extends IndexLucene {
         final IndexReader reader  = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(indexDirectory));
         searcher                  = new IndexSearcher(reader);
         LOGGER.log(Level.INFO, "Creating new Index Searcher with index directory:{0}", indexDirectory.toString());
-       
+
     }
 
     /**
@@ -287,13 +287,13 @@ public class LuceneIndexSearcher extends IndexLucene {
 
     /**
      * Return the name of the identifier field used in the identifierQuery method.
-     * 
+     *
      * @return the name of the identifier field.
      */
     public String getIdentifierSearchField() {
         return "id";
     }
-    
+
     public Map<String, Character> getNumericFields() {
         return numericFields;
     }
@@ -341,13 +341,13 @@ public class LuceneIndexSearcher extends IndexLucene {
             String stringQuery       = spatialQuery.getQuery();
             final QueryParser parser = new ExtendedQueryParser(field, analyzer, numericFields);
             parser.setDefaultOperator(Operator.AND);
-            
+
             // remove term:* query
             stringQuery = removeOnlyWildchar(stringQuery);
-            
+
             // escape '/' character
             stringQuery = stringQuery.replace("/", "\\/");
-            
+
             // we enable the leading wildcard mode if the first character of the query is a '*'
             if (stringQuery.indexOf(":*") != -1 || stringQuery.indexOf(":?") != -1 || stringQuery.indexOf(":(*") != -1
              || stringQuery.indexOf(":(+*") != -1 || stringQuery.indexOf(":+*") != -1) {
@@ -451,7 +451,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                 if (operator == LogicalFilterType.OR && query.equals(SIMPLE_QUERY)) {
                     results.clear();
                 }
-                
+
                 for (SpatialQuery sub : spatialQuery.getSubQueries()) {
                     final Set<String> subResults = doSearch(sub);
                     if (operator == LogicalFilterType.AND) {
@@ -464,7 +464,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                         results.removeAll(toRemove);
                     } else if (operator == LogicalFilterType.OR){
                         results.addAll(subResults);
-                        
+
                     } else {
                         LOGGER.warning("unimplemented case in doSearch");
                     }
@@ -473,7 +473,7 @@ public class LuceneIndexSearcher extends IndexLucene {
 
             //we put the query in cache
             putInCache(spatialQuery, results);
-            
+
             LOGGER.log(logLevel, results.size() + " total matching documents (" + (System.currentTimeMillis() - start) + "ms)");
             return results;
         } catch (ParseException ex) {
@@ -486,19 +486,19 @@ public class LuceneIndexSearcher extends IndexLucene {
     public static String removeOnlyWildchar(String s) {
         final String pattern = "[^: +\\(]*:\\* ";
         s = s.replaceAll(pattern, "metafile:doc ");
-        
+
         final String pattern2 = "[^: +\\(]*:\\*$";
         s = s.replaceAll(pattern2, "metafile:doc");
-        
+
         final String pattern3 = "[^: +\\(]*:[(][*][)]";
         s = s.replaceAll(pattern3, "metafile:doc");
-        
+
         final String pattern4 = "[^: +\\(]*:\\*[)]";
         s = s.replaceAll(pattern4, "metafile:doc)");
-        
+
         return s;
     }
-    
+
     /**
      * Add a query and its results to the cache.
      * if the map has reach the maximum size the older query is removed from the cache.

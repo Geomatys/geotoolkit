@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TimeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeType">
  *   &lt;complexContent>
@@ -37,8 +37,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeType")
@@ -49,11 +49,11 @@ public class TimeType extends TimeStampType {
 
     /**
      * Gets the value of the utcOffset property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getUtcOffset() {
         return utcOffset;
@@ -61,11 +61,11 @@ public class TimeType extends TimeStampType {
 
     /**
      * Sets the value of the utcOffset property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setUtcOffset(Integer value) {
         this.utcOffset = value;

@@ -24,13 +24,13 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**
  * TableModel for fields edition in the shapefile creation tool.
- * 
+ *
  * @author Johann Sorel
  */
 class ShapeAttModel extends AbstractTableModel{
 
     private final List<Field> datas = new ArrayList<Field>();
-    
+
     /**
      * {@inheritDoc }
      */
@@ -43,7 +43,7 @@ class ShapeAttModel extends AbstractTableModel{
      * {@inheritDoc }
      */
     @Override
-    public int getColumnCount() {        
+    public int getColumnCount() {
         return 2;
     }
 
@@ -82,15 +82,15 @@ class ShapeAttModel extends AbstractTableModel{
     Field getDataAt(final int rowIndex){
         return datas.get(rowIndex);
     }
-    
+
     Field[] getDatas(){
         return datas.toArray(new Field[datas.size()]);
     }
-    
+
     int indexOf(final Field data){
         return datas.indexOf(data);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -115,13 +115,13 @@ class ShapeAttModel extends AbstractTableModel{
         }
         fireTableCellUpdated(rowIndex, columnIndex);
     }
-    
+
     void addAttribut(){
         final Field newData = new Field();
         datas.add(newData);
         fireTableRowsInserted(datas.indexOf(newData), datas.indexOf(newData));
     }
-    
+
     void deleteAttribut(final Field data){
         final int index = datas.indexOf(data);
         datas.remove(data);
@@ -136,9 +136,9 @@ class ShapeAttModel extends AbstractTableModel{
             datas.add(index-1, data);
             fireTableRowsInserted(index-1, index-1);
         }
-        
+
     }
-    
+
     void moveDown(final Field data){
         final int index = datas.indexOf(data);
         if(index >= 0 && index < datas.size()-1 ){
@@ -148,8 +148,8 @@ class ShapeAttModel extends AbstractTableModel{
             fireTableRowsInserted(index+1, index+1);
         }
     }
-    
-    
+
+
 }
 
 

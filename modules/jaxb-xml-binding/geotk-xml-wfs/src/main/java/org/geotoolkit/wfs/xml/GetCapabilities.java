@@ -23,5 +23,5 @@ import org.geotoolkit.ows.xml.AbstractGetCapabilities;
  * @author Guilhem Legal (Geomatys)
  */
 public interface GetCapabilities extends AbstractGetCapabilities {
-    
+
 }

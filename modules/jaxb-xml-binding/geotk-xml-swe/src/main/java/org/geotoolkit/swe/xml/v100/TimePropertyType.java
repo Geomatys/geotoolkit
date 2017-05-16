@@ -26,11 +26,11 @@ import org.geotoolkit.swe.xml.AbstractTimeProperty;
 
 /**
  * Time is a data-type so usually appears "by value" rather than by reference.
- * 
+ *
  * <p>Java class for TimePropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimePropertyType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.swe.xml.AbstractTimeProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,7 +68,7 @@ public class TimePropertyType implements AbstractTimeProperty {
             this.time = new TimeType(tp.getTime());
         }
     }
-    
+
     /**
      * Gets the value of the time property.
      */

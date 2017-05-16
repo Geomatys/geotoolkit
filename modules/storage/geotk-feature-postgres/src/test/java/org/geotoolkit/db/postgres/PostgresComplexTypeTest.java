@@ -345,7 +345,7 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         lazyCompare(refType, created);
 
     }
-    
+
     @Test
     public void testFeatureType3Creation() throws DataStoreException, VersioningException{
         reload(false);

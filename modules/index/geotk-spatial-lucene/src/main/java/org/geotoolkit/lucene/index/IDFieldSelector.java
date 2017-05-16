@@ -27,14 +27,14 @@ import org.apache.lucene.index.StoredFieldVisitor;
 public final class IDFieldSelector extends StoredFieldVisitor {
 
     private boolean found = false;
-    
+
     private final String fieldName;
-    
+
     public IDFieldSelector(final String fieldName) {
         this.fieldName = fieldName;
         this.found     = false;
     }
-    
+
     /**
      * Accept only the id field of a lucene document.
      *

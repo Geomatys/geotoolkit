@@ -111,14 +111,14 @@ public class XMLCategory {
 
     /**
      * Build Category from its internal unmarshalling attributs.
-     * 
+     *
      * @return Expected {@link Category} build from its unmarshalled attributs.
      * @throws IllegalArgumentException if internal transfer function is not known.
      * @param dataType
      */
     public Category buildCategory(int dataType) {
         MathTransform1D sampleToGeophysics = null;
-        //-- if function != null means categories own a quantitative unit. 
+        //-- if function != null means categories own a quantitative unit.
         //-- For example it is not NOData category but exits more other reason.
         if (function != null) {
             final TransferFunction f = new TransferFunction();
@@ -156,7 +156,7 @@ public class XMLCategory {
         if (Double.isNaN(lower) || lower == upper) {
             cat = new Category(name, cols[0], range);
         } else {
-            cat = new Category(name, cols, range, sampleToGeophysics);//-- sampletogeophysic may be null. 
+            cat = new Category(name, cols, range, sampleToGeophysics);//-- sampletogeophysic may be null.
         }
         return cat;
     }
@@ -194,7 +194,7 @@ public class XMLCategory {
                 throw new IllegalArgumentException("Unsupported 1D transform : "+trs);
             }
         }
-        
+
     }
 
     /**

@@ -25,12 +25,12 @@ import org.geotoolkit.ows.xml.v110.ExceptionReport;
 
 
 /**
- * Indicator that the process has failed to execute successfully. The reason for failure is given in the exception report. 
- * 
+ * Indicator that the process has failed to execute successfully. The reason for failure is given in the exception report.
+ *
  * <p>Java class for ProcessFailedType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ProcessFailedType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.ows.xml.v110.ExceptionReport;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,20 +56,20 @@ public class ProcessFailedType {
     protected ExceptionReport exceptionReport;
 
     public ProcessFailedType() {
-        
+
     }
-    
+
     public ProcessFailedType( ExceptionReport exceptionReport) {
         this.exceptionReport = exceptionReport;
     }
-    
+
     /**
      * Gets the value of the exceptionReport property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExceptionReport }
-     *     
+     *
      */
     public ExceptionReport getExceptionReport() {
         return exceptionReport;
@@ -77,11 +77,11 @@ public class ProcessFailedType {
 
     /**
      * Sets the value of the exceptionReport property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExceptionReport }
-     *     
+     *
      */
     public void setExceptionReport(final ExceptionReport value) {
         this.exceptionReport = value;
@@ -95,7 +95,7 @@ public class ProcessFailedType {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

@@ -18,20 +18,20 @@ package org.geotoolkit.util;
 
 /**
  * Interface for Cancelable objects.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public interface Cancellable {
-    
+
     /**
      * Ask to stop any running tasks. this method should not block.
      */
     void cancel();
-    
+
     /**
      * @return true if a call to cancel has been made.
      */
     boolean isCancelled();
-    
+
 }

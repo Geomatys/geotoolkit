@@ -34,7 +34,7 @@ public class DefaultQueryCapabilities implements QueryCapabilities{
     public DefaultQueryCapabilities(final boolean crossQuery) {
         this(crossQuery, new String[]{Query.GEOTK_QOM});
     }
-    
+
     public DefaultQueryCapabilities(final boolean crossQuery, boolean versioning) {
         this(crossQuery, versioning, new String[]{Query.GEOTK_QOM});
     }
@@ -42,7 +42,7 @@ public class DefaultQueryCapabilities implements QueryCapabilities{
     public DefaultQueryCapabilities(final boolean crossQuery, final String[] languages) {
         this(crossQuery,false,languages);
     }
-    
+
     public DefaultQueryCapabilities(final boolean crossQuery, final boolean versioning, final String[] languages) {
         this.crossQuery = crossQuery;
         this.versioning = versioning;
@@ -64,7 +64,7 @@ public class DefaultQueryCapabilities implements QueryCapabilities{
     public String[] getSupportedQueryLanguages() {
         return supportedLanguages;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -80,6 +80,6 @@ public class DefaultQueryCapabilities implements QueryCapabilities{
     public boolean handleVersioning() {
         return versioning;
     }
-    
+
 
 }

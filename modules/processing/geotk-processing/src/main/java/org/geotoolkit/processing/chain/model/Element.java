@@ -25,12 +25,12 @@ import javax.xml.bind.annotation.XmlSeeAlso;
  */
 @XmlSeeAlso({ElementProcess.class,ElementCondition.class,ElementManual.class})
 public class Element extends Positionable {
-        
+
     /** Placeholder for process flow start node */
     public static final Element BEGIN = new Element(Integer.MIN_VALUE);
     /** Placeholder for process flow end node */
     public static final Element END = new Element(Integer.MAX_VALUE);
-    
+
     @XmlAttribute(name="id")
     protected Integer id;
 
@@ -45,7 +45,7 @@ public class Element extends Positionable {
         super(x, y);
         this.id = id;
     }
-    
+
     public Integer getId() {
         return id;
     }
@@ -53,9 +53,9 @@ public class Element extends Positionable {
     public void setId(final Integer id) {
         this.id = id;
     }
-    
+
     public Element copy(){
         return new Element(id);
     }
-    
+
 }

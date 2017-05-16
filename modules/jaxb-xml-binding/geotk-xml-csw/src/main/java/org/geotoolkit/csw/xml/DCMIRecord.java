@@ -26,71 +26,71 @@ import org.geotoolkit.dublincore.xml.AbstractSimpleLiteral;
  * @module
  */
 public interface DCMIRecord extends AbstractRecord {
-    
+
     /**
      * Gets the value of the dcElement property.
      * (unModifiable)
      */
     List<? extends Object> getDCElement();
-    
+
     AbstractSimpleLiteral getIdentifier();
-    
+
     String getIdentifierStringValue();
-    
+
     AbstractSimpleLiteral getTitle();
-    
+
     String getTitleStringValue();
-    
+
     AbstractSimpleLiteral getType();
-    
+
     String getTypeStringValue();
-    
+
     List<? extends AbstractSimpleLiteral> getSubject();
-    
+
     List<? extends AbstractSimpleLiteral> getFormat();
-    
+
     AbstractSimpleLiteral getModified();
-    
+
     List< ? extends AbstractSimpleLiteral> getAbstract();
-    
+
     String getAbstractStringValue();
-    
+
     List<? extends AbstractSimpleLiteral> getCreator();
-    
+
     String getCreatorStringValue();
-    
+
     AbstractSimpleLiteral getLanguage();
-    
+
     List<? extends AbstractSimpleLiteral> getRelation();
-    
+
     List<? extends AbstractSimpleLiteral> getSource();
-    
+
     List<? extends AbstractSimpleLiteral> getCoverage();
-    
+
     AbstractSimpleLiteral getDate();
-    
+
     String getDateStringValue();
-    
+
     List<? extends AbstractSimpleLiteral> getRights();
-    
+
     AbstractSimpleLiteral getSpatial();
-    
+
     AbstractSimpleLiteral getReferences();
-    
+
     List<? extends AbstractSimpleLiteral> getPublisher();
-    
+
     String getPublisherStringValue();
-    
+
     List<? extends AbstractSimpleLiteral> getContributor();
-    
+
     String getContributorStringValue();
-    
+
     List<? extends AbstractSimpleLiteral> getDescription();
-    
+
     String getDescriptionStringValue();
-    
+
     List<String> getDescriptionStringValues();
-    
+
     AbstractSimpleLiteral getDCProperty(final String property);
 
 }

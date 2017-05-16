@@ -28,9 +28,9 @@ import org.geotoolkit.swes.xml.InsertSensorResponse;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -42,7 +42,7 @@ import org.geotoolkit.swes.xml.InsertSensorResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -61,7 +61,7 @@ public class RegisterSensorResponse extends ResponseBaseType implements InsertSe
      * An empty constructor used by JAXB.
      */
     RegisterSensorResponse () {}
-    
+
     /**
      * Build a new response with the specified sensor ID.
      *
@@ -71,7 +71,7 @@ public class RegisterSensorResponse extends ResponseBaseType implements InsertSe
     public RegisterSensorResponse(final String assignedSensorId) {
         this.assignedSensorId = assignedSensorId;
     }
-     
+
     /**
      * Gets the value of the assignedSensorId property.
      */
@@ -79,7 +79,7 @@ public class RegisterSensorResponse extends ResponseBaseType implements InsertSe
     public String getAssignedProcedure() {
         return assignedSensorId;
     }
-    
+
     @Override
     public String getAssignedOffering() {
         return null; // no assigned offering in SOS 1.0.0
@@ -106,7 +106,7 @@ public class RegisterSensorResponse extends ResponseBaseType implements InsertSe
         hash = assignedSensorId.hashCode();
         return hash;
     }
-    
+
     @Override
     public String toString() {
         return "RegisterSensorResponse: assignedSensorId=" + assignedSensorId;

@@ -28,9 +28,9 @@ import org.geotoolkit.skos.xml.Concept;
 
 /**
  * <p>Java class for getConceptsMatchingRegexByThesaurusResponse complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="getConceptsMatchingRegexByThesaurusResponse">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.skos.xml.Concept;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getConceptsMatchingRegexByThesaurusResponse", propOrder = {

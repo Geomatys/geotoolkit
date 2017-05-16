@@ -46,19 +46,19 @@ public class TextBlockType extends AbstractEncodingType implements TextBlock {
      */
     @XmlAttribute(required = true)
     private String tokenSeparator;
-    
+
     /**
      * chaine de 3 caractere maximum pour separer les blocks.
      */
     @XmlAttribute(required = true)
     private String blockSeparator;
-    
+
     /**
      * un caractere pour separer les decimaux.
      */
     @XmlAttribute(required = true)
     private String decimalSeparator;
-    
+
     /**
      * Constructeur utilisé par jaxB.
      */
@@ -72,7 +72,7 @@ public class TextBlockType extends AbstractEncodingType implements TextBlock {
             this.tokenSeparator   = tb.getTokenSeparator();
         }
     }
-    
+
     /**
      * Crée un nouveau encodage de texte.
      */
@@ -118,7 +118,7 @@ public class TextBlockType extends AbstractEncodingType implements TextBlock {
         if (object instanceof TextBlockType && super.equals(object)) {
             final TextBlockType that = (TextBlockType) object;
             return Objects.equals(this.tokenSeparator,          that.tokenSeparator)   &&
-                   Objects.equals(this.blockSeparator,    that.blockSeparator)   && 
+                   Objects.equals(this.blockSeparator,    that.blockSeparator)   &&
                    Objects.equals(this.decimalSeparator,   that.decimalSeparator) ;
         }
         return false;
@@ -132,15 +132,15 @@ public class TextBlockType extends AbstractEncodingType implements TextBlock {
         hash = 11 * hash + (this.decimalSeparator != null? this.decimalSeparator.hashCode() : 0);
         return hash;
     }
-    
+
     /**
      * Retourne une representation de l'objet (debug).
      */
     @Override
     public String toString() {
-        return super.toString()+ " " + this.blockSeparator 
+        return super.toString()+ " " + this.blockSeparator
         + '|' + this.decimalSeparator + '|' + this.tokenSeparator;
     }
-    
-    
+
+
 }

@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for locatorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="locatorType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "locatorType", propOrder = {
@@ -66,10 +66,10 @@ public class LocatorType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link TitleEltType }
-     * 
+     *
      */
     public List<TitleEltType> getTitle() {
         if (title == null) {
@@ -80,11 +80,11 @@ public class LocatorType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TypeType }
-     *     
+     *
      */
     public TypeType getType() {
         if (type == null) {
@@ -96,11 +96,11 @@ public class LocatorType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TypeType }
-     *     
+     *
      */
     public void setType(TypeType value) {
         this.type = value;
@@ -108,11 +108,11 @@ public class LocatorType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -120,11 +120,11 @@ public class LocatorType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -132,11 +132,11 @@ public class LocatorType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -144,11 +144,11 @@ public class LocatorType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -156,11 +156,11 @@ public class LocatorType {
 
     /**
      * Gets the value of the titleTemp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitleTemp() {
         return titleTemp;
@@ -168,26 +168,26 @@ public class LocatorType {
 
     /**
      * Sets the value of the titleTemp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitleTemp(String value) {
         this.titleTemp = value;
     }
 
     /**
-     * 
+     *
      *      label is not required, but locators have no particular
      *      XLink function if they are not labeled.
-     *     
-     * 
+     *
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLabel() {
         return label;
@@ -195,11 +195,11 @@ public class LocatorType {
 
     /**
      * Sets the value of the label property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLabel(String value) {
         this.label = value;

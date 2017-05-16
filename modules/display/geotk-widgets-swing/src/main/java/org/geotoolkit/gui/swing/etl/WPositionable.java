@@ -26,5 +26,5 @@ import org.geotoolkit.processing.chain.model.Positionable;
 public interface WPositionable {
 
     Positionable getObject();
-    
+
 }

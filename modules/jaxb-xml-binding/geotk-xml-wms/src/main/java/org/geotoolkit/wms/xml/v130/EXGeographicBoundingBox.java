@@ -26,9 +26,9 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * @author Guilhem Legal 
+ *
+ * @author Guilhem Legal
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -78,7 +78,7 @@ public class EXGeographicBoundingBox implements AbstractGeographicBoundingBox {
         this.northBoundLatitude = northBoundLatitude;
         this.southBoundLatitude = southBoundLatitude;
         this.westBoundLongitude = westBoundLongitude;
-        
+
     }
 
     /**
@@ -94,7 +94,7 @@ public class EXGeographicBoundingBox implements AbstractGeographicBoundingBox {
 
     /**
      * Gets the value of the westBoundLongitude property.
-     * 
+     *
      */
     public double getWestBoundLongitude() {
         return westBoundLongitude;
@@ -102,7 +102,7 @@ public class EXGeographicBoundingBox implements AbstractGeographicBoundingBox {
 
     /**
      * Gets the value of the eastBoundLongitude property.
-     * 
+     *
      */
     public double getEastBoundLongitude() {
         return eastBoundLongitude;
@@ -110,7 +110,7 @@ public class EXGeographicBoundingBox implements AbstractGeographicBoundingBox {
 
     /**
      * Gets the value of the southBoundLatitude property.
-     * 
+     *
      */
     public double getSouthBoundLatitude() {
         return southBoundLatitude;
@@ -118,21 +118,21 @@ public class EXGeographicBoundingBox implements AbstractGeographicBoundingBox {
 
     /**
      * Gets the value of the northBoundLatitude property.
-     * 
+     *
      */
     public double getNorthBoundLatitude() {
         return northBoundLatitude;
     }
-    
+
     @Override
     public Boolean getInclusion() {
         return Boolean.TRUE;
     }
-    
+
     @Override
     public String toString() {
-        return "Env[" + westBoundLongitude + " : " + eastBoundLongitude + 
+        return "Env[" + westBoundLongitude + " : " + eastBoundLongitude +
                  ", " + southBoundLatitude + " : " + northBoundLatitude + "]";
     }
-    
+
 }

@@ -9,28 +9,28 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 
 
 public class ListAllFactoriesDemo {
-    
+
     public static void main(String[] args) {
         Demos.init();
-        
-        // Listing or creating new datastores are made through the DataStoreFinder utility class        
+
+        // Listing or creating new datastores are made through the DataStoreFinder utility class
         final Iterator<FeatureStoreFactory> ite = DataStores.getAllFactories(FeatureStoreFactory.class).iterator();
-        
+
         while(ite.hasNext()){
-            
+
             final FeatureStoreFactory factory = ite.next();
-            
+
             //display general informations about this factory
             System.out.println(factory.getDisplayName());
             System.out.println(factory.getDescription());
-            
+
             //display the parameter requiered to open a new instance
             //of featurestore of this type
             final ParameterDescriptorGroup description = factory.getParametersDescriptor();
             System.out.println(description);
             System.out.println("\n\n");
-            
-            
+
+
             //if we wanted to created a new featurestore of this type we would proceed
             //like this :
             /*
@@ -41,8 +41,8 @@ public class ListAllFactoriesDemo {
             final Server server = factory.open(params);
             */
         }
-        
-        
+
+
     }
-    
+
 }

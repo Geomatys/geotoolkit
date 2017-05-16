@@ -39,9 +39,9 @@ import org.geotoolkit.swe.xml.v100.SimpleDataRecordType;
 
 /**
  * <p>Java class for PresentationLayerPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PresentationLayerPropertyType">
  *   &lt;complexContent>
@@ -57,8 +57,8 @@ import org.geotoolkit.swe.xml.v100.SimpleDataRecordType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -154,7 +154,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
         }
         return null;
     }
-    
+
     /**
      * Sets the value of the abstractDataRecord property.
      */
@@ -185,7 +185,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Sets the value of the dataBlockDefinition property.
-     * 
+     *
      */
     public void setDataBlockDefinition(final DataBlockDefinitionType value) {
         this.dataBlockDefinition = value;
@@ -293,7 +293,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Sets the value of the show property.
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;

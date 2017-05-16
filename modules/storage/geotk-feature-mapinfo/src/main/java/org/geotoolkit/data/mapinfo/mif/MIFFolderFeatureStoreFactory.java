@@ -119,5 +119,5 @@ public class MIFFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, false, false, false, GEOMS_ALL);
     }
-    
+
 }

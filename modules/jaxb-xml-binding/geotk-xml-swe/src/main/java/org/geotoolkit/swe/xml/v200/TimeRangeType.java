@@ -32,9 +32,9 @@ import org.geotoolkit.swe.xml.AbstractTimeRange;
 
 /**
  * <p>Java class for TimeRangeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeRangeType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.swe.xml.AbstractTimeRange;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeRangeType", propOrder = {
@@ -74,21 +74,21 @@ public class TimeRangeType extends AbstractSimpleComponentType implements Abstra
     private String localFrame;
 
     public TimeRangeType() {
-        
+
     }
-    
+
     public TimeRangeType(final String definition, final List<String> value) {
         super(null, definition, null);
         this.value = value;
     }
-    
+
     /**
      * Gets the value of the uom property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link UnitReference }
-     *     
+     *
      */
     @Override
     public UnitReference getUom() {
@@ -97,11 +97,11 @@ public class TimeRangeType extends AbstractSimpleComponentType implements Abstra
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link UnitReference }
-     *     
+     *
      */
     public void setUom(UnitReference value) {
         this.uom = value;
@@ -109,11 +109,11 @@ public class TimeRangeType extends AbstractSimpleComponentType implements Abstra
 
     /**
      * Gets the value of the constraint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedTimesPropertyType }
-     *     
+     *
      */
     public AllowedTimesPropertyType getConstraint() {
         return constraint;
@@ -121,11 +121,11 @@ public class TimeRangeType extends AbstractSimpleComponentType implements Abstra
 
     /**
      * Sets the value of the constraint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedTimesPropertyType }
-     *     
+     *
      */
     public void setConstraint(AllowedTimesPropertyType value) {
         this.constraint = value;
@@ -133,11 +133,11 @@ public class TimeRangeType extends AbstractSimpleComponentType implements Abstra
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     @Override
     public List<String> getValue() {
@@ -149,16 +149,16 @@ public class TimeRangeType extends AbstractSimpleComponentType implements Abstra
 
     /**
      * Gets the value of the referenceTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getReferenceTimeCalendar() {
         return referenceTime;
     }
-    
+
     @Override
     public String getReferenceTime() {
         if (referenceTime != null) {
@@ -169,11 +169,11 @@ public class TimeRangeType extends AbstractSimpleComponentType implements Abstra
 
     /**
      * Sets the value of the referenceTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setReferenceTime(XMLGregorianCalendar value) {
         this.referenceTime = value;
@@ -181,11 +181,11 @@ public class TimeRangeType extends AbstractSimpleComponentType implements Abstra
 
     /**
      * Gets the value of the localFrame property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getLocalFrame() {
@@ -194,11 +194,11 @@ public class TimeRangeType extends AbstractSimpleComponentType implements Abstra
 
     /**
      * Sets the value of the localFrame property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLocalFrame(String value) {
         this.localFrame = value;

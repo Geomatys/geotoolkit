@@ -27,11 +27,11 @@ import org.geotoolkit.gml.xml.AbstractCurveSegment;
 
 /**
  * Curve segment defines a homogeneous segment of a curve.
- * 
+ *
  * <p>Java class for AbstractCurveSegmentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractCurveSegmentType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.gml.xml.AbstractCurveSegment;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -82,11 +82,11 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
     }
     /**
      * Gets the value of the numDerivativesAtStart property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getNumDerivativesAtStart() {
         /*if (numDerivativesAtStart == null) {
@@ -97,11 +97,11 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
 
     /**
      * Sets the value of the numDerivativesAtStart property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setNumDerivativesAtStart(final Integer value) {
         this.numDerivativesAtStart = value;
@@ -109,11 +109,11 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
 
     /**
      * Gets the value of the numDerivativesAtEnd property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getNumDerivativesAtEnd() {
         /*if (numDerivativesAtEnd == null) {
@@ -124,11 +124,11 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
 
     /**
      * Sets the value of the numDerivativesAtEnd property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setNumDerivativesAtEnd(final Integer value) {
         this.numDerivativesAtEnd = value;
@@ -136,11 +136,11 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
 
     /**
      * Gets the value of the numDerivativeInterior property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getNumDerivativeInterior() {
         /*if (numDerivativeInterior == null) {
@@ -151,11 +151,11 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
 
     /**
      * Sets the value of the numDerivativeInterior property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setNumDerivativeInterior(final Integer value) {
         this.numDerivativeInterior = value;

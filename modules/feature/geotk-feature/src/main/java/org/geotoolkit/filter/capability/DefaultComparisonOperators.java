@@ -85,5 +85,5 @@ public class DefaultComparisonOperators implements ComparisonOperators {
         hash = 11 * hash + (this.operators != null ? this.operators.hashCode() : 0);
         return hash;
     }
-    
+
 }

@@ -29,14 +29,14 @@ public class WName extends LabelWidget {
     private final boolean isSource;
     private final boolean isTarget;
     private final Widget originWidget;
-    
-    public WName(final ChainScene scene, final String name, final boolean editable, 
+
+    public WName(final ChainScene scene, final String name, final boolean editable,
             final boolean isSource, final boolean isTarget, final Widget originWidget) {
         super(scene, name);
         this.isSource = isSource;
         this.isTarget = isTarget;
         this.originWidget = originWidget;
-        
+
         if (editable) {
             getActions().addAction(ActionFactory.createConnectAction(scene.getActionLayer(), new ProviderFlowConnect(scene)));
         }
@@ -45,11 +45,11 @@ public class WName extends LabelWidget {
     public boolean isSource() {
         return isSource;
     }
-    
+
     public boolean isTarget() {
         return isTarget;
     }
-    
+
     public Widget getOriginWidget() {
         return originWidget;
     }

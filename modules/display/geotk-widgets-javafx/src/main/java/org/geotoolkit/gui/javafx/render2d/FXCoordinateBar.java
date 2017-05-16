@@ -61,16 +61,16 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  */
 public class FXCoordinateBar extends GridPane {
-    
+
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance();
-    
+
     private final FXMap map;
     private final PropertyChangeListener listener = new PropertyChangeListener() {
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             final String propertyName = evt.getPropertyName();
-            
+
             if(AbstractCanvas2D.OBJECTIVE_CRS_KEY.equals(propertyName)){
                 //update crs button
                 crsButton.crsProperty().set((CoordinateReferenceSystem)evt.getNewValue());
@@ -92,7 +92,7 @@ public class FXCoordinateBar extends GridPane {
                     }
                 }
             }
-            
+
             //update scale box
             Platform.runLater(() -> {
                 scaleCombo.valueProperty().removeListener(action);
@@ -104,7 +104,7 @@ public class FXCoordinateBar extends GridPane {
                     Loggers.JAVAFX.log(Level.WARNING, null, ex);
                 }
             });
-                     
+
         }
     };
     private final ChangeListener action = new ChangeListener() {
@@ -120,23 +120,23 @@ public class FXCoordinateBar extends GridPane {
             }
         }
     };
-    
-    
+
+
     private final StatusBar statusBar = new StatusBar();
     private final ComboBox scaleCombo = new ComboBox();
     private final ColorPicker colorPicker = new ColorPicker(Color.WHITE);
     private final FXCRSButton crsButton = new FXCRSButton();
     private final ToggleButton sliderButton = new ToggleButton(null, new ImageView(GeotkFX.ICON_SLIDERS));
     private final FXAxisView sliderview = new FXAxisView();
-    
+
     public FXCoordinateBar(FXMap map) {
         this.map = map;
-        
+
         colorPicker.setStyle("-fx-color-label-visible:false;");
-        
+
         statusBar.setMaxWidth(Double.MAX_VALUE);
         add(statusBar, 0, 1);
-        
+
         final ColumnConstraints col0 = new ColumnConstraints();
         col0.setHgrow(Priority.ALWAYS);
         final RowConstraints row0 = new RowConstraints();
@@ -145,7 +145,7 @@ public class FXCoordinateBar extends GridPane {
         row1.setVgrow(Priority.NEVER);
         getColumnConstraints().addAll(col0);
         getRowConstraints().addAll(row0,row1);
-        
+
         sliderview.scaleProperty().set( (1.0/TemporalConstants.DAY_MS)*30 );
         sliderview.visibleProperty().bind(sliderButton.selectedProperty());
         sliderButton.setOnAction((ActionEvent event) -> {
@@ -154,7 +154,7 @@ public class FXCoordinateBar extends GridPane {
                 add(sliderview, 0, 0, 1, 1);
             }
         });
-        
+
         final ChangeListener rangeListener = new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
@@ -169,7 +169,7 @@ public class FXCoordinateBar extends GridPane {
                             maxValue = minValue;
                         }
                         map.getCanvas().setTemporalRange(
-                                minValue!=null ? new Date(minValue.longValue()) : null, 
+                                minValue!=null ? new Date(minValue.longValue()) : null,
                                 maxValue!=null ? new Date(maxValue.longValue()) : null);
                     }
                 } catch (TransformException ex) {
@@ -177,13 +177,13 @@ public class FXCoordinateBar extends GridPane {
                 }
             }
         };
-        
+
         sliderview.rangeMinProperty().addListener(rangeListener);
         sliderview.rangeMaxProperty().addListener(rangeListener);
-        
-        
+
+
         statusBar.getLeftItems().add(sliderButton);
-        
+
         scaleCombo.getItems().addAll(  1000l,
                                  5000l,
                                 20000l,
@@ -192,28 +192,28 @@ public class FXCoordinateBar extends GridPane {
                                500000l);
         scaleCombo.setEditable(true);
         scaleCombo.setConverter(new LongStringConverter());
-        
+
         statusBar.getRightItems().add(scaleCombo);
         statusBar.getRightItems().add(colorPicker);
         statusBar.getRightItems().add(crsButton);
-        
+
         map.addEventHandler(MouseEvent.ANY, new myListener());
-        
+
         if (this.map != null) {
             this.map.getCanvas().addPropertyChangeListener(listener);
-        }        
-        
+        }
+
         colorPicker.setOnAction(new EventHandler() {
             public void handle(Event t) {
                 if (map != null) {
                     map.getCanvas().setBackgroundPainter(new SolidColorPainter(FXUtilities.toSwingColor(colorPicker.getValue())));
                     map.getCanvas().repaint();
-                }     
+                }
             }
         });
-        
+
         crsButton.crsProperty().setValue(map.getCanvas().getObjectiveCRS());
-        crsButton.crsProperty().addListener((ObservableValue<? extends CoordinateReferenceSystem> observable, 
+        crsButton.crsProperty().addListener((ObservableValue<? extends CoordinateReferenceSystem> observable,
                 CoordinateReferenceSystem oldValue, CoordinateReferenceSystem newValue) -> {
             try {
                 if(newValue!=null){
@@ -223,7 +223,7 @@ public class FXCoordinateBar extends GridPane {
                 Loggers.JAVAFX.log(Level.INFO, ex.getMessage(), ex);
             }
         });
-        
+
         // Set button tooltips
         sliderButton.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "temporalTooltip")));
         statusBar.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "coordinateTooltip")));
@@ -231,7 +231,7 @@ public class FXCoordinateBar extends GridPane {
         colorPicker.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "bgColorTooltip")));
         crsButton.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "crsTooltip")));
     }
-    
+
     public void setCrsButtonVisible(boolean visible){
         if(statusBar.getRightItems().contains(crsButton)){
             statusBar.getRightItems().remove(crsButton);
@@ -239,34 +239,34 @@ public class FXCoordinateBar extends GridPane {
             statusBar.getRightItems().add(crsButton);
         }
     }
-    
+
     public boolean isCrsButtonVisible(){
         return crsButton.isVisible();
     }
 
     /**
      * TODO change this, we should be able to control multiple crs axis at the same time.
-     * 
+     *
      * @return temporal axis crs viewer
      */
     public FXAxisView getSliderview() {
         return sliderview;
     }
-    
+
     /**
      * Set scale values displayed in the right corner combo box.
-     * 
+     *
      * @param scales predefined scale values
      */
     public void setScaleBoxValues(Long[] scales){
         scaleCombo.getItems().setAll(Arrays.asList(scales));
     }
-        
+
     private class myListener implements EventHandler<MouseEvent>{
 
         @Override
         public void handle(MouseEvent event) {
-            
+
             final Point2D pt = new Point2D.Double(event.getX(), event.getY());
             Point2D coord = new DirectPosition2D();
             try {
@@ -290,5 +290,5 @@ public class FXCoordinateBar extends GridPane {
         }
 
     }
-    
+
 }

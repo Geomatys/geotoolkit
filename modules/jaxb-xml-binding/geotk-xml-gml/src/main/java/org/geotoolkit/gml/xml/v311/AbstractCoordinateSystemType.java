@@ -28,17 +28,17 @@ import org.apache.sis.util.ComparisonMode;
 
 
 /**
- * A coordinate system (CS) is the set of coordinate system axes that spans a given coordinate space. 
- * A CS is derived from a set of (mathematical) rules for specifying how coordinates in a given space are to be assigned to points. 
- * The coordinate values in a coordinate tuple shall be recorded in the order in which the coordinate system axes associations are recorded, 
- * whenever those coordinates use a coordinate reference system that uses this coordinate system. 
- * This abstract complexType shall not be used, extended, or restricted, in an Application Schema, 
- * to define a concrete subtype with a meaning equivalent to a concrete subtype specified in this document. 
- * 
+ * A coordinate system (CS) is the set of coordinate system axes that spans a given coordinate space.
+ * A CS is derived from a set of (mathematical) rules for specifying how coordinates in a given space are to be assigned to points.
+ * The coordinate values in a coordinate tuple shall be recorded in the order in which the coordinate system axes associations are recorded,
+ * whenever those coordinates use a coordinate reference system that uses this coordinate system.
+ * This abstract complexType shall not be used, extended, or restricted, in an Application Schema,
+ * to define a concrete subtype with a meaning equivalent to a concrete subtype specified in this document.
+ *
  * <p>Java class for AbstractCoordinateSystemType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractCoordinateSystemType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -80,8 +80,8 @@ public abstract class AbstractCoordinateSystemType extends AbstractCoordinateSys
     private List<CoordinateSystemAxisRefType> usesAxis;
 
     /**
-     * Set of alternative identifications of this coordinate system. 
-     * The first csID, if any, is normally the primary identification code, 
+     * Set of alternative identifications of this coordinate system.
+     * The first csID, if any, is normally the primary identification code,
      * and any others are aliases. Gets the value of the csID property.
      * (unmodifiable)
      */

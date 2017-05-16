@@ -56,10 +56,10 @@ public class Values implements AbstractValues {
    /*@XmlAnyElement
     private List<Element> any; we need direct String value. TODO see how to handle both any xml and String value
      */
-    
+
     @XmlValue
     private String any;
-    
+
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
@@ -73,7 +73,7 @@ public class Values implements AbstractValues {
             this.otherAttributes = v.getOtherAttributes();
         }
     }
-    
+
     /**
      * Gets the value of the any property.
      *

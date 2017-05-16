@@ -61,10 +61,10 @@ import org.apache.sis.util.logging.Logging;
  * @module
  */
 public final class DbaseFileReader implements Closeable{
-	/**
-	 * Logger.
-	 */
-	private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.dbf");
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.dbf");
 
     public static final Charset DEFAULT_STRING_CHARSET = Charset.forName("ISO-8859-1");
 
@@ -266,11 +266,11 @@ public final class DbaseFileReader implements Closeable{
         if(result == CoderResult.OVERFLOW){
             result.throwException();
         } else if(result != CoderResult.UNDERFLOW) {
-        	try {
-        		result.throwException();
-        	} catch (Exception e) {
-        		LOGGER.log(Level.INFO, e.getMessage(), e);
-        	}
+            try {
+                result.throwException();
+            } catch (Exception e) {
+                LOGGER.log(Level.INFO, e.getMessage(), e);
+            }
         }
         result = decoder.flush(charBuffer);
         if(CoderResult.UNDERFLOW != result){

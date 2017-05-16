@@ -222,7 +222,7 @@ public class GeometryParser {
         }  else if (type.equalsIgnoreCase("LINESTRING")) {
             return readLineStringText(tokenizer);
         } else if (type.equalsIgnoreCase("LINEARRING")) {
-        	return readLinearRingText(tokenizer);
+            return readLinearRingText(tokenizer);
         }  else if (type.equalsIgnoreCase("POLYGON")) {
             return readPolygonText(tokenizer);
         } else if (type.equalsIgnoreCase("MULTIPOINT")) {
@@ -230,9 +230,9 @@ public class GeometryParser {
         } else if (type.equalsIgnoreCase("MULTIPOLYGON")) {
             return readMultiPolygonText(tokenizer);
         } else if (type.equalsIgnoreCase("GEOMETRYCOLLECTION")) {
-        	return readGeometryCollectionText(tokenizer);
+            return readGeometryCollectionText(tokenizer);
         } else if (type.equalsIgnoreCase("MULTILINESTRING")) {
-        	return readMultiLineStringText(tokenizer);
+            return readMultiLineStringText(tokenizer);
         }
         throw new ParseException("Unknown geometry type: " + type, tokenizer.lineno());
     }
@@ -535,7 +535,7 @@ public class GeometryParser {
         List<Ring> holes = new ArrayList<Ring>();
         nextToken = getNextCloserOrComma(tokenizer);
         while (nextToken.equals(COMMA)) {
-        	Curve holecurve = readLinearRingText(tokenizer);
+            Curve holecurve = readLinearRingText(tokenizer);
             List<OrientableCurve> holeList = Collections.singletonList((OrientableCurve)holecurve);
             Ring hole = primitiveFactory.createRing(holeList);
             //Ring hole = readLinearRingText(tokenizer);
@@ -561,7 +561,7 @@ public class GeometryParser {
     private MultiPrimitive readMultiPolygonText(final StreamTokenizer tokenizer) throws IOException, ParseException {
         String nextToken = getNextEmptyOrOpener(tokenizer);
         if (nextToken.equals(EMPTY)) {
-        	return null;
+            return null;
         }
         MultiPrimitive multi = geometryFactory.createMultiPrimitive();
         Surface surface  = readPolygonText(tokenizer);
@@ -593,7 +593,7 @@ public class GeometryParser {
     private MultiPrimitive readMultiPointText(final StreamTokenizer tokenizer) throws IOException, ParseException {
         String nextToken = getNextEmptyOrOpener(tokenizer);
         if (nextToken.equals(EMPTY)) {
-        	return null;
+            return null;
         }
         MultiPrimitive multi = geometryFactory.createMultiPrimitive();
         Point point = primitiveFactory.createPoint(getPreciseCoordinate(tokenizer));
@@ -602,9 +602,9 @@ public class GeometryParser {
         elements.add(point);
         nextToken = getNextCloserOrComma(tokenizer);
         while (nextToken.equals(COMMA)) {
-        	point = primitiveFactory.createPoint(getPreciseCoordinate(tokenizer));
+            point = primitiveFactory.createPoint(getPreciseCoordinate(tokenizer));
             //multi.getElements().add(point);
-        	elements.add(point);
+            elements.add(point);
             nextToken = getNextCloserOrComma(tokenizer);
         }
         return multi;
@@ -623,7 +623,7 @@ public class GeometryParser {
     private MultiPrimitive readGeometryCollectionText(final StreamTokenizer tokenizer) throws IOException, ParseException {
         String nextToken = getNextEmptyOrOpener(tokenizer);
         if (nextToken.equals(EMPTY)) {
-        	return null;
+            return null;
         }
         MultiPrimitive multi = geometryFactory.createMultiPrimitive();
         Geometry geom = readGeometryTaggedText(tokenizer);
@@ -653,10 +653,10 @@ public class GeometryParser {
     private MultiPrimitive readMultiLineStringText(final StreamTokenizer tokenizer) throws IOException, ParseException {
         String nextToken = getNextEmptyOrOpener(tokenizer);
         if (nextToken.equals(EMPTY)) {
-        	return null;
+            return null;
         }
         MultiPrimitive multi = geometryFactory.createMultiPrimitive();
-    	Curve curve = readLineStringText(tokenizer);
+        Curve curve = readLineStringText(tokenizer);
         //multi.getElements().add(curve);
         Set elements = multi.getElements();
         elements.add(curve);

@@ -38,7 +38,7 @@ import org.opengis.style.SelectedChannelType;
 
 /**
  * Channel selection panel
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -46,8 +46,8 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection> 
 
     private MapLayer layer = null;
 
-    /** 
-     * Creates new form JFillPanel 
+    /**
+     * Creates new form JFillPanel
      */
     public JChannelSelectionPane() {
         super(ChannelSelection.class);
@@ -72,14 +72,14 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection> 
     public MapLayer getLayer(){
         return layer;
     }
-    
+
     @Override
     public void parse(final ChannelSelection channel) {
         guiGray.parse(null);
         guiRed.parse(null);
         guiGreen.parse(null);
         guiBlue.parse(null);
-            
+
         if (channel == null) {
             guiCheckNative.setSelected(true);
         }else{
@@ -98,7 +98,7 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection> 
                 guiCheckNative.setSelected(true);
             }
         }
-        
+
         lock();
     }
 
@@ -117,12 +117,12 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection> 
             final SelectedChannelType graytype = guiGray.create();
             return getStyleFactory().channelSelection(graytype);
         }
-        
+
         return null;
     }
-    
+
     private void lock(){
-        
+
         if(guiCheckNative.isSelected()){
             guiRed.setEnabled(false);
             guiGreen.setEnabled(false);
@@ -162,7 +162,7 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection> 
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiRed,guiGreen,guiBlue,guiGray};
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

@@ -32,14 +32,14 @@ import org.geotoolkit.wps.xml.Input;
 
 
 /**
- * 
+ *
  * This structure contains information elements to supply input data for process execution.
- * 			
- * 
+ *
+ *
  * <p>Java class for DataInputType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataInputType">
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import org.geotoolkit.wps.xml.Input;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataInputType", propOrder = {
@@ -78,26 +78,26 @@ public class DataInputType implements Input {
     protected String id;
 
     public DataInputType() {
-        
+
     }
-    
+
     public DataInputType(String id, ReferenceType reference) {
         this.id = id;
         this.reference = reference;
     }
-    
+
     public DataInputType(String id, Data data) {
         this.id = id;
         this.data = data;
     }
-    
+
     /**
      * Gets the value of the data property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Data }
-     *     
+     *
      */
     @Override
     public Data getData() {
@@ -106,11 +106,11 @@ public class DataInputType implements Input {
 
     /**
      * Sets the value of the data property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Data }
-     *     
+     *
      */
     public void setData(Data value) {
         this.data = value;
@@ -118,11 +118,11 @@ public class DataInputType implements Input {
 
     /**
      * Gets the value of the reference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     @Override
     public ReferenceType getReference() {
@@ -131,11 +131,11 @@ public class DataInputType implements Input {
 
     /**
      * Sets the value of the reference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setReference(ReferenceType value) {
         this.reference = value;
@@ -143,11 +143,11 @@ public class DataInputType implements Input {
 
     /**
      * Gets the value of the input property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link DataInputType }
-     * 
-     * 
+     *
+     *
      */
     public List<DataInputType> getInput() {
         if (input == null) {
@@ -158,11 +158,11 @@ public class DataInputType implements Input {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -170,11 +170,11 @@ public class DataInputType implements Input {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(String value) {
         this.id = value;

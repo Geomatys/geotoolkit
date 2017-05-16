@@ -25,12 +25,12 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
 /**
  * Denotes the relation of a Room to its interior furnitures (movable). The
  *                 InteriorFurniturePropertyType element must either carry a reference to a BuildingFurniture object or contain a
- *                 BuildingFurniture object inline, but neither both nor none. 
- * 
+ *                 BuildingFurniture object inline, but neither both nor none.
+ *
  * <p>Java class for InteriorFurniturePropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InteriorFurniturePropertyType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

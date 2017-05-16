@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TileSetType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TileSetType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TileSetType")
@@ -54,11 +54,11 @@ public class TileSetType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -66,11 +66,11 @@ public class TileSetType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -78,11 +78,11 @@ public class TileSetType {
 
     /**
      * Gets the value of the unitsPerPixel property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getUnitsPerPixel() {
         return unitsPerPixel;
@@ -90,11 +90,11 @@ public class TileSetType {
 
     /**
      * Sets the value of the unitsPerPixel property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setUnitsPerPixel(Double value) {
         this.unitsPerPixel = value;
@@ -102,11 +102,11 @@ public class TileSetType {
 
     /**
      * Gets the value of the order property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getOrder() {
         return order;
@@ -114,11 +114,11 @@ public class TileSetType {
 
     /**
      * Sets the value of the order property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setOrder(Integer value) {
         this.order = value;

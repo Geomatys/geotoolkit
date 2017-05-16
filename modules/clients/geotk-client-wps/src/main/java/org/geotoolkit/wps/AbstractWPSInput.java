@@ -21,13 +21,13 @@ package org.geotoolkit.wps;
  * @author Quentin Boileau
  */
 public abstract class AbstractWPSInput {
-    
+
     protected String identifier ;
 
     protected AbstractWPSInput(String identifier) {
         this.identifier = identifier;
     }
-        
+
     protected String getIdentifier() {
         return identifier;
     }

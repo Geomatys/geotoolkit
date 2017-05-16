@@ -36,24 +36,24 @@ import javax.xml.bind.annotation.XmlType;
  *    horizontal curves for each integer offset are calculated
  *    and evaluated at "s". The defines a sequence of control
  *    points:
- *    
- *    cn(s) : s  1 .....columns 
- * 
+ *
+ *    cn(s) : s  1 .....columns
+ *
  *    From this sequence a vertical curve is calculated for "s",
  *    and evaluated at "t". In most cases, the order of
  *    calculation (horizontal-vertical vs. vertical-horizontal)
- *    does not make a difference. Where it does, the horizontal-   
+ *    does not make a difference. Where it does, the horizontal-
  *    vertical order shall be the one used.
- * 
+ *
  *    Logically, any pair of curve interpolation types can lead
  *    to a subtype of GriddedSurface. The following clauses
  *    define some most commonly encountered surfaces that can
  *    be represented in this manner.
- * 
+ *
  * <p>Java class for AbstractGriddedSurfaceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractGriddedSurfaceType">
  *   &lt;complexContent>
@@ -67,8 +67,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -91,7 +91,7 @@ public class AbstractGriddedSurfaceType extends AbstractParametricCurveSurfaceTy
 
     /**
      * Gets the value of the row property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractGriddedSurfaceType.Row }
      */
@@ -104,11 +104,11 @@ public class AbstractGriddedSurfaceType extends AbstractParametricCurveSurfaceTy
 
     /**
      * Gets the value of the rows property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getRows() {
         return rows;
@@ -116,11 +116,11 @@ public class AbstractGriddedSurfaceType extends AbstractParametricCurveSurfaceTy
 
     /**
      * Sets the value of the rows property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setRows(final Integer value) {
         this.rows = value;
@@ -128,11 +128,11 @@ public class AbstractGriddedSurfaceType extends AbstractParametricCurveSurfaceTy
 
     /**
      * Gets the value of the columns property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getColumns() {
         return columns;
@@ -140,11 +140,11 @@ public class AbstractGriddedSurfaceType extends AbstractParametricCurveSurfaceTy
 
     /**
      * Sets the value of the columns property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setColumns(final Integer value) {
         this.columns = value;
@@ -153,9 +153,9 @@ public class AbstractGriddedSurfaceType extends AbstractParametricCurveSurfaceTy
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -167,8 +167,8 @@ public class AbstractGriddedSurfaceType extends AbstractParametricCurveSurfaceTy
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -186,11 +186,11 @@ public class AbstractGriddedSurfaceType extends AbstractParametricCurveSurfaceTy
 
         /**
          * Gets the value of the posList property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link DirectPositionListType }
-         *     
+         *
          */
         public DirectPositionListType getPosList() {
             return posList;
@@ -198,11 +198,11 @@ public class AbstractGriddedSurfaceType extends AbstractParametricCurveSurfaceTy
 
         /**
          * Sets the value of the posList property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link DirectPositionListType }
-         *     
+         *
          */
         public void setPosList(final DirectPositionListType value) {
             this.posList = value;
@@ -214,7 +214,7 @@ public class AbstractGriddedSurfaceType extends AbstractParametricCurveSurfaceTy
          * Objects of the following type(s) are allowed in the list
          * {@link PointPropertyType }
          * {@link DirectPositionType }
-         * 
+         *
          */
         public List<Object> getGeometricPositionGroup() {
             if (geometricPositionGroup == null) {

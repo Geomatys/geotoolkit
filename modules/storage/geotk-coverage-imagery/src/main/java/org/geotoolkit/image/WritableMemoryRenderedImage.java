@@ -40,22 +40,22 @@ public class WritableMemoryRenderedImage implements WritableRenderedImage {
      * Default tile size.
      */
     private static final int DEFAULT_TILE_SIZE = 256;
-    
+
     /**
      * Minimum required tile size.
      */
     private static final int MIN_TILE_SIZE = 64;
-    
+
     /**
      * Upper left corner of all image tiles.
      */
     private Point[] tileIndices = null;
-    
+
     /**
      * Image attributes.
      */
     private final Raster[][] tiles;
-    
+
     /**
      * Image attributs.
      */
@@ -77,11 +77,11 @@ public class WritableMemoryRenderedImage implements WritableRenderedImage {
     /**
      * Create {@link WritableLargeRenderedImage} with default upper corner at position (0, 0),
      * a default tile size of 256 x 256 pixels and a default tile grid offset at position (0, 0).
-     * 
+     *
      * @param width
      * @param height
      * @param sampleModel
-     * @param colorModel 
+     * @param colorModel
      */
     public WritableMemoryRenderedImage(final int width, final int height, final SampleModel sampleModel, final ColorModel colorModel) {
         this.minX = 0;
@@ -99,8 +99,8 @@ public class WritableMemoryRenderedImage implements WritableRenderedImage {
         this.sm = sampleModel;
     }
 
-    public WritableMemoryRenderedImage(int minX, int minY, int width, int height, 
-                                       int tileWidth, int tileHeight, int tileGridXOffset, int tileGridYOffset, 
+    public WritableMemoryRenderedImage(int minX, int minY, int width, int height,
+                                       int tileWidth, int tileHeight, int tileGridXOffset, int tileGridYOffset,
                                        int nbrTileX, int nbrTileY, ColorModel cm, SampleModel sm) {
         this.minX = minX;
         this.minY = minY;
@@ -123,7 +123,7 @@ public class WritableMemoryRenderedImage implements WritableRenderedImage {
      */
     @Override
     public void addTileObserver(TileObserver to) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -132,7 +132,7 @@ public class WritableMemoryRenderedImage implements WritableRenderedImage {
      */
     @Override
     public void removeTileObserver(TileObserver to) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -183,14 +183,14 @@ public class WritableMemoryRenderedImage implements WritableRenderedImage {
         return tileIndices;
     }
 
-    
+
     /**
      * {@inheritDoc }.<br>
      * note : not implemented yed.
      */
     @Override
     public boolean hasTileWriters() {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -198,20 +198,20 @@ public class WritableMemoryRenderedImage implements WritableRenderedImage {
      */
     @Override
     public void setData(Raster r) {
-        
+
         final int rminX = r.getMinX();
         final int rminY = r.getMinY();
         final int rw    = r.getWidth();
         final int rh    = r.getHeight();
         final int rmaxX = rminX+rw;
         final int rmaxY = rminY+rh;
-        
-        if (Math.abs(minX-rminX) % tileWidth != 0) 
+
+        if (Math.abs(minX-rminX) % tileWidth != 0)
             throw new IllegalArgumentException("raster minX value don't tie in tile coordinate");
-        
-        if (Math.abs(minY-rminY) % tileHeight != 0) 
+
+        if (Math.abs(minY-rminY) % tileHeight != 0)
             throw new IllegalArgumentException("raster minY value don't tie in tile coordinate");
-        
+
         final int ix  = Math.max(rminX, minX);
         final int imx = Math.min(rmaxX, minX+width);
         final int iy  = Math.max(rminY, minY);
@@ -236,7 +236,7 @@ public class WritableMemoryRenderedImage implements WritableRenderedImage {
      */
     @Override
     public Vector<RenderedImage> getSources() {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -254,7 +254,7 @@ public class WritableMemoryRenderedImage implements WritableRenderedImage {
      */
     @Override
     public String[] getPropertyNames() {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -264,10 +264,10 @@ public class WritableMemoryRenderedImage implements WritableRenderedImage {
     public ColorModel getColorModel() {
         return cm;
     }
-    
+
     /**
      * Set a new {@link ColorModel} in this {@linkplain WritableMemoryRenderedImage WritableRenderedImage} implementation.
-     * 
+     *
      * @param colorModel the new setted {@link ColorModel}.
      */
     public void setColorModel(final ColorModel colorModel) {
@@ -281,10 +281,10 @@ public class WritableMemoryRenderedImage implements WritableRenderedImage {
     public SampleModel getSampleModel() {
         return sm;
     }
-    
+
     /**
      * Set a new {@link SampleModel} in this {@linkplain WritableMemoryRenderedImage WritableRenderedImage} implementation.
-     * 
+     *
      * @param sampleModel the new setted {@link SampleModel}.
      */
     public void setSampleModel(final SampleModel sampleModel) {
@@ -336,7 +336,7 @@ public class WritableMemoryRenderedImage implements WritableRenderedImage {
      */
     @Override
     public int getNumYTiles() {
-        return nbrTileY; 
+        return nbrTileY;
     }
 
     /**
@@ -428,7 +428,7 @@ public class WritableMemoryRenderedImage implements WritableRenderedImage {
      */
     @Override
     public Raster getData(Rectangle rect) {
-        throw new UnsupportedOperationException("WritableMemoryRenderedImage.getData(Rectangle) : Not supported yet."); 
+        throw new UnsupportedOperationException("WritableMemoryRenderedImage.getData(Rectangle) : Not supported yet.");
     }
 
     /**

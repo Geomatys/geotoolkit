@@ -38,7 +38,7 @@ import org.opengis.style.PointSymbolizer;
 
 /**
  * Point symbolizer edition panel
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -50,10 +50,10 @@ public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer
     public JPointSymbolizerAdvanced() {
         super(PointSymbolizer.class);
         initComponents();
-        
+
         //align labels
         alignLabelColumnWidth(this);
-        
+
         //configure panel with a default symbolizer
         parse(getStyleFactory().pointSymbolizer());
     }
@@ -101,7 +101,7 @@ public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer
             name = oldSymbolizer.getName();
             desc = oldSymbolizer.getDescription();
         }
-        
+
         return getStyleFactory().pointSymbolizer(
                 name,
                 guiGeom.create(),
@@ -114,7 +114,7 @@ public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiUOM,guiGeom,guiGraphic};
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -213,7 +213,7 @@ public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
-        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());
         }
     }//GEN-LAST:event_propertyChange

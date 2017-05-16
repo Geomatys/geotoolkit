@@ -97,7 +97,7 @@ public class ChainSceneAdvanced extends ChainSceneIntermediate {
                 createElementCondition((ElementCondition)ele);
             }
         }
-        
+
         for(final Constant cst : chain.getConstants()){
             createConstant(cst);
         }

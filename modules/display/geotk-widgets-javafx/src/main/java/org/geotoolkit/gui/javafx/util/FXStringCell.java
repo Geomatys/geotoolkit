@@ -70,5 +70,5 @@ public class FXStringCell<S> extends FXTableCell<S, Object> {
             setText((String) item);
         }
     }
-    
+
 }

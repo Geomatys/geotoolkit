@@ -25,11 +25,11 @@ import java.util.Iterator;
  * @author Remi Marechal (Geomatys).
  */
 public interface TreeIdentifierIterator extends Iterator<Integer> {
-    
+
     /**
      * Iter on each integer Tree Identifier from search result.
-     *  
-     * @return next integer from search result. 
+     *
+     * @return next integer from search result.
      */
     int nextInt() throws IOException;
 }

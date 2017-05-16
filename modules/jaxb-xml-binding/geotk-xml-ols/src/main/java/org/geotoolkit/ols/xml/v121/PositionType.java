@@ -30,9 +30,9 @@ import org.geotoolkit.gml.xml.v311.PolygonType;
 
 /**
  * <p>Java class for PositionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PositionType">
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import org.geotoolkit.gml.xml.v311.PolygonType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PositionType", propOrder = {
@@ -99,11 +99,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Gets the value of the point property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PointType }
-     *     
+     *
      */
     public PointType getPoint() {
         return point;
@@ -111,11 +111,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Sets the value of the point property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PointType }
-     *     
+     *
      */
     public void setPoint(PointType value) {
         this.point = value;
@@ -123,11 +123,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Gets the value of the ellipse property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EllipseType }
-     *     
+     *
      */
     public EllipseType getEllipse() {
         return ellipse;
@@ -135,11 +135,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Sets the value of the ellipse property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EllipseType }
-     *     
+     *
      */
     public void setEllipse(EllipseType value) {
         this.ellipse = value;
@@ -147,11 +147,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Gets the value of the circleByCenterPoint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CircleByCenterPointType }
-     *     
+     *
      */
     public CircleByCenterPointType getCircleByCenterPoint() {
         return circleByCenterPoint;
@@ -159,11 +159,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Sets the value of the circleByCenterPoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CircleByCenterPointType }
-     *     
+     *
      */
     public void setCircleByCenterPoint(CircleByCenterPointType value) {
         this.circleByCenterPoint = value;
@@ -171,11 +171,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Gets the value of the circularArc property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CircularArcType }
-     *     
+     *
      */
     public CircularArcType getCircularArc() {
         return circularArc;
@@ -183,11 +183,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Sets the value of the circularArc property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CircularArcType }
-     *     
+     *
      */
     public void setCircularArc(CircularArcType value) {
         this.circularArc = value;
@@ -195,11 +195,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Gets the value of the polygon property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PolygonType }
-     *     
+     *
      */
     public PolygonType getPolygon() {
         return polygon;
@@ -207,11 +207,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Sets the value of the polygon property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PolygonType }
-     *     
+     *
      */
     public void setPolygon(PolygonType value) {
         this.polygon = value;
@@ -219,11 +219,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Gets the value of the multiPolygon property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MultiPolygonType }
-     *     
+     *
      */
     public MultiPolygonType getMultiPolygon() {
         return multiPolygon;
@@ -231,11 +231,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Sets the value of the multiPolygon property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MultiPolygonType }
-     *     
+     *
      */
     public void setMultiPolygon(MultiPolygonType value) {
         this.multiPolygon = value;
@@ -243,11 +243,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Gets the value of the qoP property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QualityOfPositionType }
-     *     
+     *
      */
     public QualityOfPositionType getQoP() {
         return qoP;
@@ -255,11 +255,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Sets the value of the qoP property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QualityOfPositionType }
-     *     
+     *
      */
     public void setQoP(QualityOfPositionType value) {
         this.qoP = value;
@@ -267,11 +267,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Gets the value of the time property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimeType }
-     *     
+     *
      */
     public TimeType getTime() {
         return time;
@@ -279,11 +279,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Sets the value of the time property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimeType }
-     *     
+     *
      */
     public void setTime(TimeType value) {
         this.time = value;
@@ -291,11 +291,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Gets the value of the speed property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SpeedType }
-     *     
+     *
      */
     public SpeedType getSpeed() {
         return speed;
@@ -303,11 +303,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Sets the value of the speed property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SpeedType }
-     *     
+     *
      */
     public void setSpeed(SpeedType value) {
         this.speed = value;
@@ -315,11 +315,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Gets the value of the direction property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AngleType }
-     *     
+     *
      */
     public AngleType getDirection() {
         return direction;
@@ -327,11 +327,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Sets the value of the direction property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AngleType }
-     *     
+     *
      */
     public void setDirection(AngleType value) {
         this.direction = value;
@@ -339,11 +339,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Gets the value of the levelOfConf property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLevelOfConf() {
         return levelOfConf;
@@ -351,11 +351,11 @@ public class PositionType extends AbstractPositionType {
 
     /**
      * Sets the value of the levelOfConf property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLevelOfConf(String value) {
         this.levelOfConf = value;

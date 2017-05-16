@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for HorAccType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="HorAccType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "HorAccType", propOrder = {
@@ -57,11 +57,11 @@ public class HorAccType {
 
     /**
      * Gets the value of the distance property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DistanceType }
-     *     
+     *
      */
     public DistanceType getDistance() {
         return distance;
@@ -69,11 +69,11 @@ public class HorAccType {
 
     /**
      * Sets the value of the distance property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DistanceType }
-     *     
+     *
      */
     public void setDistance(DistanceType value) {
         this.distance = value;
@@ -81,11 +81,11 @@ public class HorAccType {
 
     /**
      * Gets the value of the angle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AngleType }
-     *     
+     *
      */
     public AngleType getAngle() {
         return angle;
@@ -93,11 +93,11 @@ public class HorAccType {
 
     /**
      * Sets the value of the angle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AngleType }
-     *     
+     *
      */
     public void setAngle(AngleType value) {
         this.angle = value;

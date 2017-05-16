@@ -42,7 +42,7 @@ public class DefaultOrientation extends DefaultAbstractObject implements Orienta
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param heading

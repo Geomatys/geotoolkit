@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for ListStyleType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ListStyleType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -80,11 +80,11 @@ public class ListStyleType extends AbstractSubStyleType {
 
     /**
      * Gets the value of the listItemType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ListItemTypeEnumType }
-     *     
+     *
      */
     public ListItemTypeEnumType getListItemType() {
         return listItemType;
@@ -92,11 +92,11 @@ public class ListStyleType extends AbstractSubStyleType {
 
     /**
      * Sets the value of the listItemType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ListItemTypeEnumType }
-     *     
+     *
      */
     public void setListItemType(final ListItemTypeEnumType value) {
         this.listItemType = value;
@@ -104,11 +104,11 @@ public class ListStyleType extends AbstractSubStyleType {
 
     /**
      * Gets the value of the bgColor property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public byte[] getBgColor() {
         return bgColor;
@@ -116,11 +116,11 @@ public class ListStyleType extends AbstractSubStyleType {
 
     /**
      * Sets the value of the bgColor property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setBgColor(final byte[] value) {
         this.bgColor = ((byte[]) value);
@@ -128,25 +128,25 @@ public class ListStyleType extends AbstractSubStyleType {
 
     /**
      * Gets the value of the itemIcon property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the itemIcon property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getItemIcon().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ItemIconType }
-     * 
-     * 
+     *
+     *
      */
     public List<ItemIconType> getItemIcon() {
         if (itemIcon == null) {
@@ -157,11 +157,11 @@ public class ListStyleType extends AbstractSubStyleType {
 
     /**
      * Gets the value of the maxSnippetLines property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMaxSnippetLines() {
         return maxSnippetLines;
@@ -169,11 +169,11 @@ public class ListStyleType extends AbstractSubStyleType {
 
     /**
      * Sets the value of the maxSnippetLines property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMaxSnippetLines(final Integer value) {
         this.maxSnippetLines = value;
@@ -181,25 +181,25 @@ public class ListStyleType extends AbstractSubStyleType {
 
     /**
      * Gets the value of the listStyleSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the listStyleSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getListStyleSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getListStyleSimpleExtensionGroup() {
         if (listStyleSimpleExtensionGroup == null) {
@@ -210,25 +210,25 @@ public class ListStyleType extends AbstractSubStyleType {
 
     /**
      * Gets the value of the listStyleObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the listStyleObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getListStyleObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getListStyleObjectExtensionGroup() {
         if (listStyleObjectExtensionGroup == null) {

@@ -25,11 +25,11 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * Extract first geometry segment angle in radians.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class StartAngleFunction extends AbstractFunction {
-    
+
     public StartAngleFunction(final Expression expr1) {
         super(GeometryFunctionFactory.STARTANGLE, new Expression[] {expr1}, null);
     }
@@ -43,7 +43,7 @@ public class StartAngleFunction extends AbstractFunction {
         } catch (Exception e){
             throw new IllegalArgumentException("Invalid function parameter."+parameters.get(0));
         }
-        
+
         if(geom==null) return 0.0;
         final LineString line = getLine(geom);
         if(line==null) return 0.0;
@@ -52,7 +52,7 @@ public class StartAngleFunction extends AbstractFunction {
         final CoordinateSequence cs = line.getCoordinateSequence();
         return Math.atan2(cs.getY(0)-cs.getY(1),cs.getX(0)-cs.getX(1));
     }
-    
+
     private static LineString getLine(Geometry geom){
         if(geom instanceof LineString){
             return (LineString) geom;
@@ -64,5 +64,5 @@ public class StartAngleFunction extends AbstractFunction {
         }
         return null;
     }
-    
+
 }

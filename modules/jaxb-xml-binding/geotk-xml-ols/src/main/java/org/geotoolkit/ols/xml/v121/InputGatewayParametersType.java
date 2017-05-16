@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for InputGatewayParametersType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InputGatewayParametersType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InputGatewayParametersType", propOrder = {
@@ -53,11 +53,11 @@ public class InputGatewayParametersType extends AbstractGatewayParametersType {
 
     /**
      * Gets the value of the inputMSIDs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link InputMSIDsType }
-     *     
+     *
      */
     public InputMSIDsType getInputMSIDs() {
         return inputMSIDs;
@@ -65,11 +65,11 @@ public class InputGatewayParametersType extends AbstractGatewayParametersType {
 
     /**
      * Sets the value of the inputMSIDs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link InputMSIDsType }
-     *     
+     *
      */
     public void setInputMSIDs(InputMSIDsType value) {
         this.inputMSIDs = value;

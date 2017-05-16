@@ -33,10 +33,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class IsEmptyDescriptor extends AbstractProcessDescriptor{
-        
+
     /**Process name : isEmpty */
     public static final String NAME = "jts:isEmpty";
-    
+
     /**
      * Input parameters
      */
@@ -45,11 +45,11 @@ public class IsEmptyDescriptor extends AbstractProcessDescriptor{
             .setRemarks("Geometry JTS source")
             .setRequired(true)
             .create(Geometry.class, null);
-    
-    
+
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(GEOM);
-    
+
     /**
      * OutputParameters
      */
@@ -58,7 +58,7 @@ public class IsEmptyDescriptor extends AbstractProcessDescriptor{
             .setRemarks("IsEmpty result")
             .setRequired(true)
             .create(Boolean.class, null);
-    
+
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT);
 
@@ -75,5 +75,5 @@ public class IsEmptyDescriptor extends AbstractProcessDescriptor{
     public Process createProcess(final ParameterValueGroup input) {
         return new IsEmptyProcess(input);
     }
-    
+
 }

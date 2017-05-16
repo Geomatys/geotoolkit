@@ -43,7 +43,7 @@ public interface SimpleData {
     String getName();
 
     /**
-     * 
+     *
      * @return
      */
     String getContent();

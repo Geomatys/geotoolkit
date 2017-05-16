@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for getAllTranslationsForConceptResponse complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="getAllTranslationsForConceptResponse">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getAllTranslationsForConceptResponse", propOrder = {
@@ -65,7 +65,7 @@ public class GetAllTranslationsForConceptResponse {
 
     /**
      * Gets the value of the return property.
-     * 
+     *
      */
     public List<LanguageString> getReturn() {
         if (response == null) {

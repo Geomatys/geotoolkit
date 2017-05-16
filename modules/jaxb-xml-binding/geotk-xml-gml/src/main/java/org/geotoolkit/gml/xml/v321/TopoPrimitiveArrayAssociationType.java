@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TopoPrimitiveArrayAssociationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TopoPrimitiveArrayAssociationType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TopoPrimitiveArrayAssociationType", propOrder = {
@@ -61,20 +61,20 @@ public class TopoPrimitiveArrayAssociationType {
 
     /**
      * Gets the value of the abstractTopoPrimitive property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the abstractTopoPrimitive property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAbstractTopoPrimitive().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link NodeType }{@code >}
@@ -82,8 +82,8 @@ public class TopoPrimitiveArrayAssociationType {
      * {@link JAXBElement }{@code <}{@link TopoSolidType }{@code >}
      * {@link JAXBElement }{@code <}{@link EdgeType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractTopoPrimitiveType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends AbstractTopoPrimitiveType>> getAbstractTopoPrimitive() {
         if (abstractTopoPrimitive == null) {
@@ -94,11 +94,11 @@ public class TopoPrimitiveArrayAssociationType {
 
     /**
      * Gets the value of the owns property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public boolean isOwns() {
         if (owns == null) {
@@ -110,11 +110,11 @@ public class TopoPrimitiveArrayAssociationType {
 
     /**
      * Sets the value of the owns property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public void setOwns(java.lang.Boolean value) {
         this.owns = value;

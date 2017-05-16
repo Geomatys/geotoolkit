@@ -33,10 +33,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class BufferDescriptor extends AbstractProcessDescriptor{
-        
+
     /**Process name : buffer */
     public static final String NAME = "jts:buffer";
-    
+
     /**
      * Input parameters
      */
@@ -60,10 +60,10 @@ public class BufferDescriptor extends AbstractProcessDescriptor{
             .setRemarks("The end cap style used. 1 -> Round, 2 -> Flat, 3 -> Square.")
             .setRequired(false)
             .create(Integer.class, 2);
-   
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(GEOM,DISTANCE,SEGMENTS,ENDSTYLE);
-    
+
     /**
      * OutputParameters
      */
@@ -88,5 +88,5 @@ public class BufferDescriptor extends AbstractProcessDescriptor{
     public Process createProcess(final ParameterValueGroup input) {
         return new BufferProcess(input);
     }
-    
+
 }

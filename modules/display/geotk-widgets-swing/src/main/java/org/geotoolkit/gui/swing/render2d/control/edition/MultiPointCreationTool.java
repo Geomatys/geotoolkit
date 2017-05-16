@@ -37,7 +37,7 @@ public class MultiPointCreationTool extends AbstractEditionTool {
 
     public MultiPointCreationTool() {
         super(1200,"multipointCreation",MessageBundle.formatInternational(MessageBundle.Keys.createMultiPoint),
-             new SimpleInternationalString("Tool for creating multi-points."), 
+             new SimpleInternationalString("Tool for creating multi-points."),
              IconBundle.getIcon("16_newgeometry"), FeatureMapLayer.class);
     }
 
@@ -56,7 +56,7 @@ public class MultiPointCreationTool extends AbstractEditionTool {
             return false;
         }
 
-        return MultiPoint.class.isAssignableFrom(desc.getValueClass()) 
+        return MultiPoint.class.isAssignableFrom(desc.getValueClass())
             || Geometry.class.equals(desc.getValueClass());
     }
 

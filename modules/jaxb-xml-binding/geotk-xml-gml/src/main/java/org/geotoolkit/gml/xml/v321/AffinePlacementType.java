@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AffinePlacementType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AffinePlacementType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AffinePlacementType", propOrder = {
@@ -71,11 +71,11 @@ public class AffinePlacementType {
 
     /**
      * Gets the value of the location property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     public DirectPositionType getLocation() {
         return location;
@@ -83,11 +83,11 @@ public class AffinePlacementType {
 
     /**
      * Sets the value of the location property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     public void setLocation(DirectPositionType value) {
         this.location = value;
@@ -95,25 +95,25 @@ public class AffinePlacementType {
 
     /**
      * Gets the value of the refDirection property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the refDirection property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRefDirection().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link VectorType }
-     * 
-     * 
+     *
+     *
      */
     public List<VectorType> getRefDirection() {
         if (refDirection == null) {
@@ -124,11 +124,11 @@ public class AffinePlacementType {
 
     /**
      * Gets the value of the inDimension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getInDimension() {
         return inDimension;
@@ -136,11 +136,11 @@ public class AffinePlacementType {
 
     /**
      * Sets the value of the inDimension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setInDimension(Integer value) {
         this.inDimension = value;
@@ -148,11 +148,11 @@ public class AffinePlacementType {
 
     /**
      * Gets the value of the outDimension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getOutDimension() {
         return outDimension;
@@ -160,11 +160,11 @@ public class AffinePlacementType {
 
     /**
      * Sets the value of the outDimension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setOutDimension(Integer value) {
         this.outDimension = value;

@@ -83,7 +83,7 @@ import org.opengis.filter.temporal.TOverlaps;
 /**
  * Visitor to convert a Filter in CQL.<br>
  * Returned object is a StringBuilder containing the CQL text.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
@@ -98,7 +98,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
 
     private FilterToCQLVisitor() {
     }
-    
+
     private static StringBuilder toStringBuilder(final Object o){
         if(o instanceof StringBuilder){
             return (StringBuilder) o;
@@ -106,11 +106,11 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         return new StringBuilder();
     }
 
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // FILTER //////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public Object visitNullFilter(final Object o) {
         throw new UnsupportedOperationException("Null filter not supported in CQL.");
@@ -132,38 +132,38 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
 
     @Override
     public Object visit(final And filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);        
+        final StringBuilder sb = toStringBuilder(o);
         final List<Filter> filters = filter.getChildren();
         if(filters != null && !filters.isEmpty()){
             final int size = filters.size();
-            sb.append('(');            
+            sb.append('(');
             for(int i=0,n=size-1;i<n;i++){
                 filters.get(i).accept(this,sb);
                 sb.append(" AND ");
             }
-            filters.get(size-1).accept(this,sb);            
+            filters.get(size-1).accept(this,sb);
             sb.append(')');
-        }        
+        }
         return sb;
     }
-    
+
     @Override
     public Object visit(final Or filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);        
+        final StringBuilder sb = toStringBuilder(o);
         final List<Filter> filters = filter.getChildren();
         if(filters != null && !filters.isEmpty()){
             final int size = filters.size();
-            sb.append('(');            
+            sb.append('(');
             for(int i=0,n=size-1;i<n;i++){
                 filters.get(i).accept(this,sb);
                 sb.append(" OR ");
             }
-            filters.get(size-1).accept(this,sb);            
+            filters.get(size-1).accept(this,sb);
             sb.append(')');
-        }        
+        }
         return sb;
     }
-    
+
     @Override
     public Object visit(final Id filter, final Object o) {
         throw new UnsupportedOperationException("ID filter not supported in CQL.");
@@ -253,7 +253,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         final String pattern = DefaultPropertyIsLike.convertToSQL92(escape, wildCard, singleChar, literal);
 
         filter.getExpression().accept(this,sb);
-            
+
         if(matchingCase){
             sb.append(" LIKE ");
         }else{
@@ -280,16 +280,16 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         sb.append(" IS NIL");
         return sb;
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // GEOMETRY FILTER /////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public Object visit(final BBOX filter, final Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        
-        if(filter.getExpression1() instanceof PropertyName 
+
+        if(filter.getExpression1() instanceof PropertyName
            && filter.getExpression2() instanceof Literal){
             //use writing : BBOX(att,v1,v2,v3,v4)
             sb.append("BBOX(");
@@ -303,16 +303,16 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
             sb.append(',');
             sb.append(filter.getMaxY());
             sb.append(')');
-            
+
         }else{
             //use writing BBOX(exp1,exp2)
             sb.append("BBOX(");
             filter.getExpression1().accept(this,sb);
             sb.append(',');
             filter.getExpression2().accept(this,sb);
-            sb.append(')');            
+            sb.append(')');
         }
-        
+
         return sb;
     }
 
@@ -323,7 +323,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         filter.getExpression1().accept(this,sb);
         sb.append(',');
         filter.getExpression2().accept(this,sb);
-        sb.append(')');        
+        sb.append(')');
         return sb;
     }
 
@@ -334,7 +334,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         filter.getExpression1().accept(this,sb);
         sb.append(',');
         filter.getExpression2().accept(this,sb);
-        sb.append(')');        
+        sb.append(')');
         return sb;
     }
 
@@ -345,7 +345,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         filter.getExpression1().accept(this,sb);
         sb.append(',');
         filter.getExpression2().accept(this,sb);
-        sb.append(')');        
+        sb.append(')');
         return sb;
     }
 
@@ -356,7 +356,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         filter.getExpression1().accept(this,sb);
         sb.append(',');
         filter.getExpression2().accept(this,sb);
-        sb.append(')');        
+        sb.append(')');
         return sb;
     }
 
@@ -367,7 +367,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         filter.getExpression1().accept(this,sb);
         sb.append(',');
         filter.getExpression2().accept(this,sb);
-        sb.append(')');        
+        sb.append(')');
         return sb;
     }
 
@@ -378,7 +378,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         filter.getExpression1().accept(this,sb);
         sb.append(',');
         filter.getExpression2().accept(this,sb);
-        sb.append(')');        
+        sb.append(')');
         return sb;
     }
 
@@ -389,7 +389,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         filter.getExpression1().accept(this,sb);
         sb.append(',');
         filter.getExpression2().accept(this,sb);
-        sb.append(')');        
+        sb.append(')');
         return sb;
     }
 
@@ -400,7 +400,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         filter.getExpression1().accept(this,sb);
         sb.append(',');
         filter.getExpression2().accept(this,sb);
-        sb.append(')');        
+        sb.append(')');
         return sb;
     }
 
@@ -411,7 +411,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         filter.getExpression1().accept(this,sb);
         sb.append(',');
         filter.getExpression2().accept(this,sb);
-        sb.append(')');        
+        sb.append(')');
         return sb;
     }
 
@@ -422,14 +422,14 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         filter.getExpression1().accept(this,sb);
         sb.append(',');
         filter.getExpression2().accept(this,sb);
-        sb.append(')');        
+        sb.append(')');
         return sb;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // TEMPORAL FILTER /////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public Object visit(After filter, Object o) {
         final StringBuilder sb = toStringBuilder(o);
@@ -555,11 +555,11 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         filter.getExpression2().accept(this,sb);
         return sb;
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // EXPRESSIONS /////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public Object visit(final Literal exp, final Object o) {
         final StringBuilder sb = toStringBuilder(o);
@@ -592,9 +592,9 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         }else{
             sb.append(name);
         }
-        return sb;        
+        return sb;
     }
-    
+
     @Override
     public Object visit(final Add exp, final Object o) {
         final StringBuilder sb = toStringBuilder(o);
@@ -612,7 +612,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         exp.getExpression2().accept(this,sb);
         return sb;
     }
-    
+
     @Override
     public Object visit(final Multiply exp, final Object o) {
         final StringBuilder sb = toStringBuilder(o);
@@ -630,7 +630,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         exp.getExpression2().accept(this,sb);
         return sb;
     }
-    
+
     @Override
     public Object visit(final Function exp, final Object o) {
         final StringBuilder sb = toStringBuilder(o);
@@ -647,15 +647,15 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
                     sb.append(" , ");
                 }
                 exps.get(size-1).accept(this,sb);
-            }            
+            }
         }
         sb.append(')');
         return sb;
     }
-    
+
     @Override
     public Object visit(final NilExpression exp, final Object o) {
         throw new UnsupportedOperationException("NilExpression not supported in CQL.");
     }
-    
+
 }

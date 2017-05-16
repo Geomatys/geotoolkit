@@ -21,48 +21,48 @@ import org.geotoolkit.client.Request;
 
 /**
  * Interface for GetMetadata requests
- * 
+ *
  * @author Olivier Terral (Geomatys)
  * @module
  */
-public interface NcGetMetadataMinMaxRequest extends NcGetMetadataRequest {    
-    
+public interface NcGetMetadataMinMaxRequest extends NcGetMetadataRequest {
+
     /**
      * Returns the crs code name.
      */
     String getCrs();
-    
+
     /**
      * Sets the crs code .
      */
     void setCrs(final String crsCode);
-    
+
     /**
      * Returns the current bbox: minx,miny,max,maxy
      */
     String getBbox();
 
     /**
-     * Sets the bbox .   
+     * Sets the bbox .
      */
     void setBbox(final String bbox);
-    
+
     /**
      * Returns the width.
      */
     String getWidth();
-    
+
     /**
      * Sets the width.
      */
     void setWidth(final String width);
-    
-    
+
+
     /**
      * Returns the height.
      */
     String getHeight();
-    
+
     /**
      * Sets the height.
      */

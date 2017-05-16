@@ -85,7 +85,7 @@ public class SpatialFilterType {
             this.spatialOps = filter;
         }
     }
-    
+
     public SpatialFilterType(final Filter filter) {
         if (filter instanceof SpatialOpsType) {
             this.spatialOps = (SpatialOpsType)filter;

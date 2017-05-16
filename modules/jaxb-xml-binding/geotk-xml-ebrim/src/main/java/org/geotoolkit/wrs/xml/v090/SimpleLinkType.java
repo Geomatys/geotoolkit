@@ -25,16 +25,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * The xlink:href property provides a reference to the content associated with an extrinsic object. 
- * The value may be an absolute or a relative URI as defined in RFC 2396. 
- * If the URI specifies a resource located in a repository maintained by another party, 
- * then the catalogue must perform an HTTP redirect (status code 303) and set the value of the Location header accordingly. 
- *       
- * 
+ * The xlink:href property provides a reference to the content associated with an extrinsic object.
+ * The value may be an absolute or a relative URI as defined in RFC 2396.
+ * If the URI specifies a resource located in a repository maintained by another party,
+ * then the catalogue must perform an HTTP redirect (status code 303) and set the value of the Location header accordingly.
+ *
+ *
  * <p>Java class for SimpleLinkType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SimpleLinkType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

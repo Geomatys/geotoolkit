@@ -37,7 +37,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * PostgreSQL/PostGIS  feature store factory.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -53,9 +53,9 @@ public class PostgresFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
     /**
      * Parameter for loose bbox filter.
      */
@@ -76,13 +76,13 @@ public class PostgresFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory
             new ParameterBuilder().addName("PostgresParameters").createGroup(
                 IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,TABLE,USER,PASSWORD,NAMESPACE,
                 DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT,LOOSEBBOX,SIMPLETYPE);
-    
-    
+
+
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS_DESCRIPTOR;
@@ -113,7 +113,7 @@ public class PostgresFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory
         //add versioning support
         return new PostgresFeatureStore(params, factoryId);
     }
-    
+
     @Override
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, false, true, false, GEOMS_ALL);

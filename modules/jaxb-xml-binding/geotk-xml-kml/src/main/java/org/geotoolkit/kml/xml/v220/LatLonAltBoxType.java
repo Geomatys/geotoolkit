@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for LatLonAltBoxType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LatLonAltBoxType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,11 +75,11 @@ public class LatLonAltBoxType extends AbstractLatLonBoxType {
 
     /**
      * Gets the value of the minAltitude property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMinAltitude() {
         return minAltitude;
@@ -87,11 +87,11 @@ public class LatLonAltBoxType extends AbstractLatLonBoxType {
 
     /**
      * Sets the value of the minAltitude property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMinAltitude(final Double value) {
         this.minAltitude = value;
@@ -99,11 +99,11 @@ public class LatLonAltBoxType extends AbstractLatLonBoxType {
 
     /**
      * Gets the value of the maxAltitude property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMaxAltitude() {
         return maxAltitude;
@@ -111,11 +111,11 @@ public class LatLonAltBoxType extends AbstractLatLonBoxType {
 
     /**
      * Sets the value of the maxAltitude property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMaxAltitude(final Double value) {
         this.maxAltitude = value;
@@ -123,12 +123,12 @@ public class LatLonAltBoxType extends AbstractLatLonBoxType {
 
     /**
      * Gets the value of the altitudeModeGroup property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link AltitudeModeEnumType }{@code >}
-     *     
+     *
      */
     public JAXBElement<?> getAltitudeModeGroup() {
         return altitudeModeGroup;
@@ -136,12 +136,12 @@ public class LatLonAltBoxType extends AbstractLatLonBoxType {
 
     /**
      * Sets the value of the altitudeModeGroup property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link AltitudeModeEnumType }{@code >}
-     *     
+     *
      */
     public void setAltitudeModeGroup(final JAXBElement<?> value) {
         this.altitudeModeGroup = ((JAXBElement<?> ) value);
@@ -149,25 +149,25 @@ public class LatLonAltBoxType extends AbstractLatLonBoxType {
 
     /**
      * Gets the value of the latLonAltBoxSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the latLonAltBoxSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLatLonAltBoxSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getLatLonAltBoxSimpleExtensionGroup() {
         if (latLonAltBoxSimpleExtensionGroup == null) {
@@ -178,25 +178,25 @@ public class LatLonAltBoxType extends AbstractLatLonBoxType {
 
     /**
      * Gets the value of the latLonAltBoxObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the latLonAltBoxObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLatLonAltBoxObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getLatLonAltBoxObjectExtensionGroup() {
         if (latLonAltBoxObjectExtensionGroup == null) {

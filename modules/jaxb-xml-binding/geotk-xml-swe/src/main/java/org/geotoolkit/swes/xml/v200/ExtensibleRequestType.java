@@ -30,9 +30,9 @@ import org.apache.sis.util.Version;
 
 /**
  * <p>Java class for ExtensibleRequestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ExtensibleRequestType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.apache.sis.util.Version;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ExtensibleRequestType", propOrder = {
@@ -76,27 +76,27 @@ public abstract class ExtensibleRequestType implements RequestBase {
     private String service;
 
     public ExtensibleRequestType() {
-        
+
     }
-    
+
     public ExtensibleRequestType(final String version, final String service) {
         this.service = service;
         this.version = version;
     }
-    
+
     public ExtensibleRequestType(final String version, final String service, final List<Object> extension) {
         this.service   = service;
         this.version   = version;
         this.extension = extension;
     }
-    
+
     /**
      * Gets the value of the extension property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getExtension() {
         if (extension == null) {
@@ -104,18 +104,18 @@ public abstract class ExtensibleRequestType implements RequestBase {
         }
         return this.extension;
     }
-    
+
     public void setExtension(List<Object> extension) {
         this.extension = extension;
     }
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public Version getVersion() {
@@ -127,11 +127,11 @@ public abstract class ExtensibleRequestType implements RequestBase {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setVersion(String value) {
@@ -140,11 +140,11 @@ public abstract class ExtensibleRequestType implements RequestBase {
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getService() {
@@ -153,11 +153,11 @@ public abstract class ExtensibleRequestType implements RequestBase {
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setService(String value) {

@@ -29,7 +29,7 @@ import org.opengis.style.Symbolizer;
  * - CachedRasterSymbolizer<br>
  * - CachedTextSymbolizer<br>
  * This interface provide commun methods.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -65,12 +65,12 @@ public abstract class CachedSymbolizer<T extends Symbolizer> extends Cache<T>{
     /**
      * Get the maximum size of the symbol for the given feature.
      * This is used to calculate the display boundingbox of a feature.
-     * 
+     *
      * @param candidate : feature to evaluate
      * @param coeff : use to adjust symbolizer size, if in display unit value equals 1
      * @return max width of this symbol with the given feature
      *     can be NaN if and only if the given feature is null.
      */
     public abstract float getMargin(Object candidate, float coeff);
-    
+
 }

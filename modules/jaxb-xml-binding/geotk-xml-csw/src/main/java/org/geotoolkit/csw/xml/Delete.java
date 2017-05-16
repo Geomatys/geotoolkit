@@ -21,10 +21,10 @@ package org.geotoolkit.csw.xml;
  * @author Guilhem Legal (Geomatys)
  */
 public interface Delete {
-    
+
     QueryConstraint getConstraint();
-    
+
     String getTypeName();
-    
+
     String getHandle();
 }

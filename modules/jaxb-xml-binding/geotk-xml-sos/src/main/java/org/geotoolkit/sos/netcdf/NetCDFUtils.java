@@ -38,7 +38,7 @@ import ucar.nc2.time.CalendarDateUnit;
 public class NetCDFUtils {
 
     public static final double FILL_VALUE = Double.parseDouble("1.e+36");
-    
+
     public static double getDoubleValue(final Array array, final int i, final Number fillValue) {
         if (array instanceof ArrayInt.D1) {
             int val = ((ArrayInt.D1)array).get(i);
@@ -70,7 +70,7 @@ public class NetCDFUtils {
         }
         return Double.NaN;
     }
-    
+
     public static double getDoubleValue(final Array array, final Number fillValue) {
         if (array instanceof ArrayInt.D0) {
             int val = ((ArrayInt.D0)array).get();
@@ -102,14 +102,14 @@ public class NetCDFUtils {
         }
         return Double.NaN;
     }
-    
+
     public static double getDoubleValue(final boolean mainFirst, final Array array, int i, int j, final Number fillValue) {
         if (!mainFirst) {
             final int tmp = i;
             i = j;
             j = tmp;
         }
-        
+
         if (array instanceof ArrayInt.D2) {
             int val = ((ArrayInt.D2)array).get(i, j);
             if (val != N3iosp.NC_FILL_INT && (fillValue == null || !fillValue.equals(val))) {
@@ -140,10 +140,10 @@ public class NetCDFUtils {
         }
         return Double.NaN;
     }
-    
+
     public static double getDoubleValue(final Array array, int i, int j, int k, final Number fillValue) {
-        
-        
+
+
         if (array instanceof ArrayInt.D3) {
             int val = ((ArrayInt.D3)array).get(i, j, k);
             if (val != N3iosp.NC_FILL_INT && (fillValue == null || !fillValue.equals(val))) {
@@ -174,7 +174,7 @@ public class NetCDFUtils {
         }
         return Double.NaN;
     }
-    
+
     public static long getTimeValue(final String units, final boolean mainFirst, boolean constantT, final Array array, int i, int j) {
         if (constantT) {
             return getTimeValue(units, array, i);
@@ -195,7 +195,7 @@ public class NetCDFUtils {
             }
         }
     }
-    
+
     public static long getTimeValue(final String units, final Array array, final int i) {
         if (array instanceof ArrayInt.D1) {
             final int value = ((ArrayInt.D1)array).get(i);
@@ -213,7 +213,7 @@ public class NetCDFUtils {
             throw new IllegalArgumentException("Unexpected Array type for time field:" + array.getClass().getName() + " expecting D1");
         }
     }
-    
+
     public static double getZValue(final boolean mainFirst, boolean constantZ, final Array zArray, final int i, final int j, final Number fillValue) {
         if (constantZ) {
             return getDoubleValue(zArray, i, fillValue);
@@ -221,7 +221,7 @@ public class NetCDFUtils {
             return getDoubleValue(mainFirst, zArray, i, j, fillValue);
         }
     }
-    
+
     public static Type getTypeFromDataType(final DataType type) {
         switch(type) {
             case BOOLEAN:
@@ -259,7 +259,7 @@ public class NetCDFUtils {
             default: return Type.UNSUPPORTED;
         }
     }
-    
+
     public static Dimension getGoodTimeDimension(final Variable timeVar, final String separatorDim) {
         if (separatorDim == null || timeVar.getDimensions().size() == 1) {
             return timeVar.getDimension(0);
@@ -272,11 +272,11 @@ public class NetCDFUtils {
         }
         return null;
     }
-    
+
     /**
      * The method Variable.getDimensionsString() seems to have issues.
      * @param var
-     * @return 
+     * @return
      */
     public static String getDimensionString(final Variable var) {
         final List<Dimension> dims = var.getDimensions();
@@ -289,7 +289,7 @@ public class NetCDFUtils {
         }
         return result.toString();
     }
-    
+
     public static long parseTime(final long l, final String unit) {
         final CalendarDateUnit c = CalendarDateUnit.of("gregorian", unit);
         final CalendarDate date  = c.makeCalendarDate(l);

@@ -27,10 +27,10 @@ import org.apache.sis.util.Version;
 
 
 /**
- * XML encoded SOS operation request base, for all operations except Get Capabilities. 
- * In this XML encoding, no "request" parameter is included, 
- * since the element name specifies the specific operation. 
- * 
+ * XML encoded SOS operation request base, for all operations except Get Capabilities.
+ * In this XML encoding, no "request" parameter is included,
+ * since the element name specifies the specific operation.
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -52,22 +52,22 @@ import org.apache.sis.util.Version;
 public class RequestBaseType implements RequestBase {
 
     /**
-     * Service type identifier. 
+     * Service type identifier.
      */
     @XmlAttribute(required = true)
     private String service;
-    
+
     /**
      * Specification version for SOS version and operation.
      */
     @XmlAttribute(required = true)
     private String version;
-    
+
      /**
      * An empty constructor used by jaxB
      */
     RequestBaseType(){}
-    
+
     /**
      * Build a base request
      */
@@ -95,7 +95,7 @@ public class RequestBaseType implements RequestBase {
             return service;
         }
     }
-    
+
     @Override
     public void setService(final String service) {
         this.service = service;
@@ -111,7 +111,7 @@ public class RequestBaseType implements RequestBase {
         }
         return null;
     }
-    
+
     @Override
     public void setVersion(final String version) {
         this.version = version;
@@ -141,7 +141,7 @@ public class RequestBaseType implements RequestBase {
         hash = 17 * hash + (this.version != null ? this.version.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         return "request base: service=" + service + " version=" + version;

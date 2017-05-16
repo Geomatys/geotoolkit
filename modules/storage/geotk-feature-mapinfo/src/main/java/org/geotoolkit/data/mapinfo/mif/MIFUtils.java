@@ -212,7 +212,6 @@ public final class MIFUtils {
                 type = GeometryType.GEOMETRY;
             }
         }
-
         return type;
     }
 
@@ -233,7 +232,6 @@ public final class MIFUtils {
             if (found != null)
                 return pt;
         }
-
         return null;
     }
 
@@ -251,16 +249,14 @@ public final class MIFUtils {
         if (input instanceof org.opengis.feature.AttributeType && Geometries.isKnownType(((org.opengis.feature.AttributeType) input).getValueClass())) {
             return (org.opengis.feature.AttributeType) input;
         }
-
         return null;
     }
 
     public static Object getGeometryValue(final Feature input) {
         IdentifiedType found = findGeometryProperty(input.getType());
         if (found != null) {
-            return input.getPropertyValue(found.getName().tip().toString());
+            return input.getPropertyValue(found.getName().toString());
         }
-
         return null;
     }
 

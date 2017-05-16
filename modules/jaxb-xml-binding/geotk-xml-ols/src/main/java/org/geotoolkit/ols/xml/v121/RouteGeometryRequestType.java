@@ -28,11 +28,11 @@ import org.geotoolkit.gml.xml.v311.EnvelopeType;
 
 /**
  * Defines the request parameters for route geometry.
- * 
+ *
  * <p>Java class for RouteGeometryRequestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RouteGeometryRequestType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.gml.xml.v311.EnvelopeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RouteGeometryRequestType", propOrder = {
@@ -69,11 +69,11 @@ public class RouteGeometryRequestType {
 
     /**
      * Gets the value of the boundingBox property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EnvelopeType }
-     *     
+     *
      */
     public EnvelopeType getBoundingBox() {
         return boundingBox;
@@ -81,11 +81,11 @@ public class RouteGeometryRequestType {
 
     /**
      * Sets the value of the boundingBox property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EnvelopeType }
-     *     
+     *
      */
     public void setBoundingBox(EnvelopeType value) {
         this.boundingBox = value;
@@ -93,11 +93,11 @@ public class RouteGeometryRequestType {
 
     /**
      * Gets the value of the scale property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getScale() {
         if (scale == null) {
@@ -109,11 +109,11 @@ public class RouteGeometryRequestType {
 
     /**
      * Sets the value of the scale property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setScale(Integer value) {
         this.scale = value;
@@ -121,11 +121,11 @@ public class RouteGeometryRequestType {
 
     /**
      * Gets the value of the provideStartingPortion property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isProvideStartingPortion() {
         if (provideStartingPortion == null) {
@@ -137,11 +137,11 @@ public class RouteGeometryRequestType {
 
     /**
      * Sets the value of the provideStartingPortion property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setProvideStartingPortion(Boolean value) {
         this.provideStartingPortion = value;
@@ -149,11 +149,11 @@ public class RouteGeometryRequestType {
 
     /**
      * Gets the value of the maxPoints property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMaxPoints() {
         if (maxPoints == null) {
@@ -165,11 +165,11 @@ public class RouteGeometryRequestType {
 
     /**
      * Sets the value of the maxPoints property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMaxPoints(Integer value) {
         this.maxPoints = value;

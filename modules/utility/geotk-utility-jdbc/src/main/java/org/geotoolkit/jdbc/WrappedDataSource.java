@@ -84,7 +84,7 @@ public class WrappedDataSource implements DataSource{
     }
 
     /**
-     * Do not declare as @Override . 
+     * Do not declare as @Override .
      * this method is only in JDK 7, declaring the override will break JDK 6 build.
      */
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {

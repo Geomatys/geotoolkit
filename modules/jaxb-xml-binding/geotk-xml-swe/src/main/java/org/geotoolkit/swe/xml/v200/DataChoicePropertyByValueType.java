@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for DataChoicePropertyByValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataChoicePropertyByValueType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataChoicePropertyByValueType", propOrder = {
@@ -53,11 +53,11 @@ public class DataChoicePropertyByValueType {
 
     /**
      * Gets the value of the dataChoice property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataChoiceType }
-     *     
+     *
      */
     public DataChoiceType getDataChoice() {
         return dataChoice;
@@ -65,11 +65,11 @@ public class DataChoicePropertyByValueType {
 
     /**
      * Sets the value of the dataChoice property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataChoiceType }
-     *     
+     *
      */
     public void setDataChoice(DataChoiceType value) {
         this.dataChoice = value;

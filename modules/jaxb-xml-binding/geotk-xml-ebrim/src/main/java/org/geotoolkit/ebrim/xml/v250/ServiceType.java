@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ServiceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ServiceType">
  *   &lt;complexContent>
@@ -42,15 +42,15 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ServiceType", propOrder = {
     "serviceBinding"
 })
-@XmlRootElement(name = "Service")        
+@XmlRootElement(name = "Service")
 public class ServiceType extends RegistryEntryType {
 
     @XmlElement(name = "ServiceBinding")
@@ -65,7 +65,7 @@ public class ServiceType extends RegistryEntryType {
         }
         return this.serviceBinding;
     }
-    
+
     /**
      * Sets the value of the serviceBinding property.
      */
@@ -75,7 +75,7 @@ public class ServiceType extends RegistryEntryType {
         }
         this.serviceBinding.add(serviceBinding);
     }
-    
+
     /**
      * Sets the value of the serviceBinding property.
      */

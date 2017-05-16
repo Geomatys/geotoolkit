@@ -30,9 +30,9 @@ import org.geotoolkit.swe.xml.v200.TimePropertyType;
 
 /**
  * <p>Java class for AbstractPhysicalProcessType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractPhysicalProcessType">
  *   &lt;complexContent>
@@ -68,8 +68,8 @@ import org.geotoolkit.swe.xml.v200.TimePropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractPhysicalProcessType", propOrder = {
@@ -95,11 +95,11 @@ public abstract class AbstractPhysicalProcessType
 
     /**
      * Gets the value of the attachedTo property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getAttachedTo() {
         return attachedTo;
@@ -107,11 +107,11 @@ public abstract class AbstractPhysicalProcessType
 
     /**
      * Sets the value of the attachedTo property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setAttachedTo(ReferenceType value) {
         this.attachedTo = value;
@@ -119,25 +119,25 @@ public abstract class AbstractPhysicalProcessType
 
     /**
      * Gets the value of the localReferenceFrame property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the localReferenceFrame property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLocalReferenceFrame().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractPhysicalProcessType.LocalReferenceFrame }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractPhysicalProcessType.LocalReferenceFrame> getLocalReferenceFrame() {
         if (localReferenceFrame == null) {
@@ -148,25 +148,25 @@ public abstract class AbstractPhysicalProcessType
 
     /**
      * Gets the value of the localTimeFrame property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the localTimeFrame property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLocalTimeFrame().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractPhysicalProcessType.LocalTimeFrame }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractPhysicalProcessType.LocalTimeFrame> getLocalTimeFrame() {
         if (localTimeFrame == null) {
@@ -177,25 +177,25 @@ public abstract class AbstractPhysicalProcessType
 
     /**
      * Gets the value of the position property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the position property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPosition().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link PositionUnionPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<PositionUnionPropertyType> getPosition() {
         if (position == null) {
@@ -206,25 +206,25 @@ public abstract class AbstractPhysicalProcessType
 
     /**
      * Gets the value of the timePosition property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the timePosition property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTimePosition().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TimePropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<TimePropertyType> getTimePosition() {
         if (timePosition == null) {
@@ -236,9 +236,9 @@ public abstract class AbstractPhysicalProcessType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -250,8 +250,8 @@ public abstract class AbstractPhysicalProcessType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -264,11 +264,11 @@ public abstract class AbstractPhysicalProcessType
 
         /**
          * Gets the value of the spatialFrame property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link SpatialFrameType }
-         *     
+         *
          */
         public SpatialFrameType getSpatialFrame() {
             return spatialFrame;
@@ -276,11 +276,11 @@ public abstract class AbstractPhysicalProcessType
 
         /**
          * Sets the value of the spatialFrame property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link SpatialFrameType }
-         *     
+         *
          */
         public void setSpatialFrame(SpatialFrameType value) {
             this.spatialFrame = value;
@@ -291,9 +291,9 @@ public abstract class AbstractPhysicalProcessType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -305,8 +305,8 @@ public abstract class AbstractPhysicalProcessType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -319,11 +319,11 @@ public abstract class AbstractPhysicalProcessType
 
         /**
          * Gets the value of the temporalFrame property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TemporalFrameType }
-         *     
+         *
          */
         public TemporalFrameType getTemporalFrame() {
             return temporalFrame;
@@ -331,11 +331,11 @@ public abstract class AbstractPhysicalProcessType
 
         /**
          * Sets the value of the temporalFrame property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TemporalFrameType }
-         *     
+         *
          */
         public void setTemporalFrame(TemporalFrameType value) {
             this.temporalFrame = value;

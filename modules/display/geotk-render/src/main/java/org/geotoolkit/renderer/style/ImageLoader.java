@@ -232,7 +232,7 @@ class ImageLoader implements Runnable {
 
         return;
     }
-    
+
     /**
      * Resets the image cache
      */

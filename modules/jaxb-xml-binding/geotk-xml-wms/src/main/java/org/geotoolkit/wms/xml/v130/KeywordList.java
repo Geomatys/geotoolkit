@@ -29,9 +29,9 @@ import org.geotoolkit.wms.xml.AbstractKeywordList;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -43,7 +43,7 @@ import org.geotoolkit.wms.xml.AbstractKeywordList;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -68,9 +68,9 @@ public class KeywordList implements AbstractKeywordList{
      */
     public KeywordList(final List<Keyword> keyword) {
         this.keyword = keyword;
-        
+
     }
-    
+
     public KeywordList(final String... keyword) {
         if (keyword != null) {
             for (String s : keyword) {
@@ -87,7 +87,7 @@ public class KeywordList implements AbstractKeywordList{
             this.keyword.add(element);
         }
     }
-    
+
     /**
      * Gets the value of the keyword property.
      */

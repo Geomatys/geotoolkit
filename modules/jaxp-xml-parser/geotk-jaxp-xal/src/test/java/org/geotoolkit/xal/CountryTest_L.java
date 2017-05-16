@@ -93,7 +93,7 @@ public class CountryTest_L {
         assertEquals("obligatoire", postBoxNumber.getGrPostal().getCode());
         assertEquals("PBNcontent", postBoxNumber.getContent());
 
-        
+
 
     }
 
@@ -102,11 +102,11 @@ public class CountryTest_L {
         final XalFactory xalFactory = DefaultXalFactory.getInstance();
 
         final PostBoxNumber postBoxNumber = xalFactory.createPostBoxNumber(xalFactory.createGrPostal("obligatoire"), "PBNcontent");
-        
+
         final PostBox postBox = xalFactory.createPostBox();
         postBox.setPostBoxNumber(postBoxNumber);
         postBox.setType("localityPostBox");
-        
+
         final Locality locality = xalFactory.createLocality();
         locality.setPostBox(postBox);
         locality.setType("countryLocality");

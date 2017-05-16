@@ -40,7 +40,7 @@ public enum RefreshMode {
     private final String refreshMode;
 
     /**
-     * 
+     *
      * @param refreshMode
      */
     private RefreshMode(String refreshMode){

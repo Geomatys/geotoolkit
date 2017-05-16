@@ -92,7 +92,7 @@ public class DefaultRandomPalette implements RandomPalette{
 
     @Override
     public List<Entry<Double, Color>> getSteps() {
-        final List<Entry<Double, Color>> steps = new ArrayList<Entry<Double, Color>>();     
+        final List<Entry<Double, Color>> steps = new ArrayList<Entry<Double, Color>>();
         steps.add(new SimpleImmutableEntry<Double, Color>(0d, next()));
         steps.add(new SimpleImmutableEntry<Double, Color>(0.5d, next()));
         steps.add(new SimpleImmutableEntry<Double, Color>(1d, next()));

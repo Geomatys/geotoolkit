@@ -31,9 +31,9 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.feature.BiFunction;
+import java.util.function.BiFunction;
 import org.apache.sis.internal.feature.FeatureLoop;
-import org.apache.sis.internal.feature.Predicate;
+import java.util.function.Predicate;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -166,7 +166,7 @@ public class BufferTest extends AbstractProcessTest {
         geometryFactory = new GeometryFactory();
 
         Feature myFeature1 = type.newInstance();
-        myFeature1.setPropertyValue("@identifier", "id-01");
+        myFeature1.setPropertyValue("sis:identifier", "id-01");
         myFeature1.setPropertyValue("name", "Point");
         myFeature1.setPropertyValue("position", geometryFactory.createPoint(new Coordinate(-10.0, 10.0)));
         featureList.add(myFeature1);
@@ -180,7 +180,7 @@ public class BufferTest extends AbstractProcessTest {
                     new Coordinate(60.0, 50.0),
                     new Coordinate(70.0, 40.0)
                 });
-        myFeature2.setPropertyValue("@identifier", "id-02");
+        myFeature2.setPropertyValue("sis:identifier", "id-02");
         myFeature2.setPropertyValue("name", "LineString");
         myFeature2.setPropertyValue("position", line);
         featureList.add(myFeature2);
@@ -200,7 +200,7 @@ public class BufferTest extends AbstractProcessTest {
                     new Coordinate(10.0, -20.0),
                     new Coordinate(-10.0, -10.0)
                 });
-        myFeature3.setPropertyValue("@identifier", "id-03");
+        myFeature3.setPropertyValue("sis:identifier", "id-03");
         myFeature3.setPropertyValue("name", "Polygone");
         myFeature3.setPropertyValue("position", geometryFactory.createPolygon(ring2, null));
         featureList.add(myFeature3);
@@ -215,7 +215,7 @@ public class BufferTest extends AbstractProcessTest {
         geometryFactory = new GeometryFactory();
 
         Feature myFeature1 = type.newInstance();
-        myFeature1.setPropertyValue("@identifier", "id-01");
+        myFeature1.setPropertyValue("sis:identifier", "id-01");
         myFeature1.setPropertyValue("name", "Point");
         myFeature1.setPropertyValue("position", geometryFactory.createPoint(new Coordinate(-10.0, 10.0)).buffer(distance));
         featureList.add(myFeature1);
@@ -229,7 +229,7 @@ public class BufferTest extends AbstractProcessTest {
                     new Coordinate(60.0, 50.0),
                     new Coordinate(70.0, 40.0)
                 });
-        myFeature2.setPropertyValue("@identifier", "id-02");
+        myFeature2.setPropertyValue("sis:identifier", "id-02");
         myFeature2.setPropertyValue("name", "LineString");
         myFeature2.setPropertyValue("position", line.buffer(distance));
         featureList.add(myFeature2);
@@ -250,7 +250,7 @@ public class BufferTest extends AbstractProcessTest {
                     new Coordinate(-10.0, -10.0)
                 });
 
-        myFeature3.setPropertyValue("@identifier", "id-03");
+        myFeature3.setPropertyValue("sis:identifier", "id-03");
         myFeature3.setPropertyValue("name", "Polygone");
         myFeature3.setPropertyValue("position", geometryFactory.createPolygon(ring2, null).buffer(distance));
         featureList.add(myFeature3);

@@ -40,8 +40,8 @@ import org.opengis.filter.Filter;
  */
 public class MapItemFilterColumn extends TreeTableColumn{
 
-    public MapItemFilterColumn() {                
-        setCellValueFactory(param -> ((CellDataFeatures)param).getValue().valueProperty());     
+    public MapItemFilterColumn() {
+        setCellValueFactory(param -> ((CellDataFeatures)param).getValue().valueProperty());
         setCellFactory((Object param) -> new FilterCell());
         setEditable(true);
         setPrefWidth(26);

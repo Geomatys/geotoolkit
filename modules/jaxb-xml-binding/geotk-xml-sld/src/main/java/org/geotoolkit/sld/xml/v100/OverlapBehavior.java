@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -67,11 +67,11 @@ public class OverlapBehavior {
 
     /**
      * Gets the value of the latestontop property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LATESTONTOP }
-     *     
+     *
      */
     public LATESTONTOP getLATESTONTOP() {
         return latestontop;
@@ -79,11 +79,11 @@ public class OverlapBehavior {
 
     /**
      * Sets the value of the latestontop property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LATESTONTOP }
-     *     
+     *
      */
     public void setLATESTONTOP(final LATESTONTOP value) {
         this.latestontop = value;
@@ -91,11 +91,11 @@ public class OverlapBehavior {
 
     /**
      * Gets the value of the earliestontop property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EARLIESTONTOP }
-     *     
+     *
      */
     public EARLIESTONTOP getEARLIESTONTOP() {
         return earliestontop;
@@ -103,11 +103,11 @@ public class OverlapBehavior {
 
     /**
      * Sets the value of the earliestontop property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EARLIESTONTOP }
-     *     
+     *
      */
     public void setEARLIESTONTOP(final EARLIESTONTOP value) {
         this.earliestontop = value;
@@ -115,11 +115,11 @@ public class OverlapBehavior {
 
     /**
      * Gets the value of the average property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AVERAGE }
-     *     
+     *
      */
     public AVERAGE getAVERAGE() {
         return average;
@@ -127,11 +127,11 @@ public class OverlapBehavior {
 
     /**
      * Sets the value of the average property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AVERAGE }
-     *     
+     *
      */
     public void setAVERAGE(final AVERAGE value) {
         this.average = value;
@@ -139,11 +139,11 @@ public class OverlapBehavior {
 
     /**
      * Gets the value of the random property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RANDOM }
-     *     
+     *
      */
     public RANDOM getRANDOM() {
         return random;
@@ -151,11 +151,11 @@ public class OverlapBehavior {
 
     /**
      * Sets the value of the random property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RANDOM }
-     *     
+     *
      */
     public void setRANDOM(final RANDOM value) {
         this.random = value;

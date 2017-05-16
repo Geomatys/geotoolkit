@@ -21,5 +21,5 @@ package org.geotoolkit.wcs.xml;
  * @author Guilhem Legal (Geomatys)
  */
 public interface ServiceMetadata {
-    
+
 }

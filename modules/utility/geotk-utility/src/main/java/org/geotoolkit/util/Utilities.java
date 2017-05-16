@@ -32,12 +32,6 @@ import org.apache.sis.util.Version;
  * an hash code), an arbitrary value must be provided. We suggest a different number for different
  * class in order to reduce the risk of collision between "empty" instances of different classes.
  * {@linkplain java.io.Serializable} classes can use {@code (int) serialVersionUID} for example.
- *
- * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 4.00
- *
- * @since 1.2
- * @module
  */
 public final class Utilities extends Static {
     /**
@@ -198,15 +192,16 @@ public final class Utilities extends Static {
     private static String name(final Object object) {
         return object.getClass().getSimpleName();
     }
-    
+
     /**
      * Utility method to avoid to fill an empty list during equals.
-     * But we want to consider equals a null list and an empty one, for JAXB purpose
+     * But we want to consider equals a null list and an empty one, for JAXB purpose.
+     *
      * @param l1 first list to compare
      * @param l2 second list to compare
      * @return True if the two list are equals, or if one is null and the other empty
      */
-    public static boolean listNullEquals(List l1, List l2) {
+    public static boolean listNullEquals(List<?> l1, List<?> l2) {
         if (l1 == null && l2 != null && l2.isEmpty()) {
             return true;
         } else if (l2 == null && l1 != null && l1.isEmpty()) {
@@ -214,6 +209,5 @@ public final class Utilities extends Static {
         } else {
             return Objects.equals(l1, l2);
         }
-
     }
 }

@@ -35,9 +35,9 @@ import org.geotoolkit.wps.xml.ProcessSummary;
 
 /**
  * <p>Java class for ProcessBriefType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ProcessBriefType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.wps.xml.ProcessSummary;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -74,20 +74,20 @@ public class ProcessBriefType extends DescriptionType implements ProcessSummary,
     protected String processVersion;
 
     public ProcessBriefType() {
-        
+
     }
-    
+
     public ProcessBriefType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, String processVersion) {
         super(identifier, title, _abstract);
         this.processVersion = processVersion;
     }
-    
+
     /**
      * Gets the value of the profile property.
-     * 
+     *
      * @return Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getProfile() {
         if (profile == null) {
@@ -98,11 +98,11 @@ public class ProcessBriefType extends DescriptionType implements ProcessSummary,
 
     /**
      * Location of a WSDL document which describes this process.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link WSDL }
-     *     
+     *
      */
     public WSDL getWSDL() {
         return wsdl;
@@ -110,11 +110,11 @@ public class ProcessBriefType extends DescriptionType implements ProcessSummary,
 
     /**
      * Location of a WSDL document which describes this process.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link WSDL }
-     *     
+     *
      */
     public void setWSDL(final WSDL value) {
         this.wsdl = value;
@@ -122,11 +122,11 @@ public class ProcessBriefType extends DescriptionType implements ProcessSummary,
 
     /**
      * Gets the value of the processVersion property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getProcessVersion() {
         return processVersion;
@@ -134,16 +134,16 @@ public class ProcessBriefType extends DescriptionType implements ProcessSummary,
 
     /**
      * Sets the value of the processVersion property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setProcessVersion(final String value) {
         this.processVersion = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString()).append("\n");
@@ -161,7 +161,7 @@ public class ProcessBriefType extends DescriptionType implements ProcessSummary,
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

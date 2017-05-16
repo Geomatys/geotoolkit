@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Overlaps")
 public class OverlapsType extends BinarySpatialOpType {
-    
+
     public OverlapsType() {
-        
+
     }
-    
+
     public OverlapsType(final OverlapsType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new OverlapsType(this);

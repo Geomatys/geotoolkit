@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AllowedTokensPropertyByValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AllowedTokensPropertyByValueType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AllowedTokensPropertyByValueType", propOrder = {
@@ -53,11 +53,11 @@ public class AllowedTokensPropertyByValueType {
 
     /**
      * Gets the value of the allowedTokens property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedTokensType }
-     *     
+     *
      */
     public AllowedTokensType getAllowedTokens() {
         return allowedTokens;
@@ -65,11 +65,11 @@ public class AllowedTokensPropertyByValueType {
 
     /**
      * Sets the value of the allowedTokens property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedTokensType }
-     *     
+     *
      */
     public void setAllowedTokens(AllowedTokensType value) {
         this.allowedTokens = value;

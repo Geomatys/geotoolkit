@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * Defines the core information of a service request message.
- * 
+ *
  * <p>Java class for RequestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RequestType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RequestType", propOrder = {
@@ -75,7 +75,7 @@ public class RequestType extends AbstractBodyType {
 
     /**
      * Gets the value of the requestParameters property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link SLIRType }{@code >}
@@ -86,7 +86,7 @@ public class RequestType extends AbstractBodyType {
      *     {@link JAXBElement }{@code <}{@link PortrayMapRequestType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ReverseGeocodeRequestType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DirectoryRequestType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractRequestParametersType> getRequestParameters() {
         return requestParameters;
@@ -94,7 +94,7 @@ public class RequestType extends AbstractBodyType {
 
     /**
      * Sets the value of the requestParameters property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link SLIRType }{@code >}
@@ -105,7 +105,7 @@ public class RequestType extends AbstractBodyType {
      *     {@link JAXBElement }{@code <}{@link PortrayMapRequestType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ReverseGeocodeRequestType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DirectoryRequestType }{@code >}
-     *     
+     *
      */
     public void setRequestParameters(JAXBElement<? extends AbstractRequestParametersType> value) {
         this.requestParameters = ((JAXBElement<? extends AbstractRequestParametersType> ) value);
@@ -113,11 +113,11 @@ public class RequestType extends AbstractBodyType {
 
     /**
      * Gets the value of the methodName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMethodName() {
         return methodName;
@@ -125,11 +125,11 @@ public class RequestType extends AbstractBodyType {
 
     /**
      * Sets the value of the methodName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMethodName(String value) {
         this.methodName = value;
@@ -137,11 +137,11 @@ public class RequestType extends AbstractBodyType {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         return version;
@@ -149,11 +149,11 @@ public class RequestType extends AbstractBodyType {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(String value) {
         this.version = value;
@@ -161,11 +161,11 @@ public class RequestType extends AbstractBodyType {
 
     /**
      * Gets the value of the requestID property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRequestID() {
         return requestID;
@@ -173,11 +173,11 @@ public class RequestType extends AbstractBodyType {
 
     /**
      * Sets the value of the requestID property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRequestID(String value) {
         this.requestID = value;
@@ -185,11 +185,11 @@ public class RequestType extends AbstractBodyType {
 
     /**
      * Gets the value of the maximumResponses property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMaximumResponses() {
         return maximumResponses;
@@ -197,11 +197,11 @@ public class RequestType extends AbstractBodyType {
 
     /**
      * Sets the value of the maximumResponses property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMaximumResponses(Integer value) {
         this.maximumResponses = value;

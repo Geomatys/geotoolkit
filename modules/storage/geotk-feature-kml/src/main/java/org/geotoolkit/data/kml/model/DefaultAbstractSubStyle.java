@@ -27,13 +27,13 @@ import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 public abstract class DefaultAbstractSubStyle extends DefaultAbstractObject implements AbstractSubStyle {
 
     /**
-     * 
+     *
      */
     protected DefaultAbstractSubStyle() {
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractSubStyleSimpleExtensions

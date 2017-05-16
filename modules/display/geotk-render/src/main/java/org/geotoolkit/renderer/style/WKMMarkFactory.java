@@ -24,7 +24,7 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * Well Known Mark factory.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class WKMMarkFactory extends MarkFactory {
@@ -35,13 +35,13 @@ public class WKMMarkFactory extends MarkFactory {
     public static final Shape STAR;
     public static final Shape CROSS;
     public static final Shape X;
-    
+
 
     static {
         SQUARE = new Rectangle2D.Double(-0.5, -0.5, 1.0, 1.0);
         CIRCLE = new Ellipse2D.Double(-0.5, -0.5, 1.0, 1.0);
-        
-        
+
+
         GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
         double angle = (-Math.PI / 2.0);
         double sin = Math.sin(angle);
@@ -57,8 +57,8 @@ public class WKMMarkFactory extends MarkFactory {
         AffineTransform at = new AffineTransform();
         at.translate(0, -path.getBounds2D().getCenterY());
         TRIANGLE = path.createTransformedShape(at);
-        
-        
+
+
         path = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
         angle =(-Math.PI / 2.0);
         sin = Math.sin(angle);
@@ -75,8 +75,8 @@ public class WKMMarkFactory extends MarkFactory {
         at = new AffineTransform();
         at.translate(0, -path.getBounds2D().getCenterY());
         STAR = path.createTransformedShape(at);
-        
-        
+
+
         path = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
         path.moveTo( 0.5,   0.125);
         path.lineTo( 0.125, 0.125);
@@ -92,23 +92,23 @@ public class WKMMarkFactory extends MarkFactory {
         path.lineTo( 0.5,  -0.125);
         path.lineTo( 0.5,   0.125);
         CROSS = path;
-        
-        
+
+
         at = new AffineTransform();
         at.rotate(Math.PI / 4.0);
         X = path.createTransformedShape(at);
-        
+
     }
-    
+
     @Override
     public Shape evaluateShape(String format, Object markRef, int markIndex) {
-        
+
         if(!(markRef instanceof String)){
             return null;
         }
-        
+
         final String wellKnownName = (String) markRef;
-        
+
         if ("cross".equalsIgnoreCase(wellKnownName)) {
             return CROSS;
         }else if ("circle".equalsIgnoreCase(wellKnownName)) {
@@ -125,5 +125,5 @@ public class WKMMarkFactory extends MarkFactory {
 
         return null;
     }
-    
+
 }

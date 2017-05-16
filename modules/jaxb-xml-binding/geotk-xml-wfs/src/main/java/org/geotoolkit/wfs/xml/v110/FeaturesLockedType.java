@@ -27,9 +27,9 @@ import org.geotoolkit.ogc.xml.v110.FeatureIdType;
 
 /**
  * <p>Java class for FeaturesLockedType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FeaturesLockedType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.ogc.xml.v110.FeatureIdType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

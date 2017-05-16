@@ -40,9 +40,9 @@ import org.opengis.geometry.Envelope;
 
 /**
  * <p>Java class for CoverageDescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoverageDescriptionType">
  *   &lt;complexContent>
@@ -59,8 +59,8 @@ import org.opengis.geometry.Envelope;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CoverageDescriptionType", propOrder = {
@@ -89,10 +89,10 @@ public class CoverageDescriptionType extends AbstractFeatureType implements Cove
     private ServiceParametersType serviceParameters;
 
     public CoverageDescriptionType() {
-        
+
     }
-    
-    public CoverageDescriptionType(final String coverageId, final EnvelopeType env, final DomainSetType domainSet, 
+
+    public CoverageDescriptionType(final String coverageId, final EnvelopeType env, final DomainSetType domainSet,
             final DataRecordPropertyType rangeType, final ServiceParametersType serviceParameters) {
         this.coverageId = coverageId;
         if (env != null) {
@@ -105,14 +105,14 @@ public class CoverageDescriptionType extends AbstractFeatureType implements Cove
         this.rangeType = rangeType;
         this.serviceParameters = serviceParameters;
     }
-    
+
     /**
      * Gets the value of the coverageId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCoverageId() {
         return coverageId;
@@ -120,11 +120,11 @@ public class CoverageDescriptionType extends AbstractFeatureType implements Cove
 
     /**
      * Sets the value of the coverageId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCoverageId(String value) {
         this.coverageId = value;
@@ -132,11 +132,11 @@ public class CoverageDescriptionType extends AbstractFeatureType implements Cove
 
     /**
      * Gets the value of the coverageFunction property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoverageFunctionType }
-     *     
+     *
      */
     public CoverageFunctionType getCoverageFunction() {
         return coverageFunction;
@@ -144,11 +144,11 @@ public class CoverageDescriptionType extends AbstractFeatureType implements Cove
 
     /**
      * Sets the value of the coverageFunction property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoverageFunctionType }
-     *     
+     *
      */
     public void setCoverageFunction(CoverageFunctionType value) {
         this.coverageFunction = value;
@@ -156,11 +156,11 @@ public class CoverageDescriptionType extends AbstractFeatureType implements Cove
 
     /**
      * Gets the value of the metadata property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Metadata }
-     * 
-     * 
+     *
+     *
      */
     public List<Metadata> getMetadata() {
         if (metadata == null) {
@@ -176,10 +176,10 @@ public class CoverageDescriptionType extends AbstractFeatureType implements Cove
             this.metadata.add(new Metadata(href));
         }
     }
-    
+
     /**
      * Gets the value of the domainSet property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link DomainSetType }{@code >}
@@ -189,7 +189,7 @@ public class CoverageDescriptionType extends AbstractFeatureType implements Cove
      *     {@link JAXBElement }{@code <}{@link DomainSetType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DomainSetType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DomainSetType }{@code >}
-     *     
+     *
      */
     public JAXBElement<DomainSetType> getDomainSet() {
         return domainSet;
@@ -197,7 +197,7 @@ public class CoverageDescriptionType extends AbstractFeatureType implements Cove
 
     /**
      * Sets the value of the domainSet property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link DomainSetType }{@code >}
@@ -207,7 +207,7 @@ public class CoverageDescriptionType extends AbstractFeatureType implements Cove
      *     {@link JAXBElement }{@code <}{@link DomainSetType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DomainSetType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DomainSetType }{@code >}
-     *     
+     *
      */
     public void setDomainSet(JAXBElement<DomainSetType> value) {
         this.domainSet = ((JAXBElement<DomainSetType> ) value);
@@ -215,11 +215,11 @@ public class CoverageDescriptionType extends AbstractFeatureType implements Cove
 
     /**
      * Gets the value of the rangeType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataRecordPropertyType }
-     *     
+     *
      */
     public DataRecordPropertyType getRangeType() {
         return rangeType;
@@ -227,11 +227,11 @@ public class CoverageDescriptionType extends AbstractFeatureType implements Cove
 
     /**
      * Sets the value of the rangeType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataRecordPropertyType }
-     *     
+     *
      */
     public void setRangeType(DataRecordPropertyType value) {
         this.rangeType = value;
@@ -239,11 +239,11 @@ public class CoverageDescriptionType extends AbstractFeatureType implements Cove
 
     /**
      * Gets the value of the serviceParameters property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ServiceParametersType }
-     *     
+     *
      */
     public ServiceParametersType getServiceParameters() {
         return serviceParameters;
@@ -251,11 +251,11 @@ public class CoverageDescriptionType extends AbstractFeatureType implements Cove
 
     /**
      * Sets the value of the serviceParameters property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ServiceParametersType }
-     *     
+     *
      */
     public void setServiceParameters(ServiceParametersType value) {
         this.serviceParameters = value;

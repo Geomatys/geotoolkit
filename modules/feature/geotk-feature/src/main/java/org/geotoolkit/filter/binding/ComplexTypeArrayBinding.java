@@ -29,7 +29,7 @@ public class ComplexTypeArrayBinding extends AbstractBinding<FeatureType>{
     public ComplexTypeArrayBinding() {
         super(FeatureType.class, 11);
     }
-    
+
     private int toIndex(final String xpath){
         String num = xpath.substring(2, xpath.length()-1);
 
@@ -39,7 +39,7 @@ public class ComplexTypeArrayBinding extends AbstractBinding<FeatureType>{
 
         return Integer.valueOf(num);
     }
-    
+
     @Override
     public boolean support(String xpath) {
         return xpath.startsWith("*[") && xpath.endsWith("]");
@@ -63,5 +63,5 @@ public class ComplexTypeArrayBinding extends AbstractBinding<FeatureType>{
     public void set(FeatureType candidate, String xpath, Object value) throws IllegalArgumentException {
         throw new IllegalArgumentException("Types are immutable");
     }
-    
+
 }

@@ -98,7 +98,7 @@ public class JBankPanel extends StyleElementEditor {
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -171,7 +171,7 @@ public class JBankPanel extends StyleElementEditor {
     }//GEN-LAST:event_guiImportButtonActionPerformed
 
     private void guiTypeSymbolizerListItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_guiTypeSymbolizerListItemStateChanged
-        //Update display        
+        //Update display
         bankView.setCandidates(model.getCandidates(new StyleBank.ByClassComparator(new Class[]{(Class) evt.getItem()})));
     }//GEN-LAST:event_guiTypeSymbolizerListItemStateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
