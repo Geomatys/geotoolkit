@@ -29,7 +29,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.feature.Geometries;

@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.opengis.feature.Feature;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;

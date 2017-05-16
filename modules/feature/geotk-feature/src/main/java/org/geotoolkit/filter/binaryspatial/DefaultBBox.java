@@ -25,7 +25,7 @@ import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 
 import java.util.logging.Level;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.filter.DefaultPropertyName;

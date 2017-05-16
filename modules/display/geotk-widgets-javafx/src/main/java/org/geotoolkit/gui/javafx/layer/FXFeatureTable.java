@@ -45,7 +45,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;

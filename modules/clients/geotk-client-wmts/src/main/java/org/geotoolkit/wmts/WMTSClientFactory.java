@@ -19,7 +19,7 @@ package org.geotoolkit.wmts;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;

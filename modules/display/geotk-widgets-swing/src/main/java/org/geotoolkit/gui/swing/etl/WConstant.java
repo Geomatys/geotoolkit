@@ -31,7 +31,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import org.apache.sis.feature.SingleAttributeTypeBuilder;
+import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.geotoolkit.gui.swing.propertyedit.JAttributeEditor;
 import org.geotoolkit.processing.chain.ConstantUtilities;
 import org.geotoolkit.processing.chain.model.ChainDataTypes;

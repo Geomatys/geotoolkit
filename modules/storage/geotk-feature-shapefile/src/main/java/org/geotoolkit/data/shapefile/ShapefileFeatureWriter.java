@@ -43,7 +43,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreContentEvent;

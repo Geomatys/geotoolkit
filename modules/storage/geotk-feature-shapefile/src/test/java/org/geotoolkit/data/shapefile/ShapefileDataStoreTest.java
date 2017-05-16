@@ -56,7 +56,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.io.wkt.PrjFiles;

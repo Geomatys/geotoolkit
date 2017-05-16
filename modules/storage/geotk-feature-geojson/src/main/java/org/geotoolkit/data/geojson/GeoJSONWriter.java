@@ -22,7 +22,7 @@ import java.util.Locale;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 import static org.geotoolkit.data.geojson.utils.GeoJSONMembres.*;
 import static org.geotoolkit.data.geojson.utils.GeoJSONTypes.*;

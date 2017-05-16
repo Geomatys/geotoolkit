@@ -49,7 +49,7 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.storage.DataStores;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.measure.Units;

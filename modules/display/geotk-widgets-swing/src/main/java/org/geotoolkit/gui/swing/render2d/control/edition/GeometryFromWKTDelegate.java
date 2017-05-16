@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import javax.swing.JInternalFrame;
 import javax.swing.JLayeredPane;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.gui.swing.render2d.JMap2D;

@@ -11,7 +11,7 @@ import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.logging.Level;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;

@@ -20,7 +20,7 @@ package org.geotoolkit.report.graphic.scalebar;
 
 
 import net.sf.jasperreports.engine.JRField;
-import org.apache.sis.feature.SingleAttributeTypeBuilder;
+import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 
 import org.geotoolkit.report.JRFieldRenderer;
 import org.geotoolkit.report.graphic.EmptyRenderable;

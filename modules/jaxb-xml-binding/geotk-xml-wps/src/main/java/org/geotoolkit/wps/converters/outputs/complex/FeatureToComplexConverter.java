@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.UUID;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.geojson.GeoJSONStreamWriter;

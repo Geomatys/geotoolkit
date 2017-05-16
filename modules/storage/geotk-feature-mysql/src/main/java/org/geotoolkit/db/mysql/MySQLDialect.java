@@ -42,7 +42,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import org.apache.sis.feature.SingleAttributeTypeBuilder;
+import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Version;

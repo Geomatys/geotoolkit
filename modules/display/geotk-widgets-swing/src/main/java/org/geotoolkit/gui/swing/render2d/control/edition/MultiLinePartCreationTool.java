@@ -18,7 +18,7 @@
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
 import com.vividsolutions.jts.geom.MultiLineString;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;

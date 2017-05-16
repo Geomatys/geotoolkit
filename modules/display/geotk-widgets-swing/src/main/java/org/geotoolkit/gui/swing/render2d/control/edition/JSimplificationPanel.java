@@ -21,7 +21,7 @@ import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTSMapping;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.swing.render2d.JMap2D;

@@ -19,7 +19,7 @@ package org.geotoolkit.data.osm.model;
 
 import com.vividsolutions.jts.geom.Point;
 import java.util.Collections;
-import org.apache.sis.feature.SingleAttributeTypeBuilder;
+import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.apache.sis.feature.DefaultAssociationRole;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;

@@ -60,10 +60,10 @@ import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
 import static junit.framework.Assert.*;
-import org.apache.sis.feature.FeatureTypeExt;
-import org.apache.sis.feature.ReprojectFeatureType;
-import org.apache.sis.feature.TransformFeatureType;
-import org.apache.sis.feature.ViewFeatureType;
+import org.geotoolkit.feature.FeatureTypeExt;
+import org.geotoolkit.feature.ReprojectFeatureType;
+import org.geotoolkit.feature.TransformFeatureType;
+import org.geotoolkit.feature.ViewFeatureType;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CRS;

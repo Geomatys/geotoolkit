@@ -17,7 +17,7 @@
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
 import javax.swing.ImageIcon;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;

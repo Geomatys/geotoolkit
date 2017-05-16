@@ -18,7 +18,7 @@
 package org.geotoolkit.data;
 
 import java.util.List;
-import org.apache.sis.feature.FeatureTypeExt;
+import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;

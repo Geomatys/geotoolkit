@@ -36,11 +36,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.nio.file.StandardOpenOption.*;
-import org.apache.sis.feature.SingleAttributeTypeBuilder;
+import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.apache.sis.feature.DefaultAssociationRole;
 import org.apache.sis.feature.DefaultAttributeType;
-import org.apache.sis.feature.FeatureExt;
-import org.apache.sis.feature.FeatureTypeExt;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.opengis.feature.FeatureAssociationRole;

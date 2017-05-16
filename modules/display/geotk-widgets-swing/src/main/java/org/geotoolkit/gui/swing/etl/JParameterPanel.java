@@ -22,7 +22,7 @@ import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDialog;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.gui.swing.propertyedit.JAttributeEditor;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.processing.chain.ChainProcessDescriptor;

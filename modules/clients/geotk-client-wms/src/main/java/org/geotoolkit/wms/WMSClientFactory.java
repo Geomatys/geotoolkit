@@ -35,7 +35,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
