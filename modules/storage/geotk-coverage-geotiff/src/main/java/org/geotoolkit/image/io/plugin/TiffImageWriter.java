@@ -1351,20 +1351,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         }
 
         //-- compression --//
-        compression = 1;
-        if (param.canWriteCompressed() && param.getCompressionMode() == ImageWriteParam.MODE_EXPLICIT) {
-            final String comp = param.getCompressionType();
-            if (comp != null) {
-                if (lzw.equalsIgnoreCase(comp)) {
-                    compression = 5;
-                } else if (packbits.equalsIgnoreCase(comp)) {
-                    compression = 32773;
-                } else {
-                    throw new IllegalStateException("the compression type : "+comp+". Is not known. Impossible to write image.");
-                }
-            }
-        }
-        assert compression <= 0xFFFF : "compression exceed short max value";
+        compression = extractCompression(param);
         addProperty(Compression, TYPE_USHORT, 1, new short[]{(short) compression}, properties);
 
         //-- planar configuration
@@ -1483,7 +1470,25 @@ public class TiffImageWriter extends SpatialImageWriter {
         }
 
         //-- compression --//
-        compression = 1;
+        compression = extractCompression(param);
+        addProperty(Compression, TYPE_USHORT, 1, new short[]{(short) compression}, properties);
+
+        /*
+         * Some globals class attribut have been already initialized to define writing made.
+         * See method computeRegion.
+         */
+        if (currentImgTW != 0 && currentImgTH != 0) {
+            addTileOffsetsProperties(currentImgTW, currentImgTH, currentImgNumXT, currentImgNumYT, properties);
+        } else {
+            addStripOffsetProperties((planarConfig == 2 ) ? destRegion.height * sm.getNumBands() : destRegion.height, properties);
+        }
+    }
+
+    /**
+     * Internal method used to convert image write parameters to tiff compression value.
+     */
+    private static int extractCompression(ImageWriteParam param) {
+        int compression = 1;
         if (param != null && param.canWriteCompressed() && param.getCompressionMode() == ImageWriteParam.MODE_EXPLICIT) {
             final String comp = param.getCompressionType();
             if (comp != null) {
@@ -1497,17 +1502,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             }
         }
         assert compression <= 0xFFFF : "compression exceed short max value";
-        addProperty(Compression, TYPE_USHORT, 1, new short[]{(short) compression}, properties);
-
-        /*
-         * Some globals class attribut have been already initialized to define writing made.
-         * See method computeRegion.
-         */
-        if (currentImgTW != 0 && currentImgTH != 0) {
-            addTileOffsetsProperties(currentImgTW, currentImgTH, currentImgNumXT, currentImgNumYT, properties);
-        } else {
-            addStripOffsetProperties((planarConfig == 2 ) ? destRegion.height * sm.getNumBands() : destRegion.height, properties);
-        }
+        return compression;
     }
 
     /**
@@ -2421,10 +2416,12 @@ public class TiffImageWriter extends SpatialImageWriter {
                 final int cuImgTH = currentImgTH * srcYsubsampling;
                 currentImgNumXT = (srcOffX + srcRegion.width  + cuImgTW - 1) / cuImgTW;
                 currentImgNumYT = (srcOffY + srcRegion.height + cuImgTH - 1) / cuImgTH;
-                if (currentImgTW % 16 != 0)
-                        throw new IllegalStateException("To be in accordance with tiff specification tile width must be multiple of 16. Current tile width = "+param.getTileWidth());
-                if (currentImgTH % 16 != 0)
-                        throw new IllegalStateException("To be in accordance with tiff specification tile height must be multiple of 16. Current tile height = "+param.getTileHeight());
+                if (extractCompression(param) != 1) {
+                    if (currentImgTW % 16 != 0)
+                            throw new IllegalStateException("To be in accordance with tiff specification tile width must be multiple of 16. Current tile width = "+param.getTileWidth());
+                    if (currentImgTH % 16 != 0)
+                            throw new IllegalStateException("To be in accordance with tiff specification tile height must be multiple of 16. Current tile height = "+param.getTileHeight());
+                }
                 tileRegion = new Rectangle(srcRegion.x - srcOffX, srcRegion.y - srcOffY, currentImgNumXT * cuImgTW, currentImgNumYT * cuImgTH);
 
             } else {
