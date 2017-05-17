@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -33,6 +34,7 @@ import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
@@ -48,6 +50,7 @@ import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DefaultDataNode;
+import org.geotoolkit.storage.coverage.CoverageReference;
 import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
@@ -291,13 +294,25 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
      * @throws IOException if fail to create a writer.
      */
     ImageWriter createWriter(final Path candidate) throws IOException{
-        final ImageReaderSpi readerSpi = createReader(candidate,spi).getOriginatingProvider();
-        final String[] writerSpiNames = readerSpi.getImageWriterSpiNames();
-        if(writerSpiNames == null || writerSpiNames.length == 0){
-            throw new IOException("No writer for this format.");
-        }
+        if (Files.exists(candidate)) {
+            final ImageReaderSpi readerSpi = createReader(candidate,spi).getOriginatingProvider();
+            final String[] writerSpiNames = readerSpi.getImageWriterSpiNames();
+            if(writerSpiNames == null || writerSpiNames.length == 0){
+                throw new IOException("No writer for this format.");
+            }
 
-        return XImageIO.getWriterByFormatName(readerSpi.getFormatNames()[0], candidate, null);
+            return XImageIO.getWriterByFormatName(readerSpi.getFormatNames()[0], candidate, null);
+        } else if (spi!=null) {
+            return XImageIO.getWriterByFormatName(spi.getFormatNames()[0], candidate, null);
+        } else {
+            final String extension = IOUtilities.extension(candidate);
+            if ("tif".equalsIgnoreCase(extension) || "tiff".equalsIgnoreCase(extension)) {
+                //take geotoolkit geotiff writer
+                return XImageIO.getWriterByFormatName("geotiff", candidate, null);
+            } else {
+                return XImageIO.getWriterBySuffix(candidate, null);
+            }
+        }
     }
 
     @Override
@@ -308,6 +323,22 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
     @Override
     public Path[] getDataFiles() throws DataStoreException {
         return new Path[] {root};
+    }
+
+    @Override
+    public CoverageReference create(GenericName name) throws DataStoreException {
+        final Collection<GenericName> names = getNames();
+        if(names.contains(name)){
+            throw new IllegalNameException("Coverage "+name+" already exist in this datastore.");
+        }
+
+        final String fileName = name.tip().toString();
+        final URI filePath = rootPath.resolve(fileName+".tiff");
+
+        final FileCoverageReference fcr = new FileCoverageReference(this, name, Paths.get(filePath), 0);
+        rootNode.getChildren().add(fcr);
+
+        return fcr;
     }
 
     /**
