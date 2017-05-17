@@ -111,6 +111,11 @@ public class XMLMosaic implements GridMosaic {
     int tileWidth;
     @XmlElement
     int tileHeight;
+    @XmlElement
+    int dataPixelWidth;
+    @XmlElement
+    int dataPixelHeight;
+
     // Use getter /setter to bind those two, because we must perform special operation at flush.
     String existMask;
     String emptyMask;
@@ -476,7 +481,14 @@ public class XMLMosaic implements GridMosaic {
      * {@inheritDoc }
      */
     @Override
-    public Rectangle getDataArea() {
+    public Rectangle getDataExtent() {
+
+        if (dataPixelWidth != 0 && dataPixelHeight != 0) {
+            return new Rectangle(dataPixelWidth, dataPixelHeight);
+        }
+        return new Rectangle(gridWidth * tileWidth, gridHeight * tileHeight);
+
+        /**
         final Path folder = getFolder();
 
         try (DirectoryStream<Path> tileStream = Files.newDirectoryStream(folder)) {
@@ -508,7 +520,7 @@ public class XMLMosaic implements GridMosaic {
            LOGGER.log(Level.FINE, "Data area compute failed "+e.getLocalizedMessage(), e);
             //error with directory stream
             return null;
-        }
+        }*/
     }
 
     private Point parsePosition(String tileFile) {

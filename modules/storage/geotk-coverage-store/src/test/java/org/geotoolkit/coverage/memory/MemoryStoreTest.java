@@ -91,7 +91,14 @@ public class MemoryStoreTest {
         Assert.assertTrue("Metadata temporal extents should be aligned with data store envelopes", sameElements(timeBoxes, expectedExtent.getTemporalElements()));
         Assert.assertTrue("Metadata vertical extents should be aligned with data store envelopes", sameElements(vertBoxes, expectedExtent.getVerticalElements()));
     }
-    
+
+    /**
+     * Check that the two given collections contain the same objects.
+     * @param first
+     * @param second
+     * @return True if input collections have the same content (order is not checked).
+     * False otherwise.
+     */
     private static boolean sameElements(Collection first, Collection second) {
         return first.size() == second.size() && first.containsAll(second);
     }

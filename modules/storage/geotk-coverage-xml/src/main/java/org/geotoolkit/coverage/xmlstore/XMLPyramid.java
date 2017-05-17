@@ -275,4 +275,28 @@ public class XMLPyramid implements Pyramid {
         return mosaic;
     }
 
+    /**
+     * Create and register a new mosaic in this pyramid
+     *
+     * @param gridSize
+     * @param tilePixelSize
+     * @param upperleft
+     * @param pixelscale
+     * @return
+     */
+    XMLMosaic createMosaic(Dimension gridSize, Dimension tilePixelSize, Dimension dataPixelSize, DirectPosition upperleft, double pixelscale) {
+        final XMLMosaic mosaic = new XMLMosaic();
+        mosaic.scale = pixelscale;
+        mosaic.gridWidth = gridSize.width;
+        mosaic.gridHeight = gridSize.height;
+        mosaic.tileWidth = tilePixelSize.width;
+        mosaic.tileHeight = tilePixelSize.height;
+        mosaic.upperLeft = upperleft.getCoordinate();
+        mosaic.dataPixelWidth = dataPixelSize.width;
+        mosaic.dataPixelHeight = dataPixelSize.height;
+        mosaics.add(mosaic);
+        mosaic.initialize(this);
+        return mosaic;
+    }
+
 }

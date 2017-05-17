@@ -38,6 +38,8 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.measure.NumberRange;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
 
 
 /**
@@ -151,8 +153,8 @@ final class RenderedSampleDimension extends GridSampleDimension {
                         names = new CharSequence[numBands];
                         Arrays.fill(names, name);
                     }
-                    create(names, (image != null) ? RectIterFactory.create(image,  null)
-                                                  : RectIterFactory.create(raster, null),
+                    create(names, (image != null) ? PixelIteratorFactory.createDefaultIterator(image)
+                                                  : PixelIteratorFactory.createDefaultIterator(raster),
                             model, null, null, null, null, defaultSD, null);
                 }
                 sd = defaultSD[i];
@@ -202,7 +204,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
     {
         final SampleModel model = image.getSampleModel();
         final GridSampleDimension[] dst = new GridSampleDimension[model.getNumBands()];
-        create(names, (min == null || max == null) ? RectIterFactory.create(image, null) : null,
+        create(names, (min == null || max == null) ? PixelIteratorFactory.createDefaultIterator(image) : null,
                model, min, max, units, colors, dst, hints);
         return dst;
     }
@@ -237,7 +239,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
                                         final RenderingHints hints)
     {
         final GridSampleDimension[] dst = new GridSampleDimension[raster.getNumBands()];
-        create(names, (min == null || max == null) ? RectIterFactory.create(raster, null) : null,
+        create(names, (min == null || max == null) ? PixelIteratorFactory.createDefaultIterator(raster) : null,
                raster.getSampleModel(), min, max, units, colors, dst, hints);
         return dst;
     }
@@ -267,7 +269,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
      *         {@link SampleDimensionType#USHORT USHORT}.
      */
     private static void create(final CharSequence[]        names,
-                               final RectIter              iterator,
+                               final PixelIterator         iterator,
                                final SampleModel           model,
                                double[]                    min,
                                double[]                    max,
@@ -350,25 +352,18 @@ final class RenderedSampleDimension extends GridSampleDimension {
                 Arrays.fill(max, Double.NEGATIVE_INFINITY);
             }
             int b = 0;
-            iterator.startBands();
-            if (!iterator.finishedBands()) do {
-                iterator.startLines();
-                if (!iterator.finishedLines()) do {
-                    iterator.startPixels();
-                    if (!iterator.finishedPixels()) do {
-                        final double z = iterator.getSampleDouble();
-                        if (computeMin && z < min[b]) min[b] = z;
-                        if (computeMax && z > max[b]) max[b] = z;
-                    } while (!iterator.nextPixelDone());
-                } while (!iterator.nextLineDone());
+            while (iterator.next()) {
+                final double z = iterator.getSampleDouble();
+                if (computeMin && z < min[b]) min[b] = z;
+                if (computeMax && z > max[b]) max[b] = z;
                 if (computeMin && computeMax) {
                     if (!(min[b] < max[b])) {
                         min[b] = 0;
                         max[b] = 1;
                     }
                 }
-                b++;
-            } while (!iterator.nextBandDone());
+                if (++b == numBands) b = 0;
+            }
         }
         /*
          * Now, constructs the sample dimensions. We will unconditionally provides a "nodata"

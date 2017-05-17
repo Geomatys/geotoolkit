@@ -104,10 +104,11 @@ public class GridMosaicRenderedImage implements RenderedImage {
         if (colorModel == null && sampleModel == null) {
             try {
                 //search the first non missing tile of the Mosaic
-                final Rectangle dataArea = mosaic.getDataArea();
+                final Rectangle dataArea = mosaic.getDataExtent();
+                final Dimension tileSize = mosaic.getTileSize();
                 if (dataArea != null) {
 
-                    final TileReference tile = mosaic.getTile(dataArea.x, dataArea.y, null);
+                    final TileReference tile = mosaic.getTile(dataArea.x / tileSize.width, dataArea.y / tileSize.height, null);
                     if (tile != null) {
                         if (tile.getInput() instanceof RenderedImage) {
                             firstTile = (RenderedImage) tile.getInput();

@@ -163,7 +163,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             final List<GridSampleDimension> sampleDimensions = covref.acquireReader().getSampleDimensions(covref.getImageIndex());
             boolean bandReadHonored = (readDimensions.length == toRead.length);
             for (int i=0;bandReadHonored && i<toRead.length;i++) {
-                bandReadHonored &= Objects.equals(readDimensions[i].getDescription(), sampleDimensions.get(toRead[i]).getDescription());
+                bandReadHonored &= Objects.equals(readDimensions[i].getDescription(), (sampleDimensions == null) ? null : sampleDimensions.get(toRead[i]).getDescription());
             }
 
             //swap new band indexes
