@@ -52,7 +52,6 @@ import org.geotoolkit.version.VersioningException;
 import org.opengis.util.GenericName;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
-import org.opengis.metadata.extent.Extent;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -195,9 +194,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         final DefaultExtent extent = new DefaultExtent() {
             @Override
             protected <E> Class<? extends Collection<E>> collectionType(Class<E> elementType) {
-                if (Extent.class.isAssignableFrom(elementType))
-                    return (Class) Set.class;
-                return super.collectionType(elementType);
+                return (Class) Set.class;
             }
         };
 
