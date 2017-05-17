@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.metadata.iso.citation.Citations;
@@ -55,7 +56,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
-import org.opengis.util.InternationalString;
 import org.opengis.util.ScopedName;
 
 /**
@@ -278,13 +278,14 @@ public class ReprojectFeatureType extends DecoratedFeatureType {
 
     }
 
-    private class ReprojectOperation implements Operation {
+    private class ReprojectOperation extends AbstractOperation {
 
         private final PropertyType base;
         private final AttributeType result;
         private final CoordinateReferenceSystem declatedCrs;
 
         public ReprojectOperation(PropertyType base) {
+            super(DecoratedFeatureType.properties(base));
             this.base = base;
 
             IdentifiedType result = base;
@@ -297,26 +298,6 @@ public class ReprojectFeatureType extends DecoratedFeatureType {
             atb.copy(res);
             atb.addCharacteristic(AttributeConvention.CRS_CHARACTERISTIC, CoordinateReferenceSystem.class, 0, 1, targetCRS);
             this.result = atb.build();
-        }
-
-        @Override
-        public GenericName getName() {
-            return base.getName();
-        }
-
-        @Override
-        public InternationalString getDefinition() {
-            return base.getDefinition();
-        }
-
-        @Override
-        public InternationalString getDesignation() {
-            return base.getDesignation();
-        }
-
-        @Override
-        public InternationalString getDescription() {
-            return base.getDescription();
         }
 
         @Override

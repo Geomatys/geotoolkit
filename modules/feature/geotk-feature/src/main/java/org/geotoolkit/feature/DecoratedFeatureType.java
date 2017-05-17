@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.sis.feature.DefaultFeatureType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.IdentifiedType;
 
 /**
  *
@@ -33,8 +34,8 @@ public abstract class DecoratedFeatureType extends DefaultFeatureType {
         super(properties(type), type.isAbstract(), type.getSuperTypes().toArray(new FeatureType[0]));
     }
 
-    private static Map<String,Object> properties(FeatureType type) {
-        final Map<String,Object> p = new HashMap<>();
+    static Map<String,Object> properties(IdentifiedType type) {
+        final Map<String,Object> p = new HashMap<>(8);
         p.put(NAME_KEY,        type.getName());
         p.put(DEFINITION_KEY,  type.getDefinition());
         p.put(DESCRIPTION_KEY, type.getDescription());

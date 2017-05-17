@@ -16,45 +16,25 @@
  */
 package org.geotoolkit.feature;
 
+import org.apache.sis.feature.AbstractOperation;
 import org.opengis.feature.Feature;
 import org.opengis.feature.IdentifiedType;
 import org.opengis.feature.Operation;
 import org.opengis.feature.Property;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.util.GenericName;
-import org.opengis.util.InternationalString;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DecoratedOperation implements Operation {
+public class DecoratedOperation extends AbstractOperation {
 
     private final Operation base;
 
     public DecoratedOperation(Operation base) {
+        super(DecoratedFeatureType.properties(base));
         this.base = base;
-    }
-
-    @Override
-    public GenericName getName() {
-        return base.getName();
-    }
-
-    @Override
-    public InternationalString getDefinition() {
-        return base.getDefinition();
-    }
-
-    @Override
-    public InternationalString getDesignation() {
-        return base.getDesignation();
-    }
-
-    @Override
-    public InternationalString getDescription() {
-        return base.getDescription();
     }
 
     @Override
