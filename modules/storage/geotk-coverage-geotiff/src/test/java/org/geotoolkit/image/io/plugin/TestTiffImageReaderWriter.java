@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -374,6 +376,27 @@ public strictfp abstract class TestTiffImageReaderWriter {
     }
 
     /**
+     * Particularity case for bgr sample type.
+     * More precisely particularity case for {@link sun.awt.image.ByteComponentRaster}.
+     */
+    @Test
+    public void bgrRgbTest() throws IOException {
+
+        final Path fileTest = Files.createTempFile(tempDir.toPath(),"bgrRgbTest", "tiff");
+
+        //create the image to write
+        final BufferedImage image = new BufferedImage(113, 59, BufferedImage.TYPE_3BYTE_BGR);
+        final Graphics g = image.createGraphics();
+        g.setColor(Color.BLUE);
+        g.fillRect(0, 0, 113, 59);
+        g.dispose();
+
+        defaultTest("bgrRgbTest", fileTest, image);
+
+
+    }
+
+    /**
      * Create an image with expected properties given by followed attributs : <br/>
      * - random width and height<br/>
      * - sampleBitsSize<br/>
@@ -407,7 +430,26 @@ public strictfp abstract class TestTiffImageReaderWriter {
         final int height = random.nextInt(256) + 16;
         final RenderedImage expected = createImageTest(width, height, sampleType, numBand, photometricInterpretation);
 
-        String messageSize = message + "\n Test image size(w/h) "+width+"/"+height+".";
+        defaultTest(message, fileTest, expected);
+    }
+
+
+    /**
+     * Write "expected" image at "filetest" adress and read.<br/>
+     * To finish read image is compare to itself before writing.<br/><br/>
+     *
+     * Moreover, test different input / output type setted.
+     *
+     * @param message in case of assertion error.
+     * @param fileTest the place to be.
+     * @param expected image which will be tested.
+     * @see #SAMPLEFORMAT_UINT
+     * @throws IOException if problem during reading/writing action.
+     */
+    private void defaultTest(final String message, final Path fileTest, final RenderedImage expected)
+            throws IOException {
+
+        final String messageSize = message + "\n Test image size(w/h) "+expected.getWidth()+"/"+expected.getHeight()+".";
 
         //test writing with different output type from Spi
         for (Class type : writer.getOriginatingProvider().getOutputTypes()) {
@@ -445,7 +487,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
                 //test image
                 checkImage(messageSize, expected, tested);
             } catch (Exception e) {
-                String messageType = messageSize + "\n Writer output : "+type.getCanonicalName()
+                final String messageType = messageSize + "\n Writer output : "+type.getCanonicalName()
                         + "\n Reader input : "+fileTest.getClass().getCanonicalName()+"."
                         + "\n Cause : "+e.getMessage();
                 fail(messageType);
@@ -479,7 +521,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
                 //test image
                 checkImage(messageSize, expected, tested);
             } catch (Exception e) {
-                String messageType = messageSize + "\n Reader input : "+type.getCanonicalName()+"."
+                final String messageType = messageSize + "\n Reader input : "+type.getCanonicalName()+"."
                         + "\n Cause : "+e.getMessage();
                 fail(messageType);
             }
