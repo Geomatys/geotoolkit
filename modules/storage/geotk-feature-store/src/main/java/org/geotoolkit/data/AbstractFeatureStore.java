@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectFeatureType;
 import org.geotoolkit.feature.ViewFeatureType;
@@ -65,7 +66,11 @@ import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.collection.BackingStoreException;
+import org.opengis.feature.AttributeType;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.ScopedName;
 
 
@@ -131,8 +136,53 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     }
 
     @Override
-    public Metadata getMetadata() throws DataStoreException {
-        return null;
+    protected Metadata createMetadata() throws DataStoreException {
+        final Set<GenericName> names = getNames();
+        if (names == null || names.isEmpty()) {
+            return null;
+        }
+
+        try {
+            final MetadataBuilder builder = new MetadataBuilder();
+
+            // Retrieve all feature types in the data source
+            names.stream()
+                    .flatMap(this::getFeatureTypeHierarchy)
+                    .distinct()
+                    /* Register found types in the metadata. We don't count instances,
+                     * as it's possibly a costly operation.
+                     */
+                    .peek(type -> builder.add(type, null))
+                    /* Search for all available reference systems. Do not query
+                     * parent properties, as we've got all abstract types through
+                     * "getFeatureTypeHierarchy"
+                     */
+                    .flatMap(type -> type.getProperties(false).stream())
+                    .filter(p -> p instanceof AttributeType)
+                    .map(p -> (AttributeType) p)
+                    .map(p -> {
+                        Object result = p.characteristics().get(AttributeConvention.CRS_CHARACTERISTIC.toString());
+                        if (result instanceof AttributeType)
+                            result = ((AttributeType) result).getDefaultValue();
+                        return result;
+                    })
+                    .filter(crs -> crs instanceof CoordinateReferenceSystem)
+                    .map(crs -> (CoordinateReferenceSystem) crs)
+                    .distinct()
+                    .forEach(builder::add);
+
+            return builder.build(false);
+        } catch (BackingStoreException e) {
+            throw e.unwrapOrRethrow(DataStoreException.class);
+        }
+    }
+
+    private Stream<FeatureType> getFeatureTypeHierarchy(final GenericName name) throws BackingStoreException {
+        try {
+            return getFeatureTypeHierarchy(name.tip().toString()).stream();
+        } catch (DataStoreException e) {
+            throw new BackingStoreException(e);
+        }
     }
 
     /**

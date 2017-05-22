@@ -859,7 +859,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             }
 
             for (int ty = 0; ty < numTiles; ty++) {
-                write(fakeTile, dataType, 0, fakeTileArrayLength, bitPerSample, compression);
+                write(fakeTile, dataType, 0, fakeTileArrayLength, bitPerSample, compression, null);//-- empty tile dataOffsets has no impact
             }
             assert channel.getStreamPosition() == endOfFile;
         }
@@ -1351,20 +1351,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         }
 
         //-- compression --//
-        compression = 1;
-        if (param.canWriteCompressed() && param.getCompressionMode() == ImageWriteParam.MODE_EXPLICIT) {
-            final String comp = param.getCompressionType();
-            if (comp != null) {
-                if (lzw.equalsIgnoreCase(comp)) {
-                    compression = 5;
-                } else if (packbits.equalsIgnoreCase(comp)) {
-                    compression = 32773;
-                } else {
-                    throw new IllegalStateException("the compression type : "+comp+". Is not known. Impossible to write image.");
-                }
-            }
-        }
-        assert compression <= 0xFFFF : "compression exceed short max value";
+        compression = extractCompression(param);
         addProperty(Compression, TYPE_USHORT, 1, new short[]{(short) compression}, properties);
 
         //-- planar configuration
@@ -1483,7 +1470,25 @@ public class TiffImageWriter extends SpatialImageWriter {
         }
 
         //-- compression --//
-        compression = 1;
+        compression = extractCompression(param);
+        addProperty(Compression, TYPE_USHORT, 1, new short[]{(short) compression}, properties);
+
+        /*
+         * Some globals class attribut have been already initialized to define writing made.
+         * See method computeRegion.
+         */
+        if (currentImgTW != 0 && currentImgTH != 0) {
+            addTileOffsetsProperties(currentImgTW, currentImgTH, currentImgNumXT, currentImgNumYT, properties);
+        } else {
+            addStripOffsetProperties((planarConfig == 2 ) ? destRegion.height * sm.getNumBands() : destRegion.height, properties);
+        }
+    }
+
+    /**
+     * Internal method used to convert image write parameters to tiff compression value.
+     */
+    private static int extractCompression(ImageWriteParam param) {
+        int compression = 1;
         if (param != null && param.canWriteCompressed() && param.getCompressionMode() == ImageWriteParam.MODE_EXPLICIT) {
             final String comp = param.getCompressionType();
             if (comp != null) {
@@ -1497,17 +1502,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             }
         }
         assert compression <= 0xFFFF : "compression exceed short max value";
-        addProperty(Compression, TYPE_USHORT, 1, new short[]{(short) compression}, properties);
-
-        /*
-         * Some globals class attribut have been already initialized to define writing made.
-         * See method computeRegion.
-         */
-        if (currentImgTW != 0 && currentImgTH != 0) {
-            addTileOffsetsProperties(currentImgTW, currentImgTH, currentImgNumXT, currentImgNumYT, properties);
-        } else {
-            addStripOffsetProperties((planarConfig == 2 ) ? destRegion.height * sm.getNumBands() : destRegion.height, properties);
-        }
+        return compression;
     }
 
     /**
@@ -1854,6 +1849,28 @@ public class TiffImageWriter extends SpatialImageWriter {
         final int srcRegionMaxX = srcRegion.x + srcRegion.width;
         final int srcRegionMaxY = srcRegion.y + srcRegion.height;
 
+        //-- particularity case for sun.awt.image.ByteComponentRaster --//
+        /*
+         * This particularity raster allow dataOffsets properties.
+         * Precisely into byte raster case, may exist case where raster is defined has bgr in contrary to rgb.
+         * Tiff specification does not provide this case.
+         * To avoid this case we should replace sample bgr into rgb sens.
+         */
+        int[] dataOffsets = null;
+        if (initRast instanceof sun.awt.image.ByteComponentRaster) {
+            sun.awt.image.ByteComponentRaster initSunRaster = (sun.awt.image.ByteComponentRaster) initRast;
+            final int[] dataOffsetsSun = initSunRaster.getDataOffsets();
+            //-- we verify that sens of iteration is not complient
+            //-- if sens is rgb we do nothing as normal comportement
+            for (int i = 0, l = dataOffsetsSun.length; i < l; i++) {
+                if (dataOffsetsSun[i] != i) {
+                    //-- raster bands iteration sens is not complient
+                    dataOffsets = dataOffsetsSun;
+                    break;
+                }
+            }
+        }
+
         // ----------------- padding array --------------------//
         assert tileRegion.width  % subsampleX == 0;
         assert tileRegion.height % subsampleY == 0;
@@ -1904,7 +1921,8 @@ public class TiffImageWriter extends SpatialImageWriter {
          && image.getTileWidth()  == currentImgTW
          && image.getTileHeight() == currentImgTH
          && compression           == 1 // no compression
-         && tileRegion.equals(imageBoundary)) {
+         && tileRegion.equals(imageBoundary)
+         && dataOffsets == null) {
 
             final long currentByteCount = (long) currentImgTW * currentImgTH * bitPerSample *  pixelLength / Byte.SIZE;
 
@@ -2025,7 +2043,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                     if (interMaxX <= interMinX || interMaxY <= interMinY) {
 
                         //-- ecrire tuile vierge --//
-                        write(dstOffYArray, dataType, 0, destTileStride, bitPerSample, compression);
+                        write(dstOffYArray, dataType, 0, destTileStride, bitPerSample, compression, null);//-- padding offset array, dataoffset has no impact write empty samples
 
                         //-- Use during packBit compression --//
                         lastByte32773     += destTileByteCount;
@@ -2057,7 +2075,7 @@ public class TiffImageWriter extends SpatialImageWriter {
 
                     //-- destination offset point in Y direction --//
                     for (int r = ctRminy; r < interMinY; r += subsampleY) {
-                        write(dstOffYArray, dataType, 0, currentImgTW * pixelLength, bitPerSample, compression);
+                        write(dstOffYArray, dataType, 0, currentImgTW * pixelLength, bitPerSample, compression, null);//-- padding offset array, dataoffset has no impact write empty samples
                     }
 
                     //-- we looking for which tiles from image will be used to fill destination tile.
@@ -2088,7 +2106,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                                 assert dstOffWriteLength % subsampleX == 0 : "dstOffWriteLength = "+dstOffWriteLength+" , subsampleX = "+subsampleX;
                                 dstOffWriteLength /= subsampleX;
                                 dstOffWriteLength *= pixelLength;
-                                write(dstOffYArray, dataType, 0, dstOffWriteLength, bitPerSample, compression);
+                                write(dstOffYArray, dataType, 0, dstOffWriteLength, bitPerSample, compression, null);//-- padding offset array, dataoffset has no impact write empty samples
                             }
 
                             // -- current image tile coordinates in X direction
@@ -2141,13 +2159,13 @@ public class TiffImageWriter extends SpatialImageWriter {
 
                                 for (int x = debx; x < endx; x += currentXSubSample) {
                                     final int writeArrayOffset = (stepOffsetBeforeY + stepY + (x-cuImgTileMinX)) * pixelLength;
-                                    write(sourceArray, dataType, writeArrayOffset, writeSize, bitPerSample, compression);
+                                    write(sourceArray, dataType, writeArrayOffset, writeSize, bitPerSample, compression, dataOffsets);
                                 }
 
                                 // -- padding in x direction
                                 if (ctRmaxx > srcRegionMaxX) {
                                     assert ((endx - debx + subsampleX - 1) / subsampleX + paddingXLength / pixelLength + dstOffWriteLength / pixelLength) == currentImgTW : "write width = "+((endx - debx + subsampleX - 1) / subsampleX + paddingXLength / pixelLength + dstOffWriteLength / pixelLength);
-                                    write(paddingXArray, dataType, 0, paddingXLength, bitPerSample, compression);
+                                    write(paddingXArray, dataType, 0, paddingXLength, bitPerSample, compression, null);//-- padding offset array, dataoffset has no impact write empty samples
                                 }
 
                                 // -- next tile X coordinates
@@ -2158,7 +2176,7 @@ public class TiffImageWriter extends SpatialImageWriter {
 
                         //-- padding in y direction.
                         if (ctRmaxy > srcRegionMaxY) {
-                            write(paddingYArray, dataType, 0, paddingYLength, bitPerSample, compression);
+                            write(paddingYArray, dataType, 0, paddingYLength, bitPerSample, compression, null);//-- padding offset array, dataoffset has no impact write empty samples
                         }
 
                         //-- next tile Y coordinates.
@@ -2216,14 +2234,44 @@ public class TiffImageWriter extends SpatialImageWriter {
      * @see #writeWithCompression(Object, int, int, int, int)
      */
     private void write(final Object sourceArray, final int datatype, final int arrayOffset,
-            final int arrayLength, final int bitPerSample, final int compression) throws IOException {
+            final int arrayLength, final int bitPerSample, final int compression, final int[] dataOffsets)
+            throws IOException {
+
+        Object writtenSourceArray = sourceArray;
+        int writtenArrayOffset    = arrayOffset;
+
+        //-- invert band sample for particularity case sun.awt.image.ByteComponentRaster.
+        if (dataOffsets != null) {
+            assert datatype == DataBuffer.TYPE_BYTE : "dataOffsets writting sens should "
+                    + "be only available for sun.awt.image.ByteComponentRaster. "
+                    + "Expected Databuffer.Type_BYTE = ("+DataBuffer.TYPE_BYTE+"), found : ("+datatype+").";
+
+            final int offLen = dataOffsets.length;
+            assert arrayLength % offLen == 0 : "Impossible to write raster with internal dataoffsets length not congrue to written arrayLength.";
+
+            //-- use the new sens arranged byte array.
+            writtenSourceArray = new byte[arrayLength];
+            writtenArrayOffset = 0;
+
+            final int nbiter = arrayLength / dataOffsets.length;
+            for (int nbi = 0; nbi < nbiter; nbi++) {
+                int wriOffset = nbi * offLen;
+                int srcOffset = arrayOffset + wriOffset;
+                for (int s = 0; s < offLen; s++) {
+                    //-- bgr -> rgb dst[offset + s] = src[offset + dataOffset[s]]
+                    Array.setByte(writtenSourceArray, wriOffset + s, Array.getByte(sourceArray, srcOffset + dataOffsets[s]));
+                }
+            }
+        }
+
+
         final int compress = compression & 0xFFFF;
         if (compress == 1) {
             //-- no compression --//
-             write(sourceArray, datatype, arrayOffset, arrayLength);
+             write(writtenSourceArray, datatype, writtenArrayOffset, arrayLength);
         } else if (compress == 5 || compress == 32773) {
             //-- with compression --//
-            writeWithCompression(sourceArray, datatype, arrayOffset, arrayLength, bitPerSample);
+            writeWithCompression(writtenSourceArray, datatype, writtenArrayOffset, arrayLength, bitPerSample);
         } else {
             throw new IllegalStateException("Impossible to write image, unknown compression format. Compression = "+compress);
         }
@@ -2421,10 +2469,12 @@ public class TiffImageWriter extends SpatialImageWriter {
                 final int cuImgTH = currentImgTH * srcYsubsampling;
                 currentImgNumXT = (srcOffX + srcRegion.width  + cuImgTW - 1) / cuImgTW;
                 currentImgNumYT = (srcOffY + srcRegion.height + cuImgTH - 1) / cuImgTH;
-                if (currentImgTW % 16 != 0)
-                        throw new IllegalStateException("To be in accordance with tiff specification tile width must be multiple of 16. Current tile width = "+param.getTileWidth());
-                if (currentImgTH % 16 != 0)
-                        throw new IllegalStateException("To be in accordance with tiff specification tile height must be multiple of 16. Current tile height = "+param.getTileHeight());
+                if (extractCompression(param) != 1) {
+                    if (currentImgTW % 16 != 0)
+                            throw new IllegalStateException("To be in accordance with tiff specification tile width must be multiple of 16. Current tile width = "+param.getTileWidth());
+                    if (currentImgTH % 16 != 0)
+                            throw new IllegalStateException("To be in accordance with tiff specification tile height must be multiple of 16. Current tile height = "+param.getTileHeight());
+                }
                 tileRegion = new Rectangle(srcRegion.x - srcOffX, srcRegion.y - srcOffY, currentImgNumXT * cuImgTW, currentImgNumYT * cuImgTH);
 
             } else {
@@ -2672,6 +2722,28 @@ public class TiffImageWriter extends SpatialImageWriter {
         final int dataType            = initRastBuff.getDataType();
         final int numbanks = initRastBuff.getNumBanks();
 
+        //-- particularity case for sun.awt.image.ByteComponentRaster --//
+        /*
+         * This particularity raster allow dataOffsets properties.
+         * Precisely into byte raster case, may exist case where raster is defined has bgr in contrary to rgb.
+         * Tiff specification does not provide this case.
+         * To avoid this case we should replace sample bgr into rgb sens.
+         */
+        int[] dataOffsets = null;
+        if (initRast instanceof sun.awt.image.ByteComponentRaster) {
+            sun.awt.image.ByteComponentRaster initSunRaster = (sun.awt.image.ByteComponentRaster) initRast;
+            final int[] dataOffsetsSun = initSunRaster.getDataOffsets();
+            //-- we verify that sens of iteration is not complient
+            //-- if sens is rgb we do nothing as normal comportement
+            for (int i = 0, l = dataOffsetsSun.length; i < l; i++) {
+                if (dataOffsetsSun[i] != i) {
+                    //-- raster bands iteration sens is not complient
+                    dataOffsets = dataOffsetsSun;
+                    break;
+                }
+            }
+        }
+
         assert bitPerSample != 0;
 
         final int srcRegionMaxX = srcRegion.x + srcRegion.width;
@@ -2736,7 +2808,8 @@ public class TiffImageWriter extends SpatialImageWriter {
          && imgNumTileY == 1
          && compression == 1
          && dstOffX == 0
-         && dstOffY == 0) {
+         && dstOffY == 0
+         && dataOffsets == null) {
 
             //-- if all offsets or bytecounts datasize should be contained into Long or Integer datasize. --//
             final int datasize = (isBigTIFF) ? Long.SIZE / Byte.SIZE : Integer.SIZE / Byte.SIZE;
@@ -2855,7 +2928,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             if (dstOffY > 0) {
                 for (int r = 0; r < dstOffY; r++) {
 
-                    write(destOffsetRowArray, dataType, 0, destRegion.width * pixelLength, bitPerSample, compression);
+                    write(destOffsetRowArray, dataType, 0, destRegion.width * pixelLength, bitPerSample, compression, null);//-- padding offset array, dataoffset has no impact write empty samples
 
                     if (compression == 5) writeWithLZWCompression(LZW_EOI_CODE);
                     lastByte32773     += currentByteCount;
@@ -2890,7 +2963,7 @@ public class TiffImageWriter extends SpatialImageWriter {
 
                    //-- pour chaque row on ecrit le tableau manquant--//
                    if (dstOffX > 0) {
-                       write(destOffsetXArray, dataType, 0, dstOffX * pixelLength, bitPerSample, compression);
+                       write(destOffsetXArray, dataType, 0, dstOffX * pixelLength, bitPerSample, compression, null);//-- padding offset array, dataoffset has no impact write empty samples
                        assertByteCount += dstOffX * pixelLength * sampleSize;
                    }
 
@@ -2946,7 +3019,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                        for (int x = cuMinX; x < cuMaxX; x += stepX) {
                            final int arrayStepX  = (x - cuMinX) * pixelLength;
                            final int finalOffset = rowArrayOffset + arrayStepY + arrayXOffset + arrayStepX;
-                           write(sourceArray, dataType, finalOffset, writeLenght, bitPerSample, compression);
+                           write(sourceArray, dataType, finalOffset, writeLenght, bitPerSample, compression, dataOffsets);
 
                            //-- assertion --//
                            assertByteCount += (writeLenght * sampleSize);
