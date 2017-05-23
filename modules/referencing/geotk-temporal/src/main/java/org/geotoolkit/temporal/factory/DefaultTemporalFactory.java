@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.measure.quantity.Time;
 import javax.measure.Unit;
-import org.apache.sis.metadata.iso.DefaultIdentifier;
 
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.temporal.object.DefaultCalendarDate;
@@ -100,7 +99,7 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     @Override
     public Period createPeriod(final Instant begin, final Instant end) {
         final Map<String, Object> prop = new HashMap<>();
-        prop.put(IdentifiedObject.NAME_KEY, new DefaultIdentifier("period"+(periodCount++)));
+        prop.put(IdentifiedObject.NAME_KEY, "period" + periodCount++);
         return new DefaultPeriod(prop, begin, end);
     }
 
@@ -110,7 +109,7 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     @Override
     public Instant createInstant(final Date instant) {
         final Map<String, Object> prop = new HashMap<>();
-        prop.put(IdentifiedObject.NAME_KEY, new DefaultIdentifier("instant"+(instantCount++)));
+        prop.put(IdentifiedObject.NAME_KEY, "instant" + instantCount++);
         if (instant != null) {
             return new DefaultInstant(prop, instant);
         } else {
@@ -223,7 +222,7 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     public OrdinalEra createOrdinalEra(final InternationalString name, final Date begin, final Date end,
             final Collection<OrdinalEra> composition) {
         final Map<String, Object> ordinalEraProperties = new HashMap<>();
-        ordinalEraProperties.put(IdentifiedObject.NAME_KEY, new DefaultIdentifier(name.toString()));
+        ordinalEraProperties.put(IdentifiedObject.NAME_KEY, name.toString());
         return new DefaultOrdinalEra(ordinalEraProperties, begin, end, composition);
     }
 
