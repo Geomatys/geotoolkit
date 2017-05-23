@@ -87,6 +87,11 @@
       <artifactId>grib</artifactId>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>edu.ucar</groupId>
+      <artifactId>udunits</artifactId>
+      <scope>runtime</scope>
+    </dependency>
 
     <!-- Following are dependencies declared in the 'netcdf.pom' file with "provided" scope,
          or their transitive dependencies. They were declared as "provided" because they are
