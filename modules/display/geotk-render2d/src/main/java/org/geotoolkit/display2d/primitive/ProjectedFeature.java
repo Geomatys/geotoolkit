@@ -18,7 +18,7 @@ package org.geotoolkit.display2d.primitive;
 
 import java.util.Collections;
 import java.util.logging.Level;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;

@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.*;
 import org.geotoolkit.gui.swing.resource.MessageBundle;

@@ -18,7 +18,7 @@ package org.geotoolkit.db.dialect;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import org.apache.sis.feature.SingleAttributeTypeBuilder;
+import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.geotoolkit.filter.visitor.CapabilitiesFilterSplitter;
 import org.opengis.feature.AttributeType;

@@ -8,7 +8,7 @@ import org.geotoolkit.data.FeatureWriter;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;

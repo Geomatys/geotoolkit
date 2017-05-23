@@ -21,7 +21,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 

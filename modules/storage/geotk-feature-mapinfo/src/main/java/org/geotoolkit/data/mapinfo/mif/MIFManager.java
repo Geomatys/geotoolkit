@@ -45,7 +45,7 @@ import org.apache.sis.util.logging.Logging;
 
 import org.apache.sis.util.Utilities;
 import static java.nio.file.StandardOpenOption.*;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.IllegalNameException;

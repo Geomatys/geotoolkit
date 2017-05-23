@@ -36,7 +36,7 @@ import javax.swing.JMenu;
 import javax.swing.JPanel;
 
 import javax.swing.SwingConstants;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display2d.container.ContextContainer2D;

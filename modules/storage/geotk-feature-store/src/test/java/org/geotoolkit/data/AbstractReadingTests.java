@@ -25,8 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.sis.feature.FeatureExt;
-import org.apache.sis.feature.FeatureTypeExt;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.storage.DataStoreException;
 
 import org.geotoolkit.data.query.Query;

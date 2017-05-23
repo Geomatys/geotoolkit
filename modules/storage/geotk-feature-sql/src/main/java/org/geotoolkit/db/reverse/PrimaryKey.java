@@ -21,7 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;

@@ -22,10 +22,12 @@ package org.geotoolkit.referencing.operation.transform;
 
 import java.io.Serializable;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.QuadCurve2D;
+import java.lang.reflect.Method;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.Matrix;
@@ -46,7 +48,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.internal.referencing.WKTUtilities;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
-import org.apache.sis.referencing.operation.transform.Accessor;
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform2D;
 
 import static org.geotoolkit.util.Utilities.hash;
 
@@ -165,7 +167,15 @@ public abstract class AbstractMathTransform extends org.apache.sis.referencing.o
         if ((dim = getSourceDimensions()) != 2 || (dim = getTargetDimensions()) != 2) {
             throw new MismatchedDimensionException(mismatchedDimension("shape", 2, dim));
         }
-        return isIdentity() ? shape : Accessor.createTransformedShape((MathTransform2D) this, shape, null, null, false);
+        if (isIdentity()) return shape;
+        try {
+            final Method method = org.apache.sis.referencing.operation.transform.AbstractMathTransform2D.class.getMethod(
+                    "createTransformedShape", MathTransform2D.class, Shape.class, AffineTransform.class, AffineTransform.class, Boolean.TYPE);
+            method.setAccessible(true);
+            return (Shape) method.invoke(null, (MathTransform2D) this, shape, null, null, false);
+        } catch (ReflectiveOperationException e) {
+            throw new TransformException(e);
+        }
     }
 
     /**

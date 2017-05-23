@@ -28,7 +28,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;

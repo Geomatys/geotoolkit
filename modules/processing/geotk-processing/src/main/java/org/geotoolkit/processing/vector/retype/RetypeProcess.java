@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.processing.vector.retype;
 
-import org.apache.sis.feature.ViewFeatureType;
+import org.geotoolkit.feature.ViewFeatureType;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.GenericDecoratedFeatureIterator;
 import org.geotoolkit.processing.AbstractProcess;

@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.event.MouseInputListener;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;

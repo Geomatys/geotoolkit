@@ -20,7 +20,7 @@ package org.geotoolkit.filter.binding;
 import java.util.Collection;
 import java.util.Iterator;
 import com.vividsolutions.jts.geom.Geometry;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.junit.Test;
 
 import org.opengis.feature.Attribute;

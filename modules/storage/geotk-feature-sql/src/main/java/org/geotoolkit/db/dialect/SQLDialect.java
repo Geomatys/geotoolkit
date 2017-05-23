@@ -22,7 +22,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
-import org.apache.sis.feature.SingleAttributeTypeBuilder;
+import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Version;
 import org.geotoolkit.db.FilterToSQL;

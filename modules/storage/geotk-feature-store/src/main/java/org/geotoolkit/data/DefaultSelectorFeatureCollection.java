@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.Query;

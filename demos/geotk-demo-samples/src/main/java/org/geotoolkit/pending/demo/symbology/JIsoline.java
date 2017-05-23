@@ -17,7 +17,7 @@ import java.util.Map;
 import javax.measure.Unit;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;

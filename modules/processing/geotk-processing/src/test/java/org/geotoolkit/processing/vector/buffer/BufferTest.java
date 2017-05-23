@@ -32,7 +32,7 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import java.util.function.BiFunction;
-import org.apache.sis.internal.feature.FeatureLoop;
+import org.geotoolkit.internal.feature.FeatureLoop;
 import java.util.function.Predicate;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;

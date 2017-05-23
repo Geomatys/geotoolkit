@@ -19,7 +19,7 @@ package org.geotoolkit.index.quadtree;
 import org.junit.Test;
 import java.io.File;
 import java.util.Iterator;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileFeatureStore;

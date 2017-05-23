@@ -21,7 +21,7 @@ package org.geotoolkit.data.query;
 import junit.framework.TestCase;
 import org.junit.Test;
 
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 

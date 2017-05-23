@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.processing.vector.reproject;
 
-import org.apache.sis.feature.ReprojectFeatureType;
+import org.geotoolkit.feature.ReprojectFeatureType;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.GenericDecoratedFeatureIterator;
 import org.geotoolkit.processing.AbstractProcess;

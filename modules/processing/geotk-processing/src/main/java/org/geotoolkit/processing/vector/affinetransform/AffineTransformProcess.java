@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.processing.vector.affinetransform;
 
-import org.apache.sis.feature.TransformFeatureType;
+import org.geotoolkit.feature.TransformFeatureType;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.GenericDecoratedFeatureIterator;
 import org.geotoolkit.processing.AbstractProcess;

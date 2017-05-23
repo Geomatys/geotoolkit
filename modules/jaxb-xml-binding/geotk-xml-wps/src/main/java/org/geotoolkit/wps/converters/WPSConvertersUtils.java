@@ -35,7 +35,7 @@ import java.util.*;
 import java.util.Set;
 import javax.xml.bind.JAXBElement;
 import net.sf.json.JSONObject;
-import org.apache.sis.feature.FeatureTypeExt;
+import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;

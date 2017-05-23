@@ -22,7 +22,7 @@ import java.awt.Paint;
 import java.util.logging.Level;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.display2d.style.CachedLineSymbolizer;
 import org.geotoolkit.display2d.style.CachedStroke;
 import org.geotoolkit.display2d.style.CachedStrokeGraphic;

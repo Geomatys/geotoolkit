@@ -54,7 +54,7 @@ import java.util.logging.Logger;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
 import javax.measure.Unit;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;

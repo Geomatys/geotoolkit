@@ -17,7 +17,7 @@
 package org.geotoolkit.filter.binding;
 
 import java.util.regex.Pattern;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;

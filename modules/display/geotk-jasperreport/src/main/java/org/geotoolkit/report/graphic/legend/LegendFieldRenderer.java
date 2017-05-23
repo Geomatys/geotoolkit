@@ -20,7 +20,7 @@ package org.geotoolkit.report.graphic.legend;
 
 
 import net.sf.jasperreports.engine.JRField;
-import org.apache.sis.feature.SingleAttributeTypeBuilder;
+import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.report.JRFieldRenderer;

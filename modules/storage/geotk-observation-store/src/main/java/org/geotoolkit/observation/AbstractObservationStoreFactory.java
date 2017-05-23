@@ -18,8 +18,8 @@ package org.geotoolkit.observation;
 
 import java.io.Serializable;
 import java.util.Map;
-import org.apache.sis.feature.FeatureExt;
-import org.apache.sis.feature.FeatureTypeExt;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.parameter.Parameters;

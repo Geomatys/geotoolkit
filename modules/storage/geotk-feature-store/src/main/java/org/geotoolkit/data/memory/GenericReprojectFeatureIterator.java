@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.memory;
 
-import org.apache.sis.feature.ReprojectFeatureType;
+import org.geotoolkit.feature.ReprojectFeatureType;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;

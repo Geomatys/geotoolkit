@@ -59,7 +59,7 @@ import org.opengis.util.GenericName;
 
 import static javax.xml.stream.events.XMLEvent.*;
 import net.iharder.Base64;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 import org.geotoolkit.geometry.jts.JTS;

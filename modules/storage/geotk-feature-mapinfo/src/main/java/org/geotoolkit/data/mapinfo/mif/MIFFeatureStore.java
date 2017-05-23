@@ -36,7 +36,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.sis.feature.ReprojectFeatureType;
+import org.geotoolkit.feature.ReprojectFeatureType;
 import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.data.memory.GenericDecoratedFeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;

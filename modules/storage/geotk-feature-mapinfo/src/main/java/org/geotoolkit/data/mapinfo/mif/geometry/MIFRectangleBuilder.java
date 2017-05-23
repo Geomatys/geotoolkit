@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import org.apache.sis.feature.DefaultAttributeType;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;

@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;

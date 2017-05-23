@@ -21,7 +21,7 @@ package org.geotoolkit.report.graphic.map;
 import java.util.logging.Level;
 
 import net.sf.jasperreports.engine.JRField;
-import org.apache.sis.feature.SingleAttributeTypeBuilder;
+import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;

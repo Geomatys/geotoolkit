@@ -66,7 +66,7 @@ import com.vividsolutions.jts.geom.Point;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import org.apache.sis.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 
