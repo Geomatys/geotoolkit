@@ -184,7 +184,7 @@
        =========================================================== -->
   <properties>
     <geoapi.version>4.0-M06</geoapi.version> <!-- Must be same than the version used by SIS. -->
-    <sis.version>0.8-jdk8-MC0008</sis.version>
+    <sis.version>0.8-jdk8-MC0011</sis.version>
     <sis.epsg.version>0.7</sis.epsg.version>
     <derby.version>10.12.1.1</derby.version>
     <netcdf.version>4.3.21</netcdf.version>
