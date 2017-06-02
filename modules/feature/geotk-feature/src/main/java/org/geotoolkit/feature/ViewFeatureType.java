@@ -66,7 +66,6 @@ public class ViewFeatureType extends DecoratedFeatureType {
      */
     public ViewFeatureType(FeatureType base, Set<String> propertyNames) {
         super(base);
-        ArgumentChecks.ensureNonNull("type", base);
         this.base = base;
 
         //NOTE : copied and modified from DefaultFeatureType.computeTransientFields
@@ -132,6 +131,13 @@ public class ViewFeatureType extends DecoratedFeatureType {
 
     @Override
     public Collection<PropertyType> getProperties(boolean includeSuperTypes) {
+        if (base == null) {
+            /*
+             * Base should never be null, except when this method is invoked (indirectly) by the super-class constructor.
+             * This happen when DefaultAssociationRole needs to resolve a property identified only by its name.
+             */
+            return super.getProperties(includeSuperTypes);
+        }
         final Collection<PropertyType> properties = new ArrayList<>();
         final Collection<? extends PropertyType> basePropertiers = base.getProperties(includeSuperTypes);
         for (PropertyType pt : basePropertiers) {
