@@ -169,7 +169,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
                     .filter(crs -> crs instanceof CoordinateReferenceSystem)
                     .map(crs -> (CoordinateReferenceSystem) crs)
                     .distinct()
-                    .forEach(builder::add);
+                    .forEach(builder::addReferenceSystem);
 
             return builder.build(false);
         } catch (BackingStoreException e) {
