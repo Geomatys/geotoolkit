@@ -31,30 +31,34 @@ import javax.imageio.ImageWriter;
 import javax.imageio.ImageIO;
 import javax.imageio.IIOImage;
 
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.ImageCoverageReader;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.plugin.TiffImageReader;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.test.TestData;
-
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.FactoryException;
+
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageIO;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.ImageCoverageReader;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.lang.Setup;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.plugin.TiffImageReader;
+import org.geotoolkit.test.TestData;
+
+import org.junit.After;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -71,6 +75,11 @@ public class GeoTiffRWTest extends org.geotoolkit.test.TestBase {    // LGPL
 
     public GeoTiffRWTest() throws IOException {
         tempDir = Files.createTempDirectory("GTiffRWTest").toFile();
+    }
+
+    @BeforeClass
+    public static void init() {
+        Setup.initialize(null);
     }
 
     @After
