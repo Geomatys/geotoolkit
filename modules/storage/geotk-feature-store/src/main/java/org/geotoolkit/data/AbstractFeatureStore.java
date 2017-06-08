@@ -152,7 +152,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
                     /* Register found types in the metadata. We don't count instances,
                      * as it's possibly a costly operation.
                      */
-                    .peek(type -> builder.add(type, null))
+                    .peek(type -> builder.addFeatureType(type, null))
                     /* Search for all available reference systems. Do not query
                      * parent properties, as we've got all abstract types through
                      * "getFeatureTypeHierarchy"
