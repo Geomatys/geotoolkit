@@ -58,7 +58,7 @@
             <artifactId>geotk-coverage</artifactId>
             <version>${project.version}</version>
         </dependency>
-      
+
       <dependency>
           <groupId>org.antlr</groupId>
           <artifactId>antlr4-runtime</artifactId>
@@ -86,6 +86,12 @@
           <groupId>jaxen</groupId>
           <artifactId>jaxen-limited</artifactId>
       </dependency>
+
+      <dependency>
+          <groupId>javax.media</groupId>
+          <artifactId>jai_codec</artifactId>
+          <scope>test</scope>
+      </dependency>
   </dependencies>
 
 
@@ -104,7 +110,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>      
+            </plugin>
         </plugins>
     </build>
 

@@ -25,6 +25,7 @@ import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferDouble;
 import java.awt.image.DataBufferFloat;
+import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferShort;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
@@ -93,6 +94,7 @@ public class BufferedImages extends Static {
                 //create it ourself
                 final DataBuffer buffer;
                 if(dataType == DataBuffer.TYPE_SHORT) buffer = new DataBufferShort(width*height*nbBand);
+                else if(dataType == DataBuffer.TYPE_INT) buffer = new DataBufferInt(width*height*nbBand);
                 else if(dataType == DataBuffer.TYPE_FLOAT) buffer = new DataBufferFloat(width*height*nbBand);
                 else if(dataType == DataBuffer.TYPE_DOUBLE) buffer = new DataBufferDouble(width*height*nbBand);
                 else throw new IllegalArgumentException("Type not supported "+dataType);
