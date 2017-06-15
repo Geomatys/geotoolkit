@@ -23,12 +23,14 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferDouble;
 import java.awt.image.DataBufferFloat;
 import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferShort;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+import java.lang.reflect.Array;
 import java.util.Hashtable;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.util.Static;
@@ -116,4 +118,42 @@ public class BufferedImages extends Static {
         return cm;
     }
 
+    /**
+     * Convert a primitive array to a DataBuffer.<br>
+     * This DataBuffer can then be used to create a WritableRaster.<br>
+     * The array is directly used by the buffer, they are not copied.
+     *
+     * @param data primitive array object with 1 or 2 dimensions.
+     * @return DataBuffer never null
+     * @throws IllegalArgumentException if the array type is not supported.
+     */
+    public static DataBuffer toDataBuffer(Object data) throws IllegalArgumentException{
+        if(data instanceof byte[]){
+            return new DataBufferByte((byte[])data,Array.getLength(data));
+        }else if(data instanceof short[]){
+            return new DataBufferShort((short[])data,Array.getLength(data));
+        }else if(data instanceof int[]){
+            return new DataBufferInt((int[])data,Array.getLength(data));
+        }else if(data instanceof float[]){
+            return new DataBufferFloat((float[])data,Array.getLength(data));
+        }else if(data instanceof double[]){
+            return new DataBufferDouble((double[])data,Array.getLength(data));
+        }
+
+        else if(data instanceof byte[][]){
+            return new DataBufferByte((byte[][])data,Array.getLength(Array.get(data, 0)));
+        }else if(data instanceof short[][]){
+            return new DataBufferShort((short[][])data,Array.getLength(Array.get(data, 0)));
+        }else if(data instanceof int[][]){
+            return new DataBufferInt((int[][])data,Array.getLength(Array.get(data, 0)));
+        }else if(data instanceof float[][]){
+            return new DataBufferFloat((float[][])data,Array.getLength(Array.get(data, 0)));
+        }else if(data instanceof double[][]){
+            return new DataBufferDouble((double[][])data,Array.getLength(Array.get(data, 0)));
+        }
+
+        else{
+            throw new IllegalArgumentException("Unexpected array type "+data.getClass());
+        }
+    }
 }

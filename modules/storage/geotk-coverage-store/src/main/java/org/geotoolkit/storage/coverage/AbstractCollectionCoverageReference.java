@@ -171,7 +171,7 @@ public abstract class AbstractCollectionCoverageReference extends AbstractCovera
         return sampleDimensions;
     }
 
-    private class CollectionCoverageReader extends AbstractGridCoverageReader {
+    private class CollectionCoverageReader extends GeoReferencedGridCoverageReader {
 
         private CollectionCoverageReader(){
             super(AbstractCollectionCoverageReference.this);
@@ -188,7 +188,7 @@ public abstract class AbstractCollectionCoverageReference extends AbstractCovera
         }
 
         @Override
-        protected GridCoverage read(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
+        protected GridCoverage readInNativeCRS(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
 
             final Collection<CoverageReference> references = getCoverages(param);
             final List<GridCoverage2D> coverages = new ArrayList<>();

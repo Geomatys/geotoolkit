@@ -77,5 +77,5 @@ public final class TypeConventions {
     }
 
     private TypeConventions(){}
-    
+
 }
