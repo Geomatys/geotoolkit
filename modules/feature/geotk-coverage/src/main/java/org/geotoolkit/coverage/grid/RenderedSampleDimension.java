@@ -161,8 +161,13 @@ final class RenderedSampleDimension extends GridSampleDimension {
             }
             sd = new RenderedSampleDimension(sd, model, i);
             dst[i] = sd;
-            if (sd.geophysics(true ) == sd) countGeophysics++;
-            if (sd.geophysics(false) == sd) countIndexed++;
+            /*
+             * We use a equality test and not == because in some cases
+             * the inverse sample dimension can be the original sample dimension
+             * inverse, which is a GridSample dimension and not a RenderedSampleDimension.
+             */
+            if (sd.geophysics(true ).equals(sd)) countGeophysics++;
+            if (sd.geophysics(false).equals(sd)) countIndexed++;
         }
         if (countGeophysics == numBands) {
             return true;
