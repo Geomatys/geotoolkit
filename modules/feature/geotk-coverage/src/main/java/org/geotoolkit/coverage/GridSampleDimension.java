@@ -1249,8 +1249,14 @@ public class GridSampleDimension implements SampleDimension, Serializable {
         }
         if (inverse == null) {
             if (categories != null) {
-                inverse = new GridSampleDimension(description, categories.inverse);
-                inverse.inverse = this;
+                //hack to test equality
+                if (categories.equals(new ArrayList(categories.inverse))) {
+                    inverse = this;
+                } else {
+                    inverse = new GridSampleDimension(description, categories.inverse);
+                    inverse.inverse = this;
+                }
+
             } else {
                 /*
                  * If there is no categories, then there is no real difference between geophysics
