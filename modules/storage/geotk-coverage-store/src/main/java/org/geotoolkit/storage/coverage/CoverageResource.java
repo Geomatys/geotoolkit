@@ -22,8 +22,8 @@ import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.storage.FeatureResource;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.StorageListener;
 import org.opengis.metadata.content.CoverageDescription;
 
@@ -36,7 +36,7 @@ import org.opengis.metadata.content.CoverageDescription;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface CoverageReference extends DataNode {
+public interface CoverageResource extends FeatureResource {
 
     /**
      * Name of the coverage. act as an identifier in the coverage store

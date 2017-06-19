@@ -33,7 +33,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class RecyclingCoverageReference extends AbstractCoverageReference{
+public abstract class RecyclingCoverageResource extends AbstractCoverageResource{
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
 
@@ -55,7 +55,7 @@ public abstract class RecyclingCoverageReference extends AbstractCoverageReferen
      */
     private final ConcurrentLinkedDeque<CoverageReader> readers = new ConcurrentLinkedDeque<>();
 
-    public RecyclingCoverageReference(CoverageStore store, GenericName name) {
+    public RecyclingCoverageResource(CoverageStore store, GenericName name) {
         super(store, name);
     }
 

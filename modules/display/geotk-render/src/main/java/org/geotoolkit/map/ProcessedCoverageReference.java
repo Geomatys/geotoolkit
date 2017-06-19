@@ -18,7 +18,7 @@ package org.geotoolkit.map;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.storage.coverage.DefaultCoverageReference;
+import org.geotoolkit.storage.coverage.DefaultCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.memory.MemoryCoverageReader;
@@ -35,7 +35,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ProcessedCoverageReference extends DefaultCoverageReference{
+public class ProcessedCoverageReference extends DefaultCoverageResource{
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.map");
 

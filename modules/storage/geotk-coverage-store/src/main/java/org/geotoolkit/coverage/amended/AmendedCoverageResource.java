@@ -26,8 +26,7 @@ import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.storage.coverage.AbstractCoverageReference;
-import org.geotoolkit.storage.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.opengis.coverage.grid.GridEnvelope;
@@ -35,6 +34,8 @@ import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
+import org.geotoolkit.storage.coverage.CoverageResource;
+import org.opengis.metadata.Metadata;
 
 /**
  * Decorates a coverage reference adding possibility to override properties.
@@ -50,9 +51,9 @@ import org.opengis.referencing.operation.MathTransform;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class AmendedCoverageReference extends AbstractCoverageReference{
+public class AmendedCoverageResource extends AbstractCoverageResource{
 
-    protected final CoverageReference ref;
+    protected final CoverageResource ref;
 
     //source unmodified informations
     protected GeneralGridGeometry refGridGeom;
@@ -64,7 +65,7 @@ public class AmendedCoverageReference extends AbstractCoverageReference{
     protected MathTransform overrideGridToCrs;
     protected List<GridSampleDimension> overrideDims;
 
-    public AmendedCoverageReference(CoverageReference ref, CoverageStore store) {
+    public AmendedCoverageResource(CoverageResource ref, CoverageStore store) {
         super(store, ref.getName());
         this.ref = ref;
     }
@@ -81,9 +82,9 @@ public class AmendedCoverageReference extends AbstractCoverageReference{
     /**
      * Get decorated coverage reference.
      *
-     * @return CoverageReference, never null.
+     * @return CoverageResource, never null.
      */
-    public CoverageReference getDecorated(){
+    public CoverageResource getDecorated(){
         return ref;
     }
 
@@ -296,6 +297,11 @@ public class AmendedCoverageReference extends AbstractCoverageReference{
     @Override
     public Image getLegend() throws DataStoreException {
         return ref.getLegend();
+    }
+
+    @Override
+    public Metadata getMatadata() throws DataStoreException {
+        return ref.getMatadata();
     }
 
 }

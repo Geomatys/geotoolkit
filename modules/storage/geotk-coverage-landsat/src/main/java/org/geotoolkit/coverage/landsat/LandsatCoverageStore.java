@@ -29,8 +29,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.DataNode;
-import org.geotoolkit.storage.DefaultDataNode;
+import org.geotoolkit.storage.DefaultDataSet;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageType;
@@ -39,6 +38,7 @@ import org.geotoolkit.utility.parameter.ParametersExt;
 
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.Resource;
 
 /**
  * Store adapted to Landsat 8 comportement.
@@ -49,7 +49,7 @@ import org.geotoolkit.storage.DataStores;
  */
 public class LandsatCoverageStore extends AbstractCoverageStore {
 
-    private final DataNode root = new DefaultDataNode();
+    private final DefaultDataSet root = new DefaultDataSet();
 
     /**
      * The current parent landsat8 directory.
@@ -118,14 +118,14 @@ public class LandsatCoverageStore extends AbstractCoverageStore {
 
         final LandsatCoverageReference reflectiveRef = new LandsatCoverageReference(this, NamesExt.create(getDefaultNamespace(),
                                                                                     sceneName+"-"+REFLECTIVE_LABEL), origin, metadataParser);
-        root.getChildren().add(reflectiveRef);
+        root.addResource(reflectiveRef);
         final LandsatCoverageReference panchroRef    = new LandsatCoverageReference(this, NamesExt.create(getDefaultNamespace(),
                                                                                     sceneName+"-"+PANCHROMATIC_LABEL), origin, metadataParser);
-        root.getChildren().add(panchroRef);
+        root.addResource(panchroRef);
 
         final LandsatCoverageReference thermicRef    = new LandsatCoverageReference(this, NamesExt.create(getDefaultNamespace(),
                                                                                    sceneName+"-"+THERMAL_LABEL), origin, metadataParser);
-        root.getChildren().add(thermicRef);
+        root.addResource(thermicRef);
     }
 
     /**
@@ -144,7 +144,7 @@ public class LandsatCoverageStore extends AbstractCoverageStore {
      * {@inheritDoc }.
      */
     @Override
-    public DataNode getRootNode() throws DataStoreException {
+    public Resource getRootNode() throws DataStoreException {
         return root;
     }
 

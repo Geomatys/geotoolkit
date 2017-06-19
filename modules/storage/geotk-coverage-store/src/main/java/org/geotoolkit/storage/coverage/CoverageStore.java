@@ -18,8 +18,8 @@ package org.geotoolkit.storage.coverage;
 
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -58,8 +58,9 @@ public interface CoverageStore {
      * TODO move this in Apache SIS DataStore class when ready
      *
      * @return DataNode never null.
+     * @throws org.apache.sis.storage.DataStoreException
      */
-    public abstract DataNode getRootNode() throws DataStoreException;
+    public abstract Resource getRootNode() throws DataStoreException;
 
 
     ////////////////////////////////////////////////////////////////////////////
@@ -88,10 +89,10 @@ public interface CoverageStore {
     /**
      * Get the coverage reference for the given name.
      * @param name reference name
-     * @return CoverageReference
+     * @return CoverageResource
      * @throws DataStoreException
      */
-    public abstract CoverageReference getCoverageReference(GenericName name) throws DataStoreException;
+    public abstract CoverageResource getCoverageReference(GenericName name) throws DataStoreException;
 
     /**
      * Get the coverage reference for the given name and version.
@@ -99,20 +100,20 @@ public interface CoverageStore {
      *
      * @param name reference name
      * @param version version
-     * @return CoverageReference
+     * @return CoverageResource
      * @throws DataStoreException
      */
-    public abstract CoverageReference getCoverageReference(GenericName name, Version version) throws DataStoreException;
+    public abstract CoverageResource getCoverageReference(GenericName name, Version version) throws DataStoreException;
 
     /**
      * Create a new coverage reference.
      * The returned coverage reference might have a different namespace.
      *
      * @param name
-     * @return CoverageReference
+     * @return CoverageResource
      * @throws DataStoreException
      */
-    public abstract CoverageReference create(GenericName name) throws DataStoreException;
+    public abstract CoverageResource create(GenericName name) throws DataStoreException;
 
     /**
      * Check coverage type define in {@link CoverageType}

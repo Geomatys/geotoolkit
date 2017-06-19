@@ -56,7 +56,6 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -65,6 +64,7 @@ import org.geotoolkit.style.StyleConstants;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory2;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  *
@@ -158,7 +158,7 @@ public class FXLayerChooser extends BorderPane{
 
                 }else if(source instanceof CoverageStore){
                     final CoverageStore store = (CoverageStore) source;
-                    final CoverageReference ref = store.getCoverageReference(name);
+                    final CoverageResource ref = store.getCoverageReference(name);
                     final MutableStyle style = styleFactory.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
                     final CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref, style);
                     layer.setName(name.tip().toString());

@@ -30,7 +30,6 @@ import javax.swing.text.html.StyleSheet;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -52,6 +51,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.InternationalString;
 import org.apache.sis.io.wkt.Warnings;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  *
@@ -106,7 +106,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
 
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final CoverageReference ref = cml.getCoverageReference();
+            final CoverageResource ref = cml.getCoverageReference();
             try {
                 final GridCoverageReader reader = ref.acquireReader();
                 final GeneralGridGeometry gridgeom = reader.getGridGeometry(0);

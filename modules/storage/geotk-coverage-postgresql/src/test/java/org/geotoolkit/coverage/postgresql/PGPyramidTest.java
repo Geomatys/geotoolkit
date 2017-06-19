@@ -106,7 +106,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         final Dimension dimension = new Dimension(20, 20);
         upperLeft.setOrdinate(0, -90);
         upperLeft.setOrdinate(1, +180);
-        PyramidalCoverageReference cref;
+        PyramidalCoverageResource cref;
         Pyramid pyramid;
         GridMosaic mosaic;
         BufferedImage image;
@@ -115,7 +115,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         store.create(name);
 
         //create version 1 -----------------------------------------------------
-        cref = (PyramidalCoverageReference) store.getCoverageReference(name);
+        cref = (PyramidalCoverageResource) store.getCoverageReference(name);
         assertNotNull(cref);
 
         //test create pyramid
@@ -171,7 +171,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         final Dimension dimension = new Dimension(20, 20);
         upperLeft.setOrdinate(0, -90);
         upperLeft.setOrdinate(1, +180);
-        PyramidalCoverageReference cref;
+        PyramidalCoverageResource cref;
         Pyramid pyramid;
         GridMosaic mosaic;
         BufferedImage image;
@@ -180,7 +180,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         store.create(name);
 
         //create version 1 -----------------------------------------------------
-        cref = (PyramidalCoverageReference) store.getCoverageReference(name);
+        cref = (PyramidalCoverageResource) store.getCoverageReference(name);
         assertNotNull(cref);
 
         //test create pyramid

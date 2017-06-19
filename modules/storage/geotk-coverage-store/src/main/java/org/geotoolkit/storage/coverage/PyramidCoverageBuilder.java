@@ -289,7 +289,7 @@ public class PyramidCoverageBuilder {
      * @throws TransformException if problems during resampling operation.
      * @throws FactoryException if impossible to find {@code MathTransform} between two {@link CoordinateReferenceSystem}.
      */
-    public void create(CoverageReference gridCoverageRef, CoverageStore coverageStore, GenericName coverageName,
+    public void create(CoverageResource gridCoverageRef, CoverageStore coverageStore, GenericName coverageName,
             Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue,
             ProcessListener processListener, ProgressMonitor monitor)
             throws DataStoreException, TransformException, FactoryException, IOException {
@@ -299,14 +299,14 @@ public class PyramidCoverageBuilder {
         ArgumentChecks.ensureNonNull("resolution_Per_Envelope", resolution_Per_Envelope);
 
         //one coverageReference for each reader.
-        final CoverageReference cv = getOrCreateCRef(coverageStore,coverageName);
+        final CoverageResource cv = getOrCreateCRef(coverageStore,coverageName);
 
-        if (!(cv instanceof PyramidalCoverageReference)) {
+        if (!(cv instanceof PyramidalCoverageResource)) {
             final IllegalArgumentException ex = new IllegalArgumentException("CoverageStore parameter should be instance of PyramidalModel."+coverageStore.toString());
             if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
             throw ex;
         }
-        final PyramidalCoverageReference pm = (PyramidalCoverageReference) cv;
+        final PyramidalCoverageResource pm = (PyramidalCoverageResource) cv;
 
         //----------------------- sample dimensions-----------------------------
         final GridCoverageReader gridReader = gridCoverageRef.acquireReader();
@@ -387,7 +387,7 @@ public class PyramidCoverageBuilder {
      * @throws TransformException
      * @throws DataStoreException
      */
-    private void resample (final PyramidalCoverageReference pm, String pyramidID, GridCoverageReader coverageReader,
+    private void resample (final PyramidalCoverageResource pm, String pyramidID, GridCoverageReader coverageReader,
             int imageIndex, GridCoverageReadParam readParam, double[] scaleLevel, DirectPosition upperLeft,
             Envelope envDest, int widthAxis, int heightAxis, double[] fillValue, final ProcessListener processListener)
             throws NoninvertibleTransformException, FactoryException, TransformException, DataStoreException, IOException {
@@ -533,8 +533,8 @@ public class PyramidCoverageBuilder {
             throw ex;
         }
 
-        final CoverageReference cv  = getOrCreateCRef(coverageStore,coverageName);
-        if (!(cv instanceof PyramidalCoverageReference)) {
+        final CoverageResource cv  = getOrCreateCRef(coverageStore,coverageName);
+        if (!(cv instanceof PyramidalCoverageResource)) {
             final IllegalArgumentException ex = new IllegalArgumentException("CoverageReference not instance of PyramidalCoverageReference");
             if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
             throw ex;
@@ -547,7 +547,7 @@ public class PyramidCoverageBuilder {
 
         if (processListener != null) initListener(resolution_Per_Envelope, gg, processListener);
 
-        final PyramidalCoverageReference pm     = (PyramidalCoverageReference) cv;
+        final PyramidalCoverageResource pm     = (PyramidalCoverageResource) cv;
 
         //------------------------ add sampleDimension -------------------------
         final int nbSampleDimension                     = gridCoverage.getNumSampleDimensions();
@@ -650,14 +650,14 @@ public class PyramidCoverageBuilder {
         final GridCoverageReadParam rp = new GridCoverageReadParam();
 
         //one coverageReference for each reader.
-        final CoverageReference cv = getOrCreateCRef(coverageStore,coverageName);
+        final CoverageResource cv = getOrCreateCRef(coverageStore,coverageName);
 
-        if (!(cv instanceof PyramidalCoverageReference)) {
+        if (!(cv instanceof PyramidalCoverageResource)) {
             final IllegalArgumentException ex = new IllegalArgumentException("CoverageStore parameter should be instance of PyramidalModel."+coverageStore.toString());
             if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
             throw ex;
         }
-        final PyramidalCoverageReference pm = (PyramidalCoverageReference) cv;
+        final PyramidalCoverageResource pm = (PyramidalCoverageResource) cv;
 
         //----------------------- sample dimensions-----------------------------
         List<GridSampleDimension> coverageSampleDims = reader.getSampleDimensions(0);
@@ -732,7 +732,7 @@ public class PyramidCoverageBuilder {
      * @throws TransformException
      * @throws DataStoreException
      */
-    private void resample (final PyramidalCoverageReference pm, String pyramidID, GridCoverage2D gridCoverage2D, double[] scaleLevel,
+    private void resample (final PyramidalCoverageResource pm, String pyramidID, GridCoverage2D gridCoverage2D, double[] scaleLevel,
             DirectPosition upperLeft, Envelope envDest, int widthAxis, int heightAxis, double[] fillValue, final ProcessListener processListener)
             throws NoninvertibleTransformException, FactoryException, TransformException, DataStoreException, IOException {
 
@@ -901,16 +901,16 @@ public class PyramidCoverageBuilder {
     }
 
     /**
-     * Search and return a {@link CoverageReference} in a {@link CoverageStore} from its {@link GenericName}.<br/>
-     * If it doesn't exist a {@link CoverageReference} is created, added in {@link CoverageStore} parameter and returned.
+     * Search and return a {@link CoverageResource} in a {@link CoverageStore} from its {@link GenericName}.<br/>
+     * If it doesn't exist a {@link CoverageResource} is created, added in {@link CoverageStore} parameter and returned.
      *
      * @param coverageStore
      * @param coverageName
-     * @return a {@link CoverageReference} in a {@link CoverageStore} from its {@link GenericName}.
+     * @return a {@link CoverageResource} in a {@link CoverageStore} from its {@link GenericName}.
      * @throws DataStoreException
      */
-    private CoverageReference getOrCreateCRef(CoverageStore coverageStore, GenericName coverageName) throws DataStoreException {
-        CoverageReference cv = null;
+    private CoverageResource getOrCreateCRef(CoverageStore coverageStore, GenericName coverageName) throws DataStoreException {
+        CoverageResource cv = null;
         for (GenericName n : coverageStore.getNames()) {
             if (n.tip().toString().equals(coverageName.tip().toString())) {
                 cv = coverageStore.getCoverageReference(n);
@@ -923,15 +923,15 @@ public class PyramidCoverageBuilder {
     }
 
     /**
-     * Search and return a {@link Pyramid} in a {@link PyramidalCoverageReference} from its {@link CoordinateReferenceSystem} properties.<br/>
-     * If it doesn't exist a {@link Pyramid} is created, added in {@link PyramidalCoverageReference} parameter and returned.
+     * Search and return a {@link Pyramid} in a {@link PyramidalCoverageResource} from its {@link CoordinateReferenceSystem} properties.<br/>
+     * If it doesn't exist a {@link Pyramid} is created, added in {@link PyramidalCoverageResource} parameter and returned.
      *
      * @param pm
      * @param crs
-     * @return a {@link Pyramid} in a {@link PyramidalCoverageReference} from its {@link CoordinateReferenceSystem} properties.
+     * @return a {@link Pyramid} in a {@link PyramidalCoverageResource} from its {@link CoordinateReferenceSystem} properties.
      * @throws DataStoreException
      */
-    public static synchronized Pyramid getOrCreatePyramid(final PyramidalCoverageReference pm, final CoordinateReferenceSystem crs) throws DataStoreException {
+    public static synchronized Pyramid getOrCreatePyramid(final PyramidalCoverageResource pm, final CoordinateReferenceSystem crs) throws DataStoreException {
         Pyramid pyramid = null;
         for (Pyramid p : pm.getPyramidSet().getPyramids()) {
             if (Utilities.equalsIgnoreMetadata(p.getCoordinateReferenceSystem(), crs)) {
@@ -947,7 +947,7 @@ public class PyramidCoverageBuilder {
         return pyramid;
     }
 
-    public static synchronized GridMosaic getOrCreateMosaic(final PyramidalCoverageReference pm,
+    public static synchronized GridMosaic getOrCreateMosaic(final PyramidalCoverageResource pm,
             String pyramidID, Dimension gridsize, Dimension tileSize, DirectPosition upperLeft, double pixelScal) throws DataStoreException {
         final Pyramid pyramid = pm.getPyramidSet().getPyramid(pyramidID);
         for(GridMosaic gm : pyramid.getMosaics()){
@@ -964,7 +964,7 @@ public class PyramidCoverageBuilder {
      * Note : an exception is thrown if tile does not exist.
      * </strong>
      *
-     * @param pm {@link PyramidalCoverageReference} where the requested {@link GridMosaic} is looking for.
+     * @param pm {@link PyramidalCoverageResource} where the requested {@link GridMosaic} is looking for.
      * @param pyramidID {@link Pyramid} identifier of the requested {@link GridMosaic}.
      * @param envDest requested {@link Envelope} in relation with needed {@link GridMosaic}.
      * @param pixelScal requested scale in relation with needed {@link GridMosaic}.
@@ -972,7 +972,7 @@ public class PyramidCoverageBuilder {
      * @throws DataStoreException if pyramid does not match with the pyramid_ID or
      * also if requested {@link GridMosaic} was not found.
      */
-    public static synchronized GridMosaic getMosaic(final PyramidalCoverageReference pm,
+    public static synchronized GridMosaic getMosaic(final PyramidalCoverageResource pm,
             String pyramidID, Envelope envDest, double pixelScal) throws DataStoreException {
         final Pyramid pyramid = pm.getPyramidSet().getPyramid(pyramidID);
         for (GridMosaic gm : pyramid.getMosaics()) {
@@ -1000,7 +1000,7 @@ public class PyramidCoverageBuilder {
      * @return true if compatible, false otherwise
      * @throws DataStoreException if an error occurs during pyramid SampleDimension reading.
      */
-    private boolean isDimensionsCompatible(PyramidalCoverageReference pyramidRef, List<GridSampleDimension> coverageSampleDims)
+    private boolean isDimensionsCompatible(PyramidalCoverageResource pyramidRef, List<GridSampleDimension> coverageSampleDims)
             throws DataStoreException {
 
         final List<GridSampleDimension> pyramidSampleDims = pyramidRef.getSampleDimensions();

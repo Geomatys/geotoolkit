@@ -39,7 +39,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -78,6 +77,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Description;
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  *
@@ -179,7 +179,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
 
             GeneralGridGeometry gridGeometry;
             try {
-                final CoverageReference covRef = coverageLayer.getCoverageReference();
+                final CoverageResource covRef = coverageLayer.getCoverageReference();
                 final GridCoverageReader reader = covRef.acquireReader();
                 gridGeometry = reader.getGridGeometry(covRef.getImageIndex());
                 covRef.recycle(reader);

@@ -48,10 +48,10 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
  */
 public class AmendedCoverageReader extends GridCoverageReader{
 
-    private final AmendedCoverageReference ref;
+    private final AmendedCoverageResource ref;
     private final GridCoverageReader reader;
 
-    public AmendedCoverageReader(AmendedCoverageReference ref) throws CoverageStoreException {
+    public AmendedCoverageReader(AmendedCoverageResource ref) throws CoverageStoreException {
         this.ref = ref;
         this.reader = ref.getDecorated().acquireReader();
     }

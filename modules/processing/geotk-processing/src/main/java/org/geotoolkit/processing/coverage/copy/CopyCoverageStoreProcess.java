@@ -21,13 +21,11 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.storage.coverage.PyramidSet;
-import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.storage.coverage.TileReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -76,6 +74,8 @@ import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescripto
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.STORE_IN;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.STORE_OUT;
 import org.geotoolkit.utility.parameter.ParametersExt;
+import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  * Copy a {@linkplain CoverageStore coverage store} into another one, that supports
@@ -139,17 +139,17 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
             for(GenericName n : inStore.getNames()){
 
                 fireProgressing("Copying "+n+".", (int)((inc*100f)/size), false);
-                final CoverageReference inRef = inStore.getCoverageReference(n);
+                final CoverageResource inRef = inStore.getCoverageReference(n);
                 final GenericName name = inRef.getName();
                 if (erase) {
                     outStore.delete(name);
                 }
-                final CoverageReference outRef = outStore.create(name);
+                final CoverageResource outRef = outStore.create(name);
 
-                if(inRef instanceof PyramidalCoverageReference && outRef instanceof PyramidalCoverageReference){
-                    savePMtoPM((PyramidalCoverageReference)inRef, (PyramidalCoverageReference)outRef);
-                }else if(outRef instanceof PyramidalCoverageReference){
-                    savePlainToPM(inRef, (PyramidalCoverageReference)outRef, reduce);
+                if(inRef instanceof PyramidalCoverageResource && outRef instanceof PyramidalCoverageResource){
+                    savePMtoPM((PyramidalCoverageResource)inRef, (PyramidalCoverageResource)outRef);
+                }else if(outRef instanceof PyramidalCoverageResource){
+                    savePlainToPM(inRef, (PyramidalCoverageResource)outRef, reduce);
                 }else{
                     throw new DataStoreException("The given coverage reference is not a pyramidal model, "
                     + "this process only work with this kind of model.");
@@ -166,7 +166,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
     /**
      * If both source and target are pyramid model, we can copy each tiles.
      */
-    private void savePMtoPM(final PyramidalCoverageReference inPM, final PyramidalCoverageReference outPM) throws DataStoreException{
+    private void savePMtoPM(final PyramidalCoverageResource inPM, final PyramidalCoverageResource outPM) throws DataStoreException{
         final PyramidSet inPS = inPM.getPyramidSet();
 
         final List<GridSampleDimension> sampleDimensions = inPM.getSampleDimensions();
@@ -320,7 +320,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
     }
 
     /**
-     * Save a {@linkplain CoverageReference coverage} into a {@linkplain CoverageStore coverage store}.
+     * Save a {@link CoverageResource coverage} into a {@linkplain CoverageStore coverage store}.
      *
      * @param outStore Coverage store in which to copy values.
      * @param inRef Coverage to store.
@@ -329,7 +329,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      * @throws DataStoreException
      * @throws TransformException
      */
-    private void savePlainToPM(final CoverageReference inRef, final PyramidalCoverageReference outPM, Boolean reduce)
+    private void savePlainToPM(final CoverageResource inRef, final PyramidalCoverageResource outPM, Boolean reduce)
             throws DataStoreException, TransformException, ProcessException {
 
         if(reduce == null) reduce = Boolean.TRUE;
@@ -374,7 +374,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      * @throws DataStoreException
      * @throws TransformException
      */
-    private void saveMosaic(final PyramidalCoverageReference pm, final Pyramid pyramid, final GridCoverageReader reader,
+    private void saveMosaic(final PyramidalCoverageResource pm, final Pyramid pyramid, final GridCoverageReader reader,
             final int imageIndex, Envelope env, boolean reduce) throws DataStoreException, TransformException, ProcessException {
         final GridCoverageReadParam params = new GridCoverageReadParam();
         if (env != null) {

@@ -33,8 +33,6 @@ import javax.media.jai.JAI;
 import javax.media.jai.TileFactory;
 import javax.media.jai.TileRecycler;
 import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.storage.coverage.CoverageReference;
-import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.primitive.SceneNode;
@@ -54,6 +52,8 @@ import org.geotoolkit.storage.coverage.CollectionCoverageReference;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
+import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  *
@@ -143,11 +143,11 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
             g2d = new StatelessCollectionLayerJ2D(getCanvas(), (CollectionMapLayer)child);
         } else if (child instanceof CoverageMapLayer) {
             final CoverageMapLayer layer = (CoverageMapLayer) child;
-            final CoverageReference ref  = layer.getCoverageReference();
+            final CoverageResource ref  = layer.getCoverageReference();
 
             if (Boolean.TRUE.equals(canvas.getRenderingHint(GO2Hints.KEY_VIEW_TILE))) {
                  //-- if view tile by tile is activate.
-                if (ref != null && ref instanceof PyramidalCoverageReference) {
+                if (ref != null && ref instanceof PyramidalCoverageResource) {
                     //-- pyramidal model, we can improve rendering
                     g2d = new StatelessPyramidalCoverageLayerJ2D(getCanvas(), layer);
                 } else if (ref != null && ref instanceof CollectionCoverageReference) {

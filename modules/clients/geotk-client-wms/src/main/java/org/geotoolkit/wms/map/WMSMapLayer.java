@@ -22,7 +22,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -33,6 +32,7 @@ import org.geotoolkit.wms.WMSCoverageReference.EPSG4326Politic;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 
 /**
@@ -53,7 +53,7 @@ public class WMSMapLayer extends DefaultCoverageMapLayer {
         graphicBuilders().add(WMSGraphicBuilder.INSTANCE);
     }
 
-    protected WMSMapLayer(final CoverageReference ref){
+    protected WMSMapLayer(final CoverageResource ref){
         super(ref,new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
     }
 

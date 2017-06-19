@@ -20,9 +20,8 @@ import java.awt.Image;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.AbstractCoverageReference;
+import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
@@ -31,15 +30,16 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultDataNode;
+import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Wrap a coverage-sql database as a CoverageStore.
@@ -97,11 +97,11 @@ public class CoverageSQLStore extends AbstractCoverageStore {
     }
 
     @Override
-    public DataNode getRootNode() throws DataStoreException {
-        final DataNode dn = new DefaultDataNode();
+    public Resource getRootNode() throws DataStoreException {
+        final DefaultDataSet dn = new DefaultDataSet();
         final Set<String> layers = db.getLayers().result();
         for (String layer : layers) {
-            dn.getChildren().add(new CoverageSQLLayerReference(NamesExt.create(layer)));
+            dn.addResource(new CoverageSQLLayerReference(NamesExt.create(layer)));
         }
         return dn;
     }
@@ -117,12 +117,12 @@ public class CoverageSQLStore extends AbstractCoverageStore {
     }
 
     @Override
-    public CoverageReference getCoverageReference(GenericName name, Version version) throws DataStoreException {
+    public CoverageResource getCoverageReference(GenericName name, Version version) throws DataStoreException {
         throw new DataStoreException("Versioning not supported");
     }
 
     @Override
-    public CoverageReference create(GenericName name) throws DataStoreException {
+    public CoverageResource create(GenericName name) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
@@ -188,7 +188,7 @@ public class CoverageSQLStore extends AbstractCoverageStore {
         }
     }
 
-    private class CoverageSQLLayerReference extends AbstractCoverageReference {
+    private class CoverageSQLLayerReference extends AbstractCoverageResource {
 
 
         private CoverageSQLLayerReference(GenericName name) {

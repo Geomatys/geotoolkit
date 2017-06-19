@@ -21,18 +21,18 @@ import java.net.URL;
 
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.Client;
-import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultDataNode;
+import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.Resource;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Client for google static maps.
@@ -53,7 +53,7 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Cl
         }
     }
 
-    private final DataNode rootNode = new DefaultDataNode();
+    private final DefaultDataSet rootNode = new DefaultDataSet();
 
     /**
      * Builds a google maps server with the default google server address.
@@ -86,10 +86,10 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Cl
         final GoogleCoverageReference ref3 = new GoogleCoverageReference(this,NamesExt.valueOf("{http://google.com}"+GetMapRequest.TYPE_SATELLITE),cache);
         final GoogleCoverageReference ref4 = new GoogleCoverageReference(this,NamesExt.valueOf("{http://google.com}"+GetMapRequest.TYPE_TERRAIN),cache);
 
-        rootNode.getChildren().add(ref1);
-        rootNode.getChildren().add(ref2);
-        rootNode.getChildren().add(ref3);
-        rootNode.getChildren().add(ref4);
+        rootNode.addResource(ref1);
+        rootNode.addResource(ref2);
+        rootNode.addResource(ref3);
+        rootNode.addResource(ref4);
     }
 
     private static ParameterValueGroup toParameters(final URL serverURL, final String key,
@@ -106,7 +106,7 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Cl
     }
 
     @Override
-    public DataNode getRootNode() throws DataStoreException {
+    public Resource getRootNode() throws DataStoreException {
         return rootNode;
     }
 
@@ -119,7 +119,7 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Cl
     }
 
     @Override
-    public CoverageReference create(GenericName name) throws DataStoreException {
+    public CoverageResource create(GenericName name) throws DataStoreException {
         throw new DataStoreException("Can not create new coverage.");
     }
 

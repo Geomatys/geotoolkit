@@ -47,13 +47,14 @@ import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.storage.DataFileStore;
-import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DataSet;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultDataNode;
-import org.geotoolkit.storage.coverage.CoverageReference;
+import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.Resource;
 import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Coverage Store which rely on standard java readers and writers.
@@ -80,7 +81,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
 
     //initialized at first access, this is not done in the constructor to
     //ensure whoever created the store to be able to attach warning listeners on it.
-    private DataNode rootNode;
+    private DefaultDataSet rootNode;
 
     //default spi
     final ImageReaderSpi spi;
@@ -127,9 +128,9 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
     }
 
     @Override
-    public synchronized DataNode getRootNode() throws DataStoreException{
+    public synchronized DataSet getRootNode() throws DataStoreException{
         if(rootNode==null){
-            rootNode = new DefaultDataNode();
+            rootNode = new DefaultDataSet();
             try {
                 visit(root);
             } catch (DataStoreException ex) {
@@ -227,8 +228,8 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
                 for (int i = 0, n = imageNames.size(); i < n; i++) {
                     final String in = imageNames.get(i);
                     final GenericName name = NamesExt.create(nmsp, filename + "." + in);
-                    final FileCoverageReference fcr = new FileCoverageReference(this, name, candidate, i);
-                    rootNode.getChildren().add(fcr);
+                    final FileCoverageResource fcr = new FileCoverageResource(this, name, candidate, i);
+                    rootNode.addResource(fcr);
                 }
 
             } else {
@@ -241,8 +242,8 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
                         name = NamesExt.create(nmsp, filename + "." + i);
                     }
 
-                    final FileCoverageReference fcr = new FileCoverageReference(this, name, candidate, i);
-                    rootNode.getChildren().add(fcr);
+                    final FileCoverageResource fcr = new FileCoverageResource(this, name, candidate, i);
+                    rootNode.addResource(fcr);
                 }
             }
         } finally {
@@ -326,7 +327,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
     }
 
     @Override
-    public CoverageReference create(GenericName name) throws DataStoreException {
+    public CoverageResource create(GenericName name) throws DataStoreException {
         final Collection<GenericName> names = getNames();
         if(names.contains(name)){
             throw new IllegalNameException("Coverage "+name+" already exist in this datastore.");
@@ -335,8 +336,8 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
         final String fileName = name.tip().toString();
         final URI filePath = rootPath.resolve(fileName+".tiff");
 
-        final FileCoverageReference fcr = new FileCoverageReference(this, name, Paths.get(filePath), 0);
-        rootNode.getChildren().add(fcr);
+        final FileCoverageResource fcr = new FileCoverageResource(this, name, Paths.get(filePath), 0);
+        rootNode.addResource(fcr);
 
         return fcr;
     }

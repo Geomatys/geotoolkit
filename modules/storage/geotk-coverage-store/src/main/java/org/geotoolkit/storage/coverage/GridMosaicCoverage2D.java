@@ -41,7 +41,7 @@ public final class GridMosaicCoverage2D {
      * @param mosaic
      * @return
      */
-    public static GridCoverage2D create(PyramidalCoverageReference ref, GridMosaic mosaic) throws DataStoreException{
+    public static GridCoverage2D create(PyramidalCoverageResource ref, GridMosaic mosaic) throws DataStoreException{
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setCoordinateReferenceSystem(mosaic.getPyramid().getCoordinateReferenceSystem());
         gcb.setGridToCRS((MathTransform)AbstractGridMosaic.getTileGridToCRS(mosaic, new Point(0, 0)));

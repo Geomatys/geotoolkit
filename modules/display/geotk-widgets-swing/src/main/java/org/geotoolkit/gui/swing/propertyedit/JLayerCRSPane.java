@@ -22,7 +22,6 @@ import java.awt.Color;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.io.X364;
@@ -35,6 +34,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.io.wkt.Warnings;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Display a WKT of the layer coordinate reference system.
@@ -76,7 +76,7 @@ public class JLayerCRSPane extends AbstractPropertyPane {
         if (layer instanceof FeatureMapLayer) {
             crs = FeatureExt.getCRS( ((FeatureMapLayer)layer).getCollection().getFeatureType());
         }else if(layer instanceof CoverageMapLayer){
-            final CoverageReference ref = ((CoverageMapLayer)layer).getCoverageReference();
+            final CoverageResource ref = ((CoverageMapLayer)layer).getCoverageReference();
             try{
                 final GridCoverageReader reader = ref.acquireReader();
                 final GeneralGridGeometry gg = reader.getGridGeometry(ref.getImageIndex());

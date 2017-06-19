@@ -14,25 +14,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.storage.coverage;
-
-import java.util.Collection;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
+package org.geotoolkit.storage;
 
 /**
- * Subtype of coverage reference which contains a collection of coverage references.
- * All coverages are expected to be similar.
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface CollectionCoverageReference extends CoverageResource {
-
-    /**
-     * Get coverage references which may match the given read parameters.
-     *
-     * @param readParam, can be null, all references will be returned in this case
-     * @return collection of coverage references. never null, can be empty
-     */
-    Collection<CoverageResource> getCoverages(GridCoverageReadParam readParam);
+public interface FeatureResource extends Resource {
 
 }

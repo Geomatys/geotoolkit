@@ -27,11 +27,11 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.storage.coverage.AbstractCoverageReference;
+import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.CoverageReference;
 
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Reader adapted to read and aggregate directly needed bands to build appropriate
@@ -41,7 +41,7 @@ import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
  * @version 1.0
  * @since   1.0
  */
-public class LandsatCoverageReference extends AbstractCoverageReference {
+public class LandsatCoverageReference extends AbstractCoverageResource {
 
     /**
      * {@link Path} of the parent directory which contain all

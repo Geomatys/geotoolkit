@@ -18,7 +18,6 @@ package org.geotoolkit.display2d.primitive;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.apache.sis.util.collection.Cache;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -35,6 +34,7 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.geometry.GeometricUtilities;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Convenient representation of a coverage for rendering.
@@ -85,7 +85,7 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
      * @param param : expected coverage parameters
      * @return GridCoverage2D or {@code null} if the requested parameters are out of the coverage area.
      *
-     * @throws CoverageStoreException if problem during {@link CoverageReference#acquireReader() }
+     * @throws CoverageStoreException if problem during {@link CoverageResource#acquireReader() }
      * or {@link GridCoverageReader#dispose() } call.
      */
     public GridCoverage2D getCoverage(final GridCoverageReadParam param) throws CoverageStoreException{
@@ -95,7 +95,7 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
             try {
                 value = handler.peek();
                 if (value == null) {
-                    final CoverageReference ref = layer.getCoverageReference();
+                    final CoverageResource ref = layer.getCoverageReference();
                     final GridCoverageReader reader = ref.acquireReader();
                     try {
                         final GridCoverage result = reader.read(layer.getCoverageReference().getImageIndex(), param);

@@ -20,13 +20,13 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageType;
-import org.geotoolkit.storage.DataNode;
-import org.geotoolkit.storage.DefaultDataNode;
+import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.Resource;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  *
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  */
 public class MPCoverageStore extends AbstractCoverageStore {
 
-    private final DataNode rootNode = new DefaultDataNode();
+    private final DefaultDataSet rootNode = new DefaultDataSet();
 
     /**
      * Dummy parameter descriptor group.
@@ -46,14 +46,14 @@ public class MPCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
-    public DataNode getRootNode() {
+    public Resource getRootNode() {
         return rootNode;
     }
 
     @Override
-    public CoverageReference create(GenericName name) throws DataStoreException {
-        final MPCoverageReference mpcref = new MPCoverageReference(this, name);
-        rootNode.getChildren().add(mpcref);
+    public CoverageResource create(GenericName name) throws DataStoreException {
+        final MPCoverageResource mpcref = new MPCoverageResource(this, name);
+        rootNode.addResource(mpcref);
         return mpcref;
     }
 

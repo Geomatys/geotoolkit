@@ -21,16 +21,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.collection.TableColumn;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.DefaultDataNode;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.metadata.iso.content.DefaultAttributeGroup;
 import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -41,9 +40,11 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.storage.AbstractResource;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
@@ -53,7 +54,7 @@ import org.opengis.util.NoSuchIdentifierException;
  * @author Johann Sorel (Geomatys)
  */
 @XmlTransient
-public abstract class AbstractCoverageReference extends DefaultDataNode implements CoverageReference {
+public abstract class AbstractCoverageResource extends AbstractResource implements CoverageResource {
 
     protected final CoverageStore store;
     protected final GenericName name;
@@ -65,9 +66,8 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
      * @param store can be null
      * @param name never null
      */
-    public AbstractCoverageReference(CoverageStore store, GenericName name) {
+    public AbstractCoverageResource(CoverageStore store, GenericName name) {
         ArgumentChecks.ensureNonNull("name",name);
-        setValue(TableColumn.NAME, name.tip().toString());
         this.store = store;
         this.name = name;
     }
@@ -80,6 +80,18 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
     @Override
     public CoverageStore getStore() {
         return store;
+    }
+
+    @Override
+    public Metadata getMatadata() throws DataStoreException {
+
+        GridCoverageReader reader = null;
+        try {
+            reader = acquireReader();
+            return reader.getMetadata();
+        } finally {
+            if (reader!=null) recycle(reader);
+        }
     }
 
     @Override

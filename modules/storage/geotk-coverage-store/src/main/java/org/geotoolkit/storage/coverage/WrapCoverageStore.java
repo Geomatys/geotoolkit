@@ -18,9 +18,9 @@ package org.geotoolkit.storage.coverage;
 
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -58,7 +58,7 @@ public class WrapCoverageStore extends DataStore implements CoverageStore{
     }
 
     @Override
-    public DataNode getRootNode() throws DataStoreException {
+    public Resource getRootNode() throws DataStoreException {
         return store.getRootNode();
     }
 
@@ -78,17 +78,17 @@ public class WrapCoverageStore extends DataStore implements CoverageStore{
     }
 
     @Override
-    public CoverageReference getCoverageReference(GenericName name) throws DataStoreException {
+    public CoverageResource getCoverageReference(GenericName name) throws DataStoreException {
         return store.getCoverageReference(name);
     }
 
     @Override
-    public CoverageReference getCoverageReference(GenericName name, Version version) throws DataStoreException {
+    public CoverageResource getCoverageReference(GenericName name, Version version) throws DataStoreException {
         return store.getCoverageReference(name, version);
     }
 
     @Override
-    public CoverageReference create(GenericName name) throws DataStoreException {
+    public CoverageResource create(GenericName name) throws DataStoreException {
         return store.create(name);
     }
 

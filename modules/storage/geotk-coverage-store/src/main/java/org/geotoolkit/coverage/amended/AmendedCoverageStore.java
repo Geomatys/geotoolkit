@@ -17,22 +17,23 @@
 package org.geotoolkit.coverage.amended;
 
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DataSet;
 import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreListener;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.storage.coverage.CoverageType;
-import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  * Decorates a coverage store adding possibility to override properties of each coverage reference.
@@ -52,7 +53,7 @@ import org.opengis.util.GenericName;
 public class AmendedCoverageStore extends AbstractCoverageStore{
 
     protected final CoverageStore store;
-    protected AmendedDataNode root;
+    protected Resource root;
 
     /**
      *
@@ -95,9 +96,15 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
      * {@inheritDoc }
      */
     @Override
-    public synchronized DataNode getRootNode() throws DataStoreException {
+    public synchronized Resource getRootNode() throws DataStoreException {
         if(root==null){
-            root = new AmendedDataNode(store.getRootNode(), this);
+            final Resource res = store.getRootNode();
+            if (res instanceof CoverageResource) {
+                root = new AmendedCoverageResource((CoverageResource) res, this);
+            } else {
+                root = new AmendedResource((DataSet) res, this);
+            }
+
         }
         return root;
     }
@@ -122,12 +129,12 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
      * {@inheritDoc }
      */
     @Override
-    public CoverageReference getCoverageReference(GenericName name, Version version) throws DataStoreException {
-        final CoverageReference cr = (version==null) ? store.getCoverageReference(name) :store.getCoverageReference(name, version);
-        if(cr instanceof PyramidalCoverageReference){
-            return new AmendedCoverageReference(cr, store);
+    public CoverageResource getCoverageReference(GenericName name, Version version) throws DataStoreException {
+        final CoverageResource cr = (version==null) ? store.getCoverageReference(name) :store.getCoverageReference(name, version);
+        if(cr instanceof PyramidalCoverageResource){
+            return new AmendedCoverageResource(cr, store);
         }else{
-            return new AmendedCoverageReference(cr, store);
+            return new AmendedCoverageResource(cr, store);
         }
     }
 
@@ -135,12 +142,12 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
      * {@inheritDoc }
      */
     @Override
-    public CoverageReference create(GenericName name) throws DataStoreException {
-        final CoverageReference cr = store.create(name);
-        if(cr instanceof PyramidalCoverageReference){
-            return new AmendedCoverageReference(cr, store);
+    public CoverageResource create(GenericName name) throws DataStoreException {
+        final CoverageResource cr = store.create(name);
+        if(cr instanceof PyramidalCoverageResource){
+            return new AmendedCoverageResource(cr, store);
         }else{
-            return new AmendedCoverageReference(cr, store);
+            return new AmendedCoverageResource(cr, store);
         }
     }
 

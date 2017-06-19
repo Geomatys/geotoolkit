@@ -63,7 +63,7 @@ import org.apache.sis.util.logging.Logging;
  * @author Johann Sorel (Geomatys)
  */
 @XmlTransient
-public abstract class AbstractPyramidalCoverageReference extends AbstractCoverageReference implements PyramidalCoverageReference {
+public abstract class AbstractPyramidalCoverageReference extends AbstractCoverageResource implements PyramidalCoverageResource {
 
     protected final int imageIndex;
 
@@ -257,7 +257,7 @@ public abstract class AbstractPyramidalCoverageReference extends AbstractCoverag
      * @param tileY
      * @return GridCoverage2D
      */
-    public static GridCoverage2D getTileAsCoverage(PyramidalCoverageReference covRef,
+    public static GridCoverage2D getTileAsCoverage(PyramidalCoverageResource covRef,
             String pyramidId, String mosaicId, int tileX, int tileY) throws DataStoreException {
 
         TileReference tile = null;
@@ -290,7 +290,7 @@ public abstract class AbstractPyramidalCoverageReference extends AbstractCoverag
      * @return GridCoverage2D
      * @throws org.apache.sis.storage.DataStoreException
      */
-    public static GridCoverage2D getTileAsCoverage(PyramidalCoverageReference covRef,
+    public static GridCoverage2D getTileAsCoverage(PyramidalCoverageResource covRef,
             String pyramidId, String mosaicId, TileReference tile) throws DataStoreException {
 
         final Pyramid pyramid = covRef.getPyramidSet().getPyramid(pyramidId);

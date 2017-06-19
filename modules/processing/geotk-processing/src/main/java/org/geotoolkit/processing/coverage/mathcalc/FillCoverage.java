@@ -75,7 +75,7 @@ public class FillCoverage {
      * @param env , envelope where new values will be evaluated.
      * @throws org.geotoolkit.coverage.io.CoverageStoreException
      */
-    public void fill(CoverageReference outRef, SampleEvaluator evaluator, Envelope env) throws DataStoreException {
+    public void fill(CoverageResource outRef, SampleEvaluator evaluator, Envelope env) throws DataStoreException {
 
         final GeneralGridGeometry gg;
         final GridCoverageWriter outWriter;
@@ -191,7 +191,7 @@ public class FillCoverage {
      * @param evaluator
      * @param outRef
      */
-    public static void fill(PyramidalCoverageReference outRef, SampleEvaluator evaluator)
+    public static void fill(PyramidalCoverageResource outRef, SampleEvaluator evaluator)
             throws DataStoreException, TransformException, FactoryException {
 
         final ColorModel cm = outRef.getColorModel();

@@ -6,7 +6,6 @@ import java.net.URL;
 import javax.imageio.ImageReader;
 import javax.measure.Unit;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.filestore.FileCoverageStore;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
@@ -19,6 +18,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.measure.Units;
+import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -61,7 +61,7 @@ public class ReliefShadowDemo {
         covPath.setInput(reliefPath);
 
         FileCoverageStore store = new FileCoverageStore(reliefPath.toURL(), "AUTO");
-        final CoverageReference ref = store.getCoverageReference(store.getNames().iterator().next());
+        final CoverageResource ref = store.getCoverageReference(store.getNames().iterator().next());
 
 //        final GridCoverageReader  demGCR = CoverageIO.createSimpleReader(covPath);
 

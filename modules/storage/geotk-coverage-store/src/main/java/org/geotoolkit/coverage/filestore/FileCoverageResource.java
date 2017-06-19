@@ -27,7 +27,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.coverage.RecyclingCoverageReference;
+import org.geotoolkit.storage.coverage.RecyclingCoverageResource;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -42,7 +42,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class FileCoverageReference extends RecyclingCoverageReference{
+public class FileCoverageResource extends RecyclingCoverageResource{
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.filestore");
 
@@ -51,11 +51,11 @@ public class FileCoverageReference extends RecyclingCoverageReference{
     private ImageReaderSpi spi;
 
     @Deprecated
-    FileCoverageReference(FileCoverageStore store, GenericName name, File file, int imageIndex) {
+    FileCoverageResource(FileCoverageStore store, GenericName name, File file, int imageIndex) {
         this(store, name, file.toPath(), imageIndex);
     }
 
-    FileCoverageReference(FileCoverageStore store, GenericName name, Path file, int imageIndex) {
+    FileCoverageResource(FileCoverageStore store, GenericName name, Path file, int imageIndex) {
         super(store,name);
         this.file = file;
         this.imageIndex = imageIndex;

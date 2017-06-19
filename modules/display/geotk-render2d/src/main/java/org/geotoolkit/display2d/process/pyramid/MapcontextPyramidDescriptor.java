@@ -20,7 +20,6 @@ import java.awt.Dimension;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.display2d.process.GO2ProcessingRegistry;
-import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
@@ -30,6 +29,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  * Description of a mapcontext pyramid process.
@@ -92,11 +92,11 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
     /**
      * Mandatory - Container which will receive the tiles.
      */
-    public static final ParameterDescriptor<PyramidalCoverageReference> IN_CONTAINER = new ParameterBuilder()
+    public static final ParameterDescriptor<PyramidalCoverageResource> IN_CONTAINER = new ParameterBuilder()
             .addName("container")
             .setRemarks("The container which will receive the tiles.")
             .setRequired(true)
-            .create(PyramidalCoverageReference.class,null);
+            .create(PyramidalCoverageResource.class,null);
 
     /**
      * Optional - Rendering hints.
@@ -122,11 +122,11 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
             new ParameterBuilder().addName(NAME+"InputParameters").createGroup(
                 IN_MAPCONTEXT,IN_EXTENT,IN_TILE_SIZE,IN_SCALES,IN_NBPAINTER,IN_CONTAINER,IN_HINTS, IN_UPDATE);
 
-    public static final ParameterDescriptor<PyramidalCoverageReference> OUT_CONTAINER = new ParameterBuilder()
+    public static final ParameterDescriptor<PyramidalCoverageResource> OUT_CONTAINER = new ParameterBuilder()
             .addName("outContainer")
             .setRemarks("The container which will receive the tiles.")
             .setRequired(true)
-            .create(PyramidalCoverageReference.class,null);
+            .create(PyramidalCoverageResource.class,null);
 
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName(NAME+"OutputParameters").createGroup(OUT_CONTAINER);

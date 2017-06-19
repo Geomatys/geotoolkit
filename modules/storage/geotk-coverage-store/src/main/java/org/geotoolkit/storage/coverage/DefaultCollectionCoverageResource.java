@@ -20,8 +20,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.apache.sis.util.collection.TreeTable;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.storage.Resource;
+import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 
 /**
@@ -30,21 +32,21 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefaultCollectionCoverageReference extends AbstractCollectionCoverageReference {
+public class DefaultCollectionCoverageResource extends AbstractCollectionCoverageResource {
 
-    public DefaultCollectionCoverageReference(CoverageStore store, GenericName name) {
+    public DefaultCollectionCoverageResource(CoverageStore store, GenericName name) {
         super(store,name);
     }
 
     @Override
-    public Collection<CoverageReference> getCoverages(GridCoverageReadParam readParam) {
-        final List<CoverageReference> references = new ArrayList<>();
-        for (TreeTable.Node node : getChildren()) {
-            if (node instanceof CoverageReference) {
-                references.add((CoverageReference) node);
+    public Collection<CoverageResource> getCoverages(GridCoverageReadParam readParam) {
+        final List<CoverageResource> resources = new ArrayList<>();
+        for (Resource res : getResources()) {
+            if (res instanceof CoverageResource) {
+                resources.add((CoverageResource) res);
             }
         }
-        return Collections.unmodifiableCollection(references);
+        return Collections.unmodifiableCollection(resources);
     }
 
 }

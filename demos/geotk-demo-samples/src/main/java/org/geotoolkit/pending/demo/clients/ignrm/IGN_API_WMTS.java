@@ -2,7 +2,6 @@
 package org.geotoolkit.pending.demo.clients.ignrm;
 
 import java.net.URL;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -13,6 +12,7 @@ import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.style.DefaultDescription;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.wmts.WMTSClientFactory;
 import org.geotoolkit.wmts.WebMapTileClient;
 import org.opengis.util.GenericName;
@@ -45,7 +45,7 @@ public class IGN_API_WMTS {
         final MapContext context = MapBuilder.createContext();
 
         for(GenericName n : store.getNames()){
-            final CoverageReference cr = store.getCoverageReference(n);
+            final CoverageResource cr = store.getCoverageReference(n);
             final CoverageMapLayer cml = MapBuilder.createCoverageLayer(cr);
             cml.setDescription(new DefaultDescription(new SimpleInternationalString(n.tip().toString()), new SimpleInternationalString("")));
             context.layers().add(cml);

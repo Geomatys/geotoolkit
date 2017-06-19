@@ -26,7 +26,6 @@ import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureCollection;
@@ -62,6 +61,7 @@ import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  *
@@ -184,7 +184,7 @@ public class WMCUtilities {
                 try {
                     for (GenericName n : cs.getNames()) {
                         if (n.tip().toString().equalsIgnoreCase(layerName.tip().toString())) {
-                            final CoverageReference ref = cs.getCoverageReference(n);
+                            final CoverageResource ref = cs.getCoverageReference(n);
                             final CoverageMapLayer mapLayer = MapBuilder.createCoverageLayer(ref,
                                     GO2Utilities.STYLE_FACTORY.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
                             context.layers().add(mapLayer);

@@ -17,8 +17,7 @@
 package org.geotoolkit.map;
 
 import java.util.Collection;
-import org.geotoolkit.storage.coverage.CoverageReference;
-import org.geotoolkit.storage.coverage.DefaultCoverageReference;
+import org.geotoolkit.storage.coverage.DefaultCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.data.FeatureCollection;
@@ -35,6 +34,7 @@ import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Utility class to create MapLayers, MapContexts and Elevation models from different sources.
@@ -162,7 +162,7 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverage2D grid, final MutableStyle style, final String name){
-        final CoverageReference ref = new DefaultCoverageReference(grid, NamesExt.create(name));
+        final CoverageResource ref = new DefaultCoverageResource(grid, NamesExt.create(name));
         return createCoverageLayer(ref, style);
     }
 
@@ -174,7 +174,7 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final Object input){
-        final CoverageReference reference = new DefaultCoverageReference(input, NamesExt.create("image"));
+        final CoverageResource reference = new DefaultCoverageResource(input, NamesExt.create("image"));
         return createCoverageLayer(reference);
     }
 
@@ -182,20 +182,20 @@ public final class MapBuilder {
      * Create a default coverage map layer with a coveragrReference.
      * Default style is used.
      *
-     * @param ref CoverageReference
+     * @param ref CoverageResource
      * @return  CoverageMapLayer
      */
-    public static CoverageMapLayer createCoverageLayer(final CoverageReference ref){
+    public static CoverageMapLayer createCoverageLayer(final CoverageResource ref){
         return new DefaultCoverageMapLayer(ref, RandomStyleBuilder.createDefaultRasterStyle());
     }
 
     /**
      * Create a default coverage map layer with a coveragrReference, a style and the grid name.
-     * @param ref CoverageReference
+     * @param ref CoverageResource
      * @param style layer style
      * @return  CoverageMapLayer
      */
-    public static CoverageMapLayer createCoverageLayer(final CoverageReference ref, final MutableStyle style){
+    public static CoverageMapLayer createCoverageLayer(final CoverageResource ref, final MutableStyle style){
         return new DefaultCoverageMapLayer(ref, style);
     }
 
@@ -205,7 +205,7 @@ public final class MapBuilder {
      * @param grid : Coverage reader holding elevation values
      * @return ElevationModel
      */
-    public static ElevationModel createElevationModel(final CoverageReference ref) throws CoverageStoreException {
+    public static ElevationModel createElevationModel(final CoverageResource ref) throws CoverageStoreException {
         return createElevationModel(ref, 130, 2, 55);
     }
 
@@ -217,7 +217,7 @@ public final class MapBuilder {
      * @param scale : a multiplication factor to use on the coverage values
      * @return ElevationModel
      */
-    public static ElevationModel createElevationModel(final CoverageReference ref, final double azimuthAngle, final double altitudeAngle, final double altitudeScale) throws CoverageStoreException {
+    public static ElevationModel createElevationModel(final CoverageResource ref, final double azimuthAngle, final double altitudeAngle, final double altitudeScale) throws CoverageStoreException {
         return new ElevationModel(ref, azimuthAngle, altitudeAngle, altitudeScale);
     }
  }

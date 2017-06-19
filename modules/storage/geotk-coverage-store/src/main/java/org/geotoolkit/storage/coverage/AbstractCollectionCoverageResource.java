@@ -22,8 +22,10 @@ import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.geometry.Envelopes;
@@ -48,8 +50,11 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.storage.DataSet;
+import org.geotoolkit.storage.Resource;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
@@ -67,15 +72,27 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractCollectionCoverageReference extends AbstractCoverageReference implements CollectionCoverageReference {
+public abstract class AbstractCollectionCoverageResource extends AbstractCoverageResource implements DataSet,CollectionCoverageReference {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
+
+    protected final List<Resource> resources = new CopyOnWriteArrayList<Resource>();
 
     private GeneralGridGeometry gridGeom;
     private List<GridSampleDimension> sampleDimensions;
 
-    public AbstractCollectionCoverageReference(CoverageStore store, GenericName name) {
+    public AbstractCollectionCoverageResource(CoverageStore store, GenericName name) {
         super(store,name);
+    }
+
+    @Override
+    public Metadata getMatadata() throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
+
+    @Override
+    public Collection<Resource> getResources() {
+        return Collections.unmodifiableList(resources);
     }
 
     @Override
@@ -117,7 +134,7 @@ public abstract class AbstractCollectionCoverageReference extends AbstractCovera
             //find global envelope and finest resolution
             GeneralEnvelope env = null;
             double[] resolution = null;
-            for (CoverageReference ref : getCoverages(null)) {
+            for (CoverageResource ref : getCoverages(null)) {
                 final GridCoverageReader reader = ref.acquireReader();
                 final GeneralGridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
                 ref.recycle(reader);
@@ -160,9 +177,9 @@ public abstract class AbstractCollectionCoverageReference extends AbstractCovera
     private synchronized List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException {
         if (sampleDimensions != null) return sampleDimensions;
 
-        final Collection<CoverageReference> references = getCoverages(null);
+        final Collection<CoverageResource> references = getCoverages(null);
         if (!references.isEmpty()) {
-            final CoverageReference ref = references.iterator().next();
+            final CoverageResource ref = references.iterator().next();
             GridCoverageReader reader = ref.acquireReader();
             sampleDimensions = reader.getSampleDimensions(ref.getImageIndex());
             ref.recycle(reader);
@@ -174,25 +191,25 @@ public abstract class AbstractCollectionCoverageReference extends AbstractCovera
     private class CollectionCoverageReader extends GeoReferencedGridCoverageReader {
 
         private CollectionCoverageReader(){
-            super(AbstractCollectionCoverageReference.this);
+            super(AbstractCollectionCoverageResource.this);
         }
 
         @Override
         public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
-            return AbstractCollectionCoverageReference.this.getGridGeometry();
+            return AbstractCollectionCoverageResource.this.getGridGeometry();
         }
 
         @Override
         public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException, CancellationException {
-            return AbstractCollectionCoverageReference.this.getSampleDimensions();
+            return AbstractCollectionCoverageResource.this.getSampleDimensions();
         }
 
         @Override
         protected GridCoverage readInNativeCRS(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
 
-            final Collection<CoverageReference> references = getCoverages(param);
+            final Collection<CoverageResource> references = getCoverages(param);
             final List<GridCoverage2D> coverages = new ArrayList<>();
-            for (CoverageReference ref : references) {
+            for (CoverageResource ref : references) {
                 final GridCoverageReader reader = ref.acquireReader();
                 try {
                     coverages.add((GridCoverage2D) reader.read(ref.getImageIndex(), param));

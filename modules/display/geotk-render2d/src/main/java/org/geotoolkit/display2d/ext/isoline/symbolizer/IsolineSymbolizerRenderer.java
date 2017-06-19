@@ -19,7 +19,6 @@ package org.geotoolkit.display2d.ext.isoline.symbolizer;
 
 import org.apache.sis.storage.DataStoreException;
 
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -63,6 +62,7 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
 import org.geotoolkit.utility.parameter.ParametersExt;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -106,7 +106,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                 ////////////////////
                 final CoverageMapLayer coverageLayer = graphic.getLayer();
                 final CoordinateReferenceSystem coverageMapLayerCRS = coverageLayer.getBounds().getCoordinateReferenceSystem();
-                final CoverageReference coverageReference = coverageLayer.getCoverageReference();
+                final CoverageResource coverageReference = coverageLayer.getCoverageReference();
 
                 double[] resolution = renderingContext.getResolution();
                 Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
@@ -154,7 +154,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                 final MemoryCoverageStore memoryCoverageStore = new MemoryCoverageStore(resampledCoverage, coverageReference.getName().tip().toString());
 
                 final GenericName name = memoryCoverageStore.getNames().iterator().next();
-                final CoverageReference resampledCovRef = memoryCoverageStore.getCoverageReference(name);
+                final CoverageResource resampledCovRef = memoryCoverageStore.getCoverageReference(name);
 
                 /////////////////////
                 // 2.2 - Compute isolines

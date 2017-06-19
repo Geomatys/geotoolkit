@@ -24,7 +24,6 @@ import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.storage.coverage.PyramidSet;
-import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
@@ -56,6 +55,7 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
 import org.apache.sis.geometry.Envelopes;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  * Graphic for pyramidal coverage layers.
@@ -67,7 +67,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
 
     protected CoverageStoreListener.Weak weakStoreListener = new CoverageStoreListener.Weak(this);
 
-    private final PyramidalCoverageReference model;
+    private final PyramidalCoverageResource model;
     private final double tolerance;
     private final CoverageFinder coverageFinder;
     private final Map<Point3d,StatefullTileJ2D> gtiles = new TreeMap<>(new Comparator<Point3d>() {
@@ -95,7 +95,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
     public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer) {
         super(canvas, layer, true);
         this.coverageFinder = new DefaultCoverageFinder();
-        model = (PyramidalCoverageReference)layer.getCoverageReference();
+        model = (PyramidalCoverageResource)layer.getCoverageReference();
         tolerance = 0.1; // in % , TODO use a flag to allow change value
         weakStoreListener.registerSource(layer.getCoverageReference());
     }
@@ -103,7 +103,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
     public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer, CoverageFinder coverageFinder) {
         super(canvas, layer, true);
         this.coverageFinder = coverageFinder;
-        model = (PyramidalCoverageReference)layer.getCoverageReference();
+        model = (PyramidalCoverageResource)layer.getCoverageReference();
         tolerance = 0.1; // in % , TODO use a flag to allow change value
         weakStoreListener.registerSource(layer.getCoverageReference());
     }

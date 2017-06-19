@@ -85,7 +85,7 @@ import org.apache.sis.util.Utilities;
  */
 public class PyramidalModelReader extends GridCoverageReader{
 
-    private CoverageReference ref;
+    private CoverageResource ref;
     private final CoverageFinder coverageFinder;
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
@@ -100,20 +100,20 @@ public class PyramidalModelReader extends GridCoverageReader{
     }
 
     @Override
-    public CoverageReference getInput() {
+    public CoverageResource getInput() {
         return ref;
     }
 
-    private PyramidalCoverageReference getPyramidalModel(){
-        return (PyramidalCoverageReference)ref;
+    private PyramidalCoverageResource getPyramidalModel(){
+        return (PyramidalCoverageResource)ref;
     }
 
     @Override
     public void setInput(Object input) throws CoverageStoreException {
-        if(!(input instanceof CoverageReference) || !(input instanceof PyramidalCoverageReference)){
+        if(!(input instanceof CoverageResource) || !(input instanceof PyramidalCoverageResource)){
             throw new CoverageStoreException("Unsupported input type, can only be CoverageReference implementing PyramidalModel.");
         }
-        this.ref = (CoverageReference) input;
+        this.ref = (CoverageResource) input;
         super.setInput(input);
     }
 
@@ -268,7 +268,7 @@ public class PyramidalModelReader extends GridCoverageReader{
             resolution = new double[]{Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
 
 
-        final PyramidalCoverageReference covref = getPyramidalModel();
+        final PyramidalCoverageResource covref = getPyramidalModel();
 
         final PyramidSet pyramidSet;
         try {
@@ -528,8 +528,8 @@ public class PyramidalModelReader extends GridCoverageReader{
                     if (image == null) {
                         ColorModel cm = null;
                         SampleModel sm = null;
-                        if (ref instanceof PyramidalCoverageReference) {
-                            final PyramidalCoverageReference pyramRef = (PyramidalCoverageReference) ref;
+                        if (ref instanceof PyramidalCoverageResource) {
+                            final PyramidalCoverageResource pyramRef = (PyramidalCoverageResource) ref;
                             cm = pyramRef.getColorModel();
                             sm = pyramRef.getSampleModel();
                         }

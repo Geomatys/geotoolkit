@@ -28,10 +28,10 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 
 /**
@@ -61,7 +61,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         final int width = 28;
         final int height = 13;
 
-        final PyramidalCoverageReference ref1 = (PyramidalCoverageReference) store.create(NamesExt.create("test1"));
+        final PyramidalCoverageResource ref1 = (PyramidalCoverageResource) store.create(NamesExt.create("test1"));
         create4DPyramid(ref1, crs, width, height, new double[][]{
             {-5,-9,  12},
             {-5, 0,  -7},
@@ -168,7 +168,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
      * @param crs
      * @param geovalues [0...n slices][Z coord, T coord, sample value]
      */
-    private static void create4DPyramid(PyramidalCoverageReference ref, CoordinateReferenceSystem crs,
+    private static void create4DPyramid(PyramidalCoverageResource ref, CoordinateReferenceSystem crs,
             int width, int height, double[][] geovalues) throws DataStoreException{
 
         final Pyramid pyramid = ref.createPyramid(crs);
