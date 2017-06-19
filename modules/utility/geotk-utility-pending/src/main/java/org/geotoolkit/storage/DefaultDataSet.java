@@ -52,7 +52,7 @@ public class DefaultDataSet extends AbstractResource implements DataSet {
     }
 
     @Override
-    public Metadata getMatadata() {
+    public Metadata getMetadata() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

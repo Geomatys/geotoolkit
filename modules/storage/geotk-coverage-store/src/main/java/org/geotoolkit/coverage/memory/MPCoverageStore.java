@@ -46,7 +46,7 @@ public class MPCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
-    public Resource getRootNode() {
+    public Resource getRootResource() {
         return rootNode;
     }
 

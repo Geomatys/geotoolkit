@@ -219,7 +219,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
         //Envelope result
         resEnv = gridcov.getEnvelope();
         proportionalityCoefficient = 2;
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(mpCovStore.getCoverageReference(name));
+        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(mpCovStore.getCoverageResource(name));
         testImageLayer(img, cl);
 
         proportionalityCoefficient = 1;

@@ -41,7 +41,7 @@ public class WMTSClientDemo {
         for(final GenericName n : server.getNames()){
             System.out.println(n);
 
-            final CoverageResource ref = server.getCoverageReference(n);
+            final CoverageResource ref = server.getCoverageResource(n);
             final MapLayer layer = MapBuilder.createCoverageLayer(
                     ref,
                     new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));

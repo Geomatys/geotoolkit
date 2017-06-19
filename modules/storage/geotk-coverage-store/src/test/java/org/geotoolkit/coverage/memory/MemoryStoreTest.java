@@ -48,7 +48,7 @@ public class MemoryStoreTest {
     @Test
     public void testMetadata() throws Exception {
         final MemoryCoverageStore store = create();
-        final Resource root = store.getRootNode();
+        final Resource root = store.getRootResource();
         Assume.assumeNotNull(root);
 
         final Metadata md = store.getMetadata();

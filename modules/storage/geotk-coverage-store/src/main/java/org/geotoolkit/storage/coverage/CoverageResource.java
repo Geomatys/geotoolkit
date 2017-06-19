@@ -24,14 +24,11 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.FeatureResource;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.StorageListener;
 import org.opengis.metadata.content.CoverageDescription;
 
 /**
- * Reference to a coverage in the coverage store.
+ * Resource to a coverage in the coverage store.
  *
- * TODO : name is not following ISO. must find a proper name.
- * something like RenderableCoverage...
  *
  * @author Johann Sorel (Geomatys)
  * @module
@@ -55,7 +52,7 @@ public interface CoverageResource extends FeatureResource {
      *
      * @return CoverageDescripion, can be null
      */
-    CoverageDescription getMetadata();
+    CoverageDescription getCoverageDescription();
 
     /**
      * @return true if coverage is writable
@@ -108,18 +105,5 @@ public interface CoverageResource extends FeatureResource {
      * @throws DataStoreException
      */
     Image getLegend() throws DataStoreException;
-
-    /**
-     * Add a storage listener which will be notified when structure changes or
-     * when coverage data changes.
-     * @param listener to add
-     */
-    void addStorageListener(StorageListener listener);
-
-    /**
-     * Remove a storage listener
-     * @param listener to remove
-     */
-    void removeStorageListener(StorageListener listener);
 
 }

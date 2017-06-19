@@ -60,7 +60,7 @@ public interface CoverageStore {
      * @return DataNode never null.
      * @throws org.apache.sis.storage.DataStoreException
      */
-    public abstract Resource getRootNode() throws DataStoreException;
+    public abstract Resource getRootResource() throws DataStoreException;
 
 
     ////////////////////////////////////////////////////////////////////////////
@@ -69,6 +69,7 @@ public interface CoverageStore {
 
     /**
      * Get a collection of all available coverage names.
+     *
      * @return Set<Name> , never null, but can be empty.
      * @throws DataStoreException
      */
@@ -76,23 +77,26 @@ public interface CoverageStore {
 
     /**
      * Check if this coverage store support versioning.
+     *
      * @return true if versioning is supported.
      */
     public abstract boolean handleVersioning();
 
     /**
      * Get version history for given coverage.
+     *
      * @return VersionHistory for given name.
      */
     public abstract VersionControl getVersioning(GenericName typeName) throws VersioningException;
 
     /**
      * Get the coverage reference for the given name.
+     *
      * @param name reference name
      * @return CoverageResource
      * @throws DataStoreException
      */
-    public abstract CoverageResource getCoverageReference(GenericName name) throws DataStoreException;
+    public abstract CoverageResource getCoverageResource(GenericName name) throws DataStoreException;
 
     /**
      * Get the coverage reference for the given name and version.
@@ -103,7 +107,7 @@ public interface CoverageStore {
      * @return CoverageResource
      * @throws DataStoreException
      */
-    public abstract CoverageResource getCoverageReference(GenericName name, Version version) throws DataStoreException;
+    public abstract CoverageResource getCoverageResource(GenericName name, Version version) throws DataStoreException;
 
     /**
      * Create a new coverage reference.
@@ -132,12 +136,14 @@ public interface CoverageStore {
     /**
      * Add a storage listener which will be notified when structure changes or
      * when coverage data changes.
+     * 
      * @param listener to add
      */
     public abstract void addStorageListener(StorageListener listener);
 
     /**
-     * Remove a storage listener
+     * Remove a storage listener.
+     *
      * @param listener to remove
      */
     public abstract void removeStorageListener(StorageListener listener);

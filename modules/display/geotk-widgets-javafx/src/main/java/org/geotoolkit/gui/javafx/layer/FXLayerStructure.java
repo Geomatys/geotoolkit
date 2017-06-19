@@ -251,7 +251,7 @@ public class FXLayerStructure extends FXPropertyPane {
             tabs.getTabs().add(tabprops);
 
             //dimension editor
-            final CoverageDescription desc = ref.getMetadata();
+            final CoverageDescription desc = ref.getCoverageDescription();
             if(desc!=null && !desc.getAttributeGroups().isEmpty()){
                 final Tab tabbands = new Tab("Bands");
                 tabs.getTabs().add(tabbands);

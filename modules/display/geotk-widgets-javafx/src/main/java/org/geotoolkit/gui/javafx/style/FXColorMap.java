@@ -314,7 +314,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
     private Double[] findMinMaxInMeta(){
         final CoverageMapLayer cml = (CoverageMapLayer)layer;
         final CoverageResource cref = cml.getCoverageReference();
-        final CoverageDescription covdesc = cref.getMetadata();
+        final CoverageDescription covdesc = cref.getCoverageDescription();
         if(covdesc==null) return null;
         final Integer index = uiBand.valueProperty().get().intValue();
 

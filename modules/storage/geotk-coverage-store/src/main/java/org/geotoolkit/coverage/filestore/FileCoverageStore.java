@@ -128,7 +128,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
     }
 
     @Override
-    public synchronized DataSet getRootNode() throws DataStoreException{
+    public synchronized DataSet getRootResource() throws DataStoreException{
         if(rootNode==null){
             rootNode = new DefaultDataSet();
             try {

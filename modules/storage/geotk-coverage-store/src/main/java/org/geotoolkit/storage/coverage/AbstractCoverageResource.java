@@ -83,7 +83,7 @@ public abstract class AbstractCoverageResource extends AbstractResource implemen
     }
 
     @Override
-    public Metadata getMatadata() throws DataStoreException {
+    public Metadata getMetadata() throws DataStoreException {
 
         GridCoverageReader reader = null;
         try {
@@ -95,7 +95,7 @@ public abstract class AbstractCoverageResource extends AbstractResource implemen
     }
 
     @Override
-    public synchronized CoverageDescription getMetadata() {
+    public synchronized CoverageDescription getCoverageDescription() {
         if(desc!=null) return desc;
 
         //calculate image statistics

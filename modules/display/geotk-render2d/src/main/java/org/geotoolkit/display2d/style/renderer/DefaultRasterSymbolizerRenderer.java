@@ -483,7 +483,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
             final int nbBands = sampleMod.getNumBands();
 
-            final CoverageDescription covRefMetadata = ref.getMetadata();
+            final CoverageDescription covRefMetadata = ref.getCoverageDescription();
 
             ImageStatistics analyse = null;
 

@@ -98,7 +98,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
-    public Resource getRootNode() {
+    public Resource getRootResource() {
         return rootNode;
     }
 
@@ -110,7 +110,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
         }
         rootNode.addResource(new MemoryCoverageReference(name));
         fireCoverageAdded(name);
-        return getCoverageReference(name);
+        return getCoverageResource(name);
     }
 
     /**

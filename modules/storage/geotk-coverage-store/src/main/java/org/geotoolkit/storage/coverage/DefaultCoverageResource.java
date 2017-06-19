@@ -61,7 +61,7 @@ public class DefaultCoverageResource extends AbstractCoverageResource{
     }
 
     @Override
-    public Metadata getMatadata() throws CoverageStoreException {
+    public Metadata getMetadata() throws CoverageStoreException {
         Metadata metadata = acquireReader().getMetadata();
         return metadata;
     }
@@ -98,9 +98,9 @@ public class DefaultCoverageResource extends AbstractCoverageResource{
 
     @Override
     public void recycle(CoverageReader reader) {
-        if(input instanceof GridCoverageReader){
+        if (input instanceof GridCoverageReader) {
             //do not dispose it, it will be reused
-        }else{
+        } else {
             super.recycle(reader);
         }
     }
@@ -112,7 +112,7 @@ public class DefaultCoverageResource extends AbstractCoverageResource{
 
     @Override
     protected void finalize() throws Throwable {
-        if(input instanceof GridCoverageReader){
+        if (input instanceof GridCoverageReader) {
             dispose((GridCoverageReader)input);
         }
         super.finalize();

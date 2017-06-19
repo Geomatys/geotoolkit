@@ -120,7 +120,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
      */
     @Override
     protected Metadata createMetadata() throws DataStoreException {
-        final Resource root = getRootNode();
+        final Resource root = getRootResource();
         if (root == null) {
             return null;
         }
@@ -241,7 +241,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         final StringBuilder sb = new StringBuilder();
         sb.append(Classes.getShortClassName(this));
         try {
-            final Resource node = getRootNode();
+            final Resource node = getRootResource();
             sb.append(' ');
             sb.append(node.toString());
         } catch (DataStoreException ex) {
@@ -262,7 +262,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // Convinient methods, fallback on getRootNode                            //
+    // Convinient methods, fallback on getRootResource                            //
     ////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -272,7 +272,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
     }
 
     @Override
-    public final CoverageResource getCoverageReference(GenericName name) throws DataStoreException {
+    public final CoverageResource getCoverageResource(GenericName name) throws DataStoreException {
         final Map<GenericName,CoverageResource> map = listReferences();
         final CoverageResource ref = map.get(name);
         if(ref==null){
@@ -289,7 +289,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
     protected Map<GenericName,CoverageResource> listReferences() throws DataStoreException {
         if (cachedRefs.isEmpty()) {
-            listReferences(getRootNode(), cachedRefs);
+            listReferences(getRootResource(), cachedRefs);
         }
         return cachedRefs;
     }
@@ -325,7 +325,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
     }
 
     @Override
-    public CoverageResource getCoverageReference(GenericName name, Version version) throws DataStoreException {
+    public CoverageResource getCoverageResource(GenericName name, Version version) throws DataStoreException {
         throw new DataStoreException("Versioning not supported");
     }
 

@@ -49,7 +49,7 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
         try {
             for(GenericName n : server.getNames()){
                 if(n.tip().toString().equalsIgnoreCase(mapType)){
-                    return server.getCoverageReference(n);
+                    return server.getCoverageResource(n);
                 }
             }
             throw new RuntimeException("Not layer for name : " + mapType);

@@ -81,7 +81,7 @@ public class PGVersionControl extends AbstractVersionControl{
     @Override
     public void dropVersion(Version version) throws VersioningException {
         try {
-            final PyramidalCoverageResource ref = (PyramidalCoverageResource) store.getCoverageReference(name, version);
+            final PyramidalCoverageResource ref = (PyramidalCoverageResource) store.getCoverageResource(name, version);
             final Collection<Pyramid> pyramids = ref.getPyramidSet().getPyramids();
             for(Pyramid p : pyramids){
                 ref.deletePyramid(p.getId());

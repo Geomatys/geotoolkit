@@ -144,7 +144,7 @@ public class LandsatCoverageStore extends AbstractCoverageStore {
      * {@inheritDoc }.
      */
     @Override
-    public Resource getRootNode() throws DataStoreException {
+    public Resource getRootResource() throws DataStoreException {
         return root;
     }
 

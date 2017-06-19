@@ -97,7 +97,7 @@ public class CoverageSQLStore extends AbstractCoverageStore {
     }
 
     @Override
-    public Resource getRootNode() throws DataStoreException {
+    public Resource getRootResource() throws DataStoreException {
         final DefaultDataSet dn = new DefaultDataSet();
         final Set<String> layers = db.getLayers().result();
         for (String layer : layers) {
@@ -117,7 +117,7 @@ public class CoverageSQLStore extends AbstractCoverageStore {
     }
 
     @Override
-    public CoverageResource getCoverageReference(GenericName name, Version version) throws DataStoreException {
+    public CoverageResource getCoverageResource(GenericName name, Version version) throws DataStoreException {
         throw new DataStoreException("Versioning not supported");
     }
 

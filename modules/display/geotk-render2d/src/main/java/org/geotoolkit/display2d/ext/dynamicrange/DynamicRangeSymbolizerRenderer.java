@@ -81,7 +81,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                 allLiteral &= channel.getLower().getValue() instanceof Literal;
                 allLiteral &= channel.getUpper().getValue() instanceof Literal;
             }
-            final CoverageDescription covdesc = allLiteral ? null : covref.getMetadata();
+            final CoverageDescription covdesc = allLiteral ? null : covref.getCoverageDescription();
 
             for(DynamicRangeSymbolizer.DRChannel channel : symbolizer.getChannels()){
                 final Integer bandIdx;

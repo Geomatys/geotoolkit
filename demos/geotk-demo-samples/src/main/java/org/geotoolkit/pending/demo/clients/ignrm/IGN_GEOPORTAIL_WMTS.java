@@ -43,7 +43,7 @@ public class IGN_GEOPORTAIL_WMTS {
         final MapContext context = MapBuilder.createContext();
 
         for(GenericName n : store.getNames()){
-            final CoverageResource cr = store.getCoverageReference(n);
+            final CoverageResource cr = store.getCoverageResource(n);
             if(cr instanceof PyramidalCoverageResource){
                 PyramidalCoverageResource model = (PyramidalCoverageResource) cr;
                 System.out.println(model.getPyramidSet());

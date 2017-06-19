@@ -46,7 +46,7 @@ public class OSMTMSClientDemo {
         final CoverageStore store = (CoverageStore) DataStores.open(params);
 
         for(GenericName n : store.getNames()){
-            final CoverageResource cr = store.getCoverageReference(n);
+            final CoverageResource cr = store.getCoverageResource(n);
             final CoverageMapLayer cml = MapBuilder.createCoverageLayer(cr);
             cml.setDescription(new DefaultDescription(
                     new SimpleInternationalString(n.tip().toString()),

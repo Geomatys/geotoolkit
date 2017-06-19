@@ -98,7 +98,7 @@ public abstract class AbstractResource implements Resource{
     public String toString() {
         CharSequence name = "";
         try {
-            name = getMatadata().getIdentificationInfo().iterator().next().getCitation().getIdentifiers().iterator().next().getCode();
+            name = getMetadata().getIdentificationInfo().iterator().next().getCitation().getIdentifiers().iterator().next().getCode();
         } catch (DataStoreException ex) {
             //do nothing
         }

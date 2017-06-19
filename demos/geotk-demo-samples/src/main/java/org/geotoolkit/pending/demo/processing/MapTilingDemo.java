@@ -105,7 +105,7 @@ public class MapTilingDemo {
 //        //display the tiled image
 //        context.layers().clear();
 //        for(final Name n : store.getNames()){
-//            final CoverageReference covref = store.getCoverageReference(n);
+//            final CoverageReference covref = store.getCoverageResource(n);
 //            final MapLayer layer = MapBuilder.createCoverageLayer(
 //                    covref,
 //                    new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER),
@@ -133,7 +133,7 @@ public class MapTilingDemo {
         final MapContext context = MapBuilder.createContext();
 
         for(GenericName n : store.getNames()){
-            final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.getCoverageReference(n));
+            final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.getCoverageResource(n));
             context.layers().add(layer);
         }
 

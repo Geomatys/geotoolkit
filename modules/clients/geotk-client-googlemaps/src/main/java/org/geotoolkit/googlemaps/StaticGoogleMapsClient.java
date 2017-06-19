@@ -106,7 +106,7 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Cl
     }
 
     @Override
-    public Resource getRootNode() throws DataStoreException {
+    public Resource getRootResource() throws DataStoreException {
         return rootNode;
     }
 

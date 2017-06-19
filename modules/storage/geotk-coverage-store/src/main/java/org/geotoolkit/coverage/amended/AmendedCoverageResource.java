@@ -247,8 +247,8 @@ public class AmendedCoverageResource extends AbstractCoverageResource{
      * {@inheritDoc }
      */
     @Override
-    public CoverageDescription getMetadata() {
-        return ref.getMetadata();
+    public CoverageDescription getCoverageDescription() {
+        return ref.getCoverageDescription();
     }
 
     /**
@@ -300,8 +300,8 @@ public class AmendedCoverageResource extends AbstractCoverageResource{
     }
 
     @Override
-    public Metadata getMatadata() throws DataStoreException {
-        return ref.getMatadata();
+    public Metadata getMetadata() throws DataStoreException {
+        return ref.getMetadata();
     }
 
 }

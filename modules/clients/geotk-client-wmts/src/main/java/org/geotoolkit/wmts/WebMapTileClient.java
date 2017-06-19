@@ -257,7 +257,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
     }
 
     @Override
-    public synchronized Resource getRootNode() throws DataStoreException {
+    public synchronized Resource getRootResource() throws DataStoreException {
         if(rootNode == null){
             rootNode = new DefaultDataSet();
 

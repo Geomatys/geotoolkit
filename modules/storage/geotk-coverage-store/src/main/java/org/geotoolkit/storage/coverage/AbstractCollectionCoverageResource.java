@@ -86,7 +86,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
     }
 
     @Override
-    public Metadata getMatadata() throws DataStoreException {
+    public Metadata getMetadata() throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
 

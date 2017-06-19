@@ -96,9 +96,9 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
      * {@inheritDoc }
      */
     @Override
-    public synchronized Resource getRootNode() throws DataStoreException {
+    public synchronized Resource getRootResource() throws DataStoreException {
         if(root==null){
-            final Resource res = store.getRootNode();
+            final Resource res = store.getRootResource();
             if (res instanceof CoverageResource) {
                 root = new AmendedCoverageResource((CoverageResource) res, this);
             } else {
@@ -129,8 +129,8 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
      * {@inheritDoc }
      */
     @Override
-    public CoverageResource getCoverageReference(GenericName name, Version version) throws DataStoreException {
-        final CoverageResource cr = (version==null) ? store.getCoverageReference(name) :store.getCoverageReference(name, version);
+    public CoverageResource getCoverageResource(GenericName name, Version version) throws DataStoreException {
+        final CoverageResource cr = (version==null) ? store.getCoverageResource(name) :store.getCoverageResource(name, version);
         if(cr instanceof PyramidalCoverageResource){
             return new AmendedCoverageResource(cr, store);
         }else{

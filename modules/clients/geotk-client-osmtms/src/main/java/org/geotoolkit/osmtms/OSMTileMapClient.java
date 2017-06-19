@@ -104,7 +104,7 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client{
     }
 
     @Override
-    public Resource getRootNode() {
+    public Resource getRootResource() {
         return rootNode;
     }
 

@@ -58,8 +58,8 @@ public class WrapCoverageStore extends DataStore implements CoverageStore{
     }
 
     @Override
-    public Resource getRootNode() throws DataStoreException {
-        return store.getRootNode();
+    public Resource getRootResource() throws DataStoreException {
+        return store.getRootResource();
     }
 
     @Override
@@ -78,13 +78,13 @@ public class WrapCoverageStore extends DataStore implements CoverageStore{
     }
 
     @Override
-    public CoverageResource getCoverageReference(GenericName name) throws DataStoreException {
-        return store.getCoverageReference(name);
+    public CoverageResource getCoverageResource(GenericName name) throws DataStoreException {
+        return store.getCoverageResource(name);
     }
 
     @Override
-    public CoverageResource getCoverageReference(GenericName name, Version version) throws DataStoreException {
-        return store.getCoverageReference(name, version);
+    public CoverageResource getCoverageResource(GenericName name, Version version) throws DataStoreException {
+        return store.getCoverageResource(name, version);
     }
 
     @Override

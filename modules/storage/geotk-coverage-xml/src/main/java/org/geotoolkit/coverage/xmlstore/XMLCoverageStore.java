@@ -106,7 +106,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
-    public Resource getRootNode() {
+    public Resource getRootResource() {
         return rootNode;
     }
 

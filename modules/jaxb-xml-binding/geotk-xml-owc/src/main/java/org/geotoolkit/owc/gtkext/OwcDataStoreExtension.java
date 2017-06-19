@@ -115,7 +115,7 @@ public class OwcDataStoreExtension extends OwcExtension {
                 final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col);
                 return layer;
             }else if(store instanceof CoverageStore){
-                final CoverageResource covref = ((CoverageStore)store).getCoverageReference(NamesExt.valueOf(typeName));
+                final CoverageResource covref = ((CoverageStore)store).getCoverageResource(NamesExt.valueOf(typeName));
                 final CoverageMapLayer layer = MapBuilder.createCoverageLayer(covref);
                 return layer;
             }
