@@ -61,17 +61,17 @@ public class ReliefShadowDemo {
         covPath.setInput(reliefPath);
 
         FileCoverageStore store = new FileCoverageStore(reliefPath.toURL(), "AUTO");
-        final CoverageResource ref = store.getCoverageResource(store.getNames().iterator().next());
+        final CoverageResource ref = store.findResource(store.getNames().iterator().next());
 
 //        final GridCoverageReader  demGCR = CoverageIO.createSimpleReader(covPath);
 
         /*
          * Coverage which will be shadowed.
          */
-//        final File input = new File(ReliefShadowDemo.class.getCoverageResource("/data/coverage/clouds.jpg").toURI());
+//        final File input = new File(ReliefShadowDemo.class.findResource("/data/coverage/clouds.jpg").toURI());
 //        final FileCoverageStore store = new FileCoverageStore(input.toURL(), "JPEG");
 //        final Name name = store.getNames().iterator().next();
-//        final CoverageReference ref = store.getCoverageResource(name);
+//        final CoverageReference ref = store.findResource(name);
 //        final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
 //        final GridCoverage2D grid = (GridCoverage2D) reader.read(0, null);
 

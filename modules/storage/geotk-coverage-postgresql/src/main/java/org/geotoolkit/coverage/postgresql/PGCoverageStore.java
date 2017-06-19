@@ -156,7 +156,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         }
 
         fireCoverageAdded(name);
-        return getCoverageResource(NamesExt.create(getDefaultNamespace(), name.tip().toString()));
+        return findResource(NamesExt.create(getDefaultNamespace(), name.tip().toString()));
     }
 
     @Override
@@ -250,7 +250,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
     }
 
     @Override
-    public CoverageResource getCoverageResource(GenericName name, Version version) throws DataStoreException {
+    public CoverageResource findResource(GenericName name, Version version) throws DataStoreException {
         typeCheck(name);
         return createCoverageReference(name, version);
     }

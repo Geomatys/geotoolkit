@@ -105,7 +105,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         //decorate this coverage
         final CoverageStore decorated = new AmendedCoverageStore(store);
         assertEquals(1,decorated.getNames().size());
-        final AmendedCoverageResource decoratedRef = (AmendedCoverageResource) decorated.getCoverageResource(name);
+        final AmendedCoverageResource decoratedRef = (AmendedCoverageResource) decorated.findResource(name);
         assertNotNull(decoratedRef);
         assertEquals(IMAGECRS, decoratedRef.getGridGeometry(0).getCoordinateReferenceSystem());
         assertEquals(new AffineTransform(), decoratedRef.getGridGeometry(0).getGridToCRS());
@@ -133,7 +133,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         //decorate this coverage
         final CoverageStore decorated = new AmendedCoverageStore(store);
         assertEquals(1,decorated.getNames().size());
-        final AmendedCoverageResource decoratedRef = (AmendedCoverageResource) decorated.getCoverageResource(name);
+        final AmendedCoverageResource decoratedRef = (AmendedCoverageResource) decorated.findResource(name);
         assertNotNull(decoratedRef);
         assertEquals(IMAGECRS, decoratedRef.getGridGeometry(0).getCoordinateReferenceSystem());
         assertEquals(new AffineTransform(), decoratedRef.getGridGeometry(0).getGridToCRS());
@@ -170,7 +170,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
 
         //decorate this coverage
         final CoverageStore decorated = new AmendedCoverageStore(store);
-        final AmendedCoverageResource decoratedRef = (AmendedCoverageResource) decorated.getCoverageResource(name);
+        final AmendedCoverageResource decoratedRef = (AmendedCoverageResource) decorated.findResource(name);
 
         //override grid to crs
         final CoordinateReferenceSystem overrideCrs = CommonCRS.defaultGeographic();

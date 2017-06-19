@@ -51,7 +51,7 @@ public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
         try {
             for(GenericName n : server.getNames()){
                 if(n.tip().toString().equalsIgnoreCase(mapType)){
-                    return server.getCoverageResource(n);
+                    return server.findResource(n);
                 }
             }
             throw new RuntimeException("Not layer for name : " + mapType);

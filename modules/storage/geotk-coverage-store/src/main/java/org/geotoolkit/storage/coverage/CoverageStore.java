@@ -96,7 +96,7 @@ public interface CoverageStore extends AutoCloseable {
      * @return CoverageResource
      * @throws DataStoreException
      */
-    public abstract CoverageResource getCoverageResource(GenericName name) throws DataStoreException;
+    public abstract CoverageResource findResource(GenericName name) throws DataStoreException;
 
     /**
      * Get the coverage reference for the given name and version.
@@ -107,7 +107,7 @@ public interface CoverageStore extends AutoCloseable {
      * @return CoverageResource
      * @throws DataStoreException
      */
-    public abstract CoverageResource getCoverageResource(GenericName name, Version version) throws DataStoreException;
+    public abstract CoverageResource findResource(GenericName name, Version version) throws DataStoreException;
 
     /**
      * Create a new coverage reference.

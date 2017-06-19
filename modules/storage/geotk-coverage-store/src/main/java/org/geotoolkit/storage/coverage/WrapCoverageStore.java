@@ -78,13 +78,13 @@ public class WrapCoverageStore extends DataStore implements CoverageStore{
     }
 
     @Override
-    public CoverageResource getCoverageResource(GenericName name) throws DataStoreException {
-        return store.getCoverageResource(name);
+    public CoverageResource findResource(GenericName name) throws DataStoreException {
+        return store.findResource(name);
     }
 
     @Override
-    public CoverageResource getCoverageResource(GenericName name, Version version) throws DataStoreException {
-        return store.getCoverageResource(name, version);
+    public CoverageResource findResource(GenericName name, Version version) throws DataStoreException {
+        return store.findResource(name, version);
     }
 
     @Override

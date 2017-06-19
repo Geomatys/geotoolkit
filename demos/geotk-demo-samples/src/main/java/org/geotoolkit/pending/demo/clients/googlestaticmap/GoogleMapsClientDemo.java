@@ -39,7 +39,7 @@ public class GoogleMapsClientDemo {
         final CoverageStore store = (CoverageStore) DataStores.open(parameters);
 
         for(GenericName name : store.getNames()){
-            final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.getCoverageResource(name));
+            final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.findResource(name));
             layer.setDescription(SF.description(name.tip().toString(), ""));
             context.layers().add(layer);
         }

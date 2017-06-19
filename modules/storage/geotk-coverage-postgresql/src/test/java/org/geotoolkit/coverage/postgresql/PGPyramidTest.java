@@ -115,7 +115,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         store.create(name);
 
         //create version 1 -----------------------------------------------------
-        cref = (PyramidalCoverageResource) store.getCoverageResource(name);
+        cref = (PyramidalCoverageResource) store.findResource(name);
         assertNotNull(cref);
 
         //test create pyramid
@@ -180,7 +180,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         store.create(name);
 
         //create version 1 -----------------------------------------------------
-        cref = (PyramidalCoverageResource) store.getCoverageResource(name);
+        cref = (PyramidalCoverageResource) store.findResource(name);
         assertNotNull(cref);
 
         //test create pyramid

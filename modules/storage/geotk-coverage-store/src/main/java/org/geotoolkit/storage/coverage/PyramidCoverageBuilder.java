@@ -913,7 +913,7 @@ public class PyramidCoverageBuilder {
         CoverageResource cv = null;
         for (GenericName n : coverageStore.getNames()) {
             if (n.tip().toString().equals(coverageName.tip().toString())) {
-                cv = coverageStore.getCoverageResource(n);
+                cv = coverageStore.findResource(n);
             }
         }
         if (cv == null) {

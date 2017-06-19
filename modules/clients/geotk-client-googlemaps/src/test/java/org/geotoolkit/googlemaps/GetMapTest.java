@@ -56,7 +56,7 @@ public class GetMapTest extends org.geotoolkit.test.TestBase {
     public void testRequestStructure() throws NoSuchAuthorityCodeException, FactoryException, TransformException, DataStoreException {
 
         final StaticGoogleMapsClient gmserver = new StaticGoogleMapsClient();
-        final GoogleCoverageResource ref = (GoogleCoverageResource) gmserver.getCoverageResource(gmserver.getNames().iterator().next());
+        final GoogleCoverageResource ref = (GoogleCoverageResource) gmserver.findResource(gmserver.getNames().iterator().next());
 
         final GetMapRequest request = ref.createGetMap();
 

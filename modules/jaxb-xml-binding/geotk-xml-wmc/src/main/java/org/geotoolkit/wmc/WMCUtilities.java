@@ -184,7 +184,7 @@ public class WMCUtilities {
                 try {
                     for (GenericName n : cs.getNames()) {
                         if (n.tip().toString().equalsIgnoreCase(layerName.tip().toString())) {
-                            final CoverageResource ref = cs.getCoverageResource(n);
+                            final CoverageResource ref = cs.findResource(n);
                             final CoverageMapLayer mapLayer = MapBuilder.createCoverageLayer(ref,
                                     GO2Utilities.STYLE_FACTORY.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
                             context.layers().add(mapLayer);

@@ -154,7 +154,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                 final MemoryCoverageStore memoryCoverageStore = new MemoryCoverageStore(resampledCoverage, coverageReference.getName().tip().toString());
 
                 final GenericName name = memoryCoverageStore.getNames().iterator().next();
-                final CoverageResource resampledCovRef = memoryCoverageStore.getCoverageResource(name);
+                final CoverageResource resampledCovRef = memoryCoverageStore.findResource(name);
 
                 /////////////////////
                 // 2.2 - Compute isolines

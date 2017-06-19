@@ -139,7 +139,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
             for(GenericName n : inStore.getNames()){
 
                 fireProgressing("Copying "+n+".", (int)((inc*100f)/size), false);
-                final CoverageResource inRef = inStore.getCoverageResource(n);
+                final CoverageResource inRef = inStore.findResource(n);
                 final GenericName name = inRef.getName();
                 if (erase) {
                     outStore.delete(name);

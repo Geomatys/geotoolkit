@@ -271,7 +271,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
     }
 
     @Override
-    public final CoverageResource getCoverageResource(GenericName name) throws DataStoreException {
+    public final CoverageResource findResource(GenericName name) throws DataStoreException {
         final Map<GenericName,CoverageResource> map = listReferences();
         final CoverageResource ref = map.get(name);
         if(ref==null){
@@ -324,7 +324,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
     }
 
     @Override
-    public CoverageResource getCoverageResource(GenericName name, Version version) throws DataStoreException {
+    public CoverageResource findResource(GenericName name, Version version) throws DataStoreException {
         throw new DataStoreException("Versioning not supported");
     }
 

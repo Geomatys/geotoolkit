@@ -62,7 +62,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         });
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
         final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
-        final CoverageResource ref = store.getCoverageResource(store.getNames().iterator().next());
+        final CoverageResource ref = store.findResource(store.getNames().iterator().next());
 
 
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor2.NAME);
@@ -96,7 +96,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         });
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
         final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
-        final CoverageResource ref = store.getCoverageResource(store.getNames().iterator().next());
+        final CoverageResource ref = store.findResource(store.getNames().iterator().next());
 
 
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor2.NAME);
@@ -130,7 +130,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         });
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
         final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
-        final CoverageResource ref = store.getCoverageResource(store.getNames().iterator().next());
+        final CoverageResource ref = store.findResource(store.getNames().iterator().next());
 
 
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor2.NAME);
@@ -167,7 +167,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
 
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
         final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
-        final CoverageResource ref = store.getCoverageResource(store.getNames().iterator().next());
+        final CoverageResource ref = store.findResource(store.getNames().iterator().next());
 
         double[] intervales = {3.163};
 

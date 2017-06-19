@@ -158,7 +158,7 @@ public class FXLayerChooser extends BorderPane{
 
                 }else if(source instanceof CoverageStore){
                     final CoverageStore store = (CoverageStore) source;
-                    final CoverageResource ref = store.getCoverageResource(name);
+                    final CoverageResource ref = store.findResource(name);
                     final MutableStyle style = styleFactory.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
                     final CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref, style);
                     layer.setName(name.tip().toString());

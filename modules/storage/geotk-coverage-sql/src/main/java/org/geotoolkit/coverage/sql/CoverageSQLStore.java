@@ -117,7 +117,7 @@ public class CoverageSQLStore extends AbstractCoverageStore {
     }
 
     @Override
-    public CoverageResource getCoverageResource(GenericName name, Version version) throws DataStoreException {
+    public CoverageResource findResource(GenericName name, Version version) throws DataStoreException {
         throw new DataStoreException("Versioning not supported");
     }
 

@@ -45,7 +45,7 @@ public class IGN_API_WMTS {
         final MapContext context = MapBuilder.createContext();
 
         for(GenericName n : store.getNames()){
-            final CoverageResource cr = store.getCoverageResource(n);
+            final CoverageResource cr = store.findResource(n);
             final CoverageMapLayer cml = MapBuilder.createCoverageLayer(cr);
             cml.setDescription(new DefaultDescription(new SimpleInternationalString(n.tip().toString()), new SimpleInternationalString("")));
             context.layers().add(cml);

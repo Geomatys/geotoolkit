@@ -43,7 +43,7 @@ public class CoverageStoreDemo {
         final MapContext context = MapBuilder.createContext();
 
         for(GenericName n : store.getNames()){
-            final CoverageResource ref = store.getCoverageResource(n);
+            final CoverageResource ref = store.findResource(n);
             final CoverageMapLayer cl = MapBuilder.createCoverageLayer(ref);
             context.layers().add(cl);
         }

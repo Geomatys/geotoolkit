@@ -129,8 +129,8 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
      * {@inheritDoc }
      */
     @Override
-    public CoverageResource getCoverageResource(GenericName name, Version version) throws DataStoreException {
-        final CoverageResource cr = (version==null) ? store.getCoverageResource(name) :store.getCoverageResource(name, version);
+    public CoverageResource findResource(GenericName name, Version version) throws DataStoreException {
+        final CoverageResource cr = (version==null) ? store.findResource(name) :store.findResource(name, version);
         if(cr instanceof PyramidalCoverageResource){
             return new AmendedCoverageResource(cr, store);
         }else{
