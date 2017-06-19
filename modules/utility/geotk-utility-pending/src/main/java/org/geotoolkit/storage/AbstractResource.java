@@ -18,9 +18,12 @@ package org.geotoolkit.storage;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.opengis.metadata.Metadata;
+import org.opengis.metadata.Identifier;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -30,8 +33,22 @@ public abstract class AbstractResource implements Resource{
 
     protected final Set<StorageListener> listeners = new HashSet<>();
 
-    public AbstractResource() {
 
+    protected final Identifier identifier;
+
+    public AbstractResource(GenericName name) {
+        ArgumentChecks.ensureNonNull("identifier", name);
+        this.identifier = new NamedIdentifier(name);
+    }
+
+    public AbstractResource(Identifier identifier) {
+        ArgumentChecks.ensureNonNull("identifier", identifier);
+        this.identifier = identifier;
+    }
+
+    @Override
+    public Identifier getIdentifier() {
+        return identifier;
     }
 
     @Override

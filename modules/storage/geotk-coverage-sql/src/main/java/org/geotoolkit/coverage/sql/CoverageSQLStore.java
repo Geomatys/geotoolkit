@@ -98,10 +98,10 @@ public class CoverageSQLStore extends AbstractCoverageStore {
 
     @Override
     public Resource getRootResource() throws DataStoreException {
-        final DefaultDataSet dn = new DefaultDataSet();
+        final DefaultDataSet dn = new DefaultDataSet(NamesExt.create("root"));
         final Set<String> layers = db.getLayers().result();
         for (String layer : layers) {
-            dn.addResource(new CoverageSQLLayerReference(NamesExt.create(layer)));
+            dn.addResource(new CoverageSQLLayerResource(NamesExt.create(layer)));
         }
         return dn;
     }
@@ -188,10 +188,10 @@ public class CoverageSQLStore extends AbstractCoverageStore {
         }
     }
 
-    private class CoverageSQLLayerReference extends AbstractCoverageResource {
+    private class CoverageSQLLayerResource extends AbstractCoverageResource {
 
 
-        private CoverageSQLLayerReference(GenericName name) {
+        private CoverageSQLLayerResource(GenericName name) {
             super(CoverageSQLStore.this,name);
         }
 
@@ -208,7 +208,7 @@ public class CoverageSQLStore extends AbstractCoverageStore {
 
         @Override
         public GridCoverageReader acquireReader() throws CoverageStoreException {
-            final LayerCoverageReader reader = CoverageSQLStore.this.db.createGridCoverageReader(name.tip().toString());
+            final LayerCoverageReader reader = CoverageSQLStore.this.db.createGridCoverageReader(getName().tip().toString());
             return reader;
         }
 

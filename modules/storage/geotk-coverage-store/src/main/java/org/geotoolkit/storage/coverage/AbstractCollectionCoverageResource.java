@@ -72,7 +72,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractCollectionCoverageResource extends AbstractCoverageResource implements DataSet,CollectionCoverageReference {
+public abstract class AbstractCollectionCoverageResource extends AbstractCoverageResource implements DataSet,CollectionCoverageResource {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
 

@@ -103,7 +103,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
 
     @Override
     public Resource getRootResource() throws DataStoreException {
-        final DefaultDataSet root = new DefaultDataSet();
+        final DefaultDataSet root = new DefaultDataSet(NamesExt.create("root"));
         final String ns = getDefaultNamespace();
 
         final StringBuilder query = new StringBuilder();
@@ -272,7 +272,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
                 throw new DataStoreException(ex.getMessage(), ex);
             }
         }
-        return new PGCoverageReference(this, name, version);
+        return new PGCoverageResource(this, name, version);
     }
 
     ////////////////////////////////////////////////////////////////////////////

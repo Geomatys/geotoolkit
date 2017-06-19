@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,31 +14,28 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.googlemaps;
+package org.geotoolkit.wmsc;
 
-import org.geotoolkit.googlemaps.model.GoogleMapsPyramidSet;
+import org.geotoolkit.client.CapabilitiesException;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageReference;
+import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.storage.coverage.PyramidSet;
+import org.geotoolkit.wmsc.model.WMSCPyramidSet;
 import org.opengis.util.GenericName;
 
 /**
- * GoogleMaps coverage reference.
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class GoogleCoverageReference extends AbstractPyramidalCoverageReference {
+public class WMSCCoverageResource extends AbstractPyramidalCoverageResource {
 
-    private final GoogleMapsPyramidSet set;
+    private final PyramidSet set;
 
-    GoogleCoverageReference(final StaticGoogleMapsClient server, final GenericName name, boolean cacheImage) throws DataStoreException{
-        super(server,name,0);
-        this.set = new GoogleMapsPyramidSet(this,cacheImage);
-    }
-
-    public GetMapRequest createGetMap() {
-        return new DefaultGetMap( (StaticGoogleMapsClient)store, name.tip().toString());
+    public WMSCCoverageResource(final WebMapClientCached server,
+            final GenericName name) throws CapabilitiesException{
+        super(server, name, 0);
+        set = new WMSCPyramidSet(server, name.tip().toString());
     }
 
     @Override

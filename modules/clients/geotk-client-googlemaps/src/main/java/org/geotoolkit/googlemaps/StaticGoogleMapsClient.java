@@ -53,7 +53,7 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Cl
         }
     }
 
-    private final DefaultDataSet rootNode = new DefaultDataSet();
+    private final DefaultDataSet rootNode = new DefaultDataSet(NamesExt.create("root"));
 
     /**
      * Builds a google maps server with the default google server address.
@@ -81,10 +81,10 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Cl
         super(params);
 
         final boolean cache = getCacheImage();
-        final GoogleCoverageReference ref1 = new GoogleCoverageReference(this,NamesExt.valueOf("{http://google.com}"+GetMapRequest.TYPE_HYBRID),cache);
-        final GoogleCoverageReference ref2 = new GoogleCoverageReference(this,NamesExt.valueOf("{http://google.com}"+GetMapRequest.TYPE_ROADMAP),cache);
-        final GoogleCoverageReference ref3 = new GoogleCoverageReference(this,NamesExt.valueOf("{http://google.com}"+GetMapRequest.TYPE_SATELLITE),cache);
-        final GoogleCoverageReference ref4 = new GoogleCoverageReference(this,NamesExt.valueOf("{http://google.com}"+GetMapRequest.TYPE_TERRAIN),cache);
+        final GoogleCoverageResource ref1 = new GoogleCoverageResource(this,NamesExt.valueOf("{http://google.com}"+GetMapRequest.TYPE_HYBRID),cache);
+        final GoogleCoverageResource ref2 = new GoogleCoverageResource(this,NamesExt.valueOf("{http://google.com}"+GetMapRequest.TYPE_ROADMAP),cache);
+        final GoogleCoverageResource ref3 = new GoogleCoverageResource(this,NamesExt.valueOf("{http://google.com}"+GetMapRequest.TYPE_SATELLITE),cache);
+        final GoogleCoverageResource ref4 = new GoogleCoverageResource(this,NamesExt.valueOf("{http://google.com}"+GetMapRequest.TYPE_TERRAIN),cache);
 
         rootNode.addResource(ref1);
         rootNode.addResource(ref2);

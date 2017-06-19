@@ -17,6 +17,7 @@
 package org.geotoolkit.storage;
 
 import org.apache.sis.storage.DataStoreException;
+import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
 
 /**
@@ -24,6 +25,13 @@ import org.opengis.metadata.Metadata;
  * @author Johann Sorel (Geomatys)
  */
 public interface Resource {
+
+    /**
+     * Data identifier.
+     *
+     * @return Identifier, never null
+     */
+    Identifier getIdentifier();
 
     /**
      * Returns information about the resource. The returned metadata object, can contain
@@ -45,7 +53,7 @@ public interface Resource {
 
     /**
      * Remove a storage listener.
-     * 
+     *
      * @param listener to remove
      */
     void removeStorageListener(final StorageListener listener);

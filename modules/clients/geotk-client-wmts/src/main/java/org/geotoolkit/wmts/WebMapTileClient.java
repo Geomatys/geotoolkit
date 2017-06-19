@@ -259,7 +259,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
     @Override
     public synchronized Resource getRootResource() throws DataStoreException {
         if(rootNode == null){
-            rootNode = new DefaultDataSet();
+            rootNode = new DefaultDataSet(NamesExt.create("root"));
 
             final Capabilities capa = getCapabilities();
             if(capa == null){
@@ -269,7 +269,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
             for(LayerType lt : layers){
                 final String name = lt.getIdentifier().getValue();
                 final GenericName nn = NamesExt.create(name);
-                final CoverageResource ref = new WMTSCoverageReference(this,nn,getImageCache());
+                final CoverageResource ref = new WMTSCoverageResource(this,nn,getImageCache());
                 rootNode.addResource(ref);
             }
 

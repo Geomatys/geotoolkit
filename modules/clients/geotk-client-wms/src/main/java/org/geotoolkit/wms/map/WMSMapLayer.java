@@ -27,8 +27,8 @@ import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.wms.*;
-import org.geotoolkit.wms.WMSCoverageReference.CRS84Politic;
-import org.geotoolkit.wms.WMSCoverageReference.EPSG4326Politic;
+import org.geotoolkit.wms.WMSCoverageResource.CRS84Politic;
+import org.geotoolkit.wms.WMSCoverageResource.EPSG4326Politic;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -44,8 +44,8 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  */
 public class WMSMapLayer extends DefaultCoverageMapLayer {
 
-    private static WMSCoverageReference toReference(final WebMapClient server, final String... layers){
-        return new WMSCoverageReference(server, layers);
+    private static WMSCoverageResource toReference(final WebMapClient server, final String... layers){
+        return new WMSCoverageResource(server, layers);
     }
 
     public WMSMapLayer(final WebMapClient server, final String... layers) {
@@ -59,11 +59,11 @@ public class WMSMapLayer extends DefaultCoverageMapLayer {
 
     /**
      * Configuration of the requested coverage.
-     * @return WMSCoverageReference , never null
+     * @return WMSCoverageResource , never null
      */
     @Override
-    public WMSCoverageReference getCoverageReference() {
-        return (WMSCoverageReference) super.getCoverageReference();
+    public WMSCoverageResource getCoverageReference() {
+        return (WMSCoverageResource) super.getCoverageReference();
     }
 
     /**

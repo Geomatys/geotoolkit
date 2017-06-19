@@ -54,7 +54,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
 public class XMLCoverageStore extends AbstractCoverageStore {
 
     private final Path root;
-    private final DefaultDataSet rootNode = new DefaultDataSet();
+    private final DefaultDataSet rootNode = new DefaultDataSet(NamesExt.create("root"));
 
     final boolean cacheTileState;
 
@@ -142,9 +142,9 @@ public class XMLCoverageStore extends AbstractCoverageStore {
     private void createReference(Path refDescriptor) {
         try {
             //TODO useless copy here
-            final XMLCoverageReference set = XMLCoverageReference.read(refDescriptor);
+            final XMLCoverageResource set = XMLCoverageResource.read(refDescriptor);
             final GenericName name = NamesExt.create(getDefaultNamespace(), set.getId());
-            final XMLCoverageReference ref = new XMLCoverageReference(this,name,set.getPyramidSet());
+            final XMLCoverageResource ref = new XMLCoverageResource(this,name,set.getPyramidSet());
             ref.copy(set);
             rootNode.addResource(ref);
         } catch (JAXBException ex) {
@@ -186,7 +186,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
         }
 
         final XMLPyramidSet set = new XMLPyramidSet();
-        final XMLCoverageReference ref = new XMLCoverageReference(this,name,set);
+        final XMLCoverageResource ref = new XMLCoverageResource(this,name,set);
         ref.initialize(root.resolve(name.tip() + ".xml"));
 
         if (packMode != null) {

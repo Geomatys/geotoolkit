@@ -35,7 +35,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ProcessedCoverageReference extends DefaultCoverageResource{
+public class ProcessedCoverageResource extends DefaultCoverageResource{
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.map");
 
@@ -47,7 +47,7 @@ public class ProcessedCoverageReference extends DefaultCoverageResource{
     private ParameterValueGroup result;
     private long lastCall = 0;
 
-    public ProcessedCoverageReference(){
+    public ProcessedCoverageResource(){
         super(null, NamesExt.create("Processed"));
     }
 

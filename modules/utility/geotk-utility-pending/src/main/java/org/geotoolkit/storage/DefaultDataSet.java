@@ -23,7 +23,9 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.xml.bind.annotation.XmlTransient;
+import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -34,8 +36,12 @@ public class DefaultDataSet extends AbstractResource implements DataSet {
 
     protected final List<Resource> resources = new CopyOnWriteArrayList<Resource>();
 
-    public DefaultDataSet() {
+    public DefaultDataSet(GenericName name) {
+        super(name);
+    }
 
+    public DefaultDataSet(Identifier identifier) {
+        super(identifier);
     }
 
     public void addResource(Resource res) {

@@ -127,7 +127,7 @@ public class AmendedCoverageResource extends AbstractCoverageResource{
     public void setOverrideCRS(CoordinateReferenceSystem overrideCRS) {
         if(this.overrideCRS==overrideCRS) return;
         this.overrideCRS = overrideCRS;
-        sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, name, null, null));
+        sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, getName(), null, null));
     }
 
     /**
@@ -167,7 +167,7 @@ public class AmendedCoverageResource extends AbstractCoverageResource{
     public void setOverrideGridToCrs(MathTransform overrideGridToCrs) {
         if(this.overrideGridToCrs==overrideGridToCrs) return;
         this.overrideGridToCrs = overrideGridToCrs;
-        sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, name, null, null));
+        sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, getName(), null, null));
     }
 
     /**

@@ -62,7 +62,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
      */
     private static final ParameterDescriptorGroup desc = new ParameterBuilder().addName("Unamed").createGroup(AbstractCoverageStoreFactory.NAMESPACE);
 
-    private final DefaultDataSet rootNode = new DefaultDataSet();
+    private final DefaultDataSet rootNode = new DefaultDataSet(NamesExt.create("root"));
 
 
     public MemoryCoverageStore() {
@@ -108,7 +108,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
         if(names.contains(name)){
             throw new DataStoreException("Layer "+name+" already exist");
         }
-        rootNode.addResource(new MemoryCoverageReference(name));
+        rootNode.addResource(new MemoryCoverageResource(name));
         fireCoverageAdded(name);
         return getCoverageResource(name);
     }
@@ -120,11 +120,11 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
     public void close() {
     }
 
-    private class MemoryCoverageReference extends DefaultCoverageResource{
+    private class MemoryCoverageResource extends DefaultCoverageResource{
 
         private GridCoverage2D coverage;
 
-        public MemoryCoverageReference(GenericName name) {
+        public MemoryCoverageResource(GenericName name) {
             super(MemoryCoverageStore.this,null,name);
         }
 
@@ -148,9 +148,9 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
 
     private static class MemoryCoverageReader extends GridCoverageReader {
 
-        private final MemoryCoverageReference ref;
+        private final MemoryCoverageResource ref;
 
-        public MemoryCoverageReader(MemoryCoverageReference ref){
+        public MemoryCoverageReader(MemoryCoverageResource ref){
             this.ref = ref;
         }
 
@@ -182,9 +182,9 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
 
     private static class MemoryCoverageWriter extends GridCoverageWriter{
 
-        private final MemoryCoverageReference ref;
+        private final MemoryCoverageResource ref;
 
-        public MemoryCoverageWriter(MemoryCoverageReference ref){
+        public MemoryCoverageWriter(MemoryCoverageResource ref){
             this.ref = ref;
         }
 

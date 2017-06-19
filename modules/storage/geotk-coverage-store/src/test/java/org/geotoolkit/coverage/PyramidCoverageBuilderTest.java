@@ -70,8 +70,8 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
         //test reference
         CoverageResource outRef = mpCovStore.getCoverageResource(name);
         assertNotNull(outRef);
-        assertTrue(outRef instanceof AbstractPyramidalCoverageReference);
-        AbstractPyramidalCoverageReference outRefPy = (AbstractPyramidalCoverageReference) outRef;
+        assertTrue(outRef instanceof AbstractPyramidalCoverageResource);
+        AbstractPyramidalCoverageResource outRefPy = (AbstractPyramidalCoverageResource) outRef;
 
         //test pyramids
         PyramidSet pyramidSet = outRefPy.getPyramidSet();
@@ -153,8 +153,8 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
         //test reference
         CoverageResource outRef = mpCovStore.getCoverageResource(name);
         assertNotNull(outRef);
-        assertTrue(outRef instanceof AbstractPyramidalCoverageReference);
-        AbstractPyramidalCoverageReference outRefPy = (AbstractPyramidalCoverageReference) outRef;
+        assertTrue(outRef instanceof AbstractPyramidalCoverageResource);
+        AbstractPyramidalCoverageResource outRefPy = (AbstractPyramidalCoverageResource) outRef;
 
         //test pyramids
         PyramidSet pyramidSet = outRefPy.getPyramidSet();

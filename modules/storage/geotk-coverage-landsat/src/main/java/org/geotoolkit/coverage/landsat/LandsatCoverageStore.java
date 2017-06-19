@@ -49,7 +49,7 @@ import org.geotoolkit.storage.Resource;
  */
 public class LandsatCoverageStore extends AbstractCoverageStore {
 
-    private final DefaultDataSet root = new DefaultDataSet();
+    private final DefaultDataSet root = new DefaultDataSet(NamesExt.create("root"));
 
     /**
      * The current parent landsat8 directory.
@@ -116,14 +116,14 @@ public class LandsatCoverageStore extends AbstractCoverageStore {
         origin                  = metadataParser.getPath().getParent();
         final String sceneName  = getSceneName();
 
-        final LandsatCoverageReference reflectiveRef = new LandsatCoverageReference(this, NamesExt.create(getDefaultNamespace(),
+        final LandsatCoverageResource reflectiveRef = new LandsatCoverageResource(this, NamesExt.create(getDefaultNamespace(),
                                                                                     sceneName+"-"+REFLECTIVE_LABEL), origin, metadataParser);
         root.addResource(reflectiveRef);
-        final LandsatCoverageReference panchroRef    = new LandsatCoverageReference(this, NamesExt.create(getDefaultNamespace(),
+        final LandsatCoverageResource panchroRef    = new LandsatCoverageResource(this, NamesExt.create(getDefaultNamespace(),
                                                                                     sceneName+"-"+PANCHROMATIC_LABEL), origin, metadataParser);
         root.addResource(panchroRef);
 
-        final LandsatCoverageReference thermicRef    = new LandsatCoverageReference(this, NamesExt.create(getDefaultNamespace(),
+        final LandsatCoverageResource thermicRef    = new LandsatCoverageResource(this, NamesExt.create(getDefaultNamespace(),
                                                                                    sceneName+"-"+THERMAL_LABEL), origin, metadataParser);
         root.addResource(thermicRef);
     }

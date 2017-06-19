@@ -31,7 +31,6 @@ import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.storage.coverage.CoverageStore;
 
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
-import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Reader adapted to read and aggregate directly needed bands to build appropriate
@@ -41,7 +40,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  * @version 1.0
  * @since   1.0
  */
-public class LandsatCoverageReference extends AbstractCoverageResource {
+public class LandsatCoverageResource extends AbstractCoverageResource {
 
     /**
      * {@link Path} of the parent directory which contain all
@@ -77,7 +76,7 @@ public class LandsatCoverageReference extends AbstractCoverageResource {
      * @param imagePath path metadata file.
      * @param metadataParser Landsat 8 parent directory.
      */
-    public LandsatCoverageReference(final CoverageStore store, final GenericName name,
+    public LandsatCoverageResource(final CoverageStore store, final GenericName name,
                                     final Path imagePath, final LandsatMetadataParser metadataParser) {
         super(store, name);
         this.imagePath      = imagePath;

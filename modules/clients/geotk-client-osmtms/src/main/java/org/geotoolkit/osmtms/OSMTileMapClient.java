@@ -43,7 +43,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
 public class OSMTileMapClient extends AbstractCoverageClient implements Client{
 
     private final OSMTMSPyramidSet pyramidSet;
-    private final DefaultDataSet rootNode = new DefaultDataSet();
+    private final DefaultDataSet rootNode = new DefaultDataSet(NamesExt.create("root"));
 
     /**
      * Builds a tile map server with the given server url and version.
@@ -85,7 +85,7 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client{
         super(params);
         final GenericName name = NamesExt.create(serverURL.toString(), "main");
         pyramidSet = new OSMTMSPyramidSet(this,getMaxZoomLevel(),getCacheImage());
-        final OSMTMSCoverageReference ref = new OSMTMSCoverageReference(this,name);
+        final OSMTMSCoverageResource ref = new OSMTMSCoverageResource(this,name);
         rootNode.addResource(ref);
     }
 

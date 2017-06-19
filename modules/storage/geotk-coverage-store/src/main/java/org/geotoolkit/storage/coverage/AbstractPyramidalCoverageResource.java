@@ -63,11 +63,11 @@ import org.apache.sis.util.logging.Logging;
  * @author Johann Sorel (Geomatys)
  */
 @XmlTransient
-public abstract class AbstractPyramidalCoverageReference extends AbstractCoverageResource implements PyramidalCoverageResource {
+public abstract class AbstractPyramidalCoverageResource extends AbstractCoverageResource implements PyramidalCoverageResource {
 
     protected final int imageIndex;
 
-    public AbstractPyramidalCoverageReference(CoverageStore store, GenericName name,int imageIndex) {
+    public AbstractPyramidalCoverageResource(CoverageStore store, GenericName name,int imageIndex) {
         super(store, name);
         this.imageIndex = imageIndex;
     }

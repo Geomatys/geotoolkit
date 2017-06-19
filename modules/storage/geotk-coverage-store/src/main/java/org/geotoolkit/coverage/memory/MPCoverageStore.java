@@ -27,6 +27,7 @@ import org.geotoolkit.storage.Resource;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.util.NamesExt;
 
 /**
  *
@@ -34,7 +35,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  */
 public class MPCoverageStore extends AbstractCoverageStore {
 
-    private final DefaultDataSet rootNode = new DefaultDataSet();
+    private final DefaultDataSet rootNode = new DefaultDataSet(NamesExt.create("root"));
 
     /**
      * Dummy parameter descriptor group.

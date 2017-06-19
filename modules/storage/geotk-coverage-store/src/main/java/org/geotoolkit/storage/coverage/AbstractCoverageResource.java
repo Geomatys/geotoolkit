@@ -20,7 +20,6 @@ import java.awt.Point;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -57,7 +56,6 @@ import org.opengis.util.NoSuchIdentifierException;
 public abstract class AbstractCoverageResource extends AbstractResource implements CoverageResource {
 
     protected final CoverageStore store;
-    protected final GenericName name;
 
     private DefaultCoverageDescription desc = null;
 
@@ -67,14 +65,13 @@ public abstract class AbstractCoverageResource extends AbstractResource implemen
      * @param name never null
      */
     public AbstractCoverageResource(CoverageStore store, GenericName name) {
-        ArgumentChecks.ensureNonNull("name",name);
+        super(name);
         this.store = store;
-        this.name = name;
     }
 
     @Override
     public GenericName getName() {
-        return name;
+        return (GenericName) getIdentifier();
     }
 
     @Override

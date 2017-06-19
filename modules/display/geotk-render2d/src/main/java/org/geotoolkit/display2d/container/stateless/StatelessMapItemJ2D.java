@@ -48,12 +48,12 @@ import org.geotoolkit.map.ItemListener;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.storage.coverage.CollectionCoverageReference;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.storage.coverage.CollectionCoverageResource;
 
 /**
  *
@@ -150,7 +150,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
                 if (ref != null && ref instanceof PyramidalCoverageResource) {
                     //-- pyramidal model, we can improve rendering
                     g2d = new StatelessPyramidalCoverageLayerJ2D(getCanvas(), layer);
-                } else if (ref != null && ref instanceof CollectionCoverageReference) {
+                } else if (ref != null && ref instanceof CollectionCoverageResource) {
                     //-- collection model, we can improve rendering
                     g2d = new StatelessCollectionCoverageLayerJ2D(getCanvas(), layer);
                 } else {

@@ -14,28 +14,27 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wmsc;
+package org.geotoolkit.wmts;
 
-import org.geotoolkit.client.CapabilitiesException;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageReference;
+import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.storage.coverage.PyramidSet;
-import org.geotoolkit.wmsc.model.WMSCPyramidSet;
+import org.geotoolkit.wmts.model.WMTSPyramidSet;
 import org.opengis.util.GenericName;
 
 /**
+ * WMTS Coverage Reference.
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMSCCoverageReference extends AbstractPyramidalCoverageReference {
+public class WMTSCoverageResource extends AbstractPyramidalCoverageResource {
 
     private final PyramidSet set;
 
-    public WMSCCoverageReference(final WebMapClientCached server,
-            final GenericName name) throws CapabilitiesException{
-        super(server, name, 0);
-        set = new WMSCPyramidSet(server, name.tip().toString());
+    WMTSCoverageResource(WebMapTileClient server, GenericName name, boolean cacheImage){
+        super(server,name,0);
+        set = new WMTSPyramidSet(server, name.tip().toString(), cacheImage);
     }
 
     @Override

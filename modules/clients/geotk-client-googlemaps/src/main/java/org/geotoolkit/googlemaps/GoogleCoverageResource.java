@@ -14,40 +14,36 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.osmtms;
+package org.geotoolkit.googlemaps;
 
+import org.geotoolkit.googlemaps.model.GoogleMapsPyramidSet;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageReference;
+import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.storage.coverage.PyramidSet;
 import org.opengis.util.GenericName;
 
 /**
- * Open Street Map Tile Map Server.
+ * GoogleMaps coverage reference.
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class OSMTMSCoverageReference extends AbstractPyramidalCoverageReference {
+public class GoogleCoverageResource extends AbstractPyramidalCoverageResource {
 
-    OSMTMSCoverageReference(OSMTileMapClient server, GenericName name){
+    private final GoogleMapsPyramidSet set;
+
+    GoogleCoverageResource(final StaticGoogleMapsClient server, final GenericName name, boolean cacheImage) throws DataStoreException{
         super(server,name,0);
+        this.set = new GoogleMapsPyramidSet(this,cacheImage);
+    }
+
+    public GetMapRequest createGetMap() {
+        return new DefaultGetMap( (StaticGoogleMapsClient)store, getName().tip().toString());
     }
 
     @Override
     public PyramidSet getPyramidSet() throws DataStoreException {
-        return ((OSMTileMapClient)store).getPyramidSet();
+        return set;
     }
 
-    /**
-     * Returns adapted {@link ViewType} for OSM TMS reference.
-     * The default associated view is {@link ViewType#PHOTOGRAPHIC}.
-     *
-     * @return
-     * @throws DataStoreException
-     */
-    @Override
-    public ViewType getPackMode() throws DataStoreException {
-        return ViewType.PHOTOGRAPHIC;
-    }
 }

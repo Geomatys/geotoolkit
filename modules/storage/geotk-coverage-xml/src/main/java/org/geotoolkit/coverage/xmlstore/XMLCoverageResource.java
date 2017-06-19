@@ -43,7 +43,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageReference;
+import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.storage.coverage.Pyramid;
@@ -74,7 +74,7 @@ import static java.nio.file.StandardOpenOption.WRITE;
  * @module
  */
 @XmlRootElement(name="CoverageReference")
-public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
+public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
 
     /**
      * Changes :
@@ -87,7 +87,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     private static MarshallerPool POOL;
     static {
         try {
-            POOL = new MarshallerPool(JAXBContext.newInstance(XMLCoverageReference.class), null);
+            POOL = new MarshallerPool(JAXBContext.newInstance(XMLCoverageResource.class), null);
         } catch (JAXBException ex) {
             Logging.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, ex.getMessage(), ex);
             throw new RuntimeException("Failed to initialize JAXB XML Coverage reference marshaller pool.");
@@ -227,11 +227,11 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     //caches
     private List<GridSampleDimension> cacheDimensions = null;
 
-    public XMLCoverageReference() {
+    public XMLCoverageResource() {
         super(null, DEFAULT_NAME, 0);
     }
 
-    public XMLCoverageReference(XMLCoverageStore store, GenericName name, XMLPyramidSet set) {
+    public XMLCoverageResource(XMLCoverageStore store, GenericName name, XMLPyramidSet set) {
         super(store,name,0);
         this.set = set;
         this.set.setRef(this);
@@ -242,7 +242,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         return sampleDimensions;
     }
 
-    public void copy(XMLCoverageReference ref){
+    public void copy(XMLCoverageResource ref){
         this.version                    = ref.version;
         this.id                         = ref.id;
         this.mainfile                   = ref.mainfile;
@@ -373,7 +373,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
 
 
     /**
-     * Read the given file and return an XMLCoverageReference.
+     * Read the given file and return an XMLCoverageResource.
      *
      * @param file
      * @return
@@ -381,28 +381,28 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
      * @throws org.apache.sis.storage.DataStoreException if the file describe a pyramid, but it contains an invalid CRS.
      */
     @Deprecated
-    public static XMLCoverageReference read(File file) throws JAXBException, DataStoreException {
+    public static XMLCoverageResource read(File file) throws JAXBException, DataStoreException {
         final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
-        final XMLCoverageReference ref;
-        ref = (XMLCoverageReference) unmarshaller.unmarshal(file);
+        final XMLCoverageResource ref;
+        ref = (XMLCoverageResource) unmarshaller.unmarshal(file);
         POOL.recycle(unmarshaller);
         ref.initialize(file.toPath());
         return ref;
     }
 
     /**
-     * Read the given Path and return an XMLCoverageReference.
+     * Read the given Path and return an XMLCoverageResource.
      *
      * @param file
      * @return
      * @throws JAXBException if an error occurred while reading descriptor file.
      * @throws org.apache.sis.storage.DataStoreException if the file describe a pyramid, but it contains an invalid CRS.
      */
-    public static XMLCoverageReference read(Path file) throws JAXBException, DataStoreException, IOException {
+    public static XMLCoverageResource read(Path file) throws JAXBException, DataStoreException, IOException {
         final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
-        final XMLCoverageReference ref;
+        final XMLCoverageResource ref;
         try (InputStream is = Files.newInputStream(file)) {
-            ref = (XMLCoverageReference) unmarshaller.unmarshal(is);
+            ref = (XMLCoverageResource) unmarshaller.unmarshal(is);
             POOL.recycle(unmarshaller);
             ref.initialize(file);
         }

@@ -50,6 +50,7 @@ final class AmendedResource extends DefaultDataSet {
     };
 
     AmendedResource(DataSet node, final AmendedCoverageStore store) {
+        super(node.getIdentifier());
         this.store = store;
         this.base = node;
         node.addStorageListener(new StorageListener.Weak(store, subListener));

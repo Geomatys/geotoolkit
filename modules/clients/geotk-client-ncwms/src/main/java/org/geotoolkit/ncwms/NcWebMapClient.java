@@ -104,7 +104,7 @@ public class NcWebMapClient extends WebMapClient{
 
     @Override
     protected CoverageResource createReference(GenericName name) throws DataStoreException{
-        return new NcWMSCoverageReference(this,name);
+        return new NcWMSCoverageResource(this,name);
     }
 
     /**

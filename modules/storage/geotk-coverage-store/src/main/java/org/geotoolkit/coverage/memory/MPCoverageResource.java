@@ -37,7 +37,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Marechal Remi (Geomatys).
  */
-public class MPCoverageResource extends AbstractPyramidalCoverageReference {
+public class MPCoverageResource extends AbstractPyramidalCoverageResource {
 
     private final DefaultPyramidSet pyramidSet;
     private final AtomicLong mosaicID = new AtomicLong(0);

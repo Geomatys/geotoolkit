@@ -89,7 +89,7 @@ public class WebMapClientCached extends WebMapClient {
     @Override
     protected CoverageResource createReference(GenericName name) throws DataStoreException{
         try {
-            return new WMSCCoverageReference(this,name);
+            return new WMSCCoverageResource(this,name);
         } catch (CapabilitiesException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }

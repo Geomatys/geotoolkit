@@ -20,7 +20,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractGridMosaic;
-import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageReference;
+import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreListener;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
@@ -410,7 +410,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
 
         final GridCoverage2D coverage;
         try {
-            coverage = AbstractPyramidalCoverageReference.getTileAsCoverage(ref,pyramidId,mosaicId,tileX,tileY);
+            coverage = AbstractPyramidalCoverageResource.getTileAsCoverage(ref,pyramidId,mosaicId,tileX,tileY);
         } catch (DataStoreException ex) {
             LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             return null;
@@ -426,7 +426,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
 
         final GridCoverage2D coverage;
         try {
-            coverage = AbstractPyramidalCoverageReference.getTileAsCoverage(ref,pyramidId,mosaicId,tile);
+            coverage = AbstractPyramidalCoverageResource.getTileAsCoverage(ref,pyramidId,mosaicId,tile);
         } catch (DataStoreException ex) {
             LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             return null;

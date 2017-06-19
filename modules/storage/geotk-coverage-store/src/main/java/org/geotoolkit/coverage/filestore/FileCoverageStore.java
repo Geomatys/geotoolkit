@@ -50,7 +50,6 @@ import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataSet;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DefaultDataSet;
-import org.geotoolkit.storage.Resource;
 import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
@@ -130,7 +129,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
     @Override
     public synchronized DataSet getRootResource() throws DataStoreException{
         if(rootNode==null){
-            rootNode = new DefaultDataSet();
+            rootNode = new DefaultDataSet(NamesExt.create("root"));
             try {
                 visit(root);
             } catch (DataStoreException ex) {

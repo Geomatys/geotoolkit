@@ -383,7 +383,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
     @Override
     public synchronized Resource getRootResource() throws DataStoreException {
         if(rootNode == null){
-            rootNode = new DefaultDataSet();
+            rootNode = new DefaultDataSet(NamesExt.create("root"));
             final AbstractWMSCapabilities capa;
             try {
                 capa = getCapabilities();
@@ -412,7 +412,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
      * @return
      */
     protected CoverageResource createReference(GenericName name) throws DataStoreException{
-        return new WMSCoverageReference(this,name);
+        return new WMSCoverageResource(this,name);
     }
 
     @Override
