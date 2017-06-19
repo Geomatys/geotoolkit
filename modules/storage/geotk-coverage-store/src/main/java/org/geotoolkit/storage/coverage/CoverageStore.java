@@ -33,7 +33,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface CoverageStore {
+public interface CoverageStore extends AutoCloseable {
 
     /**
      * Get the parameters used to initialize this source from it's factory.
@@ -136,7 +136,7 @@ public interface CoverageStore {
     /**
      * Add a storage listener which will be notified when structure changes or
      * when coverage data changes.
-     * 
+     *
      * @param listener to add
      */
     public abstract void addStorageListener(StorageListener listener);

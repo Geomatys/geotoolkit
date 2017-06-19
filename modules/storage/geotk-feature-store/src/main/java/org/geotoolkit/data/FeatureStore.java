@@ -52,7 +52,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface FeatureStore {
+public interface FeatureStore extends AutoCloseable {
 
     /**
      * Get the parameters used to initialize this source from it's factory.

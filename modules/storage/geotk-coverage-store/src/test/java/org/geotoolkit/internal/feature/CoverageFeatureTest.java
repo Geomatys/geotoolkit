@@ -31,6 +31,7 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.internal.feature.TypeConventions;
 import org.junit.Test;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;

@@ -30,6 +30,7 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -40,10 +41,13 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.geotoolkit.internal.feature.TypeConventions;
+import org.geotoolkit.storage.coverage.CoverageResource;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
@@ -222,6 +226,70 @@ public final class CoverageFeature {
         } else {
             throw new CoverageStoreException("Unsupported coverage type "+coverage);
         }
+
+    }
+
+    public static FeatureAssociation coverageRecords(final CoverageResource res, final FeatureAssociationRole role) {
+
+        final Collection<Feature> pixels = new AbstractCollection<Feature>() {
+
+            int count = -1;
+
+            @Override
+            public Iterator<Feature> iterator() {
+                final GridCoverage2D cov2d;
+                try {
+                    final GridCoverageReader reader = res.acquireReader();
+                    cov2d = (GridCoverage2D) reader.read(res.getImageIndex(), null);
+                } catch (DataStoreException ex) {
+                    throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
+                }
+                return new CoverageRecordIterator(role.getValueType(), cov2d);
+            }
+
+            @Override
+            public synchronized int size() {
+                if (count==-1) {
+                    try {
+                        final GridCoverageReader reader = res.acquireReader();
+                        final GridGeometry gg = reader.getGridGeometry(res.getImageIndex());
+                        final GridEnvelope extent = gg.getExtent();
+                        final int dimension = extent.getDimension();
+                        int size = extent.getSpan(0);
+                        for (int i=1;i<dimension;i++) {
+                            size *= extent.getSpan(i);
+                        }
+                        res.recycle(reader);
+                        count = size;
+                    } catch (DataStoreException ex) {
+                        throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
+                    }
+                }
+                return count;
+            }
+        };
+
+        return new AbstractAssociation(role) {
+            @Override
+            public Collection<Feature> getValues() {
+                return pixels;
+            }
+
+            @Override
+            public void setValues(Collection<? extends Feature> values) throws InvalidPropertyValueException {
+                throw new InvalidPropertyValueException("Property is unmodifiable.");
+            }
+
+            @Override
+            public Feature getValue() throws MultiValuedPropertyException {
+                throw new MultiValuedPropertyException();
+            }
+
+            @Override
+            public void setValue(Feature value) throws InvalidPropertyValueException {
+                throw new InvalidPropertyValueException("Property is unmodifiable.");
+            }
+        };
 
     }
 

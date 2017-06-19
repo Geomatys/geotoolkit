@@ -17,18 +17,33 @@
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Image;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.storage.FeatureResource;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureResource;
+import org.geotoolkit.data.memory.GenericQueryFeatureIterator;
+import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.internal.feature.CoverageFeature;
+import org.geotoolkit.internal.feature.TypeConventions;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureAssociationRole;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.metadata.content.CoverageDescription;
 
 /**
  * Resource to a coverage in the coverage store.
- *
  *
  * @author Johann Sorel (Geomatys)
  * @module
@@ -105,5 +120,30 @@ public interface CoverageResource extends FeatureResource {
      * @throws DataStoreException
      */
     Image getLegend() throws DataStoreException;
+
+    @Override
+    public default FeatureType getType() throws DataStoreException {
+        final GridCoverageReader reader = acquireReader();
+        final FeatureType type = CoverageFeature.createCoverageType(reader);
+        recycle(reader);
+        return type;
+    }
+
+    @Override
+    public default Stream<Feature> read(Query query) throws DataStoreException {
+        final FeatureType type = getType();
+        final FeatureAssociationRole role = (FeatureAssociationRole) type.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
+        final Feature feature = type.newInstance();
+        feature.setProperty(CoverageFeature.coverageRecords(this,role));
+        final List<Feature> lst = Arrays.asList(feature);
+        FeatureReader reader = GenericWrapFeatureIterator.wrapToReader(lst.iterator(), type);
+        if (query!=null) {
+            reader = GenericQueryFeatureIterator.wrap(reader, query);
+        }
+
+        final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize((Iterator)reader, Spliterator.ORDERED);
+        final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
+        return stream.onClose(reader::close);
+    }
 
 }
