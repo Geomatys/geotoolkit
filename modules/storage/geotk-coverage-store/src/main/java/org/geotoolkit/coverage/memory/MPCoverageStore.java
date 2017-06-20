@@ -55,6 +55,7 @@ public class MPCoverageStore extends AbstractCoverageStore {
     public CoverageResource create(GenericName name) throws DataStoreException {
         final MPCoverageResource mpcref = new MPCoverageResource(this, name);
         rootNode.addResource(mpcref);
+        fireCoverageAdded(name);
         return mpcref;
     }
 

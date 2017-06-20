@@ -457,7 +457,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         gcb.setEnvelope(covenv);
         gcb.setRenderedImage(img);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
-        final MapLayer layer = MapBuilder.createCoverageLayer(coverage, SF.style(SF.rasterSymbolizer()), "");
+        final MapLayer layer = MapBuilder.createCoverageLayer(coverage, SF.style(SF.rasterSymbolizer()), "unnamed");
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);
 

@@ -16,18 +16,11 @@
  */
 package org.geotoolkit.storage;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import org.apache.sis.internal.metadata.NameToIdentifier;
 import org.apache.sis.metadata.MetadataCopier;
 import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.util.NamesExt;
-import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.util.GenericName;
 
 /**
  *
@@ -87,60 +80,4 @@ public abstract class DataStore extends org.apache.sis.storage.DataStore {
         return null;
     }
 
-//    public abstract Resource getRootResource() throws DataStoreException;
-
-//    /**
-//     * Convenient method to list identifiers of all resources in the store.
-//     *
-//     * @return Set, never null, can be empty.
-//     */
-//    public Set<GenericName> getNames() throws DataStoreException {
-//        final Set<GenericName> names = new HashSet<>();
-//        fillNames(getRootResource(), names);
-//        return names;
-//    }
-//
-//    private void fillNames(Resource candidate, Set<GenericName> names) {
-//        final Identifier identifier = candidate.getIdentifier();
-//        if (identifier instanceof GenericName) {
-//            names.add((GenericName) identifier);
-//        } else {
-//            names.add(NamesExt.create(identifier.getCode()));
-//        }
-//
-//        if (candidate instanceof DataSet) {
-//            final DataSet ds = (DataSet) candidate;
-//            for (Resource rs : ds.getResources()) {
-//                fillNames(rs, names);
-//            }
-//        }
-//
-//    }
-//
-//    public Resource findResource(String name) throws DataStoreException {
-//        final Resource res = findResource(name, getRootResource());
-//        if (res==null) {
-//            throw new DataStoreException("No resource for name : "+name);
-//        }
-//        return res;
-//    }
-//
-//    private Resource findResource(String name, Resource candidate) throws DataStoreException {
-//        boolean match = NameToIdentifier.isHeuristicMatchForIdentifier(Collections.singleton(candidate.getIdentifier()), name);
-//        Resource result = match ? candidate : null;
-//
-//        if (candidate instanceof DataSet) {
-//            final DataSet ds = (DataSet) candidate;
-//            for (Resource rs : ds.getResources()) {
-//                rs = findResource(name, rs);
-//                if (rs!=null) {
-//                    if (result!=null) {
-//                        throw new DataStoreException("Multiple resources match the name : "+name);
-//                    }
-//                    result = rs;
-//                }
-//            }
-//        }
-//        return result;
-//    }
 }

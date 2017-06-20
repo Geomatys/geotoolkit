@@ -40,9 +40,11 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.storage.AbstractResource;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.parameter.ParameterValueGroup;
@@ -71,7 +73,12 @@ public abstract class AbstractCoverageResource extends AbstractResource implemen
 
     @Override
     public GenericName getName() {
-        return (GenericName) getIdentifier();
+        Identifier identifier = getIdentifier();
+        if (identifier instanceof GenericName) {
+            return (GenericName) identifier;
+        } else {
+           return NamesExt.create(identifier.getCode());
+        }
     }
 
     @Override

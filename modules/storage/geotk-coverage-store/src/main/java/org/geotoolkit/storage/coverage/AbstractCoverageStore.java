@@ -34,10 +34,12 @@ import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.data.internal.GenericNameIndex;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.storage.DataSet;
@@ -71,7 +73,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
     protected final ParameterValueGroup parameters;
     protected final Set<StorageListener> storeListeners = new HashSet<>();
 
-    private final HashMap<GenericName, CoverageResource> cachedRefs = new HashMap<>();
+    private GenericNameIndex<CoverageResource> cachedRefs = null;
 
     protected AbstractCoverageStore(final ParameterValueGroup params) {
         this.parameters = params;
@@ -266,38 +268,29 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
     @Override
     public final Set<GenericName> getNames() throws DataStoreException {
-        final Map<GenericName,CoverageResource> map = listReferences();
-        return map.keySet();
+        final GenericNameIndex<CoverageResource> map = listReferences();
+        return map.getNames();
     }
 
     @Override
     public final CoverageResource findResource(GenericName name) throws DataStoreException {
-        final Map<GenericName,CoverageResource> map = listReferences();
-        final CoverageResource ref = map.get(name);
-        if(ref==null){
-            final StringBuilder sb = new StringBuilder("Type name : ");
-            sb.append(name);
-            sb.append(" do not exist in this datastore, available names are : ");
-            for(final GenericName n : map.keySet()){
-                sb.append(n).append(", ");
-            }
-            throw new DataStoreException(sb.toString());
-        }
-        return ref;
+        final GenericNameIndex<CoverageResource> map = listReferences();
+        return map.get(name.toString());
     }
 
-    protected Map<GenericName,CoverageResource> listReferences() throws DataStoreException {
-        if (cachedRefs.isEmpty()) {
+    protected synchronized GenericNameIndex<CoverageResource> listReferences() throws DataStoreException {
+        if (cachedRefs==null) {
+            cachedRefs = new GenericNameIndex<>();
             listReferences(getRootResource(), cachedRefs);
         }
         return cachedRefs;
     }
 
-    private Map<GenericName,CoverageResource> listReferences(Resource candidate, Map<GenericName,CoverageResource> map){
+    private GenericNameIndex<CoverageResource> listReferences(Resource candidate, GenericNameIndex<CoverageResource> map) throws IllegalNameException{
 
         if(candidate instanceof CoverageResource){
             final CoverageResource cr = (CoverageResource) candidate;
-            map.put(cr.getName(), cr);
+            map.add(cr.getName(), cr);
         }
 
         if (candidate instanceof DataSet) {
@@ -449,8 +442,8 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
      * Forward a structure event to all listeners.
      * @param event , event to send to listeners.
      */
-    protected void sendStructureEvent(final StorageEvent event){
-        cachedRefs.clear();
+    protected synchronized void sendStructureEvent(final StorageEvent event){
+        cachedRefs = null;
         final StorageListener[] lst;
         synchronized (storeListeners) {
             lst = storeListeners.toArray(new StorageListener[storeListeners.size()]);

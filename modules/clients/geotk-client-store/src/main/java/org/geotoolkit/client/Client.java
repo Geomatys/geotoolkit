@@ -19,6 +19,7 @@ package org.geotoolkit.client;
 import java.net.URI;
 import java.net.URL;
 import java.util.Map;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.StorageListener;
 import org.opengis.parameter.ParameterValueGroup;
@@ -31,7 +32,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface Client {
+public interface Client extends AutoCloseable {
 
     /**
      * Get the parameters used to initialize this source from it's factory.
@@ -100,5 +101,7 @@ public interface Client {
      * @param listener to remove
      */
     void removeStorageListener(StorageListener listener);
+
+    void close() throws DataStoreException;
 
 }

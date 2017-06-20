@@ -92,6 +92,7 @@ import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -125,7 +126,10 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 obj = GO2Utilities.evaluate(GO2Utilities.FILTER_FACTORY.property(geomName), pf.getCandidate(), null, null);
             }
             if(obj instanceof GridCoverage2D){
-                final CoverageMapLayer ml = MapBuilder.createCoverageLayer((GridCoverage2D)obj, GO2Utilities.STYLE_FACTORY.style(), "");
+                final GridCoverage2D cov = (GridCoverage2D) obj;
+                CharSequence name = cov.getName();
+                if (name==null) name = "unnamed";
+                final CoverageMapLayer ml = MapBuilder.createCoverageLayer(cov, GO2Utilities.STYLE_FACTORY.style(), name.toString());
                 final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
