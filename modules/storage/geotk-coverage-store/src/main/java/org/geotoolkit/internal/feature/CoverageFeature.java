@@ -237,14 +237,14 @@ public final class CoverageFeature {
 
             @Override
             public Iterator<Feature> iterator() {
-                final GridCoverage2D cov2d;
+                final GridCoverage cov;
                 try {
                     final GridCoverageReader reader = res.acquireReader();
-                    cov2d = (GridCoverage2D) reader.read(res.getImageIndex(), null);
+                    cov = reader.read(res.getImageIndex(), null);
                 } catch (DataStoreException ex) {
                     throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
                 }
-                return new CoverageRecordIterator(role.getValueType(), cov2d);
+                return create(role.getValueType(), cov);
             }
 
             @Override
@@ -309,8 +309,7 @@ public final class CoverageFeature {
         final Collection<Feature> pixels = new AbstractCollection<Feature>() {
             @Override
             public Iterator<Feature> iterator() {
-                final GridCoverage2D cov2d = (GridCoverage2D) coverage;
-                return new CoverageRecordIterator(recordType, cov2d);
+                return create(recordType, coverage);
             }
 
             @Override
@@ -343,7 +342,77 @@ public final class CoverageFeature {
 
     }
 
-    private static class CoverageRecordIterator implements Iterator<Feature> {
+    private static Iterator<Feature> create(FeatureType recordType, Coverage coverage) {
+        if (coverage instanceof GridCoverage2D) {
+            return new GridCoverage2DRecordIterator(recordType, (GridCoverage2D) coverage);
+        } else if (coverage instanceof CoverageStack) {
+            return new GridCoverageRecordIterator(recordType, (CoverageStack) coverage);
+        } else {
+            throw new UnsupportedOperationException("Unsupported coverage type "+coverage.getClass().getName());
+        }
+    }
+
+    private static class GridCoverageRecordIterator implements Iterator<Feature> {
+
+        private final FeatureType recordType;
+        private final Iterator<GridCoverage> coverageIte;
+        private Iterator<Feature> subIte;
+        private Feature next = null;
+
+
+        private GridCoverageRecordIterator(FeatureType recordType, CoverageStack coverage) {
+            this.recordType = recordType;
+            final int nb = coverage.getStackSize();
+            final List<GridCoverage> stack = new ArrayList<>(nb);
+            for (int i=0;i<nb;i++) {
+                stack.add((GridCoverage) coverage.coverageAtIndex(i));
+            }
+            this.coverageIte = stack.iterator();
+        }
+
+        @Override
+        public boolean hasNext() {
+            findNext();
+            return next != null;
+        }
+
+        @Override
+        public Feature next() {
+            findNext();
+            if(next == null){
+                throw new NoSuchElementException("No more features.");
+            }
+            final Feature candidate = next;
+            next = null;
+            return candidate;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        private void findNext(){
+            if (next != null) return;
+
+            while (next==null) {
+                if (subIte==null) {
+                    if (coverageIte.hasNext()) {
+                        subIte = create(recordType, coverageIte.next());
+                    } else {
+                        break;
+                    }
+                } else if(subIte.hasNext()) {
+                    next = subIte.next();
+                } else {
+                    subIte = null;
+                }
+            }
+        }
+
+    }
+
+    private static class GridCoverage2DRecordIterator implements Iterator<Feature> {
 
         private final GeometryFactory GF = new GeometryFactory();
         private final FeatureType recordType;
@@ -355,7 +424,7 @@ public final class CoverageFeature {
         private boolean iteNext;
         private Feature next = null;
 
-        private CoverageRecordIterator(FeatureType recordType, GridCoverage2D coverage) {
+        private GridCoverage2DRecordIterator(FeatureType recordType, GridCoverage2D coverage) {
             this.recordType = recordType;
             this.coverage = coverage.view(ViewType.GEOPHYSICS);
             this.pixelIterator = PixelIteratorFactory.createDefaultIterator(this.coverage.getRenderedImage());
