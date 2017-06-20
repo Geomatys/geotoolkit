@@ -28,6 +28,7 @@ import java.util.NoSuchElementException;
 import org.apache.sis.feature.AbstractAssociation;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
@@ -113,8 +114,15 @@ public final class CoverageFeature {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setSuperTypes(TypeConventions.COVERAGE_RECORD_TYPE);
         ftb.setName((coverage instanceof AbstractCoverage ? ((AbstractCoverage)coverage).getName() : "") + "Record" );
-        final CoordinateReferenceSystem crs = CRS.getHorizontalComponent(coverage.getCoordinateReferenceSystem());
-        ftb.addAttribute(Geometry.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs).setMinimumOccurs(1).setMaximumOccurs(1).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(crs);
+        ftb.addAttribute(Geometry.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs2d).setMinimumOccurs(1).setMaximumOccurs(1).addRole(AttributeRole.DEFAULT_GEOMETRY);
+
+        //if the CRS has more the 2 dimensions, we convert the envelope operation
+        //to an attribute, the envelope will be N dimesion, and the geometry 2D
+        if (crs.getCoordinateSystem().getDimension() > 2) {
+            ftb.addAttribute(Envelope.class).setName(AttributeConvention.ENVELOPE_PROPERTY).setCRS(crs);
+        }
 
         //use existing sample dimensions
         final int nbDim = coverage.getNumSampleDimensions();
@@ -148,12 +156,19 @@ public final class CoverageFeature {
         final int imageIndex = 0;
 
         final GeneralGridGeometry gridGeometry = reader.getGridGeometry(imageIndex);
-        final CoordinateReferenceSystem crs = CRS.getHorizontalComponent(gridGeometry.getCoordinateReferenceSystem());
+        final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(crs);
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setSuperTypes(TypeConventions.COVERAGE_RECORD_TYPE);
         ftb.setName(reader.getCoverageNames().get(imageIndex).tip().toString()+"Record");
-        ftb.addAttribute(Geometry.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs).setMinimumOccurs(1).setMaximumOccurs(1).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(Geometry.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs2d).setMinimumOccurs(1).setMaximumOccurs(1).addRole(AttributeRole.DEFAULT_GEOMETRY);
+
+        //if the CRS has more the 2 dimensions, we convert the envelope operation
+        //to an attribute, the envelope will be N dimesion, and the geometry 2D
+        if (crs.getCoordinateSystem().getDimension() > 2) {
+            ftb.addAttribute(Envelope.class).setName(AttributeConvention.ENVELOPE_PROPERTY).setCRS(crs);
+        }
 
         //use existing sample dimensions
         final List<GridSampleDimension> samples = reader.getSampleDimensions(imageIndex);
@@ -420,7 +435,9 @@ public final class CoverageFeature {
         private final String[] properties;
         private final PixelIterator pixelIterator;
         private final MathTransform gridToCrs2D;
+        private final CoordinateReferenceSystem crs;
         private final CoordinateReferenceSystem crs2D;
+        private final Envelope envelope;
         private boolean iteNext;
         private Feature next = null;
 
@@ -430,6 +447,8 @@ public final class CoverageFeature {
             this.pixelIterator = PixelIteratorFactory.createDefaultIterator(this.coverage.getRenderedImage());
             final GridGeometry2D gridGeometry = this.coverage.getGridGeometry();
             this.gridToCrs2D = gridGeometry.getGridToCRS2D(PixelOrientation.LOWER_LEFT);
+            this.envelope = gridGeometry.getEnvelope();
+            this.crs = gridGeometry.getCoordinateReferenceSystem();
             this.crs2D = gridGeometry.getCoordinateReferenceSystem2D();
 
             //list properties
@@ -470,7 +489,7 @@ public final class CoverageFeature {
         private void findNext(){
             if(next != null) return;
 
-            while(next == null && iteNext){
+            while (next == null && iteNext) {
                 next = recordType.newInstance();
                 //build geometry
                 final int x = pixelIterator.getX();
@@ -497,8 +516,17 @@ public final class CoverageFeature {
                     next.setPropertyValue(properties[i], pixelIterator.getSampleDouble());
                     iteNext = pixelIterator.next();
                 }
-            }
 
+                //if the CRS has more the 2 dimensions, we convert the envelope operation
+                //has been converted to an attribute, the envelope will be N dimesion, and the geometry 2D
+                if (envelope.getDimension() > 2) {
+                    final GeneralEnvelope env = new GeneralEnvelope(envelope);
+                    final com.vividsolutions.jts.geom.Envelope jtsEnv = geom.getEnvelopeInternal();
+                    env.setRange(0, jtsEnv.getMinX(), jtsEnv.getMaxX());
+                    env.setRange(1, jtsEnv.getMinY(), jtsEnv.getMaxY());
+                    next.setPropertyValue(AttributeConvention.ENVELOPE_PROPERTY.toString(), env);
+                }
+            }
         }
 
     }
