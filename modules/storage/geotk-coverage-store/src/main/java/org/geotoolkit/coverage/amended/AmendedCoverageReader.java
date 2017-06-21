@@ -104,7 +104,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
      *
      *
      * @param index : image index
-     * @param param : read parameters.
+     * @param param : features parameters.
      * @return GridCoverage
      * @throws CoverageStoreException
      * @throws CancellationException

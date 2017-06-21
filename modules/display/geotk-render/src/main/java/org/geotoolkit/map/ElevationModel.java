@@ -68,7 +68,7 @@ public class ElevationModel {
      *
      * Note : The default value of {@linkplain #axisDirection} is {@link AxisDirection#UP}.
      *
-     * @param ref {@link CoverageResource} where we can read DEM.
+     * @param ref {@link CoverageResource} where we can features DEM.
      * @param azimuth Light angle in degree from  {@link CoordinateReferenceSystem} North {@link CoordinateSystemAxis} from {@link GridCoverage}.
      * @param altitude Light angle in degree of the light from the ground.
      * @param scale Coefficient (or factor) in per cent to controle shadow length spread in function of maximum DEM amplitude value.
@@ -80,7 +80,7 @@ public class ElevationModel {
     /**
      * Build {@link ElevationModel} object which contain some elevation information need to build shadow relief.
      *
-     * @param ref {@link CoverageResource} where we can read DEM.
+     * @param ref {@link CoverageResource} where we can features DEM.
      * @param azimuth Light angle in degree from  {@link CoordinateReferenceSystem} North {@link CoordinateSystemAxis} from {@link GridCoverage}.
      * @param altitude Light angle in degree of the light from the ground.
      * @param scale Coefficient (or factor) in per cent to controle shadow length spread in function of maximum DEM amplitude value.

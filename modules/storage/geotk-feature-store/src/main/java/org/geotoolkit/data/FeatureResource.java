@@ -42,16 +42,26 @@ public interface FeatureResource extends Resource {
      * @return the feature type, never null.
      * @throws DataStoreException if an I/O or decoding error occurs.
      */
-    public FeatureType getType() throws DataStoreException;
+    FeatureType getType() throws DataStoreException;
+
+    /**
+     * Request a subset of features from this resource.
+     * The query is optional, if not set this resource will be returned.
+     *
+     * @param  query a filter to apply on the returned features, or null if none.
+     * @return resource of features matching the given query.
+     * @throws DataStoreException if an I/O or decoding error occurs.
+     */
+    default FeatureResource subset(Query query) throws DataStoreException {
+        return new SubsetFeatureResource(this, query);
+    }
 
     /**
      * Reads features from the resource.
-     * The query is optional, if not set all features will be returned.
      *
-     * @param  query a filter to apply on the returned features, or null if none.
-     * @return stream of features matching the given query.
+     * @return stream of features.
      * @throws DataStoreException if an I/O or decoding error occurs.
      */
-    public Stream<Feature> read(Query query) throws DataStoreException;
+    Stream<Feature> features() throws DataStoreException;
 
 }

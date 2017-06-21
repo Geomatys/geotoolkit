@@ -216,7 +216,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
                 }
 
                 //this imply ready the file, may be long, we have to calculate a reduced area
-//                final GridCoverage coverage = reader.read(0, null);
+//                final GridCoverage coverage = reader.features(0, null);
 //                final RenderedImage image = (RenderedImage) coverage.getRenderableImage(0, 0);
 //                final SampleModel sm = image.getSampleModel();
 //                sm.getNumBands();

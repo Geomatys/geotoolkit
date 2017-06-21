@@ -122,7 +122,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         if (temporalCRS == null) {
             /*
              * If there is no temporal range, arbitrarily select the latest date.
-             * This is necessary otherwise the call to reader.read(...) will scan
+             * This is necessary otherwise the call to reader.features(...) will scan
              * every records in the GridCoverages table for the layer.
              */
             Envelope timeRange = layer.getBounds();

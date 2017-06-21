@@ -208,8 +208,8 @@ public class DataUtilitiesTest extends org.geotoolkit.test.TestBase {
     public void testCollectionSequence() throws DataStoreException{
 
         FeatureCollection fc1 = store.createSession(false).getFeatureCollection(QueryBuilder.all(name1));
-        FeatureCollection fc2 = store.createSession(false).getFeatureCollection(QueryBuilder.all(name2));
-        FeatureCollection fc3 = store.createSession(false).getFeatureCollection(QueryBuilder.all(name3));
+        FeatureCollection fc2 = store.createSession(false).getFeatureCollection(QueryBuilder.all(name1));
+        FeatureCollection fc3 = store.createSession(false).getFeatureCollection(QueryBuilder.all(name1));
         FeatureCollection col = FeatureStreams.sequence("id", fc1, fc2, fc3);
 
         CheckCloseFeatureIterator reader = new CheckCloseFeatureIterator(col.iterator());

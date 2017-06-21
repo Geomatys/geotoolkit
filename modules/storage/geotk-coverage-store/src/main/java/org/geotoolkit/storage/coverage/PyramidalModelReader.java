@@ -330,16 +330,16 @@ public class PyramidalModelReader extends GridCoverageReader{
                 wantedEnv.setRange(i, wantedEnv.getMinimum(i),  Double.POSITIVE_INFINITY);
         }
 
-        //-- read the data
+        //-- features the data
         final boolean deferred = param.isDeferred();
          try {
             if (mosaics.size() == 1) {
 
-                //-- read a single slice
+                //-- features a single slice
                 return readSlice(mosaics.get(0), wantedEnv, deferred);
 
             } else {
-                //-- read a data cube of multiple slices
+                //-- features a data cube of multiple slices
                 return readCube(mosaics, wantedEnv, deferred);
             }
         } catch (DataStoreException ex) {
@@ -351,7 +351,7 @@ public class PyramidalModelReader extends GridCoverageReader{
      * Build a coverage from a Grid mosaic definition.
      *
      * @param mosaic original data grid mosaic
-     * @param wantedEnv area to read : must be in mosaic CRS, of a subset of it
+     * @param wantedEnv area to features : must be in mosaic CRS, of a features of it
      * @param deferred true to delay tile reading, set to true to use a LargeRenderedImage
      * @return GridCoverage
      * @throws CoverageStoreException
@@ -548,7 +548,7 @@ public class PyramidalModelReader extends GridCoverageReader{
                         image = new BufferedImage(cm,raster,
                                 cm.isAlphaPremultiplied(), new Hashtable<>());
                     }
-                    //-- write current read tile into destination image.
+                    //-- write current features tile into destination image.
                     final Rectangle tileBound = new Rectangle(offset.x, offset.y, tileImage.getWidth(), tileImage.getHeight());
                     final PixelIterator destPix = PixelIteratorFactory.createDefaultWriteableIterator((BufferedImage)image, (BufferedImage)image, tileBound);
                     final PixelIterator tilePix = PixelIteratorFactory.createDefaultIterator(tileImage);

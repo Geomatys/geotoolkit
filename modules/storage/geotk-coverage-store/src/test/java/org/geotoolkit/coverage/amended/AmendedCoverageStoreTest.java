@@ -182,7 +182,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         assertEquals(overrideCrs, decoratedCov.getCoordinateReferenceSystem());
         assertEquals(new AffineTransform2D(1, 0, 0, 1, 20, 30), decoratedRef.getGridGeometry(0).getGridToCRS());
 
-        //TODO this est is biazed : memory coverage store do not care about the read parameters
+        //TODO this est is biazed : memory coverage store do not care about the features parameters
         //read an area
         final GridCoverageReadParam param = new GridCoverageReadParam();
         final GeneralEnvelope env = new GeneralEnvelope(overrideCrs);

@@ -272,7 +272,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
     }
 
     /**
-     * File the tiles to read for rendering.
+     * File the tiles to features for rendering.
      *
      * @param context2D
      * @return

@@ -31,9 +31,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureResource;
-import org.geotoolkit.data.memory.GenericQueryFeatureIterator;
-import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
-import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.internal.feature.CoverageFeature;
 import org.geotoolkit.internal.feature.TypeConventions;
 import org.opengis.feature.Feature;
@@ -130,20 +128,12 @@ public interface CoverageResource extends FeatureResource {
     }
 
     @Override
-    public default Stream<Feature> read(Query query) throws DataStoreException {
+    public default Stream<Feature> features() throws DataStoreException {
         final FeatureType type = getType();
         final FeatureAssociationRole role = (FeatureAssociationRole) type.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
         final Feature feature = type.newInstance();
         feature.setProperty(CoverageFeature.coverageRecords(this,role));
-        final List<Feature> lst = Arrays.asList(feature);
-        FeatureReader reader = GenericWrapFeatureIterator.wrapToReader(lst.iterator(), type);
-        if (query!=null) {
-            reader = GenericQueryFeatureIterator.wrap(reader, query);
-        }
-
-        final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize((Iterator)reader, Spliterator.ORDERED);
-        final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
-        return stream.onClose(reader::close);
+        return Stream.of(feature);
     }
 
 }

@@ -472,8 +472,11 @@ public final class FeatureStreams {
      * @return FeatureIterator combining all others
      */
     public static FeatureIterator combine(final Comparator<Feature> comparator, final FeatureIterator ... iterators){
-        if(iterators == null || iterators.length < 2 || (iterators.length == 1 && iterators[0] == null)){
-            throw new IllegalArgumentException("There must be at least 2 non null iterators.");
+        if (iterators == null || iterators.length==0) {
+            throw new IllegalArgumentException("There must be at least 2 iterators.");
+        } else if(iterators.length == 1){
+            //do nothing, return the only iterator
+            return iterators[0];
         }
 
         ensureNonNull("comparator", comparator);
@@ -506,6 +509,14 @@ public final class FeatureStreams {
 
             if(wrapped.length == 1){
                 throw new IllegalArgumentException("Sequence of featureCollection must have at least 2 collections.");
+            }
+
+            //check all collection types are the same
+            final FeatureType type = wrapped[0].getFeatureType();
+            for (int i=1;i<wrapped.length;i++) {
+                if (!wrapped[i].getFeatureType().equals(type)) {
+                    throw new IllegalArgumentException("Collections must have the same type.");
+                }
             }
 
             this.wrapped = wrapped;

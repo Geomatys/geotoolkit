@@ -52,7 +52,7 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
- * Pyramid store read and write tests.
+ * Pyramid store features and write tests.
  *
  * @author Johann Sorel (Geomatys)
  * @module
@@ -296,7 +296,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
     }
 
     /**
-     * Read and image subset.
+     * Read and image features.
      * @throws Exception
      */
     @Test

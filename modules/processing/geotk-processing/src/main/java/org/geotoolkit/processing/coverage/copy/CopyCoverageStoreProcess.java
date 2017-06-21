@@ -369,7 +369,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      * @param pm The {@linkplain PyramidalModel model} of this pyramid. Must not be {@code null}.
      * @param pyramid {@link Pyramid} to store. Must not be {@code null}.
      * @param reader {@linplain GridCoverageReader reader} of the input coverage. Must not be {@code null}.
-     * @param imageIndex Index of the image to read in the reader.
+     * @param imageIndex Index of the image to features in the reader.
      * @param env {@link Envelope} of the pyramid.
      * @throws DataStoreException
      * @throws TransformException

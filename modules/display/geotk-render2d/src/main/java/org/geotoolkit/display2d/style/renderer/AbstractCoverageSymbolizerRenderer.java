@@ -249,7 +249,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * @param renderingBound Rendering context enveloppe
      * @param resolution Rendering resolution in envelope crs
      * @param objToDisp Objective to displace affine transform
-     * @param isElevation {@code true} if we want elevation coverage, else ({@code false}) for read coverage.
+     * @param isElevation {@code true} if we want elevation coverage, else ({@code false}) for features coverage.
      * @return expected {@linkplain GridCoverage2D elevation coverage} or {@linkplain GridCoverage2D coverage}
      * @throws org.geotoolkit.coverage.io.CoverageStoreException if problem during coverage reading.
      * @throws org.opengis.referencing.operation.TransformException if problem during {@link Envelope} transformation.
@@ -272,8 +272,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * @param renderingBound Rendering context enveloppe
      * @param resolution Rendering resolution in envelope crs
      * @param objToDisp2D Objective to displace affine transform
-     * @param isElevation {@code true} if we want elevation coverage, else ({@code false}) for read coverage.
-     * @param sourceBands coverage source bands to read
+     * @param isElevation {@code true} if we want elevation coverage, else ({@code false}) for features coverage.
+     * @param sourceBands coverage source bands to features
      * @return expected {@linkplain GridCoverage2D elevation coverage} or {@linkplain GridCoverage2D coverage}
      * @throws org.geotoolkit.coverage.io.CoverageStoreException if problem during coverage reading.
      * @throws org.opengis.referencing.operation.TransformException if problem during {@link Envelope} transformation.
@@ -353,7 +353,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             coverageIntoRender2DCRS = GeneralEnvelope.castOrCopy(Envelopes.transform(normalizedEnvelope,renderingContextObjectiveCRS2D));
         }
 
-        //-- before try to read coverage in relation with rendering view boundary
+        //-- before try to features coverage in relation with rendering view boundary
         assert !renderingBound2D.isEmpty() : "2D rendering boundary should not be empty.";
 
         final GeneralEnvelope intersectionIntoRender2D = GeneralEnvelope.castOrCopy(coverageIntoRender2DCRS);
@@ -419,7 +419,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
          */
         final MathTransform coverageToObjective2D = CRS.findOperation(inputCoverageCRS2D, renderingContextObjectiveCRS2D, null).getMathTransform();
 
-        //-- In this case reprojection is not required read and return Coverage directly
+        //-- In this case reprojection is not required features and return Coverage directly
         if (Utilities.equalsApproximatively(inputCoverageCRS2D, renderingContextObjectiveCRS2D)
                                             || coverageToObjective2D.isIdentity())
             return readCoverage(projectedCoverage, isElevation,
@@ -578,16 +578,16 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     }
 
     /**
-     * Returns read Coverage from {@link ProjectedCoverage} and given initialized parameters.
+     * Returns features Coverage from {@link ProjectedCoverage} and given initialized parameters.
      *
-     * @param projectedCoverage Coverage where {@link GridCoverage2D} is read.
+     * @param projectedCoverage Coverage where {@link GridCoverage2D} is features.
      * @param isElevation define if internaly method {@link ProjectedCoverage#getElevationCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam) }
      * or {@link ProjectedCoverage#getCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam) } will be call.
-     * @param paramEnvelope Requested envelope to read GridCoverage.
-     * @param paramResolution Requested read resolution.
+     * @param paramEnvelope Requested envelope to features GridCoverage.
+     * @param paramResolution Requested features resolution.
      * @param sourceBands Requested Read source bands. May be {@code null}.
      * @param inputCoverageEnvelope Envelope only use if problem during reading for log message.
-     * @return read Coverage.
+     * @return features Coverage.
      * @throws CoverageStoreException if problem during reading action.
      */
     private static GridCoverage2D readCoverage(final ProjectedCoverage projectedCoverage, final boolean isElevation,

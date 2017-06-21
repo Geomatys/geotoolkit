@@ -194,7 +194,7 @@ public class Statistics extends AbstractProcess {
      * Run Statistics process with a GridCoverageReader and return ImageStatistics
      *
      * @param reader GridCoverageReader
-     * @param imageIdx image index to read
+     * @param imageIdx image index to features
      * @param excludeNoData exclude no-data flag
      * @return ImageStatistics
      * @throws ProcessException
