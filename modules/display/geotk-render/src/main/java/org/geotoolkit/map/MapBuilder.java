@@ -142,7 +142,7 @@ public final class MapBuilder {
      * @return FeatureMapLayer
      */
     public static FeatureMapLayer createFeatureLayer(final FeatureCollection collection){
-        return new DefaultFeatureMapLayer(collection, RandomStyleBuilder.createDefaultVectorStyle(collection.getFeatureType()));
+        return new DefaultFeatureMapLayer(collection, RandomStyleBuilder.createDefaultVectorStyle(collection.getType()));
     }
 
     /**

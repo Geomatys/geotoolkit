@@ -148,7 +148,7 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
                     }
                 }else if(ml instanceof FeatureMapLayer){
                     final FeatureMapLayer fml = (FeatureMapLayer) ml;
-                    crs = FeatureExt.getCRS(fml.getCollection().getFeatureType());
+                    crs = FeatureExt.getCRS(fml.getCollection().getType());
                 }
                 if(crs != null){
                     final TemporalCRS tc = CRS.getTemporalComponent(ml.getBounds().getCoordinateReferenceSystem());

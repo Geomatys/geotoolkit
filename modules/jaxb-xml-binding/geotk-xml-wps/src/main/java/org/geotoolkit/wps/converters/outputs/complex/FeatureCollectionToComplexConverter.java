@@ -82,7 +82,7 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
         }
         final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(wpsVersion, (String) params.get(ENCODING),(String) params.get(MIME), null);
 
-        final FeatureType ft = source.getFeatureType();
+        final FeatureType ft = source.getType();
         final String namespace = NamesExt.getNamespace(ft.getName());
         final Map<String, String> schemaLocation = new HashMap<>();
 

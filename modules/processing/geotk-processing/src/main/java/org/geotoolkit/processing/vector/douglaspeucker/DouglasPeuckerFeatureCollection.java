@@ -53,7 +53,7 @@ public class DouglasPeuckerFeatureCollection extends WrapFeatureCollection {
         this.inputAccuracy = inputAccuracy;
         this.inputBehavior = inputBehavior;
         this.inputLenient = inputLenient;
-        this.newFeatureType = super.getOriginalFeatureCollection().getFeatureType();
+        this.newFeatureType = super.getOriginalFeatureCollection().getType();
     }
 
     /**
@@ -61,7 +61,7 @@ public class DouglasPeuckerFeatureCollection extends WrapFeatureCollection {
      * @return FeatureType
      */
     @Override
-    public FeatureType getFeatureType() {
+    public FeatureType getType() {
         return newFeatureType;
     }
 

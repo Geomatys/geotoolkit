@@ -174,7 +174,7 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
 
             final FeatureCollection collection =
                     fml.getCollection().subCollection(
-                    QueryBuilder.filtered(fml.getCollection().getFeatureType().getName().toString(), filter));
+                    QueryBuilder.filtered(fml.getCollection().getType().getName().toString(), filter));
 
             if(!collection.isEmpty()){
                 final FeatureIterator ite = collection.iterator();

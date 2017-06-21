@@ -125,7 +125,7 @@ public class JLayerChooser extends javax.swing.JPanel {
                     final FeatureStore store = (FeatureStore) source;
                     final Session session = store.createSession(true);
                     final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name.toString()));
-                    final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getFeatureType());
+                    final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getType());
                     final FeatureMapLayer layer = MapBuilder.createFeatureLayer(collection, style);
                     layer.setDescription(styleFactory.description(name.tip().toString(), name.toString()));
                     layers.add(layer);

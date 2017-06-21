@@ -96,7 +96,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
         sb.append("<html><body>");
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            final FeatureType type = fml.getCollection().getFeatureType();
+            final FeatureType type = fml.getCollection().getType();
 
             String str = type.toString().replace("\n", "<br>");
             str = str.replaceAll(" ", "&nbsp;");

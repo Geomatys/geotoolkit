@@ -57,7 +57,7 @@ public class CreatePolygonTool extends AbstractEditionTool{
                 final FeatureMapLayer fml = (FeatureMapLayer) candidate;
                 if(!fml.getCollection().isWritable()) return false;
 
-                final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(fml.getCollection().getFeatureType());
+                final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(fml.getCollection().getType());
                 if(desc == null) return false;
 
                 return Polygon.class.isAssignableFrom(desc.getValueClass())

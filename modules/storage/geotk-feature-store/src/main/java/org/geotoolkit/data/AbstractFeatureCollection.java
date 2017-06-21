@@ -228,7 +228,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
 
     @Override
     public String toString() {
-        return "FeatureCollection\n"+String.valueOf(getFeatureType());
+        return "FeatureCollection\n"+String.valueOf(getType());
     }
 
     @Override
@@ -301,7 +301,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         }
 
         //wrap properties --------------------
-        final FeatureType original = result.getFeatureType();
+        final FeatureType original = result.getType();
         FeatureType mask = original;
         if(properties!=null && FeatureTypeExt.isAllProperties(original, properties)) {
             try {
@@ -314,13 +314,13 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         //wrap resampling ------------------------------------------------------
         if(resampling != null){
             final GeometryScaleTransformer trs = new GeometryScaleTransformer(resampling[0], resampling[1]);
-            final TransformFeatureType ttype = new TransformFeatureType(result.getFeatureType(), trs);
+            final TransformFeatureType ttype = new TransformFeatureType(result.getType(), trs);
             result = FeatureStreams.decorate(result, ttype);
         }
 
         //wrap reprojection ----------------------------------------------------
         if(crs != null){
-            result = FeatureStreams.decorate(result, new ReprojectFeatureType(result.getFeatureType(), crs));
+            result = FeatureStreams.decorate(result, new ReprojectFeatureType(result.getType(), crs));
         }
 
         return result;
@@ -372,7 +372,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
      */
     @Override
     public void structureChanged(FeatureStoreManagementEvent event){
-        final FeatureType currentType = getFeatureType();
+        final FeatureType currentType = getType();
 
         //forward events only if the collection is typed and match the type name
         if(currentType != null && currentType.getName().equals(event.getFeatureTypeName())){
@@ -392,7 +392,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
      */
     @Override
     public void contentChanged(final FeatureStoreContentEvent event){
-        final FeatureType currentType = getFeatureType();
+        final FeatureType currentType = getType();
 
         //forward events only if the collection is typed and match the type name
         if(currentType != null && currentType.getName().equals(event.getFeatureTypeName())){

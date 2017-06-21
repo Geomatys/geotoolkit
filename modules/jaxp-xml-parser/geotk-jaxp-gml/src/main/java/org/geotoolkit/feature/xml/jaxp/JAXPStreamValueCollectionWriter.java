@@ -256,7 +256,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
         }
 
 
-        FeatureType type = featureCollection.getFeatureType();
+        FeatureType type = featureCollection.getType();
         if (type != null && type.getName() != null) {
             String namespace = NamesExt.getNamespace(type.getName());
             if (namespace != null && !(namespace.equals("http://www.opengis.net/gml") || namespace.equals("http://www.opengis.net/gml/3.2"))) {

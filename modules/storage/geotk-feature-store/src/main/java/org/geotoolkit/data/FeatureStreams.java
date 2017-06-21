@@ -512,9 +512,9 @@ public final class FeatureStreams {
             }
 
             //check all collection types are the same
-            final FeatureType type = wrapped[0].getFeatureType();
+            final FeatureType type = wrapped[0].getType();
             for (int i=1;i<wrapped.length;i++) {
-                if (!wrapped[i].getFeatureType().equals(type)) {
+                if (!wrapped[i].getType().equals(type)) {
                     throw new IllegalArgumentException("Collections must have the same type.");
                 }
             }
@@ -591,8 +591,8 @@ public final class FeatureStreams {
         }
 
         @Override
-        public FeatureType getFeatureType() {
-            return wrapped[0].getFeatureType();
+        public FeatureType getType() {
+            return wrapped[0].getType();
         }
 
         @Override

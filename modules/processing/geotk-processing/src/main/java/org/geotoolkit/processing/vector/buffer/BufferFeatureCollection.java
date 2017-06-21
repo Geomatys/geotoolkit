@@ -51,7 +51,7 @@ public class BufferFeatureCollection extends WrapFeatureCollection {
         super(originalFC);
         this.inputDistance = inputDistance;
         this.inputLenient = inputLenient;
-        this.newFeatureType = VectorProcessUtils.changeGeometryFeatureType(super.getFeatureType(), Geometry.class);
+        this.newFeatureType = VectorProcessUtils.changeGeometryFeatureType(super.getType(), Geometry.class);
     }
 
     /**
@@ -59,7 +59,7 @@ public class BufferFeatureCollection extends WrapFeatureCollection {
      * @return FeatureType
      */
     @Override
-    public FeatureType getFeatureType() {
+    public FeatureType getType() {
         return newFeatureType;
     }
 

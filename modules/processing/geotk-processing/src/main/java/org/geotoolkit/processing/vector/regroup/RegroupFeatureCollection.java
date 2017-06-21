@@ -61,7 +61,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
         super(originalFC);
         this.regroupAttribute = regroupAttribute;
         this.geometryName = geometryName;
-        this.newFeatureType = RegroupProcess.regroupFeatureType(originalFC.getFeatureType(), geometryName, regroupAttribute);
+        this.newFeatureType = RegroupProcess.regroupFeatureType(originalFC.getType(), geometryName, regroupAttribute);
     }
 
     /**
@@ -69,7 +69,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
      * @return FeatureType
      */
     @Override
-    public FeatureType getFeatureType() {
+    public FeatureType getType() {
         return newFeatureType;
     }
 

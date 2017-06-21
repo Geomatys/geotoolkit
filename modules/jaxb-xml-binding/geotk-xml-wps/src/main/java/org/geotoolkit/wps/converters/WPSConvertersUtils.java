@@ -141,7 +141,7 @@ public class WPSConvertersUtils {
         if (dataValue instanceof FeatureCollection) {
             final FeatureCollection featureColl = (FeatureCollection) dataValue;
 
-            FeatureType ft = featureColl.getFeatureType();
+            FeatureType ft = featureColl.getType();
             try (FeatureIterator featureIter = featureColl.iterator()) {
                 if (featureIter.hasNext()) {
                     final Feature feature = featureIter.next();

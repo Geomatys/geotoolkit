@@ -147,7 +147,7 @@ public class FXLayerChooser extends BorderPane{
                         style = SF.style();
 
                     }else{
-                        style = RandomStyleBuilder.createRandomVectorStyle(collection.getFeatureType());
+                        style = RandomStyleBuilder.createRandomVectorStyle(collection.getType());
                     }
 
                     final FeatureMapLayer layer = MapBuilder.createFeatureLayer(collection, style);

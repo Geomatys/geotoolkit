@@ -113,7 +113,7 @@ public class CategoryStyleBuilder extends Factory {
 
         properties.clear();
         if(layer != null){
-            FeatureType schema = layer.getCollection().getFeatureType();
+            FeatureType schema = layer.getCollection().getType();
 
             for(PropertyType desc : schema.getProperties(true)){
                 if(desc instanceof AttributeType){
@@ -269,7 +269,7 @@ public class CategoryStyleBuilder extends Factory {
         final Set<Object> differentValues = new HashSet<Object>();
         final PropertyName property = currentProperty;
         final QueryBuilder builder = new QueryBuilder();
-        builder.setTypeName(layer.getCollection().getFeatureType().getName());
+        builder.setTypeName(layer.getCollection().getType().getName());
         builder.setProperties(new String[]{property.getPropertyName()});
         final Query query = builder.buildQuery();
 

@@ -133,7 +133,7 @@ public class GenericQueryFeatureIterator {
             private FeatureType type = null;
 
             @Override
-            public FeatureType getFeatureType() {
+            public FeatureType getType() {
                 if(type==null){
                     try (FeatureReader ite = iterator(null)) {
                         type = ite.getFeatureType();

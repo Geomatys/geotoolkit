@@ -72,7 +72,7 @@ public class DefaultFeatureStoreJoinFeatureCollection extends AbstractFeatureCol
     }
 
     @Override
-    public synchronized FeatureType getFeatureType(){
+    public synchronized FeatureType getType(){
         if(type == null){
             try {
                 FeatureReader reader = (FeatureReader) session.getFeatureIterator(query);

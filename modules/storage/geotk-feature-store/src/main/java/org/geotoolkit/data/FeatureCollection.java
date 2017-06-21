@@ -19,16 +19,20 @@ package org.geotoolkit.data;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Stream;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Identifier;
 
 /**
  * A java collection that may hold only features.
@@ -43,7 +47,7 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface FeatureCollection extends Collection<Feature> {
+public interface FeatureCollection extends Collection<Feature>, FeatureResource {
 
     /**
      * A feature collection is created with an id.
@@ -52,6 +56,11 @@ public interface FeatureCollection extends Collection<Feature> {
      * @return String, never null
      */
     String getID();
+
+    @Override
+    default Identifier getIdentifier() {
+        return new NamedIdentifier(NamesExt.create(getID()));
+    }
 
     /**
      * A collection may be linked to a session, this implies that changes maid
@@ -78,7 +87,7 @@ public interface FeatureCollection extends Collection<Feature> {
      *
      * @return Feature type or null if features doesn't have always the same type.
      */
-    FeatureType getFeatureType();
+    FeatureType getType();
 
     /**
      * Get the envelope of all features in this collection.
@@ -134,6 +143,11 @@ public interface FeatureCollection extends Collection<Feature> {
      */
     FeatureIterator iterator(Hints hints) throws FeatureStoreRuntimeException;
 
+    @Override
+    default Stream<Feature> features() throws DataStoreException {
+        return stream();
+    }
+
     /**
      * Convenient method to update a single feature.
      * @see #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
@@ -156,19 +170,5 @@ public interface FeatureCollection extends Collection<Feature> {
      * @throws DataStoreException
      */
     void remove(Filter filter) throws DataStoreException;
-
-    /**
-     * Add a storage listener which will be notified when schema are added, modified or deleted
-     * and when features are added, modified or deleted.
-     *
-     * @param listener to add
-     */
-    void addStorageListener(StorageListener listener);
-
-    /**
-     * Remove a storage listener
-     * @param listener to remove
-     */
-    void removeStorageListener(StorageListener listener);
 
 }

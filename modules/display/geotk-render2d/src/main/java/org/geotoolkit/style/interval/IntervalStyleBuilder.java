@@ -337,7 +337,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
 
         //search the different numeric attributs
-        FeatureType schema = layer.getCollection().getFeatureType();
+        FeatureType schema = layer.getCollection().getType();
 
         for(PropertyType desc : schema.getProperties(true)){
             if(desc instanceof AttributeType){
@@ -375,7 +375,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
 
         //search the extreme values
-        final QueryBuilder query = new QueryBuilder(layer.getCollection().getFeatureType().getName().toString());
+        final QueryBuilder query = new QueryBuilder(layer.getCollection().getType().getName().toString());
 
         if(classification == null || layer == null) return;
         if(!properties.contains(classification)) return;

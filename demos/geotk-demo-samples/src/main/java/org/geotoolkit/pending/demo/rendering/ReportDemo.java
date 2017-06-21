@@ -100,7 +100,7 @@ public class ReportDemo {
 
             @Override
             public FeatureType getSourceType() {
-                return countries.getFeatureType();
+                return countries.getType();
             }
 
             @Override
@@ -115,7 +115,7 @@ public class ReportDemo {
                 //create the main map with a single feature ------------------
                 final FeatureCollection col = FeatureStoreUtilities.collection(feature);
                 final MapContext context = MapBuilder.createContext();
-                final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(col.getFeatureType());
+                final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(col.getType());
                 context.layers().add(MapBuilder.createFeatureLayer(col, style));
 
 

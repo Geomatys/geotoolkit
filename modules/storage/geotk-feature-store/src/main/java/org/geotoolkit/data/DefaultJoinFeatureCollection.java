@@ -85,10 +85,10 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection{
     }
 
     @Override
-    public synchronized FeatureType getFeatureType() {
+    public synchronized FeatureType getType() {
         if(type == null){
-            leftType = leftCollection.getFeatureType();
-            rightType = rightCollection.getFeatureType();
+            leftType = leftCollection.getType();
+            rightType = rightCollection.getType();
             leftName = (leftCollection.getSource() instanceof Selector) ?
                     NamesExt.valueOf(((Selector)leftCollection.getSource()).getSelectorName()) :
                     leftType.getName();
@@ -115,7 +115,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection{
      * @throws DataStoreException
      */
     private Feature toFeature(final Feature left, final Feature right) throws DataStoreException{
-        final FeatureType type = getFeatureType(); //force creating type.
+        final FeatureType type = getType(); //force creating type.
         final Feature f = type.newInstance();
 
         String id = "";

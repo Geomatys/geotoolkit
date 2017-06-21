@@ -49,7 +49,7 @@ public class ReprojectProcess extends AbstractProcess {
         final CoordinateReferenceSystem targetCRS           = value(ReprojectDescriptor.CRS_IN, inputParameters);
 
         final FeatureCollection resultFeatureList = FeatureStreams.decorate(inputFeatureList,
-                new ReprojectFeatureType(inputFeatureList.getFeatureType(), targetCRS));
+                new ReprojectFeatureType(inputFeatureList.getType(), targetCRS));
 
         getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }

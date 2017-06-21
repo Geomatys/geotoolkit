@@ -30,7 +30,6 @@ import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 
 /**
@@ -55,11 +54,6 @@ final class DefaultFeatureResource extends AbstractResource implements FeatureRe
     }
 
     @Override
-    public Metadata getMetadata() throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public FeatureType getType() throws DataStoreException {
         return store.getFeatureType(query.getTypeName());
     }
@@ -77,7 +71,6 @@ final class DefaultFeatureResource extends AbstractResource implements FeatureRe
         final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
         return stream.onClose(reader::close);
     }
-
 
     /**
      * Forward event to listeners by changing source.

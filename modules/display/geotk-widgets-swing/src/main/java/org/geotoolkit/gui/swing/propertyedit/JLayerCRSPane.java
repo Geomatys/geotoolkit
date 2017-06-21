@@ -74,7 +74,7 @@ public class JLayerCRSPane extends AbstractPropertyPane {
 
     private void init() {
         if (layer instanceof FeatureMapLayer) {
-            crs = FeatureExt.getCRS( ((FeatureMapLayer)layer).getCollection().getFeatureType());
+            crs = FeatureExt.getCRS( ((FeatureMapLayer)layer).getCollection().getType());
         }else if(layer instanceof CoverageMapLayer){
             final CoverageResource ref = ((CoverageMapLayer)layer).getCoverageReference();
             try{

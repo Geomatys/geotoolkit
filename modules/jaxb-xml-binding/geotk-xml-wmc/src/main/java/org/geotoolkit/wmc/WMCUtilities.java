@@ -199,7 +199,7 @@ public class WMCUtilities {
                 final FeatureStore wfs = (FeatureStore) server;
                 final Session storeSession = wfs.createSession(true);
                 final FeatureCollection collection = storeSession.getFeatureCollection(QueryBuilder.all(layerName));
-                final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getFeatureType());
+                final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getType());
                 final MapLayer layer = MapBuilder.createFeatureLayer(collection, style);
                 context.layers().add(layer);
             }

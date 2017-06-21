@@ -106,7 +106,7 @@ public class FXLayerStructure extends FXPropertyPane {
         sb.append("</head><body>");
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            final FeatureType type = fml.getCollection().getFeatureType();
+            final FeatureType type = fml.getCollection().getType();
 
             String str = type.toString().replace("&", "&amp;");
             str = str.replace("<", "&lt;");
