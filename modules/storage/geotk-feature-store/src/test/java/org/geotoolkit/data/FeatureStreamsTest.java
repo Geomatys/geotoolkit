@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.iterator;
+package org.geotoolkit.data;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -62,14 +62,15 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.geotoolkit.data.memory.FeatureStreams;
+import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.data.iterator.CheckCloseFeatureIterator;
 
 /**
  * Tests of the different iterators.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
+public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000001d;
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
@@ -92,7 +93,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
     private final Feature sf2;
     private final Feature sf3;
 
-    public GenericIteratorTest() throws NoSuchAuthorityCodeException, FactoryException{
+    public FeatureStreamsTest() throws NoSuchAuthorityCodeException, FactoryException{
         FeatureTypeBuilder builder = new FeatureTypeBuilder();
         name = NamesExt.create("http://test.com", "TestSchema");
         builder = new FeatureTypeBuilder();

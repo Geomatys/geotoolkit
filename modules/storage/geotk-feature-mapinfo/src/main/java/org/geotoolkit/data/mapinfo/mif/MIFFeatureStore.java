@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import org.geotoolkit.feature.ReprojectFeatureType;
 import org.apache.sis.storage.IllegalNameException;
-import org.geotoolkit.data.memory.FeatureStreams;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;

@@ -17,7 +17,7 @@
 package org.geotoolkit.processing.vector.filter;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.FeatureStreams;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 

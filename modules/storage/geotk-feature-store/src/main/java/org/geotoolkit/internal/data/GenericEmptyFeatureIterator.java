@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
 import java.util.NoSuchElementException;
 import org.geotoolkit.data.FeatureCollection;
@@ -23,6 +23,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.geotoolkit.factory.Hints;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -33,7 +34,7 @@ import org.opengis.feature.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-class GenericEmptyFeatureIterator implements FeatureIterator {
+public class GenericEmptyFeatureIterator implements FeatureIterator {
 
     /**
      * Creates a new instance of GenericEmptyFeatureIterator
@@ -139,7 +140,7 @@ class GenericEmptyFeatureIterator implements FeatureIterator {
      * Create an empty FeatureReader of the given type.
      * @param type FeatureType can be null
      */
-    static FeatureReader createReader(final FeatureType type){
+    public static FeatureReader createReader(final FeatureType type){
         return new GenericEmptyFeatureReader(type);
     }
 
@@ -147,21 +148,21 @@ class GenericEmptyFeatureIterator implements FeatureIterator {
      * Create an empty FeatureWriter of the given type.
      * @param type FeatureType can be null
      */
-    static FeatureWriter createWriter(final FeatureType type){
+    public static FeatureWriter createWriter(final FeatureType type){
         return new GenericEmptyFeatureWriter(type);
     }
 
     /**
      * Create an empty FeatureIterator of the given type.
      */
-    static FeatureIterator createIterator(){
+    public static FeatureIterator createIterator(){
         return new GenericEmptyFeatureIterator();
     }
 
     /**
      * Create an empty FeaturCollection wrapping the collection.
      */
-    static FeatureCollection wrap(final FeatureCollection original){
+    public static FeatureCollection wrap(final FeatureCollection original){
         return new GenericEmptyFeatureCollection(original);
     }
 

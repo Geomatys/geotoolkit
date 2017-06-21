@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -28,7 +28,7 @@ import org.opengis.filter.Filter;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-class GenericFilterIterator<F> implements Iterator<F> {
+public class GenericFilterIterator<F> implements Iterator<F> {
 
     protected final Iterator<F> iterator;
     protected final Filter filter;
@@ -103,7 +103,7 @@ class GenericFilterIterator<F> implements Iterator<F> {
     /**
      * Wrap a FeatureIterator with a filter.
      */
-    static <F> Iterator<F> wrap(final Iterator<F> reader, final Filter filter){
+    public static <F> Iterator<F> wrap(final Iterator<F> reader, final Filter filter){
         return new GenericFilterIterator(reader, filter);
     }
 

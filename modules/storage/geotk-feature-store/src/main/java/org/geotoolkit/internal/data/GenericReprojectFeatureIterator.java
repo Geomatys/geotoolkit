@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
 import org.geotoolkit.feature.ReprojectFeatureType;
 import org.geotoolkit.data.FeatureCollection;
@@ -23,6 +23,8 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -33,7 +35,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-class GenericReprojectFeatureIterator<R extends FeatureReader> implements FeatureReader{
+public class GenericReprojectFeatureIterator<R extends FeatureReader> implements FeatureReader{
 
     protected final R iterator;
     protected final FeatureType baseType;
@@ -150,14 +152,14 @@ class GenericReprojectFeatureIterator<R extends FeatureReader> implements Featur
     /**
      * Wrap a FeatureReader with a reprojection.
      */
-    static FeatureReader wrap(final FeatureReader reader, final CoordinateReferenceSystem crs, final Hints hints) throws FactoryException {
+    public static FeatureReader wrap(final FeatureReader reader, final CoordinateReferenceSystem crs, final Hints hints) throws FactoryException {
         return new GenericReprojectFeatureIterator(reader, crs);
     }
 
     /**
      * Create a reproject FeatureCollection wrapping the given collection.
      */
-    static FeatureCollection wrap(final FeatureCollection original, final CoordinateReferenceSystem crs){
+    public static FeatureCollection wrap(final FeatureCollection original, final CoordinateReferenceSystem crs){
         return new GenericReprojectFeatureCollection(original, crs);
     }
 

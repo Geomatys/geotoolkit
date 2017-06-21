@@ -16,9 +16,8 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
-import java.util.NoSuchElementException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -26,6 +25,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -37,7 +37,7 @@ import org.opengis.filter.Filter;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-class GenericFilterFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
+public class GenericFilterFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
     protected final R iterator;
     protected final Filter filter;
@@ -187,7 +187,7 @@ class GenericFilterFeatureIterator<R extends FeatureIterator> implements Feature
     /**
      * Wrap a FeatureIterator with a filter.
      */
-    static FeatureIterator wrap(final FeatureIterator reader, final Filter filter){
+    public static FeatureIterator wrap(final FeatureIterator reader, final Filter filter){
         if(reader instanceof FeatureReader){
             return wrap((FeatureReader)reader,filter);
         }else if(reader instanceof FeatureWriter){
@@ -200,21 +200,21 @@ class GenericFilterFeatureIterator<R extends FeatureIterator> implements Feature
     /**
      * Wrap a FeatureReader with a filter.
      */
-    static FeatureReader wrap(final FeatureReader reader, final Filter filter){
+    public static FeatureReader wrap(final FeatureReader reader, final Filter filter){
         return new GenericFilterFeatureReader(reader, filter);
     }
 
     /**
      * Wrap a FeatureWriter with a filter.
      */
-    static FeatureWriter wrap(final FeatureWriter writer, final Filter filter){
+    public static FeatureWriter wrap(final FeatureWriter writer, final Filter filter){
         return new GenericFilterFeatureWriter(writer, filter);
     }
 
     /**
      * Create an filtered FeatureCollection wrapping the given collection.
      */
-    static FeatureCollection wrap(final FeatureCollection original, final Filter filter){
+    public static FeatureCollection wrap(final FeatureCollection original, final Filter filter){
         return new GenericFilterFeatureCollection(original, filter);
     }
 

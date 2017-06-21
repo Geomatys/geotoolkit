@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -30,6 +30,7 @@ import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.factory.HintsPending;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -39,7 +40,7 @@ import org.opengis.feature.FeatureType;
  *
  * @author Johann Sorel (Geomatys)
  */
-class GenericCachedFeatureIterator implements FeatureIterator {
+public class GenericCachedFeatureIterator implements FeatureIterator {
 
     //TODO : wait for martin, there should already be a thread pool for global tasks somewhere.
     public static final Executor POOL = Executors.newCachedThreadPool();
@@ -238,7 +239,7 @@ class GenericCachedFeatureIterator implements FeatureIterator {
     /**
      * Wrap a FeatureIterator with a cache size.
      */
-    static FeatureIterator wrap(final FeatureIterator reader, final int cacheSize){
+    public static FeatureIterator wrap(final FeatureIterator reader, final int cacheSize){
         if(reader instanceof FeatureReader){
             return wrap((FeatureReader)reader,cacheSize);
         }else if(reader instanceof FeatureWriter){
@@ -251,14 +252,14 @@ class GenericCachedFeatureIterator implements FeatureIterator {
     /**
      * Wrap a FeatureReader with a cache size.
      */
-    static FeatureReader wrap(final FeatureReader reader, final int cacheSize){
+    public static FeatureReader wrap(final FeatureReader reader, final int cacheSize){
         return new GenericCachedFeatureIterator.GenericCachedFeatureReader(reader, cacheSize);
     }
 
     /**
      * Create an caching FeatureCollection wrapping the given collection.
      */
-    static FeatureCollection wrap(final FeatureCollection original, final int cacheSize){
+    public static FeatureCollection wrap(final FeatureCollection original, final int cacheSize){
         return new GenericCachedFeatureIterator.GenericCachedFeatureCollection(original, cacheSize);
     }
 

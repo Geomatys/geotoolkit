@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
 import org.geotoolkit.feature.DecoratedFeatureType;
 import org.geotoolkit.data.FeatureCollection;
@@ -24,6 +24,8 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -33,7 +35,7 @@ import org.opengis.feature.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @param <R>
  */
-abstract class GenericDecoratedFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
+public abstract class GenericDecoratedFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
     protected final R iterator;
 
@@ -133,7 +135,7 @@ abstract class GenericDecoratedFeatureIterator<R extends FeatureIterator> implem
     /**
      * Decorate a feature reader.
      */
-    static FeatureReader wrap(final FeatureReader reader, final DecoratedFeatureType mask, final Hints hints){
+    public static FeatureReader wrap(final FeatureReader reader, final DecoratedFeatureType mask, final Hints hints){
         final FeatureType original = reader.getFeatureType();
         if(mask.equals(original)){
             //same type mapping, no need to wrap it
@@ -146,7 +148,7 @@ abstract class GenericDecoratedFeatureIterator<R extends FeatureIterator> implem
     /**
      * Decorate a FeatureCollection.
      */
-    static FeatureCollection wrap(final FeatureCollection original, final DecoratedFeatureType mask){
+    public static FeatureCollection wrap(final FeatureCollection original, final DecoratedFeatureType mask){
         return new GenericRetypeFeatureCollection(original, mask);
     }
 

@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
 import java.util.NoSuchElementException;
 import org.geotoolkit.data.FeatureCollection;
@@ -25,6 +25,7 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -34,7 +35,7 @@ import org.opengis.feature.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-class GenericStartIndexFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
+public class GenericStartIndexFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
     protected final R iterator;
     protected final int startIndex;
@@ -187,7 +188,7 @@ class GenericStartIndexFeatureIterator<R extends FeatureIterator> implements Fea
     /**
      * Wrap a FeatureIterator with a start index.
      */
-    static FeatureIterator wrap(final FeatureIterator reader, final int limit){
+    public static FeatureIterator wrap(final FeatureIterator reader, final int limit){
         if(reader instanceof FeatureReader){
             return wrap((FeatureReader)reader,limit);
         }else if(reader instanceof FeatureWriter){
@@ -200,21 +201,21 @@ class GenericStartIndexFeatureIterator<R extends FeatureIterator> implements Fea
     /**
      * Wrap a FeatureReader with a start index.
      */
-    static FeatureReader wrap(final FeatureReader reader, final int limit){
+    public static FeatureReader wrap(final FeatureReader reader, final int limit){
         return new GenericStartIndexFeatureReader(reader, limit);
     }
 
     /**
      * Wrap a FeatureWriter with a start index.
      */
-    static FeatureWriter wrap(final FeatureWriter writer, final int limit){
+    public static FeatureWriter wrap(final FeatureWriter writer, final int limit){
         return new GenericStartIndexFeatureWriter(writer, limit);
     }
 
     /**
      * Create an differed start index FeatureCollection wrapping the given collection.
      */
-    static FeatureCollection wrap(final FeatureCollection original, final int startIndex){
+    public static FeatureCollection wrap(final FeatureCollection original, final int startIndex){
         return new GenericStartIndexFeatureCollection(original, startIndex);
     }
 

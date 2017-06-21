@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.data.memory.FeatureStreams;
+import org.geotoolkit.data.FeatureStreams;
 import org.opengis.filter.Filter;
 
 /**

@@ -18,7 +18,7 @@ package org.geotoolkit.processing.vector.affinetransform;
 
 import org.geotoolkit.feature.TransformFeatureType;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.FeatureStreams;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.processing.AbstractProcess;
 
 import org.geotoolkit.processing.vector.VectorDescriptor;

@@ -80,8 +80,8 @@ import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.internal.GenericNameIndex;
-import org.geotoolkit.data.memory.FeatureStreams;
+import org.geotoolkit.internal.data.GenericNameIndex;
+import org.geotoolkit.data.FeatureStreams;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 

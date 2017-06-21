@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +30,7 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.SortByComparator;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.sort.SortBy;
@@ -45,7 +46,7 @@ import org.opengis.filter.sort.SortBy;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-class GenericSortByFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
+public class GenericSortByFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
     protected final R iterator;
     private final Comparator<Feature> comparator;
@@ -169,14 +170,14 @@ class GenericSortByFeatureIterator<R extends FeatureIterator> implements Feature
     /**
      * Wrap a FeatureReader will a sort by order.
      */
-    static FeatureReader wrap(final FeatureReader reader, final SortBy[] orders){
+    public static FeatureReader wrap(final FeatureReader reader, final SortBy[] orders){
         return new GenericSortByFeatureReader(reader, orders);
     }
 
     /**
      * Wrap a FeatureIterator will a sort by order.
      */
-    static FeatureIterator wrap(final FeatureIterator reader, final SortBy[] orders){
+    public static FeatureIterator wrap(final FeatureIterator reader, final SortBy[] orders){
         if(reader instanceof FeatureReader){
             return wrap((FeatureReader)reader,orders);
         }else{
@@ -187,7 +188,7 @@ class GenericSortByFeatureIterator<R extends FeatureIterator> implements Feature
     /**
      * Wrap a FeatureCollection will a sort by order.
      */
-    static FeatureCollection wrap(final FeatureCollection original, final SortBy[] orders){
+    public static FeatureCollection wrap(final FeatureCollection original, final SortBy[] orders){
         return new GenericSortByFeatureCollection(original,orders);
     }
 

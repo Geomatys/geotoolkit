@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -126,7 +126,7 @@ public class GenericModifyFeatureIterator<R extends FeatureIterator> implements 
     /**
      * Wrap a FeatureIterator with a modification set
      */
-    static FeatureIterator wrap(final FeatureIterator reader, final Filter filter, final Map<String, ?> values){
+    public static FeatureIterator wrap(final FeatureIterator reader, final Filter filter, final Map<String, ?> values){
         return new GenericModifyFeatureIterator(reader, filter, values);
     }
 

@@ -27,7 +27,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.*;
 import static org.geotoolkit.data.AbstractFolderFeatureStoreFactory.*;
-import org.geotoolkit.data.internal.GenericNameIndex;
+import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;

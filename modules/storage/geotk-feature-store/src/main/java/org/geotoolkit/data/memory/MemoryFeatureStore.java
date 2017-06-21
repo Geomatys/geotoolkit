@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data.memory;
 
+import org.geotoolkit.data.FeatureStreams;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -61,7 +62,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.IllegalNameException;
 
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.data.internal.GenericNameIndex;
+import org.geotoolkit.internal.data.GenericNameIndex;
 import org.opengis.feature.PropertyNotFoundException;
 
 

@@ -16,7 +16,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
 import java.util.NoSuchElementException;
 import org.geotoolkit.data.FeatureCollection;
@@ -26,6 +26,7 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -36,7 +37,7 @@ import org.opengis.feature.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-class GenericMaxFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
+public class GenericMaxFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
     protected final R iterator;
     protected final int maxFeatures;
@@ -164,7 +165,7 @@ class GenericMaxFeatureIterator<R extends FeatureIterator> implements FeatureIte
     /**
      * Wrap a FeatureReader with a max limit.
      */
-    static FeatureIterator wrap(final FeatureIterator reader, final int limit){
+    public static FeatureIterator wrap(final FeatureIterator reader, final int limit){
         if(limit==Integer.MAX_VALUE) return reader;
         if(reader instanceof FeatureReader){
             return wrap((FeatureReader)reader,limit);
@@ -178,7 +179,7 @@ class GenericMaxFeatureIterator<R extends FeatureIterator> implements FeatureIte
     /**
      * Wrap a FeatureReader with a max limit.
      */
-    static FeatureReader wrap(final FeatureReader reader, final int limit){
+    public static FeatureReader wrap(final FeatureReader reader, final int limit){
         if(limit==Integer.MAX_VALUE) return reader;
         return new GenericMaxFeatureReader(reader, limit);
     }
@@ -186,7 +187,7 @@ class GenericMaxFeatureIterator<R extends FeatureIterator> implements FeatureIte
     /**
      * Wrap a FeatureWriter with a max limit.
      */
-    static  FeatureWriter wrap(final FeatureWriter writer, final int limit){
+    public static FeatureWriter wrap(final FeatureWriter writer, final int limit){
         if(limit==Integer.MAX_VALUE) return writer;
         return new GenericMaxFeatureWriter(writer, limit);
     }
@@ -194,7 +195,7 @@ class GenericMaxFeatureIterator<R extends FeatureIterator> implements FeatureIte
     /**
      * Create an limited FeatureCollection wrapping the given collection.
      */
-    static FeatureCollection wrap(final FeatureCollection original, final int max){
+    public static FeatureCollection wrap(final FeatureCollection original, final int max){
         if(max==Integer.MAX_VALUE) return original;
         return new GenericMaxFeatureCollection(original, max);
     }

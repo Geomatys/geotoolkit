@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import org.opengis.feature.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-class GenericWrapFeatureIterator implements FeatureIterator {
+public class GenericWrapFeatureIterator implements FeatureIterator {
 
     protected final Iterator<? extends Feature> iterator;
 
@@ -154,21 +154,21 @@ class GenericWrapFeatureIterator implements FeatureIterator {
     /**
      * Wrap an Iterator as a FeatureIterator.
      */
-    static FeatureIterator wrapToIterator(final Iterator<? extends Feature> reader){
+    public static FeatureIterator wrapToIterator(final Iterator<? extends Feature> reader){
         return new GenericWrapFeatureIterator(reader);
     }
 
     /**
      * Wrap an Iterator as a FeatureReader.
      */
-    static FeatureReader wrapToReader(final Iterator<? extends Feature> reader, final FeatureType type){
+    public static FeatureReader wrapToReader(final Iterator<? extends Feature> reader, final FeatureType type){
         return new GenericWrapFeatureReader(reader, type);
     }
 
     /**
      * Wrap an Iterator as a FeatureWriter.
      */
-    static FeatureWriter wrapToWriter(final Iterator<? extends Feature> writer, final FeatureType type){
+    public static FeatureWriter wrapToWriter(final Iterator<? extends Feature> writer, final FeatureType type){
         return new GenericWrapFeatureWriter(writer, type);
     }
 

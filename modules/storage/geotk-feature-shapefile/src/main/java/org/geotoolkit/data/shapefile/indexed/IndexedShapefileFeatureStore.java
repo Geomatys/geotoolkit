@@ -64,7 +64,7 @@ import org.geotoolkit.index.TreeException;
 import org.geotoolkit.index.quadtree.*;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.memory.FeatureStreams;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.util.NullProgressListener;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;

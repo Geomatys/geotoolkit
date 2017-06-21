@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
 import java.util.Map;
 import org.geotoolkit.feature.FeatureTypeExt;
@@ -26,6 +26,7 @@ import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
@@ -39,9 +40,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Johann Sorel (Geomatys)
  */
-class GenericQueryFeatureIterator {
+public class GenericQueryFeatureIterator {
 
-    static FeatureReader wrap(FeatureReader reader, final Query remainingParameters) throws DataStoreException{
+    public static FeatureReader wrap(FeatureReader reader, final Query remainingParameters) throws DataStoreException{
 
         final Integer start = remainingParameters.getStartIndex();
         final Integer max = remainingParameters.getMaxFeatures();
@@ -101,7 +102,7 @@ class GenericQueryFeatureIterator {
 
         if(properties!=null && !FeatureTypeExt.isAllProperties(original, properties)) {
             try {
-                reader = GenericDecoratedFeatureIterator.wrap(reader,  new ViewFeatureType(original, properties),hints);
+                reader = FeatureStreams.decorate(reader,  new ViewFeatureType(original, properties),hints);
             } catch (MismatchedFeatureException | IllegalStateException ex) {
                 throw new DataStoreException(ex);
             }
@@ -111,13 +112,13 @@ class GenericQueryFeatureIterator {
         if(resampling != null){
             final GeometryScaleTransformer trs = new GeometryScaleTransformer(resampling[0], resampling[1]);
             final TransformFeatureType ttype = new TransformFeatureType(reader.getFeatureType(), trs);
-            reader = GenericDecoratedFeatureIterator.wrap(reader, ttype, hints);
+            reader = FeatureStreams.decorate(reader, ttype, hints);
         }
 
         //wrap reprojection ----------------------------------------------------
         if(crs != null){
             try {
-                reader = GenericDecoratedFeatureIterator.wrap(reader, new ReprojectFeatureType(reader.getFeatureType(), crs), hints);
+                reader = FeatureStreams.decorate(reader, new ReprojectFeatureType(reader.getFeatureType(), crs), hints);
             } catch (MismatchedFeatureException ex) {
                 throw new DataStoreException(ex);
             }
@@ -126,7 +127,7 @@ class GenericQueryFeatureIterator {
         return reader;
     }
 
-    static FeatureCollection wrap(final FeatureCollection col, final Query query){
+    public static FeatureCollection wrap(final FeatureCollection col, final Query query){
         return new AbstractFeatureCollection("wrap", col.getSource()) {
 
             private FeatureType type = null;
