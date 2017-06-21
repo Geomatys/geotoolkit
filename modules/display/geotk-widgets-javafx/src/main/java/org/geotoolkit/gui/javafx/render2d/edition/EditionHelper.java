@@ -41,7 +41,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.ObjectProperty;
@@ -52,7 +51,6 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -73,6 +71,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
@@ -423,7 +422,7 @@ public class EditionHelper {
             editgeoms = (FeatureCollection) editedLayer.getCollection().subCollection(qb.buildQuery());
 
             //we filter ourself since we want the filter to occure after the reprojection
-            editgeoms = GenericFilterFeatureIterator.wrap(editgeoms, flt);
+            editgeoms = FeatureStreams.filter(editgeoms, flt);
 
             fi = editgeoms.iterator();
             if (fi.hasNext()) {

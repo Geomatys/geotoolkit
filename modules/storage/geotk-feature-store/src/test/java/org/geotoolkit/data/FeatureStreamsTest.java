@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.iterator;
+package org.geotoolkit.data;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -32,14 +32,6 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.memory.GenericCachedFeatureIterator;
-import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
-import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
-import org.geotoolkit.data.memory.GenericMaxFeatureIterator;
-import org.geotoolkit.data.memory.GenericModifyFeatureIterator;
-import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
-import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
-import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
@@ -60,7 +52,6 @@ import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
 import static junit.framework.Assert.*;
-import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectFeatureType;
 import org.geotoolkit.feature.TransformFeatureType;
 import org.geotoolkit.feature.ViewFeatureType;
@@ -71,14 +62,15 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.geotoolkit.data.memory.GenericDecoratedFeatureIterator;
+import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.data.iterator.CheckCloseFeatureIterator;
 
 /**
  * Tests of the different iterators.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
+public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000001d;
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
@@ -101,7 +93,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
     private final Feature sf2;
     private final Feature sf3;
 
-    public GenericIteratorTest() throws NoSuchAuthorityCodeException, FactoryException{
+    public FeatureStreamsTest() throws NoSuchAuthorityCodeException, FactoryException{
         FeatureTypeBuilder builder = new FeatureTypeBuilder();
         name = NamesExt.create("http://test.com", "TestSchema");
         builder = new FeatureTypeBuilder();
@@ -180,7 +172,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testEmptyIterator(){
-        final FeatureIterator iterator = GenericEmptyFeatureIterator.createIterator();
+        final FeatureIterator iterator = FeatureStreams.emptyIterator();
 
         assertFalse(iterator.hasNext());
 
@@ -204,7 +196,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testEmptyReader(){
         FeatureCollection collection = buildSimpleFeatureCollection();
-        final FeatureReader iterator = GenericEmptyFeatureIterator.createReader(collection.getFeatureType());
+        final FeatureReader iterator = FeatureStreams.emptyReader(collection.getFeatureType());
 
         assertEquals(iterator.getFeatureType(), collection.getFeatureType());
         assertFalse(iterator.hasNext());
@@ -229,7 +221,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testEmptyWriter(){
         FeatureCollection collection = buildSimpleFeatureCollection();
-        final FeatureWriter iterator = GenericEmptyFeatureIterator.createWriter(collection.getFeatureType());
+        final FeatureWriter iterator = FeatureStreams.emptyWriter(collection.getFeatureType());
 
         assertEquals(iterator.getFeatureType(), collection.getFeatureType());
         assertFalse(iterator.hasNext());
@@ -255,10 +247,10 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
     @Ignore("See #GEOTK-489")
     public void testCacheIterator(){
         FeatureCollection collection = buildSimpleFeatureCollection();
-        FeatureIterator ite = GenericCachedFeatureIterator.wrap(collection.iterator(), 1);
+        FeatureIterator ite = FeatureStreams.cached(collection.iterator(), 1);
         assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
-        ite = GenericCachedFeatureIterator.wrap(collection.iterator(), 1);
+        ite = FeatureStreams.cached(collection.iterator(), 1);
 
         int mask = 0;
         Feature f;
@@ -285,15 +277,15 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testFilterIterator(){
         FeatureCollection collection = buildSimpleFeatureCollection();
-        FeatureIterator ite = GenericFilterFeatureIterator.wrap(collection.iterator(), Filter.INCLUDE);
+        FeatureIterator ite = FeatureStreams.filter(collection.iterator(), Filter.INCLUDE);
         assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
-        ite = GenericFilterFeatureIterator.wrap(collection.iterator(), Filter.EXCLUDE);
+        ite = FeatureStreams.filter(collection.iterator(), Filter.EXCLUDE);
         assertEquals(0, FeatureStoreUtilities.calculateCount(ite));
 
-        ite = GenericFilterFeatureIterator.wrap(collection.iterator(), FF.equals(FF.literal("aaa"), FF.property("att_string")));
+        ite = FeatureStreams.filter(collection.iterator(), FF.equals(FF.literal("aaa"), FF.property("att_string")));
         assertEquals(1, FeatureStoreUtilities.calculateCount(ite));
-        ite = GenericFilterFeatureIterator.wrap(collection.iterator(), FF.equals(FF.literal("aaa"), FF.property("att_string")));
+        ite = FeatureStreams.filter(collection.iterator(), FF.equals(FF.literal("aaa"), FF.property("att_string")));
 
         assertEquals(id3, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
         try{
@@ -304,13 +296,13 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         }
 
         //check has next do not iterate
-        ite = GenericFilterFeatureIterator.wrap(collection.iterator(), Filter.INCLUDE);
+        ite = FeatureStreams.filter(collection.iterator(), Filter.INCLUDE);
         testIterationOnNext(ite, 3);
 
         //check sub iterator is properly closed
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(collection.iterator());
         assertFalse(checkIte.isClosed());
-        ite = GenericFilterFeatureIterator.wrap(checkIte, Filter.INCLUDE);
+        ite = FeatureStreams.filter(checkIte, Filter.INCLUDE);
         while(ite.hasNext()) ite.next();
         ite.close();
         assertTrue(checkIte.isClosed());
@@ -319,13 +311,13 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testMaxIterator(){
         FeatureCollection collection = buildSimpleFeatureCollection();
-        FeatureIterator ite = GenericMaxFeatureIterator.wrap(collection.iterator(), 10);
+        FeatureIterator ite = FeatureStreams.limit(collection.iterator(), 10);
         assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
-        ite = GenericMaxFeatureIterator.wrap(collection.iterator(), 2);
+        ite = FeatureStreams.limit(collection.iterator(), 2);
         assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
-        ite = GenericMaxFeatureIterator.wrap(collection.iterator(), 1);
+        ite = FeatureStreams.limit(collection.iterator(), 1);
         assertEquals(id1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
         try{
             ite.next();
@@ -335,13 +327,13 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         }
 
         //check has next do not iterate
-        ite = GenericMaxFeatureIterator.wrap(collection.iterator(), 10);
+        ite = FeatureStreams.limit(collection.iterator(), 10);
         testIterationOnNext(ite, 3);
 
         //check sub iterator is properly closed
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(collection.iterator());
         assertFalse(checkIte.isClosed());
-        ite = GenericMaxFeatureIterator.wrap(checkIte, 10);
+        ite = FeatureStreams.limit(checkIte, 10);
         while(ite.hasNext()) ite.next();
         ite.close();
         assertTrue(checkIte.isClosed());
@@ -355,20 +347,20 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         Map<String,Object> values = new HashMap<>();
         values.put("att_string", "toto");
 
-        FeatureIterator ite = GenericModifyFeatureIterator.wrap(collection.iterator(), filter, values);
+        FeatureIterator ite = FeatureStreams.update(collection.iterator(), filter, values);
         assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
-        ite = GenericModifyFeatureIterator.wrap(collection.iterator(), filter, values);
+        ite = FeatureStreams.update(collection.iterator(), filter, values);
         while(ite.hasNext()){
             assertTrue(ite.next().getProperty("att_string").getValue().equals("toto"));
         }
 
 
         filter = FF.equals(FF.literal("aaa"), FF.property("att_string"));
-        ite = GenericModifyFeatureIterator.wrap(collection.iterator(), filter, values);
+        ite = FeatureStreams.update(collection.iterator(), filter, values);
         assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
-        ite = GenericModifyFeatureIterator.wrap(collection.iterator(), filter, values);
+        ite = FeatureStreams.update(collection.iterator(), filter, values);
         while(ite.hasNext()){
             Feature f = ite.next();
             if (f.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()).equals(id3)) {
@@ -379,7 +371,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         }
 
 
-        ite = GenericModifyFeatureIterator.wrap(collection.iterator(), filter, values);
+        ite = FeatureStreams.update(collection.iterator(), filter, values);
         ite.next();
         ite.next();
         ite.next();
@@ -391,13 +383,13 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         }
 
         //check has next do not iterate
-        ite = GenericModifyFeatureIterator.wrap(collection.iterator(), filter, values);
+        ite = FeatureStreams.update(collection.iterator(), filter, values);
         testIterationOnNext(ite, 3);
 
         //check sub iterator is properly closed
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(collection.iterator());
         assertFalse(checkIte.isClosed());
-        ite = GenericModifyFeatureIterator.wrap(checkIte, filter, values);
+        ite = FeatureStreams.update(checkIte, filter, values);
         while(ite.hasNext()) ite.next();
         ite.close();
         assertTrue(checkIte.isClosed());
@@ -413,7 +405,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
 
         final CoordinateReferenceSystem targetCRS = CommonCRS.WGS84.geographic();
 
-        FeatureReader retyped = GenericDecoratedFeatureIterator.wrap(reader, new ReprojectFeatureType(reader.getFeatureType(), targetCRS), new Hints());
+        FeatureReader retyped = FeatureStreams.decorate(reader, new ReprojectFeatureType(reader.getFeatureType(), targetCRS), new Hints());
 
         int mask = 0;
         Feature f;
@@ -443,14 +435,14 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
 
         //check has next do not iterate
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
-        retyped = GenericDecoratedFeatureIterator.wrap(reader, new ReprojectFeatureType(reader.getFeatureType(), CommonCRS.WGS84.geographic()), new Hints());
+        retyped = FeatureStreams.decorate(reader, new ReprojectFeatureType(reader.getFeatureType(), CommonCRS.WGS84.geographic()), new Hints());
         testIterationOnNext(retyped, 3);
 
         //check sub iterator is properly closed
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(reader);
         assertFalse(checkIte.isClosed());
-        retyped = GenericDecoratedFeatureIterator.wrap(checkIte, new ReprojectFeatureType(checkIte.getFeatureType(), CommonCRS.WGS84.geographic()), new Hints());
+        retyped = FeatureStreams.decorate(checkIte, new ReprojectFeatureType(checkIte.getFeatureType(), CommonCRS.WGS84.geographic()), new Hints());
         while(retyped.hasNext()) retyped.next();
         retyped.close();
         assertTrue(checkIte.isClosed());
@@ -493,7 +485,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
 
         GeometryTransformer decim = new GeometryScaleTransformer(10, 10);
         final TransformFeatureType ttype = new TransformFeatureType(reader.getFeatureType(), decim);
-        FeatureReader retyped = GenericDecoratedFeatureIterator.wrap(reader, ttype, hints);
+        FeatureReader retyped = FeatureStreams.decorate(reader, ttype, hints);
 
         assertTrue(retyped.hasNext());
 
@@ -525,7 +517,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         hints.put(HintsPending.FEATURE_DETACHED, Boolean.FALSE);
 
         decim = new GeometryScaleTransformer(10, 10);
-        retyped = GenericDecoratedFeatureIterator.wrap(reader,new TransformFeatureType(reader.getFeatureType(), decim), hints);
+        retyped = FeatureStreams.decorate(reader,new TransformFeatureType(reader.getFeatureType(), decim), hints);
 
         assertTrue(retyped.hasNext());
 
@@ -561,7 +553,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         final Query query = qb.buildQuery();
         FeatureReader reader = collection.getSession().getFeatureStore().getFeatureReader(query);
 
-        FeatureReader retyped = GenericDecoratedFeatureIterator.wrap(reader, (ViewFeatureType) reducedType,null);
+        FeatureReader retyped = FeatureStreams.decorate(reader, (ViewFeatureType) reducedType, null);
         assertEquals(reducedType,retyped.getFeatureType());
 
         int mask = 0;
@@ -588,14 +580,14 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
 
         //check has next do not iterate
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
-        retyped = GenericDecoratedFeatureIterator.wrap(reader, (ViewFeatureType) reducedType,null);
+        retyped = FeatureStreams.decorate(reader, (ViewFeatureType) reducedType, null);
         testIterationOnNext(retyped, 3);
 
         //check sub iterator is properly closed
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(reader);
         assertFalse(checkIte.isClosed());
-        retyped = GenericDecoratedFeatureIterator.wrap(checkIte, (ViewFeatureType) reducedType,null);
+        retyped = FeatureStreams.decorate(checkIte, (ViewFeatureType) reducedType, null);
         while(retyped.hasNext()) retyped.next();
         retyped.close();
         assertTrue(checkIte.isClosed());
@@ -609,11 +601,11 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         };
 
         FeatureCollection collection = buildSimpleFeatureCollection();
-        FeatureIterator ite = GenericSortByFeatureIterator.wrap(collection.iterator(), sorts);
+        FeatureIterator ite = FeatureStreams.sort(collection.iterator(), sorts);
         assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
 
-        ite = GenericSortByFeatureIterator.wrap(collection.iterator(), sorts);
+        ite = FeatureStreams.sort(collection.iterator(), sorts);
         assertEquals(id3, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
         assertEquals(id1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
         assertEquals(id2, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
@@ -626,13 +618,13 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         }
 
         //check has next do not iterate
-        ite = GenericSortByFeatureIterator.wrap(collection.iterator(), sorts);
+        ite = FeatureStreams.sort(collection.iterator(), sorts);
         testIterationOnNext(ite, 3);
 
         //check sub iterator is properly closed
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(collection.iterator());
         assertFalse(checkIte.isClosed());
-        ite = GenericSortByFeatureIterator.wrap(checkIte, sorts);
+        ite = FeatureStreams.sort(checkIte, sorts);
         while(ite.hasNext()) ite.next();
         ite.close();
         assertTrue(checkIte.isClosed());
@@ -648,10 +640,10 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
             FF.sort("att_string", SortOrder.DESCENDING)
         };
 
-        FeatureIterator ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
+        FeatureIterator ite = FeatureStreams.sort(collectionComplex.iterator(), sorts);
         assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
-        ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
+        ite = FeatureStreams.sort(collectionComplex.iterator(), sorts);
         assertEquals(COMPLEX_ID_2, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
         assertEquals(COMPLEX_ID_1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
 
@@ -667,10 +659,10 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
             FF.sort("att_double", SortOrder.DESCENDING)
         };
 
-        ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
+        ite = FeatureStreams.sort(collectionComplex.iterator(), sorts);
         assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
-        ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
+        ite = FeatureStreams.sort(collectionComplex.iterator(), sorts);
         assertEquals(COMPLEX_ID_1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
         assertEquals(COMPLEX_ID_2, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
 
@@ -686,10 +678,10 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
             FF.sort("att_double", SortOrder.ASCENDING)
         };
 
-        ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
+        ite = FeatureStreams.sort(collectionComplex.iterator(), sorts);
         assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
-        ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
+        ite = FeatureStreams.sort(collectionComplex.iterator(), sorts);
         assertEquals(COMPLEX_ID_2, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
         assertEquals(COMPLEX_ID_1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
 
@@ -702,14 +694,14 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
 
 
         //check has next do not iterate
-        ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
+        ite = FeatureStreams.sort(collectionComplex.iterator(), sorts);
         testIterationOnNext(ite, 2);
 
 
         //check sub iterator is properly closed
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(collection.iterator());
         assertFalse(checkIte.isClosed());
-        ite = GenericSortByFeatureIterator.wrap(checkIte, sorts);
+        ite = FeatureStreams.sort(checkIte, sorts);
         while(ite.hasNext()) ite.next();
         ite.close();
         assertTrue(checkIte.isClosed());
@@ -718,13 +710,13 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testStartIndexIterator(){
         FeatureCollection collection = buildSimpleFeatureCollection();
-        FeatureIterator ite = GenericStartIndexFeatureIterator.wrap(collection.iterator(), 0);
+        FeatureIterator ite = FeatureStreams.skip(collection.iterator(), 0);
         assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
-        ite = GenericStartIndexFeatureIterator.wrap(collection.iterator(), 1);
+        ite = FeatureStreams.skip(collection.iterator(), 1);
         assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
-        ite = GenericStartIndexFeatureIterator.wrap(collection.iterator(), 2);
+        ite = FeatureStreams.skip(collection.iterator(), 2);
         assertTrue(ite.next() != null);
         try{
             ite.next();
@@ -734,13 +726,13 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         }
 
         //check has next do not iterate
-        ite = GenericStartIndexFeatureIterator.wrap(collection.iterator(), 1);
+        ite = FeatureStreams.skip(collection.iterator(), 1);
         testIterationOnNext(ite, 2);
 
         //check sub iterator is properly closed
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(collection.iterator());
         assertFalse(checkIte.isClosed());
-        ite = GenericStartIndexFeatureIterator.wrap(checkIte, 1);
+        ite = FeatureStreams.skip(checkIte, 1);
         while(ite.hasNext()) ite.next();
         ite.close();
         assertTrue(checkIte.isClosed());
@@ -751,13 +743,13 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
 
         FeatureCollection collection = buildSimpleFeatureCollection();
         //check has next do not iterate
-        FeatureIterator ite = GenericWrapFeatureIterator.wrapToIterator(collection.iterator());
+        FeatureIterator ite = FeatureStreams.asIterator(collection.iterator());
         testIterationOnNext(ite, 3);
 
         //check sub iterator is properly closed
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(collection.iterator());
         assertFalse(checkIte.isClosed());
-        ite = GenericWrapFeatureIterator.wrapToIterator(checkIte);
+        ite = FeatureStreams.asIterator(checkIte);
         while(ite.hasNext()) ite.next();
         ite.close();
         assertTrue(checkIte.isClosed());
@@ -767,13 +759,13 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
     public void testWrapReader(){
         FeatureCollection collection = buildSimpleFeatureCollection();
         //check has next do not iterate
-        FeatureReader reader = GenericWrapFeatureIterator.wrapToReader(collection.iterator(),collection.getFeatureType());
+        FeatureReader reader = FeatureStreams.asReader(collection.iterator(),collection.getFeatureType());
         testIterationOnNext(reader, 3);
 
         //check sub iterator is properly closed
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(collection.iterator());
         assertFalse(checkIte.isClosed());
-        reader = GenericWrapFeatureIterator.wrapToReader(checkIte,collection.getFeatureType());
+        reader = FeatureStreams.asReader(checkIte,collection.getFeatureType());
         while(reader.hasNext()) reader.next();
         reader.close();
         assertTrue(checkIte.isClosed());

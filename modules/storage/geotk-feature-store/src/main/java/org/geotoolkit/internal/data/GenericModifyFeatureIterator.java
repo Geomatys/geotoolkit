@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,7 +29,7 @@ import org.opengis.filter.Filter;
 
 /**
  * Supports on the fly modification of FeatureIterator contents.
- * This modify the features that match the given filter and changes the attributs values.
+ * This modify the features that match the given filter and changes the attributes values.
  *
  * @author Johann Sorel (Geomatys)
  * @module
@@ -124,7 +124,7 @@ public class GenericModifyFeatureIterator<R extends FeatureIterator> implements 
     }
 
     /**
-     * Wrap a FeatureIterator with a modifiycation set
+     * Wrap a FeatureIterator with a modification set
      */
     public static FeatureIterator wrap(final FeatureIterator reader, final Filter filter, final Map<String, ?> values){
         return new GenericModifyFeatureIterator(reader, filter, values);

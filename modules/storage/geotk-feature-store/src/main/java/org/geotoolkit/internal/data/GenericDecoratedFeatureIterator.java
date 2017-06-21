@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
 import org.geotoolkit.feature.DecoratedFeatureType;
 import org.geotoolkit.data.FeatureCollection;
@@ -24,6 +24,8 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -118,7 +120,7 @@ public abstract class GenericDecoratedFeatureIterator<R extends FeatureIterator>
         public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
             FeatureIterator ite = getOriginalFeatureCollection().iterator(hints);
             if(!(ite instanceof FeatureReader)){
-                ite = GenericWrapFeatureIterator.wrapToReader(ite, getOriginalFeatureCollection().getFeatureType());
+                ite = FeatureStreams.asReader(ite, getOriginalFeatureCollection().getFeatureType());
             }
             return wrap((FeatureReader)ite, mask, hints);
         }

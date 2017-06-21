@@ -34,7 +34,6 @@ import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
@@ -65,6 +64,7 @@ import org.geotoolkit.index.TreeException;
 import org.geotoolkit.index.quadtree.*;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.util.NullProgressListener;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
@@ -274,7 +274,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
             }else if(queryFilter instanceof Id && ((Id)queryFilter).getIdentifiers().isEmpty()){
                 //in case we have an empty id set
-                return GenericEmptyFeatureIterator.createReader(getFeatureType());
+                return FeatureStreams.emptyReader(getFeatureType());
 
             }else{
                 final List<AttributeType> attsProperties = new ArrayList<>(readProperties);

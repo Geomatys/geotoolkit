@@ -14,10 +14,8 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectFeatureType;
@@ -28,24 +26,21 @@ import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.NamesExt;
-import org.opengis.util.GenericName;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 public class GenericQueryFeatureIterator {
-
 
     public static FeatureReader wrap(FeatureReader reader, final Query remainingParameters) throws DataStoreException{
 
@@ -69,7 +64,7 @@ public class GenericQueryFeatureIterator {
         //This can be really expensive, and force the us to read the full iterator.
         //that may cause out of memory errors.
         if(sorts != null && sorts.length != 0){
-            reader = GenericSortByFeatureIterator.wrap(reader, sorts);
+            reader = FeatureStreams.sort(reader, sorts);
         }
 
         //wrap filter ----------------------------------------------------------
@@ -77,28 +72,28 @@ public class GenericQueryFeatureIterator {
         if(filter != null && filter != Filter.INCLUDE){
             if(filter == Filter.EXCLUDE){
                 //filter that exclude everything, use optimzed reader
-                reader = GenericEmptyFeatureIterator.createReader(reader.getFeatureType());
+                reader = FeatureStreams.emptyReader(reader.getFeatureType());
                 //close original reader
                 reader.close();
             }else{
-                reader = GenericFilterFeatureIterator.wrap(reader, filter);
+                reader = FeatureStreams.filter(reader, filter);
             }
         }
 
         //wrap start index -----------------------------------------------------
         if(start != null && start > 0){
-            reader = GenericStartIndexFeatureIterator.wrap(reader, start);
+            reader = FeatureStreams.skip(reader, start);
         }
 
         //wrap max -------------------------------------------------------------
         if(max != null){
             if(max == 0){
                 //use an optimized reader
-                reader = GenericEmptyFeatureIterator.createReader(reader.getFeatureType());
+                reader = FeatureStreams.emptyReader(reader.getFeatureType());
                 //close original reader
                 reader.close();
             }else{
-                reader = GenericMaxFeatureIterator.wrap(reader, max);
+                reader = FeatureStreams.limit(reader, max);
             }
         }
 
@@ -107,7 +102,7 @@ public class GenericQueryFeatureIterator {
 
         if(properties!=null && !FeatureTypeExt.isAllProperties(original, properties)) {
             try {
-                reader = GenericDecoratedFeatureIterator.wrap(reader,  new ViewFeatureType(original, properties),hints);
+                reader = FeatureStreams.decorate(reader,  new ViewFeatureType(original, properties),hints);
             } catch (MismatchedFeatureException | IllegalStateException ex) {
                 throw new DataStoreException(ex);
             }
@@ -117,13 +112,13 @@ public class GenericQueryFeatureIterator {
         if(resampling != null){
             final GeometryScaleTransformer trs = new GeometryScaleTransformer(resampling[0], resampling[1]);
             final TransformFeatureType ttype = new TransformFeatureType(reader.getFeatureType(), trs);
-            reader = GenericDecoratedFeatureIterator.wrap(reader, ttype, hints);
+            reader = FeatureStreams.decorate(reader, ttype, hints);
         }
 
         //wrap reprojection ----------------------------------------------------
         if(crs != null){
             try {
-                reader = GenericDecoratedFeatureIterator.wrap(reader, new ReprojectFeatureType(reader.getFeatureType(), crs), hints);
+                reader = FeatureStreams.decorate(reader, new ReprojectFeatureType(reader.getFeatureType(), crs), hints);
             } catch (MismatchedFeatureException ex) {
                 throw new DataStoreException(ex);
             }

@@ -119,7 +119,7 @@ public class DataUtilitiesTest extends org.geotoolkit.test.TestBase {
         CheckCloseFeatureIterator reader2 = new CheckCloseFeatureIterator(store.getFeatureReader(QueryBuilder.all(name2)));
         CheckCloseFeatureIterator reader3 = new CheckCloseFeatureIterator(store.getFeatureReader(QueryBuilder.all(name3)));
 
-        FeatureReader fr = FeatureStoreUtilities.sequence(reader1,reader2,reader3);
+        FeatureReader fr = FeatureStreams.sequence(reader1,reader2,reader3);
         assertFalse(reader1.isClosed());
         assertFalse(reader2.isClosed());
         assertFalse(reader3.isClosed());
@@ -143,7 +143,7 @@ public class DataUtilitiesTest extends org.geotoolkit.test.TestBase {
         reader2 = new CheckCloseFeatureIterator(store.getFeatureReader(QueryBuilder.all(name2)));
         reader3 = new CheckCloseFeatureIterator(store.getFeatureReader(QueryBuilder.all(name3)));
 
-        fr = FeatureStoreUtilities.sequence(reader1,reader2,reader3);
+        fr = FeatureStreams.sequence(reader1,reader2,reader3);
         assertFalse(reader1.isClosed());
         assertFalse(reader2.isClosed());
         assertFalse(reader3.isClosed());
@@ -165,7 +165,7 @@ public class DataUtilitiesTest extends org.geotoolkit.test.TestBase {
         CheckCloseFeatureIterator reader2 = new CheckCloseFeatureIterator(store.getFeatureReader(QueryBuilder.all(name2)));
         CheckCloseFeatureIterator reader3 = new CheckCloseFeatureIterator(store.getFeatureReader(QueryBuilder.all(name3)));
 
-        FeatureIterator fr = FeatureStoreUtilities.sequence((FeatureIterator)reader1,(FeatureIterator)reader2,(FeatureIterator)reader3);
+        FeatureIterator fr = FeatureStreams.sequence((FeatureIterator)reader1,(FeatureIterator)reader2,(FeatureIterator)reader3);
         assertFalse(reader1.isClosed());
         assertFalse(reader2.isClosed());
         assertFalse(reader3.isClosed());
@@ -189,7 +189,7 @@ public class DataUtilitiesTest extends org.geotoolkit.test.TestBase {
         reader2 = new CheckCloseFeatureIterator(store.getFeatureReader(QueryBuilder.all(name2)));
         reader3 = new CheckCloseFeatureIterator(store.getFeatureReader(QueryBuilder.all(name3)));
 
-        fr = FeatureStoreUtilities.sequence((FeatureIterator)reader1,(FeatureIterator)reader2,(FeatureIterator)reader3);
+        fr = FeatureStreams.sequence((FeatureIterator)reader1,(FeatureIterator)reader2,(FeatureIterator)reader3);
         assertFalse(reader1.isClosed());
         assertFalse(reader2.isClosed());
         assertFalse(reader3.isClosed());
@@ -210,7 +210,7 @@ public class DataUtilitiesTest extends org.geotoolkit.test.TestBase {
         FeatureCollection fc1 = store.createSession(false).getFeatureCollection(QueryBuilder.all(name1));
         FeatureCollection fc2 = store.createSession(false).getFeatureCollection(QueryBuilder.all(name2));
         FeatureCollection fc3 = store.createSession(false).getFeatureCollection(QueryBuilder.all(name3));
-        FeatureCollection col = FeatureStoreUtilities.sequence("id", fc1, fc2, fc3);
+        FeatureCollection col = FeatureStreams.sequence("id", fc1, fc2, fc3);
 
         CheckCloseFeatureIterator reader = new CheckCloseFeatureIterator(col.iterator());
         assertFalse(reader.isClosed());

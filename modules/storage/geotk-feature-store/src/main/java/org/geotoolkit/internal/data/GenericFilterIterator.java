@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

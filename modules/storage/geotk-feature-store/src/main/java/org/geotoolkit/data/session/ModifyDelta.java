@@ -26,7 +26,7 @@ import java.util.logging.Level;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.memory.GenericModifyFeatureIterator;
+import org.geotoolkit.internal.data.GenericModifyFeatureIterator;
 import org.geotoolkit.data.memory.WrapFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;

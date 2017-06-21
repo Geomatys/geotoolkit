@@ -48,7 +48,6 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
@@ -71,6 +70,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.feature.AttributeConvention;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.data.FeatureStreams;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -320,7 +320,7 @@ public class EditionHelper {
             editgeoms = editedLayer.getCollection().subCollection(qb.buildQuery());
 
             //we filter ourself since we want the filter to occure after the reprojection
-            editgeoms = GenericFilterFeatureIterator.wrap(editgeoms, flt);
+            editgeoms = FeatureStreams.filter(editgeoms, flt);
 
             fi = editgeoms.iterator();
             if (fi.hasNext()) {

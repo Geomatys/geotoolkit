@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -30,6 +30,7 @@ import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.factory.HintsPending;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 

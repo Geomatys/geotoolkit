@@ -18,7 +18,7 @@ package org.geotoolkit.processing.vector.retype;
 
 import org.geotoolkit.feature.ViewFeatureType;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.GenericDecoratedFeatureIterator;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.feature.FeatureType;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -49,7 +49,7 @@ public class RetypeProcess extends AbstractProcess {
         final FeatureType mask = value(RetypeDescriptor.MASK_IN, inputParameters);
         final FeatureCollection resultFeatureList;
         if(mask instanceof ViewFeatureType){
-            resultFeatureList = GenericDecoratedFeatureIterator.wrap(inputFeatureList, (ViewFeatureType) mask);
+            resultFeatureList = FeatureStreams.decorate(inputFeatureList, (ViewFeatureType) mask);
         }else{
             resultFeatureList = inputFeatureList;
         }
