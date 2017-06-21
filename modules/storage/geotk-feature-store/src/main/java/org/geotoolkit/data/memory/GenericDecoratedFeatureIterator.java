@@ -33,7 +33,7 @@ import org.opengis.feature.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @param <R>
  */
-public abstract class GenericDecoratedFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
+abstract class GenericDecoratedFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
     protected final R iterator;
 
@@ -118,7 +118,7 @@ public abstract class GenericDecoratedFeatureIterator<R extends FeatureIterator>
         public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
             FeatureIterator ite = getOriginalFeatureCollection().iterator(hints);
             if(!(ite instanceof FeatureReader)){
-                ite = GenericWrapFeatureIterator.wrapToReader(ite, getOriginalFeatureCollection().getFeatureType());
+                ite = FeatureStreams.asReader(ite, getOriginalFeatureCollection().getFeatureType());
             }
             return wrap((FeatureReader)ite, mask, hints);
         }
@@ -133,7 +133,7 @@ public abstract class GenericDecoratedFeatureIterator<R extends FeatureIterator>
     /**
      * Decorate a feature reader.
      */
-    public static FeatureReader wrap(final FeatureReader reader, final DecoratedFeatureType mask, final Hints hints){
+    static FeatureReader wrap(final FeatureReader reader, final DecoratedFeatureType mask, final Hints hints){
         final FeatureType original = reader.getFeatureType();
         if(mask.equals(original)){
             //same type mapping, no need to wrap it
@@ -146,7 +146,7 @@ public abstract class GenericDecoratedFeatureIterator<R extends FeatureIterator>
     /**
      * Decorate a FeatureCollection.
      */
-    public static FeatureCollection wrap(final FeatureCollection original, final DecoratedFeatureType mask){
+    static FeatureCollection wrap(final FeatureCollection original, final DecoratedFeatureType mask){
         return new GenericRetypeFeatureCollection(original, mask);
     }
 

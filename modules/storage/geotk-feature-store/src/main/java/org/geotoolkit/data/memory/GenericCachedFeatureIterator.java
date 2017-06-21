@@ -39,7 +39,7 @@ import org.opengis.feature.FeatureType;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GenericCachedFeatureIterator implements FeatureIterator {
+class GenericCachedFeatureIterator implements FeatureIterator {
 
     //TODO : wait for martin, there should already be a thread pool for global tasks somewhere.
     public static final Executor POOL = Executors.newCachedThreadPool();
@@ -238,7 +238,7 @@ public class GenericCachedFeatureIterator implements FeatureIterator {
     /**
      * Wrap a FeatureIterator with a cache size.
      */
-    public static FeatureIterator wrap(final FeatureIterator reader, final int cacheSize){
+    static FeatureIterator wrap(final FeatureIterator reader, final int cacheSize){
         if(reader instanceof FeatureReader){
             return wrap((FeatureReader)reader,cacheSize);
         }else if(reader instanceof FeatureWriter){
@@ -251,14 +251,14 @@ public class GenericCachedFeatureIterator implements FeatureIterator {
     /**
      * Wrap a FeatureReader with a cache size.
      */
-    public static FeatureReader wrap(final FeatureReader reader, final int cacheSize){
+    static FeatureReader wrap(final FeatureReader reader, final int cacheSize){
         return new GenericCachedFeatureIterator.GenericCachedFeatureReader(reader, cacheSize);
     }
 
     /**
      * Create an caching FeatureCollection wrapping the given collection.
      */
-    public static FeatureCollection wrap(final FeatureCollection original, final int cacheSize){
+    static FeatureCollection wrap(final FeatureCollection original, final int cacheSize){
         return new GenericCachedFeatureIterator.GenericCachedFeatureCollection(original, cacheSize);
     }
 

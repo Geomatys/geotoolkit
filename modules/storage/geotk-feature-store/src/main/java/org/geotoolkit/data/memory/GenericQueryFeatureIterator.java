@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.data.memory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectFeatureType;
@@ -30,24 +28,20 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.NamesExt;
-import org.opengis.util.GenericName;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GenericQueryFeatureIterator {
+class GenericQueryFeatureIterator {
 
-
-    public static FeatureReader wrap(FeatureReader reader, final Query remainingParameters) throws DataStoreException{
+    static FeatureReader wrap(FeatureReader reader, final Query remainingParameters) throws DataStoreException{
 
         final Integer start = remainingParameters.getStartIndex();
         final Integer max = remainingParameters.getMaxFeatures();
@@ -69,7 +63,7 @@ public class GenericQueryFeatureIterator {
         //This can be really expensive, and force the us to read the full iterator.
         //that may cause out of memory errors.
         if(sorts != null && sorts.length != 0){
-            reader = GenericSortByFeatureIterator.wrap(reader, sorts);
+            reader = FeatureStreams.sort(reader, sorts);
         }
 
         //wrap filter ----------------------------------------------------------
@@ -77,28 +71,28 @@ public class GenericQueryFeatureIterator {
         if(filter != null && filter != Filter.INCLUDE){
             if(filter == Filter.EXCLUDE){
                 //filter that exclude everything, use optimzed reader
-                reader = GenericEmptyFeatureIterator.createReader(reader.getFeatureType());
+                reader = FeatureStreams.emptyReader(reader.getFeatureType());
                 //close original reader
                 reader.close();
             }else{
-                reader = GenericFilterFeatureIterator.wrap(reader, filter);
+                reader = FeatureStreams.filter(reader, filter);
             }
         }
 
         //wrap start index -----------------------------------------------------
         if(start != null && start > 0){
-            reader = GenericStartIndexFeatureIterator.wrap(reader, start);
+            reader = FeatureStreams.skip(reader, start);
         }
 
         //wrap max -------------------------------------------------------------
         if(max != null){
             if(max == 0){
                 //use an optimized reader
-                reader = GenericEmptyFeatureIterator.createReader(reader.getFeatureType());
+                reader = FeatureStreams.emptyReader(reader.getFeatureType());
                 //close original reader
                 reader.close();
             }else{
-                reader = GenericMaxFeatureIterator.wrap(reader, max);
+                reader = FeatureStreams.limit(reader, max);
             }
         }
 
@@ -132,7 +126,7 @@ public class GenericQueryFeatureIterator {
         return reader;
     }
 
-    public static FeatureCollection wrap(final FeatureCollection col, final Query query){
+    static FeatureCollection wrap(final FeatureCollection col, final Query query){
         return new AbstractFeatureCollection("wrap", col.getSource()) {
 
             private FeatureType type = null;

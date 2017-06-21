@@ -36,7 +36,7 @@ import org.opengis.feature.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class GenericWrapFeatureIterator implements FeatureIterator {
+class GenericWrapFeatureIterator implements FeatureIterator {
 
     protected final Iterator<? extends Feature> iterator;
 
@@ -154,21 +154,21 @@ public class GenericWrapFeatureIterator implements FeatureIterator {
     /**
      * Wrap an Iterator as a FeatureIterator.
      */
-    public static FeatureIterator wrapToIterator(final Iterator<? extends Feature> reader){
+    static FeatureIterator wrapToIterator(final Iterator<? extends Feature> reader){
         return new GenericWrapFeatureIterator(reader);
     }
 
     /**
      * Wrap an Iterator as a FeatureReader.
      */
-    public static FeatureReader wrapToReader(final Iterator<? extends Feature> reader, final FeatureType type){
+    static FeatureReader wrapToReader(final Iterator<? extends Feature> reader, final FeatureType type){
         return new GenericWrapFeatureReader(reader, type);
     }
 
     /**
      * Wrap an Iterator as a FeatureWriter.
      */
-    public static FeatureWriter wrapToWriter(final Iterator<? extends Feature> writer, final FeatureType type){
+    static FeatureWriter wrapToWriter(final Iterator<? extends Feature> writer, final FeatureType type){
         return new GenericWrapFeatureWriter(writer, type);
     }
 

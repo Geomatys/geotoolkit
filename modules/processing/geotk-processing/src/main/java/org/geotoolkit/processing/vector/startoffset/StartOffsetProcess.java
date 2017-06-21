@@ -17,7 +17,7 @@
 package org.geotoolkit.processing.vector.startoffset;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
+import org.geotoolkit.data.memory.FeatureStreams;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -48,7 +48,7 @@ public class StartOffsetProcess extends AbstractProcess {
         final FeatureCollection inputFeatureList   = Parameters.value(VectorDescriptor.FEATURE_IN, inputParameters);
         final int offset                                    = Parameters.value(StartOffsetDescriptor.OFFSET_IN, inputParameters);
 
-        final FeatureCollection resultFeatureList = GenericStartIndexFeatureIterator.wrap(inputFeatureList, offset);
+        final FeatureCollection resultFeatureList = FeatureStreams.skip(inputFeatureList, offset);
 
         getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }

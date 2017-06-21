@@ -37,7 +37,7 @@ import org.opengis.filter.Filter;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class GenericFilterFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
+class GenericFilterFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
     protected final R iterator;
     protected final Filter filter;
@@ -187,7 +187,7 @@ public class GenericFilterFeatureIterator<R extends FeatureIterator> implements 
     /**
      * Wrap a FeatureIterator with a filter.
      */
-    public static FeatureIterator wrap(final FeatureIterator reader, final Filter filter){
+    static FeatureIterator wrap(final FeatureIterator reader, final Filter filter){
         if(reader instanceof FeatureReader){
             return wrap((FeatureReader)reader,filter);
         }else if(reader instanceof FeatureWriter){
@@ -200,21 +200,21 @@ public class GenericFilterFeatureIterator<R extends FeatureIterator> implements 
     /**
      * Wrap a FeatureReader with a filter.
      */
-    public static FeatureReader wrap(final FeatureReader reader, final Filter filter){
+    static FeatureReader wrap(final FeatureReader reader, final Filter filter){
         return new GenericFilterFeatureReader(reader, filter);
     }
 
     /**
      * Wrap a FeatureWriter with a filter.
      */
-    public static FeatureWriter wrap(final FeatureWriter writer, final Filter filter){
+    static FeatureWriter wrap(final FeatureWriter writer, final Filter filter){
         return new GenericFilterFeatureWriter(writer, filter);
     }
 
     /**
      * Create an filtered FeatureCollection wrapping the given collection.
      */
-    public static FeatureCollection wrap(final FeatureCollection original, final Filter filter){
+    static FeatureCollection wrap(final FeatureCollection original, final Filter filter){
         return new GenericFilterFeatureCollection(original, filter);
     }
 

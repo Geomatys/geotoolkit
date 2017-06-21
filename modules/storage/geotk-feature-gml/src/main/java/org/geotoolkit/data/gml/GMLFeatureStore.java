@@ -34,7 +34,7 @@ import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
+import org.geotoolkit.data.memory.FeatureStreams;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
@@ -167,7 +167,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
             //reader.dispose();
         }
 
-        final FeatureReader freader = GenericWrapFeatureIterator.wrapToReader(ite,featureType);
+        final FeatureReader freader = FeatureStreams.asReader(ite,featureType);
         return handleRemaining(freader, query);
     }
 

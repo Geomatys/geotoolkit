@@ -33,7 +33,7 @@ import org.opengis.feature.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class GenericEmptyFeatureIterator implements FeatureIterator {
+class GenericEmptyFeatureIterator implements FeatureIterator {
 
     /**
      * Creates a new instance of GenericEmptyFeatureIterator
@@ -139,7 +139,7 @@ public class GenericEmptyFeatureIterator implements FeatureIterator {
      * Create an empty FeatureReader of the given type.
      * @param type FeatureType can be null
      */
-    public static FeatureReader createReader(final FeatureType type){
+    static FeatureReader createReader(final FeatureType type){
         return new GenericEmptyFeatureReader(type);
     }
 
@@ -147,21 +147,21 @@ public class GenericEmptyFeatureIterator implements FeatureIterator {
      * Create an empty FeatureWriter of the given type.
      * @param type FeatureType can be null
      */
-    public static FeatureWriter createWriter(final FeatureType type){
+    static FeatureWriter createWriter(final FeatureType type){
         return new GenericEmptyFeatureWriter(type);
     }
 
     /**
      * Create an empty FeatureIterator of the given type.
      */
-    public static FeatureIterator createIterator(){
+    static FeatureIterator createIterator(){
         return new GenericEmptyFeatureIterator();
     }
 
     /**
      * Create an empty FeaturCollection wrapping the collection.
      */
-    public static FeatureCollection wrap(final FeatureCollection original){
+    static FeatureCollection wrap(final FeatureCollection original){
         return new GenericEmptyFeatureCollection(original);
     }
 

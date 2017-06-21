@@ -33,7 +33,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GenericReprojectFeatureIterator<R extends FeatureReader> implements FeatureReader{
+class GenericReprojectFeatureIterator<R extends FeatureReader> implements FeatureReader{
 
     protected final R iterator;
     protected final FeatureType baseType;
@@ -131,7 +131,7 @@ public class GenericReprojectFeatureIterator<R extends FeatureReader> implements
         public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
             FeatureIterator ite = getOriginalFeatureCollection().iterator(hints);
             if(!(ite instanceof FeatureReader)){
-                ite = GenericWrapFeatureIterator.wrapToReader(ite, targetType);
+                ite = FeatureStreams.asReader(ite, targetType);
             }
             try {
                 return wrap((FeatureReader) ite, targetCrs, hints);
@@ -150,14 +150,14 @@ public class GenericReprojectFeatureIterator<R extends FeatureReader> implements
     /**
      * Wrap a FeatureReader with a reprojection.
      */
-    public static FeatureReader wrap(final FeatureReader reader, final CoordinateReferenceSystem crs, final Hints hints) throws FactoryException {
+    static FeatureReader wrap(final FeatureReader reader, final CoordinateReferenceSystem crs, final Hints hints) throws FactoryException {
         return new GenericReprojectFeatureIterator(reader, crs);
     }
 
     /**
      * Create a reproject FeatureCollection wrapping the given collection.
      */
-    public static FeatureCollection wrap(final FeatureCollection original, final CoordinateReferenceSystem crs){
+    static FeatureCollection wrap(final FeatureCollection original, final CoordinateReferenceSystem crs){
         return new GenericReprojectFeatureCollection(original, crs);
     }
 

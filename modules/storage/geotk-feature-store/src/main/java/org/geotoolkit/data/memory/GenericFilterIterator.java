@@ -28,7 +28,7 @@ import org.opengis.filter.Filter;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class GenericFilterIterator<F> implements Iterator<F> {
+class GenericFilterIterator<F> implements Iterator<F> {
 
     protected final Iterator<F> iterator;
     protected final Filter filter;
@@ -103,7 +103,7 @@ public class GenericFilterIterator<F> implements Iterator<F> {
     /**
      * Wrap a FeatureIterator with a filter.
      */
-    public static <F> Iterator<F> wrap(final Iterator<F> reader, final Filter filter){
+    static <F> Iterator<F> wrap(final Iterator<F> reader, final Filter filter){
         return new GenericFilterIterator(reader, filter);
     }
 

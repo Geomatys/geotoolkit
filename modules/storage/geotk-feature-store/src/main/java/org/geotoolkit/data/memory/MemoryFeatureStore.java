@@ -550,7 +550,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
 
         final FeatureReader reader;
 
-        reader = GenericWrapFeatureIterator.wrapToReader(ite, grp.getFeatureType());
+        reader = FeatureStreams.asReader(ite, grp.getFeatureType());
 
         //fall back on generic parameter handling.
         //todo we should handle at least spatial filter here by using a quadtree.

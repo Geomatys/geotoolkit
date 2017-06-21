@@ -17,7 +17,7 @@
 package org.geotoolkit.processing.vector.maxlimit;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.GenericMaxFeatureIterator;
+import org.geotoolkit.data.memory.FeatureStreams;
 import org.geotoolkit.processing.AbstractProcess;
 
 import org.opengis.parameter.ParameterValueGroup;
@@ -45,9 +45,9 @@ public class MaxLimitProcess extends AbstractProcess {
     @Override
     protected void execute() {
         final FeatureCollection inputFeatureList   = value(FEATURE_IN, inputParameters);
-        final int max                                       = value(MAX_IN, inputParameters);
+        final int max                              = value(MAX_IN, inputParameters);
 
-        final FeatureCollection resultFeatureList = GenericMaxFeatureIterator.wrap(inputFeatureList, max);
+        final FeatureCollection resultFeatureList = FeatureStreams.limit(inputFeatureList, max);
 
         getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }

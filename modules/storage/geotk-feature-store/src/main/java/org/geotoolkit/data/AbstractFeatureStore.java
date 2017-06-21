@@ -33,7 +33,6 @@ import org.geotoolkit.feature.ReprojectFeatureType;
 import org.geotoolkit.feature.ViewFeatureType;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.memory.GenericFeatureWriter;
-import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.Selector;
@@ -45,7 +44,6 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.memory.GenericQueryFeatureIterator;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
@@ -69,6 +67,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.geotoolkit.data.memory.FeatureStreams;
 import org.opengis.feature.AttributeType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.ScopedName;
@@ -484,7 +483,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @return FeatureReader Reader wrapping the given reader with all query parameters
      */
     protected FeatureReader handleRemaining(FeatureReader reader, final Query remainingParameters) throws DataStoreException{
-        return GenericQueryFeatureIterator.wrap(reader, remainingParameters);
+        return FeatureStreams.subset(reader, remainingParameters);
     }
 
     /**
@@ -500,7 +499,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
 
         //wrap filter ----------------------------------------------------------
         if(filter != null && filter != Filter.INCLUDE){
-            writer = GenericFilterFeatureIterator.wrap(writer, filter);
+            writer = FeatureStreams.filter(writer, filter);
         }
 
         return writer;

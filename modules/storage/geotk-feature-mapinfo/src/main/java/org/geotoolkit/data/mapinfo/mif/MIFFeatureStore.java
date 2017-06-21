@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import org.geotoolkit.feature.ReprojectFeatureType;
 import org.apache.sis.storage.IllegalNameException;
-import org.geotoolkit.data.memory.GenericDecoratedFeatureIterator;
+import org.geotoolkit.data.memory.FeatureStreams;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
@@ -176,9 +176,9 @@ public class MIFFeatureStore extends AbstractFeatureStore {
                 final FeatureCollection toWrite;
                 final FeatureType type = ((FeatureCollection)newFeatures).getFeatureType();
                 if(newFeatures instanceof FeatureCollection) {
-                    toWrite = GenericDecoratedFeatureIterator.wrap( (FeatureCollection) newFeatures, new ReprojectFeatureType(type, manager.getWrittenCRS()));
+                    toWrite = FeatureStreams.decorate((FeatureCollection) newFeatures, new ReprojectFeatureType(type, manager.getWrittenCRS()));
                 } else {
-                    toWrite = GenericDecoratedFeatureIterator.wrap(
+                    toWrite = FeatureStreams.decorate(
                             FeatureStoreUtilities.collection(newFeatures.toArray(new Feature[newFeatures.size()])),
                             new ReprojectFeatureType(type, manager.getWrittenCRS()));
                 }

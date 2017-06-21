@@ -33,11 +33,6 @@ import org.geotoolkit.feature.ReprojectFeatureType;
 import org.geotoolkit.feature.TransformFeatureType;
 import org.geotoolkit.feature.ViewFeatureType;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
-import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
-import org.geotoolkit.data.memory.GenericMaxFeatureIterator;
-import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
-import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.query.Selector;
@@ -49,7 +44,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.data.memory.GenericDecoratedFeatureIterator;
+import org.geotoolkit.data.memory.FeatureStreams;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.AttributeType;
@@ -277,7 +272,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         //This can be really expensive, and force the us to read the full iterator.
         //that may cause out of memory errors.
         if(sorts != null && sorts.length != 0){
-            result = GenericSortByFeatureIterator.wrap(result, sorts);
+            result = FeatureStreams.sort(result, sorts);
         }
 
         //wrap filter ----------------------------------------------------------
@@ -285,24 +280,24 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         if(filter != null && filter != Filter.INCLUDE){
             if(filter == Filter.EXCLUDE){
                 //filter that exclude everything, use optimzed reader
-                result = GenericEmptyFeatureIterator.wrap(result);
+                result = FeatureStreams.emptyCollection(result);
             }else{
-                result = GenericFilterFeatureIterator.wrap(result, filter);
+                result = FeatureStreams.filter(result, filter);
             }
         }
 
         //wrap start index -----------------------------------------------------
         if(start != null && start > 0){
-            result = GenericStartIndexFeatureIterator.wrap(result, start);
+            result = FeatureStreams.skip(result, start);
         }
 
         //wrap max -------------------------------------------------------------
         if(max != null){
             if(max == 0){
                 //use an optimized reader
-                result = GenericEmptyFeatureIterator.wrap(result);
+                result = FeatureStreams.emptyCollection(result);
             }else{
-                result = GenericMaxFeatureIterator.wrap(result, max);
+                result = FeatureStreams.limit(result, max);
             }
         }
 
@@ -311,7 +306,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         FeatureType mask = original;
         if(properties!=null && FeatureTypeExt.isAllProperties(original, properties)) {
             try {
-                result = GenericDecoratedFeatureIterator.wrap(result,  new ViewFeatureType(mask, properties));
+                result = FeatureStreams.decorate(result,  new ViewFeatureType(mask, properties));
             } catch (MismatchedFeatureException | IllegalStateException ex) {
                 throw new DataStoreException(ex);
             }
@@ -321,12 +316,12 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         if(resampling != null){
             final GeometryScaleTransformer trs = new GeometryScaleTransformer(resampling[0], resampling[1]);
             final TransformFeatureType ttype = new TransformFeatureType(result.getFeatureType(), trs);
-            result = GenericDecoratedFeatureIterator.wrap(result, ttype);
+            result = FeatureStreams.decorate(result, ttype);
         }
 
         //wrap reprojection ----------------------------------------------------
         if(crs != null){
-            result = GenericDecoratedFeatureIterator.wrap(result, new ReprojectFeatureType(result.getFeatureType(), crs));
+            result = FeatureStreams.decorate(result, new ReprojectFeatureType(result.getFeatureType(), crs));
         }
 
         return result;

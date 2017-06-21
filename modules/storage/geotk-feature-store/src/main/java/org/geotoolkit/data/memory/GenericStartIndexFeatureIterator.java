@@ -34,7 +34,7 @@ import org.opengis.feature.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class GenericStartIndexFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
+class GenericStartIndexFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
     protected final R iterator;
     protected final int startIndex;
@@ -187,7 +187,7 @@ public class GenericStartIndexFeatureIterator<R extends FeatureIterator> impleme
     /**
      * Wrap a FeatureIterator with a start index.
      */
-    public static FeatureIterator wrap(final FeatureIterator reader, final int limit){
+    static FeatureIterator wrap(final FeatureIterator reader, final int limit){
         if(reader instanceof FeatureReader){
             return wrap((FeatureReader)reader,limit);
         }else if(reader instanceof FeatureWriter){
@@ -200,21 +200,21 @@ public class GenericStartIndexFeatureIterator<R extends FeatureIterator> impleme
     /**
      * Wrap a FeatureReader with a start index.
      */
-    public static FeatureReader wrap(final FeatureReader reader, final int limit){
+    static FeatureReader wrap(final FeatureReader reader, final int limit){
         return new GenericStartIndexFeatureReader(reader, limit);
     }
 
     /**
      * Wrap a FeatureWriter with a start index.
      */
-    public static FeatureWriter wrap(final FeatureWriter writer, final int limit){
+    static FeatureWriter wrap(final FeatureWriter writer, final int limit){
         return new GenericStartIndexFeatureWriter(writer, limit);
     }
 
     /**
      * Create an differed start index FeatureCollection wrapping the given collection.
      */
-    public static FeatureCollection wrap(final FeatureCollection original, final int startIndex){
+    static FeatureCollection wrap(final FeatureCollection original, final int startIndex){
         return new GenericStartIndexFeatureCollection(original, startIndex);
     }
 
