@@ -32,9 +32,14 @@ import org.geotoolkit.internal.data.GenericEmptyFeatureIterator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.SortByComparator;
 import org.geotoolkit.data.session.Session;
@@ -256,7 +261,7 @@ public final class FeatureStreams {
      * View a subset of given data.
      *
      * @param reader source reader
-     * @param query query used to filter and transform the collection
+     * @param query query used to filter and transform the reader
      * @return feature reader subset
      * @throws org.apache.sis.storage.DataStoreException
      */
@@ -273,6 +278,18 @@ public final class FeatureStreams {
      */
     public static FeatureCollection subset(final FeatureCollection col, final Query query){
         return GenericQueryFeatureIterator.wrap(col, query);
+    }
+
+    /**
+     * View a subset of given data stream.
+     *
+     * @param stream source feature stream
+     * @param type Type of features in the stream
+     * @param query query used to filter and transform the stream
+     * @return collection subset
+     */
+    public static Stream<Feature> subset(final Stream<Feature> stream, final FeatureType type, final Query query) throws DataStoreException{
+        return GenericQueryFeatureIterator.wrap(stream, type, query);
     }
 
     /**
@@ -406,6 +423,30 @@ public final class FeatureStreams {
      */
     public static FeatureWriter asWriter(final Iterator<? extends Feature> writer, final FeatureType type){
         return GenericWrapFeatureIterator.wrapToWriter(writer, type);
+    }
+
+    /**
+     * Wrap an iterator in a stream
+     * @param reader
+     * @return
+     */
+    public static <T> Stream<T> asStream(final Iterator<T> reader) {
+        final Iterable<T> iterable = () -> reader;
+        Stream<T> stream = StreamSupport.stream(iterable.spliterator(), false);
+        if (reader instanceof AutoCloseable) {
+            stream.onClose(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        ((AutoCloseable)reader).close();
+                    } catch (Exception ex) {
+                        Logging.getLogger("org.geotoolkit.data").log(Level.WARNING, null, ex);
+                    }
+                }
+            });
+        }
+
+        return stream;
     }
 
     /**

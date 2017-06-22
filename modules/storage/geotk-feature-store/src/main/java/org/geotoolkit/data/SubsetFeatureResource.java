@@ -72,7 +72,7 @@ final class SubsetFeatureResource extends AbstractResource implements FeatureRes
 
     @Override
     public Stream<Feature> features() throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return FeatureStreams.subset(parent.features(), getType(), query);
     }
 
     @Override
