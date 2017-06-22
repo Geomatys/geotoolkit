@@ -59,7 +59,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
@@ -78,6 +77,7 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.shapefile.cpg.CpgFiles;
 
 import org.geotoolkit.storage.DataFileStore;
@@ -413,7 +413,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         try {
             featureReader = ShapefileFeatureReader.create(attReader,idReader, schema, query.getHints());
         } catch (Exception e) {
-            featureReader = GenericEmptyFeatureIterator.createReader(schema);
+            featureReader = FeatureStreams.emptyReader(schema);
         }
         try {
             return handleRemaining(new ShapefileFeatureWriter(this,type.getName().tip().toString(), shpFiles, attReader, featureReader, dbfCharset),query.getFilter());

@@ -16,9 +16,8 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
-import java.util.NoSuchElementException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -26,6 +25,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;

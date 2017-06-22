@@ -40,7 +40,6 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Version;
 import org.geotoolkit.data.*;
-import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -75,7 +74,7 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.data.memory.GenericDecoratedFeatureIterator;
+import org.geotoolkit.data.FeatureStreams;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
@@ -412,14 +411,14 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
         // if post filter, wrap it
         if (postFilter != null && postFilter != Filter.INCLUDE) {
-            reader = GenericFilterFeatureIterator.wrap(reader, postFilter);
+            reader = FeatureStreams.filter(reader, postFilter);
         }
 
         //if we need to reproject data
         final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
         if(reproject != null && !Utilities.equalsIgnoreMetadata(reproject, FeatureExt.getCRS(baseType))){
             try {
-                reader = GenericDecoratedFeatureIterator.wrap(reader, new ReprojectFeatureType(reader.getFeatureType(), reproject),query.getHints());
+                reader = FeatureStreams.decorate(reader, new ReprojectFeatureType(reader.getFeatureType(), reproject),query.getHints());
             } catch (MismatchedFeatureException ex) {
                 throw new DataStoreException(ex);
             }
@@ -427,7 +426,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
         //if we need to constraint type
         if(!returnedFeatureType.equals(queryFeatureType)){
-            reader = GenericDecoratedFeatureIterator.wrap(reader, (ViewFeatureType) returnedFeatureType, query.getHints());
+            reader = FeatureStreams.decorate(reader, (ViewFeatureType) returnedFeatureType, query.getHints());
         }
 
         return reader;
@@ -567,7 +566,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
         //check for post filter and wrap accordingly
         if ( postFilter != null && postFilter != Filter.INCLUDE ) {
-            writer = GenericFilterFeatureIterator.wrap(writer, postFilter);
+            writer = FeatureStreams.filter(writer, postFilter);
         }
         return writer;
     }

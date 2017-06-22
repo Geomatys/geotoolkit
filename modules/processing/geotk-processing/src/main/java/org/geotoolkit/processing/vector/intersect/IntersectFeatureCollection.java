@@ -24,7 +24,6 @@ import java.util.List;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
@@ -35,6 +34,7 @@ import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.data.FeatureStreams;
 
 
 /**
@@ -76,7 +76,7 @@ public class IntersectFeatureCollection extends WrapFeatureCollection {
      */
     @Override
     public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
-        return GenericFilterFeatureIterator.wrap(getOriginalFeatureCollection().iterator(null), createFilter());
+        return FeatureStreams.filter(getOriginalFeatureCollection().iterator(null), createFilter());
     }
 
     /**

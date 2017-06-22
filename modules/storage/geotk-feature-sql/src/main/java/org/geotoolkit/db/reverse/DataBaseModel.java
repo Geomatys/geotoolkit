@@ -44,7 +44,7 @@ import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import static org.geotoolkit.data.AbstractFeatureStore.*;
-import org.geotoolkit.data.internal.GenericNameIndex;
+import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.db.DBRelationOperation;
 import org.geotoolkit.db.JDBCFeatureStore;

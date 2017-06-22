@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -16,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.memory;
+package org.geotoolkit.internal.data;
 
 import java.util.NoSuchElementException;
 import org.geotoolkit.data.FeatureCollection;
@@ -26,31 +25,32 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
 /**
- * Basic support for a  FeatureIterator that limits itself to a given number of features.
+ * Basic support for a  FeatureIterator that starts at a given index.
  *
- * @author Chris Holmes
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class GenericMaxFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
+public class GenericStartIndexFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
     protected final R iterator;
-    protected final int maxFeatures;
-    private int counter = 0;
+    protected final int startIndex;
+    protected Feature nextFeature = null;
+    private boolean translateDone = false;
 
     /**
-     * Creates a new instance of GenericMaxFeatureIterator
+     * Creates a new instance of GenericStartIndexFeatureIterator
      *
-     * @param iterator FeatureReader to limit
-     * @param maxFeatures maximum number of feature
+     * @param iterator FeatureReader to start at
+     * @param startIndex starting index
      */
-    private GenericMaxFeatureIterator(final R iterator, final int maxFeatures) {
+    private GenericStartIndexFeatureIterator(final R iterator, final int startIndex) {
         this.iterator = iterator;
-        this.maxFeatures = maxFeatures;
+        this.startIndex = startIndex;
     }
 
     /**
@@ -59,10 +59,12 @@ public class GenericMaxFeatureIterator<R extends FeatureIterator> implements Fea
     @Override
     public Feature next() throws FeatureStoreRuntimeException {
         if (hasNext()) {
-            counter++;
-            return iterator.next();
+            // hasNext() ensures that next != null
+            final Feature f = nextFeature;
+            nextFeature = null;
+            return f;
         } else {
-            throw new NoSuchElementException("No such Feature exists");
+            throw new NoSuchElementException("No more features.");
         }
     }
 
@@ -75,13 +77,28 @@ public class GenericMaxFeatureIterator<R extends FeatureIterator> implements Fea
     }
 
     /**
-     * @return <code>true</code> if the featureReader has not passed the max
-     *         and still has more features.
-     * @throws IOException If the reader we are filtering encounters a problem
+     * {@inheritDoc }
      */
     @Override
-    public boolean hasNext() throws FeatureStoreRuntimeException {
-        return ((counter < maxFeatures) && iterator.hasNext());
+    public synchronized boolean hasNext() throws FeatureStoreRuntimeException {
+        if(nextFeature != null) return true;
+
+        if(!translateDone){
+            for(int i=0;i<startIndex;i++){
+                if(iterator.hasNext()){
+                    iterator.next();
+                }else{
+                    break;
+                }
+            }
+            translateDone = true;
+        }
+
+        if(iterator.hasNext()){
+            nextFeature = iterator.next();
+        }
+
+        return nextFeature != null;
     }
 
     /**
@@ -95,7 +112,7 @@ public class GenericMaxFeatureIterator<R extends FeatureIterator> implements Fea
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
-        sb.append("[Max=").append(maxFeatures).append("]\n");
+        sb.append("[StartAt=").append(startIndex).append("]\n");
         String subIterator = "\u2514\u2500\u2500" + iterator.toString(); //move text to the right
         subIterator = subIterator.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
         sb.append(subIterator);
@@ -103,12 +120,15 @@ public class GenericMaxFeatureIterator<R extends FeatureIterator> implements Fea
     }
 
     /**
-     * Wrap a FeatureReader with a max limit.
+     * Wrap a FeatureReader with a start index.
      *
+     * @param <T> extends FeatureType
+     * @param <F> extends Feature
+     * @param <R> extends FeatureReader<T,F>
      */
-    private static final class GenericMaxFeatureReader extends GenericMaxFeatureIterator<FeatureReader> implements FeatureReader{
+    private static final class GenericStartIndexFeatureReader extends GenericStartIndexFeatureIterator<FeatureReader> implements FeatureReader{
 
-        private GenericMaxFeatureReader(final FeatureReader reader,final int limit){
+        private GenericStartIndexFeatureReader(final FeatureReader reader,final int limit){
             super(reader,limit);
         }
 
@@ -120,12 +140,15 @@ public class GenericMaxFeatureIterator<R extends FeatureIterator> implements Fea
     }
 
     /**
-     * Wrap a FeatureWriter with a max limit.
+     * Wrap a FeatureWriter with a start index.
      *
+     * @param <T> extends FeatureType
+     * @param <F> extends Feature
+     * @param <R> extends FeatureWriter<T,F>
      */
-    private static final class GenericMaxFeatureWriter extends GenericMaxFeatureIterator<FeatureWriter> implements FeatureWriter{
+    private static final class GenericStartIndexFeatureWriter extends GenericStartIndexFeatureIterator<FeatureWriter> implements FeatureWriter{
 
-        private GenericMaxFeatureWriter(final FeatureWriter writer,final int limit){
+        private GenericStartIndexFeatureWriter(final FeatureWriter writer,final int limit){
             super(writer,limit);
         }
 
@@ -140,18 +163,18 @@ public class GenericMaxFeatureIterator<R extends FeatureIterator> implements Fea
         }
     }
 
-    private static final class GenericMaxFeatureCollection extends WrapFeatureCollection{
+    private static final class GenericStartIndexFeatureCollection extends WrapFeatureCollection{
 
-        private final int max;
+        private final int startIndex;
 
-        private GenericMaxFeatureCollection(final FeatureCollection original, final int max){
+        private GenericStartIndexFeatureCollection(final FeatureCollection original, final int startIndex){
             super(original);
-            this.max = max;
+            this.startIndex = startIndex;
         }
 
         @Override
         public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
-            return wrap(getOriginalFeatureCollection().iterator(hints), max);
+            return wrap(getOriginalFeatureCollection().iterator(hints), startIndex);
         }
 
         @Override
@@ -161,42 +184,39 @@ public class GenericMaxFeatureIterator<R extends FeatureIterator> implements Fea
 
     }
 
+
     /**
-     * Wrap a FeatureReader with a max limit.
+     * Wrap a FeatureIterator with a start index.
      */
     public static FeatureIterator wrap(final FeatureIterator reader, final int limit){
-        if(limit==Integer.MAX_VALUE) return reader;
         if(reader instanceof FeatureReader){
             return wrap((FeatureReader)reader,limit);
         }else if(reader instanceof FeatureWriter){
             return wrap((FeatureWriter)reader,limit);
         }else{
-            return new GenericMaxFeatureIterator(reader, limit);
+            return new GenericStartIndexFeatureIterator(reader, limit);
         }
     }
 
     /**
-     * Wrap a FeatureReader with a max limit.
+     * Wrap a FeatureReader with a start index.
      */
     public static FeatureReader wrap(final FeatureReader reader, final int limit){
-        if(limit==Integer.MAX_VALUE) return reader;
-        return new GenericMaxFeatureReader(reader, limit);
+        return new GenericStartIndexFeatureReader(reader, limit);
     }
 
     /**
-     * Wrap a FeatureWriter with a max limit.
+     * Wrap a FeatureWriter with a start index.
      */
-    public static  FeatureWriter wrap(final FeatureWriter writer, final int limit){
-        if(limit==Integer.MAX_VALUE) return writer;
-        return new GenericMaxFeatureWriter(writer, limit);
+    public static FeatureWriter wrap(final FeatureWriter writer, final int limit){
+        return new GenericStartIndexFeatureWriter(writer, limit);
     }
 
     /**
-     * Create an limited FeatureCollection wrapping the given collection.
+     * Create an differed start index FeatureCollection wrapping the given collection.
      */
-    public static FeatureCollection wrap(final FeatureCollection original, final int max){
-        if(max==Integer.MAX_VALUE) return original;
-        return new GenericMaxFeatureCollection(original, max);
+    public static FeatureCollection wrap(final FeatureCollection original, final int startIndex){
+        return new GenericStartIndexFeatureCollection(original, startIndex);
     }
 
 }

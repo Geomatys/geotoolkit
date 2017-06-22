@@ -23,7 +23,7 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.IllegalNameException;
 import static org.geotoolkit.data.AbstractFeatureStore.GML_311_NAMESPACE;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.internal.GenericNameIndex;
+import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.FeatureType;

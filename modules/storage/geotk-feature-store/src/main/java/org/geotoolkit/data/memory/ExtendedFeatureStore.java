@@ -36,7 +36,7 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.StorageListener;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.data.internal.GenericNameIndex;
+import org.geotoolkit.internal.data.GenericNameIndex;
 import org.opengis.util.GenericName;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.util.NamesExt;

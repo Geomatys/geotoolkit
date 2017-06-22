@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.data.memory.GenericFilterIterator;
+import org.geotoolkit.data.FeatureStreams;
 import org.opengis.filter.Filter;
 
 /**
@@ -54,7 +54,7 @@ public class CachedResultSet {
     }
 
     public Iterator<Map> filter(Filter filter){
-        return GenericFilterIterator.wrap(records.iterator(), filter);
+        return FeatureStreams.filter(records.iterator(), filter);
     }
 
 

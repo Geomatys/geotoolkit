@@ -49,7 +49,7 @@ import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.IllegalNameException;
-import org.geotoolkit.data.internal.GenericNameIndex;
+import org.geotoolkit.internal.data.GenericNameIndex;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.IdentifiedType;

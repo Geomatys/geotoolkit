@@ -31,7 +31,6 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
@@ -57,6 +56,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.data.FeatureStreams;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -159,7 +159,7 @@ public class DefaultSession extends AbstractSession {
         //we must preserve the original filter after all thoses modifications
         Filter originalFilter = original.getFilter();
         originalFilter = forceCRS(originalFilter, original.getCoordinateSystemReproject(), true);
-        reader = GenericFilterFeatureIterator.wrap(reader, originalFilter);
+        reader = FeatureStreams.filter(reader, originalFilter);
 
         return reader;
     }

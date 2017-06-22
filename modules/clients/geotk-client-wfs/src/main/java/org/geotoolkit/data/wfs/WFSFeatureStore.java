@@ -50,8 +50,6 @@ import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
-import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
@@ -82,8 +80,8 @@ import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.internal.GenericNameIndex;
-import org.geotoolkit.data.memory.GenericDecoratedFeatureIterator;
+import org.geotoolkit.internal.data.GenericNameIndex;
+import org.geotoolkit.data.FeatureStreams;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -326,16 +324,16 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
         FeatureReader reader;
         if(collection == null){
-            reader = GenericEmptyFeatureIterator.createReader(sft);
+            reader = FeatureStreams.emptyReader(sft);
         }else{
-            reader = GenericWrapFeatureIterator.wrapToReader(collection.iterator(), sft);
+            reader = FeatureStreams.asReader(collection.iterator(), sft);
         }
 
         //we handle reprojection ourself, too complex or never done properly for a large
         //majority of wfs server tested.
         if(query.getCoordinateSystemReproject() != null){
             try {
-                reader = GenericDecoratedFeatureIterator.wrap(reader, new ReprojectFeatureType(reader.getFeatureType(), query.getCoordinateSystemReproject()), null);
+                reader = FeatureStreams.decorate(reader, new ReprojectFeatureType(reader.getFeatureType(), query.getCoordinateSystemReproject()), null);
             } catch (MismatchedFeatureException ex) {
                 getLogger().log(Level.WARNING, ex.getMessage(), ex);
             }

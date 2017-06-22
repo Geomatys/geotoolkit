@@ -27,7 +27,6 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ViewFeatureType;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -40,7 +39,6 @@ import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreListener;
 import org.geotoolkit.data.FeatureStoreManagementEvent;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.memory.GenericCachedFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -95,6 +93,7 @@ import org.opengis.style.Symbolizer;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.data.FeatureStreams;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
@@ -283,7 +282,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         currentQuery.getHints().put(HintsPending.FEATURE_DETACHED,Boolean.TRUE);
         final Query query = currentQuery;
         FeatureCollection col = ((FeatureCollection)item.getCollection()).subCollection(query);
-        col = GenericCachedFeatureIterator.wrap(col, 1000);
+        col = FeatureStreams.cached(col, 1000);
         return col;
     }
 
@@ -293,7 +292,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         currentQuery.getHints().put(HintsPending.FEATURE_DETACHED,Boolean.TRUE);
         final Query query = currentQuery;
         FeatureCollection col = ((FeatureCollection)item.getCollection()).subCollection(query);
-        col = GenericCachedFeatureIterator.wrap(col, 1000);
+        col = FeatureStreams.cached(col, 1000);
         return col;
     }
 

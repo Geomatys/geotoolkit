@@ -17,7 +17,7 @@
 package org.geotoolkit.processing.vector.filter;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -46,7 +46,7 @@ public class FilterProcess extends AbstractProcess {
         final FeatureCollection inputFeatureList   = value(FEATURE_IN, inputParameters);
         final org.opengis.filter.Filter filter              = value(FILTER_IN, inputParameters);
 
-        final FeatureCollection resultFeatureList = GenericFilterFeatureIterator.wrap(inputFeatureList, filter);
+        final FeatureCollection resultFeatureList = FeatureStreams.filter(inputFeatureList, filter);
 
         getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }

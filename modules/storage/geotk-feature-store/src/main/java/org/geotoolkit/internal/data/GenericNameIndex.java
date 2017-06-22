@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.internal;
+package org.geotoolkit.internal.data;
 
 import java.util.ArrayList;
 import java.util.Collection;
