@@ -20,10 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.storage.Resource;
-import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 
 /**
@@ -47,6 +45,10 @@ public class DefaultCollectionCoverageResource extends AbstractCollectionCoverag
             }
         }
         return Collections.unmodifiableCollection(resources);
+    }
+
+    public void addResource(Resource resource) {
+        resources.add(resource);
     }
 
 }

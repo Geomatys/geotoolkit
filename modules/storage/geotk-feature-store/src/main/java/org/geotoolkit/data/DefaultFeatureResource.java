@@ -36,7 +36,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class DefaultFeatureResource extends AbstractResource implements FeatureResource, FeatureStoreListener {
+public final class DefaultFeatureResource extends AbstractResource implements FeatureResource, FeatureStoreListener {
 
     private final FeatureStoreListener.Weak weakListener = new StorageListener.Weak(this);
     private final FeatureStore store;

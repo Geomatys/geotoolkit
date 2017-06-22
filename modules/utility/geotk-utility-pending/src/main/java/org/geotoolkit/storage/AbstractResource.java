@@ -34,7 +34,10 @@ public abstract class AbstractResource implements Resource{
     protected final Set<StorageListener> listeners = new HashSet<>();
 
 
-    protected final Identifier identifier;
+    protected Identifier identifier;
+
+    protected AbstractResource() {
+    }
 
     public AbstractResource(GenericName name) {
         ArgumentChecks.ensureNonNull("identifier", name);
