@@ -326,6 +326,11 @@
           </exclusion>
         </exclusions>
       </dependency>
+      <dependency>
+          <groupId>com.esri.geometry</groupId>
+          <artifactId>esri-geometry-api</artifactId>
+          <version>1.2.1</version>
+      </dependency>
 
       <!-- Miscellaneous utilities -->
       <dependency>
