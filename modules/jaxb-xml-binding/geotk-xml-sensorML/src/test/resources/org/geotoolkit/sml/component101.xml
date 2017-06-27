@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sml:SensorML xmlns:sml1="http://www.opengis.net/sensorML/1.0" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:swe1="http://www.opengis.net/swe/1.0" xmlns:icism="urn:us:gov:ic:ism:v2" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:om="http://www.opengis.net/om/1.0" xmlns:sml="http://www.opengis.net/sensorML/1.0.1" xmlns:ns9="http://www.opengis.net/gml/" xmlns:ns10="http://www.opengis.net/gml/3.2" version="1.0.1">
+  <sml:member>
+    <sml:Component>
+      <sml:identification>
+        <sml:IdentifierList>
+          <sml:identifier name="uniqueID">
+            <sml:Term definition="urn:ogc:def:identifierType:OGC:uniqueID">
+              <sml:value>urn:ogc:object:sensor:GEOM:99</sml:value>
+            </sml:Term>
+          </sml:identifier>
+          <sml:identifier>
+            <sml:Term/>
+          </sml:identifier>
+        </sml:IdentifierList>
+      </sml:identification>
+      <sml:validTime/>
+      <sml:position name="platform-location">
+        <swe:Position referenceFrame="urn:ogc:def:crs,crs:EPSG::4326">
+          <swe:location>
+            <swe:Vector definition="urn:ogc:def:phenomenon:location">
+              <swe:coordinate name="longitude">
+<swe:Quantity definition="urn:ogc:def:phenomenon:longitude">
+  <swe:uom code="degree"/>
+  <swe:value>59.683334</swe:value>
+</swe:Quantity>
+              </swe:coordinate>
+              <swe:coordinate name="latitude">
+<swe:Quantity definition="urn:ogc:def:phenomenon:latitude">
+  <swe:uom code="degree"/>
+  <swe:value>-39.65</swe:value>
+</swe:Quantity>
+              </swe:coordinate>
+            </swe:Vector>
+          </swe:location>
+        </swe:Position>
+      </sml:position>
+      <sml:inputs>
+        <sml:InputList>
+          <sml:input name="CNDC">
+            <swe:ObservableProperty definition="CNDC"/>
+          </sml:input>
+        </sml:InputList>
+      </sml:inputs>
+      <sml:outputs>
+        <sml:OutputList>
+          <sml:output name="CNDC">
+            <swe:Quantity definition="CNDC">
+              <swe:uom code="TODO"/>
+            </swe:Quantity>
+          </sml:output>
+        </sml:OutputList>
+      </sml:outputs>
+    </sml:Component>
+  </sml:member>
+</sml:SensorML>

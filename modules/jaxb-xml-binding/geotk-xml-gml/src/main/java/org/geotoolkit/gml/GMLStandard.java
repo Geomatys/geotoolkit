@@ -68,12 +68,12 @@ public class GMLStandard extends MetadataStandard {
             impl = Class.forName(implName.toString());
         } catch (ClassNotFoundException e) {
             final int end = implName.length();
-            implName.append("PropertyType");
+            implName.append("Type");
             try {
                 impl = Class.forName(implName.toString());
             } catch (ClassNotFoundException e2) {
                 implName.setLength(end);
-                implName.append("Type");
+                implName.append("PropertyType");
                 try {
                     impl = Class.forName(implName.toString());
                 } catch (ClassNotFoundException e3) {
