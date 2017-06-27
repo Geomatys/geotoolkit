@@ -857,6 +857,7 @@
         </dependencies>
         <executions>
           <execution>
+            <phase>test</phase>
             <goals>
               <goal>check</goal>
             </goals>
