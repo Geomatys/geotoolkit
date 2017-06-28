@@ -58,6 +58,10 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.esri.geometry</groupId>
+            <artifactId>esri-geometry-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>stax</groupId>
             <artifactId>stax</artifactId>
             <version>1.2.0</version>
@@ -73,7 +77,3 @@
     </dependencies>
 
 </project>
-
-
-
-

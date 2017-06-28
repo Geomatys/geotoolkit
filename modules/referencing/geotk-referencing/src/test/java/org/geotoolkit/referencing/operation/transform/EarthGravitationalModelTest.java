@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.transform;
 
 import java.util.Arrays;
 import java.io.IOException;
+import java.text.ParseException;
 
 import org.opengis.util.Factory;
 import org.opengis.util.FactoryException;
@@ -31,6 +32,7 @@ import org.opengis.test.referencing.TransformTestCase;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.*;
@@ -119,5 +121,16 @@ public final strictfp class EarthGravitationalModelTest extends TransformTestCas
          * Fetch again the model. It should be cached.
          */
         assertSame(mt, mtFactory.createParameterizedTransform(p));
+    }
+
+    @Test
+    public void testFromWKT() throws ParseException, TransformException {
+        final WKTFormat parser = new WKTFormat(null, null);
+        final MathTransform mt = (MathTransform) parser.parseObject("Param_MT[\"Ellipsoid_To_Geoid\"]");
+        DirectPosition pos = new GeneralDirectPosition(new double[] {45, 45, 1000});
+        pos = mt.transform(pos, pos);
+        assertEquals(  45.000, pos.getOrdinate(0), 0.001);
+        assertEquals(  45.000, pos.getOrdinate(1), 0.001);
+        assertEquals(1001.515, pos.getOrdinate(2), 0.001);
     }
 }
