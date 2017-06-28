@@ -98,7 +98,7 @@ public class GMLAdaptor extends ComplexAdaptor {
 
     @Override
     public InputType toWPS1Input(Object candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return InputType.createComplex("", encoding, mimeType, schema, candidate, null, null);
     }
 
     @Override

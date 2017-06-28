@@ -59,7 +59,7 @@ public class OctetStreamAdaptor extends ComplexAdaptor<byte[]> {
 
     @Override
     public InputType toWPS1Input(byte[] candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return InputType.createComplex("", null, mimeType, null, candidate, null, null);
     }
 
     @Override

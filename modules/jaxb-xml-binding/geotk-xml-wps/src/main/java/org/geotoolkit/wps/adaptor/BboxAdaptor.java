@@ -26,6 +26,7 @@ import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.ows.xml.v200.BoundingBoxType;
 import org.geotoolkit.wps.xml.v100.InputType;
 import org.geotoolkit.wps.xml.v100.OutputDataType;
+import org.geotoolkit.wps.xml.v100.SupportedCRSsType;
 import org.geotoolkit.wps.xml.v200.BoundingBoxData;
 import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.DataInputType;
@@ -57,7 +58,7 @@ public class BboxAdaptor implements DataAdaptor<Envelope> {
 
     @Override
     public InputType toWPS1Input(Envelope candidate) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return InputType.createBoundingBox("", candidate);
     }
 
     @Override
@@ -112,10 +113,33 @@ public class BboxAdaptor implements DataAdaptor<Envelope> {
         return cenv;
     }
 
+    public static BboxAdaptor create(SupportedCRSsType data) {
+
+        final List<CoordinateReferenceSystem> crss = new ArrayList<>();
+        for (String scrs : data.getSupported().getCRS()) {
+            try {
+                crss.add(CRS.forCode(scrs));
+            } catch (FactoryException ex) {
+                //do nothing, skip this crs
+            }
+        }
+
+        final SupportedCRSsType.Default def = data.getDefault();
+        if (def!=null) {
+            try {
+                crss.add(0, CRS.forCode(def.getCRS()));
+            } catch (FactoryException ex) {
+                //do nothing, skip this crs
+            }
+        }
+
+        return new BboxAdaptor(crss);
+    }
+
     public static BboxAdaptor create(BoundingBoxData data) {
 
         final List<CoordinateReferenceSystem> crss = new ArrayList<>();
-        for(SupportedCRS scrs : data.getSupportedCRS()) {
+        for (SupportedCRS scrs : data.getSupportedCRS()) {
             try {
                 CoordinateReferenceSystem crs = CRS.forCode(scrs.getValue());
                 if (Boolean.TRUE.equals(scrs.isDefault())) {

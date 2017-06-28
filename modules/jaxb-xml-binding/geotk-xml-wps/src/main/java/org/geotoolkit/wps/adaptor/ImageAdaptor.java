@@ -60,7 +60,7 @@ public class ImageAdaptor extends ComplexAdaptor<BufferedImage> {
 
     @Override
     public InputType toWPS1Input(BufferedImage candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return InputType.createComplex("", null, mimeType, null, candidate, null, null);
     }
 
     @Override

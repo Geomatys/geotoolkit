@@ -17,13 +17,17 @@
 package org.geotoolkit.wps.adaptor;
 
 import javax.measure.Unit;
+import javax.measure.format.ParserException;
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;
+import org.geotoolkit.ows.xml.DomainMetadata;
 import org.geotoolkit.ows.xml.v200.DomainMetadataType;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.xml.v100.InputType;
+import org.geotoolkit.wps.xml.v100.LiteralOutputType;
 import org.geotoolkit.wps.xml.v100.OutputDataType;
+import org.geotoolkit.wps.xml.v100.SupportedUOMsType;
 import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.DataInputType;
 import org.geotoolkit.wps.xml.v200.DataOutputType;
@@ -39,10 +43,20 @@ public class LiteralAdaptor<T> implements DataAdaptor<T> {
 
     private final ObjectConverter<String,T> converter;
     private final Unit unit;
+    private final String version;
 
-    private LiteralAdaptor(ObjectConverter<String,T> converter, Unit unit){
+    private LiteralAdaptor(ObjectConverter<String,T> converter, Unit unit, String version){
         this.converter = converter;
         this.unit = unit;
+        this.version = version;
+    }
+
+    public Unit getUnit() {
+        return unit;
+    }
+
+    public String getVersion() {
+        return version;
     }
 
     public Class<T> getValueClass() {
@@ -55,7 +69,13 @@ public class LiteralAdaptor<T> implements DataAdaptor<T> {
 
     @Override
     public InputType toWPS1Input(Object candidate) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final String uom = unit != null ? unit.toString() : null;
+
+        return InputType.createLiteral(
+                "",
+                String.valueOf(candidate),
+                WPSConvertersUtils.getDataTypeString(version, converter.getTargetClass()),
+                uom);
     }
 
     @Override
@@ -95,11 +115,42 @@ public class LiteralAdaptor<T> implements DataAdaptor<T> {
         final Unit unit = getUnit(domain.getUOM());
 
         final ObjectConverter cvt = ObjectConverters.find(String.class, clazz);
-        return new LiteralAdaptor(cvt,unit);
+        return new LiteralAdaptor(cvt,unit,"2.0.0");
     }
 
+    public static LiteralAdaptor create(LiteralOutputType domain) {
 
-    private static Class getValueClass(DomainMetadataType type) {
+        Class clazz = getValueClass(domain.getDataType());
+        if (clazz == null) clazz = String.class;
+
+        Unit unit = null;
+        final SupportedUOMsType uoMs = domain.getUOMs();
+        if (uoMs!=null) {
+            final SupportedUOMsType.Default def = uoMs.getDefault();
+            if (def!=null) {
+                try {
+                    unit = Units.valueOf(def.getUOM().getValue());
+                } catch (ParserException ex) {
+                    unit = Units.valueOf(def.getUOM().getReference());
+                }
+            }
+            if (uoMs.getSupported()!=null) {
+                for (org.geotoolkit.ows.xml.v110.DomainMetadataType t : uoMs.getSupported().getUOM()) {
+                    if (unit!=null) break;
+                    try {
+                        unit = Units.valueOf(t.getValue());
+                    } catch (ParserException ex) {
+                        unit = Units.valueOf(t.getReference());
+                    }
+                }
+            }
+        }
+
+        final ObjectConverter cvt = ObjectConverters.find(String.class, clazz);
+        return new LiteralAdaptor(cvt,unit,"1.0.0");
+    }
+
+    private static Class getValueClass(DomainMetadata type) {
         if(type==null) return null;
         Class clazz = findClass(type.getReference());
         if(clazz==null) clazz = findClass(type.getValue());

@@ -67,7 +67,7 @@ public class XMLAdaptor extends ComplexAdaptor<Node> {
 
     @Override
     public InputType toWPS1Input(Node candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return InputType.createComplex("", encoding, mimeType, schema, candidate, null, null);
     }
 
     @Override

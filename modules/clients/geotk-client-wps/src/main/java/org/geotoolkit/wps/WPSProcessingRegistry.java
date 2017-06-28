@@ -33,7 +33,6 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessingRegistry;
-import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
 import org.geotoolkit.wps.xml.ProcessOffering;
 import org.geotoolkit.wps.xml.WPSCapabilities;
 import org.opengis.metadata.identification.Identification;
@@ -48,15 +47,6 @@ import org.opengis.util.NoSuchIdentifierException;
 public class WPSProcessingRegistry implements ProcessingRegistry {
 
     static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wps");
-
-    /**
-     * A key for {@link ExtendedParameterDescriptor} user data map. Specify the format to use for parameter, using {FormatSupport} object.
-     */
-    static final String USE_FORMAT_KEY = "format";
-    /**
-     * A key for {@link ExtendedParameterDescriptor} user data map. Specify the form : literal/bbox/complex, using {FormatSupport} object.
-     */
-    static final String USE_FORM_KEY = "form";
 
     private final WebProcessingClient client;
 

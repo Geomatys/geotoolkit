@@ -66,7 +66,7 @@ public class TextAdaptor extends ComplexAdaptor<String> {
 
     @Override
     public InputType toWPS1Input(String candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return InputType.createComplex("", encoding, mimeType, schema, candidate, null, null);
     }
 
     @Override

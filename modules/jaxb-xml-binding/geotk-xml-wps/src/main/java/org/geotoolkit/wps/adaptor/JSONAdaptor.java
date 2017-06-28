@@ -67,7 +67,7 @@ public class JSONAdaptor extends ComplexAdaptor<JsonNode> {
 
     @Override
     public InputType toWPS1Input(JsonNode candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return InputType.createComplex("", encoding, mimeType, schema, candidate, null, null);
     }
 
     @Override
