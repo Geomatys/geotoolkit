@@ -67,16 +67,6 @@ public class OctetStreamAdaptor extends ComplexAdaptor<byte[]> {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
-    public byte[] fromWPS1Input(OutputDataType candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public byte[] fromWPS2Input(DataOutputType candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     public static class Spi implements ComplexAdaptor.Spi {
 
         @Override

@@ -18,6 +18,7 @@ package org.geotoolkit.wps.adaptor;
 
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.Format;
+import org.geotoolkit.wps.xml.ReferenceProxy;
 import org.geotoolkit.wps.xml.v100.InputType;
 import org.geotoolkit.wps.xml.v100.OutputDataType;
 import org.geotoolkit.wps.xml.v200.ComplexDataType;
@@ -67,11 +68,14 @@ public class XMLAdaptor extends ComplexAdaptor<Node> {
 
     @Override
     public InputType toWPS1Input(Node candidate) throws UnconvertibleObjectException {
+        if(candidate instanceof ReferenceProxy) return super.toWPS1Input(candidate);
+
         return InputType.createComplex("", encoding, mimeType, schema, candidate, null, null);
     }
 
     @Override
     public DataInputType toWPS2Input(Node candidate) throws UnconvertibleObjectException {
+        if(candidate instanceof ReferenceProxy) return super.toWPS2Input(candidate);
 
         final ComplexDataType cdt = new ComplexDataType();
         cdt.getContent().add(new org.geotoolkit.wps.xml.v200.Format(encoding, mimeType, schema, null));
@@ -83,16 +87,6 @@ public class XMLAdaptor extends ComplexAdaptor<Node> {
         final DataInputType dit = new DataInputType();
         dit.setData(data);
         return dit;
-    }
-
-    @Override
-    public Node fromWPS1Input(OutputDataType candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Node fromWPS2Input(DataOutputType candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public static class Spi implements ComplexAdaptor.Spi {

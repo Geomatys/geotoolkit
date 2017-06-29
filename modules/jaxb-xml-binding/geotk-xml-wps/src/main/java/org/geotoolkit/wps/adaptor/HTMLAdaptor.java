@@ -84,16 +84,6 @@ public class HTMLAdaptor extends ComplexAdaptor<String> {
         return dit;
     }
 
-    @Override
-    public String fromWPS1Input(OutputDataType candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public String fromWPS2Input(DataOutputType candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     public static class Spi implements ComplexAdaptor.Spi {
 
         @Override

@@ -312,6 +312,7 @@ public class InputType implements Input{
 
         return inputType;
     }
+
     /**
      * Get an Input of type complex
      *

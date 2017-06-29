@@ -16,21 +16,19 @@
  */
 package org.geotoolkit.wps.adaptor;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.util.Arrays;
 import javax.imageio.ImageIO;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.Format;
+import org.geotoolkit.wps.xml.ReferenceProxy;
 import org.geotoolkit.wps.xml.v100.InputType;
-import org.geotoolkit.wps.xml.v100.OutputDataType;
-import org.geotoolkit.wps.xml.v200.DataInputType;
-import org.geotoolkit.wps.xml.v200.DataOutputType;
 
 /**
  *
  * @author Johann Sorel
  */
-public class ImageAdaptor extends ComplexAdaptor<BufferedImage> {
+public class ImageAdaptor extends ComplexAdaptor<RenderedImage> {
 
     private final String mimeType;
 
@@ -54,28 +52,15 @@ public class ImageAdaptor extends ComplexAdaptor<BufferedImage> {
     }
 
     @Override
-    public Class<BufferedImage> getValueClass() {
-        return BufferedImage.class;
+    public Class<RenderedImage> getValueClass() {
+        return RenderedImage.class;
     }
 
     @Override
-    public InputType toWPS1Input(BufferedImage candidate) throws UnconvertibleObjectException {
+    public InputType toWPS1Input(RenderedImage candidate) throws UnconvertibleObjectException {
+        if(candidate instanceof ReferenceProxy) return super.toWPS1Input(candidate);
+
         return InputType.createComplex("", null, mimeType, null, candidate, null, null);
-    }
-
-    @Override
-    public DataInputType toWPS2Input(BufferedImage candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public BufferedImage fromWPS1Input(OutputDataType candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public BufferedImage fromWPS2Input(DataOutputType candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public static class Spi implements ComplexAdaptor.Spi {

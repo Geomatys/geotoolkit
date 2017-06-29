@@ -29,6 +29,7 @@ import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.geotoolkit.wps.xml.Format;
+import org.geotoolkit.wps.xml.ReferenceProxy;
 import org.geotoolkit.wps.xml.v100.InputType;
 import org.geotoolkit.wps.xml.v100.OutputDataType;
 import org.geotoolkit.wps.xml.v200.ComplexDataType;
@@ -98,11 +99,14 @@ public class GMLAdaptor extends ComplexAdaptor {
 
     @Override
     public InputType toWPS1Input(Object candidate) throws UnconvertibleObjectException {
+        if(candidate instanceof ReferenceProxy) return super.toWPS1Input(candidate);
+
         return InputType.createComplex("", encoding, mimeType, schema, candidate, null, null);
     }
 
     @Override
     public DataInputType toWPS2Input(Object candidate) throws UnconvertibleObjectException {
+        if(candidate instanceof ReferenceProxy) return super.toWPS2Input(candidate);
 
         final ComplexDataType cdt = new ComplexDataType();
         cdt.getContent().add(new org.geotoolkit.wps.xml.v200.Format(encoding, mimeType, schema, null));
@@ -134,16 +138,6 @@ public class GMLAdaptor extends ComplexAdaptor {
         final DataInputType dit = new DataInputType();
         dit.setData(data);
         return dit;
-    }
-
-    @Override
-    public Object fromWPS1Input(OutputDataType candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object fromWPS2Input(DataOutputType candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public static class Spi implements ComplexAdaptor.Spi {

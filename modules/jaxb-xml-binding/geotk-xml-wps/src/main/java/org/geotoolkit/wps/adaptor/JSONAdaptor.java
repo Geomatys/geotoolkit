@@ -16,9 +16,11 @@
  */
 package org.geotoolkit.wps.adaptor;
 
+import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.Format;
+import org.geotoolkit.wps.xml.ReferenceProxy;
 import org.geotoolkit.wps.xml.v100.InputType;
 import org.geotoolkit.wps.xml.v100.OutputDataType;
 import org.geotoolkit.wps.xml.v200.ComplexDataType;
@@ -30,7 +32,7 @@ import org.geotoolkit.wps.xml.v200.DataOutputType;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class JSONAdaptor extends ComplexAdaptor<JsonNode> {
+public class JSONAdaptor extends ComplexAdaptor<TreeNode> {
 
     private static final String ENC_UTF8 = "UTF-8";
     private static final String MIME_TYPE = "application/json";
@@ -66,12 +68,15 @@ public class JSONAdaptor extends ComplexAdaptor<JsonNode> {
     }
 
     @Override
-    public InputType toWPS1Input(JsonNode candidate) throws UnconvertibleObjectException {
+    public InputType toWPS1Input(TreeNode candidate) throws UnconvertibleObjectException {
+        if(candidate instanceof ReferenceProxy) return super.toWPS1Input(candidate);
+
         return InputType.createComplex("", encoding, mimeType, schema, candidate, null, null);
     }
 
     @Override
-    public DataInputType toWPS2Input(JsonNode candidate) throws UnconvertibleObjectException {
+    public DataInputType toWPS2Input(TreeNode candidate) throws UnconvertibleObjectException {
+        if(candidate instanceof ReferenceProxy) return super.toWPS2Input(candidate);
 
         final ComplexDataType cdt = new ComplexDataType();
         cdt.getContent().add(new org.geotoolkit.wps.xml.v200.Format(encoding, mimeType, schema, null));
@@ -83,16 +88,6 @@ public class JSONAdaptor extends ComplexAdaptor<JsonNode> {
         final DataInputType dit = new DataInputType();
         dit.setData(data);
         return dit;
-    }
-
-    @Override
-    public JsonNode fromWPS1Input(OutputDataType candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public JsonNode fromWPS2Input(DataOutputType candidate) throws UnconvertibleObjectException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public static class Spi implements ComplexAdaptor.Spi {
