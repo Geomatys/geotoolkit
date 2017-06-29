@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -38,11 +39,14 @@ import org.geotoolkit.csw.xml.QueryConstraint;
 import org.geotoolkit.filter.FilterFactoryImpl;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.SortByType;
+import org.geotoolkit.ogc.xml.v110.SortPropertyType;
 import org.geotoolkit.security.ClientSecurity;
 import org.opengis.filter.Filter;
+import org.opengis.filter.sort.SortOrder;
 
-import static org.geotoolkit.csw.AbstractCSWRequest.POOL;
 import static org.geotoolkit.csw.xml.CswXmlFactory.*;
+import static org.opengis.filter.sort.SortOrder.ASCENDING;
+import static org.opengis.filter.sort.SortOrder.DESCENDING;
 
 /**
  * Abstract implementation of {@link GetRecordsRequest}, which defines the
@@ -344,20 +348,18 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
                 esnt = createElementSetName(version, elementSetName);
             }
 
-            /*
+             /*
              * Getting  SortByType value, default is null
-             *
-             * @TODO if sortBy is not null we must creates SortByType instance
-             * the value can be sortBy=Title:A,Abstract:D where A for ascending order and D for decending.
-             * see Table 29 - Parameters in GetRecords operation request in document named
-             * OpenGIS Catalogue Services Specification 2.0.2 -ISO Metadata Application Profile
-             *
              */
-            final SortByType sort;
+            SortByType sort = null;
             if (sortBy != null) {
-                throw new UnsupportedOperationException("The parameter SortBy is not implemented yet for Method POST.");
-            } else {
-                sort = null;
+                String[] fields = sortBy.split(",");
+
+                for (String field : fields) {
+                    String[] split = field.split(":");
+                    SortOrder sortOrder = split.length == 1 ? null : ("D".equals(split[1]) ? DESCENDING : ASCENDING);
+                    sort = new SortByType(Collections.singletonList(new SortPropertyType(split[0], sortOrder)));
+                }
             }
 
             /*
