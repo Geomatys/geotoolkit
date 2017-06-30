@@ -28,6 +28,8 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
@@ -39,6 +41,9 @@ import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.io.WPSSchema;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.wps.xml.Execute;
+import org.geotoolkit.wps.xml.v100.InputType;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -57,19 +62,20 @@ public class ExecuteTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testRequestAndMarshall() throws IOException, ParserConfigurationException, SAXException {
         try {
-            final List<Double> corner = new ArrayList<>();
-            corner.add(10.0);
-            corner.add(10.0);
+            final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:4326"));
+            env.setRange(0, 10, 10);
+            env.setRange(1, 10, 10);
 
             final GeometryFactory gf = new GeometryFactory();
             final Point point = gf.createPoint(new Coordinate(0.0, 0.0));
             JTS.setCRS(point, CommonCRS.WGS84.geographic());
 
-            final List<AbstractWPSInput> inputs = new ArrayList<>();
-            inputs.add(new WPSInputLiteral("literal", "10"));
-            inputs.add(new WPSInputBoundingBox("bbox", corner, corner, "EPSG:4326", 2));
-            inputs.add(new WPSInputComplex("complex", point, Geometry.class, "UTF-8", WPSSchema.OGC_GML_3_1_1.getValue(), WPSMimeType.APP_GML.val()));
-            inputs.add(new WPSInputReference("reference", "http://link.to/reference/"));
+            final List<InputType> inputs = new ArrayList<>();
+            inputs.add(InputType.createLiteral("literal", "10", null, null));
+            inputs.add(InputType.createBoundingBox("bbox", env));
+            inputs.add(InputType.createComplex("complex", "UTF-8", WPSMimeType.APP_GML.val(), WPSSchema.OGC_GML_3_1_1.getValue(), point, null, null));
+            inputs.add(InputType.createReference("reference", "http://link.to/reference/", null, null, null, null));
+            
 
             final List<WPSOutput> outputs = new ArrayList<>();
             outputs.add(new WPSOutput("output"));
@@ -94,7 +100,7 @@ public class ExecuteTest extends org.geotoolkit.test.TestBase {
             assertXmlEquals(expected, result, "xmlns:*");
 
             WPSMarshallerPool.getInstance().recycle(marshaller);
-        } catch (UnconvertibleObjectException | JAXBException ex) {
+        } catch (UnconvertibleObjectException | JAXBException | FactoryException ex) {
             fail(ex.getLocalizedMessage());
         }
     }

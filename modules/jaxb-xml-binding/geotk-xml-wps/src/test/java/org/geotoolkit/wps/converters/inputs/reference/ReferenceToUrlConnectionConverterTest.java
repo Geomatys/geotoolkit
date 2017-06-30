@@ -16,13 +16,11 @@
  */
 package org.geotoolkit.wps.converters.inputs.reference;
 
-import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collections;
 import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
-import org.geotoolkit.wps.converters.inputs.references.AbstractReferenceInputConverter;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.xml.Reference;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
@@ -46,8 +44,8 @@ public class ReferenceToUrlConnectionConverterTest extends AbstractWPSConverterT
         header.setValue("myValue");
         ref.getHeader().add(header);
 
-        final URLConnection con = converter.convert(ref, Collections.singletonMap(AbstractReferenceInputConverter.IOTYPE, (Object) WPSIO.IOType.INPUT));
+        final URLConnection con = converter.convert(ref, Collections.singletonMap(WPSObjectConverter.IOTYPE, (Object) WPSIO.IOType.INPUT.name()));
         Assert.assertEquals("HRef differs !", ref.getHref(), con.getURL().toExternalForm());
-        Assert.assertEquals("No header has been copied !", Collections.singletonList(header.getValue()), con.getRequestProperty(header.getKey()));
+        Assert.assertEquals("No header has been copied !", header.getValue(), con.getRequestProperty(header.getKey()));
     }
 }
