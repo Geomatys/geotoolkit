@@ -454,7 +454,7 @@ public final class CoverageFeature {
             //list properties
             final List<String> properties = new ArrayList<>();
             for (PropertyType pt : recordType.getProperties(true)) {
-                if (pt instanceof AttributeType && !pt.getName().equals(AttributeConvention.GEOMETRY_PROPERTY)) {
+                if (pt instanceof AttributeType && !AttributeConvention.contains(pt.getName())) {
                     properties.add(pt.getName().toString());
                 }
             }
