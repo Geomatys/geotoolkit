@@ -52,6 +52,7 @@ public interface ReferenceProxy {
         final InvocationHandler handler = new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                if(method.getName().equals("getReference")) return ref;
                 return method.invoke(ref, args);
             }
         };

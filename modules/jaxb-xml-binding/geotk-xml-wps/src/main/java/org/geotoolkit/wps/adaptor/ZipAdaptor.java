@@ -16,18 +16,22 @@
  */
 package org.geotoolkit.wps.adaptor;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import net.iharder.Base64;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.Format;
+import org.geotoolkit.wps.xml.ReferenceProxy;
 import org.geotoolkit.wps.xml.v100.InputType;
-import org.geotoolkit.wps.xml.v100.OutputDataType;
+import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.DataInputType;
-import org.geotoolkit.wps.xml.v200.DataOutputType;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ZipAdaptor extends ComplexAdaptor<byte[]> {
+public class ZipAdaptor extends ComplexAdaptor<Path> {
 
     private static final String MIME_TYPE = "application/zip";
 
@@ -53,14 +57,36 @@ public class ZipAdaptor extends ComplexAdaptor<byte[]> {
     }
 
     @Override
-    public Class<byte[]> getValueClass() {
-        return byte[].class;
+    public Class<Path> getValueClass() {
+        return Path.class;
     }
 
     @Override
-    public InputType toWPS1Input(byte[] candidate) throws UnconvertibleObjectException {
+    public InputType toWPS1Input(Path candidate) throws UnconvertibleObjectException {
+        if(candidate instanceof ReferenceProxy) return super.toWPS1Input(candidate);
+
         return InputType.createComplex("", null, mimeType, null, candidate, null, null);
     }
+
+    @Override
+    public DataInputType toWPS2Input(Path candidate) throws UnconvertibleObjectException {
+        if(candidate instanceof ReferenceProxy) return super.toWPS2Input(candidate);
+
+        final byte[] bytes;
+        try {
+            bytes = Files.readAllBytes(candidate);
+        } catch (IOException ex) {
+            throw new UnconvertibleObjectException(ex.getMessage(),ex);
+        }
+        final String base64 = Base64.encodeBytes(bytes);
+        final DataInputType dit = new DataInputType();
+        final Data data = new Data();
+        data.setEncoding("base64");
+        data.getContent().add(base64);
+        dit.setData(data);
+        return dit;
+    }
+
 
     public static class Spi implements ComplexAdaptor.Spi {
 
