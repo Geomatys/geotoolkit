@@ -17,26 +17,36 @@
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Image;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureResource;
+import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.internal.feature.CoverageFeature;
+import org.geotoolkit.internal.feature.TypeConventions;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureAssociationRole;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.DataNode;
-import org.geotoolkit.storage.StorageListener;
 import org.opengis.metadata.content.CoverageDescription;
 
 /**
- * Reference to a coverage in the coverage store.
- *
- * TODO : name is not following ISO. must find a proper name.
- * something like RenderableCoverage...
+ * Resource to a coverage in the coverage store.
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface CoverageReference extends DataNode {
+public interface CoverageResource extends FeatureResource {
 
     /**
      * Name of the coverage. act as an identifier in the coverage store
@@ -55,7 +65,7 @@ public interface CoverageReference extends DataNode {
      *
      * @return CoverageDescripion, can be null
      */
-    CoverageDescription getMetadata();
+    CoverageDescription getCoverageDescription();
 
     /**
      * @return true if coverage is writable
@@ -109,17 +119,21 @@ public interface CoverageReference extends DataNode {
      */
     Image getLegend() throws DataStoreException;
 
-    /**
-     * Add a storage listener which will be notified when structure changes or
-     * when coverage data changes.
-     * @param listener to add
-     */
-    void addStorageListener(StorageListener listener);
+    @Override
+    public default FeatureType getType() throws DataStoreException {
+        final GridCoverageReader reader = acquireReader();
+        final FeatureType type = CoverageFeature.createCoverageType(reader);
+        recycle(reader);
+        return type;
+    }
 
-    /**
-     * Remove a storage listener
-     * @param listener to remove
-     */
-    void removeStorageListener(StorageListener listener);
+    @Override
+    public default Stream<Feature> features() throws DataStoreException {
+        final FeatureType type = getType();
+        final FeatureAssociationRole role = (FeatureAssociationRole) type.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
+        final Feature feature = type.newInstance();
+        feature.setProperty(CoverageFeature.coverageRecords(this,role));
+        return Stream.of(feature);
+    }
 
 }

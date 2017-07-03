@@ -100,7 +100,7 @@ public class BufferTest extends AbstractProcessTest {
         //Expected Features out
         final FeatureCollection featureListResult = buildFeatureCollectionResult();
 
-        assertEquals(featureListResult.getFeatureType(), featureListOut.getFeatureType());
+        assertEquals(featureListResult.getType(), featureListOut.getType());
         assertEquals(featureListResult.getID(), featureListOut.getID());
         assertEquals(featureListResult.size(), featureListOut.size());
 

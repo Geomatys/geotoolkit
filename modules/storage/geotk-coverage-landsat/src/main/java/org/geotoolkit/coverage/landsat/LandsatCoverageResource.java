@@ -27,9 +27,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.storage.coverage.AbstractCoverageReference;
+import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.CoverageReference;
 
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
 
@@ -41,7 +40,7 @@ import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
  * @version 1.0
  * @since   1.0
  */
-public class LandsatCoverageReference extends AbstractCoverageReference {
+public class LandsatCoverageResource extends AbstractCoverageResource {
 
     /**
      * {@link Path} of the parent directory which contain all
@@ -77,7 +76,7 @@ public class LandsatCoverageReference extends AbstractCoverageReference {
      * @param imagePath path metadata file.
      * @param metadataParser Landsat 8 parent directory.
      */
-    public LandsatCoverageReference(final CoverageStore store, final GenericName name,
+    public LandsatCoverageResource(final CoverageStore store, final GenericName name,
                                     final Path imagePath, final LandsatMetadataParser metadataParser) {
         super(store, name);
         this.imagePath      = imagePath;

@@ -198,7 +198,7 @@ public class Copy extends AbstractProcess {
         final FeatureCollection collection = sourceSS.getFeatureCollection(query);
 
         //get the real FeatureType of collection (in case of reprojection, CRS is different).
-        type = collection.getFeatureType();
+        type = collection.getType();
 
         if(targetSS.getFeatureStore().getNames().contains(name)) {
             //ERASE

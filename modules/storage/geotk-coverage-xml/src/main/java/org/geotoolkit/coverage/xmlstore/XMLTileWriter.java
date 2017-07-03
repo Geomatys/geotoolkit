@@ -33,7 +33,7 @@ import java.util.concurrent.BlockingQueue;
  */
 public class XMLTileWriter implements Runnable {
 
-    protected XMLCoverageReference targetRef;
+    protected XMLCoverageResource targetRef;
     protected BlockingQueue<XMLTileInfo> tileQueue;
 
     /**
@@ -41,7 +41,7 @@ public class XMLTileWriter implements Runnable {
      * @param tileQueue The queue containing the tiles to write as all needed information to do so.
      * @param targetRef The reference to the destination pyramid set.
      */
-    XMLTileWriter(BlockingQueue<XMLTileInfo> tileQueue, XMLCoverageReference targetRef) {
+    XMLTileWriter(BlockingQueue<XMLTileInfo> tileQueue, XMLCoverageResource targetRef) {
         ArgumentChecks.ensureNonNull("Tile queue", tileQueue);
         ArgumentChecks.ensureNonNull("Pyramid set reference", targetRef);
         this.tileQueue = tileQueue;

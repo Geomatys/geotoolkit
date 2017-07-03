@@ -126,7 +126,7 @@ public class GenericEmptyFeatureIterator implements FeatureIterator {
 
         @Override
         public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
-            return createReader(getOriginalFeatureCollection().getFeatureType());
+            return createReader(getOriginalFeatureCollection().getType());
         }
 
         @Override

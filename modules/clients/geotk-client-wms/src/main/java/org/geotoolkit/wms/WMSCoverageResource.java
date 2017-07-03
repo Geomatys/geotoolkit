@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.storage.coverage.AbstractCoverageReference;
+import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -71,7 +71,7 @@ import org.apache.sis.util.Utilities;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
-public class WMSCoverageReference extends AbstractCoverageReference{
+public class WMSCoverageResource extends AbstractCoverageResource{
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
 
@@ -172,11 +172,11 @@ public class WMSCoverageReference extends AbstractCoverageReference{
     private Envelope env;
 
 
-    public WMSCoverageReference(final WebMapClient server, String ... layers) {
+    public WMSCoverageResource(final WebMapClient server, String ... layers) {
         this(server,toNames(layers));
     }
 
-    public WMSCoverageReference(final WebMapClient server, final GenericName ... names) {
+    public WMSCoverageResource(final WebMapClient server, final GenericName ... names) {
         super(server,names[0]);
         this.server = server;
 

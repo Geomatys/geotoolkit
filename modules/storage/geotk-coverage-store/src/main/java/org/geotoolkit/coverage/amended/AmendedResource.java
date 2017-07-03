@@ -17,21 +17,21 @@
 package org.geotoolkit.coverage.amended;
 
 import java.util.Collection;
-import org.apache.sis.util.collection.TreeTable;
-import org.geotoolkit.storage.DataNode;
-import org.geotoolkit.storage.DefaultDataNode;
+import org.geotoolkit.storage.DataSet;
+import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.storage.coverage.CoverageReference;
-import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
+import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  * Wrap a DataNode and it's children.
  *
  * @author Johann Sorel (Geomatys)
  */
-final class AmendedDataNode extends DefaultDataNode {
-    private final DataNode base;
+final class AmendedResource extends DefaultDataSet {
+    private final DataSet base;
     private final AmendedCoverageStore store;
 
     /**
@@ -41,15 +41,16 @@ final class AmendedDataNode extends DefaultDataNode {
         @Override
         public void structureChanged(StorageEvent event) {
             rebuildNodes();
-            sendStructureEvent(event.copy(AmendedDataNode.this));
+            sendStructureEvent(event.copy(AmendedResource.this));
         }
         @Override
         public void contentChanged(StorageEvent event) {
-            sendStructureEvent(event.copy(AmendedDataNode.this));
+            sendStructureEvent(event.copy(AmendedResource.this));
         }
     };
 
-    AmendedDataNode(DataNode node, final AmendedCoverageStore store) {
+    AmendedResource(DataSet node, final AmendedCoverageStore store) {
+        super(node.getIdentifier());
         this.store = store;
         this.base = node;
         node.addStorageListener(new StorageListener.Weak(store, subListener));
@@ -60,16 +61,16 @@ final class AmendedDataNode extends DefaultDataNode {
      * Wrap node children.
      */
     private void rebuildNodes(){
-        if(!getChildren().isEmpty()) getChildren().clear();
-        final Collection<TreeTable.Node> children = base.getChildren();
-        for(TreeTable.Node n : children){
-            if(n instanceof PyramidalCoverageReference){
+        if(!getResources().isEmpty()) getResources().clear();
+        final Collection<Resource> children = base.getResources();
+        for(Resource n : children){
+            if(n instanceof PyramidalCoverageResource){
                 //TODO : create an amended reference which declares itself as a pyramid.
-                getChildren().add(new AmendedCoverageReference((CoverageReference)n, store));
-            }else if(n instanceof CoverageReference){
-                getChildren().add(new AmendedCoverageReference((CoverageReference)n, store));
-            }else if(n instanceof DataNode){
-                getChildren().add(new AmendedDataNode((DataNode)n, store));
+                resources.add(new AmendedCoverageResource((CoverageResource)n, store));
+            }else if(n instanceof CoverageResource){
+                resources.add(new AmendedCoverageResource((CoverageResource)n, store));
+            }else if(n instanceof DataSet){
+                resources.add(new AmendedResource((DataSet)n, store));
             }
         }
     }

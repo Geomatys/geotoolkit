@@ -11,7 +11,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.map.ProcessedCollection;
-import org.geotoolkit.map.ProcessedCoverageReference;
+import org.geotoolkit.map.ProcessedCoverageResource;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
 import static org.geotoolkit.pending.demo.mapmodel.MapContextDemo.openWorldFile;
@@ -79,7 +79,7 @@ public class ProcessedLayerDemo {
         Parameters.getOrCreate(ResampleDescriptor.IN_COVERAGE, parameters).setValue(baseData.read(0, null));
         Parameters.getOrCreate(ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM, parameters).setValue(env.getCoordinateReferenceSystem());
 
-        final ProcessedCoverageReference processed = new ProcessedCoverageReference();
+        final ProcessedCoverageResource processed = new ProcessedCoverageResource();
         processed.setProcessDescriptor(ResampleDescriptor.INSTANCE);
         processed.setInputParameters(parameters);
         processed.setLifespan(-1);

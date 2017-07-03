@@ -193,12 +193,12 @@ public final class CoverageUtilities {
     /**
      * Copy a set of pyramid pointed by source coverage reference into destination
      * reference.
-     * @param sourceRef The {@link PyramidalCoverageReference} to copy data from.
-     * @param targetRef The {@link PyramidalCoverageReference} to copy data to.
+     * @param sourceRef The {@link PyramidalCoverageResource} to copy data from.
+     * @param targetRef The {@link PyramidalCoverageResource} to copy data to.
      * @throws DataStoreException If a problem occurs at pyramid access.
      * @throws IOException If a problem occurs at image reading/writing.
      */
-    public static void copyPyramidReference(PyramidalCoverageReference sourceRef, PyramidalCoverageReference targetRef) throws DataStoreException, IOException {
+    public static void copyPyramidReference(PyramidalCoverageResource sourceRef, PyramidalCoverageResource targetRef) throws DataStoreException, IOException {
         final Collection<Pyramid> pyramids = sourceRef.getPyramidSet().getPyramids();
 
         //create pyramids
@@ -280,7 +280,7 @@ public final class CoverageUtilities {
      * @return
      * @throws DataStoreException
      */
-    public static Pyramid getOrCreatePyramid(PyramidalCoverageReference container,
+    public static Pyramid getOrCreatePyramid(PyramidalCoverageResource container,
             Envelope envelope, Dimension tileSize, double[] scales) throws DataStoreException{
 
         //find if we already have a pyramid in the given CRS

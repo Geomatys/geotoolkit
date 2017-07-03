@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2013, Geomatys
+ *    (C) 2017, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,16 +16,14 @@
  */
 package org.geotoolkit.storage;
 
-import org.apache.sis.util.collection.TreeTable;
+import java.util.Collection;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface DataNode extends TreeTable.Node {
+public interface DataSet extends Resource {
 
-    void addStorageListener(final StorageListener listener);
-
-    void removeStorageListener(final StorageListener listener);
+    Collection<Resource> getResources();
 
 }

@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.BackgroundUtilities;
@@ -57,6 +56,7 @@ import org.opengis.parameter.ParameterValue;
 import org.opengis.style.Description;
 import org.opengis.style.Rule;
 import org.opengis.util.InternationalString;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Utility class to render legend using a provided template.
@@ -512,7 +512,7 @@ public class J2DLegendUtilities {
             testwms:
             if (layer instanceof DefaultCoverageMapLayer) {
                 final DefaultCoverageMapLayer covLayer = (DefaultCoverageMapLayer)layer;
-                final CoverageReference covRef = covLayer.getCoverageReference();
+                final CoverageResource covRef = covLayer.getCoverageReference();
 
                 if (covRef == null) {
                     continue;

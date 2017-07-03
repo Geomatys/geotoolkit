@@ -161,7 +161,7 @@ public class FXFeatureTable extends FXPropertyPane{
         final FeatureCollection features = layer.getCollection();
 
         table.getColumns().clear();
-        final FeatureType featureType = features.getFeatureType();
+        final FeatureType featureType = features.getType();
         for(PropertyType prop : featureType.getProperties(true)){
             final TableColumn<Feature,String> column = new TableColumn<Feature,String>(generateFinalColumnName(prop));
             column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Feature, String>, ObservableValue<String>>() {
@@ -276,7 +276,7 @@ public class FXFeatureTable extends FXPropertyPane{
         @Override
         public ListIterator<Feature> listIterator(int index) {
 
-            final QueryBuilder qb = new QueryBuilder(features.getFeatureType().getName().toString());
+            final QueryBuilder qb = new QueryBuilder(features.getType().getName().toString());
             qb.setStartIndex(index);
 
             final FeatureCollection subcol;

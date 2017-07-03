@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012-2017, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,6 @@ package org.geotoolkit.storage.coverage;
 
 import java.awt.Image;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.collection.TableColumn;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -26,6 +25,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.memory.MemoryCoverageReader;
+import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 
 /**
@@ -33,35 +33,38 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel
  */
-public class DefaultCoverageReference extends AbstractCoverageReference{
+public class DefaultCoverageResource extends AbstractCoverageResource{
 
     private final GridCoverage2D coverage;
     private final Object input;
     private final int imageIndex;
 
-    public DefaultCoverageReference(final CoverageStore store, final GridCoverage2D coverage, GenericName name) {
+    public DefaultCoverageResource(final CoverageStore store, final GridCoverage2D coverage, GenericName name) {
         super(store,name);
-        setValue(TableColumn.NAME, name.tip().toString());
         this.coverage = coverage;
         this.input = null;
         this.imageIndex = 0;
     }
 
-    public DefaultCoverageReference(final GridCoverage2D coverage, GenericName name) {
+    public DefaultCoverageResource(final GridCoverage2D coverage, GenericName name) {
         super(null,name);
-        setValue(TableColumn.NAME, name.tip().toString());
         this.coverage = coverage;
         this.input = null;
         this.imageIndex = 0;
     }
 
-    public DefaultCoverageReference(final Object input, GenericName name) {
+    public DefaultCoverageResource(final Object input, GenericName name) {
         super(null,name);
         this.coverage = null;
         this.input = input;
         this.imageIndex = 0;
     }
 
+    @Override
+    public Metadata getMetadata() throws CoverageStoreException {
+        Metadata metadata = acquireReader().getMetadata();
+        return metadata;
+    }
 
     @Override
     public int getImageIndex() {
@@ -95,9 +98,9 @@ public class DefaultCoverageReference extends AbstractCoverageReference{
 
     @Override
     public void recycle(CoverageReader reader) {
-        if(input instanceof GridCoverageReader){
+        if (input instanceof GridCoverageReader) {
             //do not dispose it, it will be reused
-        }else{
+        } else {
             super.recycle(reader);
         }
     }
@@ -109,7 +112,7 @@ public class DefaultCoverageReference extends AbstractCoverageReference{
 
     @Override
     protected void finalize() throws Throwable {
-        if(input instanceof GridCoverageReader){
+        if (input instanceof GridCoverageReader) {
             dispose((GridCoverageReader)input);
         }
         super.finalize();

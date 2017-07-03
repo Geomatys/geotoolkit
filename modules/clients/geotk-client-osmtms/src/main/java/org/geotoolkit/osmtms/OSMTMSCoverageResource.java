@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012-2014, Geomatys
+ *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,32 +14,40 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wmts;
+package org.geotoolkit.osmtms;
 
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageReference;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.storage.coverage.PyramidSet;
-import org.geotoolkit.wmts.model.WMTSPyramidSet;
 import org.opengis.util.GenericName;
 
 /**
- * WMTS Coverage Reference.
+ * Open Street Map Tile Map Server.
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMTSCoverageReference extends AbstractPyramidalCoverageReference {
+public class OSMTMSCoverageResource extends AbstractPyramidalCoverageResource {
 
-    private final PyramidSet set;
-
-    WMTSCoverageReference(WebMapTileClient server, GenericName name, boolean cacheImage){
+    OSMTMSCoverageResource(OSMTileMapClient server, GenericName name){
         super(server,name,0);
-        set = new WMTSPyramidSet(server, name.tip().toString(), cacheImage);
     }
 
     @Override
     public PyramidSet getPyramidSet() throws DataStoreException {
-        return set;
+        return ((OSMTileMapClient)store).getPyramidSet();
     }
 
+    /**
+     * Returns adapted {@link ViewType} for OSM TMS reference.
+     * The default associated view is {@link ViewType#PHOTOGRAPHIC}.
+     *
+     * @return
+     * @throws DataStoreException
+     */
+    @Override
+    public ViewType getPackMode() throws DataStoreException {
+        return ViewType.PHOTOGRAPHIC;
+    }
 }

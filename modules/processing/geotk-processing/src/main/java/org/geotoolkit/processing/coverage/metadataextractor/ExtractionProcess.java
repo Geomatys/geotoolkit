@@ -20,7 +20,6 @@ package org.geotoolkit.processing.coverage.metadataextractor;
 import java.io.File;
 import java.net.URL;
 import java.util.logging.Level;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
@@ -34,6 +33,7 @@ import org.opengis.coverage.Coverage;
 import org.opengis.metadata.Metadata;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.utility.parameter.ParametersExt;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  *
@@ -90,9 +90,9 @@ public class ExtractionProcess extends AbstractProcess {
         //Coverage case is not supported yet
         if (input instanceof Coverage) {
             //TODO : add a convenience method into coverage interface to get metadata
-        } else if (input instanceof CoverageReference) {
+        } else if (input instanceof CoverageResource) {
             try {
-                reader = ((CoverageReference)input).acquireReader();
+                reader = ((CoverageResource)input).acquireReader();
             } catch (DataStoreException ex) {
                 Logging.getLogger("org.geotoolkit.processing.coverage.metadataextractor").log(Level.SEVERE, null, ex);
             }

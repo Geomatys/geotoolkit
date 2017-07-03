@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.*;
 import javax.imageio.ImageIO;
-import org.geotoolkit.storage.coverage.CoverageReference;
-import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.Canvas;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
@@ -35,8 +33,10 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.wms.GetLegendRequest;
-import org.geotoolkit.wms.WMSCoverageReference;
+import org.geotoolkit.wms.WMSCoverageResource;
 import org.geotoolkit.wms.WebMapClient;
+import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  * Render WMS layer in default geotoolkit rendering engine.
@@ -62,9 +62,9 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 
         final CoverageMapLayer cml = (CoverageMapLayer) layer;
 
-        final CoverageReference cr = cml.getCoverageReference();
+        final CoverageResource cr = cml.getCoverageReference();
         final GraphicJ2D gra;
-        if(cr instanceof PyramidalCoverageReference){
+        if(cr instanceof PyramidalCoverageResource){
             gra = new StatelessPyramidalCoverageLayerJ2D((J2DCanvas)canvas, cml);
         }else{
             gra = new StatelessCoverageLayerJ2D((J2DCanvas)canvas, cml,true);
@@ -85,13 +85,13 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         }
 
         final CoverageMapLayer cml = (CoverageMapLayer) layer;
-        final CoverageReference cr = cml.getCoverageReference();
+        final CoverageResource cr = cml.getCoverageReference();
 
-        if(!(cr instanceof WMSCoverageReference)){
+        if(!(cr instanceof WMSCoverageResource)){
             return null;
         }
 
-        final WMSCoverageReference reference = (WMSCoverageReference) cr;
+        final WMSCoverageResource reference = (WMSCoverageResource) cr;
         final WebMapClient server = (WebMapClient)reference.getStore();
 
         final GetLegendRequest request = server.createGetLegend();

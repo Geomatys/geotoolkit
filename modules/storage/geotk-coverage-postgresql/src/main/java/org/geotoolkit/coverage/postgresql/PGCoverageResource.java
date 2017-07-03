@@ -41,7 +41,7 @@ import net.iharder.Base64;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageReference;
+import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
@@ -77,13 +77,13 @@ import org.apache.sis.util.logging.Logging;
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  */
-public class PGCoverageReference extends AbstractPyramidalCoverageReference {
+public class PGCoverageResource extends AbstractPyramidalCoverageResource {
 
     private final PGCoverageStore pgstore;
     private final PGPyramidSet pyramidSet;
     final Version version;
 
-    public PGCoverageReference(final PGCoverageStore store, final GenericName name, Version version) {
+    public PGCoverageResource(final PGCoverageStore store, final GenericName name, Version version) {
         super(store,name,0);
         this.pgstore = store;
         this.pyramidSet = new PGPyramidSet(this);
@@ -127,7 +127,7 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
 
             stmt = cnx.createStatement();
 
-            final int layerId = pgstore.getLayerId(cnx,name.tip().toString());
+            final int layerId = pgstore.getLayerId(cnx,getName().tip().toString());
 
             StringBuilder query = new StringBuilder();
             query.append("INSERT INTO ");
@@ -456,7 +456,7 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
             cnx = pgstore.getDataSource().getConnection();
             cnx.setReadOnly(false);
 
-            final int layerId = pgstore.getLayerId(cnx,name.tip().toString());
+            final int layerId = pgstore.getLayerId(cnx,getName().tip().toString());
             String versionStr;
             if (version != null && !version.getLabel().equals(PGVersionControl.UNSET)) {
                 versionStr = TemporalUtilities.toISO8601Z(version.getDate(), TimeZone.getTimeZone("GMT+0"));
@@ -608,7 +608,7 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
                 cnx = pgstore.getDataSource().getConnection();
                 cnx.setReadOnly(false);
 
-                final int layerId = pgstore.getLayerId(cnx,name.tip().toString());
+                final int layerId = pgstore.getLayerId(cnx,getName().tip().toString());
                 for (int i = 0; i < dimensions.size(); i++) {
 
                     final GridSampleDimension dim = dimensions.get(i);

@@ -53,7 +53,7 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     @XmlTransient
     private ImageReaderSpi spi;
     @XmlTransient
-    private XMLCoverageReference ref;
+    private XMLCoverageResource ref;
 
     public XMLPyramidSet() {
     }
@@ -64,11 +64,11 @@ public class XMLPyramidSet extends AbstractPyramidSet{
         return ref.getPackMode().equals(ViewType.GEOPHYSICS) ? "tiff" : "PNG";
     }
 
-    public XMLCoverageReference getRef() {
+    public XMLCoverageResource getRef() {
         return ref;
     }
 
-    public void setRef(XMLCoverageReference ref) {
+    public void setRef(XMLCoverageResource ref) {
         this.ref = ref;
     }
 

@@ -30,7 +30,6 @@ import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.coverage.CoverageExtractor;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -53,6 +52,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.measure.Units;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * A visitor which can be applied to the
@@ -122,7 +122,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         if (temporalCRS == null) {
             /*
              * If there is no temporal range, arbitrarily select the latest date.
-             * This is necessary otherwise the call to reader.read(...) will scan
+             * This is necessary otherwise the call to reader.features(...) will scan
              * every records in the GridCoverages table for the layer.
              */
             Envelope timeRange = layer.getBounds();
@@ -169,7 +169,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
 
         final GridCoverage2D coverage;
         try {
-            final CoverageReference ref = layer.getCoverageReference();
+            final CoverageResource ref = layer.getCoverageReference();
             final GridCoverageReader reader = ref.acquireReader();
             coverage = (GridCoverage2D) reader.read(ref.getImageIndex(),param);
             ref.recycle(reader);
@@ -226,7 +226,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         dp.setOrdinate(1, bounds2D.getCenterY());
 
         final CoverageMapLayer layer = projectedCoverage.getLayer();
-        final CoverageReference covRef = layer.getCoverageReference();
+        final CoverageResource covRef = layer.getCoverageReference();
         GridCoverageReader reader = null;
         try {
             reader = covRef.acquireReader();

@@ -27,7 +27,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.PortrayalRenderedImage;
@@ -60,6 +59,7 @@ import java.util.concurrent.CancellationException;
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.parameter.Parameters.value;
 import static org.geotoolkit.display2d.process.pyramid.MapcontextPyramidDescriptor.*;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  * Create a pyramid in the given PyramidalModel.
@@ -88,7 +88,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
         final Dimension tileSize = value(IN_TILE_SIZE, inputParameters);
         final double[] scales = value(IN_SCALES, inputParameters);
         Integer nbpainter = value(IN_NBPAINTER, inputParameters);
-        final PyramidalCoverageReference container = value(IN_CONTAINER, inputParameters);
+        final PyramidalCoverageResource container = value(IN_CONTAINER, inputParameters);
         final Boolean update = value(IN_UPDATE, inputParameters);
 
         if(nbpainter == null){
@@ -221,7 +221,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
      * @throws FactoryException
      * @throws DataStoreException
      */
-    private GridMosaic getOrCreateMosaic(PyramidalCoverageReference container, String pyramidId, double scale,
+    private GridMosaic getOrCreateMosaic(PyramidalCoverageResource container, String pyramidId, double scale,
                                          final Envelope destEnvelope, final Dimension tileSize, final Dimension gridSize)
             throws FactoryException, DataStoreException {
 

@@ -34,16 +34,17 @@ import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.collection.TreeTable;
-import org.apache.sis.util.collection.TreeTable.Node;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.utility.parameter.ParametersExt;
-import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DataSet;
 import org.geotoolkit.storage.DataStore;
+import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
@@ -72,7 +73,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
     protected final ParameterValueGroup parameters;
     protected final Set<StorageListener> storeListeners = new HashSet<>();
 
-    private final HashMap<GenericName, CoverageReference> cachedRefs = new HashMap<>();
+    private GenericNameIndex<CoverageResource> cachedRefs = null;
 
     protected AbstractCoverageStore(final ParameterValueGroup params) {
         this.parameters = params;
@@ -120,7 +121,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
      */
     @Override
     protected Metadata createMetadata() throws DataStoreException {
-        final DataNode root = getRootNode();
+        final Resource root = getRootResource();
         if (root == null) {
             return null;
         }
@@ -129,12 +130,12 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
         // Queries data specific information
         final Map<GenericName, GeneralGridGeometry> geometries = new HashMap<>();
-        final List<CoverageReference> refs = flattenSubTree(root)
-                .filter(node -> node instanceof CoverageReference)
-                .map(node -> ((CoverageReference) node))
+        final List<CoverageResource> refs = flattenSubTree(root)
+                .filter(node -> node instanceof CoverageResource)
+                .map(node -> ((CoverageResource) node))
                 .collect(Collectors.toList());
 
-        for (final CoverageReference ref : refs) {
+        for (final CoverageResource ref : refs) {
             final GridCoverageReader reader = ref.acquireReader();
             final SpatialMetadata md;
             final GeneralGridGeometry gg;
@@ -166,21 +167,21 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
     /**
      * Compute extents to set in store's metadata. This analysis is separated in
-     * a method so inheriting stores will be able to customize it easily.
-     * This method is needed because geographic information could be read differently
-     * according to its structure. Example :
-     * - If the metadata represents two distinct data, we should have two distinct
-     * extents
-     * - If the metadata describes an non-continuous data cube, we should have a
-     * single extent which contains multiple disjoint geographic/temporal/elevation
-     * extents.
-     *
-     * Note : Default algorithm is really simple. We put all envelopes in a simple
-     * extent, which will directly contain the list of geographic, temporal and
-     * vertical extents for each reference.
-     *
-     * We'll also add all reference systems found in the input grid geometries if
-     * they're not here already.
+ a method so inheriting stores will be able to customize it easily.
+ This method is needed because geographic information could be features differently
+ according to its structure. Example :
+ - If the metadata represents two distinct data, we should have two distinct
+ extents
+ - If the metadata describes an non-continuous data cube, we should have a
+ single extent which contains multiple disjoint geographic/temporal/elevation
+ extents.
+
+ Note : Default algorithm is really simple. We put all envelopes in a simple
+ extent, which will directly contain the list of geographic, temporal and
+ vertical extents for each reference.
+
+ We'll also add all reference systems found in the input grid geometries if
+ they're not here already.
      *
      * @param md The metadata to update
      * @param geometries The grid geometries of each store's reference, grouped
@@ -236,22 +237,12 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
     }
 
 
-    /**
-     * Returns the root node of the data store.
-     * This node is the main access point to the content of the store.
-     *
-     * TODO move this in Apache SIS DataStore class when ready
-     *
-     * @return DataNode never null.
-     */
-    public abstract DataNode getRootNode() throws DataStoreException;
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(Classes.getShortClassName(this));
         try {
-            final DataNode node = getRootNode();
+            final Resource node = getRootResource();
             sb.append(' ');
             sb.append(node.toString());
         } catch (DataStoreException ex) {
@@ -262,7 +253,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
     }
 
     @Override
-    public CoverageReference create(GenericName name) throws DataStoreException {
+    public CoverageResource create(GenericName name) throws DataStoreException {
         throw new DataStoreException("Creation of new coverage not supported.");
     }
 
@@ -272,47 +263,40 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // Convinient methods, fallback on getRootNode                            //
+    // Convinient methods, fallback on getRootResource                            //
     ////////////////////////////////////////////////////////////////////////////
 
     @Override
     public final Set<GenericName> getNames() throws DataStoreException {
-        final Map<GenericName,CoverageReference> map = listReferences();
-        return map.keySet();
+        final GenericNameIndex<CoverageResource> map = listReferences();
+        return map.getNames();
     }
 
     @Override
-    public final CoverageReference getCoverageReference(GenericName name) throws DataStoreException {
-        final Map<GenericName,CoverageReference> map = listReferences();
-        final CoverageReference ref = map.get(name);
-        if(ref==null){
-            final StringBuilder sb = new StringBuilder("Type name : ");
-            sb.append(name);
-            sb.append(" do not exist in this datastore, available names are : ");
-            for(final GenericName n : map.keySet()){
-                sb.append(n).append(", ");
-            }
-            throw new DataStoreException(sb.toString());
-        }
-        return ref;
+    public final CoverageResource findResource(GenericName name) throws DataStoreException {
+        final GenericNameIndex<CoverageResource> map = listReferences();
+        return map.get(name.toString());
     }
 
-    protected Map<GenericName,CoverageReference> listReferences() throws DataStoreException {
-        if (cachedRefs.isEmpty()) {
-            listReferences(getRootNode(), cachedRefs);
+    protected synchronized GenericNameIndex<CoverageResource> listReferences() throws DataStoreException {
+        if (cachedRefs==null) {
+            cachedRefs = new GenericNameIndex<>();
+            listReferences(getRootResource(), cachedRefs);
         }
         return cachedRefs;
     }
 
-    private Map<GenericName,CoverageReference> listReferences(Node node, Map<GenericName,CoverageReference> map){
+    private GenericNameIndex<CoverageResource> listReferences(Resource candidate, GenericNameIndex<CoverageResource> map) throws IllegalNameException{
 
-        if(node instanceof CoverageReference){
-            final CoverageReference cr = (CoverageReference) node;
-            map.put(cr.getName(), cr);
+        if(candidate instanceof CoverageResource){
+            final CoverageResource cr = (CoverageResource) candidate;
+            map.add(cr.getName(), cr);
         }
 
-        for(Node child : node.getChildren()){
-            listReferences(child, map);
+        if (candidate instanceof DataSet) {
+            for(Resource child : ((DataSet)candidate).getResources()){
+                listReferences(child, map);
+            }
         }
 
         return map;
@@ -333,7 +317,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
     }
 
     @Override
-    public CoverageReference getCoverageReference(GenericName name, Version version) throws DataStoreException {
+    public CoverageResource findResource(GenericName name, Version version) throws DataStoreException {
         throw new DataStoreException("Versioning not supported");
     }
 
@@ -458,8 +442,8 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
      * Forward a structure event to all listeners.
      * @param event , event to send to listeners.
      */
-    protected void sendStructureEvent(final StorageEvent event){
-        cachedRefs.clear();
+    protected synchronized void sendStructureEvent(final StorageEvent event){
+        cachedRefs = null;
         final StorageListener[] lst;
         synchronized (storeListeners) {
             lst = storeListeners.toArray(new StorageListener[storeListeners.size()]);
@@ -509,15 +493,14 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
      * @return A list of all nodes under given root.
      * @throws NullPointerException If input node is null.
      */
-    public static Stream<? extends TreeTable.Node> flattenSubTree(final TreeTable.Node root) throws NullPointerException {
-        final Stream<TreeTable.Node> nodeStream = Stream.of(root);
-        if (root.isLeaf() || root.getChildren() == null || root.getChildren().isEmpty())
-            return nodeStream;
-        else
-            return Stream.concat(
-                    nodeStream,
-                    root.getChildren().stream()
+    public static Stream<? extends Resource> flattenSubTree(final Resource root) throws NullPointerException {
+        Stream<Resource> nodeStream = Stream.of(root);
+        if (root instanceof DataSet) {
+            nodeStream = Stream.concat( nodeStream,
+                    ((DataSet) root).getResources().stream()
                             .flatMap(AbstractCoverageStore::flattenSubTree)
             );
+        }
+        return nodeStream;
     }
 }

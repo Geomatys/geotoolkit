@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2014-2017, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
 package org.geotoolkit.internal.data;
 
 import java.util.Map;
+import java.util.stream.Stream;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectFeatureType;
 import org.geotoolkit.feature.TransformFeatureType;
@@ -30,6 +31,7 @@ import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
+import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
@@ -133,7 +135,7 @@ public class GenericQueryFeatureIterator {
             private FeatureType type = null;
 
             @Override
-            public FeatureType getFeatureType() {
+            public FeatureType getType() {
                 if(type==null){
                     try (FeatureReader ite = iterator(null)) {
                         type = ite.getFeatureType();
@@ -162,6 +164,11 @@ public class GenericQueryFeatureIterator {
                 throw new DataStoreException("Not supported.");
             }
         };
+    }
+
+    public static Stream<Feature> wrap(Stream<Feature> stream, FeatureType type, Query query) throws DataStoreException {
+        final FeatureReader reader = FeatureStreams.asReader(stream.iterator(),type);
+        return FeatureStreams.asStream(wrap(reader, query));
     }
 
 }

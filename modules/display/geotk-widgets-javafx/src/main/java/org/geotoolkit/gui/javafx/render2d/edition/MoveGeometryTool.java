@@ -57,7 +57,7 @@ public class MoveGeometryTool extends AbstractEditionTool{
                 final FeatureMapLayer fml = (FeatureMapLayer) candidate;
                 if(!fml.getCollection().isWritable()) return false;
 
-                final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(fml.getCollection().getFeatureType());
+                final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(fml.getCollection().getType());
                 return desc != null;
             }
             return false;

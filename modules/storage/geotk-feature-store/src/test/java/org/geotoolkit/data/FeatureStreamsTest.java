@@ -196,9 +196,9 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testEmptyReader(){
         FeatureCollection collection = buildSimpleFeatureCollection();
-        final FeatureReader iterator = FeatureStreams.emptyReader(collection.getFeatureType());
+        final FeatureReader iterator = FeatureStreams.emptyReader(collection.getType());
 
-        assertEquals(iterator.getFeatureType(), collection.getFeatureType());
+        assertEquals(iterator.getFeatureType(), collection.getType());
         assertFalse(iterator.hasNext());
 
         try{
@@ -221,9 +221,9 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testEmptyWriter(){
         FeatureCollection collection = buildSimpleFeatureCollection();
-        final FeatureWriter iterator = FeatureStreams.emptyWriter(collection.getFeatureType());
+        final FeatureWriter iterator = FeatureStreams.emptyWriter(collection.getType());
 
-        assertEquals(iterator.getFeatureType(), collection.getFeatureType());
+        assertEquals(iterator.getFeatureType(), collection.getType());
         assertFalse(iterator.hasNext());
 
         try{
@@ -342,7 +342,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testModifyIterator(){
         FeatureCollection collection = buildSimpleFeatureCollection();
-        FeatureType originalType = collection.getFeatureType();
+        FeatureType originalType = collection.getType();
         Filter filter = Filter.INCLUDE;
         Map<String,Object> values = new HashMap<>();
         values.put("att_string", "toto");
@@ -399,7 +399,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testReprojectFeatureIterator() throws DataStoreException, FactoryException{
         QueryBuilder qb = new QueryBuilder();
-        qb.setTypeName(collection.getFeatureType().getName());
+        qb.setTypeName(collection.getType().getName());
         Query query = qb.buildQuery();
         FeatureReader reader = collection.getSession().getFeatureStore().getFeatureReader(query);
 
@@ -547,9 +547,9 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
     public void testRetypeFeatureIterator() throws DataStoreException{
 
         final FeatureCollection collection = buildSimpleFeatureCollection();
-        final FeatureType reducedType = new ViewFeatureType(collection.getFeatureType(), AttributeConvention.IDENTIFIER_PROPERTY.toString(),"att_double");
+        final FeatureType reducedType = new ViewFeatureType(collection.getType(), AttributeConvention.IDENTIFIER_PROPERTY.toString(),"att_double");
         final QueryBuilder qb = new QueryBuilder();
-        qb.setTypeName(collection.getFeatureType().getName());
+        qb.setTypeName(collection.getType().getName());
         final Query query = qb.buildQuery();
         FeatureReader reader = collection.getSession().getFeatureStore().getFeatureReader(query);
 
@@ -759,13 +759,13 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
     public void testWrapReader(){
         FeatureCollection collection = buildSimpleFeatureCollection();
         //check has next do not iterate
-        FeatureReader reader = FeatureStreams.asReader(collection.iterator(),collection.getFeatureType());
+        FeatureReader reader = FeatureStreams.asReader(collection.iterator(),collection.getType());
         testIterationOnNext(reader, 3);
 
         //check sub iterator is properly closed
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(collection.iterator());
         assertFalse(checkIte.isClosed());
-        reader = FeatureStreams.asReader(checkIte,collection.getFeatureType());
+        reader = FeatureStreams.asReader(checkIte,collection.getType());
         while(reader.hasNext()) reader.next();
         reader.close();
         assertTrue(checkIte.isClosed());

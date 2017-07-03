@@ -38,7 +38,7 @@ public class NearestFeatureCollection extends WrapFeatureCollection {
      */
     public NearestFeatureCollection(final FeatureCollection originalFC) {
         super(originalFC);
-        this.newFeatureType = super.getFeatureType();
+        this.newFeatureType = super.getType();
     }
 
     /**
@@ -46,7 +46,7 @@ public class NearestFeatureCollection extends WrapFeatureCollection {
      * @return FeatureType
      */
     @Override
-    public FeatureType getFeatureType() {
+    public FeatureType getType() {
         return newFeatureType;
     }
 

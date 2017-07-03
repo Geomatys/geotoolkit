@@ -79,4 +79,5 @@ public abstract class DataStore extends org.apache.sis.storage.DataStore {
     protected Metadata createMetadata() throws DataStoreException {
         return null;
     }
+
 }

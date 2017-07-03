@@ -32,9 +32,14 @@ import org.geotoolkit.internal.data.GenericEmptyFeatureIterator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.SortByComparator;
 import org.geotoolkit.data.session.Session;
@@ -256,7 +261,7 @@ public final class FeatureStreams {
      * View a subset of given data.
      *
      * @param reader source reader
-     * @param query query used to filter and transform the collection
+     * @param query query used to filter and transform the reader
      * @return feature reader subset
      * @throws org.apache.sis.storage.DataStoreException
      */
@@ -273,6 +278,18 @@ public final class FeatureStreams {
      */
     public static FeatureCollection subset(final FeatureCollection col, final Query query){
         return GenericQueryFeatureIterator.wrap(col, query);
+    }
+
+    /**
+     * View a subset of given data stream.
+     *
+     * @param stream source feature stream
+     * @param type Type of features in the stream
+     * @param query query used to filter and transform the stream
+     * @return collection subset
+     */
+    public static Stream<Feature> subset(final Stream<Feature> stream, final FeatureType type, final Query query) throws DataStoreException{
+        return GenericQueryFeatureIterator.wrap(stream, type, query);
     }
 
     /**
@@ -409,6 +426,30 @@ public final class FeatureStreams {
     }
 
     /**
+     * Wrap an iterator in a stream
+     * @param reader
+     * @return
+     */
+    public static <T> Stream<T> asStream(final Iterator<T> reader) {
+        final Iterable<T> iterable = () -> reader;
+        Stream<T> stream = StreamSupport.stream(iterable.spliterator(), false);
+        if (reader instanceof AutoCloseable) {
+            stream.onClose(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        ((AutoCloseable)reader).close();
+                    } catch (Exception ex) {
+                        Logging.getLogger("org.geotoolkit.data").log(Level.WARNING, null, ex);
+                    }
+                }
+            });
+        }
+
+        return stream;
+    }
+
+    /**
      * Wrap a FeatureIterator with a modification set.
      *
      * @param reader source reader
@@ -472,8 +513,11 @@ public final class FeatureStreams {
      * @return FeatureIterator combining all others
      */
     public static FeatureIterator combine(final Comparator<Feature> comparator, final FeatureIterator ... iterators){
-        if(iterators == null || iterators.length < 2 || (iterators.length == 1 && iterators[0] == null)){
-            throw new IllegalArgumentException("There must be at least 2 non null iterators.");
+        if (iterators == null || iterators.length==0) {
+            throw new IllegalArgumentException("There must be at least 2 iterators.");
+        } else if(iterators.length == 1){
+            //do nothing, return the only iterator
+            return iterators[0];
         }
 
         ensureNonNull("comparator", comparator);
@@ -506,6 +550,14 @@ public final class FeatureStreams {
 
             if(wrapped.length == 1){
                 throw new IllegalArgumentException("Sequence of featureCollection must have at least 2 collections.");
+            }
+
+            //check all collection types are the same
+            final FeatureType type = wrapped[0].getType();
+            for (int i=1;i<wrapped.length;i++) {
+                if (!wrapped[i].getType().equals(type)) {
+                    throw new IllegalArgumentException("Collections must have the same type.");
+                }
             }
 
             this.wrapped = wrapped;
@@ -580,8 +632,8 @@ public final class FeatureStreams {
         }
 
         @Override
-        public FeatureType getFeatureType() {
-            return wrapped[0].getFeatureType();
+        public FeatureType getType() {
+            return wrapped[0].getType();
         }
 
         @Override

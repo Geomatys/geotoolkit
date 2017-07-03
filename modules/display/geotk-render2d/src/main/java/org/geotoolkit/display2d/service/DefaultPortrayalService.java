@@ -54,7 +54,6 @@ import javax.imageio.spi.ImageWriterSpi;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -94,6 +93,7 @@ import org.opengis.style.portrayal.PortrayalService;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.canvas.J2DCanvasSVG;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Default implementation of portrayal service.
@@ -540,7 +540,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         final CoverageMapLayer cml = (CoverageMapLayer) layer;
 
         try{
-            final CoverageReference ref = cml.getCoverageReference();
+            final CoverageResource ref = cml.getCoverageReference();
             final CoverageReader reader = ref.acquireReader();
             final String mime = outputDef.getMime();
             final Envelope env = viewDef.getEnvelope();

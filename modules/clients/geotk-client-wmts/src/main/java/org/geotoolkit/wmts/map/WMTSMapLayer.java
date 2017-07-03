@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wmts.map;
 
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.PyramidSet;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.apache.sis.storage.DataStoreException;
@@ -26,6 +25,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.wmts.WebMapTileClient;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Map representation of a WMTS layer.
@@ -45,11 +45,11 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
      */
     private final WebMapTileClient server;
 
-    private static CoverageReference getReference(WebMapTileClient server, String mapType){
+    private static CoverageResource getReference(WebMapTileClient server, String mapType){
         try {
             for(GenericName n : server.getNames()){
                 if(n.tip().toString().equalsIgnoreCase(mapType)){
-                    return server.getCoverageReference(n);
+                    return server.findResource(n);
                 }
             }
             throw new RuntimeException("Not layer for name : " + mapType);

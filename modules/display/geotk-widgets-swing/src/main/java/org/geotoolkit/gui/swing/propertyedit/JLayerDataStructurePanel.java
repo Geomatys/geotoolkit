@@ -30,7 +30,6 @@ import javax.swing.text.html.StyleSheet;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -52,6 +51,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.InternationalString;
 import org.apache.sis.io.wkt.Warnings;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  *
@@ -96,7 +96,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
         sb.append("<html><body>");
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            final FeatureType type = fml.getCollection().getFeatureType();
+            final FeatureType type = fml.getCollection().getType();
 
             String str = type.toString().replace("\n", "<br>");
             str = str.replaceAll(" ", "&nbsp;");
@@ -106,7 +106,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
 
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final CoverageReference ref = cml.getCoverageReference();
+            final CoverageResource ref = cml.getCoverageReference();
             try {
                 final GridCoverageReader reader = ref.acquireReader();
                 final GeneralGridGeometry gridgeom = reader.getGridGeometry(0);
@@ -216,7 +216,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
                 }
 
                 //this imply ready the file, may be long, we have to calculate a reduced area
-//                final GridCoverage coverage = reader.read(0, null);
+//                final GridCoverage coverage = reader.features(0, null);
 //                final RenderedImage image = (RenderedImage) coverage.getRenderableImage(0, 0);
 //                final SampleModel sm = image.getSampleModel();
 //                sm.getNumBands();

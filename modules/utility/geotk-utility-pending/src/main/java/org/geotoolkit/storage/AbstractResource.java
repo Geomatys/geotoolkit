@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2013, Geomatys
+ *    (C) 2017, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,28 +14,44 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.storage;
 
 import java.util.HashSet;
 import java.util.Set;
-import org.apache.sis.util.collection.DefaultTreeTable;
-import org.apache.sis.util.collection.TableColumn;
+import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.gui.swing.tree.Trees;
-
-import javax.xml.bind.annotation.XmlTransient;
+import org.opengis.metadata.Identifier;
+import org.opengis.util.GenericName;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-@XmlTransient
-public class DefaultDataNode extends DefaultTreeTable.Node implements DataNode {
+public abstract class AbstractResource implements Resource{
 
     protected final Set<StorageListener> listeners = new HashSet<>();
 
-    public DefaultDataNode() {
-        super("");
+
+    protected Identifier identifier;
+
+    protected AbstractResource() {
+    }
+
+    public AbstractResource(GenericName name) {
+        ArgumentChecks.ensureNonNull("identifier", name);
+        this.identifier = new NamedIdentifier(name);
+    }
+
+    public AbstractResource(Identifier identifier) {
+        ArgumentChecks.ensureNonNull("identifier", identifier);
+        this.identifier = identifier;
+    }
+
+    @Override
+    public Identifier getIdentifier() {
+        return identifier;
     }
 
     @Override
@@ -100,8 +116,17 @@ public class DefaultDataNode extends DefaultTreeTable.Node implements DataNode {
 
     @Override
     public String toString() {
-        final CharSequence name = getValue(TableColumn.NAME);
-        return Trees.toString(name.toString(), getChildren());
+        CharSequence name = "";
+        try {
+            name = getMetadata().getIdentificationInfo().iterator().next().getCitation().getIdentifiers().iterator().next().getCode();
+        } catch (DataStoreException ex) {
+            //do nothing
+        }
+        if (this instanceof DataSet) {
+            return Trees.toString(name.toString(), ((DataSet)this).getResources());
+        } else {
+            return name.toString();
+        }
     }
 
 }

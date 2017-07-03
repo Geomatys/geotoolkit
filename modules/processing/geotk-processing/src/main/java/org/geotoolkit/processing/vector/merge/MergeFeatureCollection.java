@@ -50,7 +50,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
     public MergeFeatureCollection(final FeatureCollection[] fcList, final FeatureCollection firstFC) {
         super(firstFC);
         this.fcList = fcList;
-        this.newFeatureType = firstFC.getFeatureType();
+        this.newFeatureType = firstFC.getType();
     }
 
     /**
@@ -58,7 +58,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
      * @return FeatureType
      */
     @Override
-    public FeatureType getFeatureType() {
+    public FeatureType getType() {
         return newFeatureType;
     }
 
@@ -124,7 +124,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
             if(nbFC > 0){
                 nextFC = fcList[0];
                 ite = nextFC.iterator();
-                conversionMap = MergeProcess.createConversionMap(newFeatureType, nextFC.getFeatureType());
+                conversionMap = MergeProcess.createConversionMap(newFeatureType, nextFC.getType());
             }else{
                 nextFC = null;
                 ite = null;
@@ -197,7 +197,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
                             fcIter++;
                             nextFC = fcList[fcIter];
                             ite = nextFC.iterator();
-                            conversionMap = MergeProcess.createConversionMap(newFeatureType, nextFC.getFeatureType());
+                            conversionMap = MergeProcess.createConversionMap(newFeatureType, nextFC.getType());
 
 
                         } catch (UnconvertibleObjectException ex) {

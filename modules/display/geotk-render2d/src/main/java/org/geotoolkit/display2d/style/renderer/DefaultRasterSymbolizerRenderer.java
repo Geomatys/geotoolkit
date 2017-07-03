@@ -41,7 +41,6 @@ import javax.media.jai.RenderedOp;
 
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -125,6 +124,7 @@ import org.geotoolkit.style.function.DefaultInterpolate;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.metadata.content.CoverageDescription;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Symbolizer renderer adapted for Raster.
@@ -161,7 +161,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             GridCoverage2D dataCoverage = getObjectiveCoverage(projectedCoverage);
             GridCoverage2D elevationCoverage = getObjectiveElevationCoverage(projectedCoverage);
             final CoverageMapLayer coverageLayer = projectedCoverage.getLayer();
-            final CoverageReference ref = coverageLayer.getCoverageReference();
+            final CoverageResource ref = coverageLayer.getCoverageReference();
 
             assert ref != null : "CoverageMapLayer.getCoverageReference() contract don't allow null pointeur.";
 
@@ -326,7 +326,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @see #applyShadedRelief(java.awt.image.RenderedImage, org.geotoolkit.coverage.grid.GridCoverage2D, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer)
      * @see #applyContrastEnhancement(java.awt.image.RenderedImage, org.opengis.style.RasterSymbolizer)
      */
-    public static RenderedImage applyStyle(CoverageReference ref, GridCoverage2D coverage,
+    public static RenderedImage applyStyle(CoverageResource ref, GridCoverage2D coverage,
             GridCoverage2D elevationCoverage,
             final RasterSymbolizer styleElement)
             throws ProcessException, FactoryException, TransformException, PortrayalException, IOException
@@ -450,7 +450,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @return image which is the coverage exprimate into {@link ViewType#PHOTOGRAPHIC}.
      * @throws ProcessException if problem during statistic problem.
      */
-    private static RenderedImage applyColorMapStyle(final CoverageReference ref,
+    private static RenderedImage applyColorMapStyle(final CoverageResource ref,
             GridCoverage2D coverage,final RasterSymbolizer styleElement) throws ProcessException, IOException {
         ArgumentChecks.ensureNonNull("CoverageReference", ref);
         ArgumentChecks.ensureNonNull("coverage", coverage);
@@ -483,7 +483,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
             final int nbBands = sampleMod.getNumBands();
 
-            final CoverageDescription covRefMetadata = ref.getMetadata();
+            final CoverageDescription covRefMetadata = ref.getCoverageDescription();
 
             ImageStatistics analyse = null;
 
@@ -717,7 +717,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     if(eles.length > 0 && ComponentColorModel.class.getName().equalsIgnoreCase(eles[0].getClassName())){
 
                         try{
-                            final CoverageReference ref = projectedCoverage.getLayer().getCoverageReference();
+                            final CoverageResource ref = projectedCoverage.getLayer().getCoverageReference();
                             final GridCoverageReader reader = ref.acquireReader();
                             final Map<String,Object> analyze = StatisticOp.analyze(reader,ref.getImageIndex());
                             ref.recycle(reader);

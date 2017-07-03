@@ -340,7 +340,7 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         final ObservableList properties = FXCollections.observableArrayList();
 
         if(layer != null){
-            final FeatureType schema = layer.getCollection().getFeatureType();
+            final FeatureType schema = layer.getCollection().getType();
             for(PropertyType desc : schema.getProperties(true)){
                 if(desc instanceof AttributeType){
                     final Class<?> type = ((AttributeType)desc).getValueClass();
@@ -358,7 +358,7 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         Symbolizer template = null;
 
         if(layer != null){
-            final FeatureType schema = layer.getCollection().getFeatureType();
+            final FeatureType schema = layer.getCollection().getType();
 
             //find the geometry class for template
             final AttributeType<?> geo = FeatureExt.getDefaultGeometryAttribute(schema);
@@ -479,7 +479,7 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         //search the different values
         final Set<Object> differentValues = new HashSet<Object>();
         final QueryBuilder builder = new QueryBuilder();
-        builder.setTypeName(layer.getCollection().getFeatureType().getName());
+        builder.setTypeName(layer.getCollection().getType().getName());
         builder.setProperties(new String[]{property.getPropertyName()});
         final Query query = builder.buildQuery();
 

@@ -335,7 +335,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         try {
             String id = result.getID();
             result = result.subCollection(QueryBuilder.sorted(
-                    result.getFeatureType().getName().toString(), FF.sort("attDouble", SortOrder.ASCENDING)));
+                    result.getType().getName().toString(), FF.sort("attDouble", SortOrder.ASCENDING)));
             ((AbstractFeatureCollection)result).setId(id);
         } catch (DataStoreException ex) {
             Logging.getLogger("org.geotoolkit.feature.xml").log(Level.SEVERE, null, ex);
@@ -346,7 +346,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
 
         assertEquals(collectionSimple.size(), result.size());
         assertEquals(collectionSimple.getID(), result.getID());
-        assertEquals(collectionSimple.getFeatureType(), result.getFeatureType());
+        assertEquals(collectionSimple.getType(), result.getType());
 
         assertEquals(resultIte.next(), expectedIte.next());
         assertEquals(resultIte.next(), expectedIte.next());

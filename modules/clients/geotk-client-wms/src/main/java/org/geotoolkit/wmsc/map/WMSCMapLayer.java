@@ -19,7 +19,7 @@ package org.geotoolkit.wmsc.map;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.wms.map.WMSGraphicBuilder;
 import org.geotoolkit.wms.map.WMSMapLayer;
-import org.geotoolkit.wmsc.WMSCCoverageReference;
+import org.geotoolkit.wmsc.WMSCCoverageResource;
 import org.geotoolkit.wmsc.WebMapClientCached;
 import org.opengis.util.GenericName;
 
@@ -30,8 +30,8 @@ import org.opengis.util.GenericName;
  */
 public class WMSCMapLayer extends WMSMapLayer{
 
-    private static WMSCCoverageReference toReference(final WebMapClientCached server, final GenericName name) throws CapabilitiesException{
-        return new WMSCCoverageReference(server, name);
+    private static WMSCCoverageResource toReference(final WebMapClientCached server, final GenericName name) throws CapabilitiesException{
+        return new WMSCCoverageResource(server, name);
     }
 
     /**

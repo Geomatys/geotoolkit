@@ -47,7 +47,7 @@ public class GeometryFromWKTTool extends AbstractEditionTool {
 
         //check the geometry type is type Point
         final FeatureMapLayer layer = (FeatureMapLayer) candidate;
-        final FeatureType ft = layer.getCollection().getFeatureType();
+        final FeatureType ft = layer.getCollection().getType();
         final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(ft);
         return desc != null;
     }

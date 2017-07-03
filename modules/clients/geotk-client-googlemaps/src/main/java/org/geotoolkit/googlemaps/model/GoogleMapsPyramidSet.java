@@ -29,7 +29,7 @@ import org.geotoolkit.storage.coverage.PyramidSet;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.googlemaps.GetMapRequest;
-import org.geotoolkit.googlemaps.GoogleCoverageReference;
+import org.geotoolkit.googlemaps.GoogleCoverageResource;
 import org.geotoolkit.googlemaps.StaticGoogleMapsClient;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
@@ -79,10 +79,10 @@ public class GoogleMapsPyramidSet extends CachedPyramidSet{
         }
     }
 
-    private final GoogleCoverageReference ref;
+    private final GoogleCoverageResource ref;
     private final String mapType;
 
-    public GoogleMapsPyramidSet(final GoogleCoverageReference ref, final boolean cacheImage) throws DataStoreException{
+    public GoogleMapsPyramidSet(final GoogleCoverageResource ref, final boolean cacheImage) throws DataStoreException{
         super((StaticGoogleMapsClient)ref.getStore(),true,cacheImage);
         this.ref = ref;
         this.mapType = ref.getName().tip().toString();

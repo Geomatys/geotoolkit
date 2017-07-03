@@ -25,7 +25,7 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface CollectionCoverageReference extends CoverageReference {
+public interface CollectionCoverageResource extends CoverageResource {
 
     /**
      * Get coverage references which may match the given read parameters.
@@ -33,6 +33,6 @@ public interface CollectionCoverageReference extends CoverageReference {
      * @param readParam, can be null, all references will be returned in this case
      * @return collection of coverage references. never null, can be empty
      */
-    Collection<CoverageReference> getCoverages(GridCoverageReadParam readParam);
+    Collection<CoverageResource> getCoverages(GridCoverageReadParam readParam);
 
 }

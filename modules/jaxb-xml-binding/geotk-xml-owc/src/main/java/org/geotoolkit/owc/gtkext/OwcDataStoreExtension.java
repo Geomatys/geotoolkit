@@ -23,7 +23,6 @@ import javax.xml.bind.JAXBElement;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
@@ -49,6 +48,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  *
@@ -115,7 +115,7 @@ public class OwcDataStoreExtension extends OwcExtension {
                 final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col);
                 return layer;
             }else if(store instanceof CoverageStore){
-                final CoverageReference covref = ((CoverageStore)store).getCoverageReference(NamesExt.valueOf(typeName));
+                final CoverageResource covref = ((CoverageStore)store).findResource(NamesExt.valueOf(typeName));
                 final CoverageMapLayer layer = MapBuilder.createCoverageLayer(covref);
                 return layer;
             }
@@ -177,7 +177,7 @@ public class OwcDataStoreExtension extends OwcExtension {
             }
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final CoverageReference covref = cml.getCoverageReference();
+            final CoverageResource covref = cml.getCoverageReference();
             final CoverageStore store = covref.getStore();
             if(store!=null){
                 final DataStoreFactory factory = store.getFactory();
@@ -204,7 +204,7 @@ public class OwcDataStoreExtension extends OwcExtension {
             }
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final CoverageReference covref = cml.getCoverageReference();
+            final CoverageResource covref = cml.getCoverageReference();
             final CoverageStore store = covref.getStore();
             if(store!=null){
                 return store.getConfiguration();
@@ -223,7 +223,7 @@ public class OwcDataStoreExtension extends OwcExtension {
             }
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final CoverageReference covref = cml.getCoverageReference();
+            final CoverageResource covref = cml.getCoverageReference();
             return covref.getName().toString();
         }
         return null;

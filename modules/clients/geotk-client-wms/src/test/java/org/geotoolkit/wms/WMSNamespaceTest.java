@@ -22,7 +22,6 @@ import java.util.Set;
 import java.net.MalformedURLException;
 import javax.xml.bind.JAXBException;
 
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.apache.sis.storage.DataStoreException;
 
@@ -50,13 +49,13 @@ public class WMSNamespaceTest extends org.geotoolkit.test.TestBase {
      * This test proper namespace parsing in v1.1.1
      */
     @Test
-    public void test_v111_GetNames() throws DataStoreException{
+    public void test_v111_GetNames() throws DataStoreException {
 
         final Set<GenericName> names = SERVER_111.getNames();
 
         assertEquals(3, names.size());
-        assertTrue(names.contains(NamesExt.create("ns1", "Sample")));
-        assertTrue(names.contains(NamesExt.create("ns2", "Sample")));
+        assertTrue(names.stream().anyMatch((GenericName t) -> t.toString().equals("ns1:Sample")));
+        assertTrue(names.stream().anyMatch((GenericName t) -> t.toString().equals("ns2:Sample")));
 
     }
 
@@ -64,15 +63,13 @@ public class WMSNamespaceTest extends org.geotoolkit.test.TestBase {
      * This test proper namespace parsing in v1.3.0
      */
     @Test
-    public void test_v130_GetNames() throws DataStoreException{
+    public void test_v130_GetNames() throws DataStoreException {
 
         final Set<GenericName> names = SERVER_130.getNames();
 
         assertEquals(3, names.size());
-        assertTrue(names.contains(NamesExt.create("ns1", "Sample")));
-        assertTrue(names.contains(NamesExt.create("ns2", "Sample")));
-
+        assertTrue(names.stream().anyMatch((GenericName t) -> t.toString().equals("ns1:Sample")));
+        assertTrue(names.stream().anyMatch((GenericName t) -> t.toString().equals("ns2:Sample")));
     }
-
 
 }

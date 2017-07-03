@@ -35,10 +35,10 @@ import org.opengis.geometry.DirectPosition;
  */
 public class PGGridMosaic extends AbstractGridMosaic{
 
-    private final PGCoverageReference ref;
+    private final PGCoverageResource ref;
     private final long id;
 
-    public PGGridMosaic(final PGCoverageReference ref, final long id,
+    public PGGridMosaic(final PGCoverageResource ref, final long id,
             Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize, Dimension tileSize, double scale) {
         super(String.valueOf(id),pyramid, upperLeft, gridSize, tileSize, scale);
         this.ref = ref;
@@ -78,7 +78,7 @@ public class PGGridMosaic extends AbstractGridMosaic{
         return id;
     }
 
-    public PGCoverageReference getCoverageReference() {
+    public PGCoverageResource getCoverageReference() {
         return ref;
     }
 
