@@ -27,8 +27,22 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
+ * Creates a coverage showing were an object may be after some delay if it drift in the direction of currents.
+ * Notes:
+ * <ul>
+ *   <li>Calculation are performed in a UTM projection for the zone of the starting point.</li>
+ * </ul>
+ *
+ * Other algorithms:
+ * <ul>
+ *   <li><a href="http://www.meteorologie.eu.org/mothy/rapports/rapport_guerin_coiffier.pdf">Optimisation
+ *       du modèle MOTHY pour les opérations de recherche et sauvetage en mer</a></li>
+ *   <li><a href="http://wwz.cedre.fr/en/content/download/1657/16493/file/1-meteofrance-mothy_EN.pdf">Mothy
+ *       – Oil and object surface drift</a></li>
+ * </ul>
  *
  * @author Alexis Manin (Geomatys)
+ * @author Martin Desruisseaux (Geomatys)
  */
 public class DriftPredictor extends AbstractProcess {
     /**
@@ -200,6 +214,15 @@ public class DriftPredictor extends AbstractProcess {
         return pos;
     }
 
+    /**
+     * Returns the process configuration. The configuration contains (amont other information)
+     * the {@linkplain Configuration#directory root directory} of {@code "config.txt"} file
+     * and {@code "cache"} sub-directory.
+     */
+    final Configuration configuration() {
+        return configuration;
+    }
+
     @Override
     protected void execute() throws ProcessException {
         final Parameters input = Parameters.castOrWrap(inputParameters);
@@ -232,8 +255,8 @@ public class DriftPredictor extends AbstractProcess {
         coordToGrid.scale(1./gridResolution, 1./gridResolution);
         coordToGrid.translate(-positions[0], -positions[1]);
 
-        current = new DataSource.HYCOM(configuration.directory.resolve("HYCOM"));
-        wind = new DataSource.WindSat(configuration.directory.resolve("WindSat"));
+        current = new DataSource.HYCOM(this);
+        wind = new DataSource.MeteoFrance(this);
         final Path outputPath;
         try {
             boolean newDay = false;
@@ -257,7 +280,6 @@ public class DriftPredictor extends AbstractProcess {
         } catch (Exception e) {
             throw new ProcessException(null, this, e);
         }
-
         Parameters.castOrWrap(outputParameters).getOrCreate(DriftPredictionDescriptor.OUTPUT_DATA).setValue(outputPath);
     }
 
@@ -268,9 +290,12 @@ public class DriftPredictor extends AbstractProcess {
      */
     private boolean advance() throws Exception {
         final OffsetDateTime date = OffsetDateTime.ofInstant(currentTime, ZoneOffset.UTC);
-        if (!current.load(date) || !wind.load(date)) {
+        if (!wind.load(date) || !current.load(date)) {
             return false;
         }
+        wind.deleteOldFiles();
+        current.deleteOldFiles();
+        progress("Computing drift");
         /*
          * At this point data have been loaded. Start computation.
          */
@@ -470,5 +495,28 @@ public class DriftPredictor extends AbstractProcess {
                 gridToCoord.getScaleX(),     gridToCoord.getScaleY(),
                 outputFile.toString());
         return outputFile;
+    }
+
+    /**
+     * Writes in PNG formats all snapshots created by the current process.
+     * This method is used for debugging purpose only.
+     *
+     * @throws IOException if an error occurred while writing the snapshots.
+     */
+    public final void writeShapshots() throws IOException {
+        for (int i=0; i<outputs.size(); i++) {
+            String filename = "overall.png";
+            if (i != outputs.size() - 1) {
+                filename = "day-" + (i+1) + ".png";
+            }
+            outputs.get(i).writePNG(configuration().directory, filename);
+        }
+    }
+
+    /**
+     * Reports the name of task under progress.
+     */
+    final void progress(final String task) {
+        fireProgressing(task, Float.NaN, false);
     }
 }

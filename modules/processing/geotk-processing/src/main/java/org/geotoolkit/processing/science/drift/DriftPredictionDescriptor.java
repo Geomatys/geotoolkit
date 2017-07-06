@@ -53,7 +53,7 @@ public class DriftPredictionDescriptor extends AbstractProcessDescriptor {
 
         DATA_DIRECTORY = builder
                 .addName("dataDirectory")
-                .setRemarks("Root directory of HYCOM and WindSat data.")
+                .setRemarks("Root directory of HYCOM and Météo-France data.")
                 .setRequired(true)
                 .create(Path.class, null);
 

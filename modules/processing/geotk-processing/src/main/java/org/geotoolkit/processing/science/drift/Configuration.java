@@ -23,9 +23,23 @@ final class Configuration {
      */
     final int maximumTrajectoryCount;
 
+    /**
+     * Cache size in numbers of days. This will be converted in number of files using the number of files per day
+     * (this factor is different for each file format).
+     */
+    final int historyDuration;
+
+    /**
+     * The Météo-France token for access to WCS service, or {@code null} if none.
+     */
+    final String meteoFranceToken;
+
+
     Configuration(final Path directory) throws IOException, ProcessException {
         this.directory = directory;
         int count = 2_000_000;       // Default value.
+        int history = 10;            // Default value (in days).
+        String token = null;
         final List<DriftPredictor.Weight> wg = new ArrayList<>();
         for (String line : Files.readAllLines(directory.resolve("config.txt"))) {
             if (!(line = line.trim()).isEmpty() && !line.startsWith("#")) {
@@ -47,10 +61,18 @@ final class Configuration {
                         break;
                     }
                     case "maximum_trajectory_count": {
+                        count = singleton(keyword, values);
+                        break;
+                    }
+                    case "history_duration": {
+                        history = singleton(keyword, values);
+                        break;
+                    }
+                    case "meteo-france_token": {
                         if (values.length != 1) {
                             throw new ProcessException(keyword + " shall have exactly one value.", null);
                         }
-                        count = Integer.parseInt(values[0].toString());
+                        token = values[0].toString();
                         break;
                     }
                     default: {
@@ -61,6 +83,15 @@ final class Configuration {
         }
         weights = wg.toArray(new DriftPredictor.Weight[wg.size()]);
         maximumTrajectoryCount = count;
+        historyDuration = history;
+        meteoFranceToken = token;
         Arrays.sort(weights);
+    }
+
+    private int singleton(final String keyword, final CharSequence[] values) throws ProcessException {
+        if (values.length != 1) {
+            throw new ProcessException(keyword + " shall have exactly one value.", null);
+        }
+        return Integer.parseInt(values[0].toString());
     }
 }
