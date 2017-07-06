@@ -47,6 +47,7 @@ public class GetRecordsTest extends org.geotoolkit.test.TestBase {
         getRecords202.setOutputFormat("xml");
         getRecords202.setResultType(ResultType.RESULTS);
         getRecords202.setConstraint("prop LIKE 'value'");
+        getRecords202.setSortBy("Date,Title:D");
         final URL url;
         try {
             url = getRecords202.getURL();
@@ -62,5 +63,6 @@ public class GetRecordsTest extends org.geotoolkit.test.TestBase {
         assertTrue(sUrl.contains("ELEMENTSETNAME="+ ElementSetType.FULL.value()));
         assertTrue(sUrl.contains("RESULTTYPE="+ ResultType.RESULTS.value()));
         assertTrue("was :" + sUrl, sUrl.contains("CONSTRAINT=prop+LIKE+%27value%27"));
+        assertTrue(sUrl.contains("SORTBY=Date%2CTitle%3AD"));
     }
 }
