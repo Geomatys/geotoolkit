@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -38,9 +39,13 @@ import org.geotoolkit.csw.xml.QueryConstraint;
 import org.geotoolkit.filter.FilterFactoryImpl;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.SortByType;
+import org.geotoolkit.ogc.xml.v110.SortPropertyType;
 import org.geotoolkit.security.ClientSecurity;
 import org.opengis.filter.Filter;
+import org.opengis.filter.sort.SortOrder;
 
+import static org.opengis.filter.sort.SortOrder.ASCENDING;
+import static org.opengis.filter.sort.SortOrder.DESCENDING;
 import static org.geotoolkit.csw.AbstractCSWRequest.POOL;
 import static org.geotoolkit.csw.xml.CswXmlFactory.*;
 
@@ -331,7 +336,7 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
             /*
              * Getting typeNames value used to build QueryType object
              */
-            final List<QName> typNames = new ArrayList<QName>();
+            final List<QName> typNames = new ArrayList<>();
             if (typeNames != null) {
                 typNames.add(TypeNames.valueOf(typeNames));
             }
@@ -355,7 +360,14 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
              */
             final SortByType sort;
             if (sortBy != null) {
-                throw new UnsupportedOperationException("The parameter SortBy is not implemented yet for Method POST.");
+                String[] fields = sortBy.split(",");
+                List<SortPropertyType> sortProps = new ArrayList<>();
+                for (String field : fields) {
+                    String[] split = field.split(":");
+                    SortOrder sortOrder = split.length == 1 ? null : ("D".equals(split[1]) ? DESCENDING : ASCENDING);
+                    sortProps.add(new SortPropertyType(split[0], sortOrder));
+                }
+                sort = new SortByType(sortProps);
             } else {
                 sort = null;
             }
@@ -384,7 +396,6 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
             final DistributedSearch ds = createDistributedSearch(version, hopcount);
             final org.geotoolkit.csw.xml.GetRecordsRequest recordsXml = createGetRecord(version, "CSW", resultType, requestId, outputFormat,
                     outputSchema, startPosition, maxRecords, queryType, ds);
-
 
             marsh.marshal(recordsXml, stream);
             POOL.recycle(marsh);
