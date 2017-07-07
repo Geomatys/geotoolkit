@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.sis.storage.DataStores;
 import org.geotoolkit.io.ContentFormatException;
 import ucar.ma2.Array;
 import ucar.nc2.Dimension;
@@ -31,7 +32,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * <ul>
  *   <li>Current:    <a href="ftp://ftp.hycom.org/datasets/GLBa0.08/expt_91.2/2017">HYCOM FTP access</a></li>
  *   <li>Wind speed: <a href="ftp://podaac-ftp.jpl.nasa.gov/OceanWinds/windsat/L3/rss/v7/2015">NOAA FTP access</a></li>
- *   <li>Wind speed: <a href="https://geoservices.meteofrance.fr">NOAA FTP access</a></li>
+ *   <li>Wind speed: <a href="https://donneespubliques.meteofrance.fr/">Public data from Météo-France</a></li>
  * </ul>
  */
 abstract class DataSource {
@@ -75,6 +76,13 @@ abstract class DataSource {
     VelocityComponent u, v;
 
     /**
+     * If the process fails because a file needs to be downloaded but was not found or can not be opened,
+     * the path to that file. Otherwise (i.e. if the process fail for any other reason), {@code null}.
+     * This field is used only for reporting error messages.
+     */
+    String canNotDownloadFile;
+
+    /**
      * Creates a new data source.
      *
      * @param cacheSubDir   subdirectory of the cache directory where to store downloaded data.
@@ -94,9 +102,8 @@ abstract class DataSource {
 
     /**
      * Loads the archive (if available) or prediction (as a fallback) file for the given time.
-     * If no data is available, return {@code false}.
      */
-    abstract boolean load(OffsetDateTime requested) throws Exception;
+    abstract void load(OffsetDateTime requested) throws Exception;
 
 
     // ----------------------------------------------------------------------------------------------------------
@@ -110,10 +117,16 @@ abstract class DataSource {
      */
     static final class HYCOM extends DataSource {
         /**
+         * Root URL to the directory containing the files to download.
+         */
+        static final String HYCOM_URL = "ftp://ftp.hycom.org/datasets/GLBa0.08/expt_91.2";
+
+        /**
          * The pattern to the URL of the directory containing the files to download.
+         * Example: {@code "ftp://ftp.hycom.org/datasets/GLBa0.08/expt_91.2/%d/%s/"}.
          * Parameters are the year (e.g. 2017) and the {@code "uvel"} or {@code "vvel"} sub-directory.
          */
-        private static final String DOWNLOAD_PATH = "ftp://ftp.hycom.org/datasets/GLBa0.08/expt_91.2/%d/%s/";
+        private final String downloadPath;
 
         /**
          * Pattern of RTOFS filename with four parameters, which are the year, the day of year,
@@ -138,14 +151,14 @@ abstract class DataSource {
          */
         HYCOM(final DriftPredictor process) {
             super(process, "HYCOM", "glob:*.nc", 24, true);
+            downloadPath = process.configuration().hycom_url + "/%d/%s/";
         }
 
         /**
          * Loads the prediction file for the given time.
-         * If no data is available, return {@code false}.
          */
         @Override
-        boolean load(final OffsetDateTime requested) throws Exception {
+        void load(final OffsetDateTime requested) throws Exception {
             final int year = requested.get(ChronoField.YEAR);
             final int day  = requested.get(ChronoField.DAY_OF_YEAR);
             final int code = (year << 9) | day;
@@ -162,11 +175,8 @@ abstract class DataSource {
                 if (!Files.isReadable(vFile))
                     vFile = directory.resolve(String.format(FILENAME_PATTERN, year, day, 3, 'v'));
 
-                if ((uFile = install(year, "uvel", uFile, uFileName)) == null ||
-                    (vFile = install(year, "vvel", vFile, vFileName)) == null)
-                {
-                    return false;
-                }
+                uFile = install(year, "uvel", uFile, uFileName);
+                vFile = install(year, "vvel", vFile, vFileName);
                 NetcdfDataset nc = NetcdfDataset.openDataset(uFile.toString());
                 try {
                     u = new VelocityComponent.HYCOM(nc, "u", (VelocityComponent.HYCOM) u, directory);
@@ -180,7 +190,6 @@ abstract class DataSource {
                     nc.close();
                 }
             }
-            return true;
         }
 
         /**
@@ -191,17 +200,14 @@ abstract class DataSource {
          * @param  subdir      the subdirectory of data to download: {@code uvel} or {@code vvel}.
          * @param  file3D      path to the three-dimensional data file.
          * @param  filename2D  name of the two-dimensional data file.
-         * @return path to the file to use, or {@code null} if none.
+         * @return path to the file to use.
          */
         private Path install(final int year, final String subdir, Path file3D, final String filename2D) throws Exception {
             if (Files.exists(file3D)) {
                 return file3D;                      // File exists but not downloaded by us - leave it unchanged.
             }
             final String filename = file3D.getFileName().toString();
-            file3D = download(String.format(DOWNLOAD_PATH, year, subdir) + filename, filename);
-            if (file3D == null) {
-                return null;                        // File not found on the download server.
-            }
+            file3D = download(String.format(downloadPath, year, subdir) + filename, filename);
             process.progress("Rewriting as 2D file");
             final Path file2D = file3D.resolveSibling(filename2D);
             final Map<String,Dimension> dimensions = new LinkedHashMap<>();
@@ -314,35 +320,36 @@ abstract class DataSource {
          * If no data is available, return {@code false}.
          */
         @Override
-        boolean load(final OffsetDateTime requested) throws Exception {
-            final int year = requested.get(ChronoField.YEAR);
-            final int day  = requested.get(ChronoField.DAY_OF_YEAR);
-            final int hour = requested.get(ChronoField.HOUR_OF_DAY);
+        void load(final OffsetDateTime requested) throws Exception {
+            final int year =  requested.get(ChronoField.YEAR);
+            final int day  =  requested.get(ChronoField.DAY_OF_YEAR);
+            final int hour = (requested.get(ChronoField.HOUR_OF_DAY) / timeInterval) * timeInterval;
             final int code = (((year << 9) | day) << 5) | hour;
             if (code != currentDay) {
                 currentDay = code;
-                final Instant t = requested.truncatedTo(ChronoUnit.HOURS).withHour((hour / timeInterval) * timeInterval).toInstant();
-                final Path uFile, vFile;
-                if ((uFile = install(t, year, day, hour, 'U')) == null ||
-                    (vFile = install(t, year, day, hour, 'V')) == null)
-                {
-                    return false;
-                }
+                final Instant t = requested.truncatedTo(ChronoUnit.HOURS).withHour(hour).toInstant();
+                final Path uFile = install(t, year, day, hour, 'U');
+                final Path vFile = install(t, year, day, hour, 'V');
                 u = new VelocityComponent.MeteoFrance(uFile.toUri());
                 v = new VelocityComponent.MeteoFrance(vFile.toUri());
             }
-            return true;
         }
 
         /**
          * If the given data file does not exist, downloads it.
          */
-        private Path install(final Instant time, final int year, final int day, final int hour, final char parameter) throws IOException {
+        private Path install(final Instant time, final int year, final int day, final int hour, final char parameter) throws Exception {
             final String filename = String.format(FILENAME_PATTERN, year, day, hour, parameter);
             Path target = cacheDir.resolve(filename);
             if (!Files.exists(target)) {
-                target = download(String.format(DOWNLOAD_PATH, process.configuration().meteoFranceToken, parameter,
-                                  time, time.plus(timeInterval/2, ChronoUnit.HOURS)), filename);
+                final String source = String.format(DOWNLOAD_PATH, process.configuration().meteoFranceToken,
+                                                    parameter, time, time.plus(timeInterval/2, ChronoUnit.HOURS));
+                target = download(source, filename);
+                if (!"image/tiff".equals(DataStores.probeContentType(target))) {
+                    Files.delete(target);                       // May be the XML that describe an exception.
+                    canNotDownloadFile = source;
+                    throw new IOException("Not a TIFF file.");
+                }
             }
             return target;
         }
@@ -390,7 +397,7 @@ abstract class DataSource {
          * If no data is available, return {@code false}.
          */
         @Override
-        boolean load(final OffsetDateTime requested) throws Exception {
+        void load(final OffsetDateTime requested) throws Exception {
             final int year  = requested.get(ChronoField.YEAR);
             final int month = requested.get(ChronoField.MONTH_OF_YEAR);
             final int day   = requested.get(ChronoField.DAY_OF_MONTH);
@@ -398,10 +405,7 @@ abstract class DataSource {
             if (code != currentDay) {
                 currentDay = code;
                 final Path file = cacheDir.resolve(String.format(FILENAME_PATTERN, year, month, day));
-                if (!Files.exists(file)) {
-                    return false;
-                }
-                NetcdfDataset nc = NetcdfDataset.openDataset(file.toString());
+                final NetcdfDataset nc = NetcdfDataset.openDataset(file.toString());
                 try {
                     u = new VelocityComponent.WindSat(nc, "wind_speed_aw");
                     v = new VelocityComponent.WindSat(nc, "wind_direction");
@@ -409,7 +413,6 @@ abstract class DataSource {
                     nc.close();
                 }
             }
-            return true;
         }
     }
 
@@ -424,23 +427,17 @@ abstract class DataSource {
      *
      * @param  source    URL of the file to download.
      * @param  filename  name (without path) of the file to create in the cache directory.
-     * @return the local file which has been created, or {@code null} if the resource was not found.
+     * @return the local file which has been created.
      */
     final Path download(final String source, final String filename) throws IOException {
         process.progress("Downloading " + filename + " from " + source);
         final Path target = cacheDir.resolve(filename);
-        InputStream in = null;
-        try {
-            in = new URL(source).openStream();
+        canNotDownloadFile = source;                            // In case the connection can not be established.
+        try (InputStream in = new URL(source).openStream()) {
+            canNotDownloadFile = null;                          // File has been found. If we fail, it will be for another reason.
             Files.copy(in, target);
-            in.close();
             return target;
         } catch (IOException e) {
-            if (in == null) {
-                // Can not establish connection (file may not exist).
-                return null;
-            }
-            in.close();
             if (Files.exists(target)) {
                 Files.delete(target);
             }
@@ -456,7 +453,7 @@ abstract class DataSource {
         final List<Path> files;
         final PathMatcher pm = cacheDir.getFileSystem().getPathMatcher(filePattern);
         try (Stream<Path> s = Files.walk(cacheDir)) {
-            files = s.filter((p) -> pm.matches(p)).collect(Collectors.toList());
+            files = s.filter((p) -> pm.matches(p.getFileName())).collect(Collectors.toList());
         }
         files.sort(null);
         int n = process.configuration().historyDuration * 24 / timeInterval;        // Maximal number of files.

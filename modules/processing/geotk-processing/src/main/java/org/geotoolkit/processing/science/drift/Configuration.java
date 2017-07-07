@@ -16,12 +16,10 @@ final class Configuration {
      */
     final Path directory;
 
-    final DriftPredictor.Weight[] weights;
-
     /**
-     * Maximum number of trajectories to track;
+     * URL to the HYCOM FTP directory.
      */
-    final int maximumTrajectoryCount;
+    final String hycom_url;
 
     /**
      * Cache size in numbers of days. This will be converted in number of files using the number of files per day
@@ -34,12 +32,42 @@ final class Configuration {
      */
     final String meteoFranceToken;
 
+    /**
+     * Weights to apply on wind vectors relative to current vectors.
+     */
+    final DriftPredictor.Weight[] weights;
+
+    /**
+     * Maximum number of trajectories to track;
+     */
+    final int maximumTrajectoryCount;
+
+    /**
+     * Output grid size.
+     */
+    final int gridWidth, gridHeight;
+
+    /**
+     * Size of a grid cell, in metres.
+     */
+    final int gridResolution;
+
+    /**
+     * Time elapsed between two steps, in seconds.
+     */
+    final long timeStep;
+
 
     Configuration(final Path directory) throws IOException, ProcessException {
-        this.directory = directory;
-        int count = 2_000_000;       // Default value.
-        int history = 10;            // Default value (in days).
-        String token = null;
+        this.directory       = directory;
+        String hycom_url     = DataSource.HYCOM.HYCOM_URL;
+        String token         = null;
+        int  count           = 2_000_000;         // Default value.
+        int  historyDuration = 10;                // Default value (in days).
+        int  gridWidth       = 1000;
+        int  gridHeight      = 1000;
+        int  gridResolution  = 1000;
+        long timeStep        = 6 * 60*60;
         final List<DriftPredictor.Weight> wg = new ArrayList<>();
         for (String line : Files.readAllLines(directory.resolve("config.txt"))) {
             if (!(line = line.trim()).isEmpty() && !line.startsWith("#")) {
@@ -60,12 +88,11 @@ final class Configuration {
                                 Double.parseDouble(values[2].toString())));
                         break;
                     }
-                    case "maximum_trajectory_count": {
-                        count = singleton(keyword, values);
-                        break;
-                    }
-                    case "history_duration": {
-                        history = singleton(keyword, values);
+                    case "hycom_url": {
+                        if (values.length != 1) {
+                            throw new ProcessException(keyword + " shall have exactly one value.", null);
+                        }
+                        hycom_url = values[0].toString();
                         break;
                     }
                     case "meteo-france_token": {
@@ -75,6 +102,30 @@ final class Configuration {
                         token = values[0].toString();
                         break;
                     }
+                    case "maximum_trajectory_count": {
+                        count = singleton(keyword, values);
+                        break;
+                    }
+                    case "history_duration": {
+                        historyDuration = singleton(keyword, values);
+                        break;
+                    }
+                    case "grid_width": {
+                        gridWidth = singleton(keyword, values);
+                        break;
+                    }
+                    case "grid_height": {
+                        gridHeight = singleton(keyword, values);
+                        break;
+                    }
+                    case "grid_resolution": {
+                        gridResolution = singleton(keyword, values);
+                        break;
+                    }
+                    case "time_step": {
+                        timeStep = singleton(keyword, values) * (60*60L);
+                        break;
+                    }
                     default: {
                         throw new ProcessException("Unknown property: " + keyword, null);
                     }
@@ -82,13 +133,18 @@ final class Configuration {
             }
         }
         weights = wg.toArray(new DriftPredictor.Weight[wg.size()]);
-        maximumTrajectoryCount = count;
-        historyDuration = history;
-        meteoFranceToken = token;
         Arrays.sort(weights);
+        this.hycom_url              = hycom_url;
+        this.historyDuration        = historyDuration;
+        this.meteoFranceToken       = token;
+        this.maximumTrajectoryCount = count;
+        this.gridWidth              = gridWidth;
+        this.gridHeight             = gridHeight;
+        this.gridResolution         = gridResolution;
+        this.timeStep               = timeStep;
     }
 
-    private int singleton(final String keyword, final CharSequence[] values) throws ProcessException {
+    private static int singleton(final String keyword, final CharSequence[] values) throws ProcessException {
         if (values.length != 1) {
             throw new ProcessException(keyword + " shall have exactly one value.", null);
         }

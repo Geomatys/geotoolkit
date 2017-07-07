@@ -44,10 +44,38 @@ maximum_trajectory_count = 1000000
 # Number of days to keep in the cache. When new data need to be downloaded, if the amount of files cover an amount
 # of days greater than this number, oldest data will be deleted.
 
-history_duration = 10
+history_duration = 30
+
+
+# Path to HYCOM data. The given directory shall contain sub-directories for the years (for example 2017/),
+# then subdirectories for the parameters ("uvel" or "vvel"), then files with names of the form
+# "archv.YEAR_DAYOFYEAR_00_%3zu.nc"
+
+HYCOM_URL = ftp://ftp.hycom.org/datasets/GLBa0.08/expt_91.2
 
 
 # Token for access to Météo-France WCS service on ARPEGE data. Instruction for getting token are there:
 # https://donneespubliques.meteofrance.fr/client/gfx/utilisateur/File/documentation-webservices-inspire-en.pdf
 
 # meteo-france_token = __your_token__
+
+
+# Size of the output grid in pixels. This output grid is used as an intermediate step. Each cell contain a
+# pseudo-probability that the drifting object is located in that cell. The grid size shall be large enough
+# for containing all position visited by the drifting object. When large enough, the exact grid size has no
+# impact on the final result; it only has an impact on the memory consumption. This grid size may need to
+# be increased if 'grid_resolution' is set to a smaller number.
+
+grid_width  = 1000
+grid_height = 1000
+
+
+# Grid resolution in metres. The value should not be too small, otherwise empty spaces may appear between
+# trajectories.
+
+grid_resolution = 1000
+
+
+# How many hours to advance after each calculation step.
+
+time_step = 6
