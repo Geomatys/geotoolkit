@@ -2,6 +2,7 @@ package org.geotoolkit.processing.science.drift;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
@@ -260,7 +261,7 @@ public class DriftPredictor extends AbstractProcess {
             boolean newDay = false;
             long day = currentTime.getEpochSecond() / (24*60*60);
             while (!currentTime.isAfter(endTime)) {
-                advance();
+                if (!advance()) break;
                 final long d = currentTime.getEpochSecond() / (24*60*60);
                 newDay = (d != day);
                 if (newDay) {
@@ -274,30 +275,31 @@ public class DriftPredictor extends AbstractProcess {
             trajectory();
             outputPath = writeNetcdf();
         } catch (Exception e) {
-            String canNotDownloadFile;
-            if ((canNotDownloadFile =    wind.canNotDownloadFile) != null ||
-                (canNotDownloadFile = current.canNotDownloadFile) != null)
-            {
-                throw new UnavailableDataException("Can not compute drift at " + currentTime
-                        + " because can not download " + (wind.canNotDownloadFile != null ? "wind" : "current")
-                        + " data from " + canNotDownloadFile, this, e);
-            }
             throw new ProcessException("Can not compute drift at " + currentTime, this, e);
         }
-        Parameters.castOrWrap(outputParameters).getOrCreate(DriftPredictionDescriptor.OUTPUT_DATA).setValue(outputPath);
+        final Parameters p = Parameters.castOrWrap(outputParameters);
+        p.getOrCreate(DriftPredictionDescriptor.OUTPUT_DATA).setValue(outputPath);
+        p.getOrCreate(DriftPredictionDescriptor.ACTUAL_END_TIMESTAMP).setValue(currentTime.toEpochMilli());
     }
 
     /**
      * Moves all drift positions by one {@link #timeStep}.
+     *
+     * @return {@code true} on success, or {@code false} if there is no data for this step.
      */
-    private void advance() throws Exception {
+    private boolean advance() throws Exception {
         final int  gridWidth  = configuration.gridWidth;
         final int  gridHeight = configuration.gridHeight;
         final long timeStep   = configuration.timeStep;
         final OffsetDateTime date = OffsetDateTime.ofInstant(currentTime, ZoneOffset.UTC);
         synchronized (DriftPredictor.class) {   // For making sure that only one process downloads data.
-            wind.load(date);
-            current.load(date);
+            try {
+                wind.load(date);
+                current.load(date);
+            } catch (FileNotFoundException e) {
+                progress(e.toString());                 // TODO: should actually be reported as a warning.
+                return false;
+            }
             wind.deleteOldFiles();
             current.deleteOldFiles();
         }
@@ -470,6 +472,7 @@ public class DriftPredictor extends AbstractProcess {
         }
         numOrdinates = newPosIndex;
         currentTime = currentTime.plusSeconds(timeStep);
+        return true;
     }
 
     private int discardLowProbability(final int fromIndex, int toIndex, final float probability) {
@@ -528,7 +531,7 @@ public class DriftPredictor extends AbstractProcess {
      * Reports the name of task under progress.
      */
     final void progress(final String task) {
-        LOGGER.fine(task);
+        LOGGER.info(task);
         fireProgressing(task, Float.NaN, false);
     }
 }

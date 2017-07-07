@@ -76,13 +76,6 @@ abstract class DataSource {
     VelocityComponent u, v;
 
     /**
-     * If the process fails because a file needs to be downloaded but was not found or can not be opened,
-     * the path to that file. Otherwise (i.e. if the process fail for any other reason), {@code null}.
-     * This field is used only for reporting error messages.
-     */
-    String canNotDownloadFile;
-
-    /**
      * Creates a new data source.
      *
      * @param cacheSubDir   subdirectory of the cache directory where to store downloaded data.
@@ -347,7 +340,6 @@ abstract class DataSource {
                 target = download(source, filename);
                 if (!"image/tiff".equals(DataStores.probeContentType(target))) {
                     Files.delete(target);                       // May be the XML that describe an exception.
-                    canNotDownloadFile = source;
                     throw new IOException("Not a TIFF file.");
                 }
             }
@@ -432,9 +424,7 @@ abstract class DataSource {
     final Path download(final String source, final String filename) throws IOException {
         process.progress("Downloading " + filename + " from " + source);
         final Path target = cacheDir.resolve(filename);
-        canNotDownloadFile = source;                            // In case the connection can not be established.
         try (InputStream in = new URL(source).openStream()) {
-            canNotDownloadFile = null;                          // File has been found. If we fail, it will be for another reason.
             Files.copy(in, target);
             return target;
         } catch (IOException e) {

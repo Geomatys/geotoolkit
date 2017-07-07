@@ -49,7 +49,7 @@ history_duration = 30
 
 # Path to HYCOM data. The given directory shall contain sub-directories for the years (for example 2017/),
 # then subdirectories for the parameters ("uvel" or "vvel"), then files with names of the form
-# "archv.YEAR_DAYOFYEAR_00_%3zu.nc"
+# "archv.YEAR_DAYOFYEAR_00_3zu.nc"
 
 HYCOM_URL = ftp://ftp.hycom.org/datasets/GLBa0.08/expt_91.2
 
