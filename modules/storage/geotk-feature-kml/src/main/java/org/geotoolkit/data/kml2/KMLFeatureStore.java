@@ -28,7 +28,7 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +38,9 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.xml.MarshallerPool;
@@ -45,24 +48,18 @@ import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.internal.data.GenericWrapFeatureIterator;
 import org.geotoolkit.kml.xml.KMLMarshallerPool;
 import org.geotoolkit.kml.xml.v220.AbstractContainerType;
 import org.geotoolkit.kml.xml.v220.AbstractFeatureType;
 import org.geotoolkit.kml.xml.v220.AbstractGeometryType;
 import org.geotoolkit.kml.xml.v220.BoundaryType;
-import org.geotoolkit.kml.xml.v220.DocumentType;
 import org.geotoolkit.kml.xml.v220.GroundOverlayType;
 import org.geotoolkit.kml.xml.v220.KmlType;
 import org.geotoolkit.kml.xml.v220.LineStringType;
@@ -74,8 +71,9 @@ import org.geotoolkit.kml.xml.v220.PhotoOverlayType;
 import org.geotoolkit.kml.xml.v220.PlacemarkType;
 import org.geotoolkit.kml.xml.v220.PointType;
 import org.geotoolkit.kml.xml.v220.PolygonType;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
@@ -94,29 +92,30 @@ public class KMLFeatureStore extends AbstractFeatureStore {
 
     private static final GeometryFactory GF = GO2Utilities.JTS_FACTORY;
     private static final CoordinateReferenceSystem CRS = CommonCRS.WGS84.normalizedGeographic(); //CRS:84 , longitude/latitude
-    private static final String DEFAULT_NAME = "Placemark";
-    
+    static final String ABSTRACT_FEATURE_NAME = "AbstractFeatureType";
+    static final String PLACEMARK_NAME = "Placemark";
+
+    private static FeatureType ABSTRACT_FEATURE_TYPE;
+    private static FeatureType PLACEMARK_TYPE;
+
     private final URI path;
-    private Map<GenericName,FeatureType> types = null;
-    
-    private FeatureType placemarkType;
-    
+
     public KMLFeatureStore(Path path) {
         this(toParameters(path, "no namespace"));
     }
-    
+
     public KMLFeatureStore(ParameterValueGroup params){
         super(params);
-        path = org.apache.sis.parameter.Parameters.castOrWrap(params).getValue(KMLFeatureStoreFactory.PATH);
+        path = Parameters.castOrWrap(params).getValue(KMLFeatureStoreFactory.PATH);
     }
-    
+
     private static ParameterValueGroup toParameters(final Path f,final String namespace){
-        final ParameterValueGroup params = KMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(KMLFeatureStoreFactory.PATH, params).setValue(f.toUri());
-        Parameters.getOrCreate(KMLFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
+        final Parameters params = Parameters.castOrWrap(KMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(KMLFeatureStoreFactory.PATH).setValue(f.toUri());
+        params.getOrCreate(KMLFeatureStoreFactory.NAMESPACE).setValue(namespace);
         return params;
     }
-    
+
     @Override
     public FeatureStoreFactory getFactory() {
         return (FeatureStoreFactory) DataStores.getFactoryById(KMLFeatureStoreFactory.NAME);
@@ -126,22 +125,21 @@ public class KMLFeatureStore extends AbstractFeatureStore {
     public QueryCapabilities getQueryCapabilities() {
         return new DefaultQueryCapabilities(false, false);
     }
-    
+
     @Override
     public Set<GenericName> getNames() throws DataStoreException {
-        scanTypes();
-        return types.keySet();
+        return Collections.singleton(getPlacemarkType().getName());
     }
 
     @Override
-    public FeatureType getFeatureType(GenericName gn) throws DataStoreException {
-        typeCheck(gn);
-        return types.get(gn);
+    public FeatureType getFeatureType(String name) throws DataStoreException {
+        typeCheck(name);
+        return getPlacemarkType();
     }
 
     private KmlType read() throws DataStoreException {
         final KmlType kml;
-        final MarshallerPool pool = KMLMarshallerPool.getInstance();
+        final MarshallerPool pool = KMLMarshallerPool.getINSTANCE();
         try {
             //fix old google namespace
             final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -149,7 +147,7 @@ public class KMLFeatureStore extends AbstractFeatureStore {
             final DocumentBuilder builder = factory.newDocumentBuilder();
             final Document doc = builder.parse(path.toString());
             renameNamespaceRecursive(doc, doc.getDocumentElement(), "http://earth.google.com/kml/2.2", "http://www.opengis.net/kml/2.2");
-            
+
             //unmarshall file
             final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
             Object cdt = unmarshaller.unmarshal(doc);
@@ -163,7 +161,7 @@ public class KMLFeatureStore extends AbstractFeatureStore {
         }
         return kml;
     }
-    
+
     private static void renameNamespaceRecursive(Document doc, Node node, String oldNamespace, String newNamespace) {
 
         if (node.getNodeType() == Node.ELEMENT_NODE && oldNamespace.equalsIgnoreCase(node.getNamespaceURI())) {
@@ -175,12 +173,11 @@ public class KMLFeatureStore extends AbstractFeatureStore {
             renameNamespaceRecursive(doc, list.item(i), oldNamespace, newNamespace);
         }
     }
-    
+
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
-        final GenericName typeName = query.getTypeName();
-        typeCheck(typeName);
-        
+        typeCheck(query.getTypeName());
+
         //check we can read the file
         final KmlType kml = read();
 
@@ -189,66 +186,56 @@ public class KMLFeatureStore extends AbstractFeatureStore {
 
         int i=0;
         final List<Feature> features = new ArrayList<>();
-        for(PlacemarkType pt : placemarks){
-            final Feature f = FeatureUtilities.defaultFeature(placemarkType, "kml."+i++);
-            convert(pt, f);
-            features.add(f);
+        for(PlacemarkType pt : placemarks) {
+            features.add(convert(pt));
         }
-            
-        final FeatureReader reader = GenericWrapFeatureIterator.wrapToReader(features.iterator(), placemarkType);
-            
+
+        final FeatureReader reader = GenericWrapFeatureIterator.wrapToReader(features.iterator(), getPlacemarkType());
+
         return handleRemaining(reader, query);
     }
 
-    private synchronized void scanTypes() throws DataStoreException {
-        if(types!=null) return;
-        //check it works
-        final KmlType kml = read();
-        
-        final AbstractFeatureType base = kml.getAbstractFeatureGroup().getValue();
-        String typeName = null;
-        if(base instanceof DocumentType){
-            typeName = ((DocumentType)base).getName();
+    private static synchronized FeatureType getAbstractFeatureType() {
+        if (ABSTRACT_FEATURE_TYPE == null) {
+            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+            ftb.setName(ABSTRACT_FEATURE_NAME);
+            ftb.addAttribute(String.class).setName("name");
+            ftb.addAttribute(Boolean.class).setName("visibility");
+            ftb.addAttribute(Boolean.class).setName("open");
+            ftb.addAttribute(String.class).setName("address");
+            ftb.addAttribute(String.class).setName("phoneNumber");
+            ftb.addAttribute(String.class).setName("description");
+            ftb.addAttribute(String.class).setName("styleUrl");
+            // TODO : add complex data as "kml:Region".
+
+            ABSTRACT_FEATURE_TYPE = ftb.build();
         }
-        if(typeName==null) typeName = DEFAULT_NAME;
-        
-        final FeatureTypeBuilder ftb =  new FeatureTypeBuilder();
-        ftb.setName(typeName);
-        ftb.add("name", String.class);
-        ftb.add("visibility", Boolean.class);
-        ftb.add("open", Boolean.class);
-        //feature.getProperty("author").setValue(placemark.getAuthor());
-        //feature.getProperty("link").setValue(placemark.getLink());
-        ftb.add("address", String.class);
-        //feature.getProperty("addressDetails").setValue(placemark.getName());
-        ftb.add("phoneNumber", String.class);
-        //feature.getProperty("snippet").setValue(placemark.getSnippet());
-        //feature.getProperty("snippetDenominator").setValue(placemark.getSnippetDenominator());
-        ftb.add("description", String.class);
-        //feature.getProperty("abstractViewGroup").setValue(placemark.getAbstractViewGroup());
-        //feature.getProperty("abstractTimePrimitiveGroup").setValue(placemark.getAbstractTimePrimitiveGroup());
-        ftb.add("styleUrl", String.class);
-        //feature.getProperty("abstractStyleSelectorGroup").setValue(placemark.getAbstractStyleSelectorGroup());
-        //feature.getProperty("region").setValue(placemark.getRegion());
-        //feature.getProperty("metadata").setValue(placemark.getMetadata());
-        //feature.getProperty("extendedData").setValue(placemark.getExtendedData());
-        
-        ftb.add("the_geom", Geometry.class, CRS);
-        placemarkType = ftb.buildFeatureType();
-        
-        types = new HashMap<>();
-        types.put(placemarkType.getName(), placemarkType);
+
+        return ABSTRACT_FEATURE_TYPE;
     }
-    
+
+    private static synchronized FeatureType getPlacemarkType() {
+        if (PLACEMARK_TYPE == null) {
+            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+            ftb.setName(PLACEMARK_NAME);
+            ftb.setSuperTypes(getAbstractFeatureType());
+
+            ftb.addAttribute(Geometry.class).setName("geometry").setCRS(CRS).addRole(AttributeRole.DEFAULT_GEOMETRY);
+            PLACEMARK_TYPE = ftb.build();
+        }
+
+        return PLACEMARK_TYPE;
+    }
+
     /**
      * Loop in KML object and collect Placemarks.
-     * 
+     *
      * @param candidate
-     * @param placemarks 
+     * @param placemarks
      */
     private static void extractPlacemarks(Object candidate, List<PlacemarkType> placemarks) {
         if (candidate instanceof JAXBElement) candidate = ((JAXBElement)candidate).getValue();
-        
+
         if (candidate instanceof AbstractContainerType) {
             final AbstractContainerType ct = (AbstractContainerType) candidate;
             final List<JAXBElement<? extends AbstractFeatureType>> children = ct.getAbstractFeatureGroup();
@@ -265,50 +252,41 @@ public class KMLFeatureStore extends AbstractFeatureStore {
             //todo
         }
     }
-    
-    private static void convert(PlacemarkType placemark, Feature feature) throws DataStoreException {
-                
-        feature.getProperty("name").setValue(placemark.getName());
-        feature.getProperty("visibility").setValue(Boolean.TRUE.equals(placemark.isVisibility()));
-        feature.getProperty("open").setValue(Boolean.TRUE.equals(placemark.isOpen()));
-        //feature.getProperty("author").setValue(placemark.getAuthor());
-        //feature.getProperty("link").setValue(placemark.getLink());
-        feature.getProperty("address").setValue(placemark.getAddress());
-        //feature.getProperty("addressDetails").setValue(placemark.getName());
-        feature.getProperty("phoneNumber").setValue(placemark.getPhoneNumber());
-        //feature.getProperty("snippet").setValue(placemark.getSnippet());
-        //feature.getProperty("snippetDenominator").setValue(placemark.getSnippetDenominator());
-        feature.getProperty("description").setValue(placemark.getDescription());
-        //feature.getProperty("abstractViewGroup").setValue(placemark.getAbstractViewGroup());
-        //feature.getProperty("abstractTimePrimitiveGroup").setValue(placemark.getAbstractTimePrimitiveGroup());
-        feature.getProperty("styleUrl").setValue(placemark.getStyleUrl());
-        //feature.getProperty("abstractStyleSelectorGroup").setValue(placemark.getAbstractStyleSelectorGroup());
-        //feature.getProperty("region").setValue(placemark.getRegion());
-        //feature.getProperty("metadata").setValue(placemark.getMetadata());
-        //feature.getProperty("extendedData").setValue(placemark.getExtendedData());
-        
-        
+
+    private Feature convert(PlacemarkType placemark) throws DataStoreException {
+        final Feature feature = getPlacemarkType().newInstance();
+        feature.setPropertyValue("name", placemark.getName());
+        feature.setPropertyValue("visibility", Boolean.TRUE.equals(placemark.isVisibility()));
+        feature.setPropertyValue("open", Boolean.TRUE.equals(placemark.isOpen()));
+        feature.setPropertyValue("address", placemark.getAddress());
+        feature.setPropertyValue("phoneNumber", placemark.getPhoneNumber());
+        feature.setPropertyValue("description", placemark.getDescription());
+        feature.setPropertyValue("styleUrl", placemark.getStyleUrl());
+
+
         //convert geometry to JTS
         final Geometry geom = convert(placemark.getAbstractGeometryGroup());
         if(geom!=null) {
-            feature.getProperty("the_geom").setValue(geom);
+            feature.setPropertyValue("geometry", geom);
         }
+
+        return feature;
     }
-    
+
     private static Geometry convert(Object geomType) throws DataStoreException {
         if(geomType instanceof JAXBElement) geomType = ((JAXBElement)geomType).getValue();
-        
+
         Geometry geom = null;
         if (geomType instanceof ModelType) {
             final ModelType modelType = (ModelType) geomType;
             final LocationType location = modelType.getLocation();
             geom = GF.createPoint(new Coordinate(location.getLongitude(), location.getLatitude()));
-            
+
         } else if (geomType instanceof PointType) {
             final PointType pointType = (PointType) geomType;
             final List<String> coordinates = pointType.getCoordinates();
             geom = GF.createPoint(toCoordinates(coordinates, 1, false));
-            
+
         } else if (geomType instanceof PolygonType) {
             final PolygonType polygonType = (PolygonType) geomType;
             final CoordinateSequence outter = toCoordinates(polygonType.getOuterBoundaryIs().getLinearRing().getCoordinates(), 3, true);
@@ -318,11 +296,11 @@ public class KMLFeatureStore extends AbstractFeatureStore {
                 holes[i] = GF.createLinearRing(toCoordinates(inners.get(i).getLinearRing().getCoordinates(), 3, true));
             }
             geom = GF.createPolygon(GF.createLinearRing(outter), holes);
-            
+
         } else if (geomType instanceof LinearRingType) {
             final LinearRingType linearRingType = (LinearRingType) geomType;
             geom = GF.createLineString(toCoordinates(linearRingType.getCoordinates(), 3, true));
-            
+
         } else if (geomType instanceof MultiGeometryType) {
             final MultiGeometryType multigeometryType = (MultiGeometryType) geomType;
             final List<JAXBElement<? extends AbstractGeometryType>> children = multigeometryType.getAbstractGeometryGroup();
@@ -331,20 +309,20 @@ public class KMLFeatureStore extends AbstractFeatureStore {
                 childs[i] = convert(children.get(i));
             }
             geom = GF.createGeometryCollection(childs);
-            
+
         } else if (geomType instanceof LineStringType) {
             final LineStringType lineStringType = (LineStringType) geomType;
             geom = GF.createLineString(toCoordinates(lineStringType.getCoordinates(), 2, false));
-            
+
         }
-        
+
         if(geom!=null) {
             JTS.setCRS(geom, CRS);
         }
-        
+
         return geom;
     }
-    
+
     private static CoordinateSequence toCoordinates(List<String> coordinates, int minPoint, boolean close) throws DataStoreException{
         final List<Coordinate> coords = new ArrayList<>();
         try {
@@ -358,64 +336,62 @@ public class KMLFeatureStore extends AbstractFeatureStore {
                         coords.add(new Coordinate(Double.parseDouble(parts[0]), Double.parseDouble(parts[1]), Double.parseDouble(parts[2])));
                         break;
                     default:
-                        throw new DataStoreException("Unvalid coordinate size " +parts.length);
+                        throw new DataStoreException("Invalid coordinate size " +parts.length);
                 }
             }
         } catch(NumberFormatException ex){
             throw new DataStoreException(ex.getMessage(), ex);
         }
-        
+
         while (coordinates.size() < minPoint) {
             coordinates.add(coordinates.get(coordinates.size()-1));
         }
-        
+
         if (close && !coordinates.get(0).equals(coordinates.get(coordinates.size()-1))) {
             coordinates.add(coordinates.get(0));
         }
-        
+
         return new PackedCoordinateSequence.Double(coords.toArray(new Coordinate[coords.size()]));
     }
-    
+
     @Override
     public void refreshMetaModel() {
     }
-    
+
     // WRITE OPERATIONS NOT SUPPORTED //////////////////////////////////////////
-    
-    
+
     @Override
-    public void createFeatureType(GenericName gn, FeatureType ft) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
+    public void createFeatureType(FeatureType featureType) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void updateFeatureType(GenericName gn, FeatureType ft) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
+    public void updateFeatureType(FeatureType featureType) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void deleteFeatureType(GenericName gn) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
-    }
-    
-    @Override
-    public List<FeatureId> addFeatures(GenericName gn, Collection<? extends Feature> clctn, Hints hints) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
+    public void deleteFeatureType(String typeName) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void updateFeatures(GenericName gn, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> map) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
+    public List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void removeFeatures(GenericName gn, Filter filter) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
+    public void updateFeatures(String groupName, Filter filter, Map<String, ?> values) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     @Override
-    public FeatureWriter getFeatureWriter(GenericName gn, Filter filter, Hints hints) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
+    public void removeFeatures(String groupName, Filter filter) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
+    @Override
+    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

@@ -18,40 +18,42 @@ package org.geotoolkit.data.kml2;
 
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Set;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.opengis.feature.FeatureType;
+
+import static org.geotoolkit.data.kml2.KMLFeatureStore.PLACEMARK_NAME;
+import org.opengis.feature.Feature;
+import org.opengis.util.GenericName;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 public class KMLFeatureStoreTest {
-    
+
     @Test
     public void readPlacemarkTest() throws Exception {
-        
+
         final URL path = KMLFeatureStoreTest.class.getResource("/org/geotoolkit/data/kml/placemark.kml");
         final KMLFeatureStore store = new KMLFeatureStore(Paths.get(path.toURI()));
-        
-        assertEquals(1,store.getNames().size());
-        assertEquals("Placemark",store.getNames().iterator().next().tip().toString());
-        
-        final FeatureType type = store.getFeatureType(store.getNames().iterator().next());
+
+        final Set<GenericName> names = store.getNames();
+        assertNotNull("Available data types", names);
+        assertEquals(1,names.size());
+        assertEquals(PLACEMARK_NAME, names.iterator().next().tip().toString());
+
+        final FeatureType type = store.getFeatureType(PLACEMARK_NAME);
         assertNotNull(type);
-        
-        final FeatureReader reader = store.getFeatureReader(QueryBuilder.all(NamesExt.create("Placemark")));
+
+        final FeatureReader reader = store.getFeatureReader(QueryBuilder.all(PLACEMARK_NAME));
         assertTrue(reader.hasNext());
         final Feature feature = reader.next();
-        assertEquals("Google Earth - New Placemark", feature.getProperty("name").getValue());
-        assertEquals("Some Descriptive text.", feature.getProperty("description").getValue());
+        assertEquals("Google Earth - New Placemark", feature.getPropertyValue("name"));
+        assertEquals("Some Descriptive text.", feature.getPropertyValue("description"));
         assertFalse(reader.hasNext());
-        
     }
-    
-    
 }

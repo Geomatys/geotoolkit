@@ -126,5 +126,5 @@ public abstract class AbstractContainerType
     }
 
     public abstract List<JAXBElement<? extends AbstractFeatureType>> getAbstractFeatureGroup();
-    
+
 }

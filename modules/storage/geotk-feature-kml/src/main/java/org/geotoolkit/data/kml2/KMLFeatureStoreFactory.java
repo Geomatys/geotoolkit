@@ -37,7 +37,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class KMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory{
+public class KMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "kml";
@@ -49,9 +49,9 @@ public class KMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory{
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("KMLParameters").createGroup(
@@ -92,10 +92,10 @@ public class KMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory{
     public String[] getFileExtensions() {
         return new String[] {".kml"};
     }
- 
+
     @Override
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, false, false, false, GEOMS_ALL);
     }
-    
+
 }

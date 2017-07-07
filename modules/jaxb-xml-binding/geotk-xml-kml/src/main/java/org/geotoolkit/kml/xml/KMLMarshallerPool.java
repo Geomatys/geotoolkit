@@ -28,10 +28,10 @@ import org.apache.sis.xml.MarshallerPool;
  */
 public final class KMLMarshallerPool {
 
-    private static final MarshallerPool instance;
+    private static final MarshallerPool INSTANCE;
     static {
         try {
-            instance = new MarshallerPool(createJAXBContext(
+            INSTANCE = new MarshallerPool(createJAXBContext(
                     "org.geotoolkit.ogc.xml.exception:" +
                     "org.geotoolkit.kml.xml.v220:" +
                     "org.geotoolkit.xal.xml.v20:" +
@@ -44,10 +44,10 @@ public final class KMLMarshallerPool {
 
     private KMLMarshallerPool() {}
 
-    public static MarshallerPool getInstance() {
-        return instance;
+    public static MarshallerPool getINSTANCE() {
+        return INSTANCE;
     }
-    
+
     /**
      * Creates a JAXB context for the given package names.
      * This method is strictly internal to Geotk and shall not be invoked by client code.
