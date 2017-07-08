@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,22 +36,24 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.ows.xml.ExceptionResponse;
 import org.geotoolkit.ows.xml.ExceptionType;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
+import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
+import org.geotoolkit.wps.adaptor.ComplexAdaptor;
+import org.geotoolkit.wps.adaptor.DataAdaptor;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
-import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.DataType;
 import org.geotoolkit.wps.xml.v100.ExecuteResponse;
+import org.geotoolkit.wps.xml.v100.InputType;
 import org.geotoolkit.wps.xml.v100.LiteralDataType;
 import org.geotoolkit.wps.xml.v100.OutputDataType;
 import org.geotoolkit.wps.xml.v100.ProcessFailedType;
 import org.geotoolkit.wps.xml.v100.ProcessStartedType;
 import org.geotoolkit.wps.xml.v100.StatusType;
-import org.opengis.geometry.Envelope;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
@@ -343,7 +344,7 @@ public class WPS1Process extends AbstractProcess {
             final List<GeneralParameterDescriptor> inputParamDesc = inputs.getDescriptor().descriptors();
             final List<GeneralParameterDescriptor> outputParamDesc = descriptor.getOutputDescriptor().descriptors();
 
-            final List<AbstractWPSInput> wpsIN = new ArrayList<>();
+            final List<InputType> wpsIN = new ArrayList<>();
             final List<WPSOutput> wpsOUT = new ArrayList<>();
 
             final String processId = descriptor.getIdentifier().getCode();
@@ -352,50 +353,16 @@ public class WPS1Process extends AbstractProcess {
              * INPUTS
              */
             for (final GeneralParameterDescriptor inputGeneDesc : inputParamDesc) {
+
                 if (inputGeneDesc instanceof ParameterDescriptor) {
                     final ParameterDescriptor inputDesc = (ParameterDescriptor) inputGeneDesc;
-                    final String type = (String) ((ExtendedParameterDescriptor)inputDesc)
-                            .getUserObject().get(WPSProcessingRegistry.USE_FORM_KEY);
-
+                    final DataAdaptor adaptor = (DataAdaptor) ((ExtendedParameterDescriptor)inputDesc)
+                            .getUserObject().get(DataAdaptor.USE_ADAPTOR);
                     final String inputIdentifier = inputDesc.getName().getCode();
-                    final Class inputClazz = inputDesc.getValueClass();
                     final Object value = inputs.parameter(inputIdentifier).getValue();
-                    final String unit = inputDesc.getUnit() != null ? inputDesc.getUnit().toString() : null;
-
-                    if ("literal".equals(type)) {
-                        wpsIN.add(new WPSInputLiteral(inputIdentifier, String.valueOf(value),
-                                WPSConvertersUtils.getDataTypeString(registry.getClient().getVersion().getCode(), inputClazz), unit));
-
-                    } else if ("bbox".equals(type)) {
-                        final Envelope envelop = (Envelope) value;
-                        final String crs = envelop.getCoordinateReferenceSystem().getName().getCode();
-                        final int dim = envelop.getDimension();
-
-                        final List<Double> lower = new ArrayList<>();
-                        final List<Double> upper = new ArrayList<>();
-                        for (int i = 0; i < dim; i++) {
-                            lower.add(envelop.getLowerCorner().getOrdinate(i));
-                            upper.add(envelop.getUpperCorner().getOrdinate(i));
-                        }
-
-                        wpsIN.add(new WPSInputBoundingBox(inputIdentifier, lower, upper, crs, dim));
-
-                    } else if ("complex".equals(type)) {
-                        String mime     = null;
-                        String encoding = null;
-                        String schema   = null;
-                        if (inputGeneDesc instanceof ExtendedParameterDescriptor) {
-                            final Map<String, Object> userMap = ((ExtendedParameterDescriptor) inputGeneDesc).getUserObject();
-                            if(userMap.containsKey(WPSProcessingRegistry.USE_FORMAT_KEY)) {
-                                final WPSIO.FormatSupport support = (WPSIO.FormatSupport) userMap.get(WPSProcessingRegistry.USE_FORMAT_KEY);
-                                mime     = support.getMimeType();
-                                encoding = support.getEncoding();
-                                schema   = support.getSchema();
-                            }
-                        }
-
-                        wpsIN.add(new WPSInputComplex(inputIdentifier, value, inputClazz, encoding, schema, mime));
-                    }
+                    final InputType input = adaptor.toWPS1Input(value);
+                    input.setIdentifier(new CodeType(inputIdentifier));
+                    wpsIN.add(input);
                 }
             }
 
@@ -405,22 +372,19 @@ public class WPS1Process extends AbstractProcess {
             for (final GeneralParameterDescriptor outputGeneDesc : outputParamDesc) {
                 if (outputGeneDesc instanceof ParameterDescriptor) {
                     final ParameterDescriptor outputDesc = (ParameterDescriptor) outputGeneDesc;
+                    final DataAdaptor adaptor = (DataAdaptor) ((ExtendedParameterDescriptor)outputDesc)
+                            .getUserObject().get(DataAdaptor.USE_ADAPTOR);
 
                     final String outputIdentifier = outputDesc.getName().getCode();
-                    final Class outputClazz = outputDesc.getValueClass();
                     String mime     = null;
                     String encoding = null;
                     String schema   = null;
-                    if (outputDesc instanceof ExtendedParameterDescriptor) {
-                        final Map<String, Object> userMap = ((ExtendedParameterDescriptor) outputDesc).getUserObject();
-                        if(userMap.containsKey(WPSProcessingRegistry.USE_FORMAT_KEY)) {
-                            final WPSIO.FormatSupport support = (WPSIO.FormatSupport) userMap.get(WPSProcessingRegistry.USE_FORMAT_KEY);
-                            mime     = support.getMimeType();
-                            encoding = support.getEncoding();
-                            schema   = support.getSchema();
-                        }
+                    if (adaptor instanceof ComplexAdaptor) {
+                        final ComplexAdaptor ca = (ComplexAdaptor) adaptor;
+                        mime = ca.getMimeType();
+                        encoding = ca.getEncoding();
+                        schema = ca.getSchema();
                     }
-
                     wpsOUT.add(new WPSOutput(outputIdentifier, encoding, schema, mime, null, asReference));
                 }
             }

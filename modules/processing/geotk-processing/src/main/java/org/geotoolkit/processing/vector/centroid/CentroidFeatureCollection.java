@@ -39,7 +39,7 @@ public class CentroidFeatureCollection extends WrapFeatureCollection {
      */
     public CentroidFeatureCollection(final FeatureCollection originalFC) {
         super(originalFC);
-        this.newFeatureType = VectorProcessUtils.changeGeometryFeatureType(super.getFeatureType(), Point.class);
+        this.newFeatureType = VectorProcessUtils.changeGeometryFeatureType(super.getType(), Point.class);
     }
 
     /**
@@ -47,7 +47,7 @@ public class CentroidFeatureCollection extends WrapFeatureCollection {
      * @return FeatureType
      */
     @Override
-    public FeatureType getFeatureType() {
+    public FeatureType getType() {
         return newFeatureType;
     }
 

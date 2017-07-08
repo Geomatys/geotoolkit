@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.osmtms.map;
 
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.PyramidSet;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.osmtms.OSMTileMapClient;
@@ -24,6 +23,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 
 /**
@@ -34,9 +34,9 @@ import org.apache.sis.util.ArgumentChecks;
  */
 public class OSMTMSMapLayer extends DefaultCoverageMapLayer {
 
-    private static CoverageReference getReference(OSMTileMapClient server){
+    private static CoverageResource getReference(OSMTileMapClient server){
         try {
-            return server.getCoverageReference(server.getNames().iterator().next());
+            return server.findResource(server.getNames().iterator().next());
         } catch (DataStoreException ex) {
             throw new RuntimeException(ex);
         }

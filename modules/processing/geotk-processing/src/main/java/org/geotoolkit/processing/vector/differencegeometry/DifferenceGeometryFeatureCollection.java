@@ -42,7 +42,7 @@ public class DifferenceGeometryFeatureCollection extends WrapFeatureCollection {
     public DifferenceGeometryFeatureCollection(final FeatureCollection originalFC, final Geometry diffGeometry) {
         super(originalFC);
         this.diffGeometry = diffGeometry;
-        this.newFeatureType = VectorProcessUtils.changeGeometryFeatureType(super.getFeatureType(), Geometry.class);
+        this.newFeatureType = VectorProcessUtils.changeGeometryFeatureType(super.getType(), Geometry.class);
     }
 
     /**
@@ -50,7 +50,7 @@ public class DifferenceGeometryFeatureCollection extends WrapFeatureCollection {
      * @return FeatureType
      */
     @Override
-    public FeatureType getFeatureType() {
+    public FeatureType getType() {
         return newFeatureType;
     }
 

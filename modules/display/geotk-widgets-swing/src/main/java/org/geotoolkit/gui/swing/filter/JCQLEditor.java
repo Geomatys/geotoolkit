@@ -194,7 +194,7 @@ public class JCQLEditor extends javax.swing.JPanel{
         if (layer instanceof FeatureMapLayer) {
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
 
-            final Collection<? extends PropertyType> col = fml.getCollection().getFeatureType().getProperties(true);
+            final Collection<? extends PropertyType> col = fml.getCollection().getType().getProperties(true);
             guiProperties.setModel(new ListComboBoxModel(new ArrayList(col)));
             guiPropertiesPane.setVisible(true);
             guiTextPropertySplit.setDividerLocation(120);

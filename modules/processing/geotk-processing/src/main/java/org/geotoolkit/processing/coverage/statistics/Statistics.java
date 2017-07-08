@@ -30,7 +30,6 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
@@ -54,6 +53,7 @@ import static org.geotoolkit.parameter.Parameters.value;
 import static org.geotoolkit.processing.coverage.statistics.StatisticsDescriptor.*;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.geometry.Envelopes;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Process to create a {@link org.geotoolkit.process.coverage.statistics.ImageStatistics}
@@ -78,7 +78,7 @@ public class Statistics extends AbstractProcess {
         this(toParameters(null, coverage, null, null, 0, excludeNoData));
     }
 
-    public Statistics(final CoverageReference ref, boolean excludeNoData){
+    public Statistics(final CoverageResource ref, boolean excludeNoData){
         this(toParameters(null, null, ref, null, 0, excludeNoData));
     }
 
@@ -90,7 +90,7 @@ public class Statistics extends AbstractProcess {
         super(StatisticsDescriptor.INSTANCE, input);
     }
 
-    private static ParameterValueGroup toParameters(final RenderedImage image, final GridCoverage2D coverage, final CoverageReference ref,
+    private static ParameterValueGroup toParameters(final RenderedImage image, final GridCoverage2D coverage, final CoverageResource ref,
                                                     final GridCoverageReader reader,  final int imageIdx, boolean excludeNoData) {
         final ParameterValueGroup params = StatisticsDescriptor.INSTANCE.getInputDescriptor().createValue();
         ParametersExt.getOrCreateValue(params, IMAGE.getName().getCode()).setValue(image);
@@ -130,30 +130,30 @@ public class Statistics extends AbstractProcess {
     }
 
     /**
-     * Run Statistics process with a CoverageReference and return ImageStatistics
+     * Run Statistics process with a CoverageResource and return ImageStatistics
      *
-     * @param ref CoverageReference
+     * @param ref CoverageResource
      * @param excludeNoData exclude no-data flag
      * @return ImageStatistics
      * @throws ProcessException
      */
-    public static ImageStatistics analyse(CoverageReference ref, boolean excludeNoData) throws ProcessException {
+    public static ImageStatistics analyse(CoverageResource ref, boolean excludeNoData) throws ProcessException {
         org.geotoolkit.process.Process process = new Statistics(ref, excludeNoData);
         ParameterValueGroup out = process.call();
         return value(OUTCOVERAGE, out);
     }
 
     /**
-     * Run Statistics process with a CoverageReference and return ImageStatistics
-     * the process is run on a reduced version of the data to avoid consuming to much resources.
+     * Run Statistics process with a CoverageResource and return ImageStatistics
+ the process is run on a reduced version of the data to avoid consuming to much resources.
      *
-     * @param ref CoverageReference
+     * @param ref CoverageResource
      * @param excludeNoData exclude no-data flag
      * @param imageSize sampled image size
      * @return ImageStatistics
      * @throws ProcessException
      */
-    public static ImageStatistics analyse(CoverageReference ref, boolean excludeNoData, int imageSize) throws ProcessException, CoverageStoreException{
+    public static ImageStatistics analyse(CoverageResource ref, boolean excludeNoData, int imageSize) throws ProcessException, CoverageStoreException{
         GridCoverageReader reader = null;
         try {
             reader = ref.acquireReader();
@@ -194,7 +194,7 @@ public class Statistics extends AbstractProcess {
      * Run Statistics process with a GridCoverageReader and return ImageStatistics
      *
      * @param reader GridCoverageReader
-     * @param imageIdx image index to read
+     * @param imageIdx image index to features
      * @param excludeNoData exclude no-data flag
      * @return ImageStatistics
      * @throws ProcessException
@@ -238,7 +238,7 @@ public class Statistics extends AbstractProcess {
                 if (reader != null && imageIdx != null) {
                     candidate = getCoverage(reader, imageIdx);
                 } else {
-                    final CoverageReference ref = value(REF, inputParameters);
+                    final CoverageResource ref = value(REF, inputParameters);
                     if (ref != null) {
                         candidate = getCoverage(ref);
                     }
@@ -526,12 +526,12 @@ public class Statistics extends AbstractProcess {
     }
 
     /**
-     * Read coverage from CoverageReference
+     * Read coverage from CoverageResource
      * @param ref
      * @return
      * @throws ProcessException
      */
-    private GridCoverage2D getCoverage(CoverageReference ref) throws ProcessException {
+    private GridCoverage2D getCoverage(CoverageResource ref) throws ProcessException {
         try {
             final GridCoverageReader reader = ref.acquireReader();
             GridCoverage2D coverage = getCoverage(reader, ref.getImageIndex());

@@ -70,12 +70,12 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
          */
         CoordinateReferenceSystem geometryCRS;
         if (inputGeomName == null) {
-            final PropertyType property = inputFC.getFeatureType().getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+            final PropertyType property = inputFC.getType().getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
             this.inputGeomName = property.getName().toString();
             geometryCRS = FeatureExt.getCRS(property);
         } else {
             this.inputGeomName = inputGeomName;
-            final AttributeType<?> buffDesc = (AttributeType<?>) inputFC.getFeatureType().getProperty(inputGeomName);
+            final AttributeType<?> buffDesc = (AttributeType<?>) inputFC.getType().getProperty(inputGeomName);
             geometryCRS = FeatureExt.getCRS(buffDesc);
         }
 
@@ -87,14 +87,14 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
 
         // Create the new FeatureType which concatenate two FeatureCollection FeatureType but with only one geometry
         // (inputGeomName)
-        this.newFeatureType = UnionProcess.mergeType(inputFC.getFeatureType(), unionFC.getFeatureType(), this.inputGeomName, geometryCRS);
+        this.newFeatureType = UnionProcess.mergeType(inputFC.getType(), unionFC.getType(), this.inputGeomName, geometryCRS);
     }
 
     /**
      * Return the new FeatureType
      */
     @Override
-    public FeatureType getFeatureType() {
+    public FeatureType getType() {
         return newFeatureType;
     }
 

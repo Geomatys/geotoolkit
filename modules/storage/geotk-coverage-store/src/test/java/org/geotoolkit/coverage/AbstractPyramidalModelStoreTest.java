@@ -43,16 +43,16 @@ import static org.junit.Assert.*;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.junit.Test;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
- * Pyramid store read and write tests.
+ * Pyramid store features and write tests.
  *
  * @author Johann Sorel (Geomatys)
  * @module
@@ -66,11 +66,11 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
     private CoordinateReferenceSystem crs;
 
     //RGBA reference
-    private PyramidalCoverageReference rgbaCoverageRef;
+    private PyramidalCoverageResource rgbaCoverageRef;
     private ColorModel rgbaColorModel;
 
     //Float 1 band reference
-    private PyramidalCoverageReference float1bCoverageRef;
+    private PyramidalCoverageResource float1bCoverageRef;
     private ColorModel float1bColorModel;
 
     protected abstract CoverageStore createStore() throws Exception ;
@@ -87,7 +87,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
         //create a small RGBA pyramid //////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
         final GenericName rgbaName = NamesExt.create("rgba");
-        rgbaCoverageRef = (PyramidalCoverageReference) store.create(rgbaName);
+        rgbaCoverageRef = (PyramidalCoverageResource) store.create(rgbaName);
         rgbaCoverageRef.setPackMode(ViewType.RENDERED);
 
         //define the coverage informations
@@ -133,7 +133,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
         //create a small Float 1 band pyramid //////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
         final GenericName float1bName = NamesExt.create("float1b");
-        float1bCoverageRef = (PyramidalCoverageReference) store.create(float1bName);
+        float1bCoverageRef = (PyramidalCoverageResource) store.create(float1bName);
         float1bCoverageRef.setPackMode(ViewType.GEOPHYSICS);
 
         //define the coverage informations
@@ -296,7 +296,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
     }
 
     /**
-     * Read and image subset.
+     * Read and image features.
      * @throws Exception
      */
     @Test

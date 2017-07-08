@@ -85,7 +85,7 @@ import org.apache.sis.util.Utilities;
  */
 public class PyramidalModelReader extends GridCoverageReader{
 
-    private CoverageReference ref;
+    private CoverageResource ref;
     private final CoverageFinder coverageFinder;
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
@@ -100,20 +100,20 @@ public class PyramidalModelReader extends GridCoverageReader{
     }
 
     @Override
-    public CoverageReference getInput() {
+    public CoverageResource getInput() {
         return ref;
     }
 
-    private PyramidalCoverageReference getPyramidalModel(){
-        return (PyramidalCoverageReference)ref;
+    private PyramidalCoverageResource getPyramidalModel(){
+        return (PyramidalCoverageResource)ref;
     }
 
     @Override
     public void setInput(Object input) throws CoverageStoreException {
-        if(!(input instanceof CoverageReference) || !(input instanceof PyramidalCoverageReference)){
+        if(!(input instanceof CoverageResource) || !(input instanceof PyramidalCoverageResource)){
             throw new CoverageStoreException("Unsupported input type, can only be CoverageReference implementing PyramidalModel.");
         }
-        this.ref = (CoverageReference) input;
+        this.ref = (CoverageResource) input;
         super.setInput(input);
     }
 
@@ -268,7 +268,7 @@ public class PyramidalModelReader extends GridCoverageReader{
             resolution = new double[]{Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
 
 
-        final PyramidalCoverageReference covref = getPyramidalModel();
+        final PyramidalCoverageResource covref = getPyramidalModel();
 
         final PyramidSet pyramidSet;
         try {
@@ -330,16 +330,16 @@ public class PyramidalModelReader extends GridCoverageReader{
                 wantedEnv.setRange(i, wantedEnv.getMinimum(i),  Double.POSITIVE_INFINITY);
         }
 
-        //-- read the data
+        //-- features the data
         final boolean deferred = param.isDeferred();
          try {
             if (mosaics.size() == 1) {
 
-                //-- read a single slice
+                //-- features a single slice
                 return readSlice(mosaics.get(0), wantedEnv, deferred);
 
             } else {
-                //-- read a data cube of multiple slices
+                //-- features a data cube of multiple slices
                 return readCube(mosaics, wantedEnv, deferred);
             }
         } catch (DataStoreException ex) {
@@ -351,7 +351,7 @@ public class PyramidalModelReader extends GridCoverageReader{
      * Build a coverage from a Grid mosaic definition.
      *
      * @param mosaic original data grid mosaic
-     * @param wantedEnv area to read : must be in mosaic CRS, of a subset of it
+     * @param wantedEnv area to features : must be in mosaic CRS, of a features of it
      * @param deferred true to delay tile reading, set to true to use a LargeRenderedImage
      * @return GridCoverage
      * @throws CoverageStoreException
@@ -528,8 +528,8 @@ public class PyramidalModelReader extends GridCoverageReader{
                     if (image == null) {
                         ColorModel cm = null;
                         SampleModel sm = null;
-                        if (ref instanceof PyramidalCoverageReference) {
-                            final PyramidalCoverageReference pyramRef = (PyramidalCoverageReference) ref;
+                        if (ref instanceof PyramidalCoverageResource) {
+                            final PyramidalCoverageResource pyramRef = (PyramidalCoverageResource) ref;
                             cm = pyramRef.getColorModel();
                             sm = pyramRef.getSampleModel();
                         }
@@ -548,7 +548,7 @@ public class PyramidalModelReader extends GridCoverageReader{
                         image = new BufferedImage(cm,raster,
                                 cm.isAlphaPremultiplied(), new Hashtable<>());
                     }
-                    //-- write current read tile into destination image.
+                    //-- write current features tile into destination image.
                     final Rectangle tileBound = new Rectangle(offset.x, offset.y, tileImage.getWidth(), tileImage.getHeight());
                     final PixelIterator destPix = PixelIteratorFactory.createDefaultWriteableIterator((BufferedImage)image, (BufferedImage)image, tileBound);
                     final PixelIterator tilePix = PixelIteratorFactory.createDefaultIterator(tileImage);

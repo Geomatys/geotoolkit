@@ -19,7 +19,6 @@ package org.geotoolkit.osmtms;
 import java.net.URL;
 
 import org.geotoolkit.client.AbstractCoverageClient;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.storage.coverage.PyramidSet;
 import org.geotoolkit.util.NamesExt;
@@ -28,11 +27,12 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.Client;
-import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultDataNode;
+import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.Resource;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Represent a Tile Map Server instance.
@@ -43,7 +43,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class OSMTileMapClient extends AbstractCoverageClient implements Client{
 
     private final OSMTMSPyramidSet pyramidSet;
-    private final DataNode rootNode = new DefaultDataNode();
+    private final DefaultDataSet rootNode = new DefaultDataSet(NamesExt.create("root"));
 
     /**
      * Builds a tile map server with the given server url and version.
@@ -85,8 +85,8 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client{
         super(params);
         final GenericName name = NamesExt.create(serverURL.toString(), "main");
         pyramidSet = new OSMTMSPyramidSet(this,getMaxZoomLevel(),getCacheImage());
-        final OSMTMSCoverageReference ref = new OSMTMSCoverageReference(this,name);
-        rootNode.getChildren().add(ref);
+        final OSMTMSCoverageResource ref = new OSMTMSCoverageResource(this,name);
+        rootNode.addResource(ref);
     }
 
     private static ParameterValueGroup toParameters(
@@ -104,7 +104,7 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client{
     }
 
     @Override
-    public DataNode getRootNode() {
+    public Resource getRootResource() {
         return rootNode;
     }
 
@@ -135,7 +135,7 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client{
     }
 
     @Override
-    public CoverageReference create(GenericName name) throws DataStoreException {
+    public CoverageResource create(GenericName name) throws DataStoreException {
         throw new DataStoreException("Can not create new coverage.");
     }
 

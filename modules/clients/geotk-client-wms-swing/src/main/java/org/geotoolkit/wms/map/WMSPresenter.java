@@ -57,7 +57,7 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.gui.swing.render2d.control.information.presenter.AbstractInformationPresenter;
 import org.geotoolkit.ogc.xml.exception.ServiceExceptionReport;
 import org.geotoolkit.ogc.xml.exception.ServiceExceptionType;
-import org.geotoolkit.wms.WMSCoverageReference;
+import org.geotoolkit.wms.WMSCoverageResource;
 import org.geotoolkit.wms.WebMapClient;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSMarshallerPool;
@@ -96,11 +96,11 @@ public class WMSPresenter extends AbstractInformationPresenter{
         final ProjectedCoverage graCoverage = (ProjectedCoverage) graphic;
         final CoverageMapLayer layer = graCoverage.getLayer();
 
-        if(!(layer.getCoverageReference() instanceof WMSCoverageReference)){
+        if(!(layer.getCoverageReference() instanceof WMSCoverageResource)){
             return null;
         }
 
-        final WMSCoverageReference reference = (WMSCoverageReference) layer.getCoverageReference();
+        final WMSCoverageResource reference = (WMSCoverageResource) layer.getCoverageReference();
 
         //get the different mime types
         final List<String> mimeTypes = new ArrayList<String>();
@@ -181,7 +181,7 @@ public class WMSPresenter extends AbstractInformationPresenter{
         return guiAll;
     }
 
-    public Request getFeatureInfo(final WMSCoverageReference reference, final RenderingContext context, final SearchArea mask,
+    public Request getFeatureInfo(final WMSCoverageResource reference, final RenderingContext context, final SearchArea mask,
                 final String infoFormat, final int featureCount)
                 throws TransformException, FactoryException,
                 NoninvertibleTransformException{

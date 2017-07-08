@@ -36,10 +36,10 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
-import static org.geotoolkit.wps.WPSProcessingRegistry.USE_FORMAT_KEY;
-import static org.geotoolkit.wps.WPSProcessingRegistry.USE_FORM_KEY;
-import org.geotoolkit.wps.converters.WPSObjectConverter;
-import org.geotoolkit.wps.io.WPSIO;
+import org.geotoolkit.wps.adaptor.BboxAdaptor;
+import org.geotoolkit.wps.adaptor.ComplexAdaptor;
+import org.geotoolkit.wps.adaptor.LiteralAdaptor;
+import org.geotoolkit.wps.adaptor.DataAdaptor;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v200.BoundingBoxData;
 import org.geotoolkit.wps.xml.v200.ComplexDataType;
@@ -215,8 +215,9 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
 
         final Map<String, String> properties = new HashMap<>();
         properties.put("name", inputName);
-        if(!input.getAbstract().isEmpty() && !input.getAbstract().get(0).getValue().isEmpty())
-        properties.put("remarks", input.getAbstract().get(0).getValue());
+        if(!input.getAbstract().isEmpty() && !input.getAbstract().get(0).getValue().isEmpty()) {
+            properties.put("remarks", input.getAbstract().get(0).getValue());
+        }
 
 
         if (dataDescType instanceof LiteralDataType) {
@@ -224,30 +225,19 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
 
             for(LiteralDataType.LiteralDataDomain domain : cd.getLiteralDataDomain()) {
 
-                Class clazz = getValueClass(domain.getDataType());
-                if (clazz == null) clazz = String.class;
+                final LiteralAdaptor adaptor = LiteralAdaptor.create(domain);
+                if (adaptor==null) continue;
 
                 String defaultValueValue = null;
                 final ValueType defaultValue = domain.getDefaultValue();
                 if (defaultValue!=null) defaultValueValue = defaultValue.getValue();
                 final Unit unit = getUnit(domain.getUOM());
 
-                WPSObjectConverter converter = null;
                 try {
-                    converter = WPSIO.getConverter(clazz, WPSIO.IOType.INPUT, WPSIO.FormChoice.LITERAL);
-                    if (converter == null) {
-                        throw new UnsupportedParameterException(processId,inputName,"Can't find the converter for the default literal input value.");
-                    }
-                } catch (UnconvertibleObjectException ex) {
-                    throw new UnsupportedParameterException(processId,inputName,"Can't find the converter for the default literal input value.", ex);
-                }
-
-                //At this state the converter can't be null.
-                try {
-                    final Map<String,Object> userMap = new HashMap<>();
-                    userMap.put(USE_FORM_KEY, "literal");
-                    return new ExtendedParameterDescriptor(properties, clazz,
-                            null, converter.convert(defaultValueValue, null), null, null, unit, required,userMap);
+                    return new ExtendedParameterDescriptor(properties,
+                            adaptor.getValueClass(),
+                            null, adaptor.convert(defaultValueValue), null, null, unit, required,
+                            Collections.singletonMap(DataAdaptor.USE_ADAPTOR, adaptor));
                 } catch (UnconvertibleObjectException ex2) {
                     throw new UnsupportedParameterException(processId,inputName,"Can't convert the default literal input value.", ex2);
                 }
@@ -258,40 +248,40 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
         } else if (dataDescType instanceof ComplexDataType) {
             final ComplexDataType cdt = (ComplexDataType) dataDescType;
 
-            WPSIO.FormatSupport support = null;
-            Class valueClass = null;
+            //ensure default format is first in the list
+            Collections.sort(cdt.getFormat(), (Format o1, Format o2) -> {
+                boolean d1 = Boolean.TRUE.equals(o1.isDefault());
+                boolean d2 = Boolean.TRUE.equals(o2.isDefault());
+                if(d1==d2) return 0;
+                return d1 ? -1 : +1;
+            });
+
+            //find a complexe type adaptor
+            DataAdaptor adaptor = null;
             for(Format format : cdt.getFormat()){
-                final String mime     = format.getMimeType();
-                final String encoding = format.getEncoding();
-                final String schema   = format.getSchema();
-                final Class clazz = WPSIO.findClass(WPSIO.IOType.INPUT, WPSIO.FormChoice.COMPLEX, mime, encoding, schema, null);
-
-                if (clazz!=null) {
-                    valueClass = clazz;
-                    support = new WPSIO.FormatSupport(clazz, WPSIO.IOType.INPUT, mime, encoding, schema, false);
-                    if (Boolean.TRUE.equals(format.isDefault())) {
-                        //default type found, don't check any other
-                        break;
-                    }
+                adaptor = ComplexAdaptor.getAdaptor(format);
+                if (adaptor!=null) break;
+            }
+            if (adaptor == null) {
+                final StringBuilder sb = new StringBuilder();
+                for(Format format : cdt.getFormat()){
+                    if(sb.length()!=0) sb.append(", ");
+                    sb.append(format.getMimeType()).append(' ');
+                    sb.append(format.getEncoding()).append(' ');
+                    sb.append(format.getSchema());
                 }
+                throw new UnsupportedParameterException(processId,inputName,"No compatible format found for parameter "+inputName+" formats : "+sb);
             }
 
-            if (valueClass == null) {
-                throw new UnsupportedParameterException(processId,inputName,"No compatible format found for parameter "+inputName);
-            }
-
-            final Map<String,Object> userMap = new HashMap<>();
-            userMap.put(USE_FORMAT_KEY, support);
-            userMap.put(USE_FORM_KEY, "complex");
-            return new ExtendedParameterDescriptor(properties, valueClass,
-                    null, null, null, null, null, required, userMap);
+            return new ExtendedParameterDescriptor(properties, adaptor.getValueClass(),
+                    null, null, null, null, null, required, Collections.singletonMap(DataAdaptor.USE_ADAPTOR, adaptor));
 
         } else if (dataDescType instanceof BoundingBoxData) {
-            final BoundingBoxData cdt = (BoundingBoxData) dataDescType;
-            final Map<String,Object> userMap = new HashMap<>();
-            userMap.put(USE_FORM_KEY, "bbox");
+
+            final BboxAdaptor adaptor = BboxAdaptor.create((BoundingBoxData) dataDescType);
+
             return new ExtendedParameterDescriptor(properties, Envelope.class,
-                    null, null, null, null, null, required,userMap);
+                    null, null, null, null, null, required,Collections.singletonMap(DataAdaptor.USE_ADAPTOR, adaptor));
 
         } else if (!subInputs.isEmpty()) {
             //sub group type
@@ -307,7 +297,7 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
                     .createGroup(params.toArray(new GeneralParameterDescriptor[0]));
 
         } else {
-            throw new UnsupportedParameterException(processId,inputName,"Unidentifiable input "+inputName);
+            throw new UnsupportedParameterException(processId,inputName,"Unidentifiable input "+inputName+" "+dataDescType);
         }
     }
 
@@ -315,38 +305,6 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
     private static Unit getUnit(DomainMetadataType type) {
         if(type==null || type.getValue()==null) return null;
         return Units.valueOf(type.getValue());
-    }
-
-    private static Class getValueClass(DomainMetadataType type) {
-        if(type==null) return null;
-        Class clazz = findClass(type.getReference());
-        if(clazz==null) clazz = findClass(type.getValue());
-        if(clazz==null) clazz = String.class;
-        return clazz;
-    }
-
-    private static Class findClass(String value) {
-        if(value==null) return null;
-        Class clazz = null;
-        try {
-            clazz = Class.forName(value);
-        } catch (ClassNotFoundException ex) {
-            value = value.toLowerCase();
-            if (value.contains("double")) {
-                clazz = Double.class;
-            } else if (value.contains("boolean")) {
-                clazz = Boolean.class;
-            } else if (value.contains("float")) {
-                clazz = Float.class;
-            } else if (value.contains("short")) {
-                clazz = Short.class;
-            } else if (value.contains("integer")) {
-                clazz = Integer.class;
-            } else if (value.contains("long")) {
-                clazz = Long.class;
-            }
-        }
-        return clazz;
     }
 
 }

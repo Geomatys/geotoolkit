@@ -95,7 +95,7 @@ public class Isoline2 extends AbstractProcess {
 
     @Override
     protected void execute() throws ProcessException {
-        final CoverageReference coverageRef = value(COVERAGE_REF, inputParameters);
+        final CoverageResource coverageRef = value(COVERAGE_REF, inputParameters);
         final GridCoverageReadParam readParam = value(READ_PARAM, inputParameters);
         FeatureStore featureStore = value(FEATURE_STORE, inputParameters);
         final String featureTypeName = value(FEATURE_NAME, inputParameters);
@@ -113,8 +113,8 @@ public class Isoline2 extends AbstractProcess {
             type = getOrCreateIsoType(featureStore, featureTypeName, crs);
             col = featureStore.createSession(false).getFeatureCollection(QueryBuilder.all(type.getName()));
 
-            if (coverageRef instanceof PyramidalCoverageReference) {
-                final PyramidalCoverageReference pm = (PyramidalCoverageReference) coverageRef;
+            if (coverageRef instanceof PyramidalCoverageResource) {
+                final PyramidalCoverageResource pm = (PyramidalCoverageResource) coverageRef;
                 computeIsolineFromPM(pm);
 
             } else {
@@ -154,7 +154,7 @@ public class Isoline2 extends AbstractProcess {
         outputParameters.parameter("outFeatureCollection").setValue(col);
     }
 
-    private void computeIsolineFromPM(PyramidalCoverageReference pm) throws DataStoreException, ProcessException, InterruptedException{
+    private void computeIsolineFromPM(PyramidalCoverageResource pm) throws DataStoreException, ProcessException, InterruptedException{
 
         final PyramidSet set = pm.getPyramidSet();
         final Collection<Pyramid> pyramids = set.getPyramids();

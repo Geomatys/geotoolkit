@@ -29,7 +29,7 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.coverage.amended.AmendedCoverageReference;
+import org.geotoolkit.coverage.amended.AmendedCoverageResource;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.gui.javafx.crs.FXCRSButton;
 import org.geotoolkit.internal.GeotkFX;
@@ -83,9 +83,9 @@ public class FXCoverageDecoratorPane extends GridPane {
     private final Spinner<Double> uiTranslateX = new Spinner<>(new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0.0, 1.0));
     private final Spinner<Double> uiTranslateY = new Spinner<>(new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0.0, 1.0));
 
-    private final AmendedCoverageReference decoratedRef;
+    private final AmendedCoverageResource decoratedRef;
 
-    public FXCoverageDecoratorPane(AmendedCoverageReference ref) {
+    public FXCoverageDecoratorPane(AmendedCoverageResource ref) {
         GeotkFX.loadJRXML(this, FXCoverageDecoratorPane.class);
         this.decoratedRef = ref;
 

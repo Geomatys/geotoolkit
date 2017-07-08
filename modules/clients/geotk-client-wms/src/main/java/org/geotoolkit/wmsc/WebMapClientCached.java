@@ -18,13 +18,13 @@ package org.geotoolkit.wmsc;
 
 import java.net.URL;
 import org.geotoolkit.client.CapabilitiesException;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapClient;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * WMS-C is a osgeo profile for WMS 1.1.1.
@@ -87,9 +87,9 @@ public class WebMapClientCached extends WebMapClient {
     }
 
     @Override
-    protected CoverageReference createReference(GenericName name) throws DataStoreException{
+    protected CoverageResource createReference(GenericName name) throws DataStoreException{
         try {
-            return new WMSCCoverageReference(this,name);
+            return new WMSCCoverageResource(this,name);
         } catch (CapabilitiesException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }

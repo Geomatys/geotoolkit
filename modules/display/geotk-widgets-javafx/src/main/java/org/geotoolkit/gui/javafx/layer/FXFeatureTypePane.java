@@ -94,7 +94,7 @@ public class FXFeatureTypePane extends FXPropertyPane {
         }
 
         this.layer = (FeatureMapLayer) target;
-        final FeatureType featureType = layer.getCollection().getFeatureType();
+        final FeatureType featureType = layer.getCollection().getType();
         editor.setFeatureType(featureType);
 
         return true;

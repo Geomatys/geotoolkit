@@ -17,12 +17,12 @@
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
 import java.util.logging.Level;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Coverage editor tool.
@@ -50,7 +50,7 @@ public class CoverageEditionTool extends AbstractEditionTool{
         if(!supported) return false;
 
         final CoverageMapLayer layer = (CoverageMapLayer) candidate;
-        final CoverageReference ref = layer.getCoverageReference();
+        final CoverageResource ref = layer.getCoverageReference();
         if(ref == null) return false;
         try{
             supported = ref.isWritable();

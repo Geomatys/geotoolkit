@@ -16,19 +16,23 @@
  */
 package org.geotoolkit.wps;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessingRegistry;
-import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
 import org.geotoolkit.wps.xml.ProcessOffering;
 import org.geotoolkit.wps.xml.WPSCapabilities;
 import org.opengis.metadata.identification.Identification;
@@ -44,19 +48,11 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
 
     static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wps");
 
-    /**
-     * A key for {@link ExtendedParameterDescriptor} user data map. Specify the format to use for parameter, using {FormatSupport} object.
-     */
-    static final String USE_FORMAT_KEY = "format";
-    /**
-     * A key for {@link ExtendedParameterDescriptor} user data map. Specify the form : literal/bbox/complex, using {FormatSupport} object.
-     */
-    static final String USE_FORM_KEY = "form";
-
     private final WebProcessingClient client;
 
     //process descriptors
-    private Map<String, ProcessDescriptor> descriptors;
+    private Map<String, Object> descriptors;
+    private boolean allLoaded = false;
 
     private String storageDirectory;
     private String storageURL;
@@ -78,26 +74,37 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
 
     @Override
     public List<ProcessDescriptor> getDescriptors() {
-        checkDescriptors();
-        final Collection<ProcessDescriptor> values = descriptors.values();
+        checkDescriptors(true);
+        final Collection values = descriptors.values();
         return new ArrayList<>(values);
     }
 
     @Override
     public List<String> getNames() {
-        checkDescriptors();
+        checkDescriptors(false);
         final Set<String> keys = descriptors.keySet();
         return new ArrayList<>(keys);
     }
 
     @Override
     public ProcessDescriptor getDescriptor(final String name) throws NoSuchIdentifierException {
-        checkDescriptors();
-        final ProcessDescriptor desc = descriptors.get(name);
+        checkDescriptors(false);
+        final Object desc = descriptors.get(name);
+
         if (desc == null) {
             throw new NoSuchIdentifierException("No process descriptor for name :", name);
+        } else if (desc instanceof ProcessOffering) {
+            try {
+                final ProcessDescriptor processDesc = toProcessDescriptor((ProcessOffering) desc);
+                descriptors.put(processDesc.getIdentifier().getCode(), processDesc);
+                return processDesc;
+            } catch(UnsupportedParameterException ex) {
+                throw new RuntimeException(ex.getMessage(), ex);
+            } catch(Throwable ex) {
+                throw new RuntimeException(ex.getMessage(), ex);
+            }
         } else {
-            return desc;
+            return (ProcessDescriptor) desc;
         }
     }
 
@@ -117,10 +124,14 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
         this.storageURL = storageURL;
     }
 
-    private synchronized void checkDescriptors() {
-        if (descriptors!=null) return;
+    /**
+     *
+     * @param loadDescription force loading all descriptor
+     */
+    private synchronized void checkDescriptors(boolean loadDescription) {
+        if (descriptors!=null && allLoaded) return;
 
-        descriptors = new HashMap<>();
+        if (descriptors==null) descriptors = new ConcurrentHashMap<>();
         final WPSCapabilities capabilities;
         try {
             capabilities = client.getCapabilities();
@@ -135,26 +146,55 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
         }
         final List<? extends ProcessOffering> processBrief = capabilities.getProcessOfferings().getProcesses();
 
-        for (final ProcessOffering processBriefType : processBrief) {
-            try {
-                if(processBriefType instanceof org.geotoolkit.wps.xml.v100.ProcessDescriptionType) {
-                    final ProcessDescriptor processDesc = WPS1ProcessDescriptor.create(this, processBriefType);
-                    descriptors.put(processDesc.getIdentifier().getCode(), processDesc);
-                }else if(processBriefType instanceof org.geotoolkit.wps.xml.v100.ProcessBriefType) {
-                    final ProcessDescriptor processDesc = WPS1ProcessDescriptor.create(this, processBriefType);
-                    descriptors.put(processDesc.getIdentifier().getCode(), processDesc);
-                } else if(processBriefType instanceof org.geotoolkit.wps.xml.v200.ProcessSummaryType) {
-                    final ProcessDescriptor processDesc = WPS2ProcessDescriptor.create(this, (org.geotoolkit.wps.xml.v200.ProcessSummaryType)processBriefType);
-                    descriptors.put(processDesc.getIdentifier().getCode(), processDesc);
-                }
+        if (loadDescription) {
+            final ExecutorService exec = Executors.newFixedThreadPool(8);
 
-            } catch(UnsupportedParameterException ex) {
-                LOGGER.log(Level.INFO, ex.getMessage());
-            } catch(Throwable ex) {
-                LOGGER.log(Level.INFO, ex.getMessage(),ex);
+            for (final ProcessOffering processBriefType : processBrief) {
+
+                if (descriptors.get(processBriefType.getIdentifier().getValue()) instanceof ProcessDescriptor) continue;
+
+                exec.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            final ProcessDescriptor processDesc = toProcessDescriptor(processBriefType);
+                            descriptors.put(processDesc.getIdentifier().getCode(), processDesc);
+                        } catch(UnsupportedParameterException ex) {
+                            LOGGER.log(Level.INFO, ex.getMessage());
+                        } catch(Throwable ex) {
+                            LOGGER.log(Level.INFO, ex.getMessage(),ex);
+                        }
+                    }
+                });
+            }
+
+            exec.shutdown();
+            try {
+                exec.awaitTermination(10, TimeUnit.MINUTES);
+            } catch (InterruptedException ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        } else {
+
+            for (final ProcessOffering processBriefType : processBrief) {
+                descriptors.put(processBriefType.getIdentifier().getValue(), processBriefType);
             }
         }
+
     }
+
+    private ProcessDescriptor toProcessDescriptor(ProcessOffering processBriefType) throws IOException, JAXBException, UnsupportedParameterException {
+        if (processBriefType instanceof org.geotoolkit.wps.xml.v100.ProcessDescriptionType) {
+            return WPS1ProcessDescriptor.create(WPSProcessingRegistry.this, processBriefType);
+        } else if (processBriefType instanceof org.geotoolkit.wps.xml.v100.ProcessBriefType) {
+            return WPS1ProcessDescriptor.create(WPSProcessingRegistry.this, processBriefType);
+        } else if (processBriefType instanceof org.geotoolkit.wps.xml.v200.ProcessSummaryType) {
+            return WPS2ProcessDescriptor.create(WPSProcessingRegistry.this, (org.geotoolkit.wps.xml.v200.ProcessSummaryType)processBriefType);
+        } else {
+            throw new IOException("Unknowned wps brief type : "+ processBriefType);
+        }
+    }
+
 
     /**
      * Specify if you want outputs sent back as references for the process identified by given name.
@@ -184,8 +224,8 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
      * @param choice True if you want reference as output, false otherwise.
      */
     public void setOutputAsReferenceForAll(final boolean choice) {
-        checkDescriptors();
-        for (ProcessDescriptor desc : descriptors.values()) {
+        checkDescriptors(true);
+        for (Object desc : descriptors.values()) {
             ((WPS1ProcessDescriptor)desc).setOutputAsReference(choice && ((WPS1ProcessDescriptor)desc).isStorageSupported());
         }
     }

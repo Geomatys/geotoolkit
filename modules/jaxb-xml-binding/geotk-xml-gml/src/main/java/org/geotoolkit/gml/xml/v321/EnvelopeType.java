@@ -32,8 +32,8 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.DirectPosition;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CompoundCRS;
@@ -170,15 +170,18 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
             final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
             if (crs != null) {
                 try {
-                    if (crs instanceof CompoundCRS) {
+                     if (crs instanceof CompoundCRS) {
                         final StringBuilder sb = new StringBuilder();
                         final CompoundCRS compCrs = (CompoundCRS) crs;
                         // see OGC 07-092r3 7.5.2
                         sb.append("urn:ogc:def:crs,");
                         for (CoordinateReferenceSystem child : compCrs.getComponents()) {
-                            Integer epsgCode = IdentifiedObjects.lookupEpsgCode(child, true);
-                            if (epsgCode != null) {
-                                sb.append("crs:EPSG::").append(Integer.toString(epsgCode)).append(',');
+                            String childSrs = IdentifiedObjects.lookupURN(child, null);
+                            if (childSrs != null) {
+                                if (childSrs.startsWith("urn:ogc:def:")) {
+                                    childSrs = childSrs.substring(12);
+                                }
+                                sb.append(childSrs).append(',');
                             } else {
                                 sb.append("crs:EPSG::unknow,");
                             }
@@ -186,10 +189,8 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
                         sb.deleteCharAt(sb.length() - 1);
                         srsName = sb.toString();
                     } else {
-                        Integer epsgCode = IdentifiedObjects.lookupEpsgCode(crs, true);
-                        if (epsgCode != null) {
-                            srsName = "urn:ogc:def:crs:EPSG::" + epsgCode;
-                        } else {
+                        srsName = IdentifiedObjects.lookupURN(crs, null);
+                        if (srsName == null) {
                            srsName = "urn:ogc:def:crs:EPSG::unknow";
                         }
                     }

@@ -96,7 +96,7 @@ public class NearestProcess extends AbstractProcess {
     {
         CoordinateReferenceSystem geomCrs = JTS.findCoordinateReferenceSystem(geom);
         if (geomCrs == null) {
-            geomCrs = FeatureExt.getCRS(original.getFeatureType());
+            geomCrs = FeatureExt.getCRS(original.getType());
         }
         double dist = Double.POSITIVE_INFINITY;
         final Collection<Identifier> listID = new ArrayList<>();

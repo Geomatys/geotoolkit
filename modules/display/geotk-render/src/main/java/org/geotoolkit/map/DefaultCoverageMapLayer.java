@@ -17,8 +17,6 @@
 package org.geotoolkit.map;
 
 import java.util.logging.Level;
-import org.geotoolkit.storage.coverage.CoverageReference;
-import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -31,6 +29,8 @@ import org.apache.sis.util.NullArgumentException;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.util.logging.Logging;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  * Default implementation of the coverage MapLayer.
@@ -46,10 +46,10 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
     private static final ImmutableEnvelope INFINITE = new ImmutableEnvelope(
             new double[] {-180, -90}, new double[] {180, 90}, CommonCRS.WGS84.normalizedGeographic());
 
-    private final CoverageReference ref;
+    private final CoverageResource ref;
     private Query query = null;
 
-    protected DefaultCoverageMapLayer(final CoverageReference ref, final MutableStyle style){
+    protected DefaultCoverageMapLayer(final CoverageResource ref, final MutableStyle style){
         super(style);
         if(ref == null){
             throw new NullArgumentException("Coverage reference can not be null.");
@@ -61,7 +61,7 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
      * {@inheritDoc }
      */
     @Override
-    public CoverageReference getCoverageReference() {
+    public CoverageResource getCoverageReference() {
         return ref;
     }
 
@@ -101,15 +101,15 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
      */
     @Override
     public Envelope getBounds() {
-        if(ref != null && ref instanceof PyramidalCoverageReference){
+        if(ref != null && ref instanceof PyramidalCoverageResource){
             try {
-                return ((PyramidalCoverageReference)ref).getPyramidSet().getEnvelope();
+                return ((PyramidalCoverageResource)ref).getPyramidSet().getEnvelope();
             } catch (DataStoreException ex) {
                 Logging.getLogger("org.geotoolkit.map").log(Level.SEVERE, null, ex);
             }
         }
 
-        final CoverageReference ref = getCoverageReference();
+        final CoverageResource ref = getCoverageReference();
         try {
             GridCoverageReader reader = ref.acquireReader();
             final GeneralGridGeometry geom = reader.getGridGeometry(getCoverageReference().getImageIndex());

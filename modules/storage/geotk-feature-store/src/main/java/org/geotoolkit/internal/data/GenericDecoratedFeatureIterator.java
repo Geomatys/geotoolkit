@@ -112,7 +112,7 @@ public abstract class GenericDecoratedFeatureIterator<R extends FeatureIterator>
         }
 
         @Override
-        public FeatureType getFeatureType() {
+        public FeatureType getType() {
             return mask;
         }
 
@@ -120,7 +120,7 @@ public abstract class GenericDecoratedFeatureIterator<R extends FeatureIterator>
         public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
             FeatureIterator ite = getOriginalFeatureCollection().iterator(hints);
             if(!(ite instanceof FeatureReader)){
-                ite = FeatureStreams.asReader(ite, getOriginalFeatureCollection().getFeatureType());
+                ite = FeatureStreams.asReader(ite, getOriginalFeatureCollection().getType());
             }
             return wrap((FeatureReader)ite, mask, hints);
         }

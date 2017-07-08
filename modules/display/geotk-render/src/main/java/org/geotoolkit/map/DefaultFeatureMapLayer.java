@@ -94,7 +94,7 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
     @Override
     public Query getQuery() {
         if(query == null){
-            query = QueryBuilder.all(getCollection().getFeatureType().getName());
+            query = QueryBuilder.all(getCollection().getType().getName());
         }
 
         return query;
@@ -139,7 +139,7 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
     @Override
     public Envelope getBounds() {
         final FeatureCollection featureCol = getCollection();
-        final CoordinateReferenceSystem sourceCrs = FeatureExt.getCRS(featureCol.getFeatureType());
+        final CoordinateReferenceSystem sourceCrs = FeatureExt.getCRS(featureCol.getType());
         Envelope env = null;
         try {
             env = featureCol.getEnvelope();
@@ -182,7 +182,7 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
         upper.accept(ListingPropertyVisitor.VISITOR, properties);
 
         final QueryBuilder qb = new QueryBuilder();
-        qb.setTypeName(getCollection().getFeatureType().getName());
+        qb.setTypeName(getCollection().getType().getName());
         qb.setProperties(properties.toArray(new String[properties.size()]));
         final FeatureCollection col = getCollection().subCollection(qb.buildQuery());
 

@@ -124,7 +124,7 @@ public class ExportItem extends TreeMenuItem {
                     if(folder!=null){
                         try {
                             final FeatureCollection baseCol = layer.getCollection();
-                            final FeatureType baseType = baseCol.getFeatureType();
+                            final FeatureType baseType = baseCol.getType();
                             final GenericName baseName = baseType.getName();
 
                             final FactoryMetadata metadata = factory.getMetadata();
@@ -142,7 +142,7 @@ public class ExportItem extends TreeMenuItem {
 
                             for(FeatureCollection col : cols){
 
-                                final FeatureType inType = col.getFeatureType();
+                                final FeatureType inType = col.getType();
                                 final String inTypeName = inType.getName().tip().toString();
 
                                 //output file path

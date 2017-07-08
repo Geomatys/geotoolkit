@@ -164,9 +164,9 @@ public class FXCQLEditor extends BorderPane {
         if(candidate instanceof FeatureType){
             ft = (FeatureType) candidate;
         }else if(candidate instanceof FeatureCollection) {
-            ft = ((FeatureCollection)candidate).getFeatureType();
+            ft = ((FeatureCollection)candidate).getType();
         }else if(candidate instanceof FeatureMapLayer){
-            ft = ((FeatureMapLayer)candidate).getCollection().getFeatureType();
+            ft = ((FeatureMapLayer)candidate).getCollection().getType();
         }
 
         final ObservableList properties = FXCollections.observableArrayList();

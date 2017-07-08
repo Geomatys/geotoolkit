@@ -32,18 +32,18 @@ import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultDataNode;
+import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.Resource;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Coverage store relying on an xml file.
@@ -54,7 +54,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class XMLCoverageStore extends AbstractCoverageStore {
 
     private final Path root;
-    private final DataNode rootNode = new DefaultDataNode();
+    private final DefaultDataSet rootNode = new DefaultDataSet(NamesExt.create("root"));
 
     final boolean cacheTileState;
 
@@ -106,7 +106,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
-    public DataNode getRootNode() {
+    public Resource getRootResource() {
         return rootNode;
     }
 
@@ -142,11 +142,11 @@ public class XMLCoverageStore extends AbstractCoverageStore {
     private void createReference(Path refDescriptor) {
         try {
             //TODO useless copy here
-            final XMLCoverageReference set = XMLCoverageReference.read(refDescriptor);
+            final XMLCoverageResource set = XMLCoverageResource.read(refDescriptor);
             final GenericName name = NamesExt.create(getDefaultNamespace(), set.getId());
-            final XMLCoverageReference ref = new XMLCoverageReference(this,name,set.getPyramidSet());
+            final XMLCoverageResource ref = new XMLCoverageResource(this,name,set.getPyramidSet());
             ref.copy(set);
-            rootNode.getChildren().add(ref);
+            rootNode.addResource(ref);
         } catch (JAXBException ex) {
             getLogger().log(Level.INFO, "file is not a pyramid : {0}", refDescriptor.toString());
         } catch (DataStoreException ex) {
@@ -161,21 +161,21 @@ public class XMLCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
-    public CoverageReference create(GenericName name) throws DataStoreException {
+    public CoverageResource create(GenericName name) throws DataStoreException {
         return create(name, null, null);
     }
 
     /**
-     * Create a CoverageReference with a specific data type and preferred image tile format.
+     * Create a CoverageResource with a specific data type and preferred image tile format.
      * Default is ViewType.RENDERED and PNG tile format.
      *
-     * @param name name of the new CoverageReference.
+     * @param name name of the new CoverageResource.
      * @param packMode data type (Geophysic or Rendered). Can be null.
      * @param preferredFormat pyramid tile format. Can be null.
-     * @return new CoverageReference.
+     * @return new CoverageResource.
      * @throws DataStoreException
      */
-    public CoverageReference create(GenericName name, ViewType packMode, String preferredFormat) throws DataStoreException {
+    public CoverageResource create(GenericName name, ViewType packMode, String preferredFormat) throws DataStoreException {
         if (Files.isRegularFile(root)) {
             throw new DataStoreException("Store root is a file, not a directory, no reference creation allowed.");
         }
@@ -186,7 +186,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
         }
 
         final XMLPyramidSet set = new XMLPyramidSet();
-        final XMLCoverageReference ref = new XMLCoverageReference(this,name,set);
+        final XMLCoverageResource ref = new XMLCoverageResource(this,name,set);
         ref.initialize(root.resolve(name.tip() + ".xml"));
 
         if (packMode != null) {
@@ -197,7 +197,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
             ref.setPreferredFormat(preferredFormat);
         }
 
-        rootNode.getChildren().add(ref);
+        rootNode.addResource(ref);
         ref.save();
         return ref;
     }

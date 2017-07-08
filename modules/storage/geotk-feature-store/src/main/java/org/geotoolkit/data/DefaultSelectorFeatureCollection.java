@@ -83,7 +83,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType() throws FeatureStoreRuntimeException{
+    public FeatureType getType() throws FeatureStoreRuntimeException{
         try {
             return getSession().getFeatureStore().getFeatureType(query);
         } catch (DataStoreException ex) {

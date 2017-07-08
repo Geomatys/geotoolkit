@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.map;
 
-import org.geotoolkit.storage.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * MapLayer handeling coverages.
@@ -28,8 +28,8 @@ public interface CoverageMapLayer extends MapLayer{
 
     /**
      * Reference to coverage.
-     * @return CoverageReference, never null.
+     * @return CoverageResource, never null.
      */
-    CoverageReference getCoverageReference();
+    CoverageResource getCoverageReference();
 
 }

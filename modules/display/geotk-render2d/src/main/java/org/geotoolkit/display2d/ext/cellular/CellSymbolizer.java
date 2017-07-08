@@ -39,7 +39,6 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -59,6 +58,7 @@ import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.Rule;
 import org.opengis.style.StyleVisitor;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  *
@@ -206,7 +206,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         return buildCellType(layer.getCoverageReference());
     }
 
-    public static FeatureType buildCellType(CoverageReference ref) throws DataStoreException{
+    public static FeatureType buildCellType(CoverageResource ref) throws DataStoreException{
         final GridCoverageReader reader = ref.acquireReader();
         final FeatureType sft = buildCellType(reader, ref.getImageIndex());
         ref.recycle(reader);

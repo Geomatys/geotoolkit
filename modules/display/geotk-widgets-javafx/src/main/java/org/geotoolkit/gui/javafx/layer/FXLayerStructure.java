@@ -31,7 +31,7 @@ import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.amended.AmendedCoverageReference;
+import org.geotoolkit.coverage.amended.AmendedCoverageResource;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.internal.GeotkFX;
@@ -41,7 +41,6 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.feature.FeatureType;
@@ -55,6 +54,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.InternationalString;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  *
@@ -106,7 +106,7 @@ public class FXLayerStructure extends FXPropertyPane {
         sb.append("</head><body>");
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            final FeatureType type = fml.getCollection().getFeatureType();
+            final FeatureType type = fml.getCollection().getType();
 
             String str = type.toString().replace("&", "&amp;");
             str = str.replace("<", "&lt;");
@@ -120,7 +120,7 @@ public class FXLayerStructure extends FXPropertyPane {
 
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final CoverageReference ref = cml.getCoverageReference();
+            final CoverageResource ref = cml.getCoverageReference();
             try {
                 final GridCoverageReader reader = ref.acquireReader();
                 final GeneralGridGeometry gridgeom = reader.getGridGeometry(0);
@@ -230,7 +230,7 @@ public class FXLayerStructure extends FXPropertyPane {
                 }
 
                 //this imply ready the file, may be long, we have to calculate a reduced area
-//                final GridCoverage coverage = reader.read(0, null);
+//                final GridCoverage coverage = reader.features(0, null);
 //                final RenderedImage image = (RenderedImage) coverage.getRenderableImage(0, 0);
 //                final SampleModel sm = image.getSampleModel();
 //                sm.getNumBands();
@@ -251,7 +251,7 @@ public class FXLayerStructure extends FXPropertyPane {
             tabs.getTabs().add(tabprops);
 
             //dimension editor
-            final CoverageDescription desc = ref.getMetadata();
+            final CoverageDescription desc = ref.getCoverageDescription();
             if(desc!=null && !desc.getAttributeGroups().isEmpty()){
                 final Tab tabbands = new Tab("Bands");
                 tabs.getTabs().add(tabbands);
@@ -274,9 +274,9 @@ public class FXLayerStructure extends FXPropertyPane {
             }
 
             //override projection
-            if(ref instanceof AmendedCoverageReference){
+            if(ref instanceof AmendedCoverageResource){
                 final Tab taboverride = new Tab("Overrides");
-                taboverride.setContent(new FXCoverageDecoratorPane((AmendedCoverageReference) ref));
+                taboverride.setContent(new FXCoverageDecoratorPane((AmendedCoverageResource) ref));
                 tabs.getTabs().add(taboverride);
             }
 

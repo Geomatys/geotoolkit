@@ -372,7 +372,7 @@ public class ElementFeatureWriter {
             rootElement.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", schemaLocation);
         }
 
-        /*FeatureType type = featureCollection.getFeatureType();
+        /*FeatureType type = featureCollection.getType();
         if (type != null && type.getName() != null) {
             String namespace = type.getName().getNamespaceURI();
             if (namespace != null && !namespace.equals(GML)) {

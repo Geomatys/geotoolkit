@@ -19,7 +19,6 @@ package org.geotoolkit.gui.swing.render2d.control.information.presenter;
 
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.storage.coverage.CoverageExtractor;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -52,6 +51,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -67,7 +67,7 @@ public class CoverageDrillingPresenter extends AbstractInformationPresenter {
         if (graphic instanceof ProjectedCoverage) {
             final ProjectedCoverage projectedCoverage = (ProjectedCoverage) graphic;
             final CoverageMapLayer layer = projectedCoverage.getLayer();
-            final CoverageReference covRef = layer.getCoverageReference();
+            final CoverageResource covRef = layer.getCoverageReference();
 
             GridCoverageReader reader = null;
             try {
@@ -105,7 +105,7 @@ public class CoverageDrillingPresenter extends AbstractInformationPresenter {
                 try {
                     allValues = Bridge.extractData(projectedCoverage, context, area);
                     final CoverageMapLayer layer = projectedCoverage.getLayer();
-                    final CoverageReference covRef = layer.getCoverageReference();
+                    final CoverageResource covRef = layer.getCoverageReference();
                     final GridCoverageReader reader = covRef.acquireReader();
                     final GeneralGridGeometry gridGeo = reader.getGridGeometry(covRef.getImageIndex());
                     crs = gridGeo.getCoordinateReferenceSystem();

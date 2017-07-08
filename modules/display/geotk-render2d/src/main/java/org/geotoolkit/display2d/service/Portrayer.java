@@ -25,7 +25,6 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -59,6 +58,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Portrayal data, caches the Java2D canvas for further reuse.
@@ -242,7 +242,7 @@ public final class Portrayer {
         final CoverageMapLayer cml = (CoverageMapLayer) layer;
 
         try{
-            final CoverageReference ref = cml.getCoverageReference();
+            final CoverageResource ref = cml.getCoverageReference();
             final CoverageReader reader = ref.acquireReader();
             final String mime = outputDef.getMime();
             final Envelope env = viewDef.getEnvelope();

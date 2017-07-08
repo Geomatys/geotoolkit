@@ -57,7 +57,7 @@ import org.apache.sis.geometry.Envelopes;
  */
 public class PyramidElevationLoader extends AbstractElevationLoader {
 
-    private final PyramidalCoverageReference coverageRef;
+    private final PyramidalCoverageResource coverageRef;
     private Pyramid dataSource;
     private final double minElevation;
     private final double maxElevation;
@@ -66,7 +66,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
     private CoordinateReferenceSystem outputCrs;
     private MathTransform transformToOutput, transformFromOutput;
 
-    public PyramidElevationLoader(final PyramidalCoverageReference ref) throws FactoryException, IncommensurableException, DataStoreException {
+    public PyramidElevationLoader(final PyramidalCoverageResource ref) throws FactoryException, IncommensurableException, DataStoreException {
         ArgumentChecks.ensureNonNull("pyramid reference", ref);
         this.coverageRef = ref;
 

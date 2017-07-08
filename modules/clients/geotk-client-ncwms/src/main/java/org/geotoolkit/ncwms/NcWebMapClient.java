@@ -28,12 +28,12 @@ import org.geotoolkit.ncwms.v130.NcGetMap130;
 import org.geotoolkit.ncwms.v130.NcGetTimeseries130;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.geotoolkit.wms.WebMapClient;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 
 /**
@@ -103,8 +103,8 @@ public class NcWebMapClient extends WebMapClient{
     }
 
     @Override
-    protected CoverageReference createReference(GenericName name) throws DataStoreException{
-        return new NcWMSCoverageReference(this,name);
+    protected CoverageResource createReference(GenericName name) throws DataStoreException{
+        return new NcWMSCoverageResource(this,name);
     }
 
     /**

@@ -244,7 +244,7 @@ public class FeatureStoreUtilities {
      * @return splitted collections
      */
     public static FeatureCollection[] decomposeByGeometryType(FeatureCollection col, Class ... geomClasses) throws DataStoreException{
-        return decomposeByGeometryType(col, FeatureExt.getDefaultGeometryAttribute(col.getFeatureType()).getName(), true, geomClasses);
+        return decomposeByGeometryType(col, FeatureExt.getDefaultGeometryAttribute(col.getType()).getName(), true, geomClasses);
     }
 
     /**
@@ -268,7 +268,7 @@ public class FeatureStoreUtilities {
     public static FeatureCollection[] decomposeByGeometryType(FeatureCollection col, GenericName geomPropName, boolean adaptType, Class ... geomClasses) throws DataStoreException{
 
         final FilterFactory FF = FactoryFinder.getFilterFactory(null);
-        final FeatureType baseType = col.getFeatureType();
+        final FeatureType baseType = col.getType();
         final GenericName name = baseType.getName();
         final AttributeType geomDesc = (AttributeType) baseType.getProperty(geomPropName.toString());
 

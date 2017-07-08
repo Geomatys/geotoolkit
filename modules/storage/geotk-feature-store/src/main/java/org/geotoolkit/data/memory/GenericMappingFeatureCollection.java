@@ -56,7 +56,7 @@ public class GenericMappingFeatureCollection extends AbstractCollection<Feature>
             final Map<PropertyType,Object> defaults){
         this(original,
                 new DefaultFeatureMapper(
-                        original.getFeatureType(),
+                        original.getType(),
                         newType,
                         mapping,
                         defaults)
@@ -85,7 +85,7 @@ public class GenericMappingFeatureCollection extends AbstractCollection<Feature>
     }
 
     @Override
-    public FeatureType getFeatureType() {
+    public FeatureType getType() {
         return type;
     }
 

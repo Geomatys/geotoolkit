@@ -314,7 +314,7 @@ public class EditionHelper {
                 flt = FF.and(flt, dimFilter);
             }
 
-            QueryBuilder qb = new QueryBuilder(editedLayer.getCollection().getFeatureType().getName().toString());
+            QueryBuilder qb = new QueryBuilder(editedLayer.getCollection().getType().getName().toString());
             //we filter in the map CRS
             qb.setCRS(map.getCanvas().getObjectiveCRS2D());
             editgeoms = editedLayer.getCollection().subCollection(qb.buildQuery());
@@ -332,7 +332,7 @@ public class EditionHelper {
                 fi.close();
 
                 qb.reset();
-                qb.setTypeName(editedLayer.getCollection().getFeatureType().getName());
+                qb.setTypeName(editedLayer.getCollection().getType().getName());
                 qb.setFilter(flt);
                 editgeoms = editedLayer.getCollection().subCollection(qb.buildQuery());
                 fi = editgeoms.iterator();
@@ -906,7 +906,7 @@ public class EditionHelper {
     public Geometry toObjectiveCRS(Geometry geom){
         try{
             final MathTransform trs = CRS.findOperation(
-                    FeatureExt.getCRS(editedLayer.getCollection().getFeatureType()),
+                    FeatureExt.getCRS(editedLayer.getCollection().getType()),
                     map.getCanvas().getObjectiveCRS2D(), null).getMathTransform();
 
             geom = JTS.transform(geom, trs);
@@ -927,7 +927,7 @@ public class EditionHelper {
      */
     public Filter toFilter(final Geometry poly, final FeatureMapLayer fl) throws FactoryException, MismatchedDimensionException, TransformException{
 
-        final String geoStr = FeatureExt.getDefaultGeometryAttribute(fl.getCollection().getFeatureType()).getName().toString();
+        final String geoStr = FeatureExt.getDefaultGeometryAttribute(fl.getCollection().getType()).getName().toString();
         final Expression geomField = FF.property(geoStr);
 
         final Geometry dataPoly = poly;
@@ -946,7 +946,7 @@ public class EditionHelper {
 
         if (editedLayer != null && geom != null) {
 
-            final FeatureType featureType = (FeatureType) editedLayer.getCollection().getFeatureType();
+            final FeatureType featureType = (FeatureType) editedLayer.getCollection().getType();
             final CoordinateReferenceSystem dataCrs = FeatureExt.getCRS(featureType);
             final Feature feature = featureType.newInstance();
 
@@ -993,7 +993,7 @@ public class EditionHelper {
         if (editedLayer != null && editedLayer.getCollection().isWritable()) {
 
             final Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
-            final FeatureType featureType = editedLayer.getCollection().getFeatureType();
+            final FeatureType featureType = editedLayer.getCollection().getType();
             final AttributeType geomAttribut = FeatureExt.getDefaultGeometryAttribute(featureType);
             final CoordinateReferenceSystem dataCrs = FeatureExt.getCRS(featureType);
 

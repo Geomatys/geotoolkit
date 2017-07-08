@@ -174,7 +174,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
 
             if(manager.getWrittenCRS() != null) {
                 final FeatureCollection toWrite;
-                final FeatureType type = ((FeatureCollection)newFeatures).getFeatureType();
+                final FeatureType type = ((FeatureCollection)newFeatures).getType();
                 if(newFeatures instanceof FeatureCollection) {
                     toWrite = FeatureStreams.decorate((FeatureCollection) newFeatures, new ReprojectFeatureType(type, manager.getWrittenCRS()));
                 } else {

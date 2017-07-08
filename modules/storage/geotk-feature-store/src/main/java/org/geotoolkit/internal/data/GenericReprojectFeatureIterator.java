@@ -121,11 +121,11 @@ public class GenericReprojectFeatureIterator<R extends FeatureReader> implements
         private GenericReprojectFeatureCollection(final FeatureCollection original, final CoordinateReferenceSystem targetCrs){
             super(original);
             this.targetCrs = targetCrs;
-            this.targetType = new ReprojectFeatureType(original.getFeatureType(), targetCrs);
+            this.targetType = new ReprojectFeatureType(original.getType(), targetCrs);
         }
 
         @Override
-        public FeatureType getFeatureType() {
+        public FeatureType getType() {
             return targetType;
         }
 

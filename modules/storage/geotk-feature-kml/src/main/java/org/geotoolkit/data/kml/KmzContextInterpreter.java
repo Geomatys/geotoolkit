@@ -39,7 +39,6 @@ import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
 
 import org.geotoolkit.nio.ZipUtilities;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.processing.Operations;
@@ -80,6 +79,7 @@ import static java.nio.file.StandardOpenOption.CREATE;
 import org.opengis.feature.Feature;
 import org.opengis.feature.PropertyType;
 import org.geotoolkit.data.kml.xml.KmlConstants;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  *
@@ -372,7 +372,7 @@ public class KmzContextInterpreter {
         final Feature groundOverlay = KML_FACTORY.createGroundOverlay();
         final CoordinateReferenceSystem targetCrs = CommonCRS.WGS84.normalizedGeographic();
 
-        final CoverageReference ref = coverageMapLayer.getCoverageReference();
+        final CoverageResource ref = coverageMapLayer.getCoverageReference();
         final CoverageReader reader = ref.acquireReader();
         final GridCoverage2D coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), null);
         ref.recycle(reader);

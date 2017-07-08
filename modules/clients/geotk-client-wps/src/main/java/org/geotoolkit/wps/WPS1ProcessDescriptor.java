@@ -23,26 +23,26 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import javax.measure.Unit;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.iso.DefaultInternationalString;
+import org.geotoolkit.ows.xml.v110.AllowedValues;
+import org.geotoolkit.ows.xml.v110.AnyValue;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
-import static org.geotoolkit.wps.WPSProcessingRegistry.USE_FORMAT_KEY;
-import static org.geotoolkit.wps.WPSProcessingRegistry.USE_FORM_KEY;
-import org.geotoolkit.wps.converters.WPSObjectConverter;
-import org.geotoolkit.wps.io.WPSIO;
+import org.geotoolkit.wps.adaptor.BboxAdaptor;
+import org.geotoolkit.wps.adaptor.ComplexAdaptor;
+import org.geotoolkit.wps.adaptor.DataAdaptor;
+import org.geotoolkit.wps.adaptor.LiteralAdaptor;
+import org.geotoolkit.wps.xml.DataDescription;
+import org.geotoolkit.wps.xml.Format;
 import org.geotoolkit.wps.xml.ProcessOffering;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.ComplexDataCombinationType;
-import org.geotoolkit.wps.xml.v100.ComplexDataDescriptionType;
+import org.geotoolkit.wps.xml.v100.DescriptionType;
 import org.geotoolkit.wps.xml.v100.InputDescriptionType;
 import org.geotoolkit.wps.xml.v100.LiteralInputType;
 import org.geotoolkit.wps.xml.v100.LiteralOutputType;
@@ -51,9 +51,9 @@ import org.geotoolkit.wps.xml.v100.ProcessDescriptionType;
 import org.geotoolkit.wps.xml.v100.ProcessDescriptions;
 import org.geotoolkit.wps.xml.v100.SupportedCRSsType;
 import org.geotoolkit.wps.xml.v100.SupportedComplexDataInputType;
-import org.geotoolkit.wps.xml.v100.SupportedComplexDataType;
-import org.geotoolkit.wps.xml.v100.SupportedUOMsType;
+import org.geotoolkit.wps.xml.v100.ValuesReferenceType;
 import org.opengis.geometry.Envelope;
+import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -113,7 +113,6 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
     public static WPS1ProcessDescriptor create(WPSProcessingRegistry registry, ProcessOffering processBriefType)
             throws IOException, JAXBException, UnsupportedParameterException {
 
-
         final String processIdentifier = processBriefType.getIdentifier().getValue();
 
         final InternationalString processAbstract;
@@ -130,204 +129,32 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
             processDisplayName = new DefaultInternationalString("");
         }
 
-        final List<ParameterDescriptor> inputDescriptors = new ArrayList<>();
-
         final ProcessDescriptions wpsProcessDescriptions = getDescribeProcess(registry,Collections.singletonList(processIdentifier));
-
         final ProcessDescriptionType wpsProcessDesc = wpsProcessDescriptions.getProcessDescription().get(0);
 
         // INPUTS
+        final List<GeneralParameterDescriptor> inputDescriptors = new ArrayList<>();
         if (wpsProcessDesc.getDataInputs() != null) {
-            final List<InputDescriptionType> inputDescriptionList = wpsProcessDesc.getDataInputs().getInput();
-
-            for (final InputDescriptionType inputDesc : inputDescriptionList) {
-                final String inputName = inputDesc.getIdentifier().getValue();
-                final String inputAbstract = (inputDesc.getAbstract() == null)? "" : inputDesc.getAbstract().getValue();
-                final Integer max = inputDesc.getMaxOccurs();
-                final Integer min = inputDesc.getMinOccurs();
-
-                final Map<String, String> properties = new HashMap<>();
-                properties.put("name", inputName);
-                properties.put("remarks", inputAbstract);
-
-                final SupportedComplexDataInputType complexInput = inputDesc.getComplexData();
-                final LiteralInputType literalInput = inputDesc.getLiteralData();
-                final SupportedCRSsType bboxInput = inputDesc.getBoundingBoxData();
-
-                if (complexInput != null) {
-                    final ComplexDataCombinationType complexDefault = complexInput.getDefault();
-                    if (complexDefault != null && complexDefault.getFormat() != null) {
-                        String mime     = complexDefault.getFormat().getMimeType();
-                        String encoding = complexDefault.getFormat().getEncoding();
-                        String schema   = complexDefault.getFormat().getSchema();
-
-                        /**
-                         * Make a first try on default format, as it should be the more stable. If we don't support
-                         * default format, we check the other supported formats until we find one we can use.
-                         */
-                        Class clazz = WPSIO.findClass(WPSIO.IOType.INPUT, WPSIO.FormChoice.COMPLEX, mime, encoding, schema, null);
-                        if (clazz == null) {
-                            for (ComplexDataDescriptionType currentDesc : complexInput.getSupported().getFormat()) {
-                                mime     = currentDesc.getMimeType();
-                                encoding = currentDesc.getEncoding();
-                                schema   = currentDesc.getSchema();
-                                clazz    = WPSIO.findClass(WPSIO.IOType.INPUT, WPSIO.FormChoice.COMPLEX, mime, encoding, schema, null);
-                                if (clazz != null) {
-                                    break;
-                                }
-                            }
-                            if (clazz == null) {
-                                throw new UnsupportedParameterException(processIdentifier, inputName,"No compatible format found");
-                            }
-                        }
-
-                        final WPSIO.FormatSupport support = new WPSIO.FormatSupport(clazz, WPSIO.IOType.INPUT, mime, encoding, schema, false);
-                        final Map<String,Object> userMap = new HashMap<>();
-                        userMap.put(USE_FORMAT_KEY, support);
-                        userMap.put(USE_FORM_KEY, "complex");
-
-                        inputDescriptors.add(new ExtendedParameterDescriptor(
-                                properties, clazz, null, null, null, null, null, true, userMap));
-
-                    } else {
-                        throw new UnsupportedParameterException(processIdentifier, inputName,"No default format specified for input");
-                    }
-
-                } else if (literalInput != null) {
-                    final DomainMetadataType inputType = literalInput.getDataType();
-                    Class clazz = WPSIO.findClass(WPSIO.IOType.INPUT, WPSIO.FormChoice.LITERAL, null, null, null, inputType);
-                    if (clazz == null) {
-                        clazz = String.class;
-                    }
-                    final String defaultValue = literalInput.getDefaultValue();
-                    final SupportedUOMsType inputUom = literalInput.getUOMs();
-                    Unit unit = null;
-                    if (inputUom != null) {
-                        unit = Units.valueOf(inputUom.getDefault().getUOM().getValue());
-                    }
-
-                    WPSObjectConverter converter = null;
-                    try {
-                        converter = WPSIO.getConverter(clazz, WPSIO.IOType.INPUT, WPSIO.FormChoice.LITERAL);
-                        if (converter == null) {
-                            throw new UnsupportedParameterException(processIdentifier, inputName,"Can't find the converter for the default literal input value.");
-                        }
-                    } catch (UnconvertibleObjectException ex) {
-                        throw new UnsupportedParameterException(processIdentifier, inputName,"Can't find the converter for the default literal input value.", ex);
-                    }
-
-                    //At this state the converter can't be null.
-                    final Map<String,Object> userMap = new HashMap<>();
-                    userMap.put(USE_FORM_KEY, "literal");
-                    try {
-                        inputDescriptors.add(new ExtendedParameterDescriptor(properties,
-                                clazz, null, converter.convert(defaultValue, null), null, null, unit, min != 0,userMap));
-                    } catch (UnconvertibleObjectException ex2) {
-                        throw new UnsupportedParameterException(processIdentifier, inputName,"Can't convert the default literal input value.", ex2);
-                    }
-                } else if (bboxInput != null) {
-                    final Map<String,Object> userMap = new HashMap<>();
-                    userMap.put(USE_FORM_KEY, "bbox");
-
-                    inputDescriptors.add(new ExtendedParameterDescriptor(properties,
-                            Envelope.class, null, null, null, null, null, min != 0,userMap));
-                } else {
-                    throw new UnsupportedParameterException(processIdentifier, inputName,"Unidentifiable input");
-                }
+            for (final InputDescriptionType inputDesc : wpsProcessDesc.getDataInputs().getInput()) {
+                inputDescriptors.add(toDescriptor(processIdentifier, inputDesc));
             }
         }
-
-
-        final List<ParameterDescriptor> outputDescriptors = new ArrayList<>();
 
         //OUTPUTS
+        final List<GeneralParameterDescriptor> outputDescriptors = new ArrayList<>();
         if (wpsProcessDesc.getProcessOutputs() != null) {
-
-            final List<OutputDescriptionType> outputDescriptionList = wpsProcessDesc.getProcessOutputs().getOutput();
-            for (final OutputDescriptionType outputDesc : outputDescriptionList) {
-                final String outputName = outputDesc.getIdentifier().getValue();
-                final String outputAbstract = (outputDesc.getAbstract() == null)? null: outputDesc.getAbstract().getValue();
-
-                final SupportedComplexDataType complexOutput = outputDesc.getComplexOutput();
-                final LiteralOutputType literalOutput = outputDesc.getLiteralOutput();
-                final SupportedCRSsType bboxOutput = outputDesc.getBoundingBoxOutput();
-
-
-                if (complexOutput != null) {
-                    final ComplexDataCombinationType complexDefault = complexOutput.getDefault();
-                    // If default format is missing, describe process is not valid, we stop here.
-                    if (complexDefault != null && complexDefault.getFormat() != null) {
-                        String mime     = complexDefault.getFormat().getMimeType();
-                        String encoding = complexDefault.getFormat().getEncoding();
-                        String schema   = complexDefault.getFormat().getSchema();
-
-                        /**
-                         * Make a first try on default format, as it should be the more stable. If we don't support
-                         * default format, we check the other supported formats until we find one we can use.
-                         */
-                        Class clazz = WPSIO.findClass(WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX, mime, encoding, schema, null);
-                        if (clazz == null) {
-                            for (ComplexDataDescriptionType currentDesc : complexOutput.getSupported().getFormat()) {
-                                mime     = currentDesc.getMimeType();
-                                encoding = currentDesc.getEncoding();
-                                schema   = currentDesc.getSchema();
-                                clazz    = WPSIO.findClass(WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX, mime, encoding, schema, null);
-                                if (clazz != null) {
-                                    break;
-                                }
-                            }
-
-                            if (clazz == null) {
-                                throw new UnsupportedParameterException(processIdentifier,outputName,"No compatible format found for output");
-                            }
-                        }
-
-                        final WPSIO.FormatSupport support = new WPSIO.FormatSupport(clazz, WPSIO.IOType.OUTPUT, mime, encoding, schema, false);
-                        outputDescriptors.add(new ExtendedParameterDescriptor(
-                                outputName, outputAbstract, clazz, null, true, Collections.singletonMap(USE_FORMAT_KEY, (Object) support)));
-                    } else {
-                        throw new UnsupportedParameterException(processIdentifier,outputName,"No default format specified for output");
-                    }
-
-                } else if (literalOutput != null) {
-                    final DomainMetadataType inputType = literalOutput.getDataType();
-                    Class clazz = WPSIO.findClass(WPSIO.IOType.OUTPUT, WPSIO.FormChoice.LITERAL, null, null, null, inputType);
-                    if (clazz == null) {
-                        clazz = String.class;
-                    }
-                    final SupportedUOMsType inputUom = literalOutput.getUOMs();
-                    Unit unit = null;
-                    if (inputUom != null) {
-                        unit = Units.valueOf(inputUom.getDefault().getUOM().getValue());
-                    }
-
-                    if (unit!=null && Double.class.equals(clazz)) {
-                        outputDescriptors.add(new ParameterBuilder().addName(outputName).setRemarks(outputAbstract).createBounded(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0, unit));
-                    } else {
-                        outputDescriptors.add(new ParameterBuilder().addName(outputName).setRemarks(outputAbstract).create(clazz, null));
-                    }
-
-                } else if (bboxOutput != null) {
-                    outputDescriptors.add(new ParameterBuilder().addName(outputName).setRemarks(outputAbstract).create(Envelope.class, null));
-
-                } else {
-                    throw new UnsupportedParameterException(processIdentifier,outputName,"Unidentifiable output");
-                }
+            for (final OutputDescriptionType outputDesc : wpsProcessDesc.getProcessOutputs().getOutput()) {
+                outputDescriptors.add(toDescriptor(processIdentifier, outputDesc));
             }
         }
-
-
 
         final ParameterDescriptorGroup inputs = new ParameterBuilder().addName("inputs").createGroup(
                 inputDescriptors.toArray(new ParameterDescriptor[inputDescriptors.size()]));
         final ParameterDescriptorGroup outputs = new ParameterBuilder().addName("ouptuts").createGroup(
                 outputDescriptors.toArray(new ParameterDescriptor[outputDescriptors.size()]));
 
-
         return new WPS1ProcessDescriptor(registry, wpsProcessDesc, processIdentifier, processAbstract, processDisplayName, inputs, outputs);
     }
-
-
 
     /**
      * @return ProcessDescriptions : WPS process description
@@ -349,4 +176,112 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
 
         return description;
     }
+
+    /**
+     * Convert DescriptionType to GeneralParameterDescriptor.
+     *
+     * @param input
+     * @return
+     * @throws UnsupportedOperationException if data type could not be mapped
+     */
+    private static GeneralParameterDescriptor toDescriptor(String processId, DescriptionType input) throws UnsupportedParameterException{
+
+        final String inputName = input.getIdentifier().getValue();
+        final String inputAbstract = (input.getAbstract() == null)? null : input.getAbstract().getValue();
+        final boolean required;
+
+        final Map<String, String> properties = new HashMap<>();
+        properties.put("name", inputName);
+        if (inputAbstract!=null && !inputAbstract.isEmpty()) {
+            properties.put("remarks", inputAbstract);
+        }
+
+        DataDescription dataDesc;
+        if (input instanceof InputDescriptionType) {
+            final InputDescriptionType id = (InputDescriptionType) input;
+            dataDesc = id.getBoundingBoxData();
+            if (dataDesc==null) dataDesc = id.getComplexData();
+            if (dataDesc==null) dataDesc = id.getLiteralData();
+            final Integer max = id.getMaxOccurs();
+            final Integer min = id.getMinOccurs();
+            required = min!=0;
+        } else if(input instanceof OutputDescriptionType) {
+            final OutputDescriptionType od = (OutputDescriptionType) input;
+            dataDesc = od.getBoundingBoxOutput();
+            if (dataDesc==null) dataDesc = od.getComplexOutput();
+            if (dataDesc==null) dataDesc = od.getLiteralOutput();
+            required = true;
+        } else {
+            throw new IllegalArgumentException("Unexpected description type "+input.getClass());
+        }
+
+        if (dataDesc instanceof LiteralOutputType) {
+            final LiteralOutputType cd = (LiteralOutputType) dataDesc;
+            final DomainMetadataType dataType = cd.getDataType();
+            final LiteralAdaptor adaptor = LiteralAdaptor.create(cd);
+            Object defaultValue = null;
+
+            if (cd instanceof LiteralInputType) {
+                final LiteralInputType li = (LiteralInputType) cd;
+                final AllowedValues allowedValues = li.getAllowedValues();
+                final AnyValue anyValue = li.getAnyValue();
+                final String defaultValueStr = li.getDefaultValue();
+                final ValuesReferenceType valuesReference = li.getValuesReference();
+                if (defaultValueStr!=null) {
+                    defaultValue = adaptor.convert(defaultValueStr);
+                }
+            } else {
+                final String reference = dataType.getReference();
+                final String value = dataType.getValue();
+            }
+
+            return new ExtendedParameterDescriptor(properties,
+                    adaptor.getValueClass(),
+                    null, defaultValue, null, null, adaptor.getUnit(), required,
+                    Collections.singletonMap(DataAdaptor.USE_ADAPTOR, adaptor));
+
+        } else if (dataDesc instanceof SupportedCRSsType) {
+            final BboxAdaptor adaptor = BboxAdaptor.create((SupportedCRSsType) dataDesc);
+            return new ExtendedParameterDescriptor(properties, Envelope.class,
+                    null, null, null, null, null, required,Collections.singletonMap(DataAdaptor.USE_ADAPTOR, adaptor));
+
+        } else if (dataDesc instanceof SupportedComplexDataInputType) {
+
+            final SupportedComplexDataInputType scdt = (SupportedComplexDataInputType) dataDesc;
+            final ComplexDataCombinationType complexDefault = scdt.getDefault();
+
+            final List<Format> formats = new ArrayList<>();
+            if (complexDefault != null && complexDefault.getFormat() != null) {
+                formats.add(complexDefault.getFormat());
+            }
+            if (scdt.getSupported()!=null) {
+                formats.addAll(scdt.getSupported().getFormat());
+            }
+
+            //find a complexe type adaptor
+            DataAdaptor adaptor = null;
+            for(Format format : formats){
+                adaptor = ComplexAdaptor.getAdaptor(format);
+                if (adaptor!=null) break;
+            }
+            if (adaptor == null) {
+                final StringBuilder sb = new StringBuilder();
+                for (Format format : formats) {
+                    if(sb.length()!=0) sb.append(", ");
+                    sb.append(format.getMimeType()).append(' ');
+                    sb.append(format.getEncoding()).append(' ');
+                    sb.append(format.getSchema());
+                }
+                throw new UnsupportedParameterException(processId,inputName,"No compatible format found for parameter "+inputName+" formats : "+sb);
+            }
+
+            return new ExtendedParameterDescriptor(properties, adaptor.getValueClass(),
+                    null, null, null, null, null, required, Collections.singletonMap(DataAdaptor.USE_ADAPTOR, adaptor));
+
+        } else {
+            throw new IllegalArgumentException("Unexpected data type "+dataDesc.getClass());
+        }
+
+    }
+
 }

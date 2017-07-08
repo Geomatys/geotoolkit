@@ -36,10 +36,9 @@ import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.GridMosaicCoverage2D;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
-import org.geotoolkit.storage.coverage.DefaultCoverageReference;
+import org.geotoolkit.storage.coverage.DefaultCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -53,6 +52,7 @@ import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  *
@@ -74,7 +74,7 @@ public class PyramidTest extends org.geotoolkit.test.TestBase {
 
         final MPCoverageStore store = new MPCoverageStore();
         final GenericName name = NamesExt.create(null, "test");
-        final PyramidalCoverageReference pcr = (PyramidalCoverageReference) store.create(name);
+        final PyramidalCoverageResource pcr = (PyramidalCoverageResource) store.create(name);
         final List<GridSampleDimension> dims = new ArrayList<GridSampleDimension>();
         final GridSampleDimension dim1 = new GridSampleDimension("sampleDesc1");
         final GridSampleDimension dim2 = new GridSampleDimension("sampleDesc2");
@@ -102,7 +102,7 @@ public class PyramidTest extends org.geotoolkit.test.TestBase {
 
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, PyramidDescriptor.NAME);
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
-        input.parameter("coverageref").setValue(new DefaultCoverageReference(coverage, name));
+        input.parameter("coverageref").setValue(new DefaultCoverageResource(coverage, name));
         input.parameter("in_coverage_store").setValue(store);
         input.parameter("tile_size").setValue(new Dimension(tileSize, tileSize));
         input.parameter("interpolation_type").setValue(InterpolationCase.NEIGHBOR);

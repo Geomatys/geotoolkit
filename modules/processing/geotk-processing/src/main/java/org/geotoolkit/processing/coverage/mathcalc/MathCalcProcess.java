@@ -18,8 +18,6 @@
 package org.geotoolkit.processing.coverage.mathcalc;
 
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.CoverageReference;
-import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.cql.CQL;
@@ -39,6 +37,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  *
@@ -46,7 +46,7 @@ import org.apache.sis.util.Utilities;
  */
 public class MathCalcProcess extends AbstractProcess {
 
-    public MathCalcProcess(Coverage[] inCoverages, String inFormula, String[] inMapping, CoverageReference outCoverage){
+    public MathCalcProcess(Coverage[] inCoverages, String inFormula, String[] inMapping, CoverageResource outCoverage){
         this(toParameters(inCoverages, inFormula, inMapping, outCoverage));
     }
 
@@ -54,7 +54,7 @@ public class MathCalcProcess extends AbstractProcess {
         super(MathCalcDescriptor.INSTANCE, params);
     }
 
-    private static ParameterValueGroup toParameters(Coverage[] inCoverages, String inFormula, String[] inMapping, CoverageReference outCoverage){
+    private static ParameterValueGroup toParameters(Coverage[] inCoverages, String inFormula, String[] inMapping, CoverageResource outCoverage){
         final ParameterValueGroup params = MathCalcDescriptor.INSTANCE.getInputDescriptor().createValue();
         ParametersExt.getOrCreateValue(params, "inCoverages").setValue(inCoverages);
         ParametersExt.getOrCreateValue(params, "inFormula").setValue(inFormula);
@@ -68,7 +68,7 @@ public class MathCalcProcess extends AbstractProcess {
         final Coverage[] inCoverages = value(MathCalcDescriptor.IN_COVERAGES, inputParameters);
         final String inFormula = value(MathCalcDescriptor.IN_FORMULA, inputParameters);
         final String[] inMapping = value(MathCalcDescriptor.IN_MAPPING, inputParameters);
-        final CoverageReference outRef = value(MathCalcDescriptor.IN_RESULT_COVERAGE, inputParameters);
+        final CoverageResource outRef = value(MathCalcDescriptor.IN_RESULT_COVERAGE, inputParameters);
 
         final GeneralGridGeometry gg;
         final GridCoverageReader outReader;
@@ -99,8 +99,8 @@ public class MathCalcProcess extends AbstractProcess {
 
         final FillCoverage filler = new FillCoverage();
         try {
-            if(outRef instanceof PyramidalCoverageReference){
-                filler.fill((PyramidalCoverageReference)outRef, evaluator);
+            if(outRef instanceof PyramidalCoverageResource){
+                filler.fill((PyramidalCoverageResource)outRef, evaluator);
             }else{
                 filler.fill(outRef, evaluator, null);
             }

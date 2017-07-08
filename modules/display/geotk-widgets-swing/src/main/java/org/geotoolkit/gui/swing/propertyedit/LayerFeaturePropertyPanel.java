@@ -494,7 +494,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
             panCenter.removeAll();
 
             Filter f = guiCQL.getFilter();
-            final QueryBuilder qb = new QueryBuilder(layer.getCollection().getFeatureType().getName().toString());
+            final QueryBuilder qb = new QueryBuilder(layer.getCollection().getType().getName().toString());
             qb.setFilter(f);
             if(guiVersions.getSelectedItem()!=null && !(guiVersions.getSelectedItem() instanceof String)){
                 final Date d = ((Version)guiVersions.getSelectedItem()).getDate();
@@ -554,7 +554,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
 
             jcb_edit.setEnabled(editable);
 
-            final FeatureType type = source.getFeatureType();
+            final FeatureType type = source.getType();
 
             if(type.isSimple()){
                 //use table view
@@ -581,7 +581,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
                 final FeatureStore store = s.getSession().getFeatureStore();
                 if(store.getQueryCapabilities().handleVersioning()){
                     try {
-                        final VersionHistory history = store.getVersioning(source.getFeatureType().getName().toString());
+                        final VersionHistory history = store.getVersioning(source.getType().getName().toString());
                         lst.addAll(history.list());
                     } catch (VersioningException ex) {
                         Exceptions.printStackTrace(ex);

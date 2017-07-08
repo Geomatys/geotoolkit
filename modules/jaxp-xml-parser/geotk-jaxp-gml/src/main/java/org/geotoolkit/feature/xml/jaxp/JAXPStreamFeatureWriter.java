@@ -754,7 +754,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             writer.writeAttribute("numberOfFeatures", Integer.toString(featureCollection.size()));
         }
 
-        FeatureType type = featureCollection.getFeatureType();
+        FeatureType type = featureCollection.getType();
         if (type != null && type.getName() != null) {
             for(String n : Utils.listAllNamespaces(type)){
                 if (n != null && !(n.equals("http://www.opengis.net/gml") || n.equals("http://www.opengis.net/gml/3.2")) && !n.isEmpty()) {

@@ -35,14 +35,14 @@ public abstract class AbstractDataStore extends AbstractStorage{
      *
      * @return DataNode never null.
      */
-    public abstract DataNode getRootNode() throws DataStoreException;
+    public abstract Resource getRootNode() throws DataStoreException;
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(Classes.getShortClassName(this));
         try {
-            final DataNode node = getRootNode();
+            final Resource node = getRootNode();
             sb.append(' ');
             sb.append(node.toString());
         } catch (DataStoreException ex) {

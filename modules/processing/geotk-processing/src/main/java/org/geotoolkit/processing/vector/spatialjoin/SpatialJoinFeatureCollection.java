@@ -45,7 +45,7 @@ public class SpatialJoinFeatureCollection extends WrapFeatureCollection {
         super(targetFC);
         this.sourceFC = sourceFC;
         this.method = method;
-        this.newFeatureType = SpatialJoinProcess.concatType(targetFC.getFeatureType(), sourceFC.getFeatureType());
+        this.newFeatureType = SpatialJoinProcess.concatType(targetFC.getType(), sourceFC.getType());
     }
 
     /**
@@ -53,7 +53,7 @@ public class SpatialJoinFeatureCollection extends WrapFeatureCollection {
      * @return FeatureType
      */
     @Override
-    public FeatureType getFeatureType() {
+    public FeatureType getType() {
         return newFeatureType;
     }
 

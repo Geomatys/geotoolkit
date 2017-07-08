@@ -72,7 +72,7 @@ public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection{
      * {@inheritDoc }
      */
     @Override
-    public synchronized FeatureType getFeatureType() throws FeatureStoreRuntimeException{
+    public synchronized FeatureType getType() throws FeatureStoreRuntimeException{
         if(ft == null){
             try {
                 ft = getSession().getFeatureStore().getFeatureType(query);
