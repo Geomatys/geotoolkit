@@ -35,17 +35,14 @@ import static org.geotoolkit.data.geojson.utils.GeoJSONMembres.*;
 public class GeoJSONCRS implements Serializable {
 
     private String type;
-    private Map<String, String> properties = new HashMap<>();
+    private final Map<String, String> properties = new HashMap<>();
 
     public GeoJSONCRS() {
     }
 
     public GeoJSONCRS(CoordinateReferenceSystem crs) {
         type = CRS_NAME;
-        String crsName = GeoJSONUtils.toURN(crs);
-        if (crsName != null) {
-            properties.put(NAME, crsName);
-        }
+        setCRS(crs);
     }
 
     public GeoJSONCRS(URL url, String crsType) {
@@ -68,10 +65,6 @@ public class GeoJSONCRS implements Serializable {
         return properties;
     }
 
-    public void setProperties(Map<String, String> properties) {
-        this.properties = properties;
-    }
-
     public CoordinateReferenceSystem getCRS() throws FactoryException, MalformedURLException {
         if (type.equals(CRS_NAME)) {
             return org.apache.sis.referencing.CRS.forCode(properties.get(NAME));
@@ -85,10 +78,7 @@ public class GeoJSONCRS implements Serializable {
 
     public void setCRS(CoordinateReferenceSystem crs) {
         type = CRS_NAME;
-        String crsName = GeoJSONUtils.toURN(crs);
-        if (crsName != null) {
-            properties = new HashMap<>();
-            properties.put(NAME, crsName);
-        }
+        GeoJSONUtils.toURN(crs)
+                .ifPresent(urn -> properties.put(NAME, urn));
     }
 }

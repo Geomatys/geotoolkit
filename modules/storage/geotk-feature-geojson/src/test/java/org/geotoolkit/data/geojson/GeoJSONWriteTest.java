@@ -308,7 +308,6 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
 
         String expected = "{\n" +
                 "\"type\":\"FeatureCollection\"\n" +
-                ",\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"urn:ogc:def:crs:OGC:1.3:CRS84\"}}\n" +
                 ",\"features\":[\n" +
                 "{\"type\":\"Feature\",\"id\":\"id-0\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat1\"}}\n" +
                 ",{\"type\":\"Feature\",\"id\":\"id-1\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat2\"}}\n" +
@@ -398,7 +397,6 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
 
         String expected = "{\n" +
                 "\"type\":\"FeatureCollection\"\n" +
-                ",\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"urn:ogc:def:crs:OGC:1.3:CRS84\"}}\n" +
                 ",\"features\":[\n" +
                 "{\"type\":\"Feature\",\"id\":\"id-0\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"array\":[[0.0,1.0,2.0,3.0,4.0],[1.0,2.0,3.0,4.0,5.0],[2.0,3.0,4.0,5.0,6.0],[3.0,4.0,5.0,6.0,7.0],[4.0,5.0,6.0,7.0,8.0]]}}\n" +
                 ",{\"type\":\"Feature\",\"id\":\"id-1\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"array\":[[0.0,-1.0,-2.0,-3.0,-4.0],[1.0,0.0,-1.0,-2.0,-3.0],[2.0,1.0,0.0,-1.0,-2.0],[3.0,2.0,1.0,0.0,-1.0],[4.0,3.0,2.0,1.0,0.0]]}}\n" +

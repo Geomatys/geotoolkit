@@ -70,7 +70,6 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
     private static final String DESC_FILE_SUFFIX = "_Type.json";
 
     private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
-    private final ReadWriteLock tmpLock = new ReentrantReadWriteLock();
 
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false, false);
     private GenericName name;
@@ -147,9 +146,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
     }
 
     private void checkTypeExist() throws DataStoreException {
-        if (name != null && featureType != null) {
-            return;
-        } else {
+        if (name == null || featureType == null) {
             try {
                 // try to parse file only if exist and not empty
                 if (Files.exists(jsonFile) && Files.size(jsonFile) != 0) {
@@ -306,7 +303,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
         GenericName name = getName();
 
         if (name != null) {
-            return Collections.singleton(getName());
+            return Collections.singleton(name);
         } else {
             return Collections.EMPTY_SET;
         }
@@ -324,9 +321,9 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
     public Envelope getEnvelope(final Query query) throws DataStoreException, FeatureStoreRuntimeException {
         typeCheck(query.getTypeName());
 
-        if(QueryUtilities.queryAll(query)){
+        if (QueryUtilities.queryAll(query)) {
+            rwLock.readLock().lock();
             try {
-                rwLock.readLock().lock();
                 final GeoJSONObject obj = GeoJSONParser.parse(jsonFile, true);
                 final CoordinateReferenceSystem crs = GeoJSONUtils.getCRS(obj);
                 final Envelope envelope = GeoJSONUtils.getEnvelope(obj, crs);
@@ -334,11 +331,13 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
                     return envelope;
                 }
 
-                rwLock.readLock().unlock();
             } catch (IOException e) {
                 throw new DataStoreException(e.getMessage(), e);
+            } finally {
+                rwLock.readLock().unlock();
             }
         }
+
         //fallback
         return super.getEnvelope(query);
     }
@@ -360,7 +359,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
         typeCheck(query.getTypeName());
-        final FeatureWriter fw = new GeoJSONFileWriter(jsonFile, featureType, rwLock, tmpLock,
+        final FeatureWriter fw = new GeoJSONFileWriter(jsonFile, featureType, rwLock,
                 GeoJSONFeatureStoreFactory.ENCODING, coordAccuracy);
         return handleRemaining(fw, query.getFilter());
     }
@@ -401,10 +400,10 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
             throw new DataStoreException("New type name should be equals to file name.");
         }
 
-        try{
-            rwLock.writeLock().lock();
+        rwLock.writeLock().lock();
+        try {
             writeType(featureType);
-        }finally{
+        } finally {
             rwLock.writeLock().unlock();
         }
 
@@ -440,14 +439,14 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
             throw new DataStoreException("New type name should be equals to file name.");
         }
 
-        try{
-            rwLock.writeLock().lock();
+        rwLock.writeLock().lock();
+        try {
             Files.deleteIfExists(descFile);
             Files.deleteIfExists(jsonFile);
             Files.createFile(jsonFile);
         } catch (IOException e) {
             throw new DataStoreException("Can not delete GeoJSON schema.", e);
-        } finally{
+        } finally {
             rwLock.writeLock().unlock();
         }
     }
