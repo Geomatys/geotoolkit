@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.mapinfo.mif;
 
+import java.io.IOException;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.*;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
@@ -120,7 +121,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
     public void createFeatureType(FeatureType featureType) throws DataStoreException {
         try {
             manager.addSchema(featureType.getName(), featureType);
-        } catch (URISyntaxException e) {
+        } catch (URISyntaxException | IOException e) {
             throw new DataStoreException("We're unable to add a schema because we can't access source files.", e);
         }
     }
