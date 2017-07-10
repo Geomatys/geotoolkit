@@ -24,7 +24,6 @@ import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.parameter.Parameters;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -37,6 +36,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.feature.ReprojectFeatureType;
 import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.data.FeatureStreams;
@@ -65,19 +65,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * @throws DataStoreException If we got a problem getting needed files.
      */
     public MIFFeatureStore(final URI uri) throws DataStoreException {
-        this(uri, null);
-    }
-
-    /**
-     * This sets the datastore's namespace during construction (so the schema -
-     * FeatureType - will have the correct value) You can call this with
-     * namespace = null, but I suggest you give it an actual namespace.
-     *
-     * @param uri
-     * @param namespace
-     */
-    public MIFFeatureStore(final URI uri, final String namespace) throws DataStoreException {
-        this(toParameter(uri, namespace));
+        this(toParameter(uri));
     }
 
     public MIFFeatureStore(final ParameterValueGroup params) throws DataStoreException {
@@ -91,10 +79,9 @@ public class MIFFeatureStore extends AbstractFeatureStore {
         }
     }
 
-    private static ParameterValueGroup toParameter(final URI uri, final String namespace) {
-        final ParameterValueGroup params = MIFFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(MIFFeatureStoreFactory.PATH, params).setValue(uri);
-        Parameters.getOrCreate(MIFFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
+    private static ParameterValueGroup toParameter(final URI uri) {
+        final Parameters params = Parameters.castOrWrap(MIFFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(MIFFeatureStoreFactory.PATH).setValue(uri);
         return params;
     }
 

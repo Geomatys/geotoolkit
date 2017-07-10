@@ -49,8 +49,7 @@ public class DBFReadingTest extends AbstractReadingTests{
     public DBFReadingTest() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException, IOException{
 
         final File file = new File("src/test/resources/org/geotoolkit/data/dbf/sample.dbf");
-        final String ns = "http://test.com";
-        store = new DbaseFileFeatureStore(file.toPath(), ns);
+        store = new DbaseFileFeatureStore(file.toPath());
 
         for(GenericName n : store.getNames()){
             FeatureType ft = store.getFeatureType(n.toString());
@@ -59,11 +58,11 @@ public class DBFReadingTest extends AbstractReadingTests{
 
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
-        final GenericName name = NamesExt.create(ns, "sample");
+        final GenericName name = NamesExt.create("sample");
         builder.setName(name);
-        builder.addAttribute(Double.class).setName(NamesExt.create(ns,"N1")).setMaximalLength(5);
-        builder.addAttribute(Double.class).setName(NamesExt.create(ns,"N2")).setMaximalLength(5);
-        builder.addAttribute(String.class).setName(NamesExt.create(ns,"N3")).setMaximalLength(6);
+        builder.addAttribute(Double.class).setName(NamesExt.create("N1")).setMaximalLength(5);
+        builder.addAttribute(Double.class).setName(NamesExt.create("N2")).setMaximalLength(5);
+        builder.addAttribute(String.class).setName(NamesExt.create("N3")).setMaximalLength(6);
         final FeatureType type3 = builder.build();
 
         names.add(name);

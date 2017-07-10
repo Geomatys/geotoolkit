@@ -116,15 +116,12 @@ public class LandsatCoverageStore extends AbstractCoverageStore {
         origin                  = metadataParser.getPath().getParent();
         final String sceneName  = getSceneName();
 
-        final LandsatCoverageResource reflectiveRef = new LandsatCoverageResource(this, NamesExt.create(getDefaultNamespace(),
-                                                                                    sceneName+"-"+REFLECTIVE_LABEL), origin, metadataParser);
+        final LandsatCoverageResource reflectiveRef = new LandsatCoverageResource(this, NamesExt.create(sceneName+"-"+REFLECTIVE_LABEL), origin, metadataParser);
         root.addResource(reflectiveRef);
-        final LandsatCoverageResource panchroRef    = new LandsatCoverageResource(this, NamesExt.create(getDefaultNamespace(),
-                                                                                    sceneName+"-"+PANCHROMATIC_LABEL), origin, metadataParser);
+        final LandsatCoverageResource panchroRef    = new LandsatCoverageResource(this, NamesExt.create(sceneName+"-"+PANCHROMATIC_LABEL), origin, metadataParser);
         root.addResource(panchroRef);
 
-        final LandsatCoverageResource thermicRef    = new LandsatCoverageResource(this, NamesExt.create(getDefaultNamespace(),
-                                                                                   sceneName+"-"+THERMAL_LABEL), origin, metadataParser);
+        final LandsatCoverageResource thermicRef    = new LandsatCoverageResource(this, NamesExt.create(sceneName+"-"+THERMAL_LABEL), origin, metadataParser);
         root.addResource(thermicRef);
     }
 

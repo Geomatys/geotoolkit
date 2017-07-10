@@ -132,7 +132,7 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("ShapefileParameters").createGroup(
-                IDENTIFIER, PATH,NAMESPACE,MEMORY_MAPPED,CREATE_SPATIAL_INDEX,DBFCHARSET,LOAD_QIX);
+                IDENTIFIER, PATH,MEMORY_MAPPED,CREATE_SPATIAL_INDEX,DBFCHARSET,LOAD_QIX);
 
     @Override
     public Identification getIdentification() {
@@ -208,7 +208,6 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
 
         final URI uri = (URI) params.parameter(PATH.getName().toString()).getValue();
         Boolean isMemoryMapped = (Boolean) params.parameter(MEMORY_MAPPED.getName().toString()).getValue();
-        final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
         Charset dbfCharset = (Charset) params.parameter(DBFCHARSET.getName().toString()).getValue();
         Boolean isCreateSpatialIndex = (Boolean) params.parameter(CREATE_SPATIAL_INDEX.getName().toString()).getValue();
 
@@ -257,11 +256,11 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
 
         try {
             if (createIndex) {
-                return new IndexedShapefileFeatureStore(uri, namespace, useMemoryMappedBuffer, createIndex, IndexType.QIX, dbfCharset);
+                return new IndexedShapefileFeatureStore(uri, useMemoryMappedBuffer, createIndex, IndexType.QIX, dbfCharset);
             } else if (treeIndex != IndexType.NONE) {
-                return new IndexedShapefileFeatureStore(uri, namespace, useMemoryMappedBuffer, false, treeIndex, dbfCharset);
+                return new IndexedShapefileFeatureStore(uri, useMemoryMappedBuffer, false, treeIndex, dbfCharset);
             } else {
-                return new ShapefileFeatureStore(uri, namespace, useMemoryMappedBuffer, dbfCharset);
+                return new ShapefileFeatureStore(uri, useMemoryMappedBuffer, dbfCharset);
             }
         } catch (MalformedURLException mue) {
             throw new DataStoreException("Url for shapefile malformed: " + uri, mue);
@@ -275,7 +274,6 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
     public ShapefileFeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         final URI uri = (URI) params.parameter(PATH.getName().toString()).getValue();
         Boolean isMemoryMapped = (Boolean) params.parameter(MEMORY_MAPPED.getName().toString()).getValue();
-        final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
         Charset dbfCharset = (Charset) params.parameter(DBFCHARSET.getName().toString()).getValue();
         Boolean isCreateSpatialIndex = (Boolean) params.parameter(CREATE_SPATIAL_INDEX.getName().toString()).getValue();
 
@@ -307,9 +305,9 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
 
         try {
             if (createIndex) {
-                return new IndexedShapefileFeatureStore(uri, namespace, useMemoryMappedBuffer, true, IndexType.QIX, dbfCharset);
+                return new IndexedShapefileFeatureStore(uri, useMemoryMappedBuffer, true, IndexType.QIX, dbfCharset);
             } else {
-                return new ShapefileFeatureStore(uri, namespace, useMemoryMappedBuffer, dbfCharset);
+                return new ShapefileFeatureStore(uri, useMemoryMappedBuffer, dbfCharset);
             }
         } catch (MalformedURLException mue) {
             throw new DataStoreException("Uri for shapefile malformed: " + uri, mue);

@@ -30,7 +30,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.test.TestData;
 
 import org.junit.Before;
@@ -80,22 +79,6 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
     private ShapefileFeatureStore testCreateDataStore(final boolean createIndex)
             throws Exception {
         return testCreateDataStore(true, createIndex);
-    }
-
-    @Test
-    public void testNamespace() throws Exception {
-        ShapefileFeatureStoreFactory factory = new ShapefileFeatureStoreFactory();
-        Map map = new HashMap();
-        String namespace = "http://jesse.com";
-        map.put(ShapefileFeatureStoreFactory.NAMESPACE.getName().toString(), namespace);
-        map.put(ShapefileFeatureStoreFactory.PATH.getName().toString(), ShapeTestData
-                .url(IndexedShapefileDataStoreTest.STATE_POP));
-
-        FeatureStore store = (FeatureStore) factory.open(map);
-        String typeName = IndexedShapefileDataStoreTest.STATE_POP.substring(
-                IndexedShapefileDataStoreTest.STATE_POP.indexOf('/') + 1,
-                IndexedShapefileDataStoreTest.STATE_POP.lastIndexOf('.'));
-        assertEquals("http://jesse.com", NamesExt.getNamespace(store.getFeatureType(typeName).getName()));
     }
 
     private ShapefileFeatureStore testCreateDataStore(final boolean newDS,

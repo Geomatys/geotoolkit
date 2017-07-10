@@ -37,13 +37,4 @@ public abstract class AbstractCoverageStoreFactory extends AbstractDataStoreFact
             .setRemarks(Bundle.formatInternational(Bundle.Keys.paramIdentifierRemarks))
             .setRequired(true)
             .create(String.class, null);
-
-    /** parameter for namespace of the coveragestore */
-    public static final ParameterDescriptor<String> NAMESPACE = new ParameterBuilder()
-            .addName("namespace")
-            .addName(Bundle.formatInternational(Bundle.Keys.paramNamespaceAlias))
-            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramNamespaceRemarks))
-            .setRequired(false)
-            .create(String.class, null);
-
 }

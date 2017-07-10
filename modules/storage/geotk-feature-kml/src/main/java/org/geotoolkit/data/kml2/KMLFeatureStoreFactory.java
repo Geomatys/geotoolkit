@@ -55,7 +55,7 @@ public class KMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("KMLParameters").createGroup(
-                IDENTIFIER, PATH,NAMESPACE);
+                IDENTIFIER, PATH);
 
     @Override
     public Identification getIdentification() {

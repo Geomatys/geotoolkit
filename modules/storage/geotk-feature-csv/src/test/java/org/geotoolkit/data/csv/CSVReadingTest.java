@@ -20,8 +20,8 @@ package org.geotoolkit.data.csv;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-
 import java.io.File;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -54,33 +54,29 @@ import org.opengis.filter.Filter;
 public class CSVReadingTest extends AbstractReadingTests{
 
     private final CSVFeatureStore store;
-    private final Set<GenericName> names = new HashSet<GenericName>();
-    private final List<ExpectedResult> expecteds = new ArrayList<ExpectedResult>();
+    private final Set<GenericName> names = new HashSet<>();
+    private final List<ExpectedResult> expecteds = new ArrayList<>();
 
-    public CSVReadingTest() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException, IOException{
-
+    public CSVReadingTest() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException, IOException {
         final File file = File.createTempFile("temp2", "csv");
         file.deleteOnExit();
-        store = new CSVFeatureStore(file, "http://test.com",';');
+        store = new CSVFeatureStore(file, ';');
 
         final GeometryFactory gf = new GeometryFactory();
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
-        final String namespace = "http://test.com";
-
-        GenericName name = NamesExt.create("http://test.com", "TestSchema3");
+        GenericName name = NamesExt.create("TestSchema3");
         builder.setName(name);
         builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
-        builder.addAttribute(Geometry.class).setName(namespace, "geometry").setCRS(CRS.forCode("EPSG:27582"));
-        builder.addAttribute(String.class).setName(namespace, "stringProp");
-        builder.addAttribute(Integer.class).setName(namespace, "intProp");
-        builder.addAttribute(Double.class).setName(namespace, "doubleProp");
+        builder.addAttribute(Geometry.class).setName("geometry").setCRS(CRS.forCode("EPSG:27582"));
+        builder.addAttribute(String.class).setName("stringProp");
+        builder.addAttribute(Integer.class).setName("intProp");
+        builder.addAttribute(Double.class).setName("doubleProp");
         final FeatureType type3 = builder.build();
         store.createFeatureType(type3);
 
-        //create a few features
-        FeatureWriter writer = store.getFeatureWriter(QueryBuilder.filtered(name.toString(),Filter.EXCLUDE));
-        try{
+        try( //create a few features
+            FeatureWriter writer = store.getFeatureWriter(QueryBuilder.filtered(name.toString(),Filter.EXCLUDE))) {
             Feature f = writer.next();
             f.setPropertyValue("geometry", gf.createPoint(new Coordinate(10, 11)));
             f.setPropertyValue("stringProp", "hop1");
@@ -94,10 +90,6 @@ public class CSVReadingTest extends AbstractReadingTests{
             f.setPropertyValue("intProp", 18);
             f.setPropertyValue("doubleProp", 412.10);
             writer.write();
-
-
-        }finally{
-            writer.close();
         }
 
         GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:27582"));
@@ -122,5 +114,4 @@ public class CSVReadingTest extends AbstractReadingTests{
     protected List<ExpectedResult> getReaderTests() {
         return expecteds;
     }
-
 }

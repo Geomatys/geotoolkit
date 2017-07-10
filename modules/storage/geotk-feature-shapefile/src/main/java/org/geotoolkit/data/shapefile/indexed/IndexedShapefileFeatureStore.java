@@ -107,18 +107,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      */
     public IndexedShapefileFeatureStore(final URI uri)
             throws MalformedURLException,DataStoreException {
-        this(uri, null, false, true, IndexType.QIX,null);
-    }
-
-    /**
-     * Creates a new instance of ShapefileDataStore.
-     *
-     * @param uri The URL of the shp file to use for this DataSource.
-     * @param namespace DOCUMENT ME!
-     */
-    public IndexedShapefileFeatureStore(final URI uri, final String namespace)
-            throws MalformedURLException,DataStoreException {
-        this(uri, namespace, false, true, IndexType.QIX,null);
+        this(uri, false, true, IndexType.QIX,null);
     }
 
     /**
@@ -130,14 +119,13 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      */
     public IndexedShapefileFeatureStore(final URI uri, final boolean useMemoryMappedBuffer,
             final boolean createIndex) throws MalformedURLException,DataStoreException {
-        this(uri, null, useMemoryMappedBuffer, createIndex, IndexType.QIX,null);
+        this(uri, useMemoryMappedBuffer, createIndex, IndexType.QIX,null);
     }
 
     /**
      * Creates a new instance of ShapefileDataStore.
      *
      * @param uri The URL of the shp file to use for this DataSource.
-     * @param namespace DOCUMENT ME!
      * @param useMemoryMappedBuffer enable/disable memory mapping of files
      * @param createIndex enable/disable automatic index creation if needed
      * @param treeType The type of index used
@@ -145,10 +133,10 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      *
      * @throws MalformedURLException
      */
-    public IndexedShapefileFeatureStore(final URI uri, final String namespace, final boolean useMemoryMappedBuffer,
+    public IndexedShapefileFeatureStore(final URI uri, final boolean useMemoryMappedBuffer,
             final boolean createIndex, final IndexType treeType, final Charset dbfCharset)
             throws MalformedURLException,DataStoreException {
-        super(uri, namespace, useMemoryMappedBuffer, dbfCharset);
+        super(uri, useMemoryMappedBuffer, dbfCharset);
 
         this.treeType = treeType;
         this.useIndex = treeType != IndexType.NONE;

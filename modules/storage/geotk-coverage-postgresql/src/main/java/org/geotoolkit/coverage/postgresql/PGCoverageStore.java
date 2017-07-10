@@ -104,7 +104,6 @@ public class PGCoverageStore extends AbstractCoverageStore{
     @Override
     public Resource getRootResource() throws DataStoreException {
         final DefaultDataSet root = new DefaultDataSet(NamesExt.create("root"));
-        final String ns = getDefaultNamespace();
 
         final StringBuilder query = new StringBuilder();
 
@@ -119,7 +118,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
             stmt = cnx.createStatement();
             rs = stmt.executeQuery(query.toString());
             while (rs.next()){
-                final GenericName n = NamesExt.create(ns, rs.getString(1));
+                final GenericName n = NamesExt.create(rs.getString(1));
                 final CoverageResource ref = createCoverageReference(n, null);
                 root.addResource(ref);
             }
@@ -156,7 +155,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         }
 
         fireCoverageAdded(name);
-        return findResource(NamesExt.create(getDefaultNamespace(), name.tip().toString()));
+        return findResource(NamesExt.create(name.tip().toString()));
     }
 
     @Override

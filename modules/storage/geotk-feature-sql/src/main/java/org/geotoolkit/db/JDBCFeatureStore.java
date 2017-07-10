@@ -97,14 +97,6 @@ public abstract class JDBCFeatureStore extends AbstractFeatureStore{
     }
 
     /**
-     * @return the database default namespace.
-     */
-    @Override
-    public String getDefaultNamespace(){
-        return super.getDefaultNamespace();
-    }
-
-    /**
      * Returns the select query fetch size.
      * Using a high value will require more memory but improve the overall performance.
      * @return int sql fetch size

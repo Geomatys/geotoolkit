@@ -43,15 +43,15 @@ public class BeanFeatureSupplier {
             public boolean test(java.beans.PropertyDescriptor t) {
                 return true;
             }
-        }, namespace, crs, supplier);
+        }, crs, supplier);
     }
 
     public BeanFeatureSupplier(Class bleanClass, String idField, String defaultGeom,
-            Predicate<java.beans.PropertyDescriptor> propertyFilter, String namespace,
+            Predicate<java.beans.PropertyDescriptor> propertyFilter,
             CoordinateReferenceSystem crs, BeanStore.FeatureSupplier supplier) {
         this.beanClass = bleanClass;
         this.crs = crs;
-        this.mapping = new BeanFeature.Mapping(beanClass, namespace, crs, idField, defaultGeom, propertyFilter);
+        this.mapping = new BeanFeature.Mapping(beanClass, crs, idField, defaultGeom, propertyFilter);
         this.supplier = supplier;
     }
 

@@ -669,14 +669,9 @@ public final class DataBaseModel {
      */
     public FeatureType analyzeResult(final ResultSet result, final String name) throws SQLException, DataStoreException{
         final SQLDialect dialect = store.getDialect();
-        final String namespace = store.getDefaultNamespace();
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        if (namespace != null) {
-            ftb.setName(namespace, name);
-        } else {
-            ftb.setName(name);
-        }
+        ftb.setName(name);
 
         final ResultSetMetaData metadata = result.getMetaData();
         final int nbcol = metadata.getColumnCount();
@@ -708,11 +703,11 @@ public final class DataBaseModel {
                 final SingleAttributeTypeBuilder atb = new SingleAttributeTypeBuilder();
 
                 final int nullable = metadata.isNullable(i);
-                atb.setName(ensureGMLNS(namespace, columnLabel));
+                atb.setName(ensureGMLNS(columnLabel));
                 atb.setMinimumOccurs(nullable == metadata.columnNullable ? 0 : 1);
                 atb.setMaximumOccurs(1);
 
-                atb.setName(ensureGMLNS(namespace, columnLabel));
+                atb.setName(ensureGMLNS(columnLabel));
                 Connection cx = null;
                 try {
                     cx = store.getDataSource().getConnection();
@@ -752,13 +747,8 @@ public final class DataBaseModel {
 
                 //fill the namespace--------------------------------------------
                 final FeatureTypeBuilder ftb = new FeatureTypeBuilder(table.tableType.build());
-                final String namespace = store.getDefaultNamespace();
                 final String featureName = ftb.getName().tip().toString();
-                if (namespace != null) {
-                    ftb.setName(namespace, featureName);
-                } else {
-                    ftb.setName(featureName);
-                }
+                ftb.setName(featureName);
 
                 final List<PropertyTypeBuilder> descs = ftb.properties();
 
@@ -766,7 +756,7 @@ public final class DataBaseModel {
                     final AttributeTypeBuilder atb = (AttributeTypeBuilder) descs.get(i);
                     final String name = atb.getName().tip().toString();
 
-                    atb.setName(ensureGMLNS(namespace,name));
+                    atb.setName(ensureGMLNS(name));
 
                     //Set the CRS if it's a geometry
                     final Class binding = atb.getValueClass();
@@ -830,7 +820,7 @@ public final class DataBaseModel {
                 // add 0:1 relations operations --------------------------------
                 for(final RelationMetaModel relation : table.importedKeys){
 
-                    final GenericName relationName = NamesExt.create(store.getDefaultNamespace(), relation.getRelationName());
+                    final GenericName relationName = NamesExt.create(relation.getRelationName());
                     final DBRelationOperation op = new DBRelationOperation(relationName, store, relation, relation.getForeignTable());
                     ftb.addProperty(op);
 
@@ -855,7 +845,7 @@ public final class DataBaseModel {
                     }
 
 
-                    final GenericName relationName = NamesExt.create(store.getDefaultNamespace(), relationNameTip);
+                    final GenericName relationName = NamesExt.create(relationNameTip);
                     final DBRelationOperation op = new DBRelationOperation(relationName, store, relation, relation.getForeignTable());
                     ftb.addProperty(op);
 

@@ -23,7 +23,6 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
-import static org.geotoolkit.data.AbstractFeatureStoreFactory.NAMESPACE;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.createFixedIdentifier;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import static org.geotoolkit.db.AbstractJDBCFeatureStoreFactory.DATABASE;
@@ -66,7 +65,7 @@ public class OracleFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory{
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("OracleParameters").createGroup(
-                IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,TABLE,USER,PASSWORD,NAMESPACE,
+                IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,TABLE,USER,PASSWORD,
                 DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT,SIMPLETYPE);
 
     @Override

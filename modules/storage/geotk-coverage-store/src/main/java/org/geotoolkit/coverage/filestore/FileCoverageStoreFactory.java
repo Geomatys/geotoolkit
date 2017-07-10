@@ -19,7 +19,6 @@ package org.geotoolkit.coverage.filestore;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Collections;
 import java.util.LinkedList;
 import javax.imageio.ImageIO;
@@ -45,7 +44,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
+public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "coverage-file";
@@ -97,7 +96,7 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("FileCoverageStoreParameters").createGroup(
-                IDENTIFIER,PATH,TYPE,NAMESPACE, PATH_SEPARATOR);
+                IDENTIFIER, PATH, TYPE, PATH_SEPARATOR);
 
     @Override
     public Identification getIdentification() {
@@ -151,27 +150,8 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
         return formatsDone;
     }
 
-    /**
-     * Selects the longest format string. If two of them
-     * have the same length, favor the one in upper case.
-     *
-     * @param current    The previous longest format string, or {@code null} if none.
-     * @param candidate  The format string which may be longer than the previous one.
-     * @return The format string which is the longest one up to date.
-     */
-    private static String longest(final String current, final String candidate) {
-        if (current != null) {
-            final int dl = candidate.length() - current.length();
-            if (dl < 0 || (dl == 0 && candidate.compareTo(current) >= 0)) {
-                return current;
-            }
-        }
-        return candidate;
-    }
-
     @Override
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.GRID, true, true, true);
     }
-
 }

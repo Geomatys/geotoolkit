@@ -101,7 +101,7 @@ public class KMLFeatureStore extends AbstractFeatureStore {
     private final URI path;
 
     public KMLFeatureStore(Path path) {
-        this(toParameters(path, "no namespace"));
+        this(toParameters(path));
     }
 
     public KMLFeatureStore(ParameterValueGroup params){
@@ -109,10 +109,9 @@ public class KMLFeatureStore extends AbstractFeatureStore {
         path = Parameters.castOrWrap(params).getValue(KMLFeatureStoreFactory.PATH);
     }
 
-    private static ParameterValueGroup toParameters(final Path f,final String namespace){
+    private static ParameterValueGroup toParameters(final Path f) {
         final Parameters params = Parameters.castOrWrap(KMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
         params.getOrCreate(KMLFeatureStoreFactory.PATH).setValue(f.toUri());
-        params.getOrCreate(KMLFeatureStoreFactory.NAMESPACE).setValue(namespace);
         return params;
     }
 

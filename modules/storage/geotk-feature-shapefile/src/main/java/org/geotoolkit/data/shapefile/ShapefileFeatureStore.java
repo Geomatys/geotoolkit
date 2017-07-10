@@ -52,6 +52,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.metadata.iso.citation.Citations;
+import org.apache.sis.parameter.Parameters;
 
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.AbstractFeatureStore;
@@ -74,7 +75,6 @@ import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.data.FeatureStreams;
@@ -125,22 +125,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * @throws java.net.MalformedURLException If we fail parsing input URI
      */
     public ShapefileFeatureStore(final URI uri) throws DataStoreException,MalformedURLException {
-        this(uri, null);
-    }
-
-    /**
-     * this sets the datastore's namespace during construction (so the schema -
-     * FeatureType - will have the correct value) You can call this with
-     * namespace = null, but I suggest you give it an actual namespace.
-     *
-     * @param uri
-     * @param namespace
-     * @throws java.net.MalformedURLException If we fail parsing input URI
-     * @throws org.apache.sis.storage.DataStoreException If input data analysis fails.
-     */
-    public ShapefileFeatureStore(final URI uri, final String namespace)
-            throws DataStoreException,MalformedURLException {
-        this(uri, namespace, false, null);
+        this(uri, false, null);
     }
 
     /**
@@ -149,15 +134,14 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * namespace = null, but I suggest you give it an actual namespace.
      *
      * @param uri
-     * @param namespace
      * @param useMemoryMapped : default is true
      * @param dbfCharset : if null default will be ShapefileDataStore.DEFAULT_STRING_CHARSET
      * @throws java.net.MalformedURLException If we fail parsing input URI
      * @throws org.apache.sis.storage.DataStoreException If input data analysis fails.
      */
-    public ShapefileFeatureStore(final URI uri, final String namespace, final boolean useMemoryMapped,
+    public ShapefileFeatureStore(final URI uri, final boolean useMemoryMapped,
             Charset dbfCharset) throws MalformedURLException, DataStoreException {
-        this(toParameter(uri, namespace, useMemoryMapped, dbfCharset));
+        this(toParameter(uri, useMemoryMapped, dbfCharset));
     }
 
     public ShapefileFeatureStore(final ParameterValueGroup params) throws MalformedURLException, DataStoreException {
@@ -194,14 +178,13 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         this.dbfCharset = dbfCharset;
     }
 
-    private static ParameterValueGroup toParameter(final URI uri, final String namespace,
+    private static ParameterValueGroup toParameter(final URI uri,
             final boolean useMemoryMapped, Charset dbfCharset){
-        final ParameterValueGroup params = ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(ShapefileFeatureStoreFactory.PATH, params).setValue(uri);
-        Parameters.getOrCreate(ShapefileFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
-        Parameters.getOrCreate(ShapefileFeatureStoreFactory.MEMORY_MAPPED, params).setValue(useMemoryMapped);
+        final Parameters params = Parameters.castOrWrap(ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(ShapefileFeatureStoreFactory.PATH).setValue(uri);
+        params.getOrCreate(ShapefileFeatureStoreFactory.MEMORY_MAPPED).setValue(useMemoryMapped);
         if(dbfCharset!=null){
-            Parameters.getOrCreate(ShapefileFeatureStoreFactory.DBFCHARSET, params).setValue(dbfCharset);
+            params.getOrCreate(ShapefileFeatureStoreFactory.DBFCHARSET).setValue(dbfCharset);
         }
         return params;
     }
@@ -230,7 +213,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         if (name != null && schema != null) {
             return;
         }
-        this.schema = buildSchema(getDefaultNamespace());
+        this.schema = buildSchema();
         this.name = schema.getName();
     }
 
@@ -431,7 +414,6 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * existing local resources or throw an IOException if the featurestore is
      * remote.
      *
-     * @param typeName Name to use in this store for the given feature type.
      * @param featureType The desired FeatureType.
      * @throws DataStoreException If the featurestore is remote.
      *
@@ -622,16 +604,13 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * @return The FeatureType that this featurestore contains.
      * @throws IOException If a type by the requested name is not present.
      */
-    private synchronized FeatureType buildSchema(final String namespace) throws DataStoreException {
+    private synchronized FeatureType buildSchema() throws DataStoreException {
 
         //add an identifier field
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         final String name = shpFiles.getTypeName();
-        if (namespace != null) {
-            builder.setName(namespace, name);
-        } else {
-            builder.setName(name);
-        }
+        builder.setName(name);
+
         builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
 
 
@@ -665,13 +644,13 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
 
         try {
             //get the descriptor from shp
-            geomDescriptor = shp.getHeader().createDescriptor(namespace, crs);
+            geomDescriptor = shp.getHeader().createDescriptor(crs);
             builder.addAttribute(geomDescriptor).addRole(AttributeRole.DEFAULT_GEOMETRY);
 
             //get dbf attributes if exist
             if (dbf != null) {
                 final DbaseFileHeader header = dbf.getHeader();
-                for(AttributeType at : header.createDescriptors(namespace)){
+                for(AttributeType at : header.createDescriptors()) {
                     builder.addAttribute(at);
                 }
             }
