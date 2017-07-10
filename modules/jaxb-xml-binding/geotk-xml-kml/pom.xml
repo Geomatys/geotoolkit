@@ -59,6 +59,10 @@
     in the JARs' list that maven will put in the directory "target/binaries".
   -->
   <dependencies>
+    <dependency>
+      <groupId>org.apache.sis.core</groupId>
+      <artifactId>sis-utility</artifactId>
+    </dependency>
   </dependencies>
 
 </project>

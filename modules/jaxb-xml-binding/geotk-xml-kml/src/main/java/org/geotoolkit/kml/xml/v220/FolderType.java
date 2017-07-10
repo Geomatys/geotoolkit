@@ -98,6 +98,7 @@ public class FolderType
      *
      *
      */
+    @Override
     public List<JAXBElement<? extends AbstractFeatureType>> getAbstractFeatureGroup() {
         if (abstractFeatureGroup == null) {
             abstractFeatureGroup = new ArrayList<JAXBElement<? extends AbstractFeatureType>>();
