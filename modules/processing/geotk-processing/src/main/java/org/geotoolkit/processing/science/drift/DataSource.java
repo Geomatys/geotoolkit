@@ -1,5 +1,6 @@
 package org.geotoolkit.processing.science.drift;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -84,13 +85,18 @@ abstract class DataSource {
      * @param cisf          whether the U and V components are in the same files or in two separated files.
      */
     DataSource(final DriftPredictor process, final String cacheSubDir, final String filePattern,
-            final int timeInterval, final boolean cisf)
+            final int timeInterval, final boolean cisf) throws IOException
     {
+        final Path parent = process.configuration().directory;
+        if (!Files.isDirectory(parent)) {
+            throw new FileNotFoundException(parent.toString() + " not found or not a directory.");
+        }
         this.process      = process;
-        this.cacheDir     = process.configuration().directory.resolve(CACHE).resolve(cacheSubDir);
+        this.cacheDir     = parent.resolve(CACHE).resolve(cacheSubDir);
         this.filePattern  = filePattern;
         this.timeInterval = timeInterval;
         componentsInSeparatedFiles = cisf;
+        Files.createDirectories(cacheDir);
     }
 
     /**
@@ -142,7 +148,7 @@ abstract class DataSource {
          *
          * @param path  where to search for the data files.
          */
-        HYCOM(final DriftPredictor process) {
+        HYCOM(final DriftPredictor process) throws IOException {
             super(process, "HYCOM", "glob:*.nc", 24, true);
             downloadPath = process.configuration().hycom_url + "/%d/%s/";
         }
@@ -304,7 +310,7 @@ abstract class DataSource {
          *
          * @param path  where to search for the data files.
          */
-        MeteoFrance(final DriftPredictor process) {
+        MeteoFrance(final DriftPredictor process) throws IOException {
             super(process, "MeteoFrance", "glob:*.tiff", 6, true);
         }
 
@@ -380,7 +386,7 @@ abstract class DataSource {
          *
          * @param path  where to search for the data files.
          */
-        WindSat(final DriftPredictor process) {
+        WindSat(final DriftPredictor process) throws IOException {
             super(process, "WindSat", "glob:*.nc", 24, false);
         }
 

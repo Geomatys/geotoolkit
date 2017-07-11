@@ -254,10 +254,10 @@ public class DriftPredictor extends AbstractProcess {
         coordToGrid.scale(1./gridResolution, 1./gridResolution);
         coordToGrid.translate(-positions[0], -positions[1]);
 
-        current = new DataSource.HYCOM(this);
-        wind = new DataSource.MeteoFrance(this);
         final Path outputPath;
         try {
+            current = new DataSource.HYCOM(this);
+            wind = new DataSource.MeteoFrance(this);
             boolean newDay = false;
             long day = currentTime.getEpochSecond() / (24*60*60);
             while (!currentTime.isAfter(endTime)) {
