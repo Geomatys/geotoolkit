@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStores;
-import org.geotoolkit.io.ContentFormatException;
 import ucar.ma2.Array;
 import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
@@ -222,7 +222,7 @@ abstract class DataSource {
                     length = 1;
                 }
                 if (dimensions.putIfAbsent(name, output.addDimension(null, name, length)) != null) {
-                    throw new ContentFormatException("Duplicated dimension: " + name);
+                    throw new DataStoreException("Duplicated dimension: " + name);
                 }
             }
             final Map<Variable,int[]> variables = new LinkedHashMap<>();
@@ -233,7 +233,7 @@ abstract class DataSource {
                 for (final Dimension dimension : variable.getDimensions()) {
                     final String name = dimension.getShortName();
                     if (!dim.add(dimensions.get(name))) {
-                        throw new ContentFormatException("Duplicated dimension:" + name);
+                        throw new DataStoreException("Duplicated dimension:" + name);
                     }
                     if (name.equals(VARIABLE_TO_TRIM)) {
                         shape[i] = 1;
@@ -245,7 +245,7 @@ abstract class DataSource {
                     output.addVariableAttribute(target, attribute);
                 });
                 if (variables.put(target, shape) != null) {
-                    throw new ContentFormatException("Duplicated variable: " + target);
+                    throw new DataStoreException("Duplicated variable: " + target);
                 }
             }
             output.create();

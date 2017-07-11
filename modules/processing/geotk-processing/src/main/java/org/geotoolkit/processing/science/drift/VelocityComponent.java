@@ -121,7 +121,7 @@ abstract class VelocityComponent {
                 final ArrayFloat.D2 latValues = (ArrayFloat.D2) cs.getLatAxis().read();
                 final int[] shape = lonValues.getShape();
                 if (!Arrays.equals(shape, latValues.getShape())) {
-                    throw new IOException("Inconsistent (longitude, latitude) grid size.");
+                    throw new DataStoreException("Inconsistent (longitude, latitude) grid size.");
                 }
                 width  = shape[1];
                 height = shape[0];

@@ -211,7 +211,7 @@ public class DriftPredictor extends AbstractProcess {
     }
 
     /**
-     * Returns the process configuration. The configuration contains (amont other information)
+     * Returns the process configuration. The configuration contains (among other information)
      * the {@linkplain Configuration#directory root directory} of {@code "config.txt"} file
      * and {@code "cache"} sub-directory.
      */
@@ -306,6 +306,8 @@ public class DriftPredictor extends AbstractProcess {
             } catch (FileNotFoundException e) {
                 progress(e.toString());                 // TODO: should actually be reported as a warning.
                 return false;
+            } catch (IOException e) {
+                throw new CanNotDownloadException(e.getMessage(), this, e);
             }
             wind.deleteOldFiles();
             current.deleteOldFiles();
