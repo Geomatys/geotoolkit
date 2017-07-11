@@ -547,17 +547,17 @@
       <dependency>
         <groupId>org.netbeans.api</groupId>
         <artifactId>org-netbeans-swing-outline</artifactId>
-        <version>RELEASE73</version>
+        <version>RELEASE802</version>
       </dependency>
       <dependency>
         <groupId>org.netbeans.api</groupId>
         <artifactId>org-openide-awt</artifactId>
-        <version>RELEASE73</version>
+        <version>RELEASE802</version>
       </dependency>
       <dependency>
         <groupId>org.netbeans.api</groupId>
         <artifactId>org-netbeans-api-visual</artifactId>
-        <version>RELEASE73</version>
+        <version>RELEASE802</version>
       </dependency>
       <dependency>
         <groupId>net.java.dev.timingframework</groupId>

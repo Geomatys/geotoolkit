@@ -21,7 +21,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,28 +37,18 @@ import org.opengis.feature.FeatureType;
  */
 class GeoJSONFileWriter extends GeoJSONReader implements FeatureWriter {
 
-    private ReadWriteLock tmpLock;
     private final GeoJSONWriter writer;
 
     private Feature edited = null;
     private Feature lastWritten = null;
     private Path tmpFile;
 
-
-    @Deprecated
-    public GeoJSONFileWriter(File jsonFile, FeatureType featureType, ReadWriteLock rwLock, ReadWriteLock tmpLock,
-                             final String encoding, final int doubleAccuracy) throws DataStoreException {
-        this(jsonFile.toPath(), featureType, rwLock, tmpLock, encoding, doubleAccuracy);
-    }
-
-    public GeoJSONFileWriter(Path jsonFile, FeatureType featureType, ReadWriteLock rwLock, ReadWriteLock tmpLock,
+    public GeoJSONFileWriter(Path jsonFile, FeatureType featureType, ReadWriteLock rwLock,
                              final String encoding, final int doubleAccuracy) throws DataStoreException {
         super(jsonFile, featureType, rwLock);
-        this.tmpLock = tmpLock;
 
         JsonEncoding jsonEncoding = JsonEncoding.UTF8;
 
-        tmpLock.writeLock().lock();
         try {
             final String name = featureType.getName().tip().toString();
             tmpFile = jsonFile.resolveSibling(name + ".wjson");
@@ -107,16 +96,14 @@ class GeoJSONFileWriter extends GeoJSONReader implements FeatureWriter {
 
     @Override
     public void close() {
-
-        try {
-            writer.writeEndFeatureCollection();
-            writer.flush();
-            writer.close();
+        try (final GeoJSONWriter toClose = writer) {
+            toClose.writeEndFeatureCollection();
+            toClose.flush();
         } catch (IOException ex) {
             throw new FeatureStoreRuntimeException(ex);
+        } finally {
+            super.close();
         }
-
-        super.close();
 
         //flip files
         rwlock.writeLock().lock();
@@ -124,9 +111,8 @@ class GeoJSONFileWriter extends GeoJSONReader implements FeatureWriter {
             Files.move(tmpFile, jsonFile, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ex) {
             throw new FeatureStoreRuntimeException(ex);
+        } finally {
+            rwlock.writeLock().unlock();
         }
-        rwlock.writeLock().unlock();
-
-        tmpLock.writeLock().unlock();
     }
 }

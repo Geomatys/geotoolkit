@@ -9,10 +9,8 @@ import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
-import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -34,6 +32,12 @@ import org.apache.sis.util.Utilities;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.TimeZone;
+import org.apache.sis.io.wkt.WKTFormat;
+import org.apache.sis.metadata.iso.citation.Citations;
+import org.apache.sis.referencing.IdentifiedObjects;
 import static org.geotoolkit.data.geojson.utils.GeoJSONMembres.*;
 import static org.geotoolkit.data.geojson.utils.GeoJSONTypes.*;
 
@@ -62,7 +66,7 @@ public final class GeoJSONUtils extends Static {
         }
 
         if (wkt != null) {
-            WKTFormat format = new WKTFormat();
+            WKTFormat format = new WKTFormat(Locale.ENGLISH, TimeZone.getTimeZone("GMT"));
             if (crsType.equals(CRS_TYPE_OGCWKT)) {
                 format.setConvention(Convention.WKT1);
             } else if (crsType.equals(CRS_TYPE_ESRIWKT)) {
@@ -89,20 +93,21 @@ public final class GeoJSONUtils extends Static {
      * @param crs
      * @return
      */
-    public static String toURN(CoordinateReferenceSystem crs) {
+    public static Optional<String> toURN(CoordinateReferenceSystem crs) {
         ArgumentChecks.ensureNonNull("crs", crs);
 
+        String urn = null;
         try {
             if (Utilities.equalsIgnoreMetadata(crs, CommonCRS.WGS84.normalizedGeographic())) {
-                return "urn:ogc:def:crs:OGC:1.3:CRS84";
+                crs = CommonCRS.WGS84.normalizedGeographic();
             }
 
-            int code = IdentifiedObjects.lookupEpsgCode(crs, true);
-            return "urn:ogc:def:crs:EPSG::"+code;
+            urn = IdentifiedObjects.lookupURN(crs, Citations.EPSG);
         } catch (FactoryException e) {
             GeoJSONParser.LOGGER.log(Level.WARNING, "Unable to extract epsg code from given CRS "+crs, e);
         }
-        return null;
+
+        return Optional.ofNullable(urn);
     }
 
     /**

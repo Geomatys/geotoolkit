@@ -66,7 +66,7 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("GeoJSONParameters").createGroup(
-                IDENTIFIER, PATH, NAMESPACE, COORDINATE_ACCURACY);
+                IDENTIFIER, PATH, COORDINATE_ACCURACY);
 
     @Override
     public Identification getIdentification() {

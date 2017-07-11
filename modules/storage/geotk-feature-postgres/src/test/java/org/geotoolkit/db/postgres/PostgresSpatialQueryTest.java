@@ -23,10 +23,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.version.VersionControl;
@@ -43,6 +41,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores;
 import static org.junit.Assert.*;
 import org.opengis.feature.FeatureType;
@@ -63,17 +62,17 @@ public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
 
     /**
      * <p>Find JDBC connection parameters in specified file at
-     * "/home/.geotoolkit.org/test-pgfeature.properties".<br/>
+     * "/home/.geotoolkit.org/test-pgfeature.properties".<br>
      * If properties file doesn't find all tests are skipped.</p>
      *
-     * <p>To lunch tests user should create file with this architecture<br/>
-     * for example : <br/>
-     * database   = junit    (table name)<br/>
-     * port       = 5432     (port number)<br/>
-     * schema     = public   (schema name)<br/>
-     * user       = postgres (user login)<br/>
-     * password   = postgres (user password)<br/>
-     * simpletype = false <br/>
+     * <p>To lunch tests user should create file with this architecture<br>
+     * for example : <br>
+     * database   = junit    (table name)<br>
+     * port       = 5432     (port number)<br>
+     * schema     = public   (schema name)<br>
+     * user       = postgres (user login)<br>
+     * password   = postgres (user password)<br>
+     * simpletype = false <br>
      * namespace  = no namespace</p>
      * @throws IOException
      */
@@ -85,8 +84,7 @@ public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
         Assume.assumeTrue(f.exists());
         final Properties properties = new Properties();
         properties.load(new FileInputStream(f));
-        properties.put(AbstractFeatureStoreFactory.NAMESPACE.getName().getCode(), "no namespace");
-        params = FeatureExt.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
+        params = Parameters.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
     }
 
     private void reload(boolean simpleType) throws DataStoreException, VersioningException {

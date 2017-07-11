@@ -62,7 +62,7 @@ public class MySQLFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory {
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("MySQLParameters").createGroup(
-                IDENTIFIER,HOST,PORT,DATABASE,TABLE,USER,PASSWORD,NAMESPACE,
+                IDENTIFIER,HOST,PORT,DATABASE,TABLE,USER,PASSWORD,
                 DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT,SIMPLETYPE);
 
     @Override

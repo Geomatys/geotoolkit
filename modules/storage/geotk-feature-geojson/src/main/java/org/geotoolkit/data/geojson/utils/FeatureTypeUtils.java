@@ -38,7 +38,6 @@ import java.util.logging.Logger;
 import static java.nio.file.StandardOpenOption.*;
 import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.apache.sis.feature.DefaultAssociationRole;
-import org.apache.sis.feature.DefaultAttributeType;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.feature.builder.AttributeRole;
@@ -293,8 +292,10 @@ public final class FeatureTypeUtils extends Static {
         writer.writeStringField(JAVA_TYPE, geometryType.getValueClass().getCanonicalName());
         CoordinateReferenceSystem crs = FeatureExt.getCRS(geometryType);
         if (crs != null) {
-            String crsCode = GeoJSONUtils.toURN(crs);
-            writer.writeStringField(CRS, crsCode);
+            final Optional<String> urn = GeoJSONUtils.toURN(crs);
+            if (urn.isPresent()) {
+                writer.writeStringField(CRS, urn.get());
+            }
         }
         writer.writeStringField(GEOMETRY_ATT_NAME, geometryType.getName().tip().toString());
         writer.writeEndObject();

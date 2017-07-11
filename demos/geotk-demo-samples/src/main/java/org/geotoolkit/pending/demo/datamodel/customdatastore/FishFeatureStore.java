@@ -45,7 +45,7 @@ public class FishFeatureStore extends AbstractFeatureStore{
         storage = new File(uri);
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(getDefaultNamespace(),"Fish");
+        ftb.setName("Fish");
         ftb.addAttribute(String.class).setName("name");
         ftb.addAttribute(Integer.class).setName("length");
         ftb.addAttribute(Point.class).setName("position").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);

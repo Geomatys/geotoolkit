@@ -89,16 +89,15 @@ public class ShapefileHeader {
 
     /**
      *
-     * @param namespace
      * @return AttributeDescriptor mapping this header definition
      */
-    public AttributeType createDescriptor(final String namespace, final CoordinateReferenceSystem crs){
+    public AttributeType createDescriptor(final CoordinateReferenceSystem crs){
         final SingleAttributeTypeBuilder buildAtt = new SingleAttributeTypeBuilder();
         final Class<?> geometryClass = getShapeType().bestJTSClass();
-        buildAtt.setName(namespace, Classes.getShortName(geometryClass));
+        buildAtt.setName(Classes.getShortName(geometryClass));
         buildAtt.setCRS(crs);
         buildAtt.setValueClass(geometryClass);
-        buildAtt.setName(namespace, "the_geom");
+        buildAtt.setName("the_geom");
         return buildAtt.build();
     }
 

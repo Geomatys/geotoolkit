@@ -32,6 +32,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
@@ -42,7 +43,6 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataFileStore;
 import org.opengis.feature.Feature;
@@ -74,12 +74,12 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
     /**
      * @deprecated use {@link #DbaseFileFeatureStore(Path, String)} instead
      */
-    public DbaseFileFeatureStore(final File f, final String namespace) throws MalformedURLException, DataStoreException{
-        this(f.toPath(), namespace);
+    public DbaseFileFeatureStore(final File f) throws MalformedURLException, DataStoreException{
+        this(f.toPath());
     }
 
-    public DbaseFileFeatureStore(final Path f, final String namespace) throws MalformedURLException, DataStoreException{
-        this(toParameters(f, namespace));
+    public DbaseFileFeatureStore(final Path f) throws MalformedURLException, DataStoreException{
+        this(toParameters(f));
     }
 
     public DbaseFileFeatureStore(final ParameterValueGroup params) throws DataStoreException{
@@ -97,11 +97,9 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
         this.name = path.substring(slash, dot);
     }
 
-    private static ParameterValueGroup toParameters(final Path f,
-            final String namespace) throws MalformedURLException{
-        final ParameterValueGroup params = DbaseFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(DbaseFeatureStoreFactory.PATH, params).setValue(f.toUri());
-        Parameters.getOrCreate(DbaseFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
+    private static ParameterValueGroup toParameters(final Path f) throws MalformedURLException{
+        final Parameters params = Parameters.castOrWrap(DbaseFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(DbaseFeatureStoreFactory.PATH).setValue(f.toUri());
         return params;
     }
 
@@ -134,15 +132,11 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
         try (SeekableByteChannel sbc = Files.newByteChannel(file, StandardOpenOption.READ)){
             final DbaseFileReader reader = new DbaseFileReader(sbc, true, null);
             final DbaseFileHeader header = reader.getHeader();
-            final String defaultNs = getDefaultNamespace();
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            if (defaultNs != null) {
-                ftb.setName(defaultNs, name);
-            } else {
-                ftb.setName(name);
-            }
+            ftb.setName(name);
+
             ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY).setMinimumOccurs(1).setMaximumOccurs(1);
-            final List<AttributeType> fields = header.createDescriptors(defaultNs);
+            final List<AttributeType> fields = header.createDescriptors();
             for(AttributeType at : fields){
                 ftb.addAttribute(at);
             }

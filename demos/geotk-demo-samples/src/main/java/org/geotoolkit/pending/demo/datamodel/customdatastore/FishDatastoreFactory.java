@@ -5,7 +5,6 @@ package org.geotoolkit.pending.demo.datamodel.customdatastore;
 import java.util.Collections;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
-import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
@@ -41,7 +40,7 @@ public class FishDatastoreFactory extends AbstractFileFeatureStoreFactory{
             .create(String.class, NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName("FishParameters").createGroup(IDENTIFIER, PATH,NAMESPACE);
+            new ParameterBuilder().addName("FishParameters").createGroup(IDENTIFIER, PATH);
 
     @Override
     public Identification getIdentification() {

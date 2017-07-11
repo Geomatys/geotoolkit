@@ -214,7 +214,6 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
             //this way we are sure that the file is an image.
             reader = createReader(candidate, spi);
 
-            final String nmsp = getDefaultNamespace();
             final String filename = createLayerName(candidate);
 
             final int nbImage = reader.getNumImages(true);
@@ -226,7 +225,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
                 final List<String> imageNames = nis.getImageNames();
                 for (int i = 0, n = imageNames.size(); i < n; i++) {
                     final String in = imageNames.get(i);
-                    final GenericName name = NamesExt.create(nmsp, filename + "." + in);
+                    final GenericName name = NamesExt.create(filename + "." + in);
                     final FileCoverageResource fcr = new FileCoverageResource(this, name, candidate, i);
                     rootNode.addResource(fcr);
                 }
@@ -236,9 +235,9 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
                     final GenericName name;
                     if (nbImage == 1) {
                         //don't number it if there is only one
-                        name = NamesExt.create(nmsp, filename);
+                        name = NamesExt.create(filename);
                     } else {
-                        name = NamesExt.create(nmsp, filename + "." + i);
+                        name = NamesExt.create(filename + "." + i);
                     }
 
                     final FileCoverageResource fcr = new FileCoverageResource(this, name, candidate, i);

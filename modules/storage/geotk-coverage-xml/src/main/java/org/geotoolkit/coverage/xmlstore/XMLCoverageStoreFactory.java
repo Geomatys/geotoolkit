@@ -78,7 +78,7 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("XMLCoverageStoreParameters").createGroup(
-                IDENTIFIER, PATH, NAMESPACE, CACHE_TILE_STATE);
+                IDENTIFIER, PATH, CACHE_TILE_STATE);
 
     @Override
     public Identification getIdentification() {

@@ -22,8 +22,10 @@ import java.util.Locale;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
+import java.util.Optional;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.util.Utilities;
 import static org.geotoolkit.data.geojson.utils.GeoJSONMembres.*;
 import static org.geotoolkit.data.geojson.utils.GeoJSONTypes.*;
 import static org.geotoolkit.data.geojson.binding.GeoJSONGeometry.*;
@@ -105,9 +107,12 @@ class GeoJSONWriter implements Closeable, Flushable {
         writer.writeStringField(TYPE, FEATURE_COLLECTION);
         writeNewLine();
 
-        if (crs != null && org.geotoolkit.referencing.CRS.equalsApproximatively(crs, CommonCRS.defaultGeographic())) {
-            writeCRS(crs);
-            writeNewLine();
+        if (crs != null && !Utilities.equalsApproximatively(crs, CommonCRS.defaultGeographic())) {
+            if (writeCRS(crs)) {
+                writeNewLine();
+            } else {
+                throw new IOException("Cannot determine a valid URN for "+crs.getName());
+            }
         }
 
         if (envelope != null) {
@@ -169,8 +174,10 @@ class GeoJSONWriter implements Closeable, Flushable {
         //write CRS
         if (single) {
             final CoordinateReferenceSystem crs = FeatureExt.getCRS(feature.getType());
-            if (crs != null && !org.geotoolkit.referencing.CRS.equalsApproximatively(crs, CommonCRS.defaultGeographic())) {
-                writeCRS(crs);
+            if (crs != null && !Utilities.equalsApproximatively(crs, CommonCRS.defaultGeographic())) {
+                if (!writeCRS(crs)) {
+                    throw new IOException("Cannot determine a valid URN for "+crs.getName());
+                }
             }
         }
 
@@ -197,13 +204,18 @@ class GeoJSONWriter implements Closeable, Flushable {
      * @param crs
      * @throws IOException
      */
-    private void writeCRS(CoordinateReferenceSystem crs) throws IOException {
-        writer.writeObjectFieldStart(CRS);
-        writer.writeStringField(TYPE, CRS_NAME);
-        writer.writeObjectFieldStart(PROPERTIES);
-        writer.writeStringField(NAME, GeoJSONUtils.toURN(crs));
-        writer.writeEndObject();//close properties
-        writer.writeEndObject();//close crs
+    private boolean writeCRS(CoordinateReferenceSystem crs) throws IOException {
+        final Optional<String> urn = GeoJSONUtils.toURN(crs);
+        if (urn.isPresent()) {
+            writer.writeObjectFieldStart(CRS);
+            writer.writeStringField(TYPE, CRS_NAME);
+            writer.writeObjectFieldStart(PROPERTIES);
+            writer.writeStringField(NAME, urn.get());
+            writer.writeEndObject();//close properties
+            writer.writeEndObject();//close crs
+        }
+
+        return urn.isPresent();
     }
 
     /**

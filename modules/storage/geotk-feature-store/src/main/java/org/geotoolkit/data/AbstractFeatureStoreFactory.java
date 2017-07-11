@@ -25,10 +25,10 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.io.Serializable;
 import java.util.Map;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.AbstractDataStoreFactory;
 import org.geotoolkit.storage.DataStore;
 import org.opengis.parameter.GeneralParameterValue;
@@ -69,17 +69,6 @@ public abstract class AbstractFeatureStoreFactory extends AbstractDataStoreFacto
             .create(String.class, null);
 
     /**
-     * Namespace, Optional.
-     * Default namespace used for feature type.
-     */
-    public static final ParameterDescriptor<String> NAMESPACE = new ParameterBuilder()
-            .addName("namespace")
-            .addName(Bundle.formatInternational(Bundle.Keys.paramNamespaceAlias))
-            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramNamespaceRemarks))
-            .setRequired(false)
-            .create(String.class, null);
-
-    /**
      * {@inheritDoc }
      *
      * @return a display name derivate from class name.
@@ -111,7 +100,7 @@ public abstract class AbstractFeatureStoreFactory extends AbstractDataStoreFacto
     public DataStore open(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
 
-        final ParameterValueGroup prm = FeatureExt.toParameter(params,getParametersDescriptor());
+        final ParameterValueGroup prm = Parameters.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return null;
         }
@@ -129,7 +118,7 @@ public abstract class AbstractFeatureStoreFactory extends AbstractDataStoreFacto
     public DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
 
-        final ParameterValueGroup prm = FeatureExt.toParameter(params,getParametersDescriptor());
+        final ParameterValueGroup prm = Parameters.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return null;
         }
@@ -162,7 +151,7 @@ public abstract class AbstractFeatureStoreFactory extends AbstractDataStoreFacto
 
 
 
-        final ParameterValueGroup prm = FeatureExt.toParameter(params,getParametersDescriptor());
+        final ParameterValueGroup prm = Parameters.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return false;
         }

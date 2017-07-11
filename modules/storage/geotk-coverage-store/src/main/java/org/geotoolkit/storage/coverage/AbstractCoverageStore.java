@@ -41,7 +41,6 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.data.GenericNameIndex;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.storage.DataSet;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.Resource;
@@ -53,7 +52,6 @@ import org.geotoolkit.version.VersioningException;
 import org.opengis.util.GenericName;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
-import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -66,10 +64,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public abstract class AbstractCoverageStore extends DataStore implements CoverageStore {
 
-    protected static final String NO_NAMESPACE = "no namespace";
-
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
-    private final String defaultNamespace;
     protected final ParameterValueGroup parameters;
     protected final Set<StorageListener> storeListeners = new HashSet<>();
 
@@ -77,17 +72,6 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
     protected AbstractCoverageStore(final ParameterValueGroup params) {
         this.parameters = params;
-
-        ParameterValue pv = ParametersExt.getValue(params, AbstractCoverageStoreFactory.NAMESPACE.getName().getCode());
-        String namespace = (pv==null) ? null : pv.stringValue();
-
-        if (namespace == null) {
-            defaultNamespace = "http://geotoolkit.org";
-        } else if (namespace.equals(NO_NAMESPACE)) {
-            defaultNamespace = null;
-        } else {
-            defaultNamespace = namespace;
-        }
 
         //redirect warning listener events to default logger
         listeners.getLogger().setUseParentHandlers(false);
@@ -226,10 +210,6 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
     @Override
     public ParameterValueGroup getConfiguration() {
         return parameters;
-    }
-
-    protected String getDefaultNamespace() {
-        return defaultNamespace;
     }
 
     protected Logger getLogger(){
@@ -426,12 +406,14 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         }
     }
 
+    @Override
     public void addStorageListener(final StorageListener listener) {
         synchronized (storeListeners) {
             storeListeners.add(listener);
         }
     }
 
+    @Override
     public void removeStorageListener(final StorageListener listener) {
         synchronized (storeListeners) {
             storeListeners.remove(listener);

@@ -42,7 +42,6 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
@@ -61,7 +60,6 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
-import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.MetadataBuilder;
@@ -94,32 +92,13 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
 
     protected static final String NO_NAMESPACE = "no namespace";
 
-    private final Logger Logger = Logging.getLogger("org.geotoolkit.data");
+    private static final Logger logger = Logging.getLogger("org.geotoolkit.data");
 
     protected final ParameterValueGroup parameters;
-    protected String defaultNamespace;
     protected final Set<StorageListener> listeners = new HashSet<>();
 
     protected AbstractFeatureStore(final ParameterValueGroup params) {
-
         this.parameters = params;
-        String namespace = null;
-        if(params != null){
-            try{
-                namespace = (String)Parameters.getOrCreate(AbstractFeatureStoreFactory.NAMESPACE, params).getValue();
-            }catch(ParameterNotFoundException ex){
-                //ignore this error, factory might not necessarily have a namespace parameter
-                //example : gpx
-            }
-        }
-
-        if (namespace == null) {
-            defaultNamespace = "http://geotoolkit.org";
-        } else if (namespace.equals(NO_NAMESPACE)) {
-            defaultNamespace = null;
-        } else {
-            defaultNamespace = namespace;
-        }
     }
 
     @Override
@@ -127,12 +106,8 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         return parameters;
     }
 
-    protected String getDefaultNamespace() {
-        return defaultNamespace;
-    }
-
     protected Logger getLogger(){
-        return Logger;
+        return logger;
     }
 
     @Override
@@ -583,13 +558,13 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         }
     }
 
-    public static GenericName ensureGMLNS(final String namespace, final String local){
+    public static GenericName ensureGMLNS(final String local){
         if(local.equals(GML_NAME)){
             return NamesExt.create(GML_311_NAMESPACE, GML_NAME);
         }else if(local.equals(GML_DESCRIPTION)){
             return NamesExt.create(GML_311_NAMESPACE, GML_DESCRIPTION);
         }else{
-            return NamesExt.create(namespace, local);
+            return NamesExt.create(local);
         }
     }
 

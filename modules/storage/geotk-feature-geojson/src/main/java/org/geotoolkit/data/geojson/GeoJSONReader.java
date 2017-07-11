@@ -31,13 +31,11 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.ObjectConverter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.file.Path;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +78,6 @@ public class GeoJSONReader implements FeatureReader {
         this.jsonFile = jsonFile;
         this.featureType = featureType;
         this.rwlock = rwLock;
-        rwlock.readLock().lock();
     }
 
     @Override
@@ -110,29 +107,34 @@ public class GeoJSONReader implements FeatureReader {
 
         //first call
         if (toRead) {
+            rwlock.readLock().lock();
             try {
                 jsonObj = GeoJSONParser.parse(jsonFile, true);
             } catch (IOException e) {
                 throw new FeatureStoreRuntimeException(e);
             } finally {
                 toRead = false;
+                rwlock.readLock().unlock();
             }
         }
 
-        current = null;
-
-        if (jsonObj instanceof GeoJSONFeatureCollection && ((GeoJSONFeatureCollection)jsonObj).hasNext()) {
-            GeoJSONFeature feature = ((GeoJSONFeatureCollection)jsonObj).next();
-            String id = "id-"+currentFeatureIdx;
-            if (feature.getId() != null) {
-                id = feature.getId();
+        if (jsonObj instanceof GeoJSONFeatureCollection) {
+            final GeoJSONFeatureCollection fc = (GeoJSONFeatureCollection) jsonObj;
+            rwlock.readLock().lock();
+            try {
+                if ((fc).hasNext()) {
+                    GeoJSONFeature feature = (fc).next();
+                    String id = "id-" + currentFeatureIdx;
+                    if (feature.getId() != null) {
+                        id = feature.getId();
+                    }
+                    current = toFeature(feature, id);
+                    currentFeatureIdx++;
+                }
+            } finally {
+                rwlock.readLock().unlock();
             }
-            current = toFeature(feature, id);
-            currentFeatureIdx++;
-            return;
-        }
-
-        if (jsonObj instanceof GeoJSONFeature) {
+        } else if (jsonObj instanceof GeoJSONFeature) {
             GeoJSONFeature feature = (GeoJSONFeature)jsonObj;
             String id = "id-0";
             if (feature.getId() != null) {
@@ -140,10 +142,7 @@ public class GeoJSONReader implements FeatureReader {
             }
             current = toFeature(feature, id);
             jsonObj = null;
-            return;
-        }
-
-        if (jsonObj instanceof GeoJSONGeometry) {
+        } else if (jsonObj instanceof GeoJSONGeometry) {
             current = toFeature((GeoJSONGeometry)jsonObj, "id-0");
             jsonObj = null;
         }
@@ -327,14 +326,11 @@ public class GeoJSONReader implements FeatureReader {
     public void close() {
         try {
             // If our object is a feature collection, it could get an opened connexion to a file. We must dispose it.
-            if (jsonObj instanceof Closeable) {
-                ((Closeable) jsonObj).close();
+            if (jsonObj instanceof AutoCloseable) {
+                ((AutoCloseable) jsonObj).close();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            rwlock.readLock().unlock();
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Cannot close a read resource.", e);
         }
     }
-
 }

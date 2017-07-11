@@ -621,7 +621,7 @@ public class DbaseFileHeader {
      *
      * @return List of AttributDescriptor
      */
-    public List<AttributeType> createDescriptors(final String namespace){
+    public List<AttributeType> createDescriptors() {
         final int nbFields = getNumFields();
 
         final SingleAttributeTypeBuilder atb = new SingleAttributeTypeBuilder();
@@ -633,7 +633,7 @@ public class DbaseFileHeader {
             final int length = getFieldLength(i);
 
             atb.reset();
-            atb.setName(namespace, name);
+            atb.setName(name);
             atb.setValueClass(attributeClass);
             atb.setLength(length);
 

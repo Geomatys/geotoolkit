@@ -35,8 +35,8 @@ import org.apache.sis.storage.DataStoreException;
 public class CSVModelTest extends AbstractModelTests{
 
     private final CSVFeatureStore store;
-    private final List<Class> geometries = new ArrayList<Class>();
-    private final List<Class> attributs = new ArrayList<Class>();
+    private final List<Class> geometries = new ArrayList<>();
+    private final List<Class> attributs = new ArrayList<>();
 
     public CSVModelTest() throws IOException, MalformedURLException, DataStoreException{
         geometries.add(Geometry.class);
@@ -46,7 +46,7 @@ public class CSVModelTest extends AbstractModelTests{
 
         File f = File.createTempFile("temp", "csv");
         f.deleteOnExit();
-        store = new CSVFeatureStore(f, "http://geotoolkit.org", ';');
+        store = new CSVFeatureStore(f, ';');
     }
 
     @Override

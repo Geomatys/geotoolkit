@@ -26,7 +26,6 @@ import org.apache.sis.parameter.ParameterBuilder;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageType;
@@ -39,15 +38,12 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.storage.DefaultDataSet;
 import org.geotoolkit.storage.Resource;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.GenericName;
-import org.opengis.util.NameFactory;
-import org.opengis.util.NameSpace;
 import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
@@ -60,13 +56,13 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
     /**
      * Dummy parameter descriptor group.
      */
-    private static final ParameterDescriptorGroup desc = new ParameterBuilder().addName("Unamed").createGroup(AbstractCoverageStoreFactory.NAMESPACE);
+    private static final ParameterDescriptorGroup EMPTY_DESCRIPTOR = new ParameterBuilder().addName("Unamed").createGroup();
 
     private final DefaultDataSet rootNode = new DefaultDataSet(NamesExt.create("root"));
 
 
     public MemoryCoverageStore() {
-        super(desc.createValue());
+        super(EMPTY_DESCRIPTOR.createValue());
     }
 
     public MemoryCoverageStore(final GridCoverage2D gridCov) {
@@ -76,7 +72,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
     public MemoryCoverageStore(final GridCoverage2D gridCov, final String name) {
         this();
         try {
-            final CoverageResource ref = create(NamesExt.create(getDefaultNamespace(), name));
+            final CoverageResource ref = create(NamesExt.create(name));
             final GridCoverageWriter writer = ref.acquireWriter();
             writer.write(gridCov, null);
             ref.recycle(writer);
@@ -171,12 +167,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
 
         @Override
         public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-            final NameFactory dnf = FactoryFinder.getNameFactory(null);
-            final String nameSpace = "http://geotoolkit.org" ;
-            final NameSpace ns = dnf.createNameSpace(dnf.createGenericName(null, nameSpace), null);
-            final String covName = ref.getName().tip().toString();
-            final GenericName gn = dnf.createLocalName(ns, covName);
-            return Collections.singletonList(gn);
+            return Collections.singletonList(ref.getName());
         }
     }
 

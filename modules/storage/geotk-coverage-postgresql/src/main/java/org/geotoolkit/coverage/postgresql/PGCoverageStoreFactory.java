@@ -167,7 +167,7 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("PGRasterParameters").createGroup(
-                IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,USER,PASSWORD,NAMESPACE,
+                IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,USER,PASSWORD,
                 DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT);
 
     @Override
