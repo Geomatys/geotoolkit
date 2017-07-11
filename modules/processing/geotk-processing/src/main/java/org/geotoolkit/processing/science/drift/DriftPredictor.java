@@ -259,9 +259,11 @@ public class DriftPredictor extends AbstractProcess {
             current = new DataSource.HYCOM(this);
             wind = new DataSource.MeteoFrance(this);
             boolean newDay = false;
+            boolean hasData = false;
             long day = currentTime.getEpochSecond() / (24*60*60);
             while (!currentTime.isAfter(endTime)) {
                 if (!advance()) break;
+                hasData = true;
                 final long d = currentTime.getEpochSecond() / (24*60*60);
                 newDay = (d != day);
                 if (newDay) {
@@ -269,11 +271,16 @@ public class DriftPredictor extends AbstractProcess {
                     snapshot();
                 }
             }
+            if (!hasData) {
+                throw new UnavailableDataException("No data available at " + startTime, this, null);
+            }
             if (!newDay) {
                 snapshot();
             }
             trajectory();
             outputPath = writeNetcdf();
+        } catch (ProcessException e) {
+            throw e;
         } catch (Exception e) {
             throw new ProcessException("Can not compute drift at " + currentTime, this, e);
         }
@@ -501,7 +508,7 @@ public class DriftPredictor extends AbstractProcess {
         outputs.add(new Output(trajectoryPropabilities, configuration.gridWidth, configuration.gridHeight));
     }
 
-    final Path writeNetcdf() throws Exception {
+    private Path writeNetcdf() throws Exception {
         final Path outputFile = Files.createTempFile("drift", ".nc");
         final AffineTransform gridToCoord = coordToGrid.createInverse();
         Output.write(outputs, modelCRS, startTime.toEpochMilli(),

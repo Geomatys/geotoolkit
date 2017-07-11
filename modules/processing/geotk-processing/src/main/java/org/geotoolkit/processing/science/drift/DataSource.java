@@ -345,8 +345,14 @@ abstract class DataSource {
                                                     parameter, time, time.plus(timeInterval/2, ChronoUnit.HOURS));
                 target = download(source, filename);
                 if (!"image/tiff".equals(DataStores.probeContentType(target))) {
-                    Files.delete(target);                       // May be the XML that describe an exception.
-                    throw new IOException("Not a TIFF file.");
+                    /*
+                     * The file that we downloaded may be the XML that describe an exception.
+                     * Handle this exception as if the file were not found. This is necessary
+                     * for allowing DriftPredictor.advance() to catch this exception and stop
+                     * cleanly.
+                     */
+                    Files.delete(target);
+                    throw new FileNotFoundException("Not a TIFF file.");
                 }
             }
             return target;
