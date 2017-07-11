@@ -62,7 +62,7 @@ public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory impl
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName("MIFParameters").createGroup(IDENTIFIER, PATH,NAMESPACE);
+            new ParameterBuilder().addName("MIFParameters").createGroup(IDENTIFIER, PATH);
 
     @Override
     public CharSequence getDisplayName() {
@@ -97,7 +97,6 @@ public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory impl
     public MIFFeatureStore open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
         final URI filePath = (URI) params.parameter(PATH.getName().toString()).getValue();
-        final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
 
         // Try to open a stream to ensure we've got an existing file.
         try (InputStream stream = IOUtilities.open(filePath)){
@@ -106,7 +105,7 @@ public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory impl
             throw new DataStoreException("Can't reach data pointed by given URI.", ex);
         }
 
-        return new MIFFeatureStore(filePath, namespace);
+        return new MIFFeatureStore(filePath);
     }
 
     /**
@@ -116,9 +115,8 @@ public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory impl
     public MIFFeatureStore create(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
         final URI filePath = (URI) params.parameter(PATH.getName().toString()).getValue();
-        final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
 
-        return new MIFFeatureStore(filePath, namespace);
+        return new MIFFeatureStore(filePath);
     }
 
     @Override

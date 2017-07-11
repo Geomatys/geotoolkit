@@ -52,7 +52,7 @@ public abstract class AbstractCoverageStoreEventTest extends org.geotoolkit.test
 
         assertEquals(0, store.getNames().size());
 
-        final GenericName name = NamesExt.create(store.getDefaultNamespace(), "test");
+        final GenericName name = NamesExt.create("test");
         final CoverageResource ref = store.create(name);
         assertNotNull(ref);
         assertEquals(1, storelistener.numManageEvent);

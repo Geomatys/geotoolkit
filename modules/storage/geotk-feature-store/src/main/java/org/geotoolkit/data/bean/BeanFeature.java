@@ -95,8 +95,8 @@ public class BeanFeature extends AbstractFeature{
         public final Map<String,java.beans.PropertyDescriptor> accessors = new HashMap<>();
         public java.beans.PropertyDescriptor idAccessor;
 
-        public Mapping(Class clazz, String namespace, CoordinateReferenceSystem crs, String idField) {
-            this(clazz,namespace,crs,idField,null, new Predicate<java.beans.PropertyDescriptor>() {
+        public Mapping(Class clazz, CoordinateReferenceSystem crs, String idField) {
+            this(clazz,crs,idField,null, new Predicate<java.beans.PropertyDescriptor>() {
                 @Override
                 public boolean test(java.beans.PropertyDescriptor t) {
                     return true;
@@ -104,15 +104,12 @@ public class BeanFeature extends AbstractFeature{
             });
         }
 
-        public Mapping(Class clazz, String namespace, CoordinateReferenceSystem crs, String idField, String defaultGeom, Predicate<java.beans.PropertyDescriptor> filter) {
+        public Mapping(Class clazz, CoordinateReferenceSystem crs, String idField, String defaultGeom, Predicate<java.beans.PropertyDescriptor> filter) {
             this.idField = idField;
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
             final String name = clazz.getSimpleName();
-            if (namespace != null) {
-                ftb.setName(namespace, name);
-            } else {
-                ftb.setName(name);
-            }
+            ftb.setName(name);
+
             try {
                 for (java.beans.PropertyDescriptor pd : Introspector.getBeanInfo(clazz).getPropertyDescriptors()) {
 

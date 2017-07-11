@@ -69,7 +69,7 @@ public class LandsatStoreFactory extends AbstractCoverageStoreFactory{
                       .create(URI.class, null);
 
         PARAMETERS_DESCRIPTOR = builder.addName("SpotParameters")
-                      .createGroup(IDENTIFIER, PATH, NAMESPACE);
+                      .createGroup(IDENTIFIER, PATH);
     }
 
 

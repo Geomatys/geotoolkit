@@ -39,7 +39,7 @@ public class FidIndexerTest extends FIDTestCase {
         final AccessManager locker = shpFiles.createLocker();
 
         final IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(backshp
-                .toURI(), null, false, false, IndexType.NONE,null);
+                .toURI(), false, false, IndexType.NONE,null);
 
         long features = ds.getCount(QueryBuilder.all(ds.getNames().iterator().next()));
 

@@ -44,9 +44,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataFileStore;
 
@@ -68,6 +66,8 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.IdentifiedObjects;
 
 /**
  * CSV DataStore, holds a single feature type which name match the file name.
@@ -100,27 +100,27 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     /**
      * @deprecated use {@link #CSVFeatureStore(Path, String, char)} instead
      */
-    public CSVFeatureStore(final File f, final String namespace, final char separator) throws MalformedURLException, DataStoreException{
-        this(f.toPath(),namespace,separator,null);
+    public CSVFeatureStore(final File f, final char separator) throws MalformedURLException, DataStoreException{
+        this(f.toPath(),separator,null);
     }
 
     /**
      * @deprecated use {@link #CSVFeatureStore(Path, String, char, FeatureType)} instead
      */
-    public CSVFeatureStore(final File f, final String namespace, final char separator, FeatureType ft) throws MalformedURLException, DataStoreException{
-        this(f.toPath(), namespace, separator, ft);
+    public CSVFeatureStore(final File f, final char separator, FeatureType ft) throws MalformedURLException, DataStoreException{
+        this(f.toPath(), separator, ft);
     }
 
-    public CSVFeatureStore(final Path f, final String namespace, final char separator) throws MalformedURLException, DataStoreException{
-        this(f,namespace,separator,null);
+    public CSVFeatureStore(final Path f, final char separator) throws MalformedURLException, DataStoreException{
+        this(f,separator,null);
     }
 
     /**
      * Constructor forcing feature type, if the CSV does not have any header.
      *
      */
-    public CSVFeatureStore(final Path f, final String namespace, final char separator, FeatureType ft) throws MalformedURLException, DataStoreException{
-        this(toParameters(f, namespace, separator));
+    public CSVFeatureStore(final Path f, final char separator, FeatureType ft) throws MalformedURLException, DataStoreException{
+        this(toParameters(f, separator));
         if(ft!=null){
             this.featureType = ft;
             name = featureType.getName().tip().toString();
@@ -148,12 +148,10 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     }
 
-    private static ParameterValueGroup toParameters(final Path f,
-            final String namespace, final Character separator) throws MalformedURLException{
-        final ParameterValueGroup params = CSVFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(CSVFeatureStoreFactory.PATH, params).setValue(f.toUri());
-        Parameters.getOrCreate(CSVFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
-        Parameters.getOrCreate(CSVFeatureStoreFactory.SEPARATOR, params).setValue(separator);
+    private static ParameterValueGroup toParameters(final Path f, final Character separator) throws MalformedURLException {
+        final Parameters params = Parameters.castOrWrap(CSVFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(CSVFeatureStoreFactory.PATH).setValue(f.toUri());
+        params.getOrCreate(CSVFeatureStoreFactory.SEPARATOR).setValue(separator);
         return params;
     }
 
@@ -198,12 +196,8 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         int unnamed = 0;
         final String[] fields = line.split("" + separator, -1);
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        final String ns = getDefaultNamespace();
-        if (ns != null) {
-            ftb.setName(ns, name);
-        } else {
-            ftb.setName(name);
-        }
+        ftb.setName(name);
+
         ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
 
         GenericName defaultGeometryFieldName = null;
@@ -225,7 +219,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             AttributeTypeBuilder atb = ftb.addAttribute(Object.class);
             // Check non-empty parenthesis
             if (dep > 0 && fin > dep + 1) {
-                fieldName = NamesExt.create(ns, field.substring(0, dep));
+                fieldName = NamesExt.create(field.substring(0, dep));
                 //there is a defined type
                 final String name = field.substring(dep + 1, fin);
                 /* Check if it's a java lang class (number, string, etc.). If it's a fail, maybe it's just
@@ -267,7 +261,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                     }
                 }
             } else {
-                fieldName = NamesExt.create(getDefaultNamespace(), field);
+                fieldName = NamesExt.create(field);
                 type = String.class;
             }
 
@@ -304,11 +298,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             }else if(clazz.equals(Boolean.class)){
                 sb.append("boolean");
             }else if(Geometry.class.isAssignableFrom(clazz)){
-                try {
-                    sb.append(IdentifiedObjects.lookupIdentifier(FeatureExt.getCRS(desc), true));
-                } catch (FactoryException ex) {
-                    throw new DataStoreException(ex);
-                }
+                sb.append(IdentifiedObjects.toString(IdentifiedObjects.getIdentifier(FeatureExt.getCRS(desc), null)));
             }else{
                 //unsuported, output it as text
                 sb.append("String");
@@ -320,8 +310,6 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     private void writeType(final FeatureType type) throws DataStoreException {
-        defaultNamespace = NamesExt.getNamespace(type.getName());
-        Parameters.getOrCreate(CSVFeatureStoreFactory.NAMESPACE, parameters).setValue(defaultNamespace);
         name = type.getName().tip().toString();
 
         fileLock.writeLock().lock();

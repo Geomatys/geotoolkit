@@ -58,7 +58,7 @@ public class DbaseFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("DBFParameters").createGroup(
-                IDENTIFIER, PATH,NAMESPACE);
+                IDENTIFIER, PATH);
 
     /**
      * {@inheritDoc}

@@ -30,7 +30,6 @@ import org.geotoolkit.data.geojson.utils.GeoJSONUtils;
 import org.geotoolkit.data.query.*;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.parameter.Parameters;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
@@ -55,6 +54,7 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -79,14 +79,14 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
     private Integer coordAccuracy;
     private boolean isLocal = true;
 
-    public GeoJSONFeatureStore(final Path path, final String namespace, Integer coordAccuracy)
+    public GeoJSONFeatureStore(final Path path, Integer coordAccuracy)
             throws DataStoreException {
-        this(toParameter(path.toUri(), namespace, coordAccuracy));
+        this(toParameter(path.toUri(), coordAccuracy));
     }
 
-    public GeoJSONFeatureStore(final URI uri, final String namespace, Integer coordAccuracy)
+    public GeoJSONFeatureStore(final URI uri, Integer coordAccuracy)
             throws DataStoreException {
-        this(toParameter(uri, namespace, coordAccuracy));
+        this(toParameter(uri, coordAccuracy));
     }
 
     public GeoJSONFeatureStore (final ParameterValueGroup params) throws DataStoreException {
@@ -117,11 +117,10 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
         }
     }
 
-    private static ParameterValueGroup toParameter(final URI uri, final String namespace, Integer coordAccuracy){
-        final ParameterValueGroup params = GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(GeoJSONFeatureStoreFactory.PATH, params).setValue(uri);
-        Parameters.getOrCreate(GeoJSONFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
-        Parameters.getOrCreate(GeoJSONFeatureStoreFactory.COORDINATE_ACCURACY, params).setValue(coordAccuracy);
+    private static ParameterValueGroup toParameter(final URI uri, Integer coordAccuracy){
+        final Parameters params = Parameters.castOrWrap(GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(GeoJSONFeatureStoreFactory.PATH).setValue(uri);
+        params.getOrCreate(GeoJSONFeatureStoreFactory.COORDINATE_ACCURACY).setValue(coordAccuracy);
         return params;
     }
 

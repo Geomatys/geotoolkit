@@ -27,11 +27,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.data.FeatureReader;
@@ -69,6 +66,7 @@ import org.opengis.feature.PropertyType;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
+import org.junit.Assume;
 
 /**
  *
@@ -89,7 +87,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         assertNotNull(query);
 
         URL url = ShapeTestData.url(resource);
-        ShapefileFeatureStore s = new ShapefileFeatureStore(url.toURI(),null,true,null);
+        ShapefileFeatureStore s = new ShapefileFeatureStore(url.toURI(), true, null);
 
         final QueryBuilder builder = new QueryBuilder(query);
         builder.setTypeName(s.getName());
@@ -101,7 +99,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     protected FeatureCollection loadFeatures(final String resource, final Charset charset, final Query q) throws Exception {
 
         URL url = ShapeTestData.url(resource);
-        ShapefileFeatureStore s = new ShapefileFeatureStore(url.toURI(), null, false, charset);
+        ShapefileFeatureStore s = new ShapefileFeatureStore(url.toURI(), false, charset);
 
         if(q == null){
             return s.createSession(true).getFeatureCollection(QueryBuilder.all(s.getName()));
@@ -138,29 +136,15 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
             Feature first = firstFeature(fc);
             String s = (String) first.getPropertyValue("NAME");
             assertEquals("\u9ed1\u9f99\u6c5f\u7701", s);
-        } catch (UnsupportedCharsetException notInstalledInJRE){
+        } catch (UnsupportedCharsetException notInstalledInJRE) {
                 // this just means you have not installed
                 // chinese support into your JRE
                 // (as such it represents a bad configuration
                 //  rather than a test failure)
                 // we only wanted to ensure that if you have Chinese support
                 // available - GeotoolKit can use it
-            }
+                Assume.assumeNoException(notInstalledInJRE);
         }
-
-    @Test
-    public void testNamespace() throws Exception {
-        ShapefileFeatureStoreFactory factory = new ShapefileFeatureStoreFactory();
-        Map map = new HashMap();
-
-        String namespace = "http://jesse.com";
-
-        map.put(ShapefileFeatureStoreFactory.NAMESPACE.getName().toString(), namespace);
-        map.put(ShapefileFeatureStoreFactory.PATH.getName().toString(), ShapeTestData.url(STATE_POP));
-
-        FeatureStore store = (FeatureStore) factory.open(map);
-        FeatureType schema = store.getFeatureType(store.getNames().iterator().next().toString());
-        assertEquals(namespace, NamesExt.getNamespace(schema.getName()));
     }
 
     @Test
@@ -476,17 +460,14 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         ShapefileFeatureStore s = new ShapefileFeatureStore(tmpFile.toURI());
         writeFeatures(s, features);
 
-        // read them back
-        FeatureReader reader = s.getFeatureReader(QueryBuilder.all(type.getName()));
-        try {
+        try ( // read them back
+                FeatureReader reader = s.getFeatureReader(QueryBuilder.all(type.getName()))) {
             Feature f = reader.next();
 
             assertEquals("big decimal", bigDecimal.doubleValue(), ((Number) f
                     .getPropertyValue("b")).doubleValue(), 0.00001);
             assertEquals("big integer", bigInteger.longValue(), ((Number) f
                     .getPropertyValue("c")).longValue(), 0.00001);
-        } finally {
-            reader.close();
         }
     }
 
@@ -500,18 +481,14 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
             Geometry geom = readGeometry(wktResources[i]);
             String testName = wktResources[i];
             try {
-
                 runWriteReadTest(geom, false);
                 make3D(geom);
                 testName += "3d";
                 runWriteReadTest(geom, true);
             } catch (Throwable e) {
-                e.printStackTrace();
                 throw new Exception("Error in " + testName, e);
             }
-
         }
-
     }
 
     @Test
@@ -523,15 +500,12 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         ShapefileFeatureStore store = (ShapefileFeatureStore) new ShapefileFeatureStoreFactory()
                 .createDataStore(TestData.url(AbstractTestCaseSupport.class, STREAM).toURI());
         int count = 0;
-        FeatureReader reader = store.getFeatureReader(QueryBuilder.all(store.getNames().iterator().next()));
-        try {
+        try (FeatureReader reader = store.getFeatureReader(QueryBuilder.all(store.getNames().iterator().next()))) {
             while (reader.hasNext()) {
                 count++;
                 reader.next();
             }
             assertEquals(count, store.getCount(QueryBuilder.all(store.getNames().iterator().next())));
-        } finally {
-            reader.close();
         }
     }
 
@@ -707,15 +681,15 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         final FeatureType sft = fc.iterator().next().getType();
 
         s.createFeatureType(sft);
-        FeatureWriter fw = s.getFeatureWriter(QueryBuilder.all(sft.getName().toString()));
-        Iterator<Feature> it = fc.iterator();
-        while (it.hasNext()) {
-            Feature feature = it.next();
-            Feature newFeature = fw.next();
-            FeatureExt.copy(feature, newFeature, false);
-            fw.write();
+        try (FeatureWriter fw = s.getFeatureWriter(QueryBuilder.all(sft.getName().toString()))) {
+            Iterator<Feature> it = fc.iterator();
+            while (it.hasNext()) {
+                Feature feature = it.next();
+                Feature newFeature = fw.next();
+                FeatureExt.copy(feature, newFeature, false);
+                fw.write();
+            }
         }
-        fw.close();
     }
 
     private void runWriteReadTest(final Geometry geom, final boolean d3) throws Exception {
@@ -745,33 +719,33 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         // read features
         shapeFeatureStore = new ShapefileFeatureStore(tmpFile.toURI());
         FeatureCollection fc = loadFeatures(shapeFeatureStore);
-        FeatureIterator fci = fc.iterator();
         // verify
-        while (fci.hasNext()) {
-            Feature f = fci.next();
-            Geometry fromShape = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(f);
+        try (FeatureIterator fci = fc.iterator()) {
+            while (fci.hasNext()) {
+                Feature f = fci.next();
+                Geometry fromShape = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(f);
 
-            if (fromShape instanceof GeometryCollection) {
-                if (!(geom instanceof GeometryCollection)) {
-                    fromShape = ((GeometryCollection) fromShape)
-                            .getGeometryN(0);
+                if (fromShape instanceof GeometryCollection) {
+                    if (!(geom instanceof GeometryCollection)) {
+                        fromShape = ((GeometryCollection) fromShape)
+                                .getGeometryN(0);
+                    }
                 }
-            }
-            try {
-                Coordinate[] c1 = geom.getCoordinates();
-                Coordinate[] c2 = fromShape.getCoordinates();
-                for (int cc = 0, ccc = c1.length; cc < ccc; cc++) {
-                    if (d3)
-                        assertTrue(c1[cc].equals3D(c2[cc]));
-                    else
-                        assertTrue(c1[cc].equals2D(c2[cc]));
+                try {
+                    Coordinate[] c1 = geom.getCoordinates();
+                    Coordinate[] c2 = fromShape.getCoordinates();
+                    for (int cc = 0, ccc = c1.length; cc < ccc; cc++) {
+                        if (d3)
+                            assertTrue(c1[cc].equals3D(c2[cc]));
+                        else
+                            assertTrue(c1[cc].equals2D(c2[cc]));
+                    }
+                } catch (Throwable t) {
+                    fail("Bogus : " + Arrays.asList(geom.getCoordinates()) + " : "
+                            + Arrays.asList(fromShape.getCoordinates()));
                 }
-            } catch (Throwable t) {
-                fail("Bogus : " + Arrays.asList(geom.getCoordinates()) + " : "
-                        + Arrays.asList(fromShape.getCoordinates()));
             }
         }
-        fci.close();
         tmpFile.delete();
     }
 

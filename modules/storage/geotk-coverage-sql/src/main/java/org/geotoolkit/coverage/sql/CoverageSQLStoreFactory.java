@@ -19,12 +19,10 @@ package org.geotoolkit.coverage.sql;
 import java.util.Collections;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -109,7 +107,7 @@ public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory {
 
 
     public static final ParameterDescriptorGroup PARAMETERS = new ParameterBuilder().addName("CoverageDatabase").createGroup(
-            IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,USER,PASSWORD,ROOTDIRECTORY,NAMESPACE);
+            IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,USER,PASSWORD,ROOTDIRECTORY);
 
     @Override
     public Identification getIdentification() {

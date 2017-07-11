@@ -19,7 +19,6 @@ package org.geotoolkit.coverage.memory;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.storage.DefaultDataSet;
@@ -40,7 +39,7 @@ public class MPCoverageStore extends AbstractCoverageStore {
     /**
      * Dummy parameter descriptor group.
      */
-    private static final ParameterDescriptorGroup DESC = new ParameterBuilder().addName("Unamed").createGroup(AbstractCoverageStoreFactory.NAMESPACE);
+    private static final ParameterDescriptorGroup DESC = new ParameterBuilder().addName("Unamed").createGroup();
 
     public MPCoverageStore(){
         super(DESC.createValue());

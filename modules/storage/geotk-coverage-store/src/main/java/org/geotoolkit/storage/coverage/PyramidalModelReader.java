@@ -51,9 +51,7 @@ import org.geotoolkit.coverage.grid.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -73,8 +71,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
-import org.opengis.util.NameFactory;
-import org.opengis.util.NameSpace;
 import org.apache.sis.util.Utilities;
 
 /**
@@ -119,12 +115,7 @@ public class PyramidalModelReader extends GridCoverageReader{
 
     @Override
     public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-        final NameFactory dnf = FactoryFinder.getNameFactory(null);
-        final String nss = NamesExt.getNamespace(getInput().getName());
-        final String nameSpace = nss != null ? nss : "http://geotoolkit.org" ;
-        final NameSpace ns = dnf.createNameSpace(dnf.createGenericName(null, nameSpace), null);
-        final GenericName gn = dnf.createLocalName(ns, getInput().getName().tip().toString());
-        return Collections.singletonList(gn);
+        return Collections.singletonList(getInput().getName());
     }
 
     @Override
