@@ -73,7 +73,6 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -268,7 +267,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         if (isReadEmbeddedFeatureType() && schemaLocation != null) {
             final JAXBFeatureTypeReader featureTypeReader = new JAXBFeatureTypeReader();
             schemaLocation = schemaLocation.trim();
-            final String[] urls = schemaLocation.split(" ");
+            final String[] urls = schemaLocation.split("\\s+");
             for (int i = 0; i < urls.length; i++) {
                 final String namespace = urls[i];
                 if (!(namespace.equalsIgnoreCase("http://www.opengis.net/gml") || namespace.equalsIgnoreCase("http://www.opengis.net/wfs")) && i + 1 < urls.length) {
