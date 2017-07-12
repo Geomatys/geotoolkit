@@ -457,6 +457,26 @@ public class XMLBindingTest {
 
         assertEquals(mul, obj);
 
+        p = IOUtilities.getResourceAsPath("org/geotoolkit/test/Multiplicity2.xml");
+        expected = IOUtilities.toString(p);
+
+
+        range = new MultiplicityRangeImpl(1, new Integer(15));
+        mul = new MultiplicityImpl(range);
+
+
+        sw = new StringWriter();
+        marshaller.marshal(mul, sw);
+        result = sw.toString();
+
+        comparator = new XMLComparator(expected, result);
+        comparator.compare();
+
+
+        obj = unmarshaller.unmarshal(new StringReader(expected));
+
+        assertEquals(mul, obj);
+
     }
 
 }

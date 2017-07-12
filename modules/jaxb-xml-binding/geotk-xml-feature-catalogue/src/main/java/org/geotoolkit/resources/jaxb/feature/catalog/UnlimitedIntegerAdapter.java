@@ -70,8 +70,14 @@ public class UnlimitedIntegerAdapter extends XmlAdapter<UnlimitedIntegerAdapter,
      * Sets the value for the {@link StringImpl}. This method is systematically
      * called at unmarshalling-time by JAXB.
      */
-    public void setMultiplicity(final Integer multiplicity) {
-        this.multiplicity = multiplicity;
+    public void setMultiplicity(final XmlUnlimitedInteger multiplicity) {
+        if (multiplicity != null) {
+            if (multiplicity.isInfinite()) {
+                this.multiplicity = Integer.MAX_VALUE;
+            } else {
+                this.multiplicity = multiplicity.getValue();
+            }
+        }
     }
 
     /**
@@ -100,8 +106,4 @@ public class UnlimitedIntegerAdapter extends XmlAdapter<UnlimitedIntegerAdapter,
     public UnlimitedIntegerAdapter marshal(final Integer value) throws Exception {
         return new UnlimitedIntegerAdapter(value);
     }
-
-
-
-
 }
