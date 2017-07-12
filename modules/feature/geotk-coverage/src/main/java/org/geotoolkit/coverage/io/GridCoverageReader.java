@@ -27,11 +27,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.io.IOException;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.measure.Unit;
 import javax.measure.IncommensurableException;
+import javax.measure.Quantity;
+import org.apache.sis.internal.storage.MetadataBuilder;
 
 import org.w3c.dom.Node;
 
@@ -53,10 +59,15 @@ import org.apache.sis.util.ArraysExt;
 
 import org.apache.sis.measure.Units;
 import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.metadata.AbstractMetadata;
+import org.apache.sis.metadata.MetadataCopier;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.metadata.ModifiableMetadata;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.measure.Measure;
 import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.metadata.iso.identification.DefaultResolution;
@@ -69,7 +80,11 @@ import org.geotoolkit.resources.Vocabulary;
 
 import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import org.apache.sis.util.iso.Names;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
+import org.opengis.metadata.content.AttributeGroup;
+import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.referencing.operation.MathTransform1D;
 
 
 /**
@@ -389,12 +404,14 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
             final int numCoverages = coverageNames.size();
             for (int i=0; i<numCoverages; i++) {
                 if (computeContent || computeSpatial) {
+
+                    CoverageDescription ci = null;
                     final SpatialMetadata coverageMetadata = getCoverageMetadata(i);
                     if (coverageMetadata != null) {
                         if (computeContent) {
-                            final ImageDescription description = coverageMetadata.getInstanceForType(ImageDescription.class);
-                            if (description != null) {
-                                contentInfo.add(description);
+                            ci = coverageMetadata.getInstanceForType(ImageDescription.class);
+                            if (ci != null) {
+                                contentInfo.add(ci);
                             }
                         }
                         if (computeSpatial) {
@@ -404,6 +421,47 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
                             }
                         }
                     }
+
+                    /*
+                     * Get or create the content info to store sample dimensions
+                     */
+                    if (ci==null) {
+                        //get or create it
+                        if (contentInfo.size()>i) {
+                            CoverageDescription cd = contentInfo.stream().skip(i-1).limit(1)
+                                    .filter(CoverageDescription.class::isInstance)
+                                    .map(CoverageDescription.class::cast)
+                                    .findFirst().orElse(null);
+                            if (cd instanceof ModifiableMetadata && ((ModifiableMetadata)cd).isModifiable()) {
+                                ci = cd;
+                            }
+                        } else {
+                            ci = new DefaultCoverageDescription();
+                            contentInfo.add(ci);
+                        }
+                    }
+
+                    if (ci!=null && ci.getAttributeGroups()!=null && ci.getAttributeGroups().isEmpty() && ci.getDimensions().isEmpty()) {
+                        final List<GridSampleDimension> sampleDimensions = getSampleDimensions(i);
+                        if (sampleDimensions!=null) {
+                            final MetadataBuilder mb = new MetadataBuilder();
+                            for (int idx=0,n=sampleDimensions.size();idx<n;idx++) {
+                                final GridSampleDimension gsd = sampleDimensions.get(idx);
+                                final Unit<? extends Quantity<?>> units = gsd.getUnits();
+                                mb.newSampleDimension();
+                                mb.setBandIdentifier(Names.createMemberName(null, null, ""+idx, Integer.class));
+                                mb.addBandDescription(gsd.getDescription());
+                                if(units!=null) mb.setSampleUnits(units);
+                                mb.setTransferFunction(gsd.getScale(), gsd.getOffset());
+                                mb.addMinimumSampleValue(gsd.getMinimumValue());
+                                mb.addMaximumSampleValue(gsd.getMaximumValue());
+                            }
+                            final DefaultMetadata meta = mb.build(false);
+                            final CoverageDescription imgDesc = (CoverageDescription) meta.getContentInfo().iterator().next();
+                            ci.getAttributeGroups().addAll((Collection)imgDesc.getAttributeGroups());
+                        }
+                    }
+
                 }
                 if (computeResolutions || computeExtents) {
                     /*
