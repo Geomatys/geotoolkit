@@ -303,11 +303,17 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
      */
     private static double[] convertCentralResolution(final double[] resolution, final Envelope area,
             final CoordinateReferenceSystem targetCRS) throws FactoryException, TransformException {
+        final CoordinateReferenceSystem areaCrs = area.getCoordinateReferenceSystem();
+        if (areaCrs.equals(targetCRS)) {
+            //nothing to do.
+            return resolution;
+        }
+
         final GeneralDirectPosition center = new GeneralDirectPosition(area.getDimension());
         for (int i=center.getDimension(); --i >= 0;) {
             center.setOrdinate(i, area.getMedian(i));
         }
-        final Matrix derivative = CRS.findOperation(area.getCoordinateReferenceSystem(), targetCRS, null).getMathTransform().derivative(center);
+        final Matrix derivative = CRS.findOperation(areaCrs, targetCRS, null).getMathTransform().derivative(center);
         final Matrix vector = Matrices.createZero(resolution.length, 1);
         for (int i=0; i<resolution.length; i++) {
             vector.setElement(i, 0, resolution[i]);
