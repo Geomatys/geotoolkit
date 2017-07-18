@@ -488,7 +488,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
 
                 try (ShapefileWriter writer = new ShapefileWriter(shpChannel, shxChannel)) {
                     // try to get the domain first
-                    final Envelope domain = org.geotoolkit.referencing.CRS.getEnvelope(crs);
+                    final Envelope domain = CRS.getDomainOfValidity(crs);
                     if (domain != null) {
                         writer.writeHeaders(new JTSEnvelope2D(domain), shapeType, 0, 100);
                     } else {

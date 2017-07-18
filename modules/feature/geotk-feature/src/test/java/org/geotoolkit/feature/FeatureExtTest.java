@@ -15,8 +15,10 @@ import org.apache.sis.parameter.DefaultParameterDescriptor;
 import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.test.Assert;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -150,6 +152,32 @@ public class FeatureExtTest {
         envCrs.setRange(0, 10, 10);
         envCrs.setRange(1, 20, 20);
         assertEquals(envCrs, FeatureExt.getEnvelope(feature));
+    }
 
+    @Test
+    public void findDefaultGeometry() {
+        FeatureTypeBuilder builder = new FeatureTypeBuilder();
+        builder.setName("base type");
+        builder.addAttribute(String.class).setName("first");
+        builder.addAttribute(Float.class).setName("second");
+        builder.addAttribute(Geometry.class).setName("secondary_geometry");
+
+        final FeatureType baseType = builder.build();
+        // We search only for convention, so no property should be returned here.
+        Assert.assertNull("Only sis convention should be matched", FeatureExt.getDefaultGeometryAttribute(baseType));
+
+        builder = new FeatureTypeBuilder(baseType);
+        builder.setName("with sis convention");
+        builder.addAttribute(Geometry.class).setName("main_geometry").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final FeatureType conventionedType = builder.build();
+        // We should find main geometry as we defined a convention for it.
+        AttributeType<?> defaultGeom = FeatureExt.getDefaultGeometryAttribute(conventionedType);
+        Assert.assertNotNull("We should find one geomeetry attribute", defaultGeom);
+        Assert.assertTrue("We should have found the attribute attached to SIS convention.", defaultGeom instanceof AttributeType);
+
+        final ReprojectFeatureType reprojected = new ReprojectFeatureType(conventionedType, CommonCRS.WGS84.geographic());
+        defaultGeom = FeatureExt.getDefaultGeometryAttribute(reprojected);
+        Assert.assertNotNull("We should find one geomeetry attribute", defaultGeom);
+        Assert.assertTrue("We should have found the attribute attached to SIS convention.", defaultGeom instanceof AttributeType);
     }
 }

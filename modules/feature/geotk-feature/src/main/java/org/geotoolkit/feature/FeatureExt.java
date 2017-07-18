@@ -30,12 +30,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
+import java.util.Optional;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.feature.ArrayFeature;
 import java.util.function.BiFunction;
 import org.geotoolkit.internal.feature.FeatureLoop;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.feature.DefaultFeatureType;
 import org.apache.sis.util.ArgumentChecks;
@@ -73,10 +75,9 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.system.DefaultFactories;
 
 import static org.apache.sis.feature.AbstractIdentifiedType.NAME_KEY;
-import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.util.CollectionsExt;
 import org.geotoolkit.geometry.jts.JTS;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.util.FactoryException;
 
 /**
@@ -85,6 +86,8 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  */
 public final class FeatureExt extends Static {
+
+    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.feature");
 
     /**
      * Default attribute type names separator.
@@ -506,25 +509,36 @@ public final class FeatureExt extends Static {
      * @param type FeatureType
      * @return geometry AttributeType or null
      */
-    public static AttributeType<?> getDefaultGeometryAttribute(FeatureType type){
+    public static AttributeType<?> getDefaultGeometryAttribute(final FeatureType type) {
         try {
-            PropertyType prop = type.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
-            if (prop instanceof AbstractOperation) {
-                final Set<String> dependencies = ((AbstractOperation) prop).getDependencies();
-                final String referentName = CollectionsExt.first(dependencies);
-                if (referentName != null && dependencies.size() == 1) {
-                    PropertyType original = type.getProperty(referentName);
-                    if (AttributeConvention.isGeometryAttribute(original)) {
-                        prop = original;
-                    }
-                }
-            }
-            if (prop instanceof AttributeType) {
-                return (AttributeType<?>) prop;
-            }
-        } catch (IllegalArgumentException ex) {
+            return castOrUnwrap(
+                    type.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString())
+            ).orElse(null); // TODO : change method signature to avoid unwrapping and null return.
+        } catch (PropertyNotFoundException ex) {
+            LOGGER.log(Level.FINE, ex, () -> "No default geometry found for data type "+type.getName());
         }
+
         return null;
+    }
+
+    /**
+     * Test if given data type is an attribute as defined by {@link AttributeType},
+     * or if it depends on an attribute, and return it (the attribute) if possible.
+     * @param input the data type to unravel the attribute from.
+     * @return The found attribute or an empty shell if we cannot find any.
+     */
+    public static Optional<AttributeType> castOrUnwrap(IdentifiedType input) {
+        // In case an operation also implements attribute type, we check it first.
+        // TODO : cycle detection ?
+        while (!(input instanceof AttributeType) && input instanceof Operation) {
+            input = ((Operation)input).getResult();
+        }
+
+        if (input instanceof AttributeType) {
+            return Optional.of((AttributeType)input);
+        }
+
+        return Optional.empty();
     }
 
     /**
