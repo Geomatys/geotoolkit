@@ -106,7 +106,7 @@ public final class FeatureExt extends Static {
      * A test to know if a given property is an SIS convention or not. Return true if
      * the property is marked as an SIS convention, false otherwise.
      */
-    public static final Predicate<IdentifiedType> IS_CONVENTION = p -> AttributeConvention.contains(p.getName());
+    public static final Predicate<IdentifiedType> IS_NOT_CONVENTION = p -> !AttributeConvention.contains(p.getName());
 
     /**
      * Method for creating feature id's when none is specified.
@@ -518,14 +518,44 @@ public final class FeatureExt extends Static {
      */
     public static AttributeType<?> getDefaultGeometryAttribute(final FeatureType type) {
         try {
-            return castOrUnwrap(
-                    type.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString())
-            ).orElse(null); // TODO : change method signature to avoid unwrapping and null return.
+            PropertyType geometry;
+            try {
+                geometry = type.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+            } catch (PropertyNotFoundException e) {
+                try {
+                    geometry = searchForGeometry(type);
+                } catch (RuntimeException e2) {
+                    e2.addSuppressed(e);
+                    throw e2;
+                }
+            }
+
+            // TODO : do not wrap exceptions, do not return null value.
+            return castOrUnwrap(geometry)
+                    .orElseGet(null);
+
         } catch (PropertyNotFoundException ex) {
             LOGGER.log(Level.FINE, ex, () -> "No default geometry found for data type "+type.getName());
+        } catch (IllegalStateException ex) {
+            LOGGER.log(Level.FINE, ex, () -> "No convention defined, but multiple geometries found for data type "+type.getName());
         }
 
         return null;
+    }
+
+    private static final PropertyType searchForGeometry(final FeatureType type) {
+        final List<? extends PropertyType> geometries = type.getProperties(true).stream()
+                .filter(IS_NOT_CONVENTION)
+                .filter(AttributeConvention::isGeometryAttribute)
+                .collect(Collectors.toList());
+
+        if (geometries.size() < 1) {
+            throw new PropertyNotFoundException("No geometric property can be found outside of sis convention.");
+        } else if (geometries.size() > 1) {
+            throw new IllegalStateException("Multiple geometries found. We don't know which one to select.");
+        } else {
+            return geometries.get(0);
+        }
     }
 
     /**
@@ -997,7 +1027,7 @@ public final class FeatureExt extends Static {
         Collection<? extends PropertyType> secondProperties = second.getProperties(checkSuperTypes);
 
         if (ignoreConventions) {
-            final Predicate<IdentifiedType> isNotConvention = IS_CONVENTION.negate();
+            final Predicate<IdentifiedType> isNotConvention = IS_NOT_CONVENTION;
             firstProperties = firstProperties.stream()
                     .filter(isNotConvention)
                     .collect(Collectors.toList());
