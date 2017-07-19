@@ -26,6 +26,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
 
 /**
  * Edition tool displaying a dialog to simplify the geometry using
@@ -51,14 +52,20 @@ public class GeometrySimplificationTool extends AbstractEditionTool {
         //check the geometry type is type Point
         final FeatureMapLayer layer = (FeatureMapLayer) candidate;
         final FeatureType ft = layer.getCollection().getType();
-        final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(ft);
 
-        if(desc == null || Point.class.isAssignableFrom(desc.getValueClass())){
-            //Point simplification is impossible
+        try {
+            final Class geomClass = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(ft))
+                    .map(AttributeType::getValueClass)
+                    .orElse(null);
+
+            if (geomClass == null || Point.class.isAssignableFrom(geomClass)) {
+                //Point simplification is impossible
+                return false;
+            }
+            return Geometry.class.isAssignableFrom(geomClass);
+        } catch (PropertyNotFoundException | IllegalStateException e) {
             return false;
         }
-
-        return Geometry.class.isAssignableFrom(desc.getValueClass());
     }
 
     @Override

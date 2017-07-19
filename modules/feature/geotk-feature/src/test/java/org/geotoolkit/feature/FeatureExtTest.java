@@ -8,6 +8,7 @@ import com.vividsolutions.jts.geom.Point;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -22,6 +23,8 @@ import org.junit.Test;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 import org.opengis.metadata.acquisition.GeometryType;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -166,29 +169,39 @@ public class FeatureExtTest {
 
         final FeatureType baseType = builder.build();
         // There's only one geometry here, no confusion possible.
-        Assert.assertNotNull("We should find the only geometry defined in the feature type.", FeatureExt.getDefaultGeometryAttribute(baseType));
+        PropertyType defaultGeom = FeatureExt.getDefaultGeometry(baseType);
+        Assert.assertNotNull("We should find the only geometry defined in the feature type.", defaultGeom);
+        Assert.assertEquals("We should have found the attribute attached to SIS convention.", "secondary_geometry", defaultGeom.getName().tip().toString());
 
         builder = new FeatureTypeBuilder(baseType);
         builder.setName("with sis convention");
         builder.addAttribute(Geometry.class).setName("main_geometry").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
         final FeatureType conventionedType = builder.build();
         // We should find main geometry as we defined a convention for it.
-        AttributeType<?> defaultGeom = FeatureExt.getDefaultGeometryAttribute(conventionedType);
-        Assert.assertNotNull("We should find one geomeetry attribute", defaultGeom);
-        Assert.assertTrue("We should have found the attribute attached to SIS convention.", defaultGeom instanceof AttributeType);
+        defaultGeom = FeatureExt.getDefaultGeometry(conventionedType);
+        Assert.assertNotNull("We should find one geometry attribute", defaultGeom);
+        Assert.assertEquals("We should have found the attribute attached to SIS convention.", AttributeConvention.GEOMETRY_PROPERTY, defaultGeom.getName());
 
         builder = new FeatureTypeBuilder(baseType);
         builder.setName("without sis convention");
         builder.addAttribute(Geometry.class).setName("main_geometry").setCRS(CommonCRS.WGS84.normalizedGeographic());
-        Assert.assertNull("We should not find any geometry as there's multiple geometric attributes but no convention defined.", FeatureExt.getDefaultGeometryAttribute(builder.build()));
+        try {
+            FeatureExt.getDefaultGeometry(builder.build());
+            fail("We should not find any geometry as there's multiple geometric attributes but no convention defined.");
+        } catch (PropertyNotFoundException | IllegalStateException e) {
+            // expected result
+        }
 
         // We also test we find the geometry after reprojection, and it's the good one, the reprojected.
         final ReprojectFeatureType reprojected = new ReprojectFeatureType(conventionedType, CommonCRS.WGS84.geographic());
-        defaultGeom = FeatureExt.getDefaultGeometryAttribute(reprojected);
-        Assert.assertNotNull("We should find one geomeetry attribute", defaultGeom);
-        Assert.assertTrue("We should have found the attribute attached to SIS convention.", defaultGeom instanceof AttributeType);
+        defaultGeom = FeatureExt.getDefaultGeometry(reprojected);
+        Assert.assertNotNull("We should find one geometry attribute", defaultGeom);
+        Assert.assertEquals("We should have found the attribute attached to SIS convention.", AttributeConvention.GEOMETRY_PROPERTY, defaultGeom.getName());
         // Check we've got a definition matching reprojection
-        AttributeType<?> crsCharacteristic = defaultGeom.characteristics().get(AttributeConvention.CRS_CHARACTERISTIC.toString());
+        final Optional<AttributeType<?>> geomAttr = FeatureExt.castOrUnwrap(defaultGeom);
+        Assert.assertTrue(geomAttr.isPresent());
+        
+        AttributeType<?> crsCharacteristic = geomAttr.get().characteristics().get(AttributeConvention.CRS_CHARACTERISTIC.toString());
         Assert.assertNotNull("No CRS characteristic found in returned geometry", crsCharacteristic);
         Assert.assertEquals("CRS defined in returned geometry is not correct !", CommonCRS.WGS84.geographic(), crsCharacteristic.getDefaultValue());
     }

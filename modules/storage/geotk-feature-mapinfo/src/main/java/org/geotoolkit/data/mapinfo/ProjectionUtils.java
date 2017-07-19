@@ -223,13 +223,8 @@ public class ProjectionUtils {
             }
         }
 
-        // Unit
-        unit = UnitIdentifier.getUnitFromCode(crsParameters[position++]);
-
         if(datum == null) {
             throw new DataStoreException("One of the following mandatory parameter can't be read : datum code");
-        } else if (unit == null) {
-            throw new DataStoreException("One of the following mandatory parameter can't be read : unit code");
         }
 
         /*

@@ -707,11 +707,17 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
         final FeatureCollection fs               = layer.getCollection();
         final FeatureType schema                 = fs.getType();
-        final PropertyType geomDesc              = FeatureExt.getDefaultGeometryAttribute(schema);
         final BoundingBox bbox                   = optimizeBBox(renderingContext,layer,symbolsMargin);
         final CoordinateReferenceSystem layerCRS = FeatureExt.getCRS(schema);
-        final String geomAttName                 = (geomDesc!=null)? geomDesc.getName().toString() : null;
         final RenderingHints hints               = renderingContext.getRenderingHints();
+
+        String geomAttName;
+        try {
+            geomAttName = FeatureExt.getDefaultGeometry(schema).getName().toString();
+        } catch (Exception e) {
+            // We don't want rendering to fail because of a single layer.
+            geomAttName = null;
+        }
 
         Filter filter;
 

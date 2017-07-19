@@ -35,7 +35,7 @@ import org.geotoolkit.gui.javafx.render2d.FXPanMouseListen;
 import org.geotoolkit.gui.javafx.render2d.shape.FXGeometryLayer;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.FeatureMapLayer;
-import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 
 /**
  *
@@ -58,7 +58,7 @@ public class MoveNodeTool extends AbstractEditionTool{
                 final FeatureMapLayer fml = (FeatureMapLayer) candidate;
                 if(!fml.getCollection().isWritable()) return false;
 
-                final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(fml.getCollection().getType());
+                final PropertyType desc = FeatureExt.getDefaultGeometry(fml.getCollection().getType());
                 return desc != null;
             }
             return false;

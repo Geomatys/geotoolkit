@@ -107,7 +107,7 @@ public final class FeatureTypeUtils extends Static {
         ArgumentChecks.ensureNonNull("FeatureType", ft);
         ArgumentChecks.ensureNonNull("outputFile", output);
 
-        if (FeatureExt.getDefaultGeometryAttribute(ft) == null) {
+        if (FeatureExt.getDefaultGeometry(ft) == null) {
             throw new DataStoreException("No default Geometry in given FeatureType : "+ft);
         }
 
@@ -124,7 +124,13 @@ public final class FeatureTypeUtils extends Static {
                 writer.writeStringField(DESCRIPTION, ft.getDescription().toString());
             }
 
-            writeGeometryType(FeatureExt.getDefaultGeometryAttribute(ft), writer);
+            final Optional<AttributeType<?>> geom = FeatureExt.castOrUnwrap(
+                    FeatureExt.getDefaultGeometry(ft)
+            );
+            if (geom.isPresent()) {
+                writeGeometryType(geom.get(), writer);
+            }
+
             writeProperties(ft, writer);
 
             writer.writeEndObject();
@@ -169,7 +175,7 @@ public final class FeatureTypeUtils extends Static {
         ArgumentChecks.ensureNonNull("FeatureType", ft);
         ArgumentChecks.ensureNonNull("outputStream", output);
 
-        if (FeatureExt.getDefaultGeometryAttribute(ft) == null) {
+        if (FeatureExt.getDefaultGeometry(ft) == null) {
             throw new DataStoreException("No default Geometry in given FeatureType : "+ft);
         }
 
@@ -182,7 +188,13 @@ public final class FeatureTypeUtils extends Static {
             writer.writeStringField(DESCRIPTION, ft.getDescription().toString());
         }
 
-        writeGeometryType(FeatureExt.getDefaultGeometryAttribute(ft), writer);
+        final Optional<AttributeType<?>> geom = FeatureExt.castOrUnwrap(
+                FeatureExt.getDefaultGeometry(ft)
+        );
+        if (geom.isPresent()) {
+            writeGeometryType(geom.get(), writer);
+        }
+
         writeProperties(ft, writer);
 
         writer.writeEndObject();

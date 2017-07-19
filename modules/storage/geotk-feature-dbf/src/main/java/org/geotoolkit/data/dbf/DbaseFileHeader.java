@@ -810,7 +810,7 @@ public class DbaseFileHeader {
                 continue;
             }
 
-            Optional<AttributeType> attribute = FeatureExt.castOrUnwrap(type);
+            Optional<AttributeType<?>> attribute = FeatureExt.castOrUnwrap(type);
             if (attribute.isPresent()) {
                 header.addColumn(attribute.get());
             }

@@ -22,8 +22,8 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 
 /**
  * Edition tool displaying a dialog to edit the geometry using Well Known Text.
@@ -48,7 +48,7 @@ public class GeometryFromWKTTool extends AbstractEditionTool {
         //check the geometry type is type Point
         final FeatureMapLayer layer = (FeatureMapLayer) candidate;
         final FeatureType ft = layer.getCollection().getType();
-        final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(ft);
+        final PropertyType desc = FeatureExt.getDefaultGeometry(ft);
         return desc != null;
     }
 

@@ -42,6 +42,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
@@ -55,6 +56,7 @@ import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.Identifier;
 
@@ -196,14 +198,18 @@ public class ShapefileFeatureWriter implements FeatureWriter {
         // but if records > 0 and shapeType is null there's probably
         // another problem.
         if ((records <= 0) && (shapeType == null)) {
-            final AttributeType geometryAttributeType = FeatureExt.getDefaultGeometryAttribute(featureType);
-            if(geometryAttributeType != null){
-                final Class gat = geometryAttributeType.getValueClass();
-                shapeType = ShapeType.findBestGeometryType(gat);
+            try {
+                final PropertyType geom = FeatureExt.getDefaultGeometry(featureType);
+                final Optional<Class> geomClass = FeatureExt.castOrUnwrap(geom)
+                        .map(AttributeType::getValueClass);
+                shapeType = geomClass
+                        .map(ShapeType::findBestGeometryType)
+                        .orElse(ShapeType.NULL);
+
                 if (shapeType == ShapeType.UNDEFINED) {
-                    throw new IOException("Cannot handle geometry class : "+ (gat == null ? "null" : gat.getName()));
+                    throw new IOException("Cannot handle geometry class : " + (geomClass.isPresent() ? geomClass.get() : "null"));
                 }
-            }else{
+            } catch (PropertyNotFoundException e) {
                 shapeType = ShapeType.NULL;
             }
         }
@@ -443,7 +449,10 @@ public class ShapefileFeatureWriter implements FeatureWriter {
         }
 
         // writing of Geometry
-        Geometry g = (Geometry) currentFeature.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+        Geometry g = FeatureExt.getDefaultGeometryValue(currentFeature)
+                .filter(Geometry.class::isInstance)
+                .map(Geometry.class::cast)
+                .orElse(null);
 
         // if this is the first Geometry, find the shapeType and handler
         if (shapeType == null) {

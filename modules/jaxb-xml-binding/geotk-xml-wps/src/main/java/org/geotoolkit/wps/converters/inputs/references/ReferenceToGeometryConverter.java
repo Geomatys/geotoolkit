@@ -124,12 +124,10 @@ public final class ReferenceToGeometryConverter extends AbstractReferenceInputCo
 
                 try (FeatureIterator featureCollectionIterator = featureCollection.iterator()) {
                     Feature feature = featureCollectionIterator.next();
-                    Object value = FeatureExt.getDefaultGeometryAttributeValue(feature);
-
-                    if (!(value instanceof Geometry))
-                        throw new UnconvertibleObjectException("The found value may not be of Geometry type or may be null");
-
-                    return (Geometry) value;
+                    return FeatureExt.getDefaultGeometryValue(feature)
+                            .filter(Geometry.class::isInstance)
+                            .map(Geometry.class::cast)
+                            .orElseThrow(() -> new UnconvertibleObjectException("The found value may not be of Geometry type or may be null"));
                 }
             } catch (DataStoreException ex) {
                 throw new UnconvertibleObjectException(ex);

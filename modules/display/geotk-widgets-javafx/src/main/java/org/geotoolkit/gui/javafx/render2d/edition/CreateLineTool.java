@@ -38,6 +38,7 @@ import org.geotoolkit.gui.javafx.render2d.shape.FXGeometryLayer;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyNotFoundException;
 
 /**
  *
@@ -60,11 +61,19 @@ public class CreateLineTool extends AbstractEditionTool{
                 final FeatureMapLayer fml = (FeatureMapLayer) candidate;
                 if(!fml.getCollection().isWritable()) return false;
 
-                final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(fml.getCollection().getType());
-                if(desc == null) return false;
+                try {
+                    final Class geomClass = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(fml.getCollection().getType()))
+                            .map(AttributeType::getValueClass)
+                            .orElse(null);
 
-                return LineString.class.isAssignableFrom(desc.getValueClass())
-                    || Geometry.class.equals(desc.getValueClass());
+                    if (geomClass == null) {
+                        return false;
+                    }
+                    return LineString.class.isAssignableFrom(geomClass)
+                            || Geometry.class.equals(geomClass);
+                } catch (PropertyNotFoundException | IllegalStateException e) {
+                    return false;
+                }
             }
             return false;
         }

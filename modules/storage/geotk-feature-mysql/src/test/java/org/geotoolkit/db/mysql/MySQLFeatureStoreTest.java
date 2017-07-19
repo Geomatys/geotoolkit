@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.AttributeRole;
@@ -53,7 +54,6 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.version.VersionControl;
@@ -71,6 +71,7 @@ import org.opengis.util.FactoryException;
 import static org.geotoolkit.db.mysql.MySQLFeatureStoreFactory.*;
 import org.geotoolkit.storage.DataStores;
 import org.apache.sis.referencing.CommonCRS;
+import org.junit.Assert;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.opengis.feature.AttributeType;
@@ -874,7 +875,13 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
                 }else{
                     fail("Unexpected property \n"+feature);
                 }
-                assertNotNull(JTS.findCoordinateReferenceSystem((Geometry)FeatureExt.getDefaultGeometryAttributeValue(feature)));
+
+                final Optional<Geometry> geom = FeatureExt.getDefaultGeometryValue(feature)
+                        .filter(Geometry.class::isInstance)
+                        .map(Geometry.class::cast);
+                Assert.assertTrue(geom.isPresent());
+
+                assertNotNull(JTS.findCoordinateReferenceSystem(geom.get()));
             }
         }finally{
             ite.close();

@@ -27,6 +27,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
 
 /**
  *
@@ -50,14 +51,20 @@ public class LineCreationTool extends AbstractEditionTool {
         //check the geometry type is type Point
         final FeatureMapLayer layer = (FeatureMapLayer) candidate;
         final FeatureType ft = layer.getCollection().getType();
-        final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(ft);
 
-        if(desc == null){
+        try {
+            final Class geomClass = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(ft))
+                    .map(AttributeType::getValueClass)
+                    .orElse(null);
+
+            if (geomClass == null) {
+                return false;
+            }
+            return LineString.class.isAssignableFrom(geomClass) ||
+                    Geometry.class.equals(geomClass);
+        } catch (PropertyNotFoundException | IllegalStateException e) {
             return false;
         }
-
-        return LineString.class.isAssignableFrom(desc.getValueClass())
-            || Geometry.class.equals(desc.getValueClass());
     }
 
     @Override

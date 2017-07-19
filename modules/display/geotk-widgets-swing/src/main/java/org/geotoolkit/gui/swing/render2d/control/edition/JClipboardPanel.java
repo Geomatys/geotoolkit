@@ -258,7 +258,10 @@ public class JClipboardPanel extends javax.swing.JPanel {
         if(candidate instanceof Feature){
             final Feature f = (Feature) candidate;
             if(FeatureExt.hasAGeometry(f.getType())){
-                result = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(f);
+                result = FeatureExt.getDefaultGeometryValue(f)
+                        .filter(Geometry.class::isInstance)
+                        .map(Geometry.class::cast)
+                        .orElse(null);
                 //make a copy and ensure the crs is set
                 result = (Geometry) result.clone();
                 JTS.setCRS(result, FeatureExt.getCRS(f.getType()));

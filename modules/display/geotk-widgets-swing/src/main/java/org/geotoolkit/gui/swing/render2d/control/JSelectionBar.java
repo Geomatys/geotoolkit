@@ -45,7 +45,6 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.render2d.control.selection.DefaultSelectionHandler;
 import org.geotoolkit.font.FontAwesomeIcons;
@@ -57,7 +56,6 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.util.GeotkClipboard;
-import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
 import org.openide.awt.DropDownButtonFactory;
@@ -198,11 +196,12 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
                                 ite = col.iterator();
                                 while(ite.hasNext()){
                                     final Feature f = ite.next();
-                                    final Object gt = FeatureExt.getDefaultGeometryAttributeValue(f);
-                                    if(gt instanceof Geometry){
-                                        sb.append(gt.toString());
-                                        sb.append("\n");
-                                    }
+                                    FeatureExt.getDefaultGeometryValue(f)
+                                            .filter(Geometry.class::isInstance)
+                                            .ifPresent(geom -> {
+                                                sb.append(geom.toString());
+                                                sb.append("\n");
+                                            });
                                 }
                             }
                         } catch (DataStoreException | FeatureStoreRuntimeException ex) {

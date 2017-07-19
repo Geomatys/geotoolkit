@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
@@ -64,7 +64,7 @@
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="guiError" pref="32" max="32767" attributes="1"/>
                   <Group type="103" alignment="1" groupAlignment="1" max="-2" attributes="0">
-                      <Component id="guiRollback" alignment="1" pref="28" max="32767" attributes="1"/>
+                      <Component id="guiRollback" alignment="1" max="32767" attributes="1"/>
                       <Component id="guiApply" alignment="1" max="32767" attributes="1"/>
                   </Group>
               </Group>
@@ -119,7 +119,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="CRS">
+            <TitledBorder title="&lt;crs&gt;">
               <ResourceString PropertyName="titleX" bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="crs" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </TitledBorder>
           </Border>
@@ -178,7 +178,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Type :">
+            <TitledBorder title="&lt;type&gt;">
               <ResourceString PropertyName="titleX" bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="type" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </TitledBorder>
           </Border>

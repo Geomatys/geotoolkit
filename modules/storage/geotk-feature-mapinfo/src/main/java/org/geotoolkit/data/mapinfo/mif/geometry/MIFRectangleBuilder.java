@@ -82,7 +82,7 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
                 seq = new PackedCoordinateSequence.Double(pts, 2);
             }
             final Envelope env = new Envelope(seq.getCoordinate(0), seq.getCoordinate(1));
-            toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), JTS.toGeometry(env));
+            toFill.setPropertyValue(FeatureExt.getDefaultGeometry(toFill.getType()).getName().tip().toString(), JTS.toGeometry(env));
 
         } catch (InputMismatchException ex) {
             throw new DataStoreException("Rectangle is not properly defined : not enough points found.", ex);

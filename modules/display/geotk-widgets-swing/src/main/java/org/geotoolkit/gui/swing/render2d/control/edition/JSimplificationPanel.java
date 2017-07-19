@@ -71,7 +71,10 @@ public class JSimplificationPanel extends javax.swing.JPanel {
      */
     public Geometry getGeometry(){
         if(current == null){
-            return (Geometry) FeatureExt.getDefaultGeometryAttributeValue(original);
+            return FeatureExt.getDefaultGeometryValue(original)
+                    .filter(Geometry.class::isInstance)
+                    .map(Geometry.class::cast)
+                    .orElse(null);
         }else{
             return current;
         }
@@ -91,11 +94,15 @@ public class JSimplificationPanel extends javax.swing.JPanel {
 
         try{
             final CoordinateReferenceSystem mapCRS = map.getCanvas().getObjectiveCRS2D();
-            final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(original.getType());
+            final AttributeType<?> desc = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(original.getType()))
+                    .orElseThrow(() -> new IllegalStateException("Impossible to determine a valid geometric attribute"));
             final CoordinateReferenceSystem dataCRS = FeatureExt.getCRS(desc);
-            Geometry geom = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(original);
+            Geometry geom = FeatureExt.getDefaultGeometryValue(original)
+                    .filter(Geometry.class::isInstance)
+                    .map(Geometry.class::cast)
+                    .orElseThrow(() -> new IllegalStateException("No geometry initialized"));
             geom = (Geometry) geom.clone();
-            final Class clazz = desc.getValueClass();
+            final Class clazz = geom.getClass();
 
             if(mapCrs){
                 //reproject geometry in map crs for simplification

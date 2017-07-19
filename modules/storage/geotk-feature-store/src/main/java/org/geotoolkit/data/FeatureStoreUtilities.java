@@ -244,7 +244,7 @@ public class FeatureStoreUtilities {
      * @return splitted collections
      */
     public static FeatureCollection[] decomposeByGeometryType(FeatureCollection col, Class ... geomClasses) throws DataStoreException{
-        return decomposeByGeometryType(col, FeatureExt.getDefaultGeometryAttribute(col.getType()).getName(), true, geomClasses);
+        return decomposeByGeometryType(col, FeatureExt.getDefaultGeometry(col.getType()).getName(), true, geomClasses);
     }
 
     /**

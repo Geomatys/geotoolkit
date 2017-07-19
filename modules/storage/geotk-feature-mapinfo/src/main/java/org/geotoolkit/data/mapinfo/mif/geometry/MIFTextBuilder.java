@@ -107,7 +107,7 @@ public class MIFTextBuilder extends MIFRectangleBuilder {
             }
             final Envelope env = new Envelope(seq.getCoordinate(0), seq.getCoordinate(1));
 
-            toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), JTS.toGeometry(env));
+            toFill.setPropertyValue(FeatureExt.getDefaultGeometry(toFill.getType()).getName().tip().toString(), JTS.toGeometry(env));
         } catch (Exception e) {
             throw new DataStoreException("Unable to build envelope from given data", e);
         }

@@ -36,7 +36,6 @@ import org.geotoolkit.internal.feature.ArrayFeature;
 import java.util.function.BiFunction;
 import org.geotoolkit.internal.feature.FeatureLoop;
 import java.util.function.Predicate;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.sis.feature.DefaultAttributeType;
@@ -231,12 +230,7 @@ public final class FeatureExt extends Static {
      */
     public static CoordinateReferenceSystem getCRS(FeatureType type){
         try {
-            final IdentifiedType prop = type.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
-            if (prop instanceof PropertyType) {
-                return getCRS((PropertyType) prop);
-            } else {
-                return null;
-            }
+            return getCRS(getDefaultGeometry(type));
         } catch (IllegalArgumentException ex) {
             //no default geometry property
             return null;
@@ -511,39 +505,50 @@ public final class FeatureExt extends Static {
     }
 
     /**
-     * Get default geometry property.
+     * Search for the main geometric property in the given type. We'll search
+     * for an SIS convention first (see
+     * {@link AttributeConvention#GEOMETRY_PROPERTY}. If no convention is set on
+     * the input type, we'll check if it contains a single geometric property.
+     * If it's the case, we return it. Otherwise (no or multiple geometries), we
+     * throw an exception.
      *
-     * @param type FeatureType
-     * @return geometry AttributeType or null
+     * @param type The data type to search into.
+     * @return The main geometric property we've found.
+     * @throws PropertyNotFoundException If no geometric property is available
+     * in the given type.
+     * @throws IllegalStateException If no convention is set (see
+     * {@link AttributeConvention#GEOMETRY_PROPERTY}, and we've found more than
+     * one geometry.
      */
-    public static AttributeType<?> getDefaultGeometryAttribute(final FeatureType type) {
+    public static PropertyType getDefaultGeometry(final FeatureType type) throws PropertyNotFoundException, IllegalStateException {
+        PropertyType geometry;
         try {
-            PropertyType geometry;
+            geometry = type.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+        } catch (PropertyNotFoundException e) {
             try {
-                geometry = type.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
-            } catch (PropertyNotFoundException e) {
-                try {
-                    geometry = searchForGeometry(type);
-                } catch (RuntimeException e2) {
-                    e2.addSuppressed(e);
-                    throw e2;
-                }
+                geometry = searchForGeometry(type);
+            } catch (RuntimeException e2) {
+                e2.addSuppressed(e);
+                throw e2;
             }
-
-            // TODO : do not wrap exceptions, do not return null value.
-            return castOrUnwrap(geometry)
-                    .orElseGet(null);
-
-        } catch (PropertyNotFoundException ex) {
-            LOGGER.log(Level.FINE, ex, () -> "No default geometry found for data type "+type.getName());
-        } catch (IllegalStateException ex) {
-            LOGGER.log(Level.FINE, ex, () -> "No convention defined, but multiple geometries found for data type "+type.getName());
         }
 
-        return null;
+        // TODO : do not wrap exceptions, do not return null value.
+        return geometry;
     }
 
-    private static final PropertyType searchForGeometry(final FeatureType type) {
+    /**
+     * Search for a geometric attribute outside SIS conventions. More accurately,
+     * we expect the given type to have a single geometry attribute. I many are
+     * found, an exception is thrown.
+     *
+     * @param type The data type to search into.
+     * @return The only geometric property we've found.
+     * @throws PropertyNotFoundException If no geometric property is available in
+     * the given type.
+     * @throws IllegalStateException If we've found more than one geometry.
+     */
+    private static PropertyType searchForGeometry(final FeatureType type) throws PropertyNotFoundException, IllegalStateException {
         final List<? extends PropertyType> geometries = type.getProperties(true).stream()
                 .filter(IS_NOT_CONVENTION)
                 .filter(AttributeConvention::isGeometryAttribute)
@@ -564,7 +569,7 @@ public final class FeatureExt extends Static {
      * @param input the data type to unravel the attribute from.
      * @return The found attribute or an empty shell if we cannot find any.
      */
-    public static Optional<AttributeType> castOrUnwrap(IdentifiedType input) {
+    public static Optional<AttributeType<?>> castOrUnwrap(IdentifiedType input) {
         // In case an operation also implements attribute type, we check it first.
         // TODO : cycle detection ?
         while (!(input instanceof AttributeType) && input instanceof Operation) {
@@ -579,19 +584,32 @@ public final class FeatureExt extends Static {
     }
 
     /**
-     * Get default geometry property value.
-     * This method searches for the default geometry property and return it's value
-     * if it exist.
+     * Get main geometry property value. The ways this method determines default
+     * geometry property are the same as {@link #getDefaultGeometry(org.opengis.feature.FeatureType) }.
      *
-     * @param type FeatureType
-     * @return geometry AttributeType or null
+     * @param input the feature to extract geometry from.
+     * @return Value of the main geometric property of the given feature. The returned
+     * optional will be empty only if the feature defines a geometric property, but has
+     * no value for it.
+     * @throws PropertyNotFoundException If no geometric property is available in
+     * the given feature.
+     * @throws IllegalStateException If we've found more than one geometry.
      */
-    public static Object getDefaultGeometryAttributeValue(Feature type){
+    public static Optional<Object> getDefaultGeometryValue(Feature input) throws PropertyNotFoundException, IllegalStateException {
+        Object geometry;
         try{
-            return type.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
-        }catch(IllegalArgumentException ex){
-            return null;
+            geometry = input.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+        } catch(PropertyNotFoundException ex) {
+            try {
+                final PropertyType geomType = FeatureExt.getDefaultGeometry(input.getType());
+                geometry = input.getPropertyValue(geomType.getName().toString());
+            } catch (RuntimeException e) {
+                e.addSuppressed(ex);
+                throw e;
+            }
         }
+
+        return Optional.ofNullable(geometry);
     }
 
     /**

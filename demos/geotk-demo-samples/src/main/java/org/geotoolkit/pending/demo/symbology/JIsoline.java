@@ -81,7 +81,10 @@ public class JIsoline extends JAbstractMapPane{
 
             @Override
             public Coordinate getValues(RenderingContext2D context, Feature feature) throws IOException {
-                final Geometry geom = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(feature);
+                final Geometry geom = FeatureExt.getDefaultGeometryValue(feature)
+                        .filter(Geometry.class::isInstance)
+                        .map(Geometry.class::cast)
+                        .orElseThrow(() -> new IllegalArgumentException("No geometry in input feature."));
                 final Point centroid = geom.getCentroid();
                 final Coordinate c = new Coordinate();
                 c.x = centroid.getX();

@@ -17,7 +17,6 @@
 
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
@@ -27,6 +26,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
 
 /**
  *
@@ -50,14 +50,18 @@ public class PointCreationTool extends AbstractEditionTool {
         //check the geometry type is type Point
         final FeatureMapLayer layer = (FeatureMapLayer) candidate;
         final FeatureType ft = layer.getCollection().getType();
-        final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(ft);
+        try {
+            final Class geomClass = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(ft))
+                    .map(AttributeType::getValueClass)
+                    .orElse(null);
 
-        if(desc == null){
+            if (geomClass == null) {
+                return false;
+            }
+            return Point.class.isAssignableFrom(geomClass);
+        } catch (PropertyNotFoundException | IllegalStateException e) {
             return false;
         }
-
-        return Point.class.isAssignableFrom(desc.getValueClass())
-            || Geometry.class.equals(desc.getValueClass());
     }
 
     @Override
