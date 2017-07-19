@@ -49,7 +49,6 @@ import org.geotoolkit.data.FeatureResource;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.test.TestData;
@@ -59,7 +58,7 @@ import org.opengis.util.GenericName;
 import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyType;
+import org.opengis.feature.IdentifiedType;
 
 /**
  *
@@ -102,9 +101,10 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         test("shapes/danish_point.shp");
     }
 
+    @Test
     public void testWriteReprojected() throws Exception {
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        builder.setName("reprojection test");
+        builder.setName("reprojection_test");
         builder.addAttribute(String.class).setName("mock");
         builder.addAttribute(Point.class).setName("geometry")
                 .setCRS(CommonCRS.defaultGeographic())
@@ -122,7 +122,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
                 .subCollection(QueryBuilder.reprojected(type.getName().toString(), CRS.forCode("EPSG:2154")));
 
         final Path tmpDir = Files.createTempDirectory("reprojected_shp");
-        try (final ShapefileFeatureStore store = new ShapefileFeatureStore(tmpDir.resolve("test.shp").toUri())) {
+        try (final ShapefileFeatureStore store = new ShapefileFeatureStore(tmpDir.resolve("reprojection_test.shp").toUri())) {
             store.createFeatureType(reprojected.getType());
             final String typeName = reprojected.getType().getName().toString();
             store.addFeatures(typeName, reprojected);
@@ -130,30 +130,18 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
             final Resource r = store.findResource(typeName);
             Assert.assertTrue(r instanceof FeatureResource);
             final List<Feature> features = ((FeatureResource)r).features().collect(Collectors.toList());
+            //compare(features, Collections.singleton(f));
             Assert.assertEquals("Written features", 1, features.size());
-            Assert.assertTrue("Written feature should be equal to reprojected element.", features.containsAll(reprojected));
+
+            final Feature reprojectedFeature = reprojected.features()
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("The test should define at least a single feature !"));
+
+            Assert.assertTrue("Written feature should be equal to reprojected element.", approximatelyEqual(reprojectedFeature, features.get(0)));
         } finally {
             IOUtilities.deleteRecursively(tmpDir);
         }
     }
-
-//    public void testAll() {
-//        StringBuffer errors = new StringBuffer();
-//        Exception bad = null;
-//        for (int i = 0, ii = files.length; i < ii; i++) {
-//            try {
-//
-//            } catch (Exception e) {
-//                System.out.println("File failed:" + files[i] + " " + e);
-//                e.printStackTrace();
-//                errors.append("\nFile " + files[i] + " : " + e.getMessage());
-//                bad = e;
-//            }
-//        }
-//        if (errors.length() > 0) {
-//            fail(errors.toString(), bad);
-//        }
-//    }
 
     boolean readStarted = false;
 
@@ -274,15 +262,14 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         FeatureCollection copy = session.getFeatureCollection(QueryBuilder.all(typeName.toString()));
         compare(original, copy);
 
-        if (true) {
-            // review open
-            ShapefileFeatureStore review = new ShapefileFeatureStore(tmp.toURI(), memorymapped, charset);
-            typeName = review.getNames().iterator().next();
-            FeatureCollection again = review.createSession(true).getFeatureCollection(QueryBuilder.all(typeName.toString()));
+        // review open
+        ShapefileFeatureStore review = new ShapefileFeatureStore(tmp.toURI(), memorymapped, charset);
+        typeName = review.getNames().iterator().next();
+        FeatureCollection again = review.createSession(true).getFeatureCollection(QueryBuilder.all(typeName.toString()));
 
-            compare(copy, again);
-            compare(original, again);
-        }
+        compare(copy, again);
+        compare(original, again);
+
     }
 
     static void compare(Collection<Feature> one, Collection<Feature> two) throws Exception {
@@ -299,21 +286,6 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
             if (it instanceof AutoCloseable)
                 ((AutoCloseable) it).close();
         }
-//        Iterator<SimpleFeature> iterator1 = one.iterator();
-//        Iterator<SimpleFeature> iterator2 = two.iterator();
-//
-//        while (iterator1.hasNext()) {
-//            SimpleFeature f1 = iterator1.next();
-//            SimpleFeature f2 = iterator2.next();
-//            approximatelyEqual(f1, f2);
-//        }
-//
-//        if(iterator1 instanceof Closeable){
-//            ((Closeable)iterator1).close();
-//        }
-//        if(iterator2 instanceof Closeable){
-//            ((Closeable)iterator2).close();
-//        }
     }
 
     static boolean approximatelyContains(final Feature f, final Collection<Feature> col) throws Exception {
@@ -332,10 +304,22 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
     }
 
     static boolean approximatelyEqual(final Feature f1, final Feature f2) throws Exception {
-        Assert.assertTrue(FeatureExt.sameProperties(f1.getType(), f2.getType(), true));
+        // Remove sis conventions, as they're not brut data but links and computed facilities.
+        final Collection<String> f1Properties = f1.getType().getProperties(true).stream()
+                .map(IdentifiedType::getName)
+                .filter(name -> !AttributeConvention.contains(name))
+                .map(GenericName::toString)
+                .collect(Collectors.toList());
+        final Collection<String> f2Properties = f2.getType().getProperties(true).stream()
+                .map(IdentifiedType::getName)
+                .filter(name -> !AttributeConvention.contains(name))
+                .map(GenericName::toString)
+                .collect(Collectors.toList());
 
-        for(PropertyType desc : f1.getType().getProperties(true)) {
-            final String name = desc.getName().toString();
+        if (f1Properties.size() != f2Properties.size() || !f1Properties.containsAll(f2Properties))
+            return false;
+
+        for(String name : f1Properties) {
             Object att1 = f1.getPropertyValue(name);
             Object att2 = f2.getPropertyValue(name);
             if (!approximatelyEqual(att1, att2))

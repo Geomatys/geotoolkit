@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.metadata.acquisition.GeometryType;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -179,5 +180,41 @@ public class FeatureExtTest {
         defaultGeom = FeatureExt.getDefaultGeometryAttribute(reprojected);
         Assert.assertNotNull("We should find one geomeetry attribute", defaultGeom);
         Assert.assertTrue("We should have found the attribute attached to SIS convention.", defaultGeom instanceof AttributeType);
+    }
+
+    @Test
+    public void testSameProperties() {
+        final String geometryName = "geom";
+        final String stringName = "this is a string";
+
+        /* We build a super-type with only one attribute. This attribute will be
+         * inherited by the first feature type to test, but the second one will
+         * redefine. It means that when super-types will be tested, both checked
+         * types will have the parent attribute. But if we ignore super types,
+         * only one of the two attributes have it.
+         */
+        FeatureTypeBuilder builder = new FeatureTypeBuilder();
+        builder.setName("parent");
+        builder.addAttribute(String.class).setName(stringName);
+        final FeatureType parentType = builder.build();
+
+        /* We define a type with sis convention, and another without it. It allows
+         * us to check the "ignore conventions" flag.
+         */
+        builder = new FeatureTypeBuilder();
+        builder.setName("with convention and super type.");
+        builder.setSuperTypes(parentType);
+        builder.addAttribute(GeometryType.LINEAR).setName(geometryName).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final FeatureType withConvention = builder.build();
+
+        builder = new FeatureTypeBuilder();
+        builder.setName("without convention nor super type");
+        builder.addAttribute(GeometryType.LINEAR).setName(geometryName);
+        builder.addAttribute(String.class).setName(stringName);
+        final FeatureType withoutConvention = builder.build();
+
+        Assert.assertFalse("Tested types should not be equal as conventions are checked.", FeatureExt.sameProperties(withConvention, withoutConvention, true));
+        Assert.assertTrue("Tested types should not be equal as conventions are checked.", FeatureExt.sameProperties(withConvention, withoutConvention, true, true));
+        Assert.assertFalse("Tested types should not be equal as super-types are ignored.", FeatureExt.sameProperties(withConvention, withoutConvention, false, true));
     }
 }

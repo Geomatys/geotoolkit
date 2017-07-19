@@ -38,6 +38,7 @@ import org.geotoolkit.internal.feature.FeatureLoop;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.feature.DefaultFeatureType;
 import org.apache.sis.util.ArgumentChecks;
@@ -100,6 +101,12 @@ public final class FeatureExt extends Static {
      */
     public static final GenericName ATTRIBUTE_SYMBOLIZERS = DefaultFactories.forBuildin(NameFactory.class)
             .createLocalName(AttributeConvention.IDENTIFIER_PROPERTY.scope(), "@symbolizers");
+
+    /**
+     * A test to know if a given property is an SIS convention or not. Return true if
+     * the property is marked as an SIS convention, false otherwise.
+     */
+    public static final Predicate<IdentifiedType> IS_CONVENTION = p -> AttributeConvention.contains(p.getName());
 
     /**
      * Method for creating feature id's when none is specified.
@@ -982,8 +989,22 @@ public final class FeatureExt extends Static {
      * order theyr appear in), false otherwise.
      */
     public static boolean sameProperties(final FeatureType first, final FeatureType second, boolean checkSuperTypes) {
-        final Collection<? extends PropertyType> firstProperties = first.getProperties(checkSuperTypes);
-        final Collection<? extends PropertyType> secondProperties = second.getProperties(checkSuperTypes);
+        return sameProperties(first, second, checkSuperTypes, false);
+    }
+
+    public static boolean sameProperties(final FeatureType first, final FeatureType second, boolean checkSuperTypes, final boolean ignoreConventions) {
+        Collection<? extends PropertyType> firstProperties = first.getProperties(checkSuperTypes);
+        Collection<? extends PropertyType> secondProperties = second.getProperties(checkSuperTypes);
+
+        if (ignoreConventions) {
+            final Predicate<IdentifiedType> isNotConvention = IS_CONVENTION.negate();
+            firstProperties = firstProperties.stream()
+                    .filter(isNotConvention)
+                    .collect(Collectors.toList());
+            secondProperties = secondProperties.stream()
+                    .filter(isNotConvention)
+                    .collect(Collectors.toList());
+        }
 
         return firstProperties.size() == secondProperties.size() && firstProperties.containsAll(secondProperties);
     }
