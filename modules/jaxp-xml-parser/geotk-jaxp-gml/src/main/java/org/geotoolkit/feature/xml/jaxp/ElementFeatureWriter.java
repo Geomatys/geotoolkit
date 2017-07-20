@@ -46,6 +46,7 @@ import org.apache.sis.xml.Namespaces;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 
 import org.geotoolkit.util.NamesExt;
@@ -55,6 +56,7 @@ import org.opengis.feature.PropertyType;
 import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -292,7 +294,25 @@ public class ElementFeatureWriter {
                         if (prefix != null) {
                             element.setPrefix(prefix.prefix);
                         }
-                        Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) valueA, FeatureExt.getCRS(type));
+
+                        final Geometry isoGeometry;
+                        if (valueA instanceof com.vividsolutions.jts.geom.Geometry) {
+                            com.vividsolutions.jts.geom.Geometry geomValue = (com.vividsolutions.jts.geom.Geometry) valueA;
+                        CoordinateReferenceSystem crs = null;
+                            try {
+                                crs = JTS.findCoordinateReferenceSystem(geomValue);
+                            } catch (FactoryException ex) {
+                                LOGGER.log(Level.WARNING, "Cannot find CRS directly from jts geometry", ex);
+                            }
+                            if (crs == null) {
+                                crs = FeatureExt.getCRS(typeA);
+                            }
+                            isoGeometry = JTSUtils.toISO(geomValue, crs);
+                        } else if (valueA instanceof Geometry) {
+                            isoGeometry = (Geometry) valueA;
+                        } else {
+                            throw new UnsupportedOperationException("Cannot serialize geometry object of type "+valueA.getClass());
+                        }
                         try {
                             final Marshaller marshaller;
                             marshaller = POOL.acquireMarshaller();
