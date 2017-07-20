@@ -103,7 +103,7 @@ public final class FeatureExt extends Static {
 
     /**
      * A test to know if a given property is an SIS convention or not. Return true if
-     * the property is marked as an SIS convention, false otherwise.
+     * the property is NOT marked as an SIS convention, false otherwise.
      */
     public static final Predicate<IdentifiedType> IS_NOT_CONVENTION = p -> !AttributeConvention.contains(p.getName());
 
@@ -533,7 +533,6 @@ public final class FeatureExt extends Static {
             }
         }
 
-        // TODO : do not wrap exceptions, do not return null value.
         return geometry;
     }
 
