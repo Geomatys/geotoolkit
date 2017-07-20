@@ -93,7 +93,7 @@ public class GeometryFromWKTDelegate extends AbstractFeatureEditionDelegate {
             final Geometry oldgeom = FeatureExt.getDefaultGeometryValue(feature)
                     .filter(Geometry.class::isInstance)
                     .map(Geometry.class::cast)
-                    .orElseThrow(() -> new IllegalArgumentException("No geometric value found in given feature."));
+                    .orElse(null);
             final Geometry newGeom = dialogDecoration.wktPanel.getGeometry();
             if(oldgeom == null || !oldgeom.equals(newGeom)){
                 helper.sourceModifyFeature(feature, newGeom, false);

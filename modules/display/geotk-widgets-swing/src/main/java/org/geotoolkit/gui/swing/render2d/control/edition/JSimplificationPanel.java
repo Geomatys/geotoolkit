@@ -30,6 +30,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
@@ -67,15 +68,20 @@ public class JSimplificationPanel extends javax.swing.JPanel {
     }
 
     /**
-     * @return Geometry is data CRS.
+     * @return Simplified or source geometry if possible.
      */
     public Geometry getGeometry(){
-        if(current == null){
-            return FeatureExt.getDefaultGeometryValue(original)
-                    .filter(Geometry.class::isInstance)
-                    .map(Geometry.class::cast)
-                    .orElse(null);
-        }else{
+        if (current == null) {
+            try {
+                return FeatureExt.getDefaultGeometryValue(original)
+                        .filter(Geometry.class::isInstance)
+                        .map(Geometry.class::cast)
+                        .orElse(null);
+            } catch (PropertyNotFoundException | IllegalStateException e) {
+                LOGGER.log(Level.FINE, "Cannot determine feature CRS", e);
+                return null;
+            }
+        } else {
             return current;
         }
     }

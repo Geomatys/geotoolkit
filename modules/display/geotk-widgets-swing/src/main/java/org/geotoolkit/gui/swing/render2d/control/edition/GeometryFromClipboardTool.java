@@ -25,7 +25,7 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyType;
+import org.opengis.feature.PropertyNotFoundException;
 
 /**
  * Edition tool displaying a dialog to edit the geometry extracting geometry from the clipboard.
@@ -52,8 +52,13 @@ public class GeometryFromClipboardTool extends AbstractEditionTool {
         //check the geometry type is type Point
         final FeatureMapLayer layer = (FeatureMapLayer) candidate;
         final FeatureType ft = layer.getCollection().getType();
-        final PropertyType desc = FeatureExt.getDefaultGeometry(ft);
-        return desc != null;
+        try {
+            // Check we can reach a geometry property
+            FeatureExt.getDefaultGeometry(ft);
+            return true;
+        } catch (PropertyNotFoundException | IllegalStateException e) {
+            return false;
+        }
     }
 
     @Override
