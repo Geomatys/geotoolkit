@@ -69,12 +69,29 @@ public class GeoJSONReader implements FeatureReader {
     protected Feature current = null;
     protected int currentFeatureIdx = 0;
 
+    /**
+     * A flag indicating if we should read identifiers from read stream. it's
+     * activated if the feature type given at built contains an {@link AttributeConvention#IDENTIFIER_PROPERTY}.
+     */
+    protected final boolean hasIdentifier;
+    final CoordinateReferenceSystem crs;
+    final String geometryName;
+
     public GeoJSONReader(Path jsonFile, FeatureType featureType, ReadWriteLock rwLock) {
+        boolean tmpHasidentifier;
         try{
             featureType.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
-        }catch(PropertyNotFoundException ex){
-            throw new RuntimeException("Missing identifier field in feature type");
+            tmpHasidentifier = true;
+        }catch(PropertyNotFoundException ex) {
+            tmpHasidentifier = false;
         }
+
+        final PropertyType defaultGeometry = FeatureExt.getDefaultGeometry(featureType);
+        crs = FeatureExt.getCRS(defaultGeometry);
+        geometryName = defaultGeometry.getName().toString();
+
+        hasIdentifier = tmpHasidentifier;
+
         this.jsonFile = jsonFile;
         this.featureType = featureType;
         this.rwlock = rwLock;
@@ -122,28 +139,18 @@ public class GeoJSONReader implements FeatureReader {
             final GeoJSONFeatureCollection fc = (GeoJSONFeatureCollection) jsonObj;
             rwlock.readLock().lock();
             try {
-                if ((fc).hasNext()) {
-                    GeoJSONFeature feature = (fc).next();
-                    String id = "id-" + currentFeatureIdx;
-                    if (feature.getId() != null) {
-                        id = feature.getId();
-                    }
-                    current = toFeature(feature, id);
+                if (fc.hasNext()) {
+                    current = toFeature(fc.next());
                     currentFeatureIdx++;
                 }
             } finally {
                 rwlock.readLock().unlock();
             }
         } else if (jsonObj instanceof GeoJSONFeature) {
-            GeoJSONFeature feature = (GeoJSONFeature)jsonObj;
-            String id = "id-0";
-            if (feature.getId() != null) {
-                id = feature.getId();
-            }
-            current = toFeature(feature, id);
+            current = toFeature((GeoJSONFeature)jsonObj);
             jsonObj = null;
         } else if (jsonObj instanceof GeoJSONGeometry) {
-            current = toFeature((GeoJSONGeometry)jsonObj, "id-0");
+            current = toFeature((GeoJSONGeometry)jsonObj);
             jsonObj = null;
         }
     }
@@ -154,16 +161,21 @@ public class GeoJSONReader implements FeatureReader {
      * @param featureId
      * @return
      */
-    protected Feature toFeature(GeoJSONFeature jsonFeature, String featureId) throws FeatureStoreRuntimeException {
+    protected Feature toFeature(GeoJSONFeature jsonFeature) throws FeatureStoreRuntimeException {
 
         //Build geometry
-        final CoordinateReferenceSystem crs = FeatureExt.getCRS(featureType);
         final Geometry geom = GeometryUtils.toJTS(jsonFeature.getGeometry(), crs);
 
         //empty feature
         final Feature feature = featureType.newInstance();
-        feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), featureId);
-        feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
+        if (hasIdentifier) {
+            String id = jsonFeature.getId();
+            if (id == null) {
+                id = "id-" + currentFeatureIdx;
+            }
+            feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), id);
+        }
+        feature.setPropertyValue(geometryName, geom);
 
         //recursively fill other properties
         final Map<String, Object> properties = jsonFeature.getProperties();
@@ -292,7 +304,7 @@ public class GeoJSONReader implements FeatureReader {
      * @throws UnconvertibleObjectException
      */
     private Object convert(Object value, Class binding) throws UnconvertibleObjectException {
-        AbstractMap.SimpleEntry<Class, Class> key = new AbstractMap.SimpleEntry<Class, Class>(value.getClass(), binding);
+        AbstractMap.SimpleEntry<Class, Class> key = new AbstractMap.SimpleEntry<>(value.getClass(), binding);
         ObjectConverter converter = convertersCache.get(key);
 
         if (converter == null) {
@@ -305,15 +317,12 @@ public class GeoJSONReader implements FeatureReader {
     /**
      * Convert a GeoJSONGeometry to Feature.
      * @param jsonGeometry
-     * @param featureId
      * @return
      */
-    protected Feature toFeature(GeoJSONGeometry jsonGeometry, String featureId) {
+    protected Feature toFeature(GeoJSONGeometry jsonGeometry) {
         final Feature feature = featureType.newInstance();
-        feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), featureId);
-        final CoordinateReferenceSystem crs = FeatureExt.getCRS(featureType);
         final Geometry geom = GeometryUtils.toJTS(jsonGeometry, crs);
-        feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
+        feature.setPropertyValue(geometryName, geom);
         return feature;
     }
 
