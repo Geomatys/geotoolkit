@@ -222,7 +222,7 @@ public final class QueryBuilder {
      */
     private static void checkSource(final Source s, Set<String> selectors){
         if(selectors == null){
-            selectors = new HashSet<String>();
+            selectors = new HashSet<>();
         }
 
         if(s instanceof Join){
@@ -239,7 +239,7 @@ public final class QueryBuilder {
         }else if(s instanceof TextStatement){
             //can't check this
         }else{
-            throw new IllegalStateException("Source type is unknowned : " + s +
+            throw new IllegalStateException("Unknown source type : " + s +
                     "\n valid types ares Join and Selector");
         }
 

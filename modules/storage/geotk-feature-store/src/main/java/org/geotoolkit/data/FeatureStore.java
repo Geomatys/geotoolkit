@@ -27,6 +27,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import org.apache.sis.internal.metadata.NameToIdentifier;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.session.Session;
@@ -149,12 +150,15 @@ public interface FeatureStore extends AutoCloseable {
     }
 
     default Resource findResource(final String name) throws DataStoreException {
-
+        ArgumentChecks.ensureNonEmpty("Name for the resource to find", name);
         //recursive search
         Object res = new Function<Resource,Object>() {
             @Override
             public Object apply(final Resource candidate) {
-                boolean match = NameToIdentifier.isHeuristicMatchForIdentifier(Collections.singleton(candidate.getIdentifier()), name);
+                final boolean match =
+                        // We're forced to check strict equality because SIS utility works only with scoped names.
+                        candidate.getIdentifier().getCode().equals(name) ||
+                        NameToIdentifier.isHeuristicMatchForIdentifier(Collections.singleton(candidate.getIdentifier()), name);
                 Object result = match ? candidate : null;
 
                 if (candidate instanceof DataSet) {

@@ -36,6 +36,7 @@ import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 
 import static org.geotoolkit.data.mapinfo.mif.style.Symbol.SYMBOL;
+import org.geotoolkit.feature.FeatureExt;
 
 /**
  * Create collection of points from MIF MultiPoint
@@ -69,7 +70,7 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
                 seq = new PackedCoordinateSequence.Double(coords, 2);
             }
 
-            toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), GEOMETRY_FACTORY.createMultiPoint(seq));
+            toFill.setPropertyValue(FeatureExt.getDefaultGeometry(toFill.getType()).getName().tip().toString(), GEOMETRY_FACTORY.createMultiPoint(seq));
 
             if(scanner.hasNext(Symbol.SYMBOL_PATTERN) && toFill.getType().getProperties(true).contains(SYMBOL)) {
                 String args = scanner.next()+scanner.nextLine();

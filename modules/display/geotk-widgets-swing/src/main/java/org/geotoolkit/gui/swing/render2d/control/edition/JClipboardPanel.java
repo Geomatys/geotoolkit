@@ -52,6 +52,8 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
 import org.apache.sis.util.Utilities;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 
 /**
  * Allow to copy geometry from clipboards
@@ -255,16 +257,23 @@ public class JClipboardPanel extends javax.swing.JPanel {
             }
         }
 
-        if(candidate instanceof Feature){
+        if (candidate instanceof Feature) {
             final Feature f = (Feature) candidate;
-            if(FeatureExt.hasAGeometry(f.getType())){
-                result = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(f);
-                //make a copy and ensure the crs is set
-                result = (Geometry) result.clone();
-                JTS.setCRS(result, FeatureExt.getCRS(f.getType()));
+            try {
+                final PropertyType geom = FeatureExt.getDefaultGeometry(f.getType());
+                Object value = f.getPropertyValue(geom.getName().toString());
+                if (value instanceof Geometry) {
+                    value = ((Geometry) value).clone();
+                    if (value instanceof Geometry) {
+                        //make a copy and ensure the crs is set
+                        result = (Geometry) value;
+                        JTS.setCRS(result, FeatureExt.getCRS(geom));
+                    }
+                }
+            } catch (PropertyNotFoundException|IllegalStateException e) {
+                LOGGER.log(Level.FINE, e, () -> String.format("Cannot find any geometry for :%n%s", f));
             }
         }
-
 
         return result;
     }

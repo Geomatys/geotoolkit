@@ -20,7 +20,6 @@
  */
 package org.geotoolkit.data.dbf;
 
-import com.vividsolutions.jts.geom.Geometry;
 import java.io.EOFException;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -33,6 +32,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -750,58 +750,72 @@ public class DbaseFileHeader {
         return fs.toString();
     }
 
+    /**
+     * Analyze input data type, and try to create a new column matching its
+     * definition in the current header.
+     *
+     * @param columnDefinition The attribute to create a column from. If {@link AttributeConvention#MAXIMAL_LENGTH_CHARACTERISTIC}
+     * characteristics is set, it will be used as a constraint for the new column.
+     * @throws DbaseFileException If an error occurs while adding the column using
+     * input information.
+     */
+    private void addColumn(final AttributeType columnDefinition) throws DbaseFileException {
+        final Class<?> colType = columnDefinition.getValueClass();
+        final String colName = columnDefinition.getName().tip().toString();
+
+        Integer fieldLen = FeatureExt.getLengthCharacteristic(columnDefinition);
+        if (fieldLen == null)
+            fieldLen = 255;
+        if ((colType == Integer.class) || (colType == Short.class)
+                || (colType == Byte.class)) {
+            addColumn(colName, 'N', Math.min(fieldLen, 9), 0);
+        } else if (colType == Long.class) {
+            addColumn(colName, 'N', Math.min(fieldLen, 19), 0);
+        } else if (colType == BigInteger.class) {
+            addColumn(colName, 'N', Math.min(fieldLen, 33), 0);
+        } else if (Number.class.isAssignableFrom(colType)) {
+            int l = Math.min(fieldLen, 33);
+            int d = Math.max(l - 2, 0);
+            addColumn(colName, 'N', l, d);
+        } else if (java.util.Date.class.isAssignableFrom(colType)) {
+            addColumn(colName, 'D', fieldLen, 0);
+        } else if (colType == Boolean.class) {
+            addColumn(colName, 'L', 1, 0);
+        } else if (CharSequence.class.isAssignableFrom(colType)) {
+            // Possible fix for GEOT-42 : ArcExplorer doesn't like 0 length
+            // ensure that maxLength is at least 1
+            addColumn(colName, 'C', Math.min(254, fieldLen), 0);
+        } else {
+            //fallback : write as string
+            addColumn(colName, 'C', Math.min(254, fieldLen), 0);
+        }
+    }
 
     /**
      * Attempt to create a DbaseFileHeader for the FeatureType. Note, we cannot
      * set the number of records until the write has completed.
      *
-     * @param featureType DOCUMENT ME!
-     * @return DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
-     * @throws DbaseFileException DOCUMENT ME!
+     * @param featureType The data type describing columns to create. Geometric
+     * and convention fields will be ignored.
+     * @return A new header in DBF format, containing all columns from input feature type.
+     * @throws DbaseFileException If an error occurs while adding columns in the
+     * header to create.
      */
     public static DbaseFileHeader createDbaseHeader(final FeatureType featureType)
-            throws IOException,DbaseFileException {
+            throws DbaseFileException {
 
         final DbaseFileHeader header = new DbaseFileHeader();
-
-        for(PropertyType type : featureType.getProperties(true)) {
-            //skip properties part of the convention
-            if(AttributeConvention.contains(type.getName())) continue;
-            final Class<?> colType = ((AttributeType) type).getValueClass();
-            final String colName = type.getName().tip().toString();
-
-            Integer fieldLen = FeatureExt.getLengthCharacteristic((AttributeType)type);
-            if (fieldLen == null)
-                fieldLen = 255;
-            if ((colType == Integer.class) || (colType == Short.class)
-                    || (colType == Byte.class)) {
-                header.addColumn(colName, 'N', Math.min(fieldLen, 9), 0);
-            } else if (colType == Long.class) {
-                header.addColumn(colName, 'N', Math.min(fieldLen, 19), 0);
-            } else if (colType == BigInteger.class) {
-                header.addColumn(colName, 'N', Math.min(fieldLen, 33), 0);
-            } else if (Number.class.isAssignableFrom(colType)) {
-                int l = Math.min(fieldLen, 33);
-                int d = Math.max(l - 2, 0);
-                header.addColumn(colName, 'N', l, d);
-            } else if (java.util.Date.class.isAssignableFrom(colType)) {
-                header.addColumn(colName, 'D', fieldLen, 0);
-            } else if (colType == Boolean.class) {
-                header.addColumn(colName, 'L', 1, 0);
-            } else if (CharSequence.class.isAssignableFrom(colType)) {
-                // Possible fix for GEOT-42 : ArcExplorer doesn't like 0 length
-                // ensure that maxLength is at least 1
-                header.addColumn(colName, 'C', Math.min(254, fieldLen), 0);
-            } else if (Geometry.class.isAssignableFrom(colType)) {
+        for (final PropertyType type : featureType.getProperties(true)) {
+            if (AttributeConvention.contains(type.getName()) || AttributeConvention.isGeometryAttribute(type)) {
                 continue;
-            } else {
-                //fallback : write as string
-                header.addColumn(colName, 'C', Math.min(254, fieldLen), 0);
+            }
+
+            Optional<AttributeType<?>> attribute = FeatureExt.castOrUnwrap(type);
+            if (attribute.isPresent()) {
+                header.addColumn(attribute.get());
             }
         }
 
         return header;
     }
-
 }

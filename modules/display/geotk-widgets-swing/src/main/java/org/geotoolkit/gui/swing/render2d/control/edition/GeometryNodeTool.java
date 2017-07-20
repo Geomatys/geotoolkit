@@ -27,6 +27,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
 
 /**
  *
@@ -50,19 +51,21 @@ public class GeometryNodeTool extends AbstractEditionTool {
         //check the geometry type is type Point
         final FeatureMapLayer layer = (FeatureMapLayer) candidate;
         final FeatureType ft = layer.getCollection().getType();
-        final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(ft);
 
-        if(desc == null){
-            return false;
-        }
+        try {
+            final Class geomClass = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(ft))
+                    .map(AttributeType::getValueClass)
+                    .orElse(null);
 
-        if(Point.class.isAssignableFrom(desc.getValueClass())){
             //moving node on a Point type is the same as moving full geometry.
             //avoid duplicating the same purpose tool.
+            if(geomClass == null || Point.class.isAssignableFrom(geomClass)){
+                return false;
+            }
+            return Geometry.class.isAssignableFrom(geomClass);
+        } catch (PropertyNotFoundException | IllegalStateException e) {
             return false;
         }
-
-        return Geometry.class.isAssignableFrom(desc.getValueClass());
     }
 
     @Override

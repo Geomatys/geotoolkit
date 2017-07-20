@@ -132,7 +132,8 @@ public class ExportItem extends TreeMenuItem {
 
                             //detect if we need one or multiple types.
                             final FeatureCollection[] cols;
-                            final AttributeType<?> geomAtt = FeatureExt.getDefaultGeometryAttribute(baseType);
+                            final AttributeType<?> geomAtt = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(baseType))
+                                    .orElseThrow(() -> new IllegalArgumentException("No geometric property found in layer " + layer.getName()));
                             if(ArraysExt.contains(supportedGeometryTypes,geomAtt.getValueClass()) ){
                                 cols = new FeatureCollection[]{baseCol};
                             }else{

@@ -225,7 +225,7 @@ public class FidQueryTest extends FIDTestCase {
         // factory.createGeometryFilter(FilterType.GEOMETRY_INTERSECTS);
         // bboxFilter.addRightGeometry(bb);
         //
-        // String geom = ds.getSchema().getDefaultGeometry().getLocalName();
+        // String geom = ds.getSchema().getDefaultGeometryValue().getLocalName();
         //
         // bboxFilter.addLeftGeometry(factory.createAttributeExpression(geom));
 

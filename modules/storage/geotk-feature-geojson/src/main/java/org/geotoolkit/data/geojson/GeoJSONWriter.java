@@ -182,10 +182,13 @@ class GeoJSONWriter implements Closeable, Flushable {
         }
 
         //write geometry
-        Object geom = feature.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
-        if (geom != null) {
+        final Optional<Geometry> geom = FeatureExt.getDefaultGeometryValue(feature)
+                        .filter(Geometry.class::isInstance)
+                        .map(Geometry.class::cast);
+
+        if (geom.isPresent()) {
             writer.writeFieldName(GEOMETRY);
-            writeFeatureGeometry((Geometry) geom);
+            writeFeatureGeometry(geom.get());
         }
 
         //write properties

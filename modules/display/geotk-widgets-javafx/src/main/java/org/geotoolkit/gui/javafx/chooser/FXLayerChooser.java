@@ -181,7 +181,8 @@ public class FXLayerChooser extends BorderPane{
             final FeatureStore store = (FeatureStore) source;
             for(GenericName name : store.getNames()){
                 final FeatureType ft = store.getFeatureType(name.toString());
-                final AttributeType<?> geomAtt = FeatureExt.getDefaultGeometryAttribute(ft);
+                final AttributeType<?> geomAtt = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(ft))
+                        .orElse(null);
                 if(geomAtt != null){
                     firstCandidates.add(ft);
                 }else{
@@ -231,7 +232,8 @@ public class FXLayerChooser extends BorderPane{
                 final FeatureType ft = (FeatureType) value;
                 final FeatureStore store = (FeatureStore) getSource();
 
-                final AttributeType<?> desc = FeatureExt.getDefaultGeometryAttribute(ft);
+                final AttributeType<?> desc = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(ft))
+                        .orElse(null);
                 if(desc != null){
                     BufferedImage icon;
                     final Class binding = desc.getValueClass();

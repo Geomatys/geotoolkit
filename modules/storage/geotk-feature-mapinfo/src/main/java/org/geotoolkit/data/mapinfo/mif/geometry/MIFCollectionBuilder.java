@@ -32,6 +32,7 @@ import java.util.Scanner;
 import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.feature.DefaultFeatureType;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureExt;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -114,33 +115,37 @@ public class MIFCollectionBuilder extends MIFGeometryBuilder {
         ArrayList<String> geomsStr = new ArrayList<>();
         if(polygons.size() > 0) {
             count++;
-            final MultiPolygon multiPolygon = GEOMETRY_FACTORY.createMultiPolygon(polygons.toArray(new Polygon[polygons.size()]));
-            final FeatureType type = MIFUtils.GeometryType.REGION.getBinding(collectionCRS, null);
-            final Feature feature = type.newInstance();
-            feature.setPropertyValue(MIFUtils.findGeometryProperty(feature.getType()).getName().tip().toString(), multiPolygon);
-            geomsStr.add(MIFUtils.GeometryType.REGION.toMIFSyntax(feature));
+            geomsStr.add(convert(
+                    GEOMETRY_FACTORY.createMultiPolygon(polygons.toArray(new Polygon[polygons.size()])),
+                    MIFUtils.GeometryType.REGION
+            ));
         }
         if(lines.size() > 0) {
             count++;
-            final MultiLineString multiLine = GEOMETRY_FACTORY.createMultiLineString(lines.toArray(new LineString[lines.size()]));
-            final FeatureType type = MIFUtils.GeometryType.PLINE.getBinding(collectionCRS, null);
-            final Feature feature = type.newInstance();
-            feature.setPropertyValue(MIFUtils.findGeometryProperty(feature.getType()).getName().tip().toString(), multiLine);
-            geomsStr.add(MIFUtils.GeometryType.PLINE.toMIFSyntax(feature));
+            geomsStr.add(convert(
+                    GEOMETRY_FACTORY.createMultiLineString(lines.toArray(new LineString[lines.size()])),
+                    MIFUtils.GeometryType.PLINE
+            ));
         }
         if(points.size() > 0) {
             count++;
-            final MultiPoint multiPoint = GEOMETRY_FACTORY.createMultiPoint(points.toArray(new Point[points.size()]));
-            final FeatureType type = MIFUtils.GeometryType.PLINE.getBinding(collectionCRS, null);
-            final Feature feature = type.newInstance();
-            feature.setPropertyValue(MIFUtils.findGeometryProperty(feature.getType()).getName().tip().toString(), multiPoint);
-            geomsStr.add(MIFUtils.GeometryType.PLINE.toMIFSyntax(feature));
+            geomsStr.add(convert(
+                    GEOMETRY_FACTORY.createMultiPoint(points.toArray(new Point[points.size()])),
+                    MIFUtils.GeometryType.MULTIPOINT
+            ));
         }
 
         builder.append(count).append('\n');
         for(String mifMulti : geomsStr) {
             builder.append(mifMulti).append('\n');
         }
+    }
+
+    private String convert(final GeometryCollection col, MIFUtils.GeometryType mifType) throws DataStoreException {
+        final FeatureType type = mifType.getBinding(collectionCRS, null);
+        final Feature feature = type.newInstance();
+        feature.setPropertyValue(FeatureExt.getDefaultGeometry(type).getName().toString(), col);
+        return mifType.toMIFSyntax(feature);
     }
 
     /**
@@ -171,7 +176,7 @@ public class MIFCollectionBuilder extends MIFGeometryBuilder {
     }
 
     private void featureToMIFCollection(Feature source, StringBuilder builder) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
