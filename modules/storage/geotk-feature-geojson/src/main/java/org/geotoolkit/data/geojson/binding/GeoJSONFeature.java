@@ -27,7 +27,11 @@ import java.util.Map;
 public class GeoJSONFeature extends GeoJSONObject {
 
     private GeoJSONGeometry geometry = null;
-    private String id = null;
+    /**
+     * Identifier (id attribute) of the feature. According to RFC 7946, it is
+     * optional and can either be a number or a string.
+     */
+    private Object id = null;
     private Map<String, Object> properties = new HashMap<>();
 
     public GeoJSONFeature() {
@@ -42,11 +46,11 @@ public class GeoJSONFeature extends GeoJSONObject {
         this.geometry = geometry;
     }
 
-    public String getId() {
+    public Object getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Object id) {
         this.id = id;
     }
 

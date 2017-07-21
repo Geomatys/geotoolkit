@@ -309,8 +309,8 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         String expected = "{\n" +
                 "\"type\":\"FeatureCollection\"\n" +
                 ",\"features\":[\n" +
-                "{\"type\":\"Feature\",\"id\":\"id-0\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat1\"}}\n" +
-                ",{\"type\":\"Feature\",\"id\":\"id-1\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat2\"}}\n" +
+                "{\"type\":\"Feature\",\"id\":0,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat1\"}}\n" +
+                ",{\"type\":\"Feature\",\"id\":1,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat2\"}}\n" +
                 "]}";
 
         assertEquals(expected, outputJSON);
@@ -325,7 +325,7 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         final String outputJSON;
         try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             Feature feature = validFeatureType.newInstance();
-            feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-0");
+            feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), 0);
             feature.setPropertyValue("type","feat1");
             feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), pt);
             GeoJSONStreamWriter.writeSingleFeature(baos, feature, JsonEncoding.UTF8, 4, false);
@@ -336,7 +336,7 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         assertNotNull(outputJSON);
         assertFalse(outputJSON.isEmpty());
 
-        String expected = "{\"type\":\"Feature\",\"id\":\"id-0\"," +
+        String expected = "{\"type\":\"Feature\",\"id\":0," +
                 "\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]}," +
                 "\"properties\":{\"type\":\"feat1\"}}";
         assertEquals(expected, outputJSON);
@@ -344,8 +344,6 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void writeStreamSingleGeometryTest() throws Exception {
-        FeatureType validFeatureType = buildGeometryFeatureType("simpleFT", Point.class);
-
         Point pt = (Point)WKT_READER.read(PROPERTIES.getProperty("point"));
 
         final String outputJSON;
@@ -398,8 +396,8 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         String expected = "{\n" +
                 "\"type\":\"FeatureCollection\"\n" +
                 ",\"features\":[\n" +
-                "{\"type\":\"Feature\",\"id\":\"id-0\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"array\":[[0.0,1.0,2.0,3.0,4.0],[1.0,2.0,3.0,4.0,5.0],[2.0,3.0,4.0,5.0,6.0],[3.0,4.0,5.0,6.0,7.0],[4.0,5.0,6.0,7.0,8.0]]}}\n" +
-                ",{\"type\":\"Feature\",\"id\":\"id-1\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"array\":[[0.0,-1.0,-2.0,-3.0,-4.0],[1.0,0.0,-1.0,-2.0,-3.0],[2.0,1.0,0.0,-1.0,-2.0],[3.0,2.0,1.0,0.0,-1.0],[4.0,3.0,2.0,1.0,0.0]]}}\n" +
+                "{\"type\":\"Feature\",\"id\":\"0\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"array\":[[0.0,1.0,2.0,3.0,4.0],[1.0,2.0,3.0,4.0,5.0],[2.0,3.0,4.0,5.0,6.0],[3.0,4.0,5.0,6.0,7.0],[4.0,5.0,6.0,7.0,8.0]]}}\n" +
+                ",{\"type\":\"Feature\",\"id\":\"1\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"array\":[[0.0,-1.0,-2.0,-3.0,-4.0],[1.0,0.0,-1.0,-2.0,-3.0],[2.0,1.0,0.0,-1.0,-2.0],[3.0,2.0,1.0,0.0,-1.0],[4.0,3.0,2.0,1.0,0.0]]}}\n" +
                 "]}";
         assertEquals(expected, outputJSON);
     }
@@ -407,7 +405,7 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
     private FeatureType buildGeometryFeatureType(String name, Class geomClass) {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
-        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(Integer.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
         ftb.addAttribute(String.class).setName("type");
         ftb.addAttribute(geomClass).setName("geometry").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
         return ftb.build();

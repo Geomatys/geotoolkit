@@ -75,7 +75,9 @@ class GeoJSONFileWriter extends GeoJSONReader implements FeatureWriter {
             //we reach append mode
             //create empty feature
             edited = featureType.newInstance();
-            edited.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-"+currentFeatureIdx++);
+            if (hasIdentifier) {
+                edited.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), idConverter.apply(currentFeatureIdx++));
+            }
         }
         return edited;
     }

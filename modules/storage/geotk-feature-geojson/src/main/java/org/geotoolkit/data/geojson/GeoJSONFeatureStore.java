@@ -53,12 +53,10 @@ import java.util.logging.Logger;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyNotFoundException;
 
 /**
  *
@@ -206,12 +204,6 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
                     userData.put(HintsPending.PROPERTY_IS_IDENTIFIER,Boolean.TRUE);
                     ftb.addAttribute(String.class).setName("fid").addRole(AttributeRole.IDENTIFIER_COMPONENT);
                     ftb.addAttribute(findBinding((GeoJSONGeometry) obj)).setName("geometry").setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
-                }
-
-                try{
-                    ftb.build().getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
-                }catch(PropertyNotFoundException ex){
-                    ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
                 }
 
                 return ftb.build();

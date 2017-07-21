@@ -40,16 +40,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.data.geojson.utils.GeoJSONUtils;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 
 /**
@@ -74,23 +75,22 @@ public class GeoJSONReader implements FeatureReader {
      * activated if the feature type given at built contains an {@link AttributeConvention#IDENTIFIER_PROPERTY}.
      */
     protected final boolean hasIdentifier;
+    final Function idConverter;
     final CoordinateReferenceSystem crs;
     final String geometryName;
 
     public GeoJSONReader(Path jsonFile, FeatureType featureType, ReadWriteLock rwLock) {
-        boolean tmpHasidentifier;
-        try{
-            featureType.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
-            tmpHasidentifier = true;
-        }catch(PropertyNotFoundException ex) {
-            tmpHasidentifier = false;
+        hasIdentifier = GeoJSONUtils.hasIdentifier(featureType);
+        if (hasIdentifier) {
+            idConverter = GeoJSONUtils.getIdentifierConverter(featureType);
+        } else {
+            // It should not be used, but we don't set it to null in case someons use it by mistake.
+            idConverter = input -> input;
         }
 
         final PropertyType defaultGeometry = FeatureExt.getDefaultGeometry(featureType);
         crs = FeatureExt.getCRS(defaultGeometry);
         geometryName = defaultGeometry.getName().toString();
-
-        hasIdentifier = tmpHasidentifier;
 
         this.jsonFile = jsonFile;
         this.featureType = featureType;
@@ -169,11 +169,11 @@ public class GeoJSONReader implements FeatureReader {
         //empty feature
         final Feature feature = featureType.newInstance();
         if (hasIdentifier) {
-            String id = jsonFeature.getId();
+            Object id = jsonFeature.getId();
             if (id == null) {
-                id = "id-" + currentFeatureIdx;
+                id = currentFeatureIdx;
             }
-            feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), id);
+            feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), idConverter.apply(id));
         }
         feature.setPropertyValue(geometryName, geom);
 

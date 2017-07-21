@@ -35,11 +35,19 @@ import static java.nio.file.StandardOpenOption.WRITE;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.TimeZone;
+import java.util.function.Function;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.util.Numbers;
 import static org.geotoolkit.data.geojson.utils.GeoJSONMembres.*;
 import static org.geotoolkit.data.geojson.utils.GeoJSONTypes.*;
+import org.geotoolkit.feature.FeatureExt;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -292,7 +300,80 @@ public final class GeoJSONUtils extends Static {
                 loc1.getColumnNr() == loc2.getColumnNr() &&
                 loc1.getByteOffset() == loc2.getByteOffset() &&
                 loc1.getCharOffset() == loc2.getCharOffset());
+    }
 
+    /**
+     * Check wether the given data type contains an identifier property according
+     * to SIS convention (see {@link AttributeConvention#IDENTIFIER_PROPERTY}).
+     *
+     * @param toSearchIn The data type to scan for an identifier.
+     * @return True if an sis:identifier property is available. False otherwise.
+     */
+    public static boolean hasIdentifier(final FeatureType toSearchIn) {
+        try {
+            toSearchIn.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            return true;
+        } catch (PropertyNotFoundException ex) {
+            return false;
+        }
+    }
 
+    /**
+     * If an sis:identifier property is available (see
+     * {@link AttributeConvention#IDENTIFIER_PROPERTY}), we try to acquire it
+     * value type (see {@link AttributeType#getValueClass() }. If we cannot
+     * determine the value type for this property, we simply return an empty
+     * optional. Note that an error is thrown if the given feature type does not
+     * contain any identifier property.
+     *
+     * @param toSearchIn The property to extract identifier from.
+     * @return The value class of found property if we can determine it (i.e:
+     * it's an attribute or an operation from which we can unravel an
+     * attribute), or an empty object if the property cannot provide value
+     * class.
+     * @throws PropertyNotFoundException If no
+     * {@link AttributeConvention#IDENTIFIER_PROPERTY} is present in the input.
+     */
+    public static Optional<Class> getIdentifierType(final FeatureType toSearchIn) throws PropertyNotFoundException {
+        final PropertyType idProperty = toSearchIn.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+        return FeatureExt.castOrUnwrap(idProperty)
+                .map(AttributeType::getValueClass);
+    }
+
+    /**
+     * Create a converter to set values of arbitrary type into the sis:identifier
+     * property of a given feature type.
+     * Note: RFC7946 specifies that identifier must be either numeric or string.
+     *
+     * @param target The feature type which specifies the sis:identifier, and by
+     * extension the output value class for the converter to create.
+     * @return A function capable of converting arbitrary objects into required
+     * type for sis:identifier property.
+     * @throws IllegalArgumentException If the given data type provides a bad value
+     * class for identifier property.
+     */
+    public static Function getIdentifierConverter(final FeatureType target) throws IllegalArgumentException {
+        final Class identifierType = GeoJSONUtils.getIdentifierType(target)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot determine the value type for identifier property. Should either be a string or a number."));
+        final Function converter;
+        if (Numbers.isFloat(identifierType)) {
+            converter = input -> Double.parseDouble(input.toString());
+        } else if (Long.class.isAssignableFrom(identifierType)) {
+            converter = input -> Long.parseLong(input.toString());
+        } else if (Numbers.isInteger(identifierType)) {
+            converter = input -> Integer.parseInt(input.toString());
+        } else if (String.class.isAssignableFrom(identifierType)) {
+            converter = Object::toString;
+        } else {
+            throw new IllegalArgumentException("Unsupported type for identifier property. RFC 7946 asks for a string or number data.");
+        }
+
+        return input -> {
+            if (input == null || identifierType.getClass().isAssignableFrom(input.getClass())) {
+                return input;
+            }
+
+            return converter.apply(input);
+        };
     }
 }
