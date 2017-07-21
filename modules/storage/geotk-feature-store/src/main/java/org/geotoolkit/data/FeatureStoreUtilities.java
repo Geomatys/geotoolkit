@@ -29,10 +29,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
@@ -40,6 +41,7 @@ import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.feature.AttributeConvention;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.apache.sis.util.logging.Logging;
@@ -47,13 +49,17 @@ import org.geotoolkit.data.memory.GenericMappingFeatureCollection;
 import org.geotoolkit.data.memory.mapping.DefaultFeatureMapper;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
-import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.IdentifiedType;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
 /**
@@ -270,7 +276,20 @@ public class FeatureStoreUtilities {
         final FilterFactory FF = FactoryFinder.getFilterFactory(null);
         final FeatureType baseType = col.getType();
         final GenericName name = baseType.getName();
-        final AttributeType geomDesc = (AttributeType) baseType.getProperty(geomPropName.toString());
+        final PropertyType geomDesc = baseType.getProperty(geomPropName.toString());
+        boolean setDefaultGeometryRole = false;
+        try {
+            IdentifiedType defaultGeometry = baseType.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+            setDefaultGeometryRole = defaultGeometry.equals(geomDesc);
+            while (setDefaultGeometryRole == false && defaultGeometry instanceof Operation) {
+                defaultGeometry = ((Operation)defaultGeometry).getResult();
+                setDefaultGeometryRole = defaultGeometry.equals(geomDesc);
+            }
+        } catch (PropertyNotFoundException e) {
+            LOGGER.log(Level.FINEST, "No SIS convention found in given data type", e);
+        }
+
+        final CoordinateReferenceSystem crs = FeatureExt.getCRS(geomDesc);
 
         final List<Class> lstClasses = Arrays.asList(geomClasses);
 
@@ -309,12 +328,18 @@ public class FeatureStoreUtilities {
             //retype the collection
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder(baseType);
             ftb.setName(NamesExt.create(NamesExt.getNamespace(name), name.tip().toString() + '_' + geomClass.getSimpleName()));
-            for(PropertyTypeBuilder ptb : ftb.properties()){
-                if(ptb.getName().equals(geomPropName)){
-                    final AttributeTypeBuilder atb = (AttributeTypeBuilder) ptb;
-                    atb.setValueClass(geomClasses[i]).setCRS(FeatureExt.getCRS(geomDesc)).addRole(AttributeRole.DEFAULT_GEOMETRY);
+            PropertyTypeBuilder geometryBuilder = null;
+            final Iterator<PropertyTypeBuilder> it = ftb.properties().iterator();
+            while (geometryBuilder == null && it.hasNext()) {
+                final PropertyTypeBuilder next = it.next();
+                if (next.getName().equals(geomPropName)) {
+                    geometryBuilder = next;
+                    it.remove();
                 }
             }
+            final AttributeTypeBuilder geomAttr = ftb.addAttribute(geomClasses[i]).setCRS(crs);
+            if (setDefaultGeometryRole)
+                geomAttr.addRole(AttributeRole.DEFAULT_GEOMETRY);
 
             cols[i] = new GenericMappingFeatureCollection(cols[i],new DefaultFeatureMapper(baseType, ftb.build()));
         }
