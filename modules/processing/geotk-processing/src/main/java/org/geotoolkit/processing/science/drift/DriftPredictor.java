@@ -301,7 +301,17 @@ public class DriftPredictor extends AbstractProcess {
         final OffsetDateTime date = OffsetDateTime.ofInstant(currentTime, ZoneOffset.UTC);
         synchronized (DriftPredictor.class) {   // For making sure that only one process downloads data.
             try {
-                wind.load(date);
+                /*
+                 * In the particular case of wind, we will perform the calculation even if there is no data.
+                 * We do that because Météo-France WCS server often contains data for only the current day.
+                 * This is different than what we do for oceanic current, since missing current data are more
+                 * problematic.
+                 */
+                try {
+                    wind.load(date);
+                } catch (FileNotFoundException e) {
+                    progress("WARNING: no wind data at " + currentTime);
+                }
                 current.load(date);
             } catch (FileNotFoundException e) {
                 progress(e.toString());                 // TODO: should actually be reported as a warning.

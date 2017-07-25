@@ -101,6 +101,8 @@ abstract class DataSource {
 
     /**
      * Loads the archive (if available) or prediction (as a fallback) file for the given time.
+     *
+     * @throws FileNotFoundException if there is no data at the requested time.
      */
     abstract void load(OffsetDateTime requested) throws Exception;
 
@@ -155,6 +157,7 @@ abstract class DataSource {
 
         /**
          * Loads the prediction file for the given time.
+         * If no data is available, the <var>u</var> and <var>v</var> components are left unchanged.
          */
         @Override
         void load(final OffsetDateTime requested) throws Exception {
@@ -177,17 +180,20 @@ abstract class DataSource {
                 uFile = install(year, "uvel", uFile, uFileName);
                 vFile = install(year, "vvel", vFile, vFileName);
                 NetcdfDataset nc = NetcdfDataset.openDataset(uFile.toString());
+                final VelocityComponent tu, tv;
                 try {
-                    u = new VelocityComponent.HYCOM(nc, "u", (VelocityComponent.HYCOM) u, directory);
+                    tu = new VelocityComponent.HYCOM(nc, "u", (VelocityComponent.HYCOM) u, directory);
                 } finally {
                     nc.close();
                 }
                 nc = NetcdfDataset.openDataset(vFile.toString());
                 try {
-                    v = new VelocityComponent.HYCOM(nc, "v", (VelocityComponent.HYCOM) u, directory);  // Really 'u', not 'v'.
+                    tv = new VelocityComponent.HYCOM(nc, "v", (VelocityComponent.HYCOM) u, directory);  // Really 'u', not 'v'.
                 } finally {
                     nc.close();
                 }
+                u = tu;     // Set only after the two components have been read.
+                v = tv;
             }
         }
 
@@ -316,7 +322,7 @@ abstract class DataSource {
 
         /**
          * Loads the prediction file for the given time.
-         * If no data is available, return {@code false}.
+         * If no data is available, the <var>u</var> and <var>v</var> components are left unchanged.
          */
         @Override
         void load(final OffsetDateTime requested) throws Exception {
@@ -329,8 +335,10 @@ abstract class DataSource {
                 final Instant t = requested.truncatedTo(ChronoUnit.HOURS).withHour(hour).toInstant();
                 final Path uFile = install(t, year, day, hour, 'U');
                 final Path vFile = install(t, year, day, hour, 'V');
-                u = new VelocityComponent.MeteoFrance(uFile.toUri());
-                v = new VelocityComponent.MeteoFrance(vFile.toUri());
+                final VelocityComponent tu = new VelocityComponent.MeteoFrance(uFile.toUri());
+                final VelocityComponent tv = new VelocityComponent.MeteoFrance(vFile.toUri());
+                u = tu;     // Set only after the two components have been read.
+                v = tv;
             }
         }
 
@@ -398,7 +406,7 @@ abstract class DataSource {
 
         /**
          * Loads the prediction file for the given time.
-         * If no data is available, return {@code false}.
+         * If no data is available, the <var>u</var> and <var>v</var> components are left unchanged.
          */
         @Override
         void load(final OffsetDateTime requested) throws Exception {
@@ -410,12 +418,15 @@ abstract class DataSource {
                 currentDay = code;
                 final Path file = cacheDir.resolve(String.format(FILENAME_PATTERN, year, month, day));
                 final NetcdfDataset nc = NetcdfDataset.openDataset(file.toString());
+                final VelocityComponent tu, tv;
                 try {
-                    u = new VelocityComponent.WindSat(nc, "wind_speed_aw");
-                    v = new VelocityComponent.WindSat(nc, "wind_direction");
+                    tu = new VelocityComponent.WindSat(nc, "wind_speed_aw");
+                    tv = new VelocityComponent.WindSat(nc, "wind_direction");
                 } finally {
                     nc.close();
                 }
+                u = tu;     // Set only after the two components have been read.
+                v = tv;
             }
         }
     }
