@@ -60,6 +60,8 @@ import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 
 /**
  * Panel allowing to choose layer among the available datas of the source.
@@ -154,10 +156,10 @@ public class JLayerChooser extends javax.swing.JPanel {
             final FeatureStore store = (FeatureStore) source;
             for(GenericName name : store.getNames()){
                 final FeatureType ft = store.getFeatureType(name.toString());
-                final AttributeType<?> geomAtt = FeatureExt.getDefaultGeometryAttribute(ft);
-                if(geomAtt != null){
+                try {
+                    final PropertyType geomAtt = FeatureExt.getDefaultGeometry(ft);
                     firstCandidates.add(ft);
-                }else{
+                } catch (PropertyNotFoundException | IllegalStateException e) {
                     secondCandidates.add(ft);
                 }
             }
@@ -253,7 +255,8 @@ public class JLayerChooser extends javax.swing.JPanel {
                 final FeatureType ft = (FeatureType) value;
                 final FeatureStore store = (FeatureStore) getSource();
 
-                final AttributeType<?> desc = FeatureExt.getDefaultGeometryAttribute(ft);
+                final AttributeType<?> desc = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(ft))
+                        .orElse(null);
                 if(desc != null){
                     ImageIcon icon;
                     final Class binding = desc.getValueClass();

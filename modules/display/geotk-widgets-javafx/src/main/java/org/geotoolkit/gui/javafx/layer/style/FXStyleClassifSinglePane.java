@@ -361,8 +361,9 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
             final FeatureType schema = layer.getCollection().getType();
 
             //find the geometry class for template
-            final AttributeType<?> geo = FeatureExt.getDefaultGeometryAttribute(schema);
-            final Class<?> geoClass = (geo!=null)?geo.getValueClass():null;
+            final AttributeType<?> geo = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(schema))
+                    .orElseThrow(() -> new IllegalArgumentException("No geometric property found in layer "+layer.getName()));
+            final Class<?> geoClass = geo.getValueClass();
 
             final MutableStyleFactory sf = GeotkFX.getStyleFactory();
             final FilterFactory ff = GeotkFX.getFilterFactory();

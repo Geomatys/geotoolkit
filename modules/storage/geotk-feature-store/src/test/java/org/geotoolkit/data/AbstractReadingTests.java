@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
@@ -54,7 +55,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.Utilities;
 import org.opengis.metadata.Identifier;
 import org.opengis.feature.Operation;
-import org.apache.sis.internal.feature.AttributeConvention;
 
 /**
  * Generic reading tests for datastore.
@@ -272,16 +272,16 @@ public abstract class AbstractReadingTests {
             }
 
             //handle geometry as object since they can be ISO or JTS
-            final Map<FeatureId,Object> inOriginal = new HashMap<FeatureId, Object>();
+            final Map<FeatureId,Object> inOriginal = new HashMap<>();
             FeatureReader ite = store.getFeatureReader(QueryBuilder.all(candidate.name));
             try{
                 while(ite.hasNext()){
                     final Feature f = ite.next();
                     final FeatureId id = FeatureExt.getId(f);
-                    final Object geom = f.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
                     assertNotNull(id);
-                    assertNotNull(geom);
-                    inOriginal.put(id,geom);
+                    final Optional<Object> geom = FeatureExt.getDefaultGeometryValue(f);
+                    assertTrue(String.format("No geometry found in feature%n%s", f), geom.isPresent());
+                    inOriginal.put(id,geom.get());
                 }
             }finally{
                 ite.close();
@@ -297,12 +297,12 @@ public abstract class AbstractReadingTests {
                 while(ite.hasNext()){
                     final Feature f = ite.next();
                     final FeatureId id = FeatureExt.getId(f);
-                    final Object original = inOriginal.get(id);
-                    final Object reprojected = f.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
                     assertNotNull(id);
+                    final Object original = inOriginal.get(id);
                     assertNotNull(original);
-                    assertNotNull(reprojected);
-                    assertNotSame(original, reprojected);
+                    final Optional<Object> reprojected = FeatureExt.getDefaultGeometryValue(f);
+                    assertTrue(String.format("No geometry found in feature%n%s", reprojected), reprojected.isPresent());
+                    assertNotSame(original, reprojected.get());
                 }
             }finally{
                 ite.close();

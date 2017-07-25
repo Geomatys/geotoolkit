@@ -79,7 +79,7 @@ public class MIFArcBuilder extends MIFRectangleBuilder {
                 seq = new PackedCoordinateSequence.Double(linePts, 2);
             }
             final Envelope line = new Envelope(seq.getCoordinate(0), seq.getCoordinate(1));
-            toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), JTS.toGeometry(line));
+            toFill.setPropertyValue(FeatureExt.getDefaultGeometry(toFill.getType()).getName().tip().toString(), JTS.toGeometry(line));
 
             // Get arc angles
             Double beginAngle = Double.parseDouble(scanner.next(ProjectionUtils.DOUBLE_PATTERN));

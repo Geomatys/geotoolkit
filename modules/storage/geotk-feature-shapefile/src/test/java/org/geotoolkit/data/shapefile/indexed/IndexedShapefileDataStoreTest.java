@@ -315,7 +315,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         FeatureCollection features;
         FeatureIterator indexIter;
         FilterFactory2 fac = (FilterFactory2) FactoryFinder.getFilterFactory(null);
-        String geometryName = FeatureExt.getDefaultGeometryAttribute(indexedDS.getFeatureType()).getName().tip().toString();
+        String geometryName = FeatureExt.getDefaultGeometry(indexedDS.getFeatureType()).getName().tip().toString();
 
         Filter filter = fac.bbox(fac.property(geometryName), newBounds);
 
@@ -670,7 +670,10 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         try{
             while (fci.hasNext()) {
                 Feature f = fci.next();
-                Geometry fromShape = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(f);
+                Geometry fromShape = FeatureExt.getDefaultGeometryValue(f)
+                        .filter(Geometry.class::isInstance)
+                        .map(Geometry.class::cast)
+                        .orElseThrow(() -> new IllegalArgumentException("No geometry found in feature "+f));
 
                 if (fromShape instanceof GeometryCollection) {
                     if (!(geom instanceof GeometryCollection)) {

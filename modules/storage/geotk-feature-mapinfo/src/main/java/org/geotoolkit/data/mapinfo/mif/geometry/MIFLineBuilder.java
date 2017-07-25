@@ -35,6 +35,7 @@ import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 
 import static org.geotoolkit.data.mapinfo.mif.style.Pen.PEN;
+import org.geotoolkit.feature.FeatureExt;
 
 /**
  * Util class to build a feature from Line object of a MIF file.
@@ -61,7 +62,7 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
         final CoordinateSequence seq = new PackedCoordinateSequence.Double(linePts, 2);
         final LineString line = GEOMETRY_FACTORY.createLineString(seq);
 
-        toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), line);
+        toFill.setPropertyValue(FeatureExt.getDefaultGeometry(toFill.getType()).getName().tip().toString(), line);
 
         if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getProperties(true).contains(PEN)) {
             String args = scanner.next()+scanner.nextLine();

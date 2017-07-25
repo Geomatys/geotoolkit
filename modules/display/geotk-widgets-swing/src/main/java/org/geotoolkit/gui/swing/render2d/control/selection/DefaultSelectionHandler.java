@@ -67,8 +67,8 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
+import org.opengis.feature.PropertyType;
 
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -257,7 +257,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
                             final Set<Identifier> ids = new HashSet<>();
 
                             final FeatureMapLayer fl = (FeatureMapLayer) layer;
-                            final AttributeType<?> geomAtt = FeatureExt.getDefaultGeometryAttribute(fl.getCollection().getType());
+                            final PropertyType geomAtt = FeatureExt.getDefaultGeometry(fl.getCollection().getType());
                             final String geoStr = geomAtt.getName().tip().toString();
                             final Expression geomField = FF.property(geoStr);
 

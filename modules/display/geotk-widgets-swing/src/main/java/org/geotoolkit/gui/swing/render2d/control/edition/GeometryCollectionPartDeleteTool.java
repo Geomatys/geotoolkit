@@ -26,6 +26,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
 
 /**
  * Edition tool to remove geometry parts in geometry collections.
@@ -50,13 +51,14 @@ public class GeometryCollectionPartDeleteTool extends AbstractEditionTool {
         //check the geometry type is type Point
         final FeatureMapLayer layer = (FeatureMapLayer) candidate;
         final FeatureType ft = layer.getCollection().getType();
-        final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(ft);
-
-        if(desc == null){
+        try {
+            return FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(ft))
+                    .map(AttributeType::getValueClass)
+                    .map(GeometryCollection.class::isAssignableFrom)
+                    .orElse(Boolean.FALSE);
+        } catch (PropertyNotFoundException | IllegalStateException e) {
             return false;
         }
-
-        return GeometryCollection.class.isAssignableFrom(desc.getValueClass());
     }
 
     @Override

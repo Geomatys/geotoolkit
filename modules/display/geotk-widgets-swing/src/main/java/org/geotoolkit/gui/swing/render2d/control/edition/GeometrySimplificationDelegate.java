@@ -70,7 +70,10 @@ public class GeometrySimplificationDelegate extends AbstractFeatureEditionDelega
     private void setCurrentFeature(final Feature feature){
         this.feature = feature;
         if(feature != null){
-            final Geometry geom = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(feature);
+            final Geometry geom = FeatureExt.getDefaultGeometryValue(feature)
+                    .filter(Geometry.class::isInstance)
+                    .map(Geometry.class::cast)
+                    .orElseThrow(() -> new IllegalArgumentException("No geometric value found in given feature."));
             decoration.setGeometries(Collections.singleton(helper.toObjectiveCRS(geom)));
             dialogDecoration.simplifyPanel.setGeometry(feature);
         }else{
@@ -88,9 +91,12 @@ public class GeometrySimplificationDelegate extends AbstractFeatureEditionDelega
                 setCurrentFeature(helper.grabFeature(e.getX(), e.getY(), false));
             }
         }else if(button == MouseEvent.BUTTON3 && feature != null){
-            final Geometry oldgeom = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(feature);
+            final Geometry oldgeom = FeatureExt.getDefaultGeometryValue(feature)
+                    .filter(Geometry.class::isInstance)
+                    .map(Geometry.class::cast)
+                    .orElse(null);
             final Geometry newGeom = dialogDecoration.simplifyPanel.getGeometry();
-            if(!oldgeom.equals(newGeom)){
+            if(oldgeom == null || !oldgeom.equals(newGeom)){
                 helper.sourceModifyFeature(feature, newGeom, false);
             }
             reset();

@@ -71,7 +71,10 @@ public class LinksGraphic extends GraphicJ2D{
                 final Feature feature = mainIte.next();
 
                 //draw a line from each point to all other
-                final Geometry geom = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(feature);
+                final Geometry geom = FeatureExt.getDefaultGeometryValue(feature)
+                        .filter(Geometry.class::isInstance)
+                        .map(Geometry.class::cast)
+                        .orElseThrow(() -> new IllegalArgumentException("No geometry in input feature."));
                 final Point center = geom.getCentroid();
                 from.setLocation(center.getX(), center.getY());
                 objToDisp.transform(from, from);
@@ -92,7 +95,10 @@ public class LinksGraphic extends GraphicJ2D{
                         final Feature target = ite.next();
                         if(Math.random() > 0.1d) continue;
 
-                        final Geometry targetgeom = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(target);
+                        final Geometry targetgeom = FeatureExt.getDefaultGeometryValue(target)
+                                .filter(Geometry.class::isInstance)
+                                .map(Geometry.class::cast)
+                                .orElseThrow(() -> new IllegalArgumentException("No geometry in target feature."));
                         final Point targetcenter = targetgeom.getCentroid();
                         to.setLocation(targetcenter.getX(), targetcenter.getY());
                         objToDisp.transform(to, to);

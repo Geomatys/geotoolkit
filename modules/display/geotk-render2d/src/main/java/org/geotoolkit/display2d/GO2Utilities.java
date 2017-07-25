@@ -137,6 +137,7 @@ import org.apache.sis.measure.Units;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 
 /**
@@ -1139,16 +1140,16 @@ public final class GO2Utilities {
             if(type != null){
                 final Collection<SemanticType> semantics = fts.semanticTypeIdentifiers();
                 if(!semantics.isEmpty()){
-                    final AttributeType<?> gtype = FeatureExt.getDefaultGeometryAttribute(type);
-                    final Class ctype;
-                    if(gtype == null){
-                        ctype = null;
-                    }else{
-                        ctype = gtype.getValueClass();
+                    Class ctype;
+                    try {
+                        ctype = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(type))
+                                .map(AttributeType::getValueClass)
+                                .orElse(null);
+                    } catch (PropertyNotFoundException e) {
+                          ctype = null;
                     }
 
                     boolean valid = false;
-
                     for(SemanticType semantic : semantics){
                         if(semantic == SemanticType.ANY){
                             valid = true;
@@ -1213,8 +1214,14 @@ public final class GO2Utilities {
             if(type != null){
                 final Collection<SemanticType> semantics = fts.semanticTypeIdentifiers();
                 if(!semantics.isEmpty()){
-                    final AttributeType<?> gtype = FeatureExt.getDefaultGeometryAttribute(type);
-                    final Class ctype = gtype.getValueClass();
+                    Class ctype;
+                    try {
+                        ctype = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(type))
+                                .map(AttributeType::getValueClass)
+                                .orElse(null);
+                    } catch (PropertyNotFoundException e) {
+                          ctype = null;
+                    }
 
                     boolean valid = false;
 

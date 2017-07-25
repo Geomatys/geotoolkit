@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.shapefile;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import org.junit.Test;
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,20 +28,37 @@ import java.nio.charset.Charset;
 import org.geotoolkit.data.FeatureCollection;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.util.ArrayList;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.math.MathFunctions;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.Numbers;
+import org.geotoolkit.data.FeatureResource;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.storage.Resource;
 import org.geotoolkit.test.TestData;
+import org.junit.Assert;
 import org.opengis.util.GenericName;
 
 import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyType;
+import org.opengis.feature.IdentifiedType;
 
 /**
  *
@@ -83,25 +101,47 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         test("shapes/danish_point.shp");
     }
 
+    @Test
+    public void testWriteReprojected() throws Exception {
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
+        builder.setName("reprojection_test");
+        builder.addAttribute(String.class).setName("mock");
+        builder.addAttribute(Point.class).setName("geometry")
+                .setCRS(CommonCRS.defaultGeographic())
+                .addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final FeatureType type = builder.build();
 
+        final GeometryFactory gf = new GeometryFactory();
+        final Point sourcePoint = gf.createPoint(new Coordinate(4.9, 45.35));
 
-//    public void testAll() {
-//        StringBuffer errors = new StringBuffer();
-//        Exception bad = null;
-//        for (int i = 0, ii = files.length; i < ii; i++) {
-//            try {
-//
-//            } catch (Exception e) {
-//                System.out.println("File failed:" + files[i] + " " + e);
-//                e.printStackTrace();
-//                errors.append("\nFile " + files[i] + " : " + e.getMessage());
-//                bad = e;
-//            }
-//        }
-//        if (errors.length() > 0) {
-//            fail(errors.toString(), bad);
-//        }
-//    }
+        final Feature f = type.newInstance();
+        f.setPropertyValue("mock", "This is a test.");
+        f.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), sourcePoint);
+
+        final FeatureCollection reprojected = FeatureStoreUtilities.collection(f)
+                .subCollection(QueryBuilder.reprojected(type.getName().toString(), CRS.forCode("EPSG:2154")));
+
+        final Path tmpDir = Files.createTempDirectory("reprojected_shp");
+        try (final ShapefileFeatureStore store = new ShapefileFeatureStore(tmpDir.resolve("reprojection_test.shp").toUri())) {
+            store.createFeatureType(reprojected.getType());
+            final String typeName = reprojected.getType().getName().toString();
+            store.addFeatures(typeName, reprojected);
+
+            final Resource r = store.findResource(typeName);
+            Assert.assertTrue(r instanceof FeatureResource);
+            final List<Feature> features = ((FeatureResource)r).features().collect(Collectors.toList());
+            //compare(features, Collections.singleton(f));
+            Assert.assertEquals("Written features", 1, features.size());
+
+            final Feature reprojectedFeature = reprojected.features()
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("The test should define at least a single feature !"));
+
+            Assert.assertTrue("Written feature should be equal to reprojected element.", approximatelyEqual(reprojectedFeature, features.get(0)));
+        } finally {
+            IOUtilities.deleteRecursively(tmpDir);
+        }
+    }
 
     boolean readStarted = false;
 
@@ -222,77 +262,91 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         FeatureCollection copy = session.getFeatureCollection(QueryBuilder.all(typeName.toString()));
         compare(original, copy);
 
-        if (true) {
-            // review open
-            ShapefileFeatureStore review = new ShapefileFeatureStore(tmp.toURI(), memorymapped, charset);
-            typeName = review.getNames().iterator().next();
-            FeatureCollection again = review.createSession(true).getFeatureCollection(QueryBuilder.all(typeName.toString()));
+        // review open
+        ShapefileFeatureStore review = new ShapefileFeatureStore(tmp.toURI(), memorymapped, charset);
+        typeName = review.getNames().iterator().next();
+        FeatureCollection again = review.createSession(true).getFeatureCollection(QueryBuilder.all(typeName.toString()));
 
-            compare(copy, again);
-            compare(original, again);
+        compare(copy, again);
+        compare(original, again);
+
+    }
+
+    static void compare(Collection<Feature> one, Collection<Feature> two) throws Exception {
+
+        Assert.assertEquals("Compared feature collections have different size.", one.size(), two.size());
+
+        final Iterator<Feature> it = one.iterator();
+        try {
+            while (it.hasNext()) {
+                Assert.assertTrue("Content of compared collections differ.", approximatelyContains(it.next(), two));
+            }
+
+        } finally {
+            if (it instanceof AutoCloseable)
+                ((AutoCloseable) it).close();
         }
     }
 
-    static void compare(Collection<Feature> one, Collection<Feature> two)
-            throws Exception {
+    static boolean approximatelyContains(final Feature f, final Collection<Feature> col) throws Exception {
+        final Iterator<Feature> it = col.iterator();
+        try {
+            while (it.hasNext()) {
+                if (approximatelyEqual(f, it.next()))
+                    return true;
+            }
 
-        if (one.size() != two.size()) {
-            throw new Exception("Number of Features unequal : " + one.size()
-                    + " != " + two.size());
+            return false;
+        } finally {
+            if (it instanceof AutoCloseable)
+                ((AutoCloseable) it).close();
         }
-
-        //copy values, order is not tested here.
-        one = FeatureStoreUtilities.fill(one, new ArrayList<>());
-        two = FeatureStoreUtilities.fill(two, new ArrayList<>());
-
-        one.containsAll(two);
-        two.containsAll(one);
-
-
-//        Iterator<SimpleFeature> iterator1 = one.iterator();
-//        Iterator<SimpleFeature> iterator2 = two.iterator();
-//
-//        while (iterator1.hasNext()) {
-//            SimpleFeature f1 = iterator1.next();
-//            SimpleFeature f2 = iterator2.next();
-//            compare(f1, f2);
-//        }
-//
-//        if(iterator1 instanceof Closeable){
-//            ((Closeable)iterator1).close();
-//        }
-//        if(iterator2 instanceof Closeable){
-//            ((Closeable)iterator2).close();
-//        }
     }
 
-    static void compare(final Feature f1, final Feature f2) throws Exception {
-        Collection<? extends PropertyType> descs = f1.getType().getProperties(true);
-        if (descs.size() != f2.getType().getProperties(true).size()) {
-            throw new Exception("Unequal number of attributes");
-        }
+    static boolean approximatelyEqual(final Feature f1, final Feature f2) throws Exception {
+        // Remove sis conventions, as they're not brut data but links and computed facilities.
+        final Collection<String> f1Properties = f1.getType().getProperties(true).stream()
+                .map(IdentifiedType::getName)
+                .filter(name -> !AttributeConvention.contains(name))
+                .map(GenericName::toString)
+                .collect(Collectors.toList());
+        final Collection<String> f2Properties = f2.getType().getProperties(true).stream()
+                .map(IdentifiedType::getName)
+                .filter(name -> !AttributeConvention.contains(name))
+                .map(GenericName::toString)
+                .collect(Collectors.toList());
 
-        for(PropertyType desc : descs){
-            final String name = desc.getName().toString();
+        if (f1Properties.size() != f2Properties.size() || !f1Properties.containsAll(f2Properties))
+            return false;
+
+        for(String name : f1Properties) {
             Object att1 = f1.getPropertyValue(name);
             Object att2 = f2.getPropertyValue(name);
-            if (att1 instanceof Geometry && att2 instanceof Geometry) {
-                Geometry g1 = ((Geometry) att1);
-                Geometry g2 = ((Geometry) att2);
-                g1.normalize();
-                g2.normalize();
-                if (!g1.equalsExact(g2)) {
-                    throw new Exception("Different geometries (" + name + "):\n"
-                            + g1 + "\n" + g2);
-                }
-            } else {
-                if (!att1.equals(att2)) {
-                    throw new Exception("Different attribute (" + name + "): ["
-                            + att1 + "] - [" + att2 + "]");
-                }
-            }
+            if (!approximatelyEqual(att1, att2))
+                return false;
         }
 
+        return true;
     }
 
+    private static boolean approximatelyEqual(Object o1, Object o2) {
+        if (o1 == o2) {
+            return true;
+        } else if (o1 == null || o2 == null) {
+            return false;
+
+        } else if (o1 instanceof Geometry && o2 instanceof Geometry) {
+            Geometry g1 = ((Geometry) o1);
+            Geometry g2 = ((Geometry) o2);
+            g1.normalize();
+            g2.normalize();
+            return g1.equalsExact(g2);
+
+        } else if (Numbers.isFloat(o1.getClass()) || Numbers.isFloat(o2.getClass())) {
+            return MathFunctions.epsilonEqual(((Number) o1).doubleValue(), ((Number) o2).doubleValue(), 1e-7);
+
+        } else {
+            return o1.equals(o2);
+        }
+    }
 }

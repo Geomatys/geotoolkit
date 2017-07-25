@@ -227,7 +227,7 @@ public class MIFManager {
         // we save it as our base type. Otherwise, we set it's super type as base type, and if there's not, we set it as
         // base type, but we extract geometry first.
         if (mifBaseType == null) {
-            final IdentifiedType geom = MIFUtils.findGeometryProperty(toAdd);
+            final IdentifiedType geom = FeatureExt.getDefaultGeometry(toAdd);
             if (geom == null) {
                 mifBaseType = toAdd;
                 isBaseType = true;
@@ -256,11 +256,11 @@ public class MIFManager {
                builder.setSuperTypes(mifBaseType);
                childType = builder.build();
            }
-            if (MIFUtils.identifyFeature(childType) != null) {
-                mifChildTypes.add(childType);
-            } else {
-                throw new DataStoreException("The geometry for the given type is not supported for MIF geometry");
-            }
+
+           MIFUtils.identifyFeature(childType)
+                   .orElseThrow(() -> new DataStoreException("The geometry for the given type is not supported for MIF geometry"));
+
+           mifChildTypes.add(childType);
         }
 
     }

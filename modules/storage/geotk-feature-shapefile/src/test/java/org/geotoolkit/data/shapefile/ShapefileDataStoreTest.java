@@ -192,7 +192,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         Feature firstFeature = firstFeature(features);
         FeatureType schema = firstFeature.getType();
-        assertNotNull(FeatureExt.getDefaultGeometryAttribute(schema));
+        assertNotNull(FeatureExt.getDefaultGeometry(schema));
         assertEquals("Number of Attributes", 256, schema.getProperties(true).size());
         assertEquals("Value of statename is wrong", "Illinois", firstFeature
                 .getPropertyValue("STATE_NAME"));
@@ -723,7 +723,10 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         try (FeatureIterator fci = fc.iterator()) {
             while (fci.hasNext()) {
                 Feature f = fci.next();
-                Geometry fromShape = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(f);
+                Geometry fromShape = FeatureExt.getDefaultGeometryValue(f)
+                        .filter(Geometry.class::isInstance)
+                        .map(Geometry.class::cast)
+                        .orElseThrow(() -> new IllegalArgumentException("No geometry found in feature "+f));
 
                 if (fromShape instanceof GeometryCollection) {
                     if (!(geom instanceof GeometryCollection)) {
