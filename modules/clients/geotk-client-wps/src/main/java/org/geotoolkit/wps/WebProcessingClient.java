@@ -315,9 +315,10 @@ public class WebProcessingClient extends AbstractClient {
     /**
      * Create a GetStatus request
      *
+     * @param jobId The job identifier.
      * @return GetStatusRequest
      */
-    public GetStatusRequest createGetStatus() {
+    public GetStatusRequest createGetStatus(final String jobId) {
 
         final GetStatusRequest request = new GetStatusRequest(serverURL.toString(), getClientSecurity());
 
@@ -328,6 +329,7 @@ public class WebProcessingClient extends AbstractClient {
                 final org.geotoolkit.wps.xml.v200.GetStatus content = new org.geotoolkit.wps.xml.v200.GetStatus();
                 content.setService("WPS");
                 content.setVersion("2.0.0");
+                content.setJobID(jobId);
                 request.setContent(content);
                 } break;
             default:
@@ -339,9 +341,10 @@ public class WebProcessingClient extends AbstractClient {
     /**
      * Create a GetResult request
      *
+     * @param jobId The job identifier.
      * @return GetResultRequest.
      */
-    public GetResultRequest createGetResult() {
+    public GetResultRequest createGetResult(final String jobId) {
 
         final GetResultRequest request = new GetResultRequest(serverURL.toString(), getClientSecurity());
 
@@ -352,6 +355,7 @@ public class WebProcessingClient extends AbstractClient {
                 final org.geotoolkit.wps.xml.v200.GetResult content = new org.geotoolkit.wps.xml.v200.GetResult();
                 content.setService("WPS");
                 content.setVersion("2.0.0");
+                content.setJobID(jobId);
                 request.setContent(content);
                 } break;
             default:
@@ -363,9 +367,10 @@ public class WebProcessingClient extends AbstractClient {
     /**
      * Create a Dismiss request
      *
+     * @param jobId The job identifier.
      * @return GetResultRequest.
      */
-    public DismissRequest createDismiss() {
+    public DismissRequest createDismiss(final String jobId) {
 
         final DismissRequest request = new DismissRequest(serverURL.toString(), getClientSecurity());
 
@@ -376,6 +381,8 @@ public class WebProcessingClient extends AbstractClient {
                 final org.geotoolkit.wps.xml.v200.Dismiss content = new org.geotoolkit.wps.xml.v200.Dismiss();
                 content.setService("WPS");
                 content.setVersion("2.0.0");
+                content.setJobID(jobId);
+                request.setContent(content);
                 } break;
             default:
                 throw new IllegalArgumentException("Version was not defined or unsupported.");
