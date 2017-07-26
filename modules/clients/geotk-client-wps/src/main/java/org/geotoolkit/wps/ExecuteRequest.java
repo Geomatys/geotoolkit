@@ -19,6 +19,7 @@ package org.geotoolkit.wps;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.net.URLConnection;
 import java.util.*;
 import javax.xml.bind.JAXBElement;
@@ -30,6 +31,7 @@ import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.Execute;
 import org.geotoolkit.wps.xml.v100.DataInputsType;
@@ -215,6 +217,9 @@ public class ExecuteRequest extends AbstractRequest {
 
         try (OutputStream stream = security.encrypt(conec.getOutputStream())) {
             final Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
+            if (debug) {
+                marshaller.marshal(content, System.out);
+            }
             marshaller.marshal(content, stream);
             WPSMarshallerPool.getInstance().recycle(marshaller);
             stream.flush();
@@ -238,7 +243,13 @@ public class ExecuteRequest extends AbstractRequest {
         Object response;
         try (final InputStream in = getResponseStream()) {
             final Unmarshaller unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
-            response = unmarshaller.unmarshal(in);
+            if (debug) {
+                String s = IOUtilities.toString(in);
+                System.out.println(s);
+                response = unmarshaller.unmarshal(new StringReader(s));
+            } else {
+                response = unmarshaller.unmarshal(in);
+            }
             if (response instanceof JAXBElement) {
                 return ((JAXBElement) response).getValue();
             }

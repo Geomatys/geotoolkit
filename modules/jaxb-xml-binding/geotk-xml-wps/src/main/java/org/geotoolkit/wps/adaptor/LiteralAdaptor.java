@@ -78,20 +78,30 @@ public class LiteralAdaptor<T> implements DataAdaptor<T> {
                 uom);
     }
 
-    @Override
-    public DataInputType toWPS2Input(Object candidate) {
+    public DataInputType toWPS2Input(Object candidate, boolean rawLiteral) {
 
+        final Data data = new Data();
         final LiteralValue litValue = new LiteralValue();
         litValue.setDataType(WPSConvertersUtils.getDataTypeString("2.0.0", getValueClass()));
         litValue.setValue(String.valueOf(candidate));
         litValue.setUom(unit==null ? null : unit.getName());
 
-        final Data data = new Data();
-        data.getContent().add(litValue);
+        if (rawLiteral) {
+            data.getContent().add(String.valueOf(candidate));
+        } else {
+            data.getContent().add(litValue);
+        }
 
         final DataInputType dit = new DataInputType();
         dit.setData(data);
+
+
         return dit;
+    }
+
+    @Override
+    public DataInputType toWPS2Input(Object candidate) {
+        return toWPS2Input(candidate, false);
     }
 
     @Override
