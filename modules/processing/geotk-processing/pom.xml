@@ -50,6 +50,10 @@
   <!-- =========================================================== -->
     <dependencies>
         <dependency>
+            <groupId>org.apache.sis.storage</groupId>
+            <artifactId>sis-geotiff</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-render</artifactId>
             <version>${project.version}</version>
