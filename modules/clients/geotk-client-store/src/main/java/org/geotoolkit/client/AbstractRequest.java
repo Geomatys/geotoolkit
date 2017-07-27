@@ -36,6 +36,7 @@ import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.nio.IOUtilities;
 
 
 /**
@@ -83,6 +84,8 @@ public abstract class AbstractRequest implements Request {
      * Request timeout in milliseconds
      */
     protected int timeout;
+
+    protected boolean debug = false;
 
     protected AbstractRequest(final Client server) {
         this(server, null);
@@ -147,6 +150,15 @@ public abstract class AbstractRequest implements Request {
      */
     public void setTimeout(int timeout) {
         this.timeout = timeout;
+    }
+
+    /**
+     * Active the printing of all the sent/received request.
+     *
+     * @param debug
+     */
+    public void setDebug(boolean debug) {
+        this.debug = debug;
     }
 
     /**
@@ -358,7 +370,11 @@ public abstract class AbstractRequest implements Request {
                 //will never happen is this case
                 e.printStackTrace();
             }
-
+            if (cnx instanceof HttpURLConnection) {
+                HttpURLConnection httpCnx = (HttpURLConnection) cnx;
+                String serverError = IOUtilities.toString(httpCnx.getErrorStream());
+                writer.append("Error response from server:\n" + serverError);
+            }
             throw new IOException('\n'+ writer.toString(), ex);
         }
     }

@@ -18,7 +18,7 @@
 package org.geotoolkit.filter.binarylogic;
 
 import java.util.List;
-import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
@@ -65,7 +65,7 @@ public class DefaultAnd extends AbstractBinaryLogicOperator implements And {
      */
     @Override
     public String toString() {
-        return Trees.toString("And", filters);
+        return StringUtilities.toStringTree("And", filters);
     }
 
     /**

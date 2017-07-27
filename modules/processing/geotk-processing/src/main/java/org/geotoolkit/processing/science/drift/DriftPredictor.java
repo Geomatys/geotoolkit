@@ -2,6 +2,7 @@ package org.geotoolkit.processing.science.drift;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
@@ -12,9 +13,11 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -27,10 +30,35 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
+ * Creates a coverage showing were an object may be after some delay if it drift in the direction of currents.
+ * Notes:
+ * <ul>
+ *   <li>Calculation are performed in a UTM projection for the zone of the starting point.</li>
+ * </ul>
+ *
+ * Other algorithms:
+ * <ul>
+ *   <li><a href="http://www.meteorologie.eu.org/mothy/rapports/rapport_guerin_coiffier.pdf">Optimisation
+ *       du modèle MOTHY pour les opérations de recherche et sauvetage en mer</a></li>
+ *   <li><a href="http://wwz.cedre.fr/en/content/download/1657/16493/file/1-meteofrance-mothy_EN.pdf">Mothy
+ *       – Oil and object surface drift</a></li>
+ * </ul>
  *
  * @author Alexis Manin (Geomatys)
+ * @author Martin Desruisseaux (Geomatys)
  */
 public class DriftPredictor extends AbstractProcess {
+    /**
+     * Logger where to duplicate messages sent to listeners.
+     */
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.processing.science.drift");
+
+    /**
+     * {@code true} if the wind is stored as (magnitude, direction) vectors,
+     * or {@code false} for the usual (u, v) vectors.
+     */
+    private static final boolean WIND_USE_MAGNITUDE = false;
+
     /**
      * Where to send debugging info. If non-null, this is usually {@link System#out}.
      * Tip: if non-null, better to have a {@link #weights} array of length one,
@@ -42,24 +70,6 @@ public class DriftPredictor extends AbstractProcess {
      * Data directory, vector weights and other information needed by the process.
      */
     private Configuration configuration;
-
-    /**
-     * Output grid size. Hard-coded for now but could become a parameter in a future version
-     * (we do not use the upper-case convention for that reason).
-     */
-    private static final int numColumns = 1000, numRows = 1000;
-
-    /**
-     * Size of a grid cell, in metres. Hard-coded for now but could become a parameter in a future version
-     * (we do not use the upper-case convention for that reason).
-     */
-    private static final int gridResolution = 1000;
-
-    /**
-     * Time elapsed between two steps, in seconds. Hard-coded for now but could become a parameter
-     * in a future version (we do not use the upper-case convention for that reason).
-     */
-    private static final long timeStep = 6*60*60;
 
     /**
      * East-West (u) and North-South (v) component of the velocity vectors, in metres per second.
@@ -200,6 +210,15 @@ public class DriftPredictor extends AbstractProcess {
         return pos;
     }
 
+    /**
+     * Returns the process configuration. The configuration contains (among other information)
+     * the {@linkplain Configuration#directory root directory} of {@code "config.txt"} file
+     * and {@code "cache"} sub-directory.
+     */
+    final Configuration configuration() {
+        return configuration;
+    }
+
     @Override
     protected void execute() throws ProcessException {
         final Parameters input = Parameters.castOrWrap(inputParameters);
@@ -208,6 +227,9 @@ public class DriftPredictor extends AbstractProcess {
         } catch (IOException e) {
             throw new ProcessException(null, this, e);
         }
+        final int gridWidth      = configuration.gridWidth;
+        final int gridHeight     = configuration.gridHeight;
+        final int gridResolution = configuration.gridResolution;
         final DirectPosition startPoint = geographic(input.getValue(DriftPredictionDescriptor.START_POINT));
         startTime    = Instant.ofEpochMilli(input.getValue(DriftPredictionDescriptor.START_TIMESTAMP));
         endTime      = Instant.ofEpochMilli(input.getValue(DriftPredictionDescriptor.END_TIMESTAMP));
@@ -218,7 +240,7 @@ public class DriftPredictor extends AbstractProcess {
         positions[1] = (float) startPoint.getOrdinate(0);
         positions[WEIGHT_OFFSET] = 1;
         numOrdinates  = TUPLE_LENGTH;
-        probabilities = new double[numColumns * numRows];
+        probabilities = new double[gridWidth * gridHeight];
         probabilityChanges = new double[probabilities.length];
         trajectoryPropabilities = new double[probabilities.length];
         try {
@@ -228,20 +250,20 @@ public class DriftPredictor extends AbstractProcess {
         } catch (TransformException ex) {
             throw new ProcessException(null, this, ex);
         }
-        coordToGrid = AffineTransform.getTranslateInstance(numColumns/2, numRows/2);
+        coordToGrid = AffineTransform.getTranslateInstance(gridWidth/2, gridHeight/2);
         coordToGrid.scale(1./gridResolution, 1./gridResolution);
         coordToGrid.translate(-positions[0], -positions[1]);
 
-        current = new DataSource.HYCOM(configuration.directory.resolve("HYCOM"));
-        wind = new DataSource.WindSat(configuration.directory.resolve("WindSat"));
         final Path outputPath;
         try {
+            current = new DataSource.HYCOM(this);
+            wind = new DataSource.MeteoFrance(this);
             boolean newDay = false;
+            boolean hasData = false;
             long day = currentTime.getEpochSecond() / (24*60*60);
             while (!currentTime.isAfter(endTime)) {
-                if (!advance()) {
-                    throw new ProcessException("No data at " + currentTime, this);
-                }
+                if (!advance()) break;
+                hasData = true;
                 final long d = currentTime.getEpochSecond() / (24*60*60);
                 newDay = (d != day);
                 if (newDay) {
@@ -249,16 +271,22 @@ public class DriftPredictor extends AbstractProcess {
                     snapshot();
                 }
             }
+            if (!hasData) {
+                throw new UnavailableDataException("No data available at " + startTime, this, null);
+            }
             if (!newDay) {
                 snapshot();
             }
             trajectory();
             outputPath = writeNetcdf();
+        } catch (ProcessException e) {
+            throw e;
         } catch (Exception e) {
-            throw new ProcessException(null, this, e);
+            throw new ProcessException("Can not compute drift at " + currentTime, this, e);
         }
-
-        Parameters.castOrWrap(outputParameters).getOrCreate(DriftPredictionDescriptor.OUTPUT_DATA).setValue(outputPath);
+        final Parameters p = Parameters.castOrWrap(outputParameters);
+        p.getOrCreate(DriftPredictionDescriptor.OUTPUT_DATA).setValue(outputPath);
+        p.getOrCreate(DriftPredictionDescriptor.ACTUAL_END_TIMESTAMP).setValue(currentTime.toEpochMilli());
     }
 
     /**
@@ -267,10 +295,34 @@ public class DriftPredictor extends AbstractProcess {
      * @return {@code true} on success, or {@code false} if there is no data for this step.
      */
     private boolean advance() throws Exception {
+        final int  gridWidth  = configuration.gridWidth;
+        final int  gridHeight = configuration.gridHeight;
+        final long timeStep   = configuration.timeStep;
         final OffsetDateTime date = OffsetDateTime.ofInstant(currentTime, ZoneOffset.UTC);
-        if (!current.load(date) || !wind.load(date)) {
-            return false;
+        synchronized (DriftPredictor.class) {   // For making sure that only one process downloads data.
+            try {
+                /*
+                 * In the particular case of wind, we will perform the calculation even if there is no data.
+                 * We do that because Météo-France WCS server often contains data for only the current day.
+                 * This is different than what we do for oceanic current, since missing current data are more
+                 * problematic.
+                 */
+                try {
+                    wind.load(date);
+                } catch (FileNotFoundException e) {
+                    progress("WARNING: no wind data at " + currentTime);
+                }
+                current.load(date);
+            } catch (FileNotFoundException e) {
+                progress(e.toString());                 // TODO: should actually be reported as a warning.
+                return false;
+            } catch (IOException e) {
+                throw new CanNotDownloadException(e.getMessage(), this, e);
+            }
+            wind.deleteOldFiles();
+            current.deleteOldFiles();
         }
+        progress("Computing drift at " + currentTime);
         /*
          * At this point data have been loaded. Start computation.
          */
@@ -289,10 +341,16 @@ public class DriftPredictor extends AbstractProcess {
             double v = current.v.valueAt(tmp.y, tmp.x);
             if (Double.isNaN(u)) u = (Math.random() - 0.5) / 100;      // Small random noise (TODO: do something better).
             if (Double.isNaN(v)) v = (Math.random() - 0.5) / 100;
-            final double windSpeed = wind.u.valueAt(tmp.y, tmp.x);
-            final double windDir = -Math.toRadians(wind.v.valueAt(tmp.y, tmp.x));
-            double uWind = windSpeed * Math.cos(windDir);
-            double vWind = windSpeed * Math.sin(windDir);
+            double uWind, vWind;
+            if (WIND_USE_MAGNITUDE) {
+                final double windSpeed = wind.u.valueAt(tmp.y, tmp.x);
+                final double windDir = -Math.toRadians(wind.v.valueAt(tmp.y, tmp.x));
+                uWind = windSpeed * Math.cos(windDir);
+                vWind = windSpeed * Math.sin(windDir);
+            } else {
+                uWind = wind.u.valueAt(tmp.y, tmp.x);
+                vWind = wind.v.valueAt(tmp.y, tmp.x);
+            }
             if (Double.isNaN(uWind)) uWind = Math.random() - 0.5;      // Small random noise (TODO: do something better).
             if (Double.isNaN(vWind)) vWind = Math.random() - 0.5;
             tmp.setLocation(easting, northing);
@@ -407,8 +465,8 @@ public class DriftPredictor extends AbstractProcess {
                     if (OUT != null) {
                         OUT.printf("x=%3d y=%3d  Δx=%7.3f  Δy=%7.3f  p=%4.3f%n", gx, gy, Δxi, Δyi, p);
                     }
-                    if (gx >= 0 && gx < numColumns && gy >= 0 && gy < numRows) {
-                        probabilityChanges[((numRows - 1) - gy) * numColumns + gx] += p;
+                    if (gx >= 0 && gx < gridWidth && gy >= 0 && gy < gridHeight) {
+                        probabilityChanges[((gridHeight - 1) - gy) * gridWidth + gx] += p;
                         numOnGrid++;
                     }
                 } while (isValid);
@@ -454,15 +512,15 @@ public class DriftPredictor extends AbstractProcess {
     }
 
     private void snapshot() {
-        outputs.add(new Output(probabilities, numRows, numColumns));
+        outputs.add(new Output(probabilities, configuration.gridWidth, configuration.gridHeight));
         Arrays.fill(probabilities, 0);
     }
 
     private void trajectory() {
-        outputs.add(new Output(trajectoryPropabilities, numRows, numColumns));
+        outputs.add(new Output(trajectoryPropabilities, configuration.gridWidth, configuration.gridHeight));
     }
 
-    final Path writeNetcdf() throws Exception {
+    private Path writeNetcdf() throws Exception {
         final Path outputFile = Files.createTempFile("drift", ".nc");
         final AffineTransform gridToCoord = coordToGrid.createInverse();
         Output.write(outputs, modelCRS, startTime.toEpochMilli(),
@@ -470,5 +528,29 @@ public class DriftPredictor extends AbstractProcess {
                 gridToCoord.getScaleX(),     gridToCoord.getScaleY(),
                 outputFile.toString());
         return outputFile;
+    }
+
+    /**
+     * Writes in PNG formats all snapshots created by the current process.
+     * This method is used for debugging purpose only.
+     *
+     * @throws IOException if an error occurred while writing the snapshots.
+     */
+    public final void writeShapshots() throws IOException {
+        for (int i=0; i<outputs.size(); i++) {
+            String filename = "overall.png";
+            if (i != outputs.size() - 1) {
+                filename = "day-" + (i+1) + ".png";
+            }
+            outputs.get(i).writePNG(configuration().directory, filename);
+        }
+    }
+
+    /**
+     * Reports the name of task under progress.
+     */
+    final void progress(final String task) {
+        LOGGER.info(task);
+        fireProgressing(task, Float.NaN, false);
     }
 }

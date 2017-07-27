@@ -19,7 +19,7 @@ package org.geotoolkit.db.reverse;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.util.StringUtilities;
 
 /**
  * Description of a database schema.
@@ -50,6 +50,6 @@ public class SchemaMetaModel {
 
     @Override
     public String toString() {
-        return Trees.toString(name, tables.values());
+        return StringUtilities.toStringTree(name, tables.values());
     }
 }

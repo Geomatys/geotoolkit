@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.util;
 
+import java.util.Arrays;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -53,4 +54,13 @@ public class StringUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(2, nb[2]);
     }
 
+    @Test
+    public void stringTreeTest() {
+        final String tree = StringUtilities.toStringTree("root", Arrays.asList("a","b","c"));
+        assertEquals("root\n" +
+                     "├─ a\n" +
+                     "├─ b\n" +
+                     "└─ c",
+                     tree);
+    }
 }

@@ -95,6 +95,8 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
     public static final String STATUS_ACCEPTED = "Accepted";
     /** The job is running. */
     public static final String STATUS_RUNNING = "Running";
+    /** The job has been dismissed. */
+    public static final String STATUS_DISSMISED = "Dismissed";
 
     @XmlElement(name = "JobID", required = true)
     protected String jobID;

@@ -29,6 +29,7 @@ public class DriftPredictionDescriptor extends AbstractProcessDescriptor {
 
     public static final ParameterDescriptorGroup OUTPUT;
     public static final ParameterDescriptor<Path> OUTPUT_DATA;
+    public static final ParameterDescriptor<Long> ACTUAL_END_TIMESTAMP;
 
     static {
         final ParameterBuilder builder = new ParameterBuilder();
@@ -53,7 +54,7 @@ public class DriftPredictionDescriptor extends AbstractProcessDescriptor {
 
         DATA_DIRECTORY = builder
                 .addName("dataDirectory")
-                .setRemarks("Root directory of HYCOM and WindSat data.")
+                .setRemarks("Root directory of HYCOM and Météo-France data.")
                 .setRequired(true)
                 .create(Path.class, null);
 
@@ -66,7 +67,13 @@ public class DriftPredictionDescriptor extends AbstractProcessDescriptor {
                 .setRequired(true)
                 .create(Path.class, null);
 
-        OUTPUT = builder.addName("output").createGroup(OUTPUT_DATA);
+        ACTUAL_END_TIMESTAMP = builder
+                .addName("endTimestamp")
+                .setRemarks("Timestamp of actual model end (for example because of missing data).")
+                .setRequired(true)
+                .create(Long.class, null);
+
+        OUTPUT = builder.addName("output").createGroup(OUTPUT_DATA, ACTUAL_END_TIMESTAMP);
     }
 
     public DriftPredictionDescriptor(Identification factoryId) {

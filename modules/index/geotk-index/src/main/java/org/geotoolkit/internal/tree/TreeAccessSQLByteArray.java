@@ -38,15 +38,15 @@ public class TreeAccessSQLByteArray extends TreeAccessByteArray {
 
     private void printTree() throws SQLException, NoSuchAlgorithmException, UnsupportedEncodingException {
         final byte[] array = getData();
-        final Connection c = source.getConnection();
-        final Statement dstmt  = c.createStatement();
-        dstmt.executeUpdate("DELETE FROM \"" + getSchemaName(directory.getFileName().toString()) + "\".\"tree\"");
+        try (final Connection c = source.getConnection();
+             final Statement dstmt  = c.createStatement()) {
+            dstmt.executeUpdate("DELETE FROM \"" + getSchemaName(directory.getFileName().toString()) + "\".\"tree\"");
 
-        final PreparedStatement stmt = c.prepareStatement("INSERT INTO \"" + getSchemaName(directory.getFileName().toString()) + "\".\"tree\" VALUES(?)");
-        stmt.setBytes(1, array);
-        stmt.execute();
-        stmt.close();
-        c.close();
+            try (final PreparedStatement stmt = c.prepareStatement("INSERT INTO \"" + getSchemaName(directory.getFileName().toString()) + "\".\"tree\" VALUES(?)")) {
+                stmt.setBytes(1, array);
+                stmt.execute();
+            }
+        }
     }
 
     @Override
@@ -61,16 +61,13 @@ public class TreeAccessSQLByteArray extends TreeAccessByteArray {
 
     public static byte[] getData(final Path directory, final DataSource source) throws SQLException, NoSuchAlgorithmException, UnsupportedEncodingException {
         byte[] data = null;
-
-        final Connection c = source.getConnection();
-        final Statement stmt = c.createStatement();
-        final ResultSet rs = stmt.executeQuery("SELECT \"data\" FROM \"" + getSchemaName(directory.getFileName().toString()) + "\".\"tree\"");
-        if (rs.next()) {
-            data = rs.getBytes("data");
+        try (final Connection c = source.getConnection();
+             final Statement stmt = c.createStatement();
+             final ResultSet rs = stmt.executeQuery("SELECT \"data\" FROM \"" + getSchemaName(directory.getFileName().toString()) + "\".\"tree\"")) {
+            if (rs.next()) {
+                data = rs.getBytes("data");
+            }
         }
-        rs.close();
-        stmt.close();
-        c.close();
         return data;
     }
 

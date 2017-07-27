@@ -31,7 +31,6 @@ import org.apache.lucene.search.*;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
-import org.geotoolkit.index.tree.manager.SQLRtreeManager;
 import org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
@@ -62,6 +61,7 @@ import org.geotoolkit.index.LogicalFilterType;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
+import org.geotoolkit.index.tree.manager.postgres.PGDataSource;
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.GEOMETRY_PROPERTY;
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.wrap;
 import static org.junit.Assert.*;
@@ -112,19 +112,16 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
     @AfterClass
     public static void tearDownMethod() throws Exception {
         // postgres
-        if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY) != null) {
-            if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY).equals("postgres")) {
-                if (Files.isDirectory(directory)) {
-                    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
-                        final Iterator<Path> iterator = directoryStream.iterator();
-                        if (iterator.hasNext()) {
-                            LucenePostgresSQLTreeEltMapper.resetDB(iterator.next());
-                        }
+        if (PGDataSource.isSetPGDataSource()) {
+            if (Files.isDirectory(directory)) {
+                try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
+                    final Iterator<Path> iterator = directoryStream.iterator();
+                    if (iterator.hasNext()) {
+                        LucenePostgresSQLTreeEltMapper.resetDB(iterator.next());
                     }
                 }
             }
         }
-
         IOUtilities.deleteRecursively(directory);
     }
 

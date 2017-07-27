@@ -7,12 +7,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Iterator;
+import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.operation.builder.LocalizationGridBuilder;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.filestore.FileCoverageStore;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.storage.coverage.CoverageResource;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.util.GenericName;
 import ucar.ma2.ArrayFloat;
 import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -69,7 +79,7 @@ abstract class VelocityComponent {
          * Temporary file where to cache the {@link #coordToGrid} transform for next execution.
          * Set to {@code null} for disabling the cache.
          */
-        private static final String CACHE = "../cache/HYCOM_grid.serialized";
+        private static final String CACHE = "../HYCOM_grid.serialized";
 
         /**
          * U or V component as an array of dimension (MT, Layer, Y, X).
@@ -111,7 +121,7 @@ abstract class VelocityComponent {
                 final ArrayFloat.D2 latValues = (ArrayFloat.D2) cs.getLatAxis().read();
                 final int[] shape = lonValues.getShape();
                 if (!Arrays.equals(shape, latValues.getShape())) {
-                    throw new IOException("Inconsistent (longitude, latitude) grid size.");
+                    throw new DataStoreException("Inconsistent (longitude, latitude) grid size.");
                 }
                 width  = shape[1];
                 height = shape[0];
@@ -156,6 +166,60 @@ abstract class VelocityComponent {
                 return values.get(0, 0, (int) gy, (int) gx);
             }
             return Double.NaN;
+        }
+    }
+
+    /**
+     * Météo-France grid coverage as TIFF files.
+     */
+    static final class MeteoFrance extends VelocityComponent {
+        /**
+         * The data.
+         */
+        private final GridCoverage coverage;
+
+        /**
+         * Temporary object for evaluating velocity component.
+         */
+        private final DirectPosition2D position;
+
+        /**
+         * Temporary object for evaluating velocity component.
+         */
+        private final double[] samples;
+
+        MeteoFrance(final URI file) throws DataStoreException, IOException, URISyntaxException {
+            try (FileCoverageStore store = new FileCoverageStore(file, "geotiff")) {
+                final CoverageResource ref = store.findResource(singleton(store.getNames()));
+                final GridCoverageReader reader = ref.acquireReader();
+                coverage = reader.read(0, null);
+                ref.recycle(reader);
+            }
+            position = new DirectPosition2D();
+            samples = new double[1];
+        }
+
+        /**
+         * Returns the singleton element in the given collection.
+         * If the iteration is not over exactly one element, throws an exception.
+         */
+        private static GenericName singleton(final Iterable<? extends GenericName> names) throws DataStoreException {
+            final Iterator<? extends GenericName> it = names.iterator();
+            if (it.hasNext()) {
+                final GenericName name = it.next();
+                if (!it.hasNext()) return name;
+            }
+            throw new DataStoreException("Unexpected amount of names.");
+        }
+
+        /**
+         * Returns the velocity component at the given geographic location.
+         */
+        @Override
+        double valueAt(final double x, final double y) {
+            position.x = x;
+            position.y = y;
+            return coverage.evaluate(position, samples)[0];
         }
     }
 

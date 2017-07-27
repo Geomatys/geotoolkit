@@ -21,8 +21,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-import org.geotoolkit.gui.swing.tree.Trees;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.util.StringUtilities;
 
 /**
  * Default PyramidSet.
@@ -53,7 +53,7 @@ public class DefaultPyramidSet extends AbstractPyramidSet{
 
     @Override
     public String toString(){
-        return Trees.toString(Classes.getShortClassName(this)+" "+getId(), getPyramids());
+        return StringUtilities.toStringTree(Classes.getShortClassName(this)+" "+getId(), getPyramids());
     }
 
 }

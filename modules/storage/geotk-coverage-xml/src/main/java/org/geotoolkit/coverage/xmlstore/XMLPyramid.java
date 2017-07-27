@@ -38,9 +38,9 @@ import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.gui.swing.tree.Trees;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -230,7 +230,7 @@ public class XMLPyramid implements Pyramid {
 
     @Override
     public String toString(){
-        return Trees.toString(
+        return StringUtilities.toStringTree(
                 Classes.getShortClassName(this)
                 +" "+IdentifiedObjects.getIdentifierOrName(getCoordinateReferenceSystem())
                 +" "+getId(),

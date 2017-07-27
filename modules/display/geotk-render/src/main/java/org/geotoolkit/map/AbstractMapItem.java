@@ -21,14 +21,13 @@ import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
-import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.style.StyleConstants;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.style.Description;
 
 /**
@@ -257,7 +256,7 @@ public abstract class AbstractMapItem implements MapItem {
         buf.append(visible);
         final List<MapItem> items = items();
         if(!items.isEmpty()){
-            buf.append( Trees.toString("", items) );
+            buf.append( StringUtilities.toStringTree("", items) );
         }
         return buf.toString();
     }
