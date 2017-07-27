@@ -332,31 +332,6 @@ public final class Trees extends Static {
     }
 
     /**
-     * Returns a graphical representation of the specified nodes. This representation can be
-     * printed to the {@linkplain System#out standard output stream} (for example) if it uses
-     * a monospaced font and supports unicode.
-     *
-     * {@section Recursivity}
-     * This method does not perform any check on the element types. In particular, elements of type
-     * {@link TreeModel}, {@link TreeNode} or inner {@link Iterable} are not processed recursively.
-     * It is up to the {@code toString()} implementation of each element to invoke this
-     * {@code toString} method recursively if they wish (this method is safe for this purpose).
-     *
-     * @param  root  The root name of the tree to format.
-     * @param  nodes The nodes to format.
-     * @return A string representation of the tree.
-     *
-     * @since 3.18
-     */
-    public static String toString(final String root, final Iterable<?> nodes) {
-        final TreeFormat tf = new TreeFormat();
-        tf.setTableFormatEnabled(true);
-        final StringBuilder buffer = new StringBuilder(root).append(tf.getLineSeparator());
-        tf.format(nodes, buffer);
-        return buffer.toString();
-    }
-
-    /**
      * Prints the specified tree model to the {@linkplain System#out standard output stream}.
      * This method is mostly a convenience for debugging purpose.
      *

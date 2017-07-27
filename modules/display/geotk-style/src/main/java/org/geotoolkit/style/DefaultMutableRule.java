@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Objects;
 import javax.swing.event.EventListenerList;
 
-import org.geotoolkit.gui.swing.tree.Trees;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
@@ -37,6 +36,7 @@ import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.util.StringUtilities;
 
 /**
  * Mutable implementation of Types Rule.
@@ -343,7 +343,7 @@ public class DefaultMutableRule implements MutableRule{
         builder.append(']');
 
         if(!symbols.isEmpty()){
-            builder.append(Trees.toString("", symbols));
+            builder.append(StringUtilities.toStringTree("", symbols));
         }
 
         return builder.toString();

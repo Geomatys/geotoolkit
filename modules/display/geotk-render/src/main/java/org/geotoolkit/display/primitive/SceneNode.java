@@ -29,7 +29,7 @@ import org.apache.sis.util.Classes;
 import org.geotoolkit.display.DisplayElement;
 import org.geotoolkit.display.SceneVisitor;
 import org.geotoolkit.display.canvas.Canvas;
-import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.CollectionChangeListener;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
@@ -253,7 +253,7 @@ public class SceneNode extends DisplayElement implements Graphic {
 
     @Override
     public String toString() {
-        return Trees.toString(name+" ("+Classes.getShortClassName(this)+")", children);
+        return StringUtilities.toStringTree(name+" ("+Classes.getShortClassName(this)+")", children);
     }
 
     @Override

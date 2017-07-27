@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Objects;
 import javax.swing.event.EventListenerList;
 
-import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.CollectionChangeListener;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -41,6 +40,7 @@ import org.opengis.sld.Source;
 import org.opengis.style.Description;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.util.StringUtilities;
 
 /**
  * Default mutable user layer, thread safe.
@@ -412,7 +412,7 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
         builder.append(']');
 
         if(!styles.isEmpty()){
-            builder.append(Trees.toString("", styles));
+            builder.append(StringUtilities.toStringTree("", styles));
         }
 
         return builder.toString();
