@@ -4,7 +4,6 @@ package org.geotoolkit.pending.demo.symbology;
 
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
@@ -70,6 +69,7 @@ import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.apache.sis.measure.Units;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 import static org.geotoolkit.style.StyleConstants.*;
 import org.opengis.style.ExternalMark;
@@ -673,7 +673,7 @@ public class Styles {
 
 
         //create your maplayer with your datas
-        final CoverageReference elevationData = null;
+        final CoverageResource elevationData = null;
 
         final MapLayer layer = MapBuilder.createCoverageLayer(null, SF.style(shadedSymbolizer));
         final ElevationModel elevationModel = MapBuilder.createElevationModel(elevationData);

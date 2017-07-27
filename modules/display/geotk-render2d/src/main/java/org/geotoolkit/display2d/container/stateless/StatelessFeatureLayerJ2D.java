@@ -169,7 +169,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         }
 
         //first extract the valid rules at this scale
-        final List<Rule> validRules = getValidRules(renderingContext,item,item.getCollection().getFeatureType());
+        final List<Rule> validRules = getValidRules(renderingContext,item,item.getCollection().getType());
 
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
@@ -212,7 +212,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         }
 
         //get the expected result type
-        final FeatureType expected = candidates.getFeatureType();
+        final FeatureType expected = candidates.getType();
 
         //calculate optimized rules and included filter + expressions
         final CachedRule[] rules = toCachedRules(validRules, expected);
@@ -325,7 +325,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         //nothing visible so no possible selection
         if (!item.isVisible()) return graphics;
 
-        final GenericName featureTypeName = item.getCollection().getFeatureType().getName();
+        final GenericName featureTypeName = item.getCollection().getType().getName();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 c2d.getSEScale(), featureTypeName,null);
 
@@ -351,7 +351,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         try {
             final Set<String> attributs = GO2Utilities.propertiesCachedNames(rules);
             //add identifier property
-            final FeatureType type = getUserObject().getCollection().getFeatureType();
+            final FeatureType type = getUserObject().getCollection().getType();
             try{
                 type.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
                 attributs.add(AttributeConvention.IDENTIFIER_PROPERTY.toString());
@@ -444,7 +444,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             final Set<String> styleRequieredAtts, final List<Rule> rules, double symbolsMargin) throws PortrayalException{
 
         final FeatureCollection fs               = layer.getCollection();
-        final FeatureType schema                 = fs.getFeatureType();
+        final FeatureType schema                 = fs.getType();
         PropertyType geomDesc              = null;
         try {
             geomDesc = schema.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
@@ -706,12 +706,18 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             final FeatureMapLayer layer, double symbolsMargin) throws PortrayalException{
 
         final FeatureCollection fs               = layer.getCollection();
-        final FeatureType schema                 = fs.getFeatureType();
-        final PropertyType geomDesc              = FeatureExt.getDefaultGeometryAttribute(schema);
+        final FeatureType schema                 = fs.getType();
         final BoundingBox bbox                   = optimizeBBox(renderingContext,layer,symbolsMargin);
         final CoordinateReferenceSystem layerCRS = FeatureExt.getCRS(schema);
-        final String geomAttName                 = (geomDesc!=null)? geomDesc.getName().toString() : null;
         final RenderingHints hints               = renderingContext.getRenderingHints();
+
+        String geomAttName;
+        try {
+            geomAttName = FeatureExt.getDefaultGeometry(schema).getName().toString();
+        } catch (Exception e) {
+            // We don't want rendering to fail because of a single layer.
+            geomAttName = null;
+        }
 
         Filter filter;
 
@@ -812,7 +818,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds2D();
         final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
         final CanvasMonitor monitor                              = renderingContext.getMonitor();
-        final CoordinateReferenceSystem layerCRS                 = FeatureExt.getCRS(layer.getCollection().getFeatureType());
+        final CoordinateReferenceSystem layerCRS                 = FeatureExt.getCRS(layer.getCollection().getType());
 
         //expand the search area by the maximum symbol size
         if(symbolsMargin>0){

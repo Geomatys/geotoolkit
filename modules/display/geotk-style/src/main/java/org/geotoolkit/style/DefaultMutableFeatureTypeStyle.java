@@ -21,7 +21,6 @@ import java.beans.PropertyChangeListener;
 import java.util.*;
 import javax.swing.event.EventListenerList;
 
-import org.geotoolkit.gui.swing.tree.Trees;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
@@ -37,6 +36,7 @@ import org.opengis.style.Symbolizer;
 import org.opengis.util.GenericName;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.util.StringUtilities;
 
 /**
  * Mutable implementation of Types FeatureTypeStyle.
@@ -308,7 +308,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
         builder.append(']');
 
         if(!rules.isEmpty()){
-            builder.append(Trees.toString("", rules));
+            builder.append(StringUtilities.toStringTree("", rules));
         }
 
         return builder.toString();

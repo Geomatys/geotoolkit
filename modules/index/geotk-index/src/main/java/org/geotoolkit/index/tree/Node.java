@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.logging.Level;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.internal.tree.TreeAccessFile;
 import org.geotoolkit.internal.tree.TreeAccessMemory;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.util.StringUtilities;
 
 /**
  * Default implementation Node use in Tree.<br/><br/>
@@ -556,7 +556,7 @@ public class Node {
             if (!isData()) {
                 toString = Arrays.asList(this.getChildren());
                 String strparent =  (getParentId() == 0) ? "null" : (""+getParentId());
-                return Trees.toString(Classes.getShortClassName(this)+" parent : "+strparent+" : ID : "+getNodeId()
+                return StringUtilities.toStringTree(Classes.getShortClassName(this)+" parent : "+strparent+" : ID : "+getNodeId()
                     + " leaf : "+isLeaf()+" sibling : "+getSiblingId()+" child "+getChildId()+" children number : "+getChildCount()+Arrays.toString(getBoundary()), toString);
             } else {
                 return Classes.getShortClassName(this)+"Data : parent : "+getParentId()+" ID : "+getNodeId()+" sibling : "+getSiblingId()+" value : "+(-getChildId())+" bound : "+Arrays.toString(getBoundary());

@@ -35,10 +35,10 @@ import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer;
 import org.geotoolkit.gui.javafx.style.FXStyleElementController;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  *
@@ -117,7 +117,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
 
         if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final CoverageReference ref = cml.getCoverageReference();
+            final CoverageResource ref = cml.getCoverageReference();
             GridCoverageReader reader = null;
             try {
                 reader = ref.acquireReader();
@@ -167,7 +167,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
     public void fitToData(){
         final MapLayer cml = getLayer();
         if(cml instanceof CoverageMapLayer){
-            final CoverageReference ref = ((CoverageMapLayer)cml).getCoverageReference();
+            final CoverageResource ref = ((CoverageMapLayer)cml).getCoverageReference();
             GridCoverageReader reader = null;
             try {
                 reader = ref.acquireReader();

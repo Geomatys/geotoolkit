@@ -51,7 +51,7 @@ public class JGeomBox extends JComboBox {
         this.layer = layer;
 
         if (layer instanceof FeatureMapLayer) {
-            final Collection<? extends PropertyType> col = ((FeatureMapLayer)layer).getCollection().getFeatureType().getProperties(true);
+            final Collection<? extends PropertyType> col = ((FeatureMapLayer)layer).getCollection().getType().getProperties(true);
             final Iterator<? extends PropertyType> ite = col.iterator();
 
             final List<String> geoms = new ArrayList<>();

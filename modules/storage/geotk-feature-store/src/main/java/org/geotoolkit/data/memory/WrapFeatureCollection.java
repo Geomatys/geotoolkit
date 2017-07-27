@@ -29,7 +29,8 @@ import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 
 /**
- * Encapsulate FeatureCollection
+ * Encapsulate FeatureCollection.
+ *
  * @author Quentin Boileau
  * @module
  */
@@ -65,8 +66,8 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection {
      * @return FeatureType
      */
     @Override
-    public FeatureType getFeatureType() {
-        return originalFC.getFeatureType();
+    public FeatureType getType() {
+        return originalFC.getType();
     }
 
     /**

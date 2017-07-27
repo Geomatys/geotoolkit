@@ -36,7 +36,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureCollection;
@@ -60,6 +59,9 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.coverage.CoverageResource;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 
 /**
  * Panel allowing to choose layer among the available datas of the source.
@@ -125,14 +127,14 @@ public class JLayerChooser extends javax.swing.JPanel {
                     final FeatureStore store = (FeatureStore) source;
                     final Session session = store.createSession(true);
                     final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name.toString()));
-                    final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getFeatureType());
+                    final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getType());
                     final FeatureMapLayer layer = MapBuilder.createFeatureLayer(collection, style);
                     layer.setDescription(styleFactory.description(name.tip().toString(), name.toString()));
                     layers.add(layer);
 
                 }else if(source instanceof CoverageStore){
                     final CoverageStore store = (CoverageStore) source;
-                    final CoverageReference ref = store.getCoverageReference(name);
+                    final CoverageResource ref = store.findResource(name);
                     final MutableStyle style = styleFactory.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
                     final CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref, style);
                     layer.setDescription(styleFactory.description(name.tip().toString(), name.toString()));
@@ -154,10 +156,10 @@ public class JLayerChooser extends javax.swing.JPanel {
             final FeatureStore store = (FeatureStore) source;
             for(GenericName name : store.getNames()){
                 final FeatureType ft = store.getFeatureType(name.toString());
-                final AttributeType<?> geomAtt = FeatureExt.getDefaultGeometryAttribute(ft);
-                if(geomAtt != null){
+                try {
+                    final PropertyType geomAtt = FeatureExt.getDefaultGeometry(ft);
                     firstCandidates.add(ft);
-                }else{
+                } catch (PropertyNotFoundException | IllegalStateException e) {
                     secondCandidates.add(ft);
                 }
             }
@@ -253,7 +255,8 @@ public class JLayerChooser extends javax.swing.JPanel {
                 final FeatureType ft = (FeatureType) value;
                 final FeatureStore store = (FeatureStore) getSource();
 
-                final AttributeType<?> desc = FeatureExt.getDefaultGeometryAttribute(ft);
+                final AttributeType<?> desc = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(ft))
+                        .orElse(null);
                 if(desc != null){
                     ImageIcon icon;
                     final Class binding = desc.getValueClass();

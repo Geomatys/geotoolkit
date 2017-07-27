@@ -67,7 +67,11 @@ public class FXLineSymbolizer extends Group {
     private void updateGraphic(){
 
         final LineSymbolizer base = symbolizer.getSource();
-        final Geometry geom = transform((Geometry)FeatureExt.getDefaultGeometryAttributeValue(feature.feature));
+        final Geometry geom = FeatureExt.getDefaultGeometryValue(feature.feature)
+                .filter(Geometry.class::isInstance)
+                .map(Geometry.class::cast)
+                .map(this::transform)
+                .orElse(null);
         if(geom==null){
             getChildren().clear();
             return;

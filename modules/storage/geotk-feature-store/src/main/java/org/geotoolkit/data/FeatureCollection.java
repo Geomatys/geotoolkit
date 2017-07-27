@@ -19,31 +19,35 @@ package org.geotoolkit.data;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Stream;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Identifier;
 
 /**
  * A java collection that may hold only features.
  * This interface offer additional methods to manipulate it's content in
- * a more normalised manner, with filter, envelope and so one.
+ * a more normalized manner, with filter, envelope and so one.
  *
  * Still it can be used a normal java collection.
  *
  * Warning : don't forget to catch FeatureStoreRuntimeException that might
- * occured on some methods.
+ * occur on some methods.
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface FeatureCollection extends Collection<Feature> {
+public interface FeatureCollection extends Collection<Feature>, FeatureResource {
 
     /**
      * A feature collection is created with an id.
@@ -52,6 +56,11 @@ public interface FeatureCollection extends Collection<Feature> {
      * @return String, never null
      */
     String getID();
+
+    @Override
+    default Identifier getIdentifier() {
+        return new NamedIdentifier(NamesExt.create(getID()));
+    }
 
     /**
      * A collection may be linked to a session, this implies that changes maid
@@ -63,7 +72,7 @@ public interface FeatureCollection extends Collection<Feature> {
     Session getSession();
 
     /**
-     * A collection always takes it's datas from somewhere, it can be any kind
+     * A collection always takes it's data from somewhere, it can be any kind
      * of FeatureStore.
      *
      * @return feature source of this collection.
@@ -78,12 +87,12 @@ public interface FeatureCollection extends Collection<Feature> {
      *
      * @return Feature type or null if features doesn't have always the same type.
      */
-    FeatureType getFeatureType();
+    FeatureType getType();
 
     /**
      * Get the envelope of all features in this collection.
      *
-     * @return envelope or null if there are no features or no geometrics attributs
+     * @return envelope or null if there are no features or no geometrics attributes
      * available.
      * @throws DataStoreException
      */
@@ -121,9 +130,9 @@ public interface FeatureCollection extends Collection<Feature> {
     /**
      * Get an iterator using some extra hints to configure the reader parameters.
      *
-     * If the collection has several sources for origine, the returned feature type
-     * combine each selector, the returned features have one complexe attribut for each
-     * selector, the attribut has the name of the selector.
+     * If the collection has several sources for origin, the returned feature type
+     * combine each selector, the returned features have one complex attribute for each
+     * selector, the attribute has the name of the selector.
      *
      * This approach is the counterpart of javax.jcr.query.QueryResult.getRows
      * from JSR-283 (Java Content Repository 2).
@@ -134,18 +143,23 @@ public interface FeatureCollection extends Collection<Feature> {
      */
     FeatureIterator iterator(Hints hints) throws FeatureStoreRuntimeException;
 
+    @Override
+    default Stream<Feature> features() throws DataStoreException {
+        return stream();
+    }
+
     /**
-     * Convinient method to update a single feature.
+     * Convenient method to update a single feature.
      * @see #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
      */
     void update(Feature feature) throws DataStoreException;
 
     /**
-     * Update all featurss that matchthe given filter and update there attributs values
+     * Update all features that match the given filter and update there attributes values
      * with the values from the given map.
      *
      * @param filter : updating filter
-     * @param values : new attributs values
+     * @param values : new attributes values
      * @throws DataStoreException
      */
     void update(Filter filter, Map<String, ?> values) throws DataStoreException;
@@ -156,18 +170,5 @@ public interface FeatureCollection extends Collection<Feature> {
      * @throws DataStoreException
      */
     void remove(Filter filter) throws DataStoreException;
-
-    /**
-     * Add a storage listener which will be notified when schema are added, modified or deleted
-     * and when features are added, modified or deleted.
-     * @param listener to add
-     */
-    void addStorageListener(StorageListener listener);
-
-    /**
-     * Remove a storage listener
-     * @param listener to remove
-     */
-    void removeStorageListener(StorageListener listener);
 
 }

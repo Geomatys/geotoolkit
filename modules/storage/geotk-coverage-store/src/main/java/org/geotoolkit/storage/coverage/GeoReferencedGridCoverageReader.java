@@ -59,9 +59,9 @@ import org.opengis.util.GenericName;
  */
 public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader {
 
-    protected final CoverageReference ref;
+    protected final CoverageResource ref;
 
-    protected GeoReferencedGridCoverageReader(CoverageReference ref){
+    protected GeoReferencedGridCoverageReader(CoverageResource ref){
         this.ref = ref;
     }
 
@@ -224,7 +224,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
      * @param areaLower readInGridCRS lower corner, inclusive
      * @param areaUpper readInGridCRS upper corner, exclusive
      * @param subsampling image subsampling in pixels
-     * @param param grid coverage read parameters in native CRS
+     * @param param grid coverage features parameters in native CRS
      * @return coverage
      * @throws CoverageStoreException if Coverage readInGridCRS failed
      * @throws CancellationException if reading operation has been canceled
@@ -282,7 +282,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
      * @param areaLower
      * @param areaUpper
      * @param subsampling
-     * @param param grid coverage read parameters in native CRS
+     * @param param grid coverage features parameters in native CRS
      * @return
      * @throws CoverageStoreException
      * @throws CancellationException
@@ -303,11 +303,17 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
      */
     private static double[] convertCentralResolution(final double[] resolution, final Envelope area,
             final CoordinateReferenceSystem targetCRS) throws FactoryException, TransformException {
+        final CoordinateReferenceSystem areaCrs = area.getCoordinateReferenceSystem();
+        if (areaCrs.equals(targetCRS)) {
+            //nothing to do.
+            return resolution;
+        }
+
         final GeneralDirectPosition center = new GeneralDirectPosition(area.getDimension());
         for (int i=center.getDimension(); --i >= 0;) {
             center.setOrdinate(i, area.getMedian(i));
         }
-        final Matrix derivative = CRS.findOperation(area.getCoordinateReferenceSystem(), targetCRS, null).getMathTransform().derivative(center);
+        final Matrix derivative = CRS.findOperation(areaCrs, targetCRS, null).getMathTransform().derivative(center);
         final Matrix vector = Matrices.createZero(resolution.length, 1);
         for (int i=0; i<resolution.length; i++) {
             vector.setElement(i, 0, resolution[i]);
@@ -319,8 +325,8 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
     /**
      * Calculate the final size of each dimension.
      *
-     * @param areaLower image read lower corner
-     * @param areaUpper image read upper corner
+     * @param areaLower image features lower corner
+     * @param areaUpper image features upper corner
      * @param subsampling image subsampling
      * @return
      * @throws CoverageStoreException
@@ -338,12 +344,12 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
     }
 
     /**
-     * Derivate a grid geometry from the origina grid geometry and the read
-     * image parameters.
+     * Derivate a grid geometry from the origina grid geometry and the features
+ image parameters.
      *
      * @param gridGeom original grid geometry
-     * @param areaLower image read lower corner
-     * @param areaUpper image read upper corner
+     * @param areaLower image features lower corner
+     * @param areaUpper image features upper corner
      * @param subsampling image subsampling
      * @return derivated grid geometry.
      * @throws CoverageStoreException

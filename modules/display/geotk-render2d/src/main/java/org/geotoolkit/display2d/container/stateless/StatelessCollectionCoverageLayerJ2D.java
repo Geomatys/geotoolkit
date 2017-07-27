@@ -46,14 +46,14 @@ import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.ItemListener;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapItem;
-import org.geotoolkit.storage.coverage.CollectionCoverageReference;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Description;
+import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.CollectionCoverageResource;
 
 /**
  *
@@ -132,10 +132,10 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
             return;
         }
 
-        final CollectionCoverageReference ref = (CollectionCoverageReference) item.getCoverageReference();
-        final Collection<CoverageReference> references = ref.getCoverages(null);
+        final CollectionCoverageResource ref = (CollectionCoverageResource) item.getCoverageReference();
+        final Collection<CoverageResource> references = ref.getCoverages(null);
         final LoopLayer layer = new LoopLayer();
-        for (CoverageReference cref : references) {
+        for (CoverageResource cref : references) {
             layer.ref = cref;
             paintRaster(layer, rules, renderingContext);
         }
@@ -260,10 +260,10 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
      */
     private class LoopLayer implements CoverageMapLayer {
 
-        private CoverageReference ref;
+        private CoverageResource ref;
 
         @Override
-        public CoverageReference getCoverageReference() {
+        public CoverageResource getCoverageReference() {
             return ref;
         }
 

@@ -1,0 +1,8 @@
+org.geotoolkit.wps.adaptor.GMLAdaptor$Spi
+org.geotoolkit.wps.adaptor.HTMLAdaptor$Spi
+org.geotoolkit.wps.adaptor.ImageAdaptor$Spi
+org.geotoolkit.wps.adaptor.JSONAdaptor$Spi
+org.geotoolkit.wps.adaptor.OctetStreamAdaptor$Spi
+org.geotoolkit.wps.adaptor.TextAdaptor$Spi
+org.geotoolkit.wps.adaptor.XMLAdaptor$Spi
+org.geotoolkit.wps.adaptor.ZipAdaptor$Spi

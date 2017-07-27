@@ -64,12 +64,11 @@ public class ReferenceToGeometryArrayConverter extends AbstractReferenceInputCon
 
                 try (final FeatureIterator iterator = featureCollection.iterator()) {
                     final Feature feature = iterator.next();
-                    final Geometry defaultGeometry = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(feature);
+                    final GeometryCollection geometryCollection = FeatureExt.getDefaultGeometryValue(feature)
+                            .filter(GeometryCollection.class::isInstance)
+                            .map(GeometryCollection.class::cast)
+                            .orElseThrow(() -> new UnconvertibleObjectException("The found value may not be of GeometryCollection type or may be null"));
 
-                    if (!(defaultGeometry instanceof GeometryCollection))
-                        throw new UnconvertibleObjectException("No geometry collection found.");
-
-                    final GeometryCollection geometryCollection = (GeometryCollection) defaultGeometry;
                     final Geometry[] geometryArray = new Geometry[geometryCollection.getNumGeometries()];
                     for (int index = 0; index < geometryArray.length; index++)
                         geometryArray[index] = geometryCollection.getGeometryN(index);

@@ -26,6 +26,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyNotFoundException;
 
 /**
  * Edition tool to create multi line parts.
@@ -49,14 +50,19 @@ public class MultiLinePartCreationTool extends AbstractEditionTool {
 
         //check the geometry type is type Point
         final FeatureMapLayer layer = (FeatureMapLayer) candidate;
-        final FeatureType ft = layer.getCollection().getFeatureType();
-        final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(ft);
+        final FeatureType ft = layer.getCollection().getType();
+        try {
+            final Class geomClass = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(ft))
+                    .map(AttributeType::getValueClass)
+                    .orElse(null);
 
-        if(desc == null){
+            if (geomClass == null) {
+                return false;
+            }
+            return MultiLineString.class.isAssignableFrom(geomClass);
+        } catch (PropertyNotFoundException | IllegalStateException e) {
             return false;
         }
-
-        return MultiLineString.class.isAssignableFrom(desc.getValueClass());
     }
 
     @Override

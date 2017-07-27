@@ -43,10 +43,10 @@ import org.opengis.util.FactoryException;
  */
 public class PGPyramidSet extends DefaultPyramidSet{
 
-    private final PGCoverageReference ref;
+    private final PGCoverageResource ref;
     private boolean updated = false;
 
-    public PGPyramidSet(PGCoverageReference ref) {
+    public PGPyramidSet(PGCoverageResource ref) {
         this.ref = ref;
     }
 

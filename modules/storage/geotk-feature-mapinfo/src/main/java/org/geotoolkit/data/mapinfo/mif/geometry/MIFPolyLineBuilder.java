@@ -41,6 +41,7 @@ import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 
 import static org.geotoolkit.data.mapinfo.mif.style.Pen.PEN;
+import org.geotoolkit.feature.FeatureExt;
 
 /**
  * Util class to build a feature from Multi line object of a MIF file.
@@ -101,7 +102,7 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
                 lineTab[lineCount] = GEOMETRY_FACTORY.createLineString(seq);
             }
 
-            toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), GEOMETRY_FACTORY.createMultiLineString(lineTab));
+            toFill.setPropertyValue(FeatureExt.getDefaultGeometry(toFill.getType()).getName().tip().toString(), GEOMETRY_FACTORY.createMultiLineString(lineTab));
 
         } catch (InputMismatchException ex) {
             throw new DataStoreException("Line is not properly defined : not enough points found.", ex);

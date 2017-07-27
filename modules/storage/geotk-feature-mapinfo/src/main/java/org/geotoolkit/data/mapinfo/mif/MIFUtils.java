@@ -28,17 +28,16 @@ import java.net.URI;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Scanner;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.feature.Geometries;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.IdentifiedType;
-import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.FilterFactory;
@@ -159,14 +158,9 @@ public final class MIFUtils {
      * @throws DataStoreException If we get a problem while geometry conversion.
      */
     public static String buildMIFGeometry(Feature toConvert) throws DataStoreException {
-        String mifGeom = null;
-        if (FeatureExt.hasAGeometry(toConvert.getType())) {
-            final GeometryType geomBuilder = identifyFeature(toConvert.getType());
-            if (geomBuilder != null) {
-                mifGeom = geomBuilder.toMIFSyntax(toConvert);
-            }
-        }
-        return mifGeom;
+        final GeometryType geomBuilder = identifyFeature(toConvert.getType())
+                .orElseThrow(() -> new DataStoreException("Unknown geometry type in input feature " + toConvert));
+        return geomBuilder.toMIFSyntax(toConvert);
     }
 
     /**
@@ -175,7 +169,7 @@ public final class MIFUtils {
      * @param toIdentify The feature type to check geometry.
      * @return The MIF {@link GeometryType} corresponding to this feature.
      */
-    public static GeometryType identifyFeature(FeatureType toIdentify) {
+    public static Optional<GeometryType> identifyFeature(FeatureType toIdentify) {
         GeometryType type = null;
         /* We'll check for the exact featureType first, and if there's no matching, we'll refine our search by checking
          * the geometry classes.
@@ -194,70 +188,39 @@ public final class MIFUtils {
 
         // for some types, we don't need to get the same featureType, only a matching geometry class will be sufficient.
         final IdentifiedType geomType;
-        if(type == null && (geomType = findGeometryProperty(toIdentify)) != null) {
-            final Class sourceClass = toGeometryAttribute(geomType).getValueClass();
-            if(Polygon.class.isAssignableFrom(sourceClass) || MultiPolygon.class.isAssignableFrom(sourceClass)) {
-                type = GeometryType.REGION;
-            } else if(LineString.class.isAssignableFrom(sourceClass) || MultiLineString.class.isAssignableFrom(sourceClass)) {
-                type = GeometryType.PLINE;
-            } else if(Point.class.isAssignableFrom(sourceClass) || Coordinate.class.isAssignableFrom(sourceClass)) {
-                type = GeometryType.POINT;
-            } else if(MultiPoint.class.isAssignableFrom(sourceClass) || CoordinateSequence.class.isAssignableFrom(sourceClass)) {
-                type = GeometryType.MULTIPOINT;
-            } else if(Envelope.class.isAssignableFrom(sourceClass) || Envelope2D.class.isAssignableFrom(sourceClass) || Rectangle2D.class.isAssignableFrom(sourceClass)) {
-                type = GeometryType.RECTANGLE;
-            } else if(GeometryCollection.class.isAssignableFrom(sourceClass)) {
-                type = GeometryType.COLLECTION;
-            } else if (Geometry.class.isAssignableFrom(sourceClass)) {
-                type = GeometryType.GEOMETRY;
-            }
+        if (type != null) {
+            return Optional.of(type);
+        } else {
+            return FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(toIdentify))
+                    .map(org.opengis.feature.AttributeType::getValueClass)
+                    .map(MIFUtils::getGeometryType);
         }
+    }
+
+    private static GeometryType getGeometryType(final Class sourceClass) {
+        GeometryType type = null;
+        if (Polygon.class.isAssignableFrom(sourceClass) || MultiPolygon.class.isAssignableFrom(sourceClass)) {
+            type = GeometryType.REGION;
+        } else if (LineString.class.isAssignableFrom(sourceClass) || MultiLineString.class.isAssignableFrom(sourceClass)) {
+            type = GeometryType.PLINE;
+        } else if (Point.class.isAssignableFrom(sourceClass) || Coordinate.class.isAssignableFrom(sourceClass)) {
+            type = GeometryType.POINT;
+        } else if (MultiPoint.class.isAssignableFrom(sourceClass) || CoordinateSequence.class.isAssignableFrom(sourceClass)) {
+            type = GeometryType.MULTIPOINT;
+        } else if (Envelope.class.isAssignableFrom(sourceClass) || Envelope2D.class.isAssignableFrom(sourceClass) || Rectangle2D.class.isAssignableFrom(sourceClass)) {
+            type = GeometryType.RECTANGLE;
+        } else if (GeometryCollection.class.isAssignableFrom(sourceClass)) {
+            type = GeometryType.COLLECTION;
+        } else if (Geometry.class.isAssignableFrom(sourceClass)) {
+            type = GeometryType.GEOMETRY;
+        }
+
         return type;
     }
 
-        /**
-     * @param input A feature type to find a geometry attribute into.
-     * @return the first geometry attribute found in given feature type.
-     */
-    public static IdentifiedType findGeometryProperty(final FeatureType input) {
-        if (input == null || !FeatureExt.hasAGeometry(input))
-            return null;
-        org.opengis.feature.AttributeType<?> geomType = FeatureExt.getDefaultGeometryAttribute(input);
-        if (geomType != null) {
-            return geomType;
-        }
-        org.opengis.feature.AttributeType found;
-        for (final PropertyType pt : input.getProperties(true)) {
-            found = toGeometryAttribute(pt);
-            if (found != null)
-                return pt;
-        }
-        return null;
-    }
-
-    /**
-     * Check if given property type is a geometry one. If it is, we're sending
-     * back the exact attribute type of the geometry.
-     * @param input The property type to analyse.
-     * @return The backed geometry type, or null if the given type does not refers
-     */
-    public static org.opengis.feature.AttributeType toGeometryAttribute(IdentifiedType input) {
-        while (input instanceof Operation) {
-            input = ((Operation) input).getResult();
-        }
-
-        if (input instanceof org.opengis.feature.AttributeType && Geometries.isKnownType(((org.opengis.feature.AttributeType) input).getValueClass())) {
-            return (org.opengis.feature.AttributeType) input;
-        }
-        return null;
-    }
-
-    public static Object getGeometryValue(final Feature input) {
-        IdentifiedType found = findGeometryProperty(input.getType());
-        if (found != null) {
-            return input.getPropertyValue(found.getName().toString());
-        }
-        return null;
+    public static Object getGeometryValue(final Feature input) throws DataStoreException {
+        return FeatureExt.getDefaultGeometryValue(input)
+                .orElseThrow(() -> new DataStoreException(String.format("Given feature has no geometry :%n%s", input)));
     }
 
     /**

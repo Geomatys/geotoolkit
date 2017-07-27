@@ -34,6 +34,7 @@ import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 
 import static org.geotoolkit.data.mapinfo.mif.style.Symbol.SYMBOL;
+import org.geotoolkit.feature.FeatureExt;
 
 /**
  * Util class to build a feature from Point object of a MIF file.
@@ -82,8 +83,8 @@ public final class MIFPointBuilder extends MIFGeometryBuilder {
         }
         final Point pt = GEOMETRY_FACTORY.createPoint(result);
 
-        toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), pt);
-        toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), pt);
+        toFill.setPropertyValue(FeatureExt.getDefaultGeometry(toFill.getType()).getName().tip().toString(), pt);
+        toFill.setPropertyValue(FeatureExt.getDefaultGeometry(toFill.getType()).getName().tip().toString(), pt);
 
 
         // Style
@@ -112,7 +113,7 @@ public final class MIFPointBuilder extends MIFGeometryBuilder {
         super.toMIFSyntax(feature);
         StringBuilder builder = new StringBuilder(NAME.tip().toString());
         final Point pt;
-        final Object value = (Point) MIFUtils.getGeometryValue(feature);
+        final Object value = MIFUtils.getGeometryValue(feature);
         if(value instanceof Point) {
             pt = (Point)value;
         } else {

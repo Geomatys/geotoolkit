@@ -233,7 +233,7 @@ public class XMLMosaic implements GridMosaic {
 
     private synchronized byte[] createEmptyTile() throws DataStoreException {
         if (emptyTileEncoded == null) {
-            XMLCoverageReference ref = pyramid.getPyramidSet().getRef();
+            XMLCoverageResource ref = pyramid.getPyramidSet().getRef();
             //create an empty tile
             final List<XMLSampleDimension> dims = ref.getXMLSampleDimensions();
             final BufferedImage emptyTile;
@@ -310,7 +310,7 @@ public class XMLMosaic implements GridMosaic {
         final StringBuilder sb = new StringBuilder();
         sb.append(scale);
 
-        final XMLCoverageReference ref = pyramid.getPyramidSet().getRef();
+        final XMLCoverageResource ref = pyramid.getPyramidSet().getRef();
         final String version = ref.getVersion();
 
         if("1.0".equals(version)){

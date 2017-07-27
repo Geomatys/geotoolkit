@@ -131,6 +131,7 @@ public class DocumentType
      *
      *
      */
+    @Override
     public List<JAXBElement<? extends AbstractFeatureType>> getAbstractFeatureGroup() {
         if (abstractFeatureGroup == null) {
             abstractFeatureGroup = new ArrayList<JAXBElement<? extends AbstractFeatureType>>();

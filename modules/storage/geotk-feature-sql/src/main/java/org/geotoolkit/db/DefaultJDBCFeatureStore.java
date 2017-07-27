@@ -813,7 +813,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      */
     private void decompose(FeatureType type, List<FeatureType> types, List<TypeRelation> relations) throws DataStoreException{
 
-        final GenericName dbName = NamesExt.create(getDefaultNamespace(), type.getName().tip().toString());
+        final GenericName dbName = NamesExt.create(type.getName().tip().toString());
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(dbName);

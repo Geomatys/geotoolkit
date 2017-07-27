@@ -41,10 +41,10 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.gui.swing.tree.Trees;
 
 import javax.xml.bind.JAXBContext;
 import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.util.StringUtilities;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -331,12 +331,12 @@ public class Chain implements Comparable<Chain>,Parameterized {
         if (name != null) {
             sb.append("name:").append(name).append('\n');
         }
-        sb.append(Trees.toString("Inputs", getInputs()));
-        sb.append(Trees.toString("Outputs", getOutputs()));
-        sb.append(Trees.toString("Constants", getConstants()));
-        sb.append(Trees.toString("Chain elements", getElements()));
-        sb.append(Trees.toString("Links", getDataLinks()));
-        sb.append(Trees.toString("ExecutionLinks", getFlowLinks()));
+        sb.append(StringUtilities.toStringTree("Inputs", getInputs())).append('\n');
+        sb.append(StringUtilities.toStringTree("Outputs", getOutputs())).append('\n');
+        sb.append(StringUtilities.toStringTree("Constants", getConstants())).append('\n');
+        sb.append(StringUtilities.toStringTree("Chain elements", getElements())).append('\n');
+        sb.append(StringUtilities.toStringTree("Links", getDataLinks())).append('\n');
+        sb.append(StringUtilities.toStringTree("ExecutionLinks", getFlowLinks())).append('\n');
 
         return sb.toString();
     }

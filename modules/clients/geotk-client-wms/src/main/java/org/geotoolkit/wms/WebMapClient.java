@@ -20,13 +20,11 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.CapabilitiesException;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.storage.DataNode;
-import org.geotoolkit.storage.DefaultDataNode;
+import org.geotoolkit.storage.DefaultDataSet;
 import org.geotoolkit.wms.auto.GetCapabilitiesAuto;
 import org.geotoolkit.wms.v111.GetCapabilities111;
 import org.geotoolkit.wms.v111.GetFeatureInfo111;
@@ -53,9 +51,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.client.Client;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.Resource;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 
 /**
@@ -76,7 +74,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
     private static final long TIMEOUT_GETCAPS = 20000L;
 
     private AbstractWMSCapabilities capabilities;
-    private DataNode rootNode = null;
+    private DefaultDataSet rootNode = null;
 
     /**
      * The request header map for this server
@@ -383,9 +381,9 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
     }
 
     @Override
-    public synchronized DataNode getRootNode() throws DataStoreException {
+    public synchronized Resource getRootResource() throws DataStoreException {
         if(rootNode == null){
-            rootNode = new DefaultDataNode();
+            rootNode = new DefaultDataSet(NamesExt.create("root"));
             final AbstractWMSCapabilities capa;
             try {
                 capa = getCapabilities();
@@ -398,8 +396,8 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
                 final String name = al.getName();
                 if(name != null){
                     final GenericName nn = NamesExt.valueOf(name);
-                    final CoverageReference ref = createReference(nn);
-                    rootNode.getChildren().add(ref);
+                    final CoverageResource ref = createReference(nn);
+                    rootNode.addResource(ref);
                 }
             }
         }
@@ -413,8 +411,8 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
      * @param name
      * @return
      */
-    protected CoverageReference createReference(GenericName name) throws DataStoreException{
-        return new WMSCoverageReference(this,name);
+    protected CoverageResource createReference(GenericName name) throws DataStoreException{
+        return new WMSCoverageResource(this,name);
     }
 
     @Override
@@ -422,7 +420,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
     }
 
     @Override
-    public CoverageReference create(GenericName name) throws DataStoreException {
+    public CoverageResource create(GenericName name) throws DataStoreException {
         throw new DataStoreException("Can not create new coverage.");
     }
 

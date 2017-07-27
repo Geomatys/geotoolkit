@@ -30,15 +30,13 @@ import javax.sql.DataSource;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultDataNode;
+import org.geotoolkit.storage.DefaultDataSet;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -46,6 +44,8 @@ import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.factory.sql.EPSGFactory;
+import org.geotoolkit.storage.Resource;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * GeotoolKit Coverage Store using PostgreSQL Raster model.
@@ -102,9 +102,8 @@ public class PGCoverageStore extends AbstractCoverageStore{
     }
 
     @Override
-    public DataNode getRootNode() throws DataStoreException {
-        final DataNode root = new DefaultDataNode();
-        final String ns = getDefaultNamespace();
+    public Resource getRootResource() throws DataStoreException {
+        final DefaultDataSet root = new DefaultDataSet(NamesExt.create("root"));
 
         final StringBuilder query = new StringBuilder();
 
@@ -119,9 +118,9 @@ public class PGCoverageStore extends AbstractCoverageStore{
             stmt = cnx.createStatement();
             rs = stmt.executeQuery(query.toString());
             while (rs.next()){
-                final GenericName n = NamesExt.create(ns, rs.getString(1));
-                final CoverageReference ref = createCoverageReference(n, null);
-                root.getChildren().add(ref);
+                final GenericName n = NamesExt.create(rs.getString(1));
+                final CoverageResource ref = createCoverageReference(n, null);
+                root.addResource(ref);
             }
         } catch (SQLException ex) {
             throw new DataStoreException(ex);
@@ -132,7 +131,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
     }
 
     @Override
-    public CoverageReference create(GenericName name) throws DataStoreException {
+    public CoverageResource create(GenericName name) throws DataStoreException {
 
         final StringBuilder query = new StringBuilder();
         query.append("INSERT INTO ");
@@ -156,7 +155,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         }
 
         fireCoverageAdded(name);
-        return getCoverageReference(NamesExt.create(getDefaultNamespace(), name.tip().toString()));
+        return findResource(NamesExt.create(name.tip().toString()));
     }
 
     @Override
@@ -250,12 +249,12 @@ public class PGCoverageStore extends AbstractCoverageStore{
     }
 
     @Override
-    public CoverageReference getCoverageReference(GenericName name, Version version) throws DataStoreException {
+    public CoverageResource findResource(GenericName name, Version version) throws DataStoreException {
         typeCheck(name);
         return createCoverageReference(name, version);
     }
 
-    private CoverageReference createCoverageReference(final GenericName name, Version version) throws DataStoreException {
+    private CoverageResource createCoverageReference(final GenericName name, Version version) throws DataStoreException {
         if(version == null){
             try {
                 //grab the latest
@@ -272,7 +271,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
                 throw new DataStoreException(ex.getMessage(), ex);
             }
         }
-        return new PGCoverageReference(this, name, version);
+        return new PGCoverageResource(this, name, version);
     }
 
     ////////////////////////////////////////////////////////////////////////////

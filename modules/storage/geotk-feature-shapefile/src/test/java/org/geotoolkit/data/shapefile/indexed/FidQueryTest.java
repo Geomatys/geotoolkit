@@ -73,7 +73,7 @@ public class FidQueryTest extends FIDTestCase {
         super.setUp();
 
         final URI uri = backshp.toURI();
-        ds = new IndexedShapefileFeatureStore(uri, null, false, true, IndexType.QIX,null);
+        ds = new IndexedShapefileFeatureStore(uri, false, true, IndexType.QIX,null);
         numFeatures = 0;
         name = ds.getNames().iterator().next();
         session = ds.createSession(true);
@@ -101,7 +101,6 @@ public class FidQueryTest extends FIDTestCase {
     @Test
     @Ignore
     public void testAddFeature() throws Exception {
-        Feature feature = fids.values().iterator().next();
         final FeatureType schema = ds.getFeatureType(ds.getName().toString());
 
         final Feature newFeature = schema.newInstance();
@@ -133,7 +132,7 @@ public class FidQueryTest extends FIDTestCase {
 
         final FeatureIterator features = ds.getFeatureReader(query);
         try {
-            feature = features.next();
+            final Feature feature = features.next();
             for(PropertyType desc : schema.getProperties(true)){
                 final Object value = feature.getPropertyValue(desc.getName().toString());
                 final Object newValue = newFeature.getPropertyValue(desc.getName().toString());
@@ -226,7 +225,7 @@ public class FidQueryTest extends FIDTestCase {
         // factory.createGeometryFilter(FilterType.GEOMETRY_INTERSECTS);
         // bboxFilter.addRightGeometry(bb);
         //
-        // String geom = ds.getSchema().getDefaultGeometry().getLocalName();
+        // String geom = ds.getSchema().getDefaultGeometryValue().getLocalName();
         //
         // bboxFilter.addLeftGeometry(factory.createAttributeExpression(geom));
 

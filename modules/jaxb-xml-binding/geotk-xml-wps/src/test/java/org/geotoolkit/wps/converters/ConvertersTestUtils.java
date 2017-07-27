@@ -31,10 +31,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -61,7 +60,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
 import org.opengis.util.FactoryException;
 
 /**
@@ -194,12 +192,14 @@ public final class ConvertersTestUtils {
         Object testResource = null;
         if ("/inputs/geometry.json".equals(resourcePath)) {
             final Feature feature = WPSConvertersUtils.readFeatureFromJson(ConvertersTestUtils.class.getResource(resourcePath).toURI());
-            final Object geometryValue = FeatureExt.getDefaultGeometryAttributeValue(feature);
+            final Optional<Geometry> geometryValue = FeatureExt.getDefaultGeometryValue(feature)
+                            .filter(Geometry.class::isInstance)
+                            .map(Geometry.class::cast);
 
-            if (!(geometryValue instanceof Geometry))
+            if (!geometryValue.isPresent())
                 fail();
 
-            testResource = geometryValue;
+            testResource = geometryValue.get();
         }
         else if ("/inputs/geometrycollection.json".equals(resourcePath))
             testResource = ConvertersTestUtils.getGeometryArrayFromTestFolder(resourcePath);
@@ -434,11 +434,12 @@ public final class ConvertersTestUtils {
             // feature collection
             while (iterator.hasNext()) {
                 final Feature feature = iterator.next();
-                final Object geometryValue = FeatureExt.getDefaultGeometryAttributeValue(feature);
+                final Optional<Geometry> geometryValue = FeatureExt.getDefaultGeometryValue(feature)
+                            .filter(Geometry.class::isInstance)
+                            .map(Geometry.class::cast);
+                assertTrue(geometryValue.isPresent());
 
-                assertTrue(geometryValue instanceof Geometry);
-
-                final Geometry currentGeometry = (Geometry) geometryValue;
+                final Geometry currentGeometry = geometryValue.get();
                 final String propertyValue = ((String)feature.getPropertyValue("name"));
 
                 final Coordinate pointCoordinates = currentGeometry.getCoordinate();
@@ -496,10 +497,12 @@ public final class ConvertersTestUtils {
         final String propertyValue = ((String)feature.getPropertyValue("name"));
         assertEquals(propertyValue, "Plaza Road Park");
 
-        Object value = FeatureExt.getDefaultGeometryAttributeValue(feature);
+        Optional<Polygon> value = FeatureExt.getDefaultGeometryValue(feature)
+                            .filter(Polygon.class::isInstance)
+                            .map(Polygon.class::cast);
 
-        assertTrue(value instanceof Polygon);
-        Polygon polygon = (Polygon) value;
+        assertTrue(value.isPresent());
+        Polygon polygon = value.get();
         Coordinate[] coordinates = polygon.getCoordinates();
 
         // Test the value of the first three coordinates of the polygon

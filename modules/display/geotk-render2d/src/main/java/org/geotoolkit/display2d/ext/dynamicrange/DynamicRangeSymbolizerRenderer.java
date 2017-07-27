@@ -29,7 +29,6 @@ import java.util.logging.Level;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -50,6 +49,7 @@ import org.opengis.metadata.content.RangeDimension;
 import org.opengis.metadata.content.SampleDimension;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  *
@@ -65,7 +65,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
     public void portray(ProjectedCoverage projectedCoverage) throws PortrayalException {
 
         try{
-            final CoverageReference covref = projectedCoverage.getCandidate().getCoverageReference();
+            final CoverageResource covref = projectedCoverage.getCandidate().getCoverageReference();
 
             final DynamicRangeSymbolizer symbolizer = symbol.getSource();
 
@@ -81,7 +81,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                 allLiteral &= channel.getLower().getValue() instanceof Literal;
                 allLiteral &= channel.getUpper().getValue() instanceof Literal;
             }
-            final CoverageDescription covdesc = allLiteral ? null : covref.getMetadata();
+            final CoverageDescription covdesc = allLiteral ? null : covref.getCoverageDescription();
 
             for(DynamicRangeSymbolizer.DRChannel channel : symbolizer.getChannels()){
                 final Integer bandIdx;

@@ -32,7 +32,6 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.memory.MemoryCoverageStore;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.junit.Test;
 import org.opengis.coverage.grid.GridCoverage;
@@ -44,6 +43,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
 import static org.junit.Assert.*;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 
 /**
@@ -83,7 +83,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         final GridCoverage coverage = gcb.build();
 
         final MemoryCoverageStore store = new MemoryCoverageStore();
-        final CoverageReference ref = store.create(name);
+        final CoverageResource ref = store.create(name);
         ref.acquireWriter().write(coverage, null);
 
         return store;
@@ -105,7 +105,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         //decorate this coverage
         final CoverageStore decorated = new AmendedCoverageStore(store);
         assertEquals(1,decorated.getNames().size());
-        final AmendedCoverageReference decoratedRef = (AmendedCoverageReference) decorated.getCoverageReference(name);
+        final AmendedCoverageResource decoratedRef = (AmendedCoverageResource) decorated.findResource(name);
         assertNotNull(decoratedRef);
         assertEquals(IMAGECRS, decoratedRef.getGridGeometry(0).getCoordinateReferenceSystem());
         assertEquals(new AffineTransform(), decoratedRef.getGridGeometry(0).getGridToCRS());
@@ -133,7 +133,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         //decorate this coverage
         final CoverageStore decorated = new AmendedCoverageStore(store);
         assertEquals(1,decorated.getNames().size());
-        final AmendedCoverageReference decoratedRef = (AmendedCoverageReference) decorated.getCoverageReference(name);
+        final AmendedCoverageResource decoratedRef = (AmendedCoverageResource) decorated.findResource(name);
         assertNotNull(decoratedRef);
         assertEquals(IMAGECRS, decoratedRef.getGridGeometry(0).getCoordinateReferenceSystem());
         assertEquals(new AffineTransform(), decoratedRef.getGridGeometry(0).getGridToCRS());
@@ -165,12 +165,12 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         final GridCoverage coverage = gcb.build();
 
         final MemoryCoverageStore store = new MemoryCoverageStore();
-        final CoverageReference ref = store.create(name);
+        final CoverageResource ref = store.create(name);
         ref.acquireWriter().write(coverage, null);
 
         //decorate this coverage
         final CoverageStore decorated = new AmendedCoverageStore(store);
-        final AmendedCoverageReference decoratedRef = (AmendedCoverageReference) decorated.getCoverageReference(name);
+        final AmendedCoverageResource decoratedRef = (AmendedCoverageResource) decorated.findResource(name);
 
         //override grid to crs
         final CoordinateReferenceSystem overrideCrs = CommonCRS.defaultGeographic();
@@ -182,7 +182,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         assertEquals(overrideCrs, decoratedCov.getCoordinateReferenceSystem());
         assertEquals(new AffineTransform2D(1, 0, 0, 1, 20, 30), decoratedRef.getGridGeometry(0).getGridToCRS());
 
-        //TODO this est is biazed : memory coverage store do not care about the read parameters
+        //TODO this est is biazed : memory coverage store do not care about the features parameters
         //read an area
         final GridCoverageReadParam param = new GridCoverageReadParam();
         final GeneralEnvelope env = new GeneralEnvelope(overrideCrs);

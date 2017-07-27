@@ -27,11 +27,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
@@ -103,9 +103,10 @@ public class MIFFeatureReader implements FeatureReader {
             readMid = true;
         }
 
-        if(FeatureExt.hasAGeometry(readType)) {
+        final Optional<MIFUtils.GeometryType> geomType = MIFUtils.identifyFeature(readType);
+        if(geomType.isPresent()) {
             readMif = true;
-            geometryType = MIFUtils.identifyFeature(readType);
+            geometryType = geomType.get();
             geometryId = geometryType.name();
             geometryPattern = Pattern.compile(geometryId, Pattern.CASE_INSENSITIVE);
         } else {
@@ -327,7 +328,7 @@ public class MIFFeatureReader implements FeatureReader {
                 mifStream = IOUtilities.open(master.getMIFPath());
             }
             if(mifScanner == null) {
-                mifScanner = new Scanner(mifStream, MIFUtils.DEFAULT_CHARSET);
+                mifScanner = new Scanner(mifStream, master.getCharset().name());
                 repositionMIFReader();
             }
         }
@@ -337,7 +338,7 @@ public class MIFFeatureReader implements FeatureReader {
                 midStream = IOUtilities.open(master.getMIDPath());
             }
             if(midScanner == null) {
-                midScanner = new Scanner(midStream, MIFUtils.DEFAULT_CHARSET);
+                midScanner = new Scanner(midStream, master.getCharset().name());
 
                 // Reposition the scanner.
                 int midPosition = 0;

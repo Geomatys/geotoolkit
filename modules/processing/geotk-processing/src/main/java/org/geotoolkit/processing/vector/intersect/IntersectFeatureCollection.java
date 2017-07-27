@@ -56,7 +56,7 @@ public class IntersectFeatureCollection extends WrapFeatureCollection {
     public IntersectFeatureCollection(final FeatureCollection originalFC, final Geometry interGeom) {
         super(originalFC);
         this.interGeom = interGeom;
-        this.newFeatureType = super.getFeatureType();
+        this.newFeatureType = super.getType();
     }
 
     /**
@@ -64,7 +64,7 @@ public class IntersectFeatureCollection extends WrapFeatureCollection {
      * @return FeatureType
      */
     @Override
-    public FeatureType getFeatureType() {
+    public FeatureType getType() {
         return newFeatureType;
     }
 

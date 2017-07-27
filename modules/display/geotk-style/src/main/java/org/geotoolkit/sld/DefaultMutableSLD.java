@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Objects;
 import javax.swing.event.EventListenerList;
 
-import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.style.StyleConstants;
 import org.apache.sis.measure.NumberRange;
@@ -36,6 +35,7 @@ import org.opengis.sld.SLDVisitor;
 import org.opengis.style.Description;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.util.StringUtilities;
 
 /**
  * Default mutable Style Layer Descriptor, thread safe.
@@ -429,7 +429,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
         builder.append(']');
 
         if(!layers.isEmpty()){
-            builder.append(Trees.toString("", layers));
+            builder.append(StringUtilities.toStringTree("", layers));
         }
 
         return builder.toString();

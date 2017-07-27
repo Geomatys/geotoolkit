@@ -140,9 +140,8 @@ public class MultiplicityRangeImpl implements MultiplicityRange {
         }
         if (object instanceof MultiplicityRangeImpl) {
             final MultiplicityRangeImpl that = (MultiplicityRangeImpl) object;
-            return Objects.equals(this.lower, that.lower);
-                //&& Objects.equals(this.upper, that.upper);
-            // temporary patch TODO fix it  && Objects.equals(this.upper, that.upper);
+            return Objects.equals(this.lower, that.lower)
+                && Objects.equals(this.upper, that.upper);
         }
         return false;
     }

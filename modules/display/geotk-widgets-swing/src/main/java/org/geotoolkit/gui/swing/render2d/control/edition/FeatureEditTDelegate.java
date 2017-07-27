@@ -70,7 +70,10 @@ public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
     private void setCurrentFeature(final Feature feature){
         this.feature = feature;
         if(feature != null){
-            final Geometry geom = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(feature);
+            final Geometry geom = FeatureExt.getDefaultGeometryValue(feature)
+                    .filter(Geometry.class::isInstance)
+                    .map(Geometry.class::cast)
+                    .orElseThrow(() -> new IllegalArgumentException("No geometric value found in given feature."));
             decoration.setGeometries(Collections.singleton(helper.toObjectiveCRS(geom)));
 
             final JSplitPane split = new JSplitPane();
@@ -81,7 +84,7 @@ public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
 
             final MapContext context = MapBuilder.createContext();
             final FeatureCollection col = FeatureStoreUtilities.collection(feature);
-            final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col, RandomStyleBuilder.createDefaultVectorStyle(col.getFeatureType()));
+            final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col, RandomStyleBuilder.createDefaultVectorStyle(col.getType()));
             context.layers().add(layer);
 
             //zoom on this single feature

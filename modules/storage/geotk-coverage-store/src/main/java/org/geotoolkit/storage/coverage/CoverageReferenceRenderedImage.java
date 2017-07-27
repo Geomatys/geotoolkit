@@ -59,7 +59,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class CoverageReferenceRenderedImage implements RenderedImage{
 
-    private final CoverageReference ref;
+    private final CoverageResource ref;
     private final GridMosaic mosaic;
 
     private final ColorModel colorModel;
@@ -69,7 +69,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
     /** listener support */
     private final EventListenerList listeners = new EventListenerList();
 
-    public CoverageReferenceRenderedImage(CoverageReference ref, GridMosaic mosaic) throws DataStoreException,
+    public CoverageReferenceRenderedImage(CoverageResource ref, GridMosaic mosaic) throws DataStoreException,
             IOException, TransformException {
         this.ref = ref;
         this.mosaic = mosaic;

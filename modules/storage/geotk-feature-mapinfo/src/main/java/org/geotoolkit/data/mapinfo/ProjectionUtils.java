@@ -185,8 +185,8 @@ public class ProjectionUtils {
         }
 
         String[] crsParameters = mifCRS.split(",");
-        if(crsParameters.length < 3) {
-            throw new DataStoreException("Missing informations : A CoordSys must at least define projection type, datum and unit.");
+        if(crsParameters.length < 2) {
+            throw new DataStoreException("Missing information : A CoordSys must at least define projection type and datum.");
         }
 
         Pattern codeMatch = Pattern.compile("\\d+");
@@ -199,10 +199,9 @@ public class ProjectionUtils {
         paramList = getProjectionParameters(projCode);
 
         // Datum
-        int datumCode = -1;
         Matcher datumMatch = codeMatch.matcher(crsParameters[position++]);
         if(datumMatch.find()) {
-            datumCode = Integer.decode(datumMatch.group());
+            final int datumCode = Integer.decode(datumMatch.group());
             // If we've got a custom datum, check for its ellipsoid and Bursa Wolf parameters.
             if(datumCode == 999 || datumCode == 9999) {
                 int dParamNumber = crsParameters.length-(position+paramList.length+1);
@@ -224,13 +223,8 @@ public class ProjectionUtils {
             }
         }
 
-        // Unit
-        unit = UnitIdentifier.getUnitFromCode(crsParameters[position++]);
-
         if(datum == null) {
             throw new DataStoreException("One of the following mandatory parameter can't be read : datum code");
-        } else if (unit == null) {
-            throw new DataStoreException("One of the following mandatory parameter can't be read : unit code");
         }
 
         /*
@@ -278,6 +272,12 @@ public class ProjectionUtils {
         if(projCode == GEO_PROJ_CODE) {
             result = baseCRS;
         } else {
+            // Unit is only requested into Projected CRS context
+            unit = UnitIdentifier.getUnitFromCode(crsParameters[position++]);
+            if (unit == null) {
+                throw new DataStoreException("One of the following mandatory parameter can't be read : unit code");
+            }
+
             /**
              * If projection code is not the geographical code, we must build a projected crs matching the projection
              * pointed by given code.
@@ -385,7 +385,7 @@ public class ProjectionUtils {
 
         // Geographic CRS (special) case, mapinfo proj code is 1.
         if(crs instanceof GeographicCRS) {
-            builder.append('1').append(", ").append(mifDatum).append(", ").append(mifUnitCode);
+            builder.append('1').append(", ").append(mifDatum);
 
         } else if (crs instanceof ProjectedCRS) {
             final ProjectedCRS pCRS = (ProjectedCRS) crs;

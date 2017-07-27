@@ -56,7 +56,6 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -65,6 +64,7 @@ import org.geotoolkit.style.StyleConstants;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory2;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  *
@@ -147,7 +147,7 @@ public class FXLayerChooser extends BorderPane{
                         style = SF.style();
 
                     }else{
-                        style = RandomStyleBuilder.createRandomVectorStyle(collection.getFeatureType());
+                        style = RandomStyleBuilder.createRandomVectorStyle(collection.getType());
                     }
 
                     final FeatureMapLayer layer = MapBuilder.createFeatureLayer(collection, style);
@@ -158,7 +158,7 @@ public class FXLayerChooser extends BorderPane{
 
                 }else if(source instanceof CoverageStore){
                     final CoverageStore store = (CoverageStore) source;
-                    final CoverageReference ref = store.getCoverageReference(name);
+                    final CoverageResource ref = store.findResource(name);
                     final MutableStyle style = styleFactory.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
                     final CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref, style);
                     layer.setName(name.tip().toString());
@@ -181,7 +181,8 @@ public class FXLayerChooser extends BorderPane{
             final FeatureStore store = (FeatureStore) source;
             for(GenericName name : store.getNames()){
                 final FeatureType ft = store.getFeatureType(name.toString());
-                final AttributeType<?> geomAtt = FeatureExt.getDefaultGeometryAttribute(ft);
+                final AttributeType<?> geomAtt = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(ft))
+                        .orElse(null);
                 if(geomAtt != null){
                     firstCandidates.add(ft);
                 }else{
@@ -231,7 +232,8 @@ public class FXLayerChooser extends BorderPane{
                 final FeatureType ft = (FeatureType) value;
                 final FeatureStore store = (FeatureStore) getSource();
 
-                final AttributeType<?> desc = FeatureExt.getDefaultGeometryAttribute(ft);
+                final AttributeType<?> desc = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(ft))
+                        .orElse(null);
                 if(desc != null){
                     BufferedImage icon;
                     final Class binding = desc.getValueClass();

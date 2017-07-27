@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
@@ -52,6 +53,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.metadata.iso.citation.Citations;
+import org.apache.sis.parameter.Parameters;
 
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.AbstractFeatureStore;
@@ -74,9 +76,10 @@ import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.FeatureNaming;
+import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.shapefile.cpg.CpgFiles;
 
@@ -89,11 +92,12 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.IdentifiedType;
 import org.opengis.feature.MismatchedFeatureException;
+import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 
@@ -125,22 +129,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * @throws java.net.MalformedURLException If we fail parsing input URI
      */
     public ShapefileFeatureStore(final URI uri) throws DataStoreException,MalformedURLException {
-        this(uri, null);
-    }
-
-    /**
-     * this sets the datastore's namespace during construction (so the schema -
-     * FeatureType - will have the correct value) You can call this with
-     * namespace = null, but I suggest you give it an actual namespace.
-     *
-     * @param uri
-     * @param namespace
-     * @throws java.net.MalformedURLException If we fail parsing input URI
-     * @throws org.apache.sis.storage.DataStoreException If input data analysis fails.
-     */
-    public ShapefileFeatureStore(final URI uri, final String namespace)
-            throws DataStoreException,MalformedURLException {
-        this(uri, namespace, false, null);
+        this(uri, false, null);
     }
 
     /**
@@ -149,15 +138,14 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * namespace = null, but I suggest you give it an actual namespace.
      *
      * @param uri
-     * @param namespace
      * @param useMemoryMapped : default is true
      * @param dbfCharset : if null default will be ShapefileDataStore.DEFAULT_STRING_CHARSET
      * @throws java.net.MalformedURLException If we fail parsing input URI
      * @throws org.apache.sis.storage.DataStoreException If input data analysis fails.
      */
-    public ShapefileFeatureStore(final URI uri, final String namespace, final boolean useMemoryMapped,
+    public ShapefileFeatureStore(final URI uri, final boolean useMemoryMapped,
             Charset dbfCharset) throws MalformedURLException, DataStoreException {
-        this(toParameter(uri, namespace, useMemoryMapped, dbfCharset));
+        this(toParameter(uri, useMemoryMapped, dbfCharset));
     }
 
     public ShapefileFeatureStore(final ParameterValueGroup params) throws MalformedURLException, DataStoreException {
@@ -194,14 +182,13 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         this.dbfCharset = dbfCharset;
     }
 
-    private static ParameterValueGroup toParameter(final URI uri, final String namespace,
+    private static ParameterValueGroup toParameter(final URI uri,
             final boolean useMemoryMapped, Charset dbfCharset){
-        final ParameterValueGroup params = ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(ShapefileFeatureStoreFactory.PATH, params).setValue(uri);
-        Parameters.getOrCreate(ShapefileFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
-        Parameters.getOrCreate(ShapefileFeatureStoreFactory.MEMORY_MAPPED, params).setValue(useMemoryMapped);
+        final Parameters params = Parameters.castOrWrap(ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(ShapefileFeatureStoreFactory.PATH).setValue(uri);
+        params.getOrCreate(ShapefileFeatureStoreFactory.MEMORY_MAPPED).setValue(useMemoryMapped);
         if(dbfCharset!=null){
-            Parameters.getOrCreate(ShapefileFeatureStoreFactory.DBFCHARSET, params).setValue(dbfCharset);
+            params.getOrCreate(ShapefileFeatureStoreFactory.DBFCHARSET).setValue(dbfCharset);
         }
         return params;
     }
@@ -230,7 +217,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         if (name != null && schema != null) {
             return;
         }
-        this.schema = buildSchema(getDefaultNamespace());
+        this.schema = buildSchema();
         this.name = schema.getName();
     }
 
@@ -327,9 +314,23 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         final Hints hints = query.getHints();
         final String typeName = type.getName().tip().toString();
         final String[] propertyNames = query.getPropertyNames();
-        final AttributeType geomAtt = FeatureExt.getDefaultGeometryAttribute(schema);
-        final GenericName defaultGeomName = geomAtt.getName();
         final double[] resample = query.getResolution();
+
+        // find all possible names for geometry attributes (because of SIS convention).
+        final FeatureNaming geometryNames = new FeatureNaming();
+        try {
+            IdentifiedType defaultGeometry = FeatureExt.getDefaultGeometry(type);
+            while (defaultGeometry instanceof Operation) {
+                geometryNames.add(null, defaultGeometry.getName(), defaultGeometry.getName());
+                defaultGeometry = ((Operation) defaultGeometry).getResult();
+            }
+            geometryNames.add(null, defaultGeometry.getName(), defaultGeometry.getName());
+        } catch (PropertyNotFoundException | IllegalStateException e) {
+            getLogger().log(Level.FINE, e, () -> String.format("No geometry available in datatype :%n%s", type));
+        } catch (IllegalNameException e) {
+            // cycle detection
+            getLogger().log(Level.WARNING, "An operation references itself !", e);
+        }
 
         //check if we must read the 3d values
         final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
@@ -342,13 +343,21 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         filter.accept(extractor, null);
         final GenericName[] filterAttnames = extractor.getAttributeNames();
 
+        final Predicate<String> isGeometryName = input -> {
+            try {
+                return geometryNames.get(null, input) != null;
+            } catch (IllegalNameException e) {
+                return false;
+            }
+        };
+
         // check if the geometry is the one and only attribute needed
         // to return attribute _and_ to run the query filter
         if (   propertyNames != null
             && propertyNames.length == 1
-            && NamesExt.valueOf(propertyNames[0]).toString().equals(defaultGeomName.toString())
-            && (filterAttnames.length == 0 || (filterAttnames.length == 1 && filterAttnames[0].toString()
-                        .equals(defaultGeomName.toString())))) {
+            && isGeometryName.test(propertyNames[0])
+            && (filterAttnames.length == 0 ||
+                (filterAttnames.length == 1 && isGeometryName.test(filterAttnames[0].toString())))) {
             try {
                 final FeatureType newSchema = FeatureTypeExt.createSubType(schema, propertyNames);
 
@@ -396,8 +405,6 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
                 throw new DataStoreException("Error creating schema", se);
             }
         }
-
-
     }
 
     /**
@@ -431,7 +438,6 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * existing local resources or throw an IOException if the featurestore is
      * remote.
      *
-     * @param typeName Name to use in this store for the given feature type.
      * @param featureType The desired FeatureType.
      * @throws DataStoreException If the featurestore is remote.
      *
@@ -469,15 +475,15 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         name = typeName;
         schema = featureType;
 
-        AttributeType desc = FeatureExt.getDefaultGeometryAttribute(featureType);
-        if (desc == null) {
-            //search for the first geometry property
-            for (PropertyType pt : featureType.getProperties(true)) {
-                if (AttributeConvention.isGeometryAttribute(pt) && pt instanceof AttributeType) {
-                    desc = (AttributeType) pt;
-                }
-            }
+        AttributeType desc;
+        try {
+            desc = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(featureType))
+                .orElse(null);
+        } catch (PropertyNotFoundException e) {
+            getLogger().log(Level.FINE, e, () -> String.format("No geometry can be found in given datatype%n%s", featureType));
+            desc = null;
         }
+
         CoordinateReferenceSystem crs = null;
         final Class<?> geomType;
         final ShapeType shapeType;
@@ -506,7 +512,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
 
                 try (ShapefileWriter writer = new ShapefileWriter(shpChannel, shxChannel)) {
                     // try to get the domain first
-                    final Envelope domain = org.geotoolkit.referencing.CRS.getEnvelope(crs);
+                    final Envelope domain = CRS.getDomainOfValidity(crs);
                     if (domain != null) {
                         writer.writeHeaders(new JTSEnvelope2D(domain), shapeType, 0, 100);
                     } else {
@@ -622,16 +628,13 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * @return The FeatureType that this featurestore contains.
      * @throws IOException If a type by the requested name is not present.
      */
-    private synchronized FeatureType buildSchema(final String namespace) throws DataStoreException {
+    private synchronized FeatureType buildSchema() throws DataStoreException {
 
         //add an identifier field
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         final String name = shpFiles.getTypeName();
-        if (namespace != null) {
-            builder.setName(namespace, name);
-        } else {
-            builder.setName(name);
-        }
+        builder.setName(name);
+
         builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
 
 
@@ -665,13 +668,13 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
 
         try {
             //get the descriptor from shp
-            geomDescriptor = shp.getHeader().createDescriptor(namespace, crs);
+            geomDescriptor = shp.getHeader().createDescriptor(crs);
             builder.addAttribute(geomDescriptor).addRole(AttributeRole.DEFAULT_GEOMETRY);
 
             //get dbf attributes if exist
             if (dbf != null) {
                 final DbaseFileHeader header = dbf.getHeader();
-                for(AttributeType at : header.createDescriptors(namespace)){
+                for(AttributeType at : header.createDescriptors()) {
                     builder.addAttribute(at);
                 }
             }
@@ -700,11 +703,14 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         final FeatureType schema = getFeatureType();
 
         final AttributeType[] descs;
-        if(readDbf){
-            descs =  getAttributes(schema,false).toArray(new AttributeType[0]);
-        }else{
+        if (readDbf) {
+            descs = getAttributes(schema, false).toArray(new AttributeType[0]);
+        } else {
             getLogger().fine("The DBF file won't be opened since no attributes will be read from it");
-            descs = new AttributeType[]{FeatureExt.getDefaultGeometryAttribute(schema)};
+            descs = new AttributeType[]{
+                FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(schema))
+                .orElseThrow(() -> new DataStoreException("No geometry to read."))
+            };
         }
         try {
             return new ShapefileAttributeReader(locker, descs, read3D,

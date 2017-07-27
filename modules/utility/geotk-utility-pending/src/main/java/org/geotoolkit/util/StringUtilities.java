@@ -21,7 +21,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.geotoolkit.gui.swing.tree.Trees;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 
@@ -406,7 +405,43 @@ public final class StringUtilities {
     }
 
     public static String toStringTree(final Object ... objects){
-        return Trees.toString("", Arrays.asList(objects));
+        return toStringTree("", Arrays.asList(objects));
+    }
+
+    /**
+     * Returns a graphical representation of the specified objects. This representation can be
+     * printed to the {@linkplain System#out standard output stream} (for example) if it uses
+     * a monospaced font and supports unicode.
+     *
+     * @param  root  The root name of the tree to format.
+     * @param  objects The objects to format as root children.
+     * @return A string representation of the tree.
+     */
+    public static String toStringTree(String root, final Iterable<?> objects) {
+        final StringBuilder sb = new StringBuilder();
+        if (root != null) {
+            sb.append(root);
+        }
+        if (objects != null) {
+            final Iterator<?> ite = objects.iterator();
+            while (ite.hasNext()) {
+                sb.append('\n');
+                final Object next = ite.next();
+                final boolean last = !ite.hasNext();
+                sb.append(last ? "\u2514\u2500 " : "\u251C\u2500 ");
+
+                final String[] parts = String.valueOf(next).split("\n");
+                sb.append(parts[0]);
+                for (int k=1;k<parts.length;k++) {
+                    sb.append('\n');
+                    sb.append(last ? ' ' : '\u2502');
+                    sb.append("  ");
+                    sb.append(parts[k]);
+                }
+            }
+        }
+
+        return sb.toString();
     }
 
 }

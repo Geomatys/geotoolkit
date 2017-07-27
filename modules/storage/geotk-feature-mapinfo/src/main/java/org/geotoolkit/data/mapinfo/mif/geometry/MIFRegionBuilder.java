@@ -36,6 +36,7 @@ import org.opengis.feature.Feature;
 
 import static org.geotoolkit.data.mapinfo.mif.style.Brush.BRUSH;
 import static org.geotoolkit.data.mapinfo.mif.style.Pen.PEN;
+import org.geotoolkit.feature.FeatureExt;
 
 /**
  * Utility class to read and write MIF-MID Region geometries.
@@ -76,7 +77,7 @@ public class MIFRegionBuilder extends MIFGeometryBuilder {
             polygons[polygonCount] = GEOMETRY_FACTORY.createPolygon(ring, null);
         }
 
-        toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), GEOMETRY_FACTORY.createMultiPolygon(polygons));
+        toFill.setPropertyValue(FeatureExt.getDefaultGeometry(toFill.getType()).getName().tip().toString(), GEOMETRY_FACTORY.createMultiPolygon(polygons));
 
 
         if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getProperties(true).contains(PEN)) {

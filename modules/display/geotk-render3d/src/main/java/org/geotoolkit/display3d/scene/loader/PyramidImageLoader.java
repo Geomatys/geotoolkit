@@ -40,7 +40,6 @@ import org.geotoolkit.storage.coverage.AbstractGridMosaic;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
 import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display3d.utils.TextureUtils;
 
@@ -51,6 +50,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.geometry.Envelopes;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  * Generate tile images for terrain.
@@ -60,20 +60,20 @@ import org.apache.sis.geometry.Envelopes;
  */
 public class PyramidImageLoader implements ImageLoader{
 
-    private final PyramidalCoverageReference ref;
+    private final PyramidalCoverageResource ref;
     private final Pyramid dataSource;
     private GridMosaicRenderedImage dataRenderedImage = null;
 
     private CoordinateReferenceSystem outputCrs;
     private MathTransform transformToOutput, transformFromOutput;
 
-    public PyramidImageLoader(final PyramidalCoverageReference ref, final Pyramid dataSource) throws FactoryException, IncommensurableException {
+    public PyramidImageLoader(final PyramidalCoverageResource ref, final Pyramid dataSource) throws FactoryException, IncommensurableException {
         ArgumentChecks.ensureNonNull("pyramid", dataSource);
         this.ref = ref;
         this.dataSource = dataSource;
     }
 
-    public PyramidalCoverageReference getCoverageReference() {
+    public PyramidalCoverageResource getCoverageReference() {
         return ref;
     }
 

@@ -51,7 +51,6 @@ import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -82,6 +81,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.geometry.Envelopes;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Coverage editor tool.
@@ -194,7 +194,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                 if(res == JOptionPane.OK_OPTION){
                     editedPixels.add(mouseGridPosition);
                     //update image
-                    final CoverageReference ref = layer.getCoverageReference();
+                    final CoverageResource ref = layer.getCoverageReference();
                     if(ref != null){
                         for(int i=0;i<samples.length;i++){
                             samples[i] = ((Number)spinners.get(i).getValue()).doubleValue();
@@ -238,7 +238,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
             try {
                 gcrp.clear();
                 gcrp.setEnvelope(visibleArea);
-                final CoverageReference ref = layer.getCoverageReference();
+                final CoverageResource ref = layer.getCoverageReference();
                 final CoverageReader reader = ref.acquireReader();
                 final GridCoverage2D cov = (GridCoverage2D) reader.read(ref.getImageIndex(), gcrp);
                 ref.recycle(reader);
@@ -382,7 +382,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         if (layer == null || coverage == null) {
             return;
         }
-        final CoverageReference ref = layer.getCoverageReference();
+        final CoverageResource ref = layer.getCoverageReference();
         final GridCoverageWriter writer = ref.acquireWriter();
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(img);

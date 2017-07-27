@@ -88,7 +88,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
         } catch (DataStoreException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }
-        final FeatureType ft = featureCollection.getFeatureType();
+        final FeatureType ft = featureCollection.getType();
 
         for(PropertyType desc : ft.getProperties(true)){
             columns.add((AttributeType) desc);
@@ -112,7 +112,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
 
     public Query removeGeometryAttributs(Query query){
 
-        FeatureType ft = ((FeatureMapLayer)layer).getCollection().getFeatureType();
+        FeatureType ft = ((FeatureMapLayer)layer).getCollection().getType();
 
         String[] propNames = query.getPropertyNames();
 

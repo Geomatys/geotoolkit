@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.parameter.Parameters;
@@ -34,9 +33,9 @@ import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.Client;
-import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultDataNode;
+import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.Resource;
 import org.geotoolkit.wmts.v100.GetCapabilities100;
 import org.geotoolkit.wmts.v100.GetTile100;
 import org.geotoolkit.wmts.xml.WMTSBindingUtilities;
@@ -45,6 +44,7 @@ import org.geotoolkit.wmts.xml.v100.Capabilities;
 import org.geotoolkit.wmts.xml.v100.LayerType;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 
 /**
@@ -58,7 +58,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wmts");
 
     private Capabilities capabilities;
-    private DataNode rootNode = null;
+    private DefaultDataSet rootNode = null;
 
     /**
      * Defines the timeout in milliseconds for the GetCapabilities request.
@@ -257,9 +257,9 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
     }
 
     @Override
-    public synchronized DataNode getRootNode() throws DataStoreException {
+    public synchronized Resource getRootResource() throws DataStoreException {
         if(rootNode == null){
-            rootNode = new DefaultDataNode();
+            rootNode = new DefaultDataSet(NamesExt.create("root"));
 
             final Capabilities capa = getCapabilities();
             if(capa == null){
@@ -269,8 +269,8 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
             for(LayerType lt : layers){
                 final String name = lt.getIdentifier().getValue();
                 final GenericName nn = NamesExt.create(name);
-                final CoverageReference ref = new WMTSCoverageReference(this,nn,getImageCache());
-                rootNode.getChildren().add(ref);
+                final CoverageResource ref = new WMTSCoverageResource(this,nn,getImageCache());
+                rootNode.addResource(ref);
             }
 
         }
@@ -282,7 +282,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
     }
 
     @Override
-    public CoverageReference create(GenericName name) throws DataStoreException {
+    public CoverageResource create(GenericName name) throws DataStoreException {
         throw new DataStoreException("Can not create new coverage.");
     }
 

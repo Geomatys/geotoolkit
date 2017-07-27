@@ -67,8 +67,8 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
+import org.opengis.feature.PropertyType;
 
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -257,11 +257,11 @@ public class DefaultSelectionHandler implements CanvasHandler {
                             final Set<Identifier> ids = new HashSet<>();
 
                             final FeatureMapLayer fl = (FeatureMapLayer) layer;
-                            final AttributeType<?> geomAtt = FeatureExt.getDefaultGeometryAttribute(fl.getCollection().getFeatureType());
+                            final PropertyType geomAtt = FeatureExt.getDefaultGeometry(fl.getCollection().getType());
                             final String geoStr = geomAtt.getName().tip().toString();
                             final Expression geomField = FF.property(geoStr);
 
-                            CoordinateReferenceSystem dataCrs = FeatureExt.getCRS(fl.getCollection().getFeatureType());
+                            CoordinateReferenceSystem dataCrs = FeatureExt.getCRS(fl.getCollection().getType());
 
                             try {
                                 final Geometry dataPoly = JTS.transform(poly, CRS.findOperation(map2D.getCanvas().getDisplayCRS(), dataCrs, null).getMathTransform());
@@ -270,7 +270,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
                                 final Filter f = (withinArea) ? FF.within(geomField, geomData) : FF.intersects(geomField, geomData);
 
                                 final QueryBuilder builder = new QueryBuilder();
-                                builder.setTypeName(fml.getCollection().getFeatureType().getName());
+                                builder.setTypeName(fml.getCollection().getType().getName());
                                 builder.setFilter(f);
                                 builder.setProperties(new String[]{geoStr});
                                 final Query query = builder.buildQuery();

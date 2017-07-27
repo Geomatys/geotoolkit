@@ -107,7 +107,7 @@ public class JFeatureCollectionOutline extends JPanel{
         previous.setEnabled(index > 0 && size > 0);
 
 
-        final QueryBuilder qb = new QueryBuilder(collection.getFeatureType().getName().toString());
+        final QueryBuilder qb = new QueryBuilder(collection.getType().getName().toString());
         qb.setStartIndex(index);
         qb.setMaxFeatures(1);
         try {

@@ -19,41 +19,30 @@ package org.geotoolkit.wps;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.UnmarshalException;
 import org.apache.sis.parameter.Parameters;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.geometry.isoonjts.GeometryUtils;
-import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.ows.xml.ExceptionResponse;
-import org.geotoolkit.ows.xml.v200.BoundingBoxType;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
 import org.geotoolkit.utility.parameter.ParametersExt;
-import org.geotoolkit.wps.converters.WPSConvertersUtils;
-import org.geotoolkit.wps.io.WPSIO;
+import org.geotoolkit.wps.adaptor.ComplexAdaptor;
+import org.geotoolkit.wps.adaptor.DataAdaptor;
+import org.geotoolkit.wps.adaptor.LiteralAdaptor;
 import org.geotoolkit.wps.xml.ExecuteResponse;
-import org.geotoolkit.wps.xml.v200.ComplexDataType;
 import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.DataInputType;
 import org.geotoolkit.wps.xml.v200.DataOutputType;
-import org.geotoolkit.wps.xml.v200.Dismiss;
-import org.geotoolkit.wps.xml.v200.LiteralValue;
 import org.geotoolkit.wps.xml.v200.OutputDefinitionType;
 import org.geotoolkit.wps.xml.v200.Result;
 import org.geotoolkit.wps.xml.v200.StatusInfo;
-import org.opengis.geometry.Envelope;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
 
 /**
  * WPS 2 process.
@@ -65,12 +54,15 @@ public class WPS2Process extends AbstractProcess {
 
     private final WPSProcessingRegistry registry;
 
-    private boolean asReference = false;
-    private boolean statusReport = false;
+    private boolean asReference    = false;
+    private boolean statusReport   = false;
+    private boolean rawLiteralData = false;
+    private boolean debug          = false;
+
     private final WPS2ProcessDescriptor desc;
 
     //keep track of last progress state
-    private Integer lastProgress;
+    private Integer lastProgress = 0;
     private String lastMessage;
     private String jobId;
 
@@ -101,6 +93,19 @@ public class WPS2Process extends AbstractProcess {
         this.jobId = jobId;
     }
 
+    public void setRawLiteralData(boolean rawLiteralData) {
+        this.rawLiteralData = rawLiteralData;
+    }
+
+    public void setAsync(boolean async) {
+        this.asReference = async;
+        this.statusReport = async;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
     /**
      * Returns the process execution identifier, called jobId.<br>
      * This value is available only after the process execution has started.
@@ -124,8 +129,8 @@ public class WPS2Process extends AbstractProcess {
     public StatusInfo getStatus() throws ProcessException, JAXBException, IOException {
         if (jobId==null) throw new ProcessException("Process is not started.", this);
 
-        final GetStatusRequest req = registry.getClient().createGetStatus();
-        req.getContent().setJobID(jobId);
+        final GetStatusRequest req = registry.getClient().createGetStatus(jobId);
+        req.setDebug(debug);
         final Object response = req.getResponse();
 
         if (response instanceof ExceptionResponse) {
@@ -150,9 +155,8 @@ public class WPS2Process extends AbstractProcess {
         super.cancelProcess();
 
         //send a stop request
-        final DismissRequest request = registry.getClient().createDismiss();
-        final Dismiss dismiss = request.getContent();
-        dismiss.setJobID(jobId);
+        final DismissRequest request = registry.getClient().createDismiss(jobId);
+        request.setDebug(debug);
 
         try {
             checkResult(request.getResponse());
@@ -170,8 +174,11 @@ public class WPS2Process extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         final ExecuteRequest exec = createRequest();
+        exec.setDebug(debug);
         final Result result = sendExecuteRequest(exec);
-        fillOutputs(result);
+        if (!isCanceled()) {
+            fillOutputs(result);
+        }
     }
 
     /**
@@ -214,10 +221,13 @@ public class WPS2Process extends AbstractProcess {
             jobId = statusInfo.getJobID();
 
             if (StatusInfo.STATUS_SUCCEEDED.equalsIgnoreCase(status)) {
-                fireProgressing("", 100f, false);
+                fireProgressing("WPS remote process has been successfully executed", 100f, false);
                 return null;
             } else if (StatusInfo.STATUS_FAILED.equalsIgnoreCase(status)) {
                 throw new ProcessException("Process failed", this);
+            } else if (StatusInfo.STATUS_DISSMISED.equalsIgnoreCase(status)) {
+                fireProgressing("WPS remote process has been canceled", 100f, false);
+                return null;
             }
 
             //loop until we have an answer
@@ -237,10 +247,12 @@ public class WPS2Process extends AbstractProcess {
                     tmpResponse = getStatus();
                     failCount = 0;
                 }catch(UnmarshalException | IOException ex){
-                    if(failCount<5){
+                    if(failCount<5 && !isCanceled()){
                         failCount++;
                         continue;
-                    }else{
+                    } else if (isCanceled()) {
+                        return null;
+                    } else {
                         //server seems to have a issue or can't provide status
                         //informations in any case we don't known what is
                         //happenning so we consider the process failed
@@ -253,10 +265,13 @@ public class WPS2Process extends AbstractProcess {
                     final String stat = statInfo.getStatus();
 
                     if (StatusInfo.STATUS_SUCCEEDED.equalsIgnoreCase(stat)) {
-                        fireProgressing("", 100f, false);
+                        fireProgressing("WPS remote process has been successfully executed", 100f, false);
                         return null;
                     } else if (StatusInfo.STATUS_FAILED.equalsIgnoreCase(stat)) {
                         throw new ProcessException("Process failed", this);
+                    } else if (StatusInfo.STATUS_DISSMISED.equalsIgnoreCase(stat)) {
+                        fireProgressing("WPS remote process has been canceled", 100f, false);
+                        return null;
                     }
 
                     lastMessage = stat;
@@ -291,50 +306,20 @@ public class WPS2Process extends AbstractProcess {
         try {
             if (response==null) {
                 //request the result from the server
-                final GetResultRequest request = registry.getClient().createGetResult();
-                request.getContent().setJobID(jobId);
+                final GetResultRequest request = registry.getClient().createGetResult(jobId);
+                request.setDebug(debug);
                 response = request.getResponse();
             }
 
             if (response instanceof Result) {
                 final Result result = (Result) response;
                 for (DataOutputType out : result.getOutput()) {
-                    final GeneralParameterDescriptor desc = outputParameters.getDescriptor().descriptor(out.getId());
                     final Data data = out.getData();
                     if (data!=null) {
-                        final LiteralValue literalData = data.getLiteralData();
-                        final BoundingBox bbox = data.getBoundingBoxData();
-                        final ComplexDataType complex = data.getComplexData();
-
-                        if (literalData!=null) {
-                            final String value = literalData.getValue();
-                            final Object cvalue = ObjectConverters.convert(value, ((ParameterDescriptor)desc).getValueClass());
-                            ParametersExt.getOrCreateValue(outputParameters, out.getId()).setValue(cvalue);
-
-                        } else if (bbox!=null) {
-                            final List<Double> lower = bbox.getLowerCorner();
-                            final List<Double> upper = bbox.getUpperCorner();
-                            final String crsName = bbox.getCrs();
-                            final int dimension = bbox.getDimensions();
-
-                            //Check if it's a 2D boundingbox
-                            if (dimension != 2 || lower.size() != 2 || upper.size() != 2) {
-                                throw new ProcessException("Invalid data input : Only 2 dimension boundingbox supported.", this);
-                            }
-
-                            final CoordinateReferenceSystem crs;
-                            try {
-                                crs = CRS.forCode(crsName);
-                            } catch (FactoryException ex) {
-                                throw new ProcessException("Invalid data input : CRS not supported.", this, ex);
-                            }
-
-                            final Envelope cenv = GeometryUtils.createCRSEnvelope(crs, lower.get(0), lower.get(1), upper.get(0), upper.get(1));
-                            ParametersExt.getOrCreateValue(outputParameters, out.getId()).setValue(cenv);
-                        } else {
-                            throw new UnsupportedOperationException("unsupported data type");
-                        }
-
+                        final ExtendedParameterDescriptor outDesc = (ExtendedParameterDescriptor) outputParameters.getDescriptor().descriptor(out.getId());
+                        final DataAdaptor adaptor = (DataAdaptor) outDesc.getUserObject().get(DataAdaptor.USE_ADAPTOR);
+                        final Object value = adaptor.fromWPS2Input(out);
+                        ParametersExt.getOrCreateValue(outputParameters, out.getId()).setValue(value);
                     } else {
                         throw new UnsupportedOperationException("unsupported data type");
                     }
@@ -379,90 +364,45 @@ public class WPS2Process extends AbstractProcess {
             for (final GeneralParameterDescriptor inputGeneDesc : inputParamDesc) {
                 if (inputGeneDesc instanceof ParameterDescriptor) {
                     final ParameterDescriptor inputDesc = (ParameterDescriptor) inputGeneDesc;
-                    final String type = (String) ((ExtendedParameterDescriptor)inputDesc)
-                            .getUserObject().get(WPSProcessingRegistry.USE_FORM_KEY);
+                    final DataAdaptor adaptor = (DataAdaptor) ((ExtendedParameterDescriptor)inputDesc).getUserObject().get(DataAdaptor.USE_ADAPTOR);
 
-                    final String inputIdentifier = inputDesc.getName().getCode();
-                    final Class inputClazz = inputDesc.getValueClass();
                     final Object value = Parameters.castOrWrap(inputParameters).getValue(inputDesc);
                     if (value==null) continue;
-                    final String unit = inputDesc.getUnit() != null ? inputDesc.getUnit().toString() : null;
 
-                    if ("literal".equals(type)) {
-                        final LiteralValue litValue = new LiteralValue();
-                        litValue.setDataType(WPSConvertersUtils.getDataTypeString(registry.getClient().getVersion().getCode(), inputClazz));
-                        litValue.setValue(String.valueOf(value));
-                        litValue.setUom(unit);
-
-                        final Data data = new Data();
-                        data.getContent().add(litValue);
-
-                        final DataInputType dit = new DataInputType();
-                        dit.setId(inputIdentifier);
-                        dit.setData(data);
-
-                        wpsIN.add(dit);
-
-                    } else if ("bbox".equals(type)) {
-                        final Envelope envelop = (Envelope) value;
-
-                        final BoundingBoxType litValue = new BoundingBoxType(envelop);
-                        final Data data = new Data();
-                        data.getContent().add(litValue);
-
-                        final DataInputType dit = new DataInputType();
-                        dit.setId(inputIdentifier);
-                        dit.setData(data);
-
-                        wpsIN.add(dit);
-
-                    } else if ("complex".equals(type)) {
-                        String mime     = null;
-                        String encoding = null;
-                        String schema   = null;
-                        if (inputGeneDesc instanceof ExtendedParameterDescriptor) {
-                            final Map<String, Object> userMap = ((ExtendedParameterDescriptor) inputGeneDesc).getUserObject();
-                            if(userMap.containsKey(WPSProcessingRegistry.USE_FORMAT_KEY)) {
-                                final WPSIO.FormatSupport support = (WPSIO.FormatSupport) userMap.get(WPSProcessingRegistry.USE_FORMAT_KEY);
-                                mime     = support.getMimeType();
-                                encoding = support.getEncoding();
-                                schema   = support.getSchema();
-                            }
-                        }
-
-                        final ComplexDataType cdt = new ComplexDataType();
-                        throw new UnsupportedOperationException("Complex type not supported.");
-                        //wpsIN.add(new WPSInputComplex(inputIdentifier, value, inputClazz, encoding, schema, mime));
+                    final DataInputType dataInput;
+                    if (adaptor instanceof LiteralAdaptor) {
+                        dataInput = ((LiteralAdaptor)adaptor).toWPS2Input(value, rawLiteralData);
+                    } else {
+                        dataInput = adaptor.toWPS2Input(value);
                     }
+                    dataInput.setId(inputDesc.getName().getCode());
+                    wpsIN.add(dataInput);
                 }
             }
 
             /*
-             * OUPTUTS
+             * OUTPUTS
              */
             for (final GeneralParameterDescriptor outputGeneDesc : outputParamDesc) {
                 if (outputGeneDesc instanceof ParameterDescriptor) {
                     final ParameterDescriptor outputDesc = (ParameterDescriptor) outputGeneDesc;
+                    final DataAdaptor adaptor = (DataAdaptor) ((ExtendedParameterDescriptor)outputDesc).getUserObject().get(DataAdaptor.USE_ADAPTOR);
 
                     final String outputIdentifier = outputDesc.getName().getCode();
-                    final Class outputClazz = outputDesc.getValueClass();
                     String mime     = null;
                     String encoding = null;
                     String schema   = null;
-                    if (outputDesc instanceof ExtendedParameterDescriptor) {
-                        final Map<String, Object> userMap = ((ExtendedParameterDescriptor) outputDesc).getUserObject();
-                        if(userMap.containsKey(WPSProcessingRegistry.USE_FORMAT_KEY)) {
-                            final WPSIO.FormatSupport support = (WPSIO.FormatSupport) userMap.get(WPSProcessingRegistry.USE_FORMAT_KEY);
-                            mime     = support.getMimeType();
-                            encoding = support.getEncoding();
-                            schema   = support.getSchema();
-                        }
+                    if (adaptor instanceof ComplexAdaptor) {
+                        final ComplexAdaptor cadaptor = (ComplexAdaptor) adaptor;
+                        mime     = cadaptor.getMimeType();
+                        encoding = cadaptor.getEncoding();
+                        schema   = cadaptor.getSchema();
                     }
 
                     final OutputDefinitionType out = new OutputDefinitionType(outputIdentifier, asReference);
-//                    out.setEncoding(encoding);
-//                    out.setMimeType(mime);
-//                    out.setSchema(schema);
+                    out.setEncoding(encoding);
+                    out.setMimeType(mime);
+                    out.setSchema(schema);
                     wpsOUT.add(out);
                 }
             }
@@ -470,8 +410,11 @@ public class WPS2Process extends AbstractProcess {
             final ExecuteRequest request = registry.getClient().createExecute();
             final org.geotoolkit.wps.xml.v200.ExecuteRequestType execute = (org.geotoolkit.wps.xml.v200.ExecuteRequestType) request.getContent();
             execute.setIdentifier(processId);
-            //execute.setMode("async");
-            execute.setMode("auto");
+            if (asReference) {
+                execute.setMode("async");
+            } else {
+                execute.setMode("auto");
+            }
             execute.setResponse("document");
             execute.getInput().addAll(wpsIN);
             execute.getOutput().addAll(wpsOUT);

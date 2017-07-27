@@ -23,13 +23,13 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Create a pyramid from a MapContext.
@@ -70,7 +70,7 @@ public class MapTilingDemo {
         final CoverageStore store = (CoverageStore) factory.create(Collections.singletonMap(
                 "path", new URL("file:/media/terra/GIS_DATA/wmts_bluemarble")));
         final GenericName name = NamesExt.create("bluemarble");
-        final CoverageReference ref = store.create(name);
+        final CoverageResource ref = store.create(name);
 
 
         //set the input parameters
@@ -105,7 +105,7 @@ public class MapTilingDemo {
 //        //display the tiled image
 //        context.layers().clear();
 //        for(final Name n : store.getNames()){
-//            final CoverageReference covref = store.getCoverageReference(n);
+//            final CoverageReference covref = store.findResource(n);
 //            final MapLayer layer = MapBuilder.createCoverageLayer(
 //                    covref,
 //                    new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER),
@@ -133,7 +133,7 @@ public class MapTilingDemo {
         final MapContext context = MapBuilder.createContext();
 
         for(GenericName n : store.getNames()){
-            final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.getCoverageReference(n));
+            final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.findResource(n));
             context.layers().add(layer);
         }
 

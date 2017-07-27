@@ -29,7 +29,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface SensorStore {
+public interface SensorStore extends AutoCloseable {
 
     /**
      * Get the parameters used to initialize this source from it's factory.

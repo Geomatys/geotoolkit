@@ -88,7 +88,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
         //Expected Features out
         final FeatureCollection featureListResult = buildFeatureCollectionResult();
 
-        assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
+        assertEquals(featureListOut.getType(), featureListResult.getType());
         assertEquals(featureListOut.getID(), featureListResult.getID());
         assertEquals(featureListOut.size(), featureListResult.size());
 
@@ -193,7 +193,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
         //Expected Features out
         final FeatureCollection featureListResult = buildFeatureCollectionResult2();
 
-        assertEquals(featureListResult.getFeatureType(), featureListOut.getFeatureType());
+        assertEquals(featureListResult.getType(), featureListOut.getType());
         assertEquals(featureListResult.getID(), featureListOut.getID());
         assertEquals(featureListResult.size(), featureListOut.size());
 

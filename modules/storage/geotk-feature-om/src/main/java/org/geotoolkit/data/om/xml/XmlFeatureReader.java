@@ -116,7 +116,9 @@ class XmlFeatureReader implements FeatureReader {
                     firstCRS = false;
                 }
                 f.setPropertyValue(ATT_DESC.toString(), feature.getDescription());
-                f.setPropertyValue(ATT_NAME.toString(), feature.getName().toString());
+                if (feature.getName() != null) {
+                    f.setPropertyValue(ATT_NAME.toString(), feature.getName().toString());
+                }
                 f.setPropertyValue(ATT_POSITION.toString(),geom);
 
                 final List<String> sampleds = new ArrayList<>();

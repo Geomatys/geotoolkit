@@ -48,7 +48,7 @@ public class AffineTransformProcess extends AbstractProcess {
         final FeatureCollection inputFeatureList   = value(VectorDescriptor.FEATURE_IN, inputParameters);
         final java.awt.geom.AffineTransform transform       = value(AffineTransformDescriptor.TRANSFORM_IN, inputParameters);
         final AffineTransformGeometryTransformer trs = new AffineTransformGeometryTransformer(transform);
-        final TransformFeatureType ttype = new TransformFeatureType(inputFeatureList.getFeatureType(), trs);
+        final TransformFeatureType ttype = new TransformFeatureType(inputFeatureList.getType(), trs);
         final FeatureCollection resultFeatureList = FeatureStreams.decorate(inputFeatureList,ttype);
         getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }

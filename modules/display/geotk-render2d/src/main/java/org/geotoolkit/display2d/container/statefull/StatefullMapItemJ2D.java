@@ -24,8 +24,6 @@ import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Level;
 import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.storage.coverage.CoverageReference;
-import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.primitive.SceneNode;
@@ -41,6 +39,8 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
+import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  *
@@ -114,8 +114,8 @@ public class StatefullMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
             g2d = new StatefullFeatureMapLayerJ2D(getCanvas(), (FeatureMapLayer)child);
         }else if (child instanceof CoverageMapLayer){
             final CoverageMapLayer layer = (CoverageMapLayer) child;
-            final CoverageReference ref = layer.getCoverageReference();
-            if(ref != null && ref instanceof PyramidalCoverageReference){
+            final CoverageResource ref = layer.getCoverageReference();
+            if(ref != null && ref instanceof PyramidalCoverageResource){
                 //pyramidal model, we can improve rendering
                 g2d = new StatefullPyramidalCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)child);
             }else{

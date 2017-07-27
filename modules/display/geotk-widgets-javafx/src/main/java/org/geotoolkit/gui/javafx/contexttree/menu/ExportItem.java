@@ -124,7 +124,7 @@ public class ExportItem extends TreeMenuItem {
                     if(folder!=null){
                         try {
                             final FeatureCollection baseCol = layer.getCollection();
-                            final FeatureType baseType = baseCol.getFeatureType();
+                            final FeatureType baseType = baseCol.getType();
                             final GenericName baseName = baseType.getName();
 
                             final FactoryMetadata metadata = factory.getMetadata();
@@ -132,7 +132,8 @@ public class ExportItem extends TreeMenuItem {
 
                             //detect if we need one or multiple types.
                             final FeatureCollection[] cols;
-                            final AttributeType<?> geomAtt = FeatureExt.getDefaultGeometryAttribute(baseType);
+                            final AttributeType<?> geomAtt = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(baseType))
+                                    .orElseThrow(() -> new IllegalArgumentException("No geometric property found in layer " + layer.getName()));
                             if(ArraysExt.contains(supportedGeometryTypes,geomAtt.getValueClass()) ){
                                 cols = new FeatureCollection[]{baseCol};
                             }else{
@@ -142,7 +143,7 @@ public class ExportItem extends TreeMenuItem {
 
                             for(FeatureCollection col : cols){
 
-                                final FeatureType inType = col.getFeatureType();
+                                final FeatureType inType = col.getType();
                                 final String inTypeName = inType.getName().tip().toString();
 
                                 //output file path

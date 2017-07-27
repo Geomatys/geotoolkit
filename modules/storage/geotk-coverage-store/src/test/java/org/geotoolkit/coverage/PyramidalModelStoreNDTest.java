@@ -45,12 +45,12 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.util.NamesExt;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
  * Abstract pyramid store test.
@@ -71,7 +71,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
 
     private CoverageStore store;
     private CoordinateReferenceSystem crs;
-    private PyramidalCoverageReference ref;
+    private PyramidalCoverageResource ref;
 
     protected abstract CoverageStore createStore() throws Exception ;
 
@@ -88,7 +88,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
         crs = new GeodeticObjectBuilder().addName("3dcrs").createCompoundCRS(horizontal,vertical);
 
         final GenericName name = NamesExt.create("test");
-        ref = (PyramidalCoverageReference) store.create(name);
+        ref = (PyramidalCoverageResource) store.create(name);
 
         //prepare expected colors
         int color = 0;

@@ -74,18 +74,18 @@ import org.apache.sis.util.Utilities;
  */
 public class PyramidalModelWriter extends GridCoverageWriter {
 
-    private final CoverageReference reference;
+    private final CoverageResource reference;
 
     /**
-     * Build a writer on an existing {@linkplain CoverageReference coverage reference}.
+     * Build a writer on an existing {@link CoverageResource coverage reference}.
      *
-     * @param reference A valid {@linkplain CoverageReference coverage reference}.
+     * @param reference A valid {@link CoverageResource coverage reference}.
      *                  Should not be {@code null} and an instance of {@link PyramidalModel}.
-     * @throws IllegalArgumentException if the given {@linkplain CoverageReference coverage reference}
+     * @throws IllegalArgumentException if the given {@link CoverageResource coverage reference}
      *                                  is not an instance of {@link PyramidalModel}.
      */
-    public PyramidalModelWriter(final CoverageReference reference) {
-        if (!(reference instanceof PyramidalCoverageReference)) {
+    public PyramidalModelWriter(final CoverageResource reference) {
+        if (!(reference instanceof PyramidalCoverageResource)) {
             throw new IllegalArgumentException("Given coverage reference should be an instance of PyramidalModel!");
         }
         this.reference = reference;
@@ -157,7 +157,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
 
         //to fill value table : see resample.
         final int nbBand        = image.getSampleModel().getNumBands();
-        final PyramidalCoverageReference pm = (PyramidalCoverageReference)reference;
+        final PyramidalCoverageResource pm = (PyramidalCoverageResource)reference;
 
         final BlockingQueue<Runnable> tileQueue;
         try {
@@ -189,7 +189,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
 
     private static class ByTileQueue extends AbstractQueue<Runnable> implements BlockingQueue<Runnable> {
 
-        private final PyramidalCoverageReference model;
+        private final PyramidalCoverageResource model;
         private final Envelope requestedEnvelope;
         private final CoordinateReferenceSystem crsCoverage2D;
         private final RenderedImage sourceImage;
@@ -223,7 +223,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         private int idx = -1;
         private int idy = -1;
 
-        private ByTileQueue(PyramidalCoverageReference model, Envelope requestedEnvelope,
+        private ByTileQueue(PyramidalCoverageResource model, Envelope requestedEnvelope,
                 CoordinateReferenceSystem crsCoverage2D, RenderedImage sourceImage, int nbBand,
                 MathTransform srcCRSToGrid, InterpolationCase interpolation) throws DataStoreException{
             this.model = model;
@@ -425,7 +425,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
 
     private static class TileUpdater implements Runnable{
 
-        private final PyramidalCoverageReference pm;
+        private final PyramidalCoverageResource pm;
         private final Pyramid pyramid;
         private final GridMosaic mosaic;
         private final int idx;
@@ -445,7 +445,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         private final int tileWidth;
         private final int tileHeight;
 
-        public TileUpdater(PyramidalCoverageReference pm, GridMosaic mosaic, int idx, int idy,
+        public TileUpdater(PyramidalCoverageResource pm, GridMosaic mosaic, int idx, int idy,
                 int mosAreaX, int mosAreaY, int mosAreaMaxX, int mosAreaMaxY,
                 double mosULX, double mosULY, MathTransform crsDestToSrcGrid,
                 RenderedImage image, int nbBand, double res, InterpolationCase interpolation) {

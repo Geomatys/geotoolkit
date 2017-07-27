@@ -62,7 +62,7 @@ public class FeatureStoreReadingDemo {
         final Query query = qb.buildQuery();
 
         collection = session.getFeatureCollection(query);
-        System.out.println(collection.getFeatureType());
+        System.out.println(collection.getType());
         showCollection(collection, 10);
 
     }

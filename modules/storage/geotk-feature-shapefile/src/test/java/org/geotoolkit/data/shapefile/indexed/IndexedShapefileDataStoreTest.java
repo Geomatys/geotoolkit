@@ -119,7 +119,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             final Query q) throws Exception {
 
         URL url = ShapeTestData.url(resource);
-        ShapefileFeatureStore s = new IndexedShapefileFeatureStore(url.toURI(), null, false, true, IndexType.QIX, charset);
+        ShapefileFeatureStore s = new IndexedShapefileFeatureStore(url.toURI(), false, true, IndexType.QIX, charset);
 
         final FeatureCollection features;
         if(q == null){
@@ -197,7 +197,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     private void testEnvelope(final FeatureCollection features, final IndexType treeType)
             throws MalformedURLException, IOException, DataStoreException, URISyntaxException {
         IndexedShapefileFeatureStore s = new IndexedShapefileFeatureStore(ShapeTestData
-                .url(STATE_POP).toURI(), null, true, true, treeType,null);
+                .url(STATE_POP).toURI(), true, true, treeType,null);
         GenericName typeName = s.getName();
         FeatureCollection all = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
@@ -219,7 +219,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         }
         file.deleteOnExit();
 
-        IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(url.toURI(), null, true, true, IndexType.QIX,null);
+        IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(url.toURI(), true, true, IndexType.QIX,null);
         FeatureIterator indexIter = ds.getFeatureReader(QueryBuilder.all(ds.getName()));
 
         GeometryFactory factory = new GeometryFactory();
@@ -241,7 +241,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         indexIter.close();
 
         IndexedShapefileFeatureStore ds2 = new IndexedShapefileFeatureStore(url.toURI(),
-                null, false, false, IndexType.NONE,null);
+                false, false, IndexType.NONE,null);
 
         Envelope newBounds = (JTSEnvelope2D)ds.getEnvelope(QueryBuilder.all(ds2.getNames().iterator().next()));
         double dx = newBounds.getWidth() / 4;
@@ -263,7 +263,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     public void testFidFilter() throws Exception {
         File shpFile = copyShapefiles(STATE_POP);
         URL url = shpFile.toURI().toURL();
-        IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(url.toURI(), null, true, true, IndexType.NONE,null);
+        IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(url.toURI(), true, true, IndexType.NONE,null);
         FeatureCollection features = ds.createSession(true).getFeatureCollection(QueryBuilder.all(ds.getName()));
         FeatureIterator indexIter = features.iterator();
 
@@ -315,7 +315,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         FeatureCollection features;
         FeatureIterator indexIter;
         FilterFactory2 fac = (FilterFactory2) FactoryFinder.getFilterFactory(null);
-        String geometryName = FeatureExt.getDefaultGeometryAttribute(indexedDS.getFeatureType()).getName().tip().toString();
+        String geometryName = FeatureExt.getDefaultGeometry(indexedDS.getFeatureType()).getName().tip().toString();
 
         Filter filter = fac.bbox(fac.property(geometryName), newBounds);
 
@@ -670,7 +670,10 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         try{
             while (fci.hasNext()) {
                 Feature f = fci.next();
-                Geometry fromShape = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(f);
+                Geometry fromShape = FeatureExt.getDefaultGeometryValue(f)
+                        .filter(Geometry.class::isInstance)
+                        .map(Geometry.class::cast)
+                        .orElseThrow(() -> new IllegalArgumentException("No geometry found in feature "+f));
 
                 if (fromShape instanceof GeometryCollection) {
                     if (!(geom instanceof GeometryCollection)) {

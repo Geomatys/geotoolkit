@@ -19,6 +19,7 @@ package org.geotoolkit.wps;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
 import javax.xml.bind.JAXBElement;
@@ -26,6 +27,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.client.AbstractRequest;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v200.Dismiss;
@@ -78,6 +80,9 @@ public class DismissRequest extends AbstractRequest {
 
             //GET
             final URL url = getURL(); //build GET request
+            if (debug) {
+                System.out.println("GET " + url);
+            }
             final URLConnection conec = security.secure(url.openConnection());
             return conec.getInputStream();
 
@@ -91,6 +96,9 @@ public class DismissRequest extends AbstractRequest {
 
             try (OutputStream stream = security.encrypt(conec.getOutputStream())) {
                 Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
+                if (debug) {
+                    marshaller.marshal(request, System.out);
+                }
                 marshaller.marshal(request, stream);
                 WPSMarshallerPool.getInstance().recycle(marshaller);
             } catch (JAXBException ex) {
@@ -113,7 +121,13 @@ public class DismissRequest extends AbstractRequest {
         Object response;
         try (final InputStream in = getResponseStream()) {
             final Unmarshaller unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
-            response = unmarshaller.unmarshal(in);
+            if (debug) {
+                String s = IOUtilities.toString(in);
+                System.out.println(s);
+                response = unmarshaller.unmarshal(new StringReader(s));
+            } else {
+                response = unmarshaller.unmarshal(in);
+            }
             if (response instanceof JAXBElement) {
                 return ((JAXBElement) response).getValue();
             }

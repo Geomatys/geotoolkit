@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.coverage.isoline2;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
@@ -30,6 +29,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
+import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Create a FeatureCollection of isoline from a GridCoverage2D and an array of intervals.
@@ -46,11 +46,11 @@ public class IsolineDescriptor2 extends AbstractProcessDescriptor {
      * Coverage
      */
     public static final InternationalString IN_COVERAGE_REF_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_inCoverageRef);
-    public static final ParameterDescriptor<CoverageReference> COVERAGE_REF = new ParameterBuilder()
+    public static final ParameterDescriptor<CoverageResource> COVERAGE_REF = new ParameterBuilder()
             .addName("inCoverageRef")
             .setRemarks(IN_COVERAGE_REF_PARAM_REMARKS)
             .setRequired(true)
-            .create(CoverageReference.class, null);
+            .create(CoverageResource.class, null);
 
     /*
      * Output FeatureStore

@@ -29,6 +29,8 @@ import org.opengis.referencing.operation.MathTransform;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -54,6 +56,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.IdentifiedType;
 import org.opengis.feature.PropertyType;
+import org.opengis.util.FactoryException;
 
 /**
  * Read types of .mif file, and manage readers / writers (from mif/mid mapinfo exchange format).
@@ -87,7 +90,7 @@ public class MIFManager {
      * Header tag values. See {@link MIFHeaderCategory} for tag description.
      */
     private short mifVersion = 300;
-    private final String mifCharset = "Neutral";
+    private String mifCharset = "Neutral";
     public char mifDelimiter = '\t';
     private final ArrayList<Short> mifUnique = new ArrayList<>();
     private final ArrayList<Short> mifIndex = new ArrayList<>();
@@ -152,7 +155,7 @@ public class MIFManager {
 
     /**
      * Return the different type names specified by this document.
-     * <p/>
+     *
      * If the scanner did not already read them, we catch them all by parsing the file with {@link MIFManager#buildDataTypes()}.
      *
      * @return a list ({@link HashSet}) of available feature types in that document.
@@ -189,7 +192,7 @@ public class MIFManager {
      * @throws DataStoreException If an unexpected error occurs while referencing given type.
      * @throws URISyntaxException If the URL specified at store creation is invalid.
      */
-    public void addSchema(GenericName typeName, FeatureType toAdd) throws DataStoreException, URISyntaxException {
+    public void addSchema(GenericName typeName, FeatureType toAdd) throws DataStoreException, URISyntaxException, IOException {
         ArgumentChecks.ensureNonNull("New feature type", toAdd);
 
         /*
@@ -224,7 +227,7 @@ public class MIFManager {
         // we save it as our base type. Otherwise, we set it's super type as base type, and if there's not, we set it as
         // base type, but we extract geometry first.
         if (mifBaseType == null) {
-            final IdentifiedType geom = MIFUtils.findGeometryProperty(toAdd);
+            final IdentifiedType geom = FeatureExt.getDefaultGeometry(toAdd);
             if (geom == null) {
                 mifBaseType = toAdd;
                 isBaseType = true;
@@ -253,11 +256,11 @@ public class MIFManager {
                builder.setSuperTypes(mifBaseType);
                childType = builder.build();
            }
-            if (MIFUtils.identifyFeature(childType) != null) {
-                mifChildTypes.add(childType);
-            } else {
-                throw new DataStoreException("The geometry for the given type is not supported for MIF geometry");
-            }
+
+           MIFUtils.identifyFeature(childType)
+                   .orElseThrow(() -> new DataStoreException("The geometry for the given type is not supported for MIF geometry"));
+
+           mifChildTypes.add(childType);
         }
 
     }
@@ -421,13 +424,11 @@ public class MIFManager {
         try {
             if (mifScanner != null) {
                 mifScanner.close();
-                // Should we try to unlock the file at the same time we close scanner ?
-                //RWLock.readLock().unlock();
             }
 
             RWLock.readLock().lock();
             mifStream = IOUtilities.open(mifPath);
-            mifScanner = new Scanner(mifStream, MIFUtils.DEFAULT_CHARSET);
+            mifScanner = new Scanner(mifStream, getCharset().name());
 
             // A trigger to tell us if all mandatory categories have been parsed.
             boolean columnsParsed = false;
@@ -448,7 +449,12 @@ public class MIFManager {
                     }
 
                 } else if (matched.equalsIgnoreCase(MIFUtils.HeaderCategory.CHARSET.name())) {
-                    final String charset = mifScanner.findInLine(ALPHA_PATTERN);
+                    final String tmpCharset = mifScanner.findInLine(ALPHA_PATTERN);
+                    if (tmpCharset != null && !tmpCharset.equalsIgnoreCase(mifCharset)) {
+                        mifCharset = tmpCharset;
+                        parseHeader();
+                        return;
+                    }
 
                 } else if (matched.equalsIgnoreCase(MIFUtils.HeaderCategory.DELIMITER.name())) {
                     final String tmpStr = mifScanner.findInLine("(\"|\')[^\"](\"|\')");
@@ -465,7 +471,7 @@ public class MIFManager {
 
                 } else if (matched.equalsIgnoreCase(MIFUtils.HeaderCategory.INDEX.name())) {
                     while (mifScanner.hasNextShort()) {
-                        mifUnique.add(mifScanner.nextShort());
+                        mifIndex.add(mifScanner.nextShort());
                     }
 
                 } else if (matched.equalsIgnoreCase(MIFUtils.HeaderCategory.COORDSYS.name())) {
@@ -547,7 +553,7 @@ public class MIFManager {
             try {
                 mifScanner.close();
                 RWLock.readLock().lock();
-                mifScanner = new Scanner(IOUtilities.open(mifPath), MIFUtils.DEFAULT_CHARSET);
+                mifScanner = new Scanner(IOUtilities.open(mifPath), getCharset().name());
                 buildDataTypes();
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Reading types from MIF file failed.", e);
@@ -657,6 +663,7 @@ public class MIFManager {
     /**
      * Write the MIF file header(Version, MID columns and other stuff).
      *
+     * @return MIF formatted header.
      * @throws DataStoreException If the current FeatureType is not fully compliant with MIF constraints. If there's a
      * problem while writing the featureType in MIF header.
      */
@@ -672,7 +679,7 @@ public class MIFManager {
 
             if (mifCRS != null && mifCRS != CommonCRS.WGS84.normalizedGeographic()) {
                 String strCRS = ProjectionUtils.crsToMIFSyntax(mifCRS);
-                if(!strCRS.isEmpty()) {
+                if (!strCRS.isEmpty()) {
                     headBuilder.append(strCRS).append('\n');
                 } else {
                     throw new DataStoreException("Given CRS can't be written in MIF file.");
@@ -696,9 +703,10 @@ public class MIFManager {
 
             headBuilder.append(MIFUtils.HeaderCategory.DATA).append('\n');
 
-        } catch (Exception e) {
+        } catch (FactoryException e) {
             throw new DataStoreException("Datastore can't write MIF file header.", e);
         }
+
         // Header successfully built, we can report featureType values on datastore attributes.
         mifColumnsCount = tmpCount;
         mifBaseType = toWorkWith;
@@ -707,29 +715,17 @@ public class MIFManager {
     }
 
 
-    private void flushHeader() throws DataStoreException {
+    private void flushHeader() throws DataStoreException, IOException {
         // Cache the header in memory.
         final String head = buildHeader();
 
-        // Writing pass, with datastore locking.
-        OutputStreamWriter stream = null;
         RWLock.writeLock().lock();
-        try {
+        try (OutputStream out = IOUtilities.openWrite(mifPath, CREATE, WRITE, TRUNCATE_EXISTING);
+                final OutputStreamWriter stream = new OutputStreamWriter(out, getCharset())) {
             // writing MIF header and geometries.
-            OutputStream out = IOUtilities.openWrite(mifPath, CREATE, WRITE, TRUNCATE_EXISTING);
-            stream = new OutputStreamWriter(out);
             stream.write(head);
-        } catch (Exception e) {
-            throw new DataStoreException("A problem have been encountered while flushing data.", e);
         } finally {
             RWLock.writeLock().unlock();
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    LOGGER.log(Level.WARNING, "Writer stream can't be closed.", e);
-                }
-            }
         }
     }
 
@@ -738,53 +734,22 @@ public class MIFManager {
      * When opening MIF file in writing mode, we write all data in tmp file. This function is used for writing tmp file
      * data into the real file.
      */
-    public void flushData(MIFFeatureWriter dataToWrite) throws DataStoreException {
-
-        // Writing pass, with datastore locking.
-        OutputStreamWriter stream = null;
-        InputStream mifInput = null;
-        InputStreamReader reader;
-        InputStream midInput = null;
+    public void flushData(final Path mifToFlush, final Path midToFlush) throws IOException {
         RWLock.writeLock().lock();
         try {
             // writing MIF header and geometries.
-            OutputStream out = IOUtilities.openWrite(mifPath, CREATE, WRITE, APPEND);
-            stream = new OutputStreamWriter(out);
-            mifInput = dataToWrite.getMIFTempStore();
-            MIFUtils.write(mifInput, stream);
-            stream.close();
+            try (final OutputStream out = IOUtilities.openWrite(mifPath, CREATE, WRITE, APPEND)) {
+                // writing MIF header and geometries.
+                Files.copy(mifToFlush, out);
+            }
 
             // MID writing
-            out = IOUtilities.openWrite(midPath, CREATE, WRITE, APPEND);
-            stream = new OutputStreamWriter(out);
-            midInput = dataToWrite.getMIDTempStore();
-            MIFUtils.write(midInput, stream);
+            try (final OutputStream out = IOUtilities.openWrite(midPath, CREATE, WRITE, APPEND)) {
+                Files.copy(midToFlush, out);
+            }
 
-        } catch (Exception e) {
-            throw new DataStoreException("A problem have been encountered while flushing data.", e);
         } finally {
             RWLock.writeLock().unlock();
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    LOGGER.log(Level.WARNING, "Writer stream can't be closed.", e);
-                }
-            }
-            if (mifInput != null) {
-                try {
-                    mifInput.close();
-                } catch (IOException e) {
-                    LOGGER.log(Level.WARNING, "Temporary data store can't be closed.", e);
-                }
-            }
-            if (midInput != null) {
-                try {
-                    midInput.close();
-                } catch (IOException e) {
-                    LOGGER.log(Level.WARNING, "Temporary data store can't be closed.", e);
-                }
-            }
         }
     }
 
@@ -828,5 +793,13 @@ public class MIFManager {
 
     public CoordinateReferenceSystem getWrittenCRS() {
         return writtenCRS;
+    }
+
+    public Charset getCharset() {
+        try {
+            return Charset.forName(mifCharset);
+        } catch (NullPointerException | IllegalArgumentException e) {
+            return StandardCharsets.ISO_8859_1;
+        }
     }
 }

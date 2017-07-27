@@ -85,7 +85,7 @@ public abstract class AbstractSymbolizerRendererService<S extends Symbolizer, C 
 
     protected Object mimicObject(MapLayer layer){
         if(layer instanceof FeatureMapLayer){
-            FeatureType ft = ((FeatureMapLayer)layer).getCollection().getFeatureType();
+            FeatureType ft = ((FeatureMapLayer)layer).getCollection().getType();
             if(ft.isAbstract()) {
                 final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
                 ftb.setSuperTypes(ft);

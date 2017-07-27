@@ -21,6 +21,9 @@ import java.util.Map;
 import java.util.Collections;
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStore;
@@ -151,57 +154,53 @@ public class CSVDataStoreTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void testReadEscape() throws Exception{
+    public void testReadEscape() throws Exception {
+        try (final FeatureStore store = new CSVFeatureStore(Paths.get("./src/test/resources/org/geotoolkit/csv/escaped.csv"), ';')) {
 
-        final FeatureStore store = new CSVFeatureStore(new File("./src/test/resources/org/geotoolkit/csv/escaped.csv"), null, ';');
+            assertEquals(1, store.getNames().size());
 
-        assertEquals(1, store.getNames().size());
+            FeatureCollection col = store.createSession(false).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
 
-        FeatureCollection col = store.createSession(false).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
-
-        final FeatureIterator ite = col.iterator();
-        Feature next = ite.next();
-        assertEquals("hubert", next.getPropertyValue("name"));
-        assertEquals("someone from the \"big fisher\" corp,\na good guy and;\na ;family \"best\" friend", next.getPropertyValue("comment"));
-        assertEquals(36, next.getPropertyValue("age"));
-        next = ite.next();
-        assertEquals("marc", next.getPropertyValue("name"));
-        assertEquals("lucky luck", next.getPropertyValue("comment"));
-        assertEquals(22, next.getPropertyValue("age"));
-
-
+            try (final FeatureIterator ite = col.iterator()) {
+                Feature next = ite.next();
+                assertEquals("hubert", next.getPropertyValue("name"));
+                assertEquals("someone from the \"big fisher\" corp,\na good guy and;\na ;family \"best\" friend", next.getPropertyValue("comment"));
+                assertEquals(36, next.getPropertyValue("age"));
+                next = ite.next();
+                assertEquals("marc", next.getPropertyValue("name"));
+                assertEquals("lucky luck", next.getPropertyValue("comment"));
+                assertEquals(22, next.getPropertyValue("age"));
+            }
+        }
     }
 
     @Test
     public void testWriteEscape() throws Exception{
 
-        final File file = File.createTempFile("test", ".csv");
-        file.deleteOnExit();
+        final Path file = Files.createTempFile("test", ".csv");
+        try (final FeatureStore store = new CSVFeatureStore(file, ';')) {
+            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+            ftb.setName("test");
+            ftb.addAttribute(String.class).setName("name");
+            ftb.addAttribute(String.class).setName("comment");
+            ftb.addAttribute(Integer.class).setName("age");
+            final FeatureType ft = ftb.build();
 
-        final FeatureStore store = new CSVFeatureStore(file, null, ';');
+            store.createFeatureType(ft);
 
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName("test");
-        ftb.addAttribute(String.class).setName("name");
-        ftb.addAttribute(String.class).setName("comment");
-        ftb.addAttribute(Integer.class).setName("age");
-        final FeatureType ft = ftb.build();
+            final Feature f = ft.newInstance();
+            f.setPropertyValue("name", "hubert");
+            f.setPropertyValue("comment", "someone from the \"big fisher\" corp,\na good guy and\na family \"best\" friend");
+            f.setPropertyValue("age", 36);
+            store.addFeatures(ft.getName().toString(), Collections.singleton(f));
 
-        store.createFeatureType(ft);
-
-        final Feature f = ft.newInstance();
-        f.setPropertyValue("name", "hubert");
-        f.setPropertyValue("comment", "someone from the \"big fisher\" corp,\na good guy and\na family \"best\" friend");
-        f.setPropertyValue("age", 36);
-        store.addFeatures(ft.getName().toString(), Collections.singleton(f));
-
-        String str = IOUtilities.toString(file.toPath());
-        assertEquals("name(String);comment(String);age(Integer)\n" +
-                    "hubert;\"someone from the \"\"big fisher\"\" corp,\n" +
-                    "a good guy and\n" +
-                    "a family \"\"best\"\" friend\";36\n", str);
-
-
+            final String str = IOUtilities.toString(file);
+            assertEquals("name(String);comment(String);age(Integer)\n"
+                    + "hubert;\"someone from the \"\"big fisher\"\" corp,\n"
+                    + "a good guy and\n"
+                    + "a family \"\"best\"\" friend\";36\n", str);
+        } finally {
+            Files.delete(file);
+        }
     }
-
 }

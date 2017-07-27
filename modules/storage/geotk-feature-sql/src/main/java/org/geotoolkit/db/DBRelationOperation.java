@@ -119,7 +119,7 @@ public class DBRelationOperation extends AbstractOperation {
 
         final Object key = ftr.getPropertyValue(relation.getCurrentColumn());
         final QueryBuilder qb = new QueryBuilder();
-        qb.setTypeName(NamesExt.create(store.getDefaultNamespace(), relation.getForeignTable()));
+        qb.setTypeName(NamesExt.create(relation.getForeignTable()));
         qb.setFilter(relation.toFilter(key));
         final FeatureCollection res = store.createSession(false).getFeatureCollection(qb.buildQuery());
         final Object value;

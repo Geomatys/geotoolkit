@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.pending.demo.coverage;
 
-import org.geotoolkit.storage.coverage.CoverageReference;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.coverage.postgresql.PGCoverageStore;
 import org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory;
@@ -25,14 +25,13 @@ import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
@@ -52,20 +51,19 @@ public class PGCoverageDemo {
         Demos.init();
 
         final ParameterDescriptorGroup desc = PGCoverageStoreFactory.PARAMETERS_DESCRIPTOR;
-        final ParameterValueGroup params = desc.createValue();
-        Parameters.getOrCreate(PGCoverageStoreFactory.DATABASE, params).setValue("*****");
-        Parameters.getOrCreate(PGCoverageStoreFactory.HOST, params).setValue("localhost");
-        Parameters.getOrCreate(PGCoverageStoreFactory.PORT, params).setValue(5432);
-        Parameters.getOrCreate(PGCoverageStoreFactory.USER, params).setValue("*****");
-        Parameters.getOrCreate(PGCoverageStoreFactory.PASSWORD, params).setValue("*****");
-        Parameters.getOrCreate(PGCoverageStoreFactory.NAMESPACE, params).setValue("no namespace");
+        final Parameters params = Parameters.castOrWrap(desc.createValue());
+        params.getOrCreate(PGCoverageStoreFactory.DATABASE).setValue("*****");
+        params.getOrCreate(PGCoverageStoreFactory.HOST).setValue("localhost");
+        params.getOrCreate(PGCoverageStoreFactory.PORT).setValue(5432);
+        params.getOrCreate(PGCoverageStoreFactory.USER).setValue("*****");
+        params.getOrCreate(PGCoverageStoreFactory.PASSWORD).setValue("*****");
 
         final CoverageStore store = (CoverageStore) DataStores.open(params);
         if (!(store instanceof PGCoverageStore)) {
             throw new DataStoreException("Wrong parameters");
         }
 
-        final CoverageReference ref = store.getCoverageReference(NamesExt.create(LAYER_NAME));
+        final CoverageResource ref = store.findResource(NamesExt.create(LAYER_NAME));
         final CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref,
                 new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
 

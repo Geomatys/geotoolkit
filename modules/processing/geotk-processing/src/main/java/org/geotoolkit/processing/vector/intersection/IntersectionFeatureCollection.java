@@ -53,7 +53,7 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
         super(originalFC);
         this.intersList = intersList;
         this.geometryName = geometryName;
-        this.newFeatureType = VectorProcessUtils.oneGeometryFeatureType(originalFC.getFeatureType(), geometryName);
+        this.newFeatureType = VectorProcessUtils.oneGeometryFeatureType(originalFC.getType(), geometryName);
     }
 
     /**
@@ -61,7 +61,7 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
      * @return FeatureType
      */
     @Override
-    public FeatureType getFeatureType() {
+    public FeatureType getType() {
         return newFeatureType;
     }
 

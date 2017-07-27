@@ -132,7 +132,7 @@ public class MapLayerTest extends TestCase{
         }
 
         try{
-            layer.setQuery(QueryBuilder.filtered(fs.getFeatureType().getName().toString(), Filter.EXCLUDE));
+            layer.setQuery(QueryBuilder.filtered(fs.getType().getName().toString(), Filter.EXCLUDE));
         }catch(Exception ex){
             throw new IllegalArgumentException("Should be able to set this query");
         }

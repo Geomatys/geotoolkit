@@ -19,7 +19,6 @@ package org.geotoolkit.data.csv;
 
 import java.util.Collections;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
-import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
@@ -72,7 +71,7 @@ public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("CSVParameters").createGroup(
-                IDENTIFIER, PATH,NAMESPACE,SEPARATOR);
+                IDENTIFIER, PATH, SEPARATOR);
 
     @Override
     public Identification getIdentification() {

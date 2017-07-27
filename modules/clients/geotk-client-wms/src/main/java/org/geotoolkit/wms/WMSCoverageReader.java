@@ -60,7 +60,7 @@ public class WMSCoverageReader extends GridCoverageReader{
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
 
-    public WMSCoverageReader(final WMSCoverageReference reference) {
+    public WMSCoverageReader(final WMSCoverageResource reference) {
         try {
             setInput(reference);
         } catch (CoverageStoreException ex) {
@@ -71,15 +71,15 @@ public class WMSCoverageReader extends GridCoverageReader{
 
     @Override
     public void setInput(Object input) throws CoverageStoreException {
-        if(!(input instanceof WMSCoverageReference)){
+        if(!(input instanceof WMSCoverageResource)){
             throw new CoverageStoreException("Unsupported input type, can only be WMSCoverageReference.");
         }
         super.setInput(input);
     }
 
     @Override
-    public WMSCoverageReference getInput() throws CoverageStoreException {
-        return (WMSCoverageReference) super.getInput();
+    public WMSCoverageResource getInput() throws CoverageStoreException {
+        return (WMSCoverageResource) super.getInput();
     }
 
     @Override
@@ -96,7 +96,7 @@ public class WMSCoverageReader extends GridCoverageReader{
 
     @Override
     public GeneralGridGeometry getGridGeometry(final int index) throws CoverageStoreException, CancellationException {
-        final WMSCoverageReference ref = getInput();
+        final WMSCoverageResource ref = getInput();
         //we only know the envelope,
         final GeneralGridGeometry gridGeom = new GeneralGridGeometry(null, null, ref.getBounds());
         return gridGeom;
@@ -124,7 +124,7 @@ public class WMSCoverageReader extends GridCoverageReader{
             throw new CoverageStoreException("Source or destination bands can not be used on WMS coverages.");
         }
 
-        final WMSCoverageReference ref = getInput();
+        final WMSCoverageResource ref = getInput();
         final WebMapClient server = (WebMapClient)ref.getStore();
 
         CoordinateReferenceSystem crs = param.getCoordinateReferenceSystem();

@@ -76,8 +76,8 @@ import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.internal.Loggers;
-import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 
 /**
  *
@@ -416,7 +416,7 @@ public class EditionHelper {
                 flt = FF.and(flt, dimFilter);
             }
 
-            QueryBuilder qb = new QueryBuilder(editedLayer.getCollection().getFeatureType().getName().toString());
+            QueryBuilder qb = new QueryBuilder(editedLayer.getCollection().getType().getName().toString());
             //we filter in the map CRS
             qb.setCRS(map.getCanvas().getObjectiveCRS2D());
             editgeoms = (FeatureCollection) editedLayer.getCollection().subCollection(qb.buildQuery());
@@ -434,7 +434,7 @@ public class EditionHelper {
                 fi.close();
 
                 qb.reset();
-                qb.setTypeName(editedLayer.getCollection().getFeatureType().getName());
+                qb.setTypeName(editedLayer.getCollection().getType().getName());
                 qb.setFilter(flt);
                 editgeoms = (FeatureCollection) editedLayer.getCollection().subCollection(qb.buildQuery());
                 fi = editgeoms.iterator();
@@ -1036,18 +1036,17 @@ public class EditionHelper {
 
 
     public Geometry toObjectiveCRS(final Feature sf){
-        final Object obj = FeatureExt.getDefaultGeometryAttributeValue(sf);
-
-        if (obj instanceof Geometry) {
-            return toObjectiveCRS((Geometry)obj);
-        }
-        return null;
+        return FeatureExt.getDefaultGeometryValue(sf)
+                .filter(Geometry.class::isInstance)
+                .map(Geometry.class::cast)
+                .map(this::toObjectiveCRS)
+                .orElse(null);
     }
 
     public Geometry toObjectiveCRS(Geometry geom){
         try{
             final MathTransform trs = CRS.findOperation(
-                    FeatureExt.getCRS(editedLayer.getCollection().getFeatureType()),
+                    FeatureExt.getCRS(editedLayer.getCollection().getType()),
                     map.getCanvas().getObjectiveCRS2D(), null).getMathTransform();
 
             geom = JTS.transform(geom, trs);
@@ -1069,7 +1068,7 @@ public class EditionHelper {
      */
     public Filter toFilter(final Geometry poly, final FeatureMapLayer fl) throws MismatchedDimensionException {
 
-        final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(fl.getCollection().getFeatureType());
+        final PropertyType desc = FeatureExt.getDefaultGeometry(fl.getCollection().getType());
         final String geoStr = desc.getName().tip().toString();
         final Expression geomField = FF.property(geoStr);
 
@@ -1089,7 +1088,7 @@ public class EditionHelper {
 
         if (editedLayer != null && geom != null) {
 
-            final FeatureType featureType = (FeatureType) editedLayer.getCollection().getFeatureType();
+            final FeatureType featureType = (FeatureType) editedLayer.getCollection().getType();
             final CoordinateReferenceSystem dataCrs = FeatureExt.getCRS(featureType);
             final Feature feature = featureType.newInstance();
 
@@ -1133,8 +1132,8 @@ public class EditionHelper {
         if (editedLayer != null && editedLayer.getCollection().isWritable()) {
 
             final Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
-            final FeatureType featureType = editedLayer.getCollection().getFeatureType();
-            final AttributeType geomAttribut = FeatureExt.getDefaultGeometryAttribute(featureType);
+            final FeatureType featureType = editedLayer.getCollection().getType();
+            final PropertyType geomAttribut = FeatureExt.getDefaultGeometry(featureType);
             final CoordinateReferenceSystem dataCrs = FeatureExt.getCRS(geomAttribut);
 
             try {

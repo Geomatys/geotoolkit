@@ -52,8 +52,8 @@ public abstract class AbstractCoverageStoreEventTest extends org.geotoolkit.test
 
         assertEquals(0, store.getNames().size());
 
-        final GenericName name = NamesExt.create(store.getDefaultNamespace(), "test");
-        final CoverageReference ref = store.create(name);
+        final GenericName name = NamesExt.create("test");
+        final CoverageResource ref = store.create(name);
         assertNotNull(ref);
         assertEquals(1, storelistener.numManageEvent);
         assertEquals(0, storelistener.numContentEvent);
@@ -77,7 +77,7 @@ public abstract class AbstractCoverageStoreEventTest extends org.geotoolkit.test
 
         assertEquals(1, storelistener.numManageEvent);
         assertEquals(1, storelistener.numContentEvent);
-        assertEquals(name, storelistener.lastContentEvent.getCoverageName());
+        assertTrue(NamesExt.match(name, storelistener.lastContentEvent.getCoverageName()));
         assertEquals(null, storelistener.lastContentEvent.getPyramidId());
         assertEquals(null, storelistener.lastContentEvent.getMosaicId());
         assertEquals(null, storelistener.lastContentEvent.getTiles());
@@ -86,7 +86,7 @@ public abstract class AbstractCoverageStoreEventTest extends org.geotoolkit.test
         assertEquals(0, reflistener.numManageEvent);
         assertEquals(1, reflistener.numContentEvent);
         assertEquals(null, reflistener.lastManagementEvent);
-        assertEquals(name, reflistener.lastContentEvent.getCoverageName());
+        assertTrue(NamesExt.match(name, storelistener.lastContentEvent.getCoverageName()));
         assertEquals(null, reflistener.lastContentEvent.getPyramidId());
         assertEquals(null, reflistener.lastContentEvent.getMosaicId());
         assertEquals(null, reflistener.lastContentEvent.getTiles());
