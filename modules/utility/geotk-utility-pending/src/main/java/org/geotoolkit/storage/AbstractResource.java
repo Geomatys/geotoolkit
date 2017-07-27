@@ -21,7 +21,7 @@ import java.util.Set;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.metadata.Identifier;
 import org.opengis.util.GenericName;
 
@@ -123,7 +123,7 @@ public abstract class AbstractResource implements Resource{
             //do nothing
         }
         if (this instanceof DataSet) {
-            return Trees.toString(name.toString(), ((DataSet)this).getResources());
+            return StringUtilities.toStringTree(name.toString(), ((DataSet)this).getResources());
         } else {
             return name.toString();
         }

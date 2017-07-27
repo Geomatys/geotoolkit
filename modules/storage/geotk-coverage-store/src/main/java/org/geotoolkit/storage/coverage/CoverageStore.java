@@ -108,6 +108,12 @@ public interface CoverageStore extends AutoCloseable {
         Object res = new Function<Resource,Object>() {
             @Override
             public Object apply(final Resource candidate) {
+                //this test is not made by isHeuristicMatchForIdentifier
+                //TODO : fixed on SIS, remove when update to SIS 0.8-jdk8-MC0014+
+                if (candidate.getIdentifier().getCode().equals(name)) {
+                    return candidate;
+                }
+
                 boolean match = NameToIdentifier.isHeuristicMatchForIdentifier(Collections.singleton(candidate.getIdentifier()), name);
                 Object result = match ? candidate : null;
 

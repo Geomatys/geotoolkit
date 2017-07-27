@@ -23,14 +23,12 @@ import java.util.List;
 import java.util.Objects;
 import javax.swing.event.EventListenerList;
 
-import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.CollectionChangeListener;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
 import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.apache.sis.util.Classes;
 
@@ -40,6 +38,7 @@ import org.opengis.sld.SLDVisitor;
 import org.opengis.style.Description;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.util.StringUtilities;
 
 /**
  * Default mutable named layer, thread safe.
@@ -352,7 +351,7 @@ class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
         builder.append(']');
 
         if(!styles.isEmpty()){
-            builder.append(Trees.toString("", styles));
+            builder.append(StringUtilities.toStringTree("", styles));
         }
 
         return builder.toString();

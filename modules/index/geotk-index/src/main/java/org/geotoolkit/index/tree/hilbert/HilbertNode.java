@@ -24,12 +24,12 @@ import java.util.logging.Level;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.gui.swing.tree.Trees;
 import static org.geotoolkit.internal.tree.TreeUtilities.*;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.internal.tree.TreeAccess;
 import org.geotoolkit.path.iterator.HilbertIterator;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.util.StringUtilities;
 
 /**
  * Appropriate Node which match with {@link HilbertRTree} properties.<br/><br/>
@@ -556,7 +556,7 @@ final class HilbertNode extends Node {
                 final String strHilbertLeaf = (isLeaf())
                         ? " hilbert Order : "+getCurrentHilbertOrder() +" children number : "+getChildCount()+" data number : "+getDataCount()
                         : " children number : "+getChildCount();
-                return Trees.toString(Classes.getShortClassName(this)+" parent : "+strparent+" : ID : "+getNodeId()
+                return StringUtilities.toStringTree(Classes.getShortClassName(this)+" parent : "+strparent+" : ID : "+getNodeId()
                     + " leaf : "+isLeaf()+" sibling : "+getSiblingId()+" child "+getChildId()+strHilbertLeaf+"  "+Arrays.toString(getBoundary()), toString);
             } else {
                 return Classes.getShortClassName(this)+"Data : parent : "+getParentId()+" ID : "+getNodeId()+" sibling : "+getSiblingId()+" value : "+(-getChildId())+" bound : "+Arrays.toString(getBoundary());

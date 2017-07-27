@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.util.StringUtilities;
 
 /**
  * Description of a database table.
@@ -96,10 +96,10 @@ public class TableMetaModel {
     public String toString() {
         final StringBuilder sb = new StringBuilder(name);
         if (!importedKeys.isEmpty()) {
-            sb.append(Trees.toString("\n Imported Keys", importedKeys));
+            sb.append(StringUtilities.toStringTree("\n Imported Keys", importedKeys)).append('\n');
         }
         if (!exportedKeys.isEmpty()) {
-            sb.append(Trees.toString("\n Exported Keys", exportedKeys));
+            sb.append(StringUtilities.toStringTree("\n Exported Keys", exportedKeys)).append('\n');
         }
         return sb.toString();
     }
