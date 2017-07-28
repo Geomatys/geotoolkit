@@ -26,7 +26,7 @@ import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.metadata.iso.lineage.DefaultProcessing;
 import org.apache.sis.metadata.iso.lineage.DefaultProcessStep;
-import org.geotoolkit.parameter.Parameters;
+import org.apache.sis.parameter.Parameters;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 
@@ -40,8 +40,8 @@ public abstract class AbstractProcess implements org.geotoolkit.process.Process 
     protected final EventListenerList listeners = new EventListenerList();
 
     protected final ProcessDescriptor descriptor;
-    protected final ParameterValueGroup outputParameters;
-    protected ParameterValueGroup inputParameters;
+    protected final Parameters outputParameters;
+    protected Parameters inputParameters;
 
     volatile boolean isCanceled = false;
 
@@ -56,10 +56,10 @@ public abstract class AbstractProcess implements org.geotoolkit.process.Process 
         ensureNonNull("descriptor", desc);
         ensureNonNull("input", input);
         this.descriptor = desc;
-        this.outputParameters = descriptor.getOutputDescriptor().createValue();
-        this.inputParameters = input;
+        this.outputParameters = Parameters.castOrWrap(descriptor.getOutputDescriptor().createValue());
+        this.inputParameters = Parameters.castOrWrap(input);
 
-        final ConformanceResult res = Parameters.isValid(inputParameters, inputParameters.getDescriptor());
+        final ConformanceResult res = org.geotoolkit.parameter.Parameters.isValid(inputParameters, inputParameters.getDescriptor());
         if (!res.pass()) {
             throw new IllegalArgumentException("Input parameters are invalid:" + res.getExplanation());
         }
@@ -74,7 +74,7 @@ public abstract class AbstractProcess implements org.geotoolkit.process.Process 
     protected AbstractProcess(final ProcessDescriptor desc) {
         ensureNonNull("descriptor", desc);
         this.descriptor = desc;
-        this.outputParameters = descriptor==null? null : descriptor.getOutputDescriptor().createValue();
+        this.outputParameters = descriptor==null? null : Parameters.castOrWrap(descriptor.getOutputDescriptor().createValue());
         this.inputParameters = null;
 
     }

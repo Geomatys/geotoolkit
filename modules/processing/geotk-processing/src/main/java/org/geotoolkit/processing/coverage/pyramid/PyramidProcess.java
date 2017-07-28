@@ -21,17 +21,16 @@ import java.util.Map;
 import java.util.concurrent.CancellationException;
 import javax.swing.JLabel;
 import javax.swing.ProgressMonitor;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.storage.coverage.PyramidCoverageBuilder;
-import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.storage.coverage.CoverageResource;
@@ -68,15 +67,15 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
 
     private static ParameterValueGroup asParameters(CoverageResource covref,CoverageStore covstore,double[] fillValues,
             InterpolationCase interpolation,String pyramidName,Map resPerEnvelope, Boolean reuseTile, Dimension tileSize){
-        final ParameterValueGroup params = PyramidDescriptor.INPUT_DESC.createValue();
-        ParametersExt.getOrCreateValue(params, PyramidDescriptor.IN_COVERAGEREF.getName().getCode()).setValue(covref);
-        ParametersExt.getOrCreateValue(params, PyramidDescriptor.IN_COVERAGESTORE.getName().getCode()).setValue(covstore);
-        ParametersExt.getOrCreateValue(params, PyramidDescriptor.IN_FILLVALUES.getName().getCode()).setValue(fillValues);
-        ParametersExt.getOrCreateValue(params, PyramidDescriptor.IN_INTERPOLATIONCASE.getName().getCode()).setValue(interpolation);
-        ParametersExt.getOrCreateValue(params, PyramidDescriptor.IN_PYRAMID_NAME.getName().getCode()).setValue(pyramidName);
-        ParametersExt.getOrCreateValue(params, PyramidDescriptor.IN_RES_PER_ENVELOPE.getName().getCode()).setValue(resPerEnvelope);
-        ParametersExt.getOrCreateValue(params, PyramidDescriptor.IN_REUSETILES.getName().getCode()).setValue(reuseTile);
-        ParametersExt.getOrCreateValue(params, PyramidDescriptor.IN_TILE_SIZE.getName().getCode()).setValue(tileSize);
+        final Parameters params = Parameters.castOrWrap(PyramidDescriptor.INPUT_DESC.createValue());
+        params.getOrCreate(PyramidDescriptor.IN_COVERAGEREF).setValue(covref);
+        params.getOrCreate(PyramidDescriptor.IN_COVERAGESTORE).setValue(covstore);
+        params.getOrCreate(PyramidDescriptor.IN_FILLVALUES).setValue(fillValues);
+        params.getOrCreate(PyramidDescriptor.IN_INTERPOLATIONCASE).setValue(interpolation);
+        params.getOrCreate(PyramidDescriptor.IN_PYRAMID_NAME).setValue(pyramidName);
+        params.getOrCreate(PyramidDescriptor.IN_RES_PER_ENVELOPE).setValue(resPerEnvelope);
+        params.getOrCreate(PyramidDescriptor.IN_REUSETILES).setValue(reuseTile);
+        params.getOrCreate(PyramidDescriptor.IN_TILE_SIZE).setValue(tileSize);
         return params;
     }
 
@@ -99,14 +98,14 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
 
         ArgumentChecks.ensureNonNull("inputParameters", inputParameters);
 
-        final CoverageResource coverageref       = value(PyramidDescriptor.IN_COVERAGEREF      , inputParameters);
-        final CoverageStore coverageStore         = value(PyramidDescriptor.IN_COVERAGESTORE    , inputParameters);
-        final InterpolationCase interpolationcase = value(PyramidDescriptor.IN_INTERPOLATIONCASE, inputParameters);
-        final Map resolution_per_envelope         = value(PyramidDescriptor.IN_RES_PER_ENVELOPE , inputParameters);
-        final String pyramid_name                 = value(PyramidDescriptor.IN_PYRAMID_NAME     , inputParameters);
-        final Dimension tilesize                  = value(PyramidDescriptor.IN_TILE_SIZE        , inputParameters);
-        final double[] fillvalue                  = value(PyramidDescriptor.IN_FILLVALUES       , inputParameters);
-        Boolean reuseTiles                        = value(PyramidDescriptor.IN_REUSETILES       , inputParameters);
+        final CoverageResource coverageref        = inputParameters.getValue(PyramidDescriptor.IN_COVERAGEREF      );
+        final CoverageStore coverageStore         = inputParameters.getValue(PyramidDescriptor.IN_COVERAGESTORE    );
+        final InterpolationCase interpolationcase = inputParameters.getValue(PyramidDescriptor.IN_INTERPOLATIONCASE);
+        final Map resolution_per_envelope         = inputParameters.getValue(PyramidDescriptor.IN_RES_PER_ENVELOPE );
+        final String pyramid_name                 = inputParameters.getValue(PyramidDescriptor.IN_PYRAMID_NAME     );
+        final Dimension tilesize                  = inputParameters.getValue(PyramidDescriptor.IN_TILE_SIZE        );
+        final double[] fillvalue                  = inputParameters.getValue(PyramidDescriptor.IN_FILLVALUES       );
+        Boolean reuseTiles                        = inputParameters.getValue(PyramidDescriptor.IN_REUSETILES       );
 
         if (reuseTiles == null) {
             reuseTiles = Boolean.FALSE;
@@ -134,7 +133,7 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
         if (isCanceled()) {
             throw new CancellationException();
         }
-        getOrCreate(PyramidDescriptor.OUT_COVERAGESTORE, outputParameters).setValue(coverageStore);
+        outputParameters.getOrCreate(PyramidDescriptor.OUT_COVERAGESTORE).setValue(coverageStore);
     }
 
     /**

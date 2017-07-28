@@ -40,6 +40,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.util.ArgumentChecks;
@@ -84,7 +85,6 @@ import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.storage.coverage.CoverageResource;
 
 
@@ -596,19 +596,13 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final GridGeometry2D gg = new GridGeometry2D(new GridEnvelope2D(0, 0, width, height), outputRenderingCoverageEnv2D);
 
         final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
-        final ParameterValueGroup params = desc.getInputDescriptor().createValue();
-        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COVERAGE
-                .getName().getCode()).setValue(dataCoverage);
-        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_BACKGROUND
-                .getName().getCode()).setValue(nodata);
-        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM
-                .getName().getCode()).setValue(renderingContextObjectiveCRS2D);
-        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_GRID_GEOMETRY
-                .getName().getCode()).setValue(gg);
-        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_INTERPOLATION_TYPE
-                .getName().getCode()).setValue(interpolation);
-        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_BORDER_COMPORTEMENT_TYPE
-                .getName().getCode()).setValue(ResampleBorderComportement.FILL_VALUE);
+        final Parameters params = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
+        params.getOrCreate(ResampleDescriptor.IN_COVERAGE).setValue(dataCoverage);
+        params.getOrCreate(ResampleDescriptor.IN_BACKGROUND).setValue(nodata);
+        params.getOrCreate(ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM).setValue(renderingContextObjectiveCRS2D);
+        params.getOrCreate(ResampleDescriptor.IN_GRID_GEOMETRY).setValue(gg);
+        params.getOrCreate(ResampleDescriptor.IN_INTERPOLATION_TYPE).setValue(interpolation);
+        params.getOrCreate(ResampleDescriptor.IN_BORDER_COMPORTEMENT_TYPE).setValue(ResampleBorderComportement.FILL_VALUE);
 
         final org.geotoolkit.process.Process process = desc.createProcess(params);
         final ParameterValueGroup result = process.call();

@@ -41,12 +41,10 @@ import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.parameter.Parameters.*;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.cs.CartesianCS;
@@ -58,6 +56,7 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import javax.measure.Unit;
 import org.apache.sis.measure.Units;
+import org.apache.sis.parameter.Parameters;
 
 /**
  * Process which compute volume from DEM (Digital Elevation Model) got
@@ -104,13 +103,13 @@ public class ComputeVolumeProcess extends AbstractProcess {
 
     private static ParameterValueGroup asParameters(GridCoverageReader gcReader, Geometry jtsGeom,
             CoordinateReferenceSystem geomCRS, Integer bIndex, Double zMinCeil, double zMaxCeil){
-        final ParameterValueGroup params = ComputeVolumeDescriptor.INPUT_DESC.createValue();
-        ParametersExt.getOrCreateValue(params, ComputeVolumeDescriptor.IN_GRIDCOVERAGE_READER.getName().getCode()).setValue(gcReader);
-        ParametersExt.getOrCreateValue(params, ComputeVolumeDescriptor.IN_JTSGEOMETRY.getName().getCode()).setValue(jtsGeom);
-        if(geomCRS!=null) ParametersExt.getOrCreateValue(params, ComputeVolumeDescriptor.IN_GEOMETRY_CRS.getName().getCode()).setValue(geomCRS);
-        if(bIndex!=null) ParametersExt.getOrCreateValue(params, ComputeVolumeDescriptor.IN_INDEX_BAND.getName().getCode()).setValue(bIndex);
-        if(zMinCeil!=null) ParametersExt.getOrCreateValue(params, ComputeVolumeDescriptor.IN_GEOMETRY_ALTITUDE.getName().getCode()).setValue(zMinCeil);
-        ParametersExt.getOrCreateValue(params, ComputeVolumeDescriptor.IN_MAX_ALTITUDE_CEILING.getName().getCode()).setValue(zMaxCeil);
+        final Parameters params = Parameters.castOrWrap(ComputeVolumeDescriptor.INPUT_DESC.createValue());
+        params.getOrCreate(ComputeVolumeDescriptor.IN_GRIDCOVERAGE_READER).setValue(gcReader);
+        params.getOrCreate(ComputeVolumeDescriptor.IN_JTSGEOMETRY).setValue(jtsGeom);
+        if(geomCRS!=null) params.getOrCreate(ComputeVolumeDescriptor.IN_GEOMETRY_CRS).setValue(geomCRS);
+        if(bIndex!=null) params.getOrCreate(ComputeVolumeDescriptor.IN_INDEX_BAND).setValue(bIndex);
+        if(zMinCeil!=null) params.getOrCreate(ComputeVolumeDescriptor.IN_GEOMETRY_ALTITUDE).setValue(zMinCeil);
+        params.getOrCreate(ComputeVolumeDescriptor.IN_MAX_ALTITUDE_CEILING).setValue(zMaxCeil);
         return params;
     }
 
@@ -132,19 +131,19 @@ public class ComputeVolumeProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameters", inputParameters);
 
-        final GridCoverageReader gcReader = value(ComputeVolumeDescriptor.IN_GRIDCOVERAGE_READER  , inputParameters);
-        final Geometry jtsGeom            = value(ComputeVolumeDescriptor.IN_JTSGEOMETRY          , inputParameters);
-        CoordinateReferenceSystem geomCRS = value(ComputeVolumeDescriptor.IN_GEOMETRY_CRS         , inputParameters);
-        final Integer bIndex              = value(ComputeVolumeDescriptor.IN_INDEX_BAND           , inputParameters);
-        final Double zMinCeil             = value(ComputeVolumeDescriptor.IN_GEOMETRY_ALTITUDE    , inputParameters);
-        final double zMaxCeiling          = value(ComputeVolumeDescriptor.IN_MAX_ALTITUDE_CEILING , inputParameters);
+        final GridCoverageReader gcReader = inputParameters.getValue(ComputeVolumeDescriptor.IN_GRIDCOVERAGE_READER);
+        final Geometry jtsGeom            = inputParameters.getValue(ComputeVolumeDescriptor.IN_JTSGEOMETRY        );
+        CoordinateReferenceSystem geomCRS = inputParameters.getValue(ComputeVolumeDescriptor.IN_GEOMETRY_CRS       );
+        final Integer bIndex              = inputParameters.getValue(ComputeVolumeDescriptor.IN_INDEX_BAND         );
+        final Double zMinCeil             = inputParameters.getValue(ComputeVolumeDescriptor.IN_GEOMETRY_ALTITUDE  );
+        final double zMaxCeiling          = inputParameters.getValue(ComputeVolumeDescriptor.IN_MAX_ALTITUDE_CEILING);
 
         final int bandIndex               = (bIndex   == null) ? 0 : (int) bIndex;
         final double zGroundCeiling       = (zMinCeil == null) ? 0 : (double) zMinCeil;
         final boolean positiveSens        = zGroundCeiling < zMaxCeiling;
 
         if (zGroundCeiling == zMaxCeiling) {
-            getOrCreate(ComputeVolumeDescriptor.OUT_VOLUME_RESULT, outputParameters).setValue(0);
+            outputParameters.getOrCreate(ComputeVolumeDescriptor.OUT_VOLUME_RESULT).setValue(0);
             return;
         }
 
@@ -195,7 +194,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             final int gHeight              = gridEnv2D.getSpan(1);
 
             if (gWidth < 1 || gHeight < 1) {
-                getOrCreate(ComputeVolumeDescriptor.OUT_VOLUME_RESULT, outputParameters).setValue(0);
+                outputParameters.getOrCreate(ComputeVolumeDescriptor.OUT_VOLUME_RESULT).setValue(0);
                 return;
             } else if (gWidth < 2 || gHeight < 2) {
                 interpolationChoice = InterpolationCase.NEIGHBOR;
@@ -297,7 +296,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
                 }
                 pixPoint[1] += PIXELSTEP;
             }
-            getOrCreate(ComputeVolumeDescriptor.OUT_VOLUME_RESULT, outputParameters).setValue(volume);
+            outputParameters.getOrCreate(ComputeVolumeDescriptor.OUT_VOLUME_RESULT).setValue(volume);
         } catch (Exception ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }

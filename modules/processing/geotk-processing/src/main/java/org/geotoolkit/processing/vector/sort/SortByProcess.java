@@ -23,8 +23,6 @@ import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.parameter.Parameters.*;
-
 /**
  * Sort a FeatureCollection.
  * @see org.geotoolkit.internal.data.GenericSortByFeatureIterator
@@ -50,7 +48,6 @@ public class SortByProcess extends AbstractProcess {
 
         final FeatureCollection resultFeatureList = FeatureStreams.sort(inputFeatureList, sorter);
 
-        getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
-        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        outputParameters.getOrCreate(VectorDescriptor.FEATURE_OUT).setValue(resultFeatureList);
     }
 }

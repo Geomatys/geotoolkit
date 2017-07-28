@@ -20,10 +20,10 @@ package org.geotoolkit.processing.coverage.metadataextractor;
 import java.io.File;
 import java.net.URL;
 import java.util.logging.Level;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -32,7 +32,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.opengis.coverage.Coverage;
 import org.opengis.metadata.Metadata;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
@@ -55,8 +54,8 @@ public class ExtractionProcess extends AbstractProcess {
     }
 
     private static ParameterValueGroup asParameters(Object source){
-        final ParameterValueGroup params = ExtractionDescriptor.INPUT_DESC.createValue();
-        ParametersExt.getOrCreateValue(params, ExtractionDescriptor.IN_SOURCE.getName().getCode()).setValue(source);
+        final Parameters params = Parameters.castOrWrap(ExtractionDescriptor.INPUT_DESC.createValue());
+        params.getOrCreate(ExtractionDescriptor.IN_SOURCE).setValue(source);
         return params;
     }
 
@@ -75,7 +74,7 @@ public class ExtractionProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
 
-        Object input = Parameters.getOrCreate(ExtractionDescriptor.IN_SOURCE, inputParameters).getValue();
+        Object input = inputParameters.getOrCreate(ExtractionDescriptor.IN_SOURCE).getValue();
         Object reader = null;
         Metadata output = null;
         //Check if we get a file, or a reference to file.
@@ -118,7 +117,7 @@ public class ExtractionProcess extends AbstractProcess {
                 Logging.getLogger("org.geotoolkit.processing.coverage.metadataextractor").log(Level.SEVERE, null, ex);
             }
         }
-        Parameters.getOrCreate(ExtractionDescriptor.OUT_METADATA, outputParameters).setValue(output);
+        outputParameters.getOrCreate(ExtractionDescriptor.OUT_METADATA).setValue(output);
     }
 
 }

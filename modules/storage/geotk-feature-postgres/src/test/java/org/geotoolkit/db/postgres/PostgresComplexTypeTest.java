@@ -43,6 +43,7 @@ import java.util.Optional;
 import java.util.Properties;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.parameter.Parameters;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -53,7 +54,6 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 
@@ -228,7 +228,7 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
     public PostgresComplexTypeTest(){
     }
 
-    private static ParameterValueGroup params;
+    private static Parameters params;
 
     /**
      * <p>Find JDBC connection parameters in specified file at
@@ -254,7 +254,7 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         Assume.assumeTrue(f.exists());
         final Properties properties = new Properties();
         properties.load(new FileInputStream(f));
-        params = FeatureExt.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
+        params = Parameters.castOrWrap(FeatureExt.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false));
     }
 
     private void reload(boolean simpleType) throws DataStoreException, VersioningException {
@@ -263,7 +263,7 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         }
 
         //open in complex type to delete all types
-        ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(false);
+        params.getOrCreate(PostgresFeatureStoreFactory.SIMPLETYPE).setValue(false);
         store = (PostgresFeatureStore) DataStores.open(params);
         while(!store.getNames().isEmpty()){ // we get the list each type because relations may delete multiple types each time
             final GenericName n = store.getNames().iterator().next();
@@ -275,7 +275,7 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         store.close();
 
         //reopen the way it was asked
-        ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(simpleType);
+        params.getOrCreate(PostgresFeatureStoreFactory.SIMPLETYPE).setValue(simpleType);
         store = (PostgresFeatureStore) DataStores.open(params);
         assertTrue(store.getNames().isEmpty());
     }

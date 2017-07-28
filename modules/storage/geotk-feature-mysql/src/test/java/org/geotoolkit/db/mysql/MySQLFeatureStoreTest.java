@@ -45,6 +45,7 @@ import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.parameter.Parameters;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -55,7 +56,6 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 
@@ -206,7 +206,7 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
     public MySQLFeatureStoreTest(){
     }
 
-    private static ParameterValueGroup params;
+    private static Parameters params;
 
     /**
      * <p>Find JDBC connection parameters in specified file at
@@ -232,7 +232,7 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
         Assume.assumeTrue(f.exists());
         final Properties properties = new Properties();
         properties.load(new FileInputStream(f));
-        params = FeatureExt.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
+        params = Parameters.castOrWrap(FeatureExt.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false));
     }
 
     private void reload(boolean simpleType) throws DataStoreException, VersioningException {
@@ -241,7 +241,7 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
         }
 
         //open in complex type to delete all types
-        ParametersExt.getOrCreateValue(params, MySQLFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(false);
+        params.getOrCreate(MySQLFeatureStoreFactory.SIMPLETYPE).setValue(false);
         store = (MySQLFeatureStore) DataStores.open(params);
         for(GenericName n : store.getNames()){
             VersionControl vc = store.getVersioning(n.toString());
@@ -252,7 +252,7 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
         store.close();
 
         //reopen the way it was asked
-        ParametersExt.getOrCreateValue(params, MySQLFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(simpleType);
+        params.getOrCreate(MySQLFeatureStoreFactory.SIMPLETYPE).setValue(simpleType);
         store = (MySQLFeatureStore) DataStores.open(params);
         assertTrue(store.getNames().isEmpty());
     }

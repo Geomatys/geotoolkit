@@ -24,7 +24,7 @@ import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.utility.parameter.ParametersExt;
+import org.apache.sis.parameter.Parameters;
 import org.opengis.coverage.Coverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -57,8 +57,8 @@ public class StraightenProcess extends AbstractProcess {
     }
 
     private static ParameterValueGroup asParameters(Coverage coverage){
-        final ParameterValueGroup params = StraightenDescriptor.INPUT_DESC.createValue();
-        ParametersExt.getOrCreateValue(params, StraightenDescriptor.COVERAGE_IN.getName().getCode()).setValue(coverage);
+        final Parameters params = Parameters.castOrWrap(StraightenDescriptor.INPUT_DESC.createValue());
+        params.getOrCreate(StraightenDescriptor.COVERAGE_IN).setValue(coverage);
         return params;
     }
 
@@ -120,7 +120,7 @@ public class StraightenProcess extends AbstractProcess {
             final GridEnvelope2D gridEnv = new GridEnvelope2D(0, 0, (int)(spanX/scale), (int)(spanY/scale));
             final GridGeometry2D outgridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, outGridToCRS,crs,null);
             final GridCoverage2D outCoverage = (GridCoverage2D) Operations.DEFAULT.resample(candidate, crs, outgridGeom, null);
-            getOrCreate(StraightenDescriptor.COVERAGE_OUT, outputParameters).setValue(outCoverage);
+            outputParameters.getOrCreate(StraightenDescriptor.COVERAGE_OUT).setValue(outCoverage);
         }catch(TransformException ex){
             throw new ProcessException(ex.getMessage(), this, ex);
         }

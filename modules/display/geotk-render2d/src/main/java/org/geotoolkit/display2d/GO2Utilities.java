@@ -95,7 +95,6 @@ import org.geotoolkit.style.visitor.PrepareStyleVisitor;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.collection.Cache;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
@@ -134,6 +133,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.measure.Units;
+import org.apache.sis.parameter.Parameters;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -795,9 +795,9 @@ public final class GO2Utilities {
 
     public static GridCoverage2D resample(final Coverage dataCoverage, final CoordinateReferenceSystem targetCRS) throws ProcessException{
         final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
-        final ParameterValueGroup params = desc.getInputDescriptor().createValue();
-        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COVERAGE.getName().getCode()).setValue(dataCoverage);
-        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM.getName().getCode()).setValue(targetCRS);
+        final Parameters params = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
+        params.getOrCreate(ResampleDescriptor.IN_COVERAGE).setValue(dataCoverage);
+        params.getOrCreate(ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM).setValue(targetCRS);
 
         final org.geotoolkit.process.Process process = desc.createProcess(params);
         final ParameterValueGroup result = process.call();

@@ -58,10 +58,10 @@ import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.TextSymbolizer;
 
 import java.util.Map;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
@@ -141,14 +141,14 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                 final MathTransform gridToCRS = renderingContext.getDisplayToObjective();
                 final GridGeometry inGridGeom = new GeneralGridGeometry(gridEnv, gridToCRS, crs);
 
-                final ParameterValueGroup resampleParams = ResampleDescriptor.INPUT_DESC.createValue();
-                ParametersExt.getOrCreateValue(resampleParams, IN_COVERAGE.getName().getCode()).setValue(inCoverage);
-                ParametersExt.getOrCreateValue(resampleParams, IN_COORDINATE_REFERENCE_SYSTEM.getName().getCode()).setValue(crs);
-                ParametersExt.getOrCreateValue(resampleParams, IN_GRID_GEOMETRY.getName().getCode()).setValue(inGridGeom);
-                ParametersExt.getOrCreateValue(resampleParams, IN_INTERPOLATION_TYPE.getName().getCode()).setValue(InterpolationCase.BILINEAR);
-                ParametersExt.getOrCreateValue(resampleParams, IN_BORDER_COMPORTEMENT_TYPE.getName().getCode()).setValue(ResampleBorderComportement.FILL_VALUE);
+                final Parameters resampleParams = Parameters.castOrWrap(ResampleDescriptor.INPUT_DESC.createValue());
+                resampleParams.getOrCreate(IN_COVERAGE).setValue(inCoverage);
+                resampleParams.getOrCreate(IN_COORDINATE_REFERENCE_SYSTEM).setValue(crs);
+                resampleParams.getOrCreate(IN_GRID_GEOMETRY).setValue(inGridGeom);
+                resampleParams.getOrCreate(IN_INTERPOLATION_TYPE).setValue(InterpolationCase.BILINEAR);
+                resampleParams.getOrCreate(IN_BORDER_COMPORTEMENT_TYPE).setValue(ResampleBorderComportement.FILL_VALUE);
                 final ResampleProcess resampleProcess = new ResampleProcess(resampleParams);
-                final ParameterValueGroup output = resampleProcess.call();
+                final Parameters output = Parameters.castOrWrap(resampleProcess.call());
 
                 final GridCoverage2D resampledCoverage = (GridCoverage2D) output.parameter(ResampleDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
                 final MemoryCoverageStore memoryCoverageStore = new MemoryCoverageStore(resampledCoverage, coverageReference.getName().tip().toString());
@@ -162,12 +162,12 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                 FeatureCollection isolines = null;
                 ProcessDescriptor isolineDesc = symbol.getIsolineDesc();
                 if (isolineDesc != null) {
-                    ParameterValueGroup inputs = isolineDesc.getInputDescriptor().createValue();
-                    inputs.parameter(IsolineDescriptor2.COVERAGE_REF.getName().getCode()).setValue(resampledCovRef);
-                    inputs.parameter(IsolineDescriptor2.READ_PARAM.getName().getCode()).setValue(param);
-                    inputs.parameter(IsolineDescriptor2.INTERVALS.getName().getCode()).setValue(intervales);
-                    org.geotoolkit.process.Process process = isolineDesc.createProcess(inputs);
-                    ParameterValueGroup result = process.call();
+                    final Parameters inputs = Parameters.castOrWrap(isolineDesc.getInputDescriptor().createValue());
+                    inputs.getOrCreate(IsolineDescriptor2.COVERAGE_REF).setValue(resampledCovRef);
+                    inputs.getOrCreate(IsolineDescriptor2.READ_PARAM).setValue(param);
+                    inputs.getOrCreate(IsolineDescriptor2.INTERVALS).setValue(intervales);
+                    final org.geotoolkit.process.Process process = isolineDesc.createProcess(inputs);
+                    final ParameterValueGroup result = process.call();
                     isolines = (FeatureCollection) result.parameter(IsolineDescriptor2.FCOLL.getName().getCode()).getValue();
                 }
 

@@ -42,6 +42,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.logging.Logging;
 
 import static org.geotoolkit.parameter.Parameters.*;
@@ -112,7 +113,7 @@ public class SpatialJoinProcess extends AbstractProcess {
 
         ProcessDescriptor desc;
         org.geotoolkit.process.Process proc;
-        ParameterValueGroup in;
+        Parameters in;
         ArrayList<Feature> featureOutArray;
 
         //for each target feature geometry
@@ -125,16 +126,16 @@ public class SpatialJoinProcess extends AbstractProcess {
                 //use intersect method
                 if (method) {
                     desc = IntersectDescriptor.INSTANCE;
-                    in = desc.getInputDescriptor().createValue();
-                    in.parameter(IntersectDescriptor.FEATURE_IN .getName().getCode()).setValue(sourceFC);
-                    in.parameter(IntersectDescriptor.GEOMETRY_IN.getName().getCode()).setValue(targetGeometry);
+                    in = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
+                    in.getOrCreate(IntersectDescriptor.FEATURE_IN ).setValue(sourceFC);
+                    in.getOrCreate(IntersectDescriptor.GEOMETRY_IN).setValue(targetGeometry);
                     proc = desc.createProcess(in);
 
                 } else {    //use nearest method
                     desc = NearestDescriptor.INSTANCE;
-                    in = desc.getInputDescriptor().createValue();
-                    in.parameter(NearestDescriptor.FEATURE_IN .getName().getCode()).setValue(sourceFC);
-                    in.parameter(NearestDescriptor.GEOMETRY_IN.getName().getCode()).setValue(targetGeometry);
+                    in = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
+                    in.getOrCreate(NearestDescriptor.FEATURE_IN ).setValue(sourceFC);
+                    in.getOrCreate(NearestDescriptor.GEOMETRY_IN).setValue(targetGeometry);
                     proc = desc.createProcess(in);
                 }
 
