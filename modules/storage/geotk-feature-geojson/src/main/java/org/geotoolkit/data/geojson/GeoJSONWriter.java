@@ -23,6 +23,8 @@ import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.Utilities;
@@ -35,14 +37,13 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 
 /**
  * @author Quentin Boileau (Geomatys)
  */
 class GeoJSONWriter implements Closeable, Flushable {
-
-    private static final NumberFormat COORD_FORMAT = NumberFormat.getInstance(Locale.US);
 
     private final static String SYS_LF;
     static {
@@ -64,21 +65,15 @@ class GeoJSONWriter implements Closeable, Flushable {
     private boolean isSingleFeature = false;
     private boolean isSingleGeometry = false;
 
+    private final NumberFormat numberFormat;
+
     @Deprecated
     GeoJSONWriter(File file, JsonEncoding encoding, int doubleAccuracy, boolean prettyPrint) throws IOException {
         this(file.toPath(), encoding, doubleAccuracy, prettyPrint);
     }
 
     GeoJSONWriter(Path file, JsonEncoding encoding, int doubleAccuracy, boolean prettyPrint) throws IOException {
-        this.prettyPrint = prettyPrint;
-        this.outputStream = Files.newOutputStream(file, CREATE, WRITE, TRUNCATE_EXISTING);
-        if (prettyPrint) {
-            this.writer = GeoJSONParser.FACTORY.createGenerator(outputStream, encoding).useDefaultPrettyPrinter();
-        } else {
-            this.writer = GeoJSONParser.FACTORY.createGenerator(outputStream, encoding);
-        }
-
-        COORD_FORMAT.setMaximumFractionDigits(doubleAccuracy);
+        this(Files.newOutputStream(file, CREATE, WRITE, TRUNCATE_EXISTING), encoding, doubleAccuracy, prettyPrint);
     }
 
     GeoJSONWriter(OutputStream stream, JsonEncoding encoding,  int doubleAccuracy, boolean prettyPrint) throws IOException {
@@ -91,7 +86,9 @@ class GeoJSONWriter implements Closeable, Flushable {
         }
 
         this.writer.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, true);
-        COORD_FORMAT.setMaximumFractionDigits(doubleAccuracy);
+        numberFormat = NumberFormat.getInstance(Locale.US);
+        numberFormat.setGroupingUsed(false);
+        numberFormat.setMaximumFractionDigits(doubleAccuracy);
     }
 
 
@@ -169,7 +166,18 @@ class GeoJSONWriter implements Closeable, Flushable {
 
         writer.writeStartObject();
         writer.writeStringField(TYPE, FEATURE);
-        writer.writeStringField(ID, feature.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()).toString());
+        /* As defined in GeoJSON spec, identifier is an optional attribute. For
+         * more details, see https://tools.ietf.org/html/rfc7946#section-3.2
+         */
+        try {
+            final Object idValue = feature.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            // TODO : search for a property named id or identifier ?
+            if (idValue != null) {
+                writeAttribute(ID, idValue, true);
+            }
+        } catch (PropertyNotFoundException e) {
+            GeoJSONParser.LOGGER.log(Level.FINE, "Cannot write ID cause no matching property has been found.", e);
+        }
 
         //write CRS
         if (single) {
@@ -238,7 +246,9 @@ class GeoJSONWriter implements Closeable, Flushable {
         }
 
         FeatureType type = edited.getType();
-        Collection<? extends PropertyType> descriptors = type.getProperties(true);
+        Collection<? extends PropertyType> descriptors = type.getProperties(true).stream()
+                .filter(FeatureExt.IS_NOT_CONVENTION)
+                .collect(Collectors.toList());
         for (PropertyType propType : descriptors) {
             if(AttributeConvention.contains(propType.getName())) continue;
             if(AttributeConvention.isGeometryAttribute(propType)) continue;
@@ -297,7 +307,6 @@ class GeoJSONWriter implements Closeable, Flushable {
      * @throws IOException
      */
     private void writeAttribute(String name, Object value,  boolean writeFieldName) throws IOException, IllegalArgumentException {
-
         if (writeFieldName) {
             writer.writeFieldName(name);
         }
@@ -380,7 +389,7 @@ class GeoJSONWriter implements Closeable, Flushable {
 
     private void writeArray(double[] coordinates) throws IOException {
         for (double coordinate : coordinates) {
-            writer.writeNumber(COORD_FORMAT.format(coordinate));
+            writer.writeNumber(numberFormat.format(coordinate));
         }
     }
 

@@ -8,8 +8,10 @@ import org.geotoolkit.data.FeatureWriter;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.function.Function;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.data.geojson.utils.GeoJSONUtils;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -24,6 +26,10 @@ public class GeoJSONStreamWriter implements FeatureWriter {
     private Feature edited = null;
     private Feature lastWritten = null;
     private int currentFeatureIdx = 0;
+
+    private final boolean hasIdentifier;
+
+    final Function idConverter;
 
     /**
      *
@@ -54,6 +60,14 @@ public class GeoJSONStreamWriter implements FeatureWriter {
     public GeoJSONStreamWriter(OutputStream outputStream, FeatureType featureType, final JsonEncoding encoding, final int doubleAccuracy, boolean prettyPrint)
             throws DataStoreException {
         this.featureType= featureType;
+        hasIdentifier = GeoJSONUtils.hasIdentifier(featureType);
+        if (hasIdentifier) {
+            idConverter = GeoJSONUtils.getIdentifierConverter(featureType);
+        } else {
+            // It should not be used, but we don't set it to null in case someons use it by mistake.
+            idConverter = input -> input;
+        }
+
         try {
             writer = new GeoJSONWriter(outputStream, encoding, doubleAccuracy, prettyPrint);
             //start write feature collection.
@@ -98,7 +112,6 @@ public class GeoJSONStreamWriter implements FeatureWriter {
         }
     }
 
-
     @Override
     public FeatureType getFeatureType() {
         return featureType;
@@ -107,7 +120,9 @@ public class GeoJSONStreamWriter implements FeatureWriter {
     @Override
     public Feature next() throws FeatureStoreRuntimeException {
         edited = featureType.newInstance();
-        edited.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-" + currentFeatureIdx++);
+        if (hasIdentifier) {
+            edited.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), idConverter.apply(currentFeatureIdx++));
+        }
         return edited;
     }
 

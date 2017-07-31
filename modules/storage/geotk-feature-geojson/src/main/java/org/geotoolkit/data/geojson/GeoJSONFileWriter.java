@@ -26,7 +26,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.concurrent.locks.ReadWriteLock;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -55,7 +54,7 @@ class GeoJSONFileWriter extends GeoJSONReader implements FeatureWriter {
             writer = new GeoJSONWriter(tmpFile, jsonEncoding, doubleAccuracy, false);
 
             //start write feature collection.
-            writer.writeStartFeatureCollection(FeatureExt.getCRS(featureType), null);
+            writer.writeStartFeatureCollection(crs, null);
             writer.flush();
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
@@ -76,7 +75,9 @@ class GeoJSONFileWriter extends GeoJSONReader implements FeatureWriter {
             //we reach append mode
             //create empty feature
             edited = featureType.newInstance();
-            edited.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-"+currentFeatureIdx++);
+            if (hasIdentifier) {
+                edited.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), idConverter.apply(currentFeatureIdx++));
+            }
         }
         return edited;
     }
