@@ -71,6 +71,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
+import org.geotoolkit.index.tree.manager.postgres.PGDataSource;
 
 /**
  * A Test classes testing the different spatial filters.
@@ -115,14 +116,12 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
     @AfterClass
     public static void tearDownMethod() throws Exception {
         // postgres
-        if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY) != null) {
-            if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY).equals("postgres")) {
-                if (Files.isDirectory(directory)) {
-                    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
-                        final Iterator<Path> iterator = directoryStream.iterator();
-                        if (iterator.hasNext()) {
-                            LucenePostgresSQLTreeEltMapper.resetDB(iterator.next());
-                        }
+        if (PGDataSource.isSetPGDataSource()) {
+            if (Files.isDirectory(directory)) {
+                try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
+                    final Iterator<Path> iterator = directoryStream.iterator();
+                    if (iterator.hasNext()) {
+                        LucenePostgresSQLTreeEltMapper.resetDB(iterator.next());
                     }
                 }
             }

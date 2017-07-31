@@ -32,7 +32,7 @@ import org.geotoolkit.display3d.scene.SceneNode3D;
 import org.geotoolkit.display3d.scene.Terrain;
 import org.geotoolkit.display3d.scene.component.Tile3D;
 
-import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.util.StringUtilities;
 
 /**
  * @author Thomas Rouby (Geomatys))
@@ -423,7 +423,7 @@ public class QuadTreeNode extends SceneNode3D {
         if(children == null){
             return pyramidPosition.toString() +isData();
         }else{
-            return Trees.toString(pyramidPosition.toString() +isData(),
+            return StringUtilities.toStringTree(pyramidPosition.toString() +isData(),
                     Arrays.asList(children[0][0],children[0][1],children[1][0],children[1][1]));
         }
 

@@ -31,8 +31,8 @@ import org.apache.sis.util.Classes;
 import org.geotoolkit.storage.coverage.AbstractPyramidSet;
 import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -115,7 +115,7 @@ public class XMLPyramidSet extends AbstractPyramidSet{
 
     @Override
     public String toString(){
-        return Trees.toString(Classes.getShortClassName(this)+" "+getId(), getPyramids());
+        return StringUtilities.toStringTree(Classes.getShortClassName(this)+" "+getId(), getPyramids());
     }
 
     /**

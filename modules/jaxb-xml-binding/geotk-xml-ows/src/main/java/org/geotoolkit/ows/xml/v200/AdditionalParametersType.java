@@ -18,11 +18,16 @@
 package org.geotoolkit.ows.xml.v200;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import static org.geotoolkit.ows.xml.v200.ObjectFactory._AdditionalParameter_QNAME;
 
 
 /**
@@ -58,10 +63,52 @@ public class AdditionalParametersType extends AdditionalParametersBaseType {
      *
      */
     public List<AdditionalParameter> getAdditionalParameter() {
-        if (additionalParameter == null) {
-            additionalParameter = new ArrayList<AdditionalParameter>();
+        final List<AdditionalParameter> results = new ArrayList<>();
+        if (additionalParameter != null) {
+            results.addAll(additionalParameter);
         }
-        return this.additionalParameter;
+        // at unmarshalling time additional parameters are swallowed by the abstractMetadata attribute of MetadataType.
+        for (JAXBElement jb : getAbstractMetaData())  {
+            if (jb.getName().equals(_AdditionalParameter_QNAME) && jb.getValue() instanceof AdditionalParameter) {
+                results.add((AdditionalParameter) jb.getValue());
+            }
+        }
+        return Collections.unmodifiableList(results);
     }
 
+    public void setAdditionalParameter(List<AdditionalParameter> additionalParameter) {
+        this.additionalParameter = additionalParameter;
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof  AdditionalParametersType) {
+            final AdditionalParametersType that = (AdditionalParametersType) object;
+            return Objects.equals(this.additionalParameter, that.additionalParameter);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.additionalParameter);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        s.append(super.toString());
+        if (additionalParameter != null) {
+            s.append("additionalParameter:\n");
+            for (AdditionalParameter a : additionalParameter) {
+                s.append(a).append('\n');
+            }
+        }
+        return s.toString();
+    }
 }

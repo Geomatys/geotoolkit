@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.index.tree.manager.postgres;
 
 import java.io.IOException;
@@ -64,7 +63,6 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
 
     private Connection conn;
 
-
     private String schemaName;
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.index.tree.manager.postgres");
@@ -74,11 +72,11 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
             final String absolutePath = directory.getFileName().toString();
             ensureNonNull("absolutePath", absolutePath);
             this.schemaName = getSchemaName(absolutePath);
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex){
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
             throw new IllegalStateException("could not get schema name from directory name");
         }
 
-        this.crs    = crs;
+        this.crs = crs;
         this.source = source;
 
         this.conn = source.getConnection();
@@ -87,23 +85,21 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
 
     public static TreeElementMapper createTreeEltMapperWithDB(Path directory) throws SQLException, IOException {
         final DataSource dataSource = PGDataSource.getDataSource();
-        final Connection connection = dataSource.getConnection();
-
-        if (!schemaExist(connection,directory.getFileName().toString())){
-            createSchema(connection,directory.getFileName().toString());
+        try (Connection connection = dataSource.getConnection()) {
+            if (!schemaExist(connection, directory.getFileName().toString())) {
+                createSchema(connection, directory.getFileName().toString());
+            }
         }
-        connection.close();
-        return new LucenePostgresSQLTreeEltMapper(SQLRtreeManager.DEFAULT_CRS,dataSource, directory);
+        return new LucenePostgresSQLTreeEltMapper(SQLRtreeManager.DEFAULT_CRS, dataSource, directory);
     }
 
     public static void resetDB(Path directory) throws SQLException, IOException {
         final DataSource dataSource = PGDataSource.getDataSource();
-        final Connection connection = dataSource.getConnection();
-
-        if (schemaExist(connection,directory.getFileName().toString())){
-            dropSchema(connection,directory.getFileName().toString());
+        try (Connection connection = dataSource.getConnection()) {
+            if (schemaExist(connection, directory.getFileName().toString())) {
+                dropSchema(connection, directory.getFileName().toString());
+            }
         }
-        connection.close();
     }
 
     private static void dropSchema(Connection connection, String absolutePath) throws SQLException, IOException {
@@ -111,7 +107,7 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
             ensureNonNull("absolutePath", absolutePath);
             final String schemaName = getSchemaName(absolutePath);
             final ScriptRunner scriptRunner = new ScriptRunner(connection);
-            scriptRunner.run("DROP SCHEMA \""+schemaName+"\" CASCADE;");
+            scriptRunner.run("DROP SCHEMA \"" + schemaName + "\" CASCADE;");
             scriptRunner.close(true);
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
             throw new IllegalStateException("Unexpected error occurred while trying to create treemap database schema.", ex);
@@ -128,8 +124,8 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
             StringWriter writer = new StringWriter();
             IOUtils.copy(stream, writer, "UTF-8");
             String sqlQuery = writer.toString();
-            sqlQuery = sqlQuery.replaceAll("µSCHEMANAMEµ",schemaName);
-            sqlQuery = sqlQuery.replaceAll("µPATHµ",absolutePath);
+            sqlQuery = sqlQuery.replaceAll("µSCHEMANAMEµ", schemaName);
+            sqlQuery = sqlQuery.replaceAll("µPATHµ", absolutePath);
             scriptRunner.run(sqlQuery);
             scriptRunner.close(false);
 
@@ -160,22 +156,22 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
 
     public static boolean treeExist(final DataSource source, Path directory) {
         try {
-            Connection conn = source.getConnection();
-            boolean exist = schemaExist(conn, directory.getFileName().toString());
-            conn.close();
+            boolean exist;
+            try (Connection conn = source.getConnection()) {
+                exist = schemaExist(conn, directory.getFileName().toString());
+            }
             return exist;
 
         } catch (SQLException ex) {
-            LOGGER.log(Level.WARNING, "Error sxhile looking for postgres tree existence", ex);
+            LOGGER.log(Level.WARNING, "Error while looking for postgres tree existence", ex);
             return false;
         }
     }
 
     private static boolean schemaExist(Connection connection, String absolutePath) throws SQLException {
-        try {
-            ensureNonNull("absolutePath", absolutePath);
+        ensureNonNull("absolutePath", absolutePath);
+        try (final ResultSet schemas = connection.getMetaData().getSchemas()) {
             final String schemaName = getSchemaName(absolutePath);
-            final ResultSet schemas = connection.getMetaData().getSchemas();
             while (schemas.next()) {
                 if (schemaName.equals(schemas.getString(1))) {
                     return true;
@@ -189,24 +185,21 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
 
     private static String getSchemaName(String absolutePath) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         final String sha1 = AeSimpleSHA1.SHA1(absolutePath);
-        return SCHEMA+sha1;
+        return SCHEMA + sha1;
     }
-
-
-
 
     @Override
     public int getTreeIdentifier(final NamedEnvelope env) throws IOException {
         int result = -1;
         try {
-            final PreparedStatement stmt = conn.prepareStatement("SELECT \"id\" FROM \""+schemaName+"\".\"records\" WHERE \"identifier\"=?");
-            stmt.setString(1, env.getId());
-            final ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                result = rs.getInt(1);
+            try (PreparedStatement stmt = conn.prepareStatement("SELECT \"id\" FROM \"" + schemaName + "\".\"records\" WHERE \"identifier\"=?")) {
+                stmt.setString(1, env.getId());
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        result = rs.getInt(1);
+                    }
+                }
             }
-            rs.close();
-            stmt.close();
         } catch (SQLException ex) {
             throw new IOException("Error while getting tree identifier for envelope", ex);
         }
@@ -222,53 +215,47 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
     public void setTreeIdentifier(final NamedEnvelope env, final int treeIdentifier) throws IOException {
         try {
             if (env != null) {
-                final PreparedStatement existStmt = conn.prepareStatement("SELECT \"id\" FROM \""+schemaName+"\".\"records\" WHERE \"id\"=?");
-                existStmt.setInt(1, treeIdentifier);
-                final ResultSet rs = existStmt.executeQuery();
-                final boolean exist = rs.next();
-                rs.close();
-                existStmt.close();
+                final boolean exist;
+                try (PreparedStatement existStmt = conn.prepareStatement("SELECT \"id\" FROM \"" + schemaName + "\".\"records\" WHERE \"id\"=?")) {
+                    existStmt.setInt(1, treeIdentifier);
+                    try (ResultSet rs = existStmt.executeQuery()) {
+                        exist = rs.next();
+                    }
+                }
                 if (exist) {
-                    final PreparedStatement stmt = conn.prepareStatement("UPDATE \""+schemaName+"\".\"records\" "
-                                                                           + "SET \"identifier\"=?, \"nbenv\"=?, \"minx\"=?, \"maxx\"=?, \"miny\"=?, \"maxy\"=? "
-                                                                           + "WHERE \"id\"=?");
-                    stmt.setString(1, env.getId());
-                    stmt.setInt(2, env.getNbEnv());
-                    stmt.setDouble(3, env.getMinimum(0));
-                    stmt.setDouble(4, env.getMaximum(0));
-                    stmt.setDouble(5, env.getMinimum(1));
-                    stmt.setDouble(6, env.getMaximum(1));
-                    stmt.setInt(7, treeIdentifier);
-                    try {
+                    try (final PreparedStatement stmt = conn.prepareStatement("UPDATE \"" + schemaName + "\".\"records\" "
+                            + "SET \"identifier\"=?, \"nbenv\"=?, \"minx\"=?, \"maxx\"=?, \"miny\"=?, \"maxy\"=? "
+                            + "WHERE \"id\"=?")) {
+                        stmt.setString(1, env.getId());
+                        stmt.setInt(2, env.getNbEnv());
+                        stmt.setDouble(3, env.getMinimum(0));
+                        stmt.setDouble(4, env.getMaximum(0));
+                        stmt.setDouble(5, env.getMinimum(1));
+                        stmt.setDouble(6, env.getMaximum(1));
+                        stmt.setInt(7, treeIdentifier);
+
                         stmt.executeUpdate();
-                    } finally {
-                        stmt.close();
                     }
 //                    conn.commit();
                 } else {
-                    final PreparedStatement stmt = conn.prepareStatement("INSERT INTO \""+schemaName+"\".\"records\" "
-                                                                       + "VALUES (?, ?, ?, ?, ?, ?, ?)");
-                    stmt.setInt(1, treeIdentifier);
-                    stmt.setString(2, env.getId());
-                    stmt.setInt(3, env.getNbEnv());
-                    stmt.setDouble(4, env.getMinimum(0));
-                    stmt.setDouble(5, env.getMaximum(0));
-                    stmt.setDouble(6, env.getMinimum(1));
-                    stmt.setDouble(7, env.getMaximum(1));
-                    try {
-                    stmt.executeUpdate();
-                    } finally {
-                        stmt.close();
+                    try (final PreparedStatement stmt = conn.prepareStatement("INSERT INTO \"" + schemaName + "\".\"records\" "
+                            + "VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+                        stmt.setInt(1, treeIdentifier);
+                        stmt.setString(2, env.getId());
+                        stmt.setInt(3, env.getNbEnv());
+                        stmt.setDouble(4, env.getMinimum(0));
+                        stmt.setDouble(5, env.getMaximum(0));
+                        stmt.setDouble(6, env.getMinimum(1));
+                        stmt.setDouble(7, env.getMaximum(1));
+
+                        stmt.executeUpdate();
                     }
 //                    conn.commit();
                 }
             } else {
-                final PreparedStatement remove = conn.prepareStatement("DELETE FROM \""+schemaName+"\".\"records\" WHERE \"id\"=?");
-                remove.setInt(1, treeIdentifier);
-                try {
+                try (PreparedStatement remove = conn.prepareStatement("DELETE FROM \"" + schemaName + "\".\"records\" WHERE \"id\"=?")) {
+                    remove.setInt(1, treeIdentifier);
                     remove.executeUpdate();
-                } finally {
-                    remove.close();
                 }
 //                conn.commit();
             }
@@ -280,23 +267,22 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
     @Override
     public NamedEnvelope getObjectFromTreeIdentifier(final int treeIdentifier) throws IOException {
         NamedEnvelope result = null;
-        try {
-            final PreparedStatement stmt = conn.prepareStatement("SELECT * FROM \""+schemaName+"\".\"records\" WHERE \"id\"=?");
+
+        try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM \"" + schemaName + "\".\"records\" WHERE \"id\"=?")) {
             stmt.setInt(1, treeIdentifier);
-            final ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                final String identifier = rs.getString("identifier");
-                final int nbEnv         = rs.getInt("nbenv");
-                final double minx       = rs.getDouble("minx");
-                final double maxx       = rs.getDouble("maxx");
-                final double miny       = rs.getDouble("miny");
-                final double maxy       = rs.getDouble("maxy");
-                result = new NamedEnvelope(crs, identifier, nbEnv);
-                result.setRange(0, minx, maxx);
-                result.setRange(1, miny, maxy);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    final String identifier = rs.getString("identifier");
+                    final int nbEnv = rs.getInt("nbenv");
+                    final double minx = rs.getDouble("minx");
+                    final double maxx = rs.getDouble("maxx");
+                    final double miny = rs.getDouble("miny");
+                    final double maxy = rs.getDouble("maxy");
+                    result = new NamedEnvelope(crs, identifier, nbEnv);
+                    result.setRange(0, minx, maxx);
+                    result.setRange(1, miny, maxy);
+                }
             }
-            rs.close();
-            stmt.close();
         } catch (SQLException ex) {
             throw new IOException("Error while getting envelope", ex);
         }
@@ -306,37 +292,31 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
     @Override
     public Map<Integer, NamedEnvelope> getFullMap() throws IOException {
         Map<Integer, NamedEnvelope> result = new HashMap<>();
-        try {
-            final PreparedStatement stmt = conn.prepareStatement("SELECT * FROM \""+schemaName+"\".\"records\"");
-            final ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM \"" + schemaName + "\".\"records\"");
+                ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 final String identifier = rs.getString("identifier");
-                final int treeId        = rs.getInt("id");
-                final int nbEnv         = rs.getInt("nbenv");
-                final double minx       = rs.getDouble("minx");
-                final double maxx       = rs.getDouble("maxx");
-                final double miny       = rs.getDouble("miny");
-                final double maxy       = rs.getDouble("maxy");
+                final int treeId = rs.getInt("id");
+                final int nbEnv = rs.getInt("nbenv");
+                final double minx = rs.getDouble("minx");
+                final double maxx = rs.getDouble("maxx");
+                final double miny = rs.getDouble("miny");
+                final double maxy = rs.getDouble("maxy");
                 final NamedEnvelope env = new NamedEnvelope(crs, identifier, nbEnv);
                 env.setRange(0, minx, maxx);
                 env.setRange(1, miny, maxy);
                 result.put(treeId, env);
             }
-            rs.close();
-            stmt.close();
         } catch (SQLException ex) {
             throw new IOException("Error while getting envelope", ex);
         }
         return result;
     }
 
-
     @Override
     public void clear() throws IOException {
-        try {
-            final PreparedStatement stmt = conn.prepareStatement("DELETE FROM \""+schemaName+"\".\"records\"");
+        try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM \"" + schemaName + "\".\"records\"")) {
             stmt.executeUpdate();
-            stmt.close();
 //            conn.commit();
         } catch (SQLException ex) {
             throw new IOException("Error while removing all records", ex);
@@ -350,12 +330,14 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
 
     @Override
     public void close() throws IOException {
-        if (conn != null) try {
-            conn.close();
-            conn = null;
+        if (conn != null) {
+            try {
+                conn.close();
+                conn = null;
 
-        } catch (SQLException ex) {
-            throw new IOException("SQL exception while closing SQL tree mapper", ex);
+            } catch (SQLException ex) {
+                throw new IOException("SQL exception while closing SQL tree mapper", ex);
+            }
         }
     }
 
@@ -363,7 +345,5 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
     public boolean isClosed() {
         return conn == null;
     }
-
-
 
 }

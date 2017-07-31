@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Objects;
 import javax.swing.event.EventListenerList;
 
-import org.geotoolkit.gui.swing.tree.Trees;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
@@ -38,6 +37,7 @@ import org.opengis.style.Symbolizer;
 import org.opengis.util.GenericName;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.util.StringUtilities;
 
 /**
  * Mutable implementation of Types style.
@@ -244,7 +244,7 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
         builder.append(']');
 
         if(!fts.isEmpty()){
-            builder.append(Trees.toString("", fts));
+            builder.append(StringUtilities.toStringTree("", fts));
         }
 
         return builder.toString();

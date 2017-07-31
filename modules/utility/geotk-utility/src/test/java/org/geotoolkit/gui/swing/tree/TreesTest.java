@@ -56,26 +56,6 @@ public final strictfp class TreesTest extends org.geotoolkit.test.TestBase {
     }
 
     /**
-     * Tests the formatting of an {@link java.lang.Iterable} as a tree.
-     */
-    @Test
-    public void testToStringIterable() {
-        String tree = Trees.toString("Leaf", Arrays.asList("Node #1", "Node #2", "Node #3"));
-        tree = Trees.toString("Root", Arrays.asList(tree, "Median node", tree));
-        assertMultilinesEquals(
-                "Root\n" +
-                "├───Leaf\n" +
-                "│   ├───Node #1\n" +
-                "│   ├───Node #2\n" +
-                "│   └───Node #3\n" +
-                "├───Median node\n" +
-                "└───Leaf\n" +
-                "    ├───Node #1\n" +
-                "    ├───Node #2\n" +
-                "    └───Node #3\n", tree);
-    }
-
-    /**
      * Tests {@link Trees#objectToSwing(Object)}.
      *
      * @since 3.17
