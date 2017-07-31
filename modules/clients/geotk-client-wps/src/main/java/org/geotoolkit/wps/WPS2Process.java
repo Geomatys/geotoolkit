@@ -314,8 +314,7 @@ public class WPS2Process extends AbstractProcess {
             if (response instanceof Result) {
                 final Result result = (Result) response;
                 for (DataOutputType out : result.getOutput()) {
-                    final Data data = out.getData();
-                    if (data!=null) {
+                    if (out != null) {
                         final ExtendedParameterDescriptor outDesc = (ExtendedParameterDescriptor) outputParameters.getDescriptor().descriptor(out.getId());
                         final DataAdaptor adaptor = (DataAdaptor) outDesc.getUserObject().get(DataAdaptor.USE_ADAPTOR);
                         final Object value = adaptor.fromWPS2Input(out);

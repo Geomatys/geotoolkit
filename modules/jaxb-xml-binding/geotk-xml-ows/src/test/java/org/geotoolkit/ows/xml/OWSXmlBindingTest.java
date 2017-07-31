@@ -21,7 +21,12 @@ import java.io.IOException;
 import org.geotoolkit.ows.xml.v110.ExceptionReport;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 
 // JAXB dependencies
 import javax.xml.bind.JAXBException;
@@ -38,6 +43,11 @@ import org.junit.*;
 import org.xml.sax.SAXException;
 
 import static org.apache.sis.test.Assert.*;
+import org.geotoolkit.ows.xml.v200.AdditionalParameter;
+import org.geotoolkit.ows.xml.v200.AdditionalParametersType;
+import org.geotoolkit.ows.xml.v200.CodeType;
+import org.geotoolkit.ows.xml.v200.MetadataType;
+import org.geotoolkit.ows.xml.v200.ObjectFactory;
 
 
 /**
@@ -51,6 +61,16 @@ public class OWSXmlBindingTest extends org.geotoolkit.test.TestBase {
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter");
 
     private static final MarshallerPool pool = ExceptionReportMarshallerPool.getInstance();
+    private static final MarshallerPool owsPool;
+    static {
+        try {
+            owsPool = new MarshallerPool(JAXBContext.newInstance(
+                    org.geotoolkit.ows.xml.v100.ObjectFactory.class,
+                    org.geotoolkit.ows.xml.v200.ObjectFactory.class), null);
+        } catch (JAXBException ex) {
+            throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
+        }
+    }
     private Unmarshaller unmarshaller;
     private Marshaller   marshaller;
 
@@ -135,6 +155,110 @@ public class OWSXmlBindingTest extends org.geotoolkit.test.TestBase {
 
 
         assertEquals(expResult, result);
+
+    }
+
+    /**
+     * Test simple Record Marshalling.
+     *
+     * @throws JAXBException
+     */
+    @Test
+    public void additionalParametersTypeMarshallingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
+        Marshaller marshaller = owsPool.acquireMarshaller();
+        final ObjectFactory factory = new ObjectFactory();
+        
+        AdditionalParametersType metadata = new AdditionalParametersType();
+        List<AdditionalParameter> params = new ArrayList<>();
+        params.add(new AdditionalParameter(new CodeType("param-1"), Arrays.asList("value 1")));
+        params.add(new AdditionalParameter(new CodeType("param-2"), Arrays.asList("value 2")));
+        metadata.setAdditionalParameter(params);
+        
+        StringWriter sw = new StringWriter();
+        marshaller.marshal(factory.createAdditionalParameters(metadata), sw);
+
+        String result = sw.toString();
+
+        System.out.println(result);
+
+        String expResult =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<ns4:AdditionalParameters xmlns:ows=\"http://www.opengis.net/ows\" xmlns:ns4=\"http://www.opengis.net/ows/2.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:ins=\"http://www.inspire.org\">\n" +
+        "  <ns4:AdditionalParameter>\n" +
+        "    <ns4:Name>param-1</ns4:Name>\n" +
+        "    <ns4:Value xsi:type=\"xsd:string\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">value 1</ns4:Value>\n" +
+        "  </ns4:AdditionalParameter>\n" +
+        "  <ns4:AdditionalParameter>\n" +
+        "    <ns4:Name>param-2</ns4:Name>\n" +
+        "    <ns4:Value xsi:type=\"xsd:string\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">value 2</ns4:Value>\n" +
+        "  </ns4:AdditionalParameter>\n" +
+        "</ns4:AdditionalParameters>"                                                  + '\n';
+        assertXmlEquals(expResult, result, "xmlns:*");
+    }
+
+    @Test
+    public void additionalParametersTypeUnmarshalingTest() throws JAXBException {
+
+        Unmarshaller unmarshaller = owsPool.acquireUnmarshaller();
+
+        String xml =
+       "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<ns4:AdditionalParameters xmlns:ows=\"http://www.opengis.net/ows\" xmlns:ns4=\"http://www.opengis.net/ows/2.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:ins=\"http://www.inspire.org\">\n" +
+        "  <ns4:AdditionalParameter>\n" +
+        "    <ns4:Name>param-1</ns4:Name>\n" +
+        "    <ns4:Value xsi:type=\"xsd:string\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">value 1</ns4:Value>\n" +
+        "  </ns4:AdditionalParameter>\n" +
+        "  <ns4:AdditionalParameter>\n" +
+        "    <ns4:Name>param-2</ns4:Name>\n" +
+        "    <ns4:Value xsi:type=\"xsd:string\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">value 2</ns4:Value>\n" +
+        "  </ns4:AdditionalParameter>\n" +
+        "</ns4:AdditionalParameters>"+ '\n';
+
+        StringReader sr = new StringReader(xml);
+
+        AdditionalParametersType result = ((JAXBElement<AdditionalParametersType>) unmarshaller.unmarshal(sr)).getValue();
+
+        AdditionalParametersType expResult = new AdditionalParametersType();
+        List<AdditionalParameter> params = new ArrayList<>();
+        params.add(new AdditionalParameter(new CodeType("param-1"), Arrays.asList("value 1")));
+        params.add(new AdditionalParameter(new CodeType("param-2"), Arrays.asList("value 2")));
+        expResult.setAdditionalParameter(params);
+
+
+        assertEquals(expResult.getAdditionalParameter(), result.getAdditionalParameter());
+
+    }
+
+    @Test
+    public void additionalParametersNoTypeUnmarshalingTest() throws JAXBException {
+
+        Unmarshaller unmarshaller = owsPool.acquireUnmarshaller();
+
+        String xml =
+       "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<ns4:AdditionalParameters xmlns:ows=\"http://www.opengis.net/ows\" xmlns:ns4=\"http://www.opengis.net/ows/2.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:ins=\"http://www.inspire.org\">\n" +
+        "  <ns4:AdditionalParameter>\n" +
+        "    <ns4:Name>param-1</ns4:Name>\n" +
+        "    <ns4:Value>value 1</ns4:Value>\n" +
+        "  </ns4:AdditionalParameter>\n" +
+        "  <ns4:AdditionalParameter>\n" +
+        "    <ns4:Name>param-2</ns4:Name>\n" +
+        "    <ns4:Value>value 2</ns4:Value>\n" +
+        "  </ns4:AdditionalParameter>\n" +
+        "</ns4:AdditionalParameters>"+ '\n';
+
+        StringReader sr = new StringReader(xml);
+
+        AdditionalParametersType result = ((JAXBElement<AdditionalParametersType>) unmarshaller.unmarshal(sr)).getValue();
+
+        AdditionalParametersType expResult = new AdditionalParametersType();
+        List<AdditionalParameter> params = new ArrayList<>();
+        params.add(new AdditionalParameter(new CodeType("param-1"), Arrays.asList("value 1")));
+        params.add(new AdditionalParameter(new CodeType("param-2"), Arrays.asList("value 2")));
+        expResult.setAdditionalParameter(params);
+
+
+        assertEquals(expResult.getAdditionalParameter(), result.getAdditionalParameter());
 
     }
 }

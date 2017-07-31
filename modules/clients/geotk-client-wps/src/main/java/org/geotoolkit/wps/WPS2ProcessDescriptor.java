@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.measure.Unit;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.apache.sis.measure.Units;
@@ -40,6 +41,9 @@ import org.geotoolkit.wps.adaptor.BboxAdaptor;
 import org.geotoolkit.wps.adaptor.ComplexAdaptor;
 import org.geotoolkit.wps.adaptor.LiteralAdaptor;
 import org.geotoolkit.wps.adaptor.DataAdaptor;
+import org.geotoolkit.ows.xml.v200.MetadataType;
+import org.geotoolkit.ows.xml.v200.AdditionalParametersType;
+import org.geotoolkit.ows.xml.v200.AdditionalParameter;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v200.BoundingBoxData;
 import org.geotoolkit.wps.xml.v200.ComplexDataType;
@@ -58,6 +62,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
+import org.w3c.dom.Node;
 
 /**
  * WPS2 process descriptor.
@@ -193,19 +198,27 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
 
         final List<? extends DescriptionType> subInputs;
         final DataDescriptionType dataDescType;
-        final boolean required;
+        final int min;
+        final int max;
         if (input instanceof InputDescriptionType) {
             final InputDescriptionType id = (InputDescriptionType) input;
             subInputs = id.getInput();
             dataDescType = id.getDataDescription()==null?null : id.getDataDescription().getValue();
-            final String max = id.getMaxOccurs();
-            final Integer min = id.getMinOccurs();
-            required = min!=0;
+            final String maxValue = id.getMaxOccurs();
+            if ("unbounded".equals(maxValue)) {
+                max = Integer.MAX_VALUE;
+            } else if (maxValue != null) {
+                max = Integer.parseInt(maxValue);
+            } else {
+                max = 1;
+            }
+            min = id.getMinOccurs();
         } else if(input instanceof OutputDescriptionType) {
             final OutputDescriptionType od = (OutputDescriptionType) input;
             subInputs = od.getOutput();
             dataDescType = od.getDataDescription()==null?null : od.getDataDescription().getValue();
-            required = true;
+            min = 1;
+            max = 1;
         } else {
             throw new IllegalArgumentException("Unexpected description type "+input.getClass());
         }
@@ -213,12 +226,21 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
         final String inputName = input.getIdentifier().getValue();
         final String inputAbstract = input.getAbstract().isEmpty() ? null : input.getAbstract().get(0).getValue();
 
-        final Map<String, String> properties = new HashMap<>();
-        properties.put("name", inputName);
+        String remarks = null;
         if(!input.getAbstract().isEmpty() && !input.getAbstract().get(0).getValue().isEmpty()) {
-            properties.put("remarks", input.getAbstract().get(0).getValue());
+            remarks = input.getAbstract().get(0).getValue();
         }
 
+        Map userObject = new HashMap();
+        for (JAXBElement<? extends MetadataType> metaJB : input.getMetadata()) {
+            MetadataType meta = metaJB.getValue();
+            if (meta instanceof AdditionalParametersType) {
+                AdditionalParametersType params = (AdditionalParametersType)meta;
+                for (AdditionalParameter param : params.getAdditionalParameter()) {
+                    userObject.put(param.getName().getValue(), param.getValue());
+                }
+            }
+        }
 
         if (dataDescType instanceof LiteralDataType) {
             final LiteralDataType cd = (LiteralDataType) dataDescType;
@@ -232,14 +254,11 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
                 final ValueType defaultValue = domain.getDefaultValue();
                 if (defaultValue!=null) defaultValueValue = defaultValue.getValue();
                 final Unit unit = getUnit(domain.getUOM());
-
                 try {
-                    return new ExtendedParameterDescriptor(properties,
-                            adaptor.getValueClass(),
-                            null, adaptor.convert(defaultValueValue), null, null, unit, required,
-                            Collections.singletonMap(DataAdaptor.USE_ADAPTOR, adaptor));
+                    userObject.put(DataAdaptor.USE_ADAPTOR, adaptor);
+                    return new ExtendedParameterDescriptor(inputName, remarks, min, max, adaptor.getValueClass(), adaptor.convert(defaultValueValue), userObject);
                 } catch (UnconvertibleObjectException ex2) {
-                    throw new UnsupportedParameterException(processId,inputName,"Can't convert the default literal input value.", ex2);
+                    throw new UnsupportedParameterException(processId, inputName, "Can't convert the default literal input value.", ex2);
                 }
             }
 
@@ -272,16 +291,14 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
                 }
                 throw new UnsupportedParameterException(processId,inputName,"No compatible format found for parameter "+inputName+" formats : "+sb);
             }
-
-            return new ExtendedParameterDescriptor(properties, adaptor.getValueClass(),
-                    null, null, null, null, null, required, Collections.singletonMap(DataAdaptor.USE_ADAPTOR, adaptor));
+            userObject.put(DataAdaptor.USE_ADAPTOR, adaptor);
+            return new ExtendedParameterDescriptor(inputName, remarks, min, max, adaptor.getValueClass(), null, userObject);
 
         } else if (dataDescType instanceof BoundingBoxData) {
 
             final BboxAdaptor adaptor = BboxAdaptor.create((BoundingBoxData) dataDescType);
-
-            return new ExtendedParameterDescriptor(properties, Envelope.class,
-                    null, null, null, null, null, required,Collections.singletonMap(DataAdaptor.USE_ADAPTOR, adaptor));
+            userObject.put(DataAdaptor.USE_ADAPTOR, adaptor);
+            return new ExtendedParameterDescriptor(inputName, remarks, min, max, Envelope.class, null, userObject);
 
         } else if (!subInputs.isEmpty()) {
             //sub group type
@@ -297,7 +314,7 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
                     .createGroup(params.toArray(new GeneralParameterDescriptor[0]));
 
         } else {
-            throw new UnsupportedParameterException(processId,inputName,"Unidentifiable input "+inputName+" "+dataDescType);
+            throw new UnsupportedParameterException(processId, inputName, "Unidentifiable input " + inputName + " " + dataDescType);
         }
     }
 

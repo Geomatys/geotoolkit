@@ -19,10 +19,14 @@ package org.geotoolkit.ows.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 
 
 /**
@@ -57,6 +61,14 @@ public class AdditionalParameter {
     @XmlElement(name = "Value", required = true)
     private List<Object> value;
 
+    public AdditionalParameter() {
+
+    }
+
+    public AdditionalParameter(CodeType name, List<Object> value) {
+        this.name = name;
+        this.value = value;
+    }
     /**
      * Gets the value of the name property.
      *
@@ -87,9 +99,62 @@ public class AdditionalParameter {
      */
     public List<Object> getValue() {
         if (value == null) {
-            value = new ArrayList<Object>();
+            value = new ArrayList<>();
         }
-        return this.value;
+        List<Object> cleanValues = new ArrayList<>();
+        for (Object val : value) {
+            if (val instanceof Node) {
+                Node n = (Node) val;
+                if (n.getLocalName().equals("Value") && n.hasChildNodes()) {
+                    Node child = n.getChildNodes().item(0);
+                    if (child instanceof Text) {
+                        cleanValues.add(((Text)child).getNodeValue());
+                    }
+                    continue;
+                }
+            }
+            cleanValues.add(val);
+        }
+        return cleanValues;
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof  AdditionalParameter) {
+            final AdditionalParameter that = (AdditionalParameter) object;
+            return Objects.equals(this.name, that.name) &&
+                   Objects.equals(this.getValue(), that.getValue());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + Objects.hashCode(this.name);
+        hash = 17 * hash + Objects.hashCode(this.value);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        s.append("[AdditionalParameter]\n");
+        s.append("name=").append(name).append('\n');
+        if (value != null) {
+            s.append("values:\n");
+            for (Object a : value) {
+                s.append(a).append('\n');
+            }
+            s.append("cleaned values:\n");
+            for (Object a : getValue()) {
+                s.append(a).append('\n');
+            }
+        }
+        return s.toString();
     }
 
 }

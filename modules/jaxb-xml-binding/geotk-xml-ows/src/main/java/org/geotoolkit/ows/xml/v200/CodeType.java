@@ -17,6 +17,7 @@
 
 package org.geotoolkit.ows.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -134,4 +135,37 @@ public class CodeType implements AbstractCodeType {
         this.codeSpace = value;
     }
 
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof  CodeType) {
+            final CodeType that = (CodeType) object;
+            return Objects.equals(this.codeSpace, that.codeSpace) &&
+                   Objects.equals(this.value, that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + Objects.hashCode(this.codeSpace);
+        hash = 17 * hash + Objects.hashCode(this.value);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        s.append("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (codeSpace != null) {
+            s.append("codeSpace=").append(codeSpace).append('\n');
+        }
+        if (value != null) {
+            s.append("value=").append(value);
+        }
+        return s.toString();
+    }
 }
