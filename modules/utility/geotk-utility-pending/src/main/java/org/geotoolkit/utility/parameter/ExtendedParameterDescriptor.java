@@ -97,8 +97,9 @@ public class ExtendedParameterDescriptor<T> extends org.apache.sis.parameter.Def
                                        final int maxOccurs,
                                        final Class<T> valueClass,
                                        final T defaultValue,
+                                       final T[] validValues,
                                        final Map<String, Object> userObject) {
-        super(properties(name, remarks),minOccurs, maxOccurs, valueClass, null, null, defaultValue);
+        super(properties(name, remarks),minOccurs, maxOccurs, valueClass, null, validValues, defaultValue);
         this.userObject = userObject;
     }
 
