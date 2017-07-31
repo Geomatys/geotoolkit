@@ -64,7 +64,7 @@ public class ObjectFactory {
     private final static QName _Spacing_QNAME = new QName("http://www.opengis.net/ows/2.0", "Spacing");
     private final static QName _MinimumValue_QNAME = new QName("http://www.opengis.net/ows/2.0", "MinimumValue");
     private final static QName _BoundingBox_QNAME = new QName("http://www.opengis.net/ows/2.0", "BoundingBox");
-    private final static QName _AdditionalParameter_QNAME = new QName("http://www.opengis.net/ows/2.0", "AdditionalParameter");
+    public final static QName _AdditionalParameter_QNAME = new QName("http://www.opengis.net/ows/2.0", "AdditionalParameter");
     private final static QName _PositionName_QNAME = new QName("http://www.opengis.net/ows/2.0", "PositionName");
     private final static QName _Meaning_QNAME = new QName("http://www.opengis.net/ows/2.0", "Meaning");
     private final static QName _DefaultValue_QNAME = new QName("http://www.opengis.net/ows/2.0", "DefaultValue");

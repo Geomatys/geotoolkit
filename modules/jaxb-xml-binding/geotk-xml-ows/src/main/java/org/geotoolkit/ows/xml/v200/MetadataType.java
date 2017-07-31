@@ -17,6 +17,9 @@
 
 package org.geotoolkit.ows.xml.v200;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -69,7 +72,7 @@ import org.geotoolkit.ows.xml.AbstractMetadata;
 public class MetadataType implements AbstractMetadata {
 
     @XmlElementRef(name = "AbstractMetaData", namespace = "http://www.opengis.net/ows/2.0", type = JAXBElement.class)
-    private JAXBElement<?> abstractMetaData;
+    private List<JAXBElement<?>> abstractMetaData;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     private String about;
@@ -111,9 +114,7 @@ public class MetadataType implements AbstractMetadata {
             this.title   = that.getTitle();
             this.about   = that.getAbout();
             // can not clone this attribute
-            if (that instanceof JAXBElement) {
-                this.abstractMetaData = (JAXBElement)that.getAbstractMetaData();
-            }
+            this.abstractMetaData = (List<JAXBElement<?>>) that.getAbstractMetaData();
         }
     }
 
@@ -127,7 +128,10 @@ public class MetadataType implements AbstractMetadata {
      *
      */
     @Override
-    public JAXBElement<?> getAbstractMetaData() {
+    public List<JAXBElement<?>> getAbstractMetaData() {
+        if (abstractMetaData == null) {
+            this.abstractMetaData = new ArrayList<>();
+        }
         return abstractMetaData;
     }
 
@@ -140,8 +144,8 @@ public class MetadataType implements AbstractMetadata {
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *
      */
-    public void setAbstractMetaData(JAXBElement<?> value) {
-        this.abstractMetaData = ((JAXBElement<?> ) value);
+    public void setAbstractMetaData(List<JAXBElement<?>> value) {
+        this.abstractMetaData = value;
     }
 
     /**
@@ -348,4 +352,67 @@ public class MetadataType implements AbstractMetadata {
         this.actuate = value;
     }
 
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof  MetadataType) {
+            final MetadataType that = (MetadataType) object;
+
+            return Objects.equals(this.about,            that.about)            &&
+                   Objects.equals(this.abstractMetaData, that.abstractMetaData) &&
+                   Objects.equals(this.actuate,          that.actuate)          &&
+                   Objects.equals(this.arcrole,          that.arcrole)          &&
+                   Objects.equals(this.href,             that.href)             &&
+                   Objects.equals(this.role,             that.role)             &&
+                   Objects.equals(this.show,             that.show)             &&
+                   Objects.equals(this.title,            that.title)            &&
+                   Objects.equals(this.type,             that.type);
+        }
+        return false;
+    }
+
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        s.append("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (abstractMetaData != null) {
+            s.append("abstractMetadata:\n");
+            for (JAXBElement jb : abstractMetaData) {
+                s.append("JB Name  : ").append(jb.getName()).append('\n');
+                s.append("JB Value : ").append(jb.getValue()).append('\n');
+            }
+        }
+        if (about != null) {
+            s.append("about=").append(about).append('\n');
+        }
+        if (actuate != null) {
+            s.append("actuate=").append(actuate).append('\n');
+        }
+        if (arcrole != null) {
+            s.append("arcrole=").append(arcrole).append('\n');
+        }
+        if (href != null) {
+            s.append("href=").append(href).append('\n');
+        }
+        if (role != null) {
+            s.append("role=").append(role).append('\n');
+        }
+        if (show != null) {
+            s.append("show=").append(show).append('\n');
+        }
+        if (title != null) {
+            s.append("title=").append(title).append('\n');
+        }
+        if (type != null) {
+            s.append("type=").append(type).append('\n');
+        }
+        return s.toString();
+    }
 }
+
