@@ -152,38 +152,47 @@ public class FeatureStoreUtilities {
      *
      * @param writer, writer will not be closed
      * @param collection
-     * @return List of generated FeatureId
+     * @return List of generated FeatureId. Can be empty if output data type has
+     * no identifier property.
      * @throws FeatureStoreRuntimeException
      */
     public static List<FeatureId> write(final FeatureWriter writer, final Collection<? extends Feature> collection)
-            throws FeatureStoreRuntimeException{
+            throws FeatureStoreRuntimeException {
         final List<FeatureId> ids = new ArrayList<>();
+        boolean withId = false;
+        // Check if there's identifiers to report.
+        try {
+            writer.getFeatureType().getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            withId = true;
+        } catch (PropertyNotFoundException e) {
+            LOGGER.log(Level.FINE, "No identifier available at copy", e);
+        }
 
+        RuntimeException error = null;
         final Iterator<? extends Feature> ite = collection.iterator();
-        try{
-            while(ite.hasNext()){
+        try {
+            while (ite.hasNext()) {
                 final Feature f = ite.next();
                 final Feature candidate = writer.next();
                 FeatureExt.copy(f, candidate, false);
                 writer.write();
-                ids.add(FeatureExt.getId(candidate));
-            }
-        }finally{
-
-            //close reader before the writer to ensure no more read lock might still exist
-            //if we write on the same source
-            FeatureStoreRuntimeException e = null;
-            //todo must close safely both iterator
-            if(ite instanceof Closeable){
-                try {
-                    ((Closeable) ite).close();
-                } catch (Exception ex) {
-                    e = new FeatureStoreRuntimeException(ex);
+                if (withId) {
+                    ids.add(FeatureExt.getId(candidate));
                 }
             }
-
-            if(e != null){
-                throw e;
+        } catch (RuntimeException e) {
+            error = e;
+            throw error;
+        } finally {
+            if (ite instanceof AutoCloseable) {
+                try {
+                    ((AutoCloseable) ite).close();
+                } catch (Exception ex) {
+                    if (error == null)
+                        throw new FeatureStoreRuntimeException(ex);
+                    else
+                        error.addSuppressed(ex);
+                }
             }
         }
 
