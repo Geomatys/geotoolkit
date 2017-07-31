@@ -45,8 +45,6 @@ import org.opengis.feature.PropertyType;
  */
 class GeoJSONWriter implements Closeable, Flushable {
 
-    private static final NumberFormat COORD_FORMAT = NumberFormat.getInstance(Locale.US);
-
     private final static String SYS_LF;
     static {
         String lf = null;
@@ -67,21 +65,15 @@ class GeoJSONWriter implements Closeable, Flushable {
     private boolean isSingleFeature = false;
     private boolean isSingleGeometry = false;
 
+    private final NumberFormat numberFormat;
+
     @Deprecated
     GeoJSONWriter(File file, JsonEncoding encoding, int doubleAccuracy, boolean prettyPrint) throws IOException {
         this(file.toPath(), encoding, doubleAccuracy, prettyPrint);
     }
 
     GeoJSONWriter(Path file, JsonEncoding encoding, int doubleAccuracy, boolean prettyPrint) throws IOException {
-        this.prettyPrint = prettyPrint;
-        this.outputStream = Files.newOutputStream(file, CREATE, WRITE, TRUNCATE_EXISTING);
-        if (prettyPrint) {
-            this.writer = GeoJSONParser.FACTORY.createGenerator(outputStream, encoding).useDefaultPrettyPrinter();
-        } else {
-            this.writer = GeoJSONParser.FACTORY.createGenerator(outputStream, encoding);
-        }
-
-        COORD_FORMAT.setMaximumFractionDigits(doubleAccuracy);
+        this(Files.newOutputStream(file, CREATE, WRITE, TRUNCATE_EXISTING), encoding, doubleAccuracy, prettyPrint);
     }
 
     GeoJSONWriter(OutputStream stream, JsonEncoding encoding,  int doubleAccuracy, boolean prettyPrint) throws IOException {
@@ -94,7 +86,9 @@ class GeoJSONWriter implements Closeable, Flushable {
         }
 
         this.writer.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, true);
-        COORD_FORMAT.setMaximumFractionDigits(doubleAccuracy);
+        numberFormat = NumberFormat.getInstance(Locale.US);
+        numberFormat.setGroupingUsed(false);
+        numberFormat.setMaximumFractionDigits(doubleAccuracy);
     }
 
 
@@ -395,7 +389,7 @@ class GeoJSONWriter implements Closeable, Flushable {
 
     private void writeArray(double[] coordinates) throws IOException {
         for (double coordinate : coordinates) {
-            writer.writeNumber(COORD_FORMAT.format(coordinate));
+            writer.writeNumber(numberFormat.format(coordinate));
         }
     }
 
