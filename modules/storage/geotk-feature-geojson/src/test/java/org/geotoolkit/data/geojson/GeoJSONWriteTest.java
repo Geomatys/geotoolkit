@@ -42,12 +42,8 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
     private static final Properties PROPERTIES = new Properties();
 
     @BeforeClass
-    public static void init() {
-        try {
-            PROPERTIES.load(GeoJSONWriteTest.class.getResourceAsStream("/org/geotoolkit/geojson/geometries.properties"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void init() throws IOException {
+        PROPERTIES.load(GeoJSONWriteTest.class.getResourceAsStream("/org/geotoolkit/geojson/geometries.properties"));
     }
 
     @Test
