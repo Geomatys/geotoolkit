@@ -23,13 +23,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.awt.geom.Rectangle2D;
-import java.io.*;
-import java.net.URI;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.Set;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.internal.feature.AttributeConvention;
@@ -59,10 +60,10 @@ public final class MIFUtils {
     public static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     static {
+        NUM_FORMAT.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
         NUM_FORMAT.setGroupingUsed(false);
         NUM_FORMAT.setDecimalSeparatorAlwaysShown(false);
         NUM_FORMAT.setMaximumFractionDigits(10);
-        NUM_FORMAT.setMaximumIntegerDigits(10);
     }
 
     /**
@@ -158,7 +159,7 @@ public final class MIFUtils {
      * @throws DataStoreException If we get a problem while geometry conversion.
      */
     public static String buildMIFGeometry(Feature toConvert) throws DataStoreException {
-        final GeometryType geomBuilder = identifyFeature(toConvert.getType())
+        final GeometryType geomBuilder = identifyFeature(toConvert)
                 .orElseThrow(() -> new DataStoreException("Unknown geometry type in input feature " + toConvert));
         return geomBuilder.toMIFSyntax(toConvert);
     }
@@ -169,18 +170,20 @@ public final class MIFUtils {
      * @param toIdentify The feature type to check geometry.
      * @return The MIF {@link GeometryType} corresponding to this feature.
      */
-    public static Optional<GeometryType> identifyFeature(FeatureType toIdentify) {
+    static Optional<GeometryType> identifyFeature(Feature toIdentify) {
         GeometryType type = null;
         /* We'll check for the exact featureType first, and if there's no matching, we'll refine our search by checking
          * the geometry classes.
          */
-        final CoordinateReferenceSystem crsParam = FeatureExt.getCRS(toIdentify);
+        final FeatureType inputType = toIdentify.getType();
+        final CoordinateReferenceSystem crsParam = FeatureExt.getCRS(inputType);
         FeatureType superParam = null;
-        if(!toIdentify.getSuperTypes().isEmpty()) {
-            superParam = (FeatureType) toIdentify.getSuperTypes().iterator().next();
+        final Set<? extends FeatureType> superTypes = inputType.getSuperTypes();
+        if(!superTypes.isEmpty()) {
+            superParam = (FeatureType) superTypes.iterator().next();
         }
         for(GeometryType gType : GeometryType.values()) {
-            if(FeatureExt.sameProperties(gType.getBinding(crsParam, superParam), toIdentify, true)) {
+            if(FeatureExt.sameProperties(gType.getBinding(crsParam, superParam), inputType, true)) {
                 type = gType;
                 break;
             }
@@ -191,8 +194,8 @@ public final class MIFUtils {
         if (type != null) {
             return Optional.of(type);
         } else {
-            return FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(toIdentify))
-                    .map(org.opengis.feature.AttributeType::getValueClass)
+            return FeatureExt.getDefaultGeometryValue(toIdentify)
+                    .map(Object::getClass)
                     .map(MIFUtils::getGeometryType);
         }
     }
@@ -305,74 +308,35 @@ public final class MIFUtils {
     }
 
     /**
-     * Read the given input to build a geometry which type match the given typename
-     * @param typeName The type of geometry to build.
-     * @param reader The scanner to use for reading (at the wanted geometry position).
-     * @param toFill The feature to fill with geometry data.
-     * @throws DataStoreException If geometry can't be read.
-     */
-    public void readGeometry(String typeName, Scanner reader, Feature toFill, MathTransform toApply) throws DataStoreException {
-        ArgumentChecks.ensureNonNull("Reader", reader);
-        ArgumentChecks.ensureNonNull("Feature to fill", toFill);
-        for(GeometryType type : GeometryType.values()) {
-            if(typeName.equalsIgnoreCase(type.name())) {
-                type.readGeometry(reader, toFill, toApply);
-                return;
-            }
-        }
-    }
-
-    /**
      * Parse the given {@link FeatureType} to build a list of types in MIF format (as header COLUMNS category describes them).
+     * NOTE : the given type must have no geometry, and its properties must be simple objects.
+     *
      * @param toWorkWith The FeatureType to parse, can't be null.
-     * @param builder A StringBuilder in which we'll append generated types. If null, a new one is created.
+     * @param builder A StringBuilder in which we'll append generated types. Cannot be null
+     * @throws org.apache.sis.storage.DataStoreException If given data type contains invalid properties.
      */
     public static void featureTypeToMIFSyntax(FeatureType toWorkWith, StringBuilder builder) throws DataStoreException {
         ArgumentChecks.ensureNonNull("FeatureType to convert", toWorkWith);
-
-        if(builder == null) {
-            builder = new StringBuilder();
-        }
+        ArgumentChecks.ensureNonNull("Builder", builder);
 
         if(builder .length() > 0 && builder.charAt(builder.length()-1) != '\n') {
             builder.append('\n');
         }
 
-        for(PropertyType desc : toWorkWith.getProperties(true)) {
+        for(final PropertyType desc : toWorkWith.getProperties(true)) {
             // geometries are not specified in MIF columns.
             if (AttributeConvention.isGeometryAttribute(desc)) {
                 continue;
             }
-            final Class valueClass = ((org.opengis.feature.AttributeType)desc).getValueClass();
-            final String mifType = getColumnMIFType(valueClass);
+            Class<?> valueType = FeatureExt.castOrUnwrap(desc)
+                    .map(org.opengis.feature.AttributeType::getValueClass)
+                    .orElseThrow(() -> new DataStoreException("Cannot use attribute "+desc.getName()+" because we cannot find its value type."));
+
+            final String mifType = getColumnMIFType(valueType);
             if( mifType == null) {
-                throw new DataStoreException("Type "+valueClass+" has no equivalent in MIF format.");
+                throw new DataStoreException("Type "+valueType+" has no equivalent in MIF format.");
             }
             builder.append('\t').append(desc.getName().tip().toString()).append(' ').append(mifType.toLowerCase()).append('\n');
-        }
-    }
-
-    /**
-     * Check if the data pointed by given URL is inside or outside current fileSystem.
-     * @param uri The address of the file to test.
-     * @return true if the URL describe a local file, false otherwise.
-     */
-    public static boolean isLocal(final URI uri){
-        return "file".equalsIgnoreCase(uri.getScheme());
-    }
-
-    /**
-     * Write a stream into another.
-     * @param in The source inputStream
-     * @param writer The {@link OutputStreamWriter} which will write input stream into destination stream.
-     * @throws IOException If there's a problem connecting to one of the streams.
-     */
-    public static void write(InputStream in, OutputStreamWriter writer) throws IOException {
-        InputStreamReader reader = new InputStreamReader(in);
-        char[] inBuffer = new char[1024];
-        int byteRead = 0;
-        while((byteRead = reader.read(inBuffer)) >= 0) {
-            writer.write(inBuffer, 0, byteRead);
         }
     }
 

@@ -106,11 +106,11 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
         } else {
             multiPt = (MultiPoint) value;
         }
-        builder.append(multiPt.getNumGeometries()).append('\n');
+        builder.append(' ').append(multiPt.getNumGeometries()).append('\n');
 
         for(int i =0 ; i < multiPt.getNumGeometries(); i++) {
             Point pt = (Point) multiPt.getGeometryN(i);
-            builder.append(pt.getX()).append(pt.getY()).append('\n');
+            builder.append(pt.getX()).append(' ').append(pt.getY()).append('\n');
         }
 
         final Object sValue = MIFUtils.getPropertySafe(feature, Symbol.NAME.toString());

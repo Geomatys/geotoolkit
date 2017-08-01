@@ -32,10 +32,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.feature.ReprojectFeatureType;
 import org.apache.sis.storage.IllegalNameException;
@@ -204,7 +208,33 @@ public class MIFFeatureStore extends AbstractFeatureStore {
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         typeCheck(query.getTypeName());
-        return handleRemaining(new MIFFeatureReader(manager, query.getTypeName()), query);
+
+        FeatureType ft = getFeatureType(query.getTypeName());
+
+        /* We analyze input query to extract queried properties. We do it because
+         * we're capable of filtering properties at read, so we'll handle this part
+         * of the query.
+         */
+        if (query.getPropertyNames() != null) {
+            final FeatureTypeBuilder builder = new FeatureTypeBuilder(ft);
+            final Iterator<PropertyTypeBuilder> it = builder.properties().iterator();
+            final String[] props = Arrays.copyOf(query.getPropertyNames(), query.getPropertyNames().length);
+            Arrays.sort(props);
+            while (it.hasNext()) {
+                final GenericName pName = it.next().getName();
+
+                if (Arrays.binarySearch(props, pName.toString()) < 0 || Arrays.binarySearch(props, pName.tip().toString()) < 0) {
+                    it.remove();
+                }
+            }
+
+            ft = builder.build();
+            final QueryBuilder qb = new QueryBuilder(query);
+            qb.setProperties(null);
+            query = qb.buildQuery();
+        }
+
+        return handleRemaining(new MIFFeatureReader(manager, ft), query);
     }
 
     /**
@@ -213,7 +243,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
         typeCheck(query.getTypeName());
-        final MIFFeatureReader reader = new MIFFeatureReader(manager, query.getTypeName());
+        final FeatureReader reader = getFeatureReader(query);
         final MIFFeatureWriter writer = new MIFFeatureWriter(manager, reader);
         return  writer;
     }

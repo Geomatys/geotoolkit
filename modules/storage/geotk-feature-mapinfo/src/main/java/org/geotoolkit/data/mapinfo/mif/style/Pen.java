@@ -17,7 +17,6 @@
 package org.geotoolkit.data.mapinfo.mif.style;
 
 import org.geotoolkit.data.mapinfo.mif.geometry.MIFLineBuilder;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.style.DefaultDescription;
 import org.opengis.util.GenericName;
 import org.opengis.filter.expression.Expression;
@@ -33,6 +32,7 @@ import java.util.Collections;
 import java.util.regex.Pattern;
 import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.measure.Units;
+import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.opengis.feature.AttributeType;
@@ -45,7 +45,7 @@ import org.opengis.feature.AttributeType;
  */
 public class Pen implements MIFSymbolizer, LineSymbolizer {
 
-    public static final GenericName NAME = NamesExt.create("PEN");
+    public static final GenericName NAME = Names.createLocalName("style-rule", ":", "PEN");
     public static final AttributeType PEN = new DefaultAttributeType(Collections.singletonMap("name", Pen.NAME), Pen.class, 1, 1, null);
 
     public static final Pattern PEN_PATTERN = Pattern.compile(NAME.tip().toString()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);

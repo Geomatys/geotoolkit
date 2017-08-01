@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.util.UUID;
 import java.util.logging.Level;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.data.FeatureReader;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -38,7 +39,7 @@ import org.opengis.feature.FeatureType;
 public class MIFFeatureWriter implements FeatureWriter {
 
     private final MIFManager master;
-    private MIFFeatureReader reader;
+    private FeatureReader reader;
 
     private final FeatureType writeType;
     private Feature currentFeature;
@@ -49,7 +50,7 @@ public class MIFFeatureWriter implements FeatureWriter {
     private Path tmpMidFile;
     private BufferedWriter tmpMidWriter;
 
-    public MIFFeatureWriter(MIFManager parent, MIFFeatureReader readingIterator) throws DataStoreException {
+    public MIFFeatureWriter(MIFManager parent, FeatureReader readingIterator) throws DataStoreException {
         ArgumentChecks.ensureNonNull("File manager", parent);
         ArgumentChecks.ensureNonNull("MIF reader", readingIterator);
         master = parent;
