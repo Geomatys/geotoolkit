@@ -254,9 +254,18 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
                 final ValueType defaultValue = domain.getDefaultValue();
                 if (defaultValue!=null) defaultValueValue = defaultValue.getValue();
                 final Unit unit = getUnit(domain.getUOM());
+                Object[] allowedValues = null;
+                if (domain.getAllowedValues() != null && domain.getAllowedValues().getStringValues() != null) {
+                    allowedValues = new Object[domain.getAllowedValues().getStringValues().size()];
+                    int i = 0;
+                    for (String value : domain.getAllowedValues().getStringValues()) {
+                        allowedValues[i] = adaptor.convert(value);
+                        i++;
+                    }
+                }
                 try {
                     userObject.put(DataAdaptor.USE_ADAPTOR, adaptor);
-                    return new ExtendedParameterDescriptor(inputName, remarks, min, max, adaptor.getValueClass(), adaptor.convert(defaultValueValue), userObject);
+                    return new ExtendedParameterDescriptor(inputName, remarks, min, max, adaptor.getValueClass(), adaptor.convert(defaultValueValue), allowedValues, userObject);
                 } catch (UnconvertibleObjectException ex2) {
                     throw new UnsupportedParameterException(processId, inputName, "Can't convert the default literal input value.", ex2);
                 }
@@ -292,13 +301,13 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
                 throw new UnsupportedParameterException(processId,inputName,"No compatible format found for parameter "+inputName+" formats : "+sb);
             }
             userObject.put(DataAdaptor.USE_ADAPTOR, adaptor);
-            return new ExtendedParameterDescriptor(inputName, remarks, min, max, adaptor.getValueClass(), null, userObject);
+            return new ExtendedParameterDescriptor(inputName, remarks, min, max, adaptor.getValueClass(), null, null, userObject);
 
         } else if (dataDescType instanceof BoundingBoxData) {
 
             final BboxAdaptor adaptor = BboxAdaptor.create((BoundingBoxData) dataDescType);
             userObject.put(DataAdaptor.USE_ADAPTOR, adaptor);
-            return new ExtendedParameterDescriptor(inputName, remarks, min, max, Envelope.class, null, userObject);
+            return new ExtendedParameterDescriptor(inputName, remarks, min, max, Envelope.class, null, null, userObject);
 
         } else if (!subInputs.isEmpty()) {
             //sub group type
