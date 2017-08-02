@@ -38,6 +38,8 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import org.apache.sis.metadata.iso.citation.Citations;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.xml.MarshallerPool;
@@ -48,11 +50,9 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.owc.gtkext.ObjectFactory;
 import org.geotoolkit.owc.xml.v10.ContentType;
 import org.geotoolkit.owc.xml.v10.OfferingType;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.opengis.util.FactoryException;
 import org.w3._2005.atom.EntryType;
 import org.w3._2005.atom.FeedType;
@@ -137,7 +137,7 @@ public class OwcXmlIO {
 
         final Envelope aoi = context.getAreaOfInterest();
         if(aoi!=null){
-            final String ogc = IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, aoi.getCoordinateReferenceSystem(), true);
+            final String ogc = IdentifiedObjects.lookupURN(aoi.getCoordinateReferenceSystem(), null);
             final WhereType where = GEORSS_FACTORY.createWhereType();
             final DirectPositionType lowerCorner = new DirectPositionType(aoi.getLowerCorner());
             final DirectPositionType upperCorner = new DirectPositionType(aoi.getUpperCorner());

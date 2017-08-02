@@ -48,10 +48,9 @@ import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.GeometryPropertyType;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
-import org.geotoolkit.metadata.Citations;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.PropertyType;
 
@@ -234,7 +233,7 @@ public class JAXPStreamTransactionWriter {
         //write crs-------------------------------------------------------------
         final CoordinateReferenceSystem crs = element.getCoordinateReferenceSystem();
         if(crs != null){
-            final String id = IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, crs, true);
+            final String id = ReferencingUtilities.lookupIdentifier(crs, true);
             writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_SRSNAME, id);
         }
 
@@ -284,7 +283,7 @@ public class JAXPStreamTransactionWriter {
         //write crs-------------------------------------------------------------
         final CoordinateReferenceSystem crs = element.getCoordinateReferenceSystem();
         if(crs != null){
-            final String id = IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, crs, true);
+            final String id = ReferencingUtilities.lookupIdentifier(crs, true);
             writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_SRSNAME, id);
         }
 

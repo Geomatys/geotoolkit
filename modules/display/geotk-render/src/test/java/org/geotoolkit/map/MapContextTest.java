@@ -160,7 +160,7 @@ public class MapContextTest extends TestCase {
         context = MapBuilder.createContext();
         ctxBounds = context.getBounds(true);
         assertNotNull(ctxBounds);
-        expected = new GeneralEnvelope(org.geotoolkit.referencing.CRS.getEnvelope(CommonCRS.WGS84.defaultGeographic()));
+        expected = new GeneralEnvelope(CRS.getDomainOfValidity(CommonCRS.WGS84.defaultGeographic()));
         assertTrue(expected.equals(ctxBounds, 0.0000001, true));
 
     }

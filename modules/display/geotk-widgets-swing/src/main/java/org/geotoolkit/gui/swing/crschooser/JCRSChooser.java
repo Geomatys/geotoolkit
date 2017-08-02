@@ -56,7 +56,6 @@ import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.Classes;
@@ -74,6 +73,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Description;
 import org.opengis.style.LineSymbolizer;
 import org.apache.sis.io.wkt.Warnings;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.feature.Feature;
@@ -277,7 +277,7 @@ public class JCRSChooser extends javax.swing.JDialog {
         ctx.layers().clear();
 
         if(item instanceof CoordinateReferenceSystem){
-            final Envelope env = CRS.getEnvelope((CoordinateReferenceSystem)item);
+            final Envelope env = CRS.getDomainOfValidity((CoordinateReferenceSystem)item);
 
             if(env != null){
                 final FeatureTypeBuilder ftb = new FeatureTypeBuilder();

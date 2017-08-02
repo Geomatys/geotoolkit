@@ -721,7 +721,7 @@ public final class NewGridCoverageReference {
                 }
             }
         }
-        return org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(crs, true);
+        return IdentifiedObjects.lookupEPSG(crs);
     }
 
     /**

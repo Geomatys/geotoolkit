@@ -368,22 +368,19 @@ public class WPSConvertersUtils {
                 final GridCoverage2D coverage = (GridCoverage2D) object;
                 CoverageIO.write(coverage, "GEOTIFF", coverageFile);
                 env = Envelopes.transform(coverage.getEnvelope2D(), outCRS);
-                crsCode = org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(
-                        coverage.getCoordinateReferenceSystem(), false);
+                crsCode = IdentifiedObjects.lookupEPSG(coverage.getCoordinateReferenceSystem());
 
             } else if (object instanceof File || object instanceof Path) {
                 final Path objPath = (object instanceof File) ? ((File) object).toPath() : (Path) object;
                 final GridCoverageReader reader = CoverageIO.createSimpleReader(objPath);
                 env = Envelopes.transform(reader.getGridGeometry(0).getEnvelope(), outCRS);
-                crsCode = org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(
-                        reader.getGridGeometry(0).getCoordinateReferenceSystem(), false);
+                crsCode = IdentifiedObjects.lookupEPSG(reader.getGridGeometry(0).getCoordinateReferenceSystem());
                 IOUtilities.copy(objPath, coverageFile, StandardCopyOption.REPLACE_EXISTING);
 
             } else if (object instanceof GridCoverageReader) {
                 final GridCoverageReader reader = (GridCoverageReader) object;
                 env = Envelopes.transform(reader.getGridGeometry(0).getEnvelope(), outCRS);
-                crsCode = org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(
-                        reader.getGridGeometry(0).getCoordinateReferenceSystem(), false);
+                crsCode = IdentifiedObjects.lookupEPSG(reader.getGridGeometry(0).getCoordinateReferenceSystem());
                 Object in = reader.getInput();
                 if(in == null) {
                     throw new IOException("Input coverage is invalid.");

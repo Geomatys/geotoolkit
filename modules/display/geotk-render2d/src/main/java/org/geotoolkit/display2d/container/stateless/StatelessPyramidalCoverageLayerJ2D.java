@@ -334,7 +334,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         wantedEnv = new GeneralEnvelope(DefaultRasterSymbolizerRenderer.fixEnvelopeWithQuery(queryValues, wantedEnv, pyramidCRS));
 
         //ensure we don't go out of the crs envelope
-        final Envelope maxExt = org.geotoolkit.referencing.CRS.getEnvelope(pyramidCRS);
+        final Envelope maxExt = CRS.getDomainOfValidity(pyramidCRS);
         if(maxExt != null){
             wantedEnv2D.intersect(maxExt);
             if(Double.isNaN(wantedEnv2D.getMinimum(0))){ wantedEnv2D.setRange(0, maxExt.getMinimum(0), wantedEnv2D.getMaximum(0));  }

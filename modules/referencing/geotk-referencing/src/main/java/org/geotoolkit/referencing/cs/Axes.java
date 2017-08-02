@@ -240,7 +240,7 @@ public final class Axes {
             return a;
         }
         final UnitConverter converter = unit.getConverterToAny(newUnit);
-        final Map<String,Object> properties = new HashMap<>(org.geotoolkit.referencing.IdentifiedObjects.getProperties(a, null));
+        final Map<String,Object> properties = new HashMap<>(PredefinedCS.getProperties(a, null));
         properties.put(DefaultCoordinateSystemAxis.MINIMUM_VALUE_KEY, converter.convert(a.getMinimumValue()));
         properties.put(DefaultCoordinateSystemAxis.MAXIMUM_VALUE_KEY, converter.convert(a.getMaximumValue()));
         properties.put(DefaultCoordinateSystemAxis.RANGE_MEANING_KEY, a.getRangeMeaning()); // TODO: should be provided by getProperties

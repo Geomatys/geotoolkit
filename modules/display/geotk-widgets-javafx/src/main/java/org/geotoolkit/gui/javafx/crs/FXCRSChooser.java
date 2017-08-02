@@ -32,6 +32,7 @@ import org.apache.sis.referencing.cs.AxesConvention;
 import org.geotoolkit.gui.javafx.util.FXOptionDialog;
 import org.geotoolkit.internal.GeotkFX;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.crs.AbstractCRS;
@@ -95,7 +96,7 @@ public class FXCRSChooser extends BorderPane {
 
         //fix longitude first
         try{
-            Integer epsg = org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(crs, true);
+            Integer epsg = IdentifiedObjects.lookupEPSG(crs);
             if(epsg!=null){
                 crs = CRS.forCode("EPSG:"+epsg);
                 if (uiLongFirst.isSelected()) {

@@ -47,7 +47,6 @@ import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.client.CapabilitiesException;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.temporal.object.TemporalUtilities;
@@ -57,6 +56,7 @@ import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.Style;
 import org.apache.sis.measure.Units;
+import org.geotoolkit.referencing.ReferencingUtilities;
 
 /**
  * Convinient WMS methods.
@@ -94,7 +94,7 @@ public final class WMSUtilities {
         final AbstractLayer[] stack = server.getCapabilities().getLayerStackFromName(layername);
 
         if(stack != null){
-            final String srid = IdentifiedObjects.lookupIdentifier(crs, true);
+            final String srid = ReferencingUtilities.lookupIdentifier(crs, true);
             if(srid == null){
                 //current crs has no knowned id, we can ask the server for this crs
                 return false;

@@ -36,7 +36,6 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gml.xml.AbstractGeometricAggregate;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.AbstractRing;
-import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.IdentifiedObjects;
 import static org.geotoolkit.gml.xml.GMLXmlFactory.*;
 
@@ -442,7 +441,7 @@ public final class JTStoGeometry {
      */
     private static String getSRS(final CoordinateReferenceSystem crs) throws FactoryException {
         String srs = null;
-        final String method1 = org.geotoolkit.referencing.IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, crs, false);
+        final String method1 = IdentifiedObjects.lookupURN(crs, null);
 
         if (method1 != null) {
             srs = method1;

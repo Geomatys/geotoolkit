@@ -117,7 +117,7 @@ public class J2DGridUtilities {
             }
 
 
-            Envelope validity = org.geotoolkit.referencing.CRS.getEnvelope(gridCRS);
+            Envelope validity = CRS.getDomainOfValidity(gridCRS);
             if(validity != null){
                 GeneralEnvelope env = new GeneralEnvelope(gridBounds);
                 env.intersect(validity);

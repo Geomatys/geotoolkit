@@ -61,12 +61,12 @@ import org.geotoolkit.display2d.ext.text.GraphicTextJ2D;
 import org.geotoolkit.display2d.ext.text.TextTemplate;
 import org.geotoolkit.display2d.service.PortrayalExtension;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -570,7 +570,7 @@ public final class DecorationXMLParser {
                 try {
                     el = document.createElement(TAG_PARAMETER);
                     el.setAttribute(ATT_NAME, PARAM_CRS);
-                    el.setTextContent(IdentifiedObjects.lookupIdentifier(gridTemplate.getCRS(), true));
+                    el.setTextContent(IdentifiedObjects.lookupURN(gridTemplate.getCRS(), null));
                     deco.appendChild(el);
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.WARNING, null, ex);

@@ -70,6 +70,7 @@ import org.apache.sis.util.NullArgumentException;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
 import org.apache.sis.util.Utilities;
 
 
@@ -604,7 +605,7 @@ public final class ReferencingUtilities {
             }
 
             //try to change the crs axis
-            final String id = IdentifiedObjects.lookupIdentifier(singlecrs, true);
+            final String id = lookupIdentifier(singlecrs, true);
             if(id != null){
                 return AbstractCRS.castOrCopy(CRS.forCode(id)).forConvention(AxesConvention.RIGHT_HANDED);
             }else{
@@ -1029,4 +1030,47 @@ public final class ReferencingUtilities {
     private static Map<String,String> name(final String name) {
         return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
     }
+
+    /**
+     * Looks up an {@linkplain Identifier identifier}, such as {@code "EPSG:4326"},
+     * of the specified object. This method searches in registered factories for an object
+     * {@linkplain ComparisonMode#APPROXIMATIVE approximatively equals} to the specified
+     * object. If such an object is found, then its first identifier is returned. Otherwise
+     * this method returns {@code null}.
+     * <p>
+     * <strong>Note that this method checks the identifier validity</strong>. If the given object
+     * declares explicitly an identifier, then this method will instantiate an object from the
+     * authority factory using that identifier and compare it with the given object. If the
+     * comparison fails, then this method returns {@code null}. Consequently this method may
+     * returns {@code null} even if the given object declares explicitly its identifier. If
+     * the declared identifier is wanted unconditionally, use
+     * {@link #getIdentifier(IdentifiedObject)} instead.
+     *
+     * @param  object The object (usually a {@linkplain CoordinateReferenceSystem coordinate
+     *         reference system}) whose identifier is to be found, or {@code null}.
+     * @param  fullScan If {@code true}, an exhaustive full scan against all registered objects
+     *         should be performed (may be slow). Otherwise only a fast lookup based on embedded
+     *         identifiers and names will be performed.
+     * @return The identifier, or {@code null} if none was found or if the given object was null.
+     * @throws FactoryException If an unexpected failure occurred during the search.
+     *
+     * @see AbstractAuthorityFactory#getIdentifiedObjectFinder(Class)
+     * @see IdentifiedObjectFinder#findIdentifier(IdentifiedObject)
+     */
+    public static String lookupIdentifier(final IdentifiedObject object, final boolean fullScan)
+            throws FactoryException {
+        if (object == null) {
+            return null;
+        }
+        final IdentifiedObjectFinder f = org.apache.sis.referencing.IdentifiedObjects.newFinder(null);
+        f.setSearchDomain(fullScan ? IdentifiedObjectFinder.Domain.ALL_DATASET : IdentifiedObjectFinder.Domain.DECLARATION);
+        for (final IdentifiedObject o : f.find(object)) {
+            final String i = org.apache.sis.referencing.IdentifiedObjects.toString(
+                    org.apache.sis.referencing.IdentifiedObjects.getIdentifier(o, null));
+            if (i != null) return i;
+        }
+        return null;
+    }
+
+
 }

@@ -218,7 +218,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
 
             //try to reduce to domain before reproject
             if(env == null){
-                final Envelope domain = org.geotoolkit.referencing.CRS.getEnvelope(preserve.getCoordinateReferenceSystem());
+                final Envelope domain = CRS.getDomainOfValidity(preserve.getCoordinateReferenceSystem());
                 if(domain != null){
                     preserve.intersect(domain);
                     env = new GeneralEnvelope(Envelopes.transform(preserve, objectiveCRS2D));
@@ -228,7 +228,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
 
             //fall back on crs domain
             if(env == null){
-                final Envelope domain = org.geotoolkit.referencing.CRS.getEnvelope(objectiveCRS2D);
+                final Envelope domain = CRS.getDomainOfValidity(objectiveCRS2D);
                 if(domain!=null){
                     env = new GeneralEnvelope(domain);
                 }

@@ -26,9 +26,9 @@ import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.io.LEDataOutputStream;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.util.FactoryException;
@@ -84,7 +84,7 @@ public class WKBRasterWriter {
     public void write(final GridCoverage2D coverage, final OutputStream stream, final boolean littleEndian)
             throws IOException, FactoryException {
         final CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem2D();
-        final Integer srid = IdentifiedObjects.lookupEpsgCode(crs, true);
+        final Integer srid = IdentifiedObjects.lookupEPSG(crs);
         if(srid == null){
             throw new IOException("CoordinateReferenceSystem does not have an EPSG code.");
         }

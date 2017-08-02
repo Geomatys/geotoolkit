@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.StyleConstants;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.measure.NumberRange;
@@ -35,6 +34,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
 
 
@@ -162,7 +162,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
 
         if (result == null|| result.isEmpty()) {
             //we could not find a valid envelope
-            result = new GeneralEnvelope(CRS.getEnvelope(crs));
+            result = new GeneralEnvelope(CRS.getDomainOfValidity(crs));
         }
         return result;
     }

@@ -113,7 +113,7 @@ public class ProjectionUtils {
 
     public static String getMIFBounds(CoordinateReferenceSystem source) {
         StringBuilder builder = new StringBuilder();
-        Envelope bounds = org.geotoolkit.referencing.CRS.getEnvelope(source);
+        Envelope bounds = CRS.getDomainOfValidity(source);
         if(bounds != null) {
             double minX = bounds.getLowerCorner().getOrdinate(0);
             double minY = bounds.getLowerCorner().getOrdinate(1);
