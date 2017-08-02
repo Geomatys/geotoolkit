@@ -24,9 +24,9 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import static org.junit.Assert.assertTrue;
@@ -41,7 +41,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores;
 import static org.junit.Assert.*;
 import org.opengis.feature.FeatureType;
@@ -58,7 +57,7 @@ public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
     public PostgresSpatialQueryTest(){
     }
 
-    private static ParameterValueGroup params;
+    private static Parameters params;
 
     /**
      * <p>Find JDBC connection parameters in specified file at
@@ -84,7 +83,7 @@ public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
         Assume.assumeTrue(f.exists());
         final Properties properties = new Properties();
         properties.load(new FileInputStream(f));
-        params = Parameters.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
+        params = Parameters.castOrWrap(org.geotoolkit.parameter.Parameters.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false));
     }
 
     private void reload(boolean simpleType) throws DataStoreException, VersioningException {
@@ -93,7 +92,7 @@ public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
         }
 
         //open in complex type to delete all types
-        ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(false);
+        params.getOrCreate(PostgresFeatureStoreFactory.SIMPLETYPE).setValue(false);
         store = (PostgresFeatureStore) DataStores.open(params);
         for(GenericName n : store.getNames()){
             VersionControl vc = store.getVersioning(n.toString());
@@ -104,7 +103,7 @@ public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
         store.close();
 
         //reopen the way it was asked
-        ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(simpleType);
+        params.getOrCreate(PostgresFeatureStoreFactory.SIMPLETYPE).setValue(simpleType);
         store = (PostgresFeatureStore) DataStores.open(params);
         assertTrue(store.getNames().isEmpty());
     }

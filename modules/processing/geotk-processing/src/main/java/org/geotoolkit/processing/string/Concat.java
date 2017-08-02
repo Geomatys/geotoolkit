@@ -17,8 +17,6 @@
 
 package org.geotoolkit.processing.string;
 
-import static org.geotoolkit.parameter.Parameters.getOrCreate;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.processing.string.ConcatDescriptor.INSTANCE;
@@ -46,17 +44,17 @@ public class Concat extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         fireProcessStarted("Start concat");
-        final ParameterValue prefixVal = ParametersExt.getValue(inputParameters, PREFIX.getName().getCode());
+        final ParameterValue prefixVal = inputParameters.getOrCreate(PREFIX);
         String prefix = null;
         if (prefixVal != null) {
             prefix = prefixVal.stringValue();
         }
-        final ParameterValue suffixVal = ParametersExt.getValue(inputParameters, SUFFIX.getName().getCode());
+        final ParameterValue suffixVal = inputParameters.getOrCreate(SUFFIX);
         String suffix = null;
         if (suffixVal != null) {
             suffix = suffixVal.stringValue();
         }
-        final String value  = getOrCreate(VALUE, inputParameters).stringValue();
+        final String value  = inputParameters.getValue(VALUE);
 
         String result = value;
         if (prefix != null) {
@@ -67,7 +65,7 @@ public class Concat extends AbstractProcess {
             result = result + suffix;
         }
 
-        getOrCreate(RESULT_OUT, outputParameters).setValue(result);
+        outputParameters.getOrCreate(RESULT_OUT).setValue(result);
 
         fireProcessCompleted("Concat done.");
     }

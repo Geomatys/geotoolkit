@@ -17,11 +17,11 @@
 package org.geotoolkit.processing.coverage.merge;
 
 import java.awt.image.DataBuffer;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -31,7 +31,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.processing.coverage.merge.MergeDescriptor.*;
 import org.geotoolkit.processing.coverage.reformat.ReformatDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.opengis.coverage.Coverage;
 import org.opengis.geometry.Envelope;
 
@@ -55,9 +54,9 @@ public class MergeProcess extends AbstractProcess {
     }
 
     private static ParameterValueGroup asParameters(Coverage[] coverages, Envelope env){
-        final ParameterValueGroup params = MergeDescriptor.INPUT_DESC.createValue();
-        ParametersExt.getOrCreateValue(params, MergeDescriptor.IN_COVERAGES.getName().getCode()).setValue(coverages);
-        if(env!=null)ParametersExt.getOrCreateValue(params, MergeDescriptor.IN_ENVELOPE.getName().getCode()).setValue(env);
+        final Parameters params = Parameters.castOrWrap(MergeDescriptor.INPUT_DESC.createValue());
+        params.getOrCreate(MergeDescriptor.IN_COVERAGES).setValue(coverages);
+        if(env!=null)params.getOrCreate(MergeDescriptor.IN_ENVELOPE).setValue(env);
         return params;
     }
 
@@ -77,9 +76,9 @@ public class MergeProcess extends AbstractProcess {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
 
         // PARAMETERS CHECK ////////////////////////////////////////////////////
-        final Coverage[] inputCoverage = (Coverage[]) Parameters.getOrCreate(IN_COVERAGES, inputParameters).getValue();
-        final Envelope inputEnvelope = (Envelope) Parameters.getOrCreate(IN_ENVELOPE, inputParameters).getValue();
-        final double inputResolution = (Double) Parameters.getOrCreate(IN_RESOLUTION, inputParameters).getValue();
+        final Coverage[] inputCoverage = inputParameters.getValue(IN_COVERAGES);
+        final Envelope inputEnvelope = inputParameters.getValue(IN_ENVELOPE);
+        final double inputResolution = inputParameters.getValue(IN_RESOLUTION);
 
         //find the best data type;
         int datatype = -1;
@@ -129,7 +128,7 @@ public class MergeProcess extends AbstractProcess {
         final Process resampleProcess = coverageResampleDesc.createProcess(resampleParams);
         final Coverage result = (GridCoverage2D)resampleProcess.call().parameter("result").getValue();
 
-        Parameters.getOrCreate(OUT_COVERAGE, outputParameters).setValue(result);
+        outputParameters.getOrCreate(OUT_COVERAGE).setValue(result);
     }
 
     private static int largest(int datatype1, int datatype2){

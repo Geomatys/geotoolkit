@@ -17,6 +17,7 @@
 
 package org.geotoolkit.processing.coverage.mathcalc;
 
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -24,8 +25,6 @@ import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.WrapFilterFactory2;
-import static org.geotoolkit.parameter.Parameters.value;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.coverage.Coverage;
@@ -55,20 +54,20 @@ public class MathCalcProcess extends AbstractProcess {
     }
 
     private static ParameterValueGroup toParameters(Coverage[] inCoverages, String inFormula, String[] inMapping, CoverageResource outCoverage){
-        final ParameterValueGroup params = MathCalcDescriptor.INSTANCE.getInputDescriptor().createValue();
-        ParametersExt.getOrCreateValue(params, "inCoverages").setValue(inCoverages);
-        ParametersExt.getOrCreateValue(params, "inFormula").setValue(inFormula);
-        ParametersExt.getOrCreateValue(params, "inMapping").setValue(inMapping);
-        ParametersExt.getOrCreateValue(params, "inResultCoverage").setValue(outCoverage);
+        final Parameters params = Parameters.castOrWrap(MathCalcDescriptor.INSTANCE.getInputDescriptor().createValue());
+        params.getOrCreate(MathCalcDescriptor.IN_COVERAGES).setValue(inCoverages);
+        params.getOrCreate(MathCalcDescriptor.IN_FORMULA).setValue(inFormula);
+        params.getOrCreate(MathCalcDescriptor.IN_MAPPING).setValue(inMapping);
+        params.getOrCreate(MathCalcDescriptor.IN_RESULT_COVERAGE).setValue(outCoverage);
         return params;
     }
 
     @Override
     protected void execute() throws ProcessException {
-        final Coverage[] inCoverages = value(MathCalcDescriptor.IN_COVERAGES, inputParameters);
-        final String inFormula = value(MathCalcDescriptor.IN_FORMULA, inputParameters);
-        final String[] inMapping = value(MathCalcDescriptor.IN_MAPPING, inputParameters);
-        final CoverageResource outRef = value(MathCalcDescriptor.IN_RESULT_COVERAGE, inputParameters);
+        final Coverage[] inCoverages = inputParameters.getValue(MathCalcDescriptor.IN_COVERAGES);
+        final String inFormula = inputParameters.getValue(MathCalcDescriptor.IN_FORMULA);
+        final String[] inMapping = inputParameters.getValue(MathCalcDescriptor.IN_MAPPING);
+        final CoverageResource outRef = inputParameters.getValue(MathCalcDescriptor.IN_RESULT_COVERAGE);
 
         final GeneralGridGeometry gg;
         final GridCoverageReader outReader;

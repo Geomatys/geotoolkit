@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.AbstractMap;
 import java.util.Map.Entry;
 import javax.imageio.ImageReader;
+import org.apache.sis.parameter.Parameters;
 
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
@@ -37,12 +38,9 @@ import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-
-import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.processing.coverage.tiling.TilingDescriptor.*;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.utility.parameter.ParametersExt;
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -66,11 +64,11 @@ public final class TilingProcess extends AbstractProcess {
     }
 
     private static ParameterValueGroup asParameters(ImageReader imgReader, File file, File output, AffineTransform gridtoCRS){
-        final ParameterValueGroup params = INPUT_DESC.createValue();
-        if(imgReader!=null) ParametersExt.getOrCreateValue(params, IN_SOURCE_READER.getName().getCode()).setValue(imgReader);
-        if(file!=null) ParametersExt.getOrCreateValue(params, IN_SOURCE_FILE.getName().getCode()).setValue(file);
-        ParametersExt.getOrCreateValue(params, IN_TILES_FOLDER.getName().getCode()).setValue(output);
-        ParametersExt.getOrCreateValue(params, IN_GRID_TO_CRS.getName().getCode()).setValue(gridtoCRS);
+        final Parameters params = Parameters.castOrWrap(INPUT_DESC.createValue());
+        if(imgReader!=null) params.getOrCreate(IN_SOURCE_READER).setValue(imgReader);
+        if(file!=null) params.getOrCreate(IN_SOURCE_FILE).setValue(file);
+        params.getOrCreate(IN_TILES_FOLDER).setValue(output);
+        params.getOrCreate(IN_GRID_TO_CRS).setValue(gridtoCRS);
         return params;
     }
 
@@ -92,14 +90,14 @@ public final class TilingProcess extends AbstractProcess {
         ArgumentChecks.ensureNonNull("inputParameters", inputParameters);
 
         final Object input;
-        final ImageReader imgReader = value(IN_SOURCE_READER, inputParameters);
+        final ImageReader imgReader = inputParameters.getValue(IN_SOURCE_READER);
         if (imgReader != null) {
             input = imgReader;
         } else {
-            input = value(IN_SOURCE_FILE, inputParameters);
+            input = inputParameters.getValue(IN_SOURCE_FILE);
         }
-        final File output = value(IN_TILES_FOLDER, inputParameters);
-        AffineTransform gridtoCRS = value(IN_GRID_TO_CRS, inputParameters);
+        final File output = inputParameters.getValue(IN_TILES_FOLDER);
+        AffineTransform gridtoCRS = inputParameters.getValue(IN_GRID_TO_CRS);
 
         if (!output.exists()) {
             output.mkdirs();
@@ -131,8 +129,8 @@ public final class TilingProcess extends AbstractProcess {
             params.setTileWritingPolicy(TileWritingPolicy.WRITE_NEWS_ONLY);
             final TileManager tileManager = builder.writeFromInput(input, params);
 
-            getOrCreate(OUT_TILE_MANAGER, outputParameters).setValue(tileManager);
-            getOrCreate(OUT_CRS, outputParameters).setValue(crs);
+            outputParameters.getOrCreate(OUT_TILE_MANAGER).setValue(tileManager);
+            outputParameters.getOrCreate(OUT_CRS).setValue(crs);
         } catch (Exception ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }

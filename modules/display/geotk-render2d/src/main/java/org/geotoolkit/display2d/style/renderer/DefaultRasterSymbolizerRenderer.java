@@ -56,6 +56,7 @@ import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -67,7 +68,6 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.shadedrelief.ShadedReliefDescriptor;
@@ -1030,13 +1030,13 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             RenderedImage image = sourceCoverage.getRenderedImage();
 
             final ProcessDescriptor bandSelectDesc = BandSelectDescriptor.INSTANCE;
-            final ParameterValueGroup param = bandSelectDesc.getInputDescriptor().createValue();
-            ParametersExt.getOrCreateValue(param, BandSelectDescriptor.IN_IMAGE.getName().getCode()).setValue(image);
-            ParametersExt.getOrCreateValue(param, BandSelectDescriptor.IN_BANDS.getName().getCode()).setValue(indices);
+            final Parameters param = Parameters.castOrWrap(bandSelectDesc.getInputDescriptor().createValue());
+            param.getOrCreate(BandSelectDescriptor.IN_IMAGE).setValue(image);
+            param.getOrCreate(BandSelectDescriptor.IN_BANDS).setValue(indices);
             final org.geotoolkit.process.Process process = bandSelectDesc.createProcess(param);
 
-            final ParameterValueGroup output = process.call();
-            image = (RenderedImage) ParametersExt.getOrCreateValue(output, BandSelectDescriptor.OUT_IMAGE.getName().getCode()).getValue();
+            final Parameters output = Parameters.castOrWrap(process.call());
+            image = output.getValue(BandSelectDescriptor.OUT_IMAGE);
             final GridCoverageBuilder builder = new GridCoverageBuilder();
             builder.setGridCoverage(sourceCoverage);
             builder.setRenderedImage(image);

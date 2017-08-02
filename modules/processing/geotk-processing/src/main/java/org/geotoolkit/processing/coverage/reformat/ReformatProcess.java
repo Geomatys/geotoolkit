@@ -21,11 +21,11 @@ import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.util.Hashtable;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -33,7 +33,6 @@ import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.processing.coverage.reformat.ReformatDescriptor.*;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.opengis.coverage.Coverage;
 
 /**
@@ -56,9 +55,9 @@ public class ReformatProcess extends AbstractProcess {
     }
 
     private static ParameterValueGroup asParameters(Coverage coverage, Integer dataType){
-        final ParameterValueGroup params = ReformatDescriptor.INPUT_DESC.createValue();
-        ParametersExt.getOrCreateValue(params, ReformatDescriptor.IN_COVERAGE.getName().getCode()).setValue(coverage);
-        ParametersExt.getOrCreateValue(params, ReformatDescriptor.IN_DATATYPE.getName().getCode()).setValue(dataType);
+        final Parameters params = Parameters.castOrWrap(ReformatDescriptor.INPUT_DESC.createValue());
+        params.getOrCreate(ReformatDescriptor.IN_COVERAGE).setValue(coverage);
+        params.getOrCreate(ReformatDescriptor.IN_DATATYPE).setValue(dataType);
         return params;
     }
 
@@ -78,20 +77,20 @@ public class ReformatProcess extends AbstractProcess {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
 
         // PARAMETERS CHECK ////////////////////////////////////////////////////
-        final GridCoverage2D inputCoverage = (GridCoverage2D) Parameters.getOrCreate(IN_COVERAGE, inputParameters).getValue();
-        final int inputType = (Integer) Parameters.getOrCreate(IN_DATATYPE, inputParameters).getValue();
+        final GridCoverage2D inputCoverage = (GridCoverage2D) inputParameters.getValue(IN_COVERAGE);
+        final int inputType = inputParameters.getValue(IN_DATATYPE);
         final RenderedImage inputImage = inputCoverage.getRenderedImage();
         final SampleModel inputSampleModel = inputImage.getSampleModel();
         //check type, if same return the original coverage
         if(inputSampleModel.getDataType() == inputType){
-            Parameters.getOrCreate(OUT_COVERAGE, outputParameters).setValue(inputCoverage);
+            outputParameters.getOrCreate(OUT_COVERAGE).setValue(inputCoverage);
             return;
         }
 
 
         // CALL IMAGE BAND SELECT //////////////////////////////////////////////
         final ProcessDescriptor imageReformatDesc = org.geotoolkit.processing.image.reformat.ReformatDescriptor.INSTANCE;
-        final ParameterValueGroup params = imageReformatDesc.getInputDescriptor().createValue();
+        final Parameters params = Parameters.castOrWrap(imageReformatDesc.getInputDescriptor().createValue());
         params.parameter("image").setValue(inputCoverage.getRenderedImage());
         params.parameter("datatype").setValue(inputType);
         final Process process = imageReformatDesc.createProcess(params);
@@ -116,7 +115,7 @@ public class ReformatProcess extends AbstractProcess {
         final GridCoverage2D resultCoverage = gcb.getGridCoverage2D();
 
 
-        Parameters.getOrCreate(OUT_COVERAGE, outputParameters).setValue(resultCoverage);
+        outputParameters.getOrCreate(OUT_COVERAGE).setValue(resultCoverage);
     }
 
 }

@@ -30,14 +30,12 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.parameter.Parameters;
-import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.straighten.StraightenDescriptor;
 
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.utility.parameter.ParametersExt;
+import org.apache.sis.parameter.Parameters;
 import org.opengis.coverage.Coverage;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
@@ -73,8 +71,8 @@ public class ReduceToDomainProcess extends AbstractProcess {
     }
 
     private static ParameterValueGroup asParameters(Coverage coverage){
-        final ParameterValueGroup params = ReduceToDomainDescriptor.INPUT_DESC.createValue();
-        ParametersExt.getOrCreateValue(params, ReduceToDomainDescriptor.COVERAGE_IN.getName().getCode()).setValue(coverage);
+        final Parameters params = Parameters.castOrWrap(ReduceToDomainDescriptor.INPUT_DESC.createValue());
+        params.getOrCreate(ReduceToDomainDescriptor.COVERAGE_IN).setValue(coverage);
         return params;
     }
 
@@ -86,7 +84,7 @@ public class ReduceToDomainProcess extends AbstractProcess {
      */
     public Coverage executeNow() throws ProcessException {
         execute();
-        return (Coverage) outputParameters.parameter(ReduceToDomainDescriptor.COVERAGE_OUT.getName().getCode()).getValue();
+        return (Coverage) outputParameters.getValue(ReduceToDomainDescriptor.COVERAGE_OUT);
     }
 
     /**
@@ -94,7 +92,7 @@ public class ReduceToDomainProcess extends AbstractProcess {
      */
     @Override
     protected void execute() throws ProcessException {
-        GridCoverage2D candidate = (GridCoverage2D) value(StraightenDescriptor.COVERAGE_IN, inputParameters);
+        GridCoverage2D candidate = (GridCoverage2D) inputParameters.getValue(StraightenDescriptor.COVERAGE_IN);
         final CoordinateReferenceSystem crs = candidate.getCoordinateReferenceSystem2D();
         final CoordinateReferenceSystem crs2d;
         try {
@@ -112,23 +110,23 @@ public class ReduceToDomainProcess extends AbstractProcess {
         if (!(crs instanceof ProjectedCRS)) {
             if(!wrapAround[0] && !wrapAround[1]){
                 //no wrap around axis, can't fix anything.
-                getOrCreate(StraightenDescriptor.COVERAGE_OUT, outputParameters).setValue(candidate);
+                outputParameters.getOrCreate(StraightenDescriptor.COVERAGE_OUT).setValue(candidate);
                 return;
             }
         }
 
 
         //straighten coverage---------------------------------------------------
-        final ParameterValueGroup subParams = StraightenDescriptor.INPUT_DESC.createValue();
-        Parameters.getOrCreate(StraightenDescriptor.COVERAGE_IN, subParams).setValue(candidate);
+        final Parameters subParams = Parameters.castOrWrap(StraightenDescriptor.INPUT_DESC.createValue());
+        subParams.getOrCreate(StraightenDescriptor.COVERAGE_IN).setValue(candidate);
         final org.geotoolkit.process.Process subprocess = StraightenDescriptor.INSTANCE.createProcess(subParams);
-        final ParameterValueGroup result;
+        final Parameters result;
         try{
-            result = subprocess.call();
+            result = Parameters.castOrWrap(subprocess.call());
         }catch(ProcessException ex){
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-        candidate = (GridCoverage2D) Parameters.getOrCreate(StraightenDescriptor.COVERAGE_OUT, result).getValue();
+        candidate = (GridCoverage2D) result.getValue(StraightenDescriptor.COVERAGE_OUT);
 
 
 
@@ -189,7 +187,7 @@ public class ReduceToDomainProcess extends AbstractProcess {
             final boolean yWrap = (minY < axiYMinValue || maxY > axiYMaxValue);
             if( !xWrap && !yWrap ){
                 //nothing to fix
-                getOrCreate(StraightenDescriptor.COVERAGE_OUT, outputParameters).setValue(candidate);
+                outputParameters.getOrCreate(StraightenDescriptor.COVERAGE_OUT).setValue(candidate);
                 return;
             }
 
@@ -313,7 +311,7 @@ public class ReduceToDomainProcess extends AbstractProcess {
             gcb.setGridGeometry(gg);
             gcb.setRenderedImage(resimg);
             final GridCoverage2D outgc = gcb.getGridCoverage2D();
-            getOrCreate(StraightenDescriptor.COVERAGE_OUT, outputParameters).setValue(outgc);
+            outputParameters.getOrCreate(StraightenDescriptor.COVERAGE_OUT).setValue(outgc);
         }catch(TransformException ex){
             throw new ProcessException(ex.getMessage(), this, ex);
         }

@@ -19,12 +19,11 @@ package org.geotoolkit.processing.image.replace;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import org.apache.sis.parameter.Parameters;
 
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.processing.image.replace.ReplaceDescriptor.*;
@@ -48,9 +47,9 @@ public class ReplaceProcess extends AbstractProcess {
     }
 
     private static ParameterValueGroup toParameters(BufferedImage image, double[][][] replacements){
-        final ParameterValueGroup params = ReplaceDescriptor.INPUT_DESC.createValue();
-        ParametersExt.getOrCreateValue(params, ReplaceDescriptor.IN_IMAGE.getName().getCode()).setValue(image);
-        ParametersExt.getOrCreateValue(params, ReplaceDescriptor.IN_REPLACEMENTS.getName().getCode()).setValue(replacements);
+        final Parameters params = Parameters.castOrWrap(ReplaceDescriptor.INPUT_DESC.createValue());
+        params.getOrCreate(ReplaceDescriptor.IN_IMAGE).setValue(image);
+        params.getOrCreate(ReplaceDescriptor.IN_REPLACEMENTS).setValue(replacements);
         return params;
     }
 
@@ -58,8 +57,8 @@ public class ReplaceProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
 
-        final BufferedImage inputImage = (BufferedImage) Parameters.getOrCreate(IN_IMAGE, inputParameters).getValue();
-        replacements = (double[][][]) Parameters.getOrCreate(IN_REPLACEMENTS, inputParameters).getValue();
+        final BufferedImage inputImage = inputParameters.getValue(IN_IMAGE);
+        replacements = inputParameters.getValue(IN_REPLACEMENTS);
         replacements = replacements.clone();
 
         //copy datas
@@ -79,7 +78,7 @@ public class ReplaceProcess extends AbstractProcess {
             }
         }
 
-        Parameters.getOrCreate(OUT_IMAGE, outputParameters).setValue(inputImage);
+        outputParameters.getOrCreate(OUT_IMAGE).setValue(inputImage);
     }
 
     private double replace(double value, int band){

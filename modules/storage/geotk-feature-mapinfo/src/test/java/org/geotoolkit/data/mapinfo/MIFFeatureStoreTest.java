@@ -29,6 +29,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import java.io.File;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
@@ -37,7 +38,6 @@ import org.geotoolkit.data.mapinfo.mif.MIFFeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.apache.sis.referencing.CommonCRS;
 import org.junit.After;
 import org.junit.Test;
@@ -93,8 +93,8 @@ public class MIFFeatureStoreTest extends org.geotoolkit.test.TestBase {
         final File f = File.createTempFile("test", ".mif", tempDir);
 
         final FeatureStoreFactory ff = (FeatureStoreFactory) DataStores.getFactoryById("MIF-MID");
-        final ParameterValueGroup params = ff.getParametersDescriptor().createValue();
-        ParametersExt.getOrCreateValue(params, MIFFeatureStoreFactory.PATH.getName().getCode()).setValue(f.toURI());
+        final Parameters params = Parameters.castOrWrap(ff.getParametersDescriptor().createValue());
+        params.getOrCreate(MIFFeatureStoreFactory.PATH).setValue(f.toURI());
 
         //create new store from scratch
         final FeatureStore ds = (FeatureStore) ff.create(params);

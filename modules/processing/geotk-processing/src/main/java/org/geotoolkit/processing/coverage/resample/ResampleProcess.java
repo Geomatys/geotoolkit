@@ -42,13 +42,12 @@ import org.geotoolkit.coverage.processing.CannotReprojectException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import static org.geotoolkit.internal.coverage.CoverageUtilities.hasRenderingCategories;
-import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 
@@ -108,19 +107,19 @@ public class ResampleProcess extends AbstractProcess {
 
     private static ParameterValueGroup asParameters(GridCoverage2D coverage, CoordinateReferenceSystem targetCrs,
             GridGeometry gridGeom, InterpolationCase interpolation, double[] background){
-        final ParameterValueGroup params = ResampleDescriptor.INPUT_DESC.createValue();
-        ParametersExt.getOrCreateValue(params, IN_COVERAGE.getName().getCode()).setValue(coverage);
+        final Parameters params = Parameters.castOrWrap(ResampleDescriptor.INPUT_DESC.createValue());
+        params.getOrCreate(IN_COVERAGE).setValue(coverage);
         if(targetCrs!=null){
-            ParametersExt.getOrCreateValue(params, IN_COORDINATE_REFERENCE_SYSTEM.getName().getCode()).setValue(targetCrs);
+            params.getOrCreate( IN_COORDINATE_REFERENCE_SYSTEM).setValue(targetCrs);
         }
         if(gridGeom!=null){
-            ParametersExt.getOrCreateValue(params, IN_GRID_GEOMETRY.getName().getCode()).setValue(gridGeom);
+            params.getOrCreate(IN_GRID_GEOMETRY).setValue(gridGeom);
         }
         if(background!=null){
-            ParametersExt.getOrCreateValue(params, IN_BACKGROUND.getName().getCode()).setValue(background);
+            params.getOrCreate(IN_BACKGROUND).setValue(background);
         }
         if(interpolation!=null){
-            ParametersExt.getOrCreateValue(params, IN_INTERPOLATION_TYPE.getName().getCode()).setValue(interpolation);
+            params.getOrCreate(IN_INTERPOLATION_TYPE).setValue(interpolation);
         }
         return params;
     }
@@ -137,21 +136,19 @@ public class ResampleProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
 
 
-        final GridCoverage2D source = (GridCoverage2D) Parameters.getOrCreate(IN_COVERAGE, inputParameters).getValue();
-        final double[] background = (double[]) Parameters.getOrCreate(IN_BACKGROUND, inputParameters).getValue();
-        InterpolationCase interpolation = (InterpolationCase) Parameters.getOrCreate(IN_INTERPOLATION_TYPE, inputParameters).getValue();
+        final GridCoverage2D source = inputParameters.getValue(IN_COVERAGE);
+        final double[] background = inputParameters.getValue(IN_BACKGROUND);
+        InterpolationCase interpolation = inputParameters.getValue(IN_INTERPOLATION_TYPE);
         if(interpolation == null){
             interpolation = InterpolationCase.NEIGHBOR;
         }
-        final ResampleBorderComportement border = (ResampleBorderComportement) Parameters
-                .getOrCreate(IN_BORDER_COMPORTEMENT_TYPE, inputParameters).getValue();
+        final ResampleBorderComportement border = inputParameters.getValue(IN_BORDER_COMPORTEMENT_TYPE);
 
         CoordinateReferenceSystem targetCRS = (CoordinateReferenceSystem) inputParameters.parameter("CoordinateReferenceSystem").getValue();
         if (targetCRS == null) {
             targetCRS = source.getCoordinateReferenceSystem();
         }
-        final GridGeometry2D targetGG = GridGeometry2D.castOrCopy(
-                (GridGeometry) inputParameters.parameter("GridGeometry").getValue());
+        final GridGeometry2D targetGG = GridGeometry2D.castOrCopy(inputParameters.getValue(IN_GRID_GEOMETRY));
         final GridCoverage2D target;
 
         try {
@@ -164,7 +161,7 @@ public class ResampleProcess extends AbstractProcess {
                     Errors.Keys.CantReprojectCoverage_1, source.getName()), exception);
         }
 
-        Parameters.getOrCreate(OUT_COVERAGE, outputParameters).setValue(target);
+        outputParameters.getOrCreate(OUT_COVERAGE).setValue(target);
     }
 
     /**

@@ -2,12 +2,10 @@ package org.geotoolkit.pending.demo.swing;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import javax.swing.*;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.gui.swing.parameters.creator.JParameterDescriptorsEditor;
 import org.geotoolkit.gui.swing.propertyedit.JAttributeEditor;
-import org.geotoolkit.utility.parameter.ParametersExt;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
@@ -17,8 +15,7 @@ public class ParameterCreationDemo {
 
     public static void main(String[] args) {
 
-        final ParameterDescriptorGroup descGroup =
-                ParametersExt.createParameterDescriptorGroup("group", null, 1, 1, new ArrayList<GeneralParameterDescriptor>());
+        final ParameterDescriptorGroup descGroup = new ParameterBuilder().addName("group").setRequired(true).createGroup();
         final JAttributeEditor editors = new JAttributeEditor();
 
 

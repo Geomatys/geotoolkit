@@ -20,6 +20,7 @@ import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.sis.parameter.Parameters;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridGeometry;
@@ -32,13 +33,11 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.storage.coverage.CoverageUtilities;
-import org.geotoolkit.utility.parameter.ParametersExt;
 
 import static org.geotoolkit.processing.coverage.bandcombine.BandCombineDescriptor.*;
 
@@ -64,8 +63,8 @@ public class BandCombineProcess extends AbstractProcess {
     }
 
     private static ParameterValueGroup asParameters(Coverage ... coverages){
-        final ParameterValueGroup params = BandCombineDescriptor.INPUT_DESC.createValue();
-        ParametersExt.getOrCreateValue(params, IN_COVERAGES.getName().getCode()).setValue(coverages);
+        final Parameters params = Parameters.castOrWrap(BandCombineDescriptor.INPUT_DESC.createValue());
+        params.getOrCreate(IN_COVERAGES).setValue(coverages);
         return params;
     }
 
@@ -77,7 +76,7 @@ public class BandCombineProcess extends AbstractProcess {
      */
     public GridCoverage2D executeNow() throws ProcessException {
         execute();
-        return (GridCoverage2D) outputParameters.parameter(OUT_COVERAGE.getName().getCode()).getValue();
+        return (GridCoverage2D)outputParameters.getValue(OUT_COVERAGE);
     }
 
     @Override
@@ -85,12 +84,12 @@ public class BandCombineProcess extends AbstractProcess {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
 
         // PARAMETERS CHECK ////////////////////////////////////////////////////
-        final Coverage[] inputCoverage = (Coverage[]) Parameters.getOrCreate(IN_COVERAGES, inputParameters).getValue();
+        final Coverage[] inputCoverage = inputParameters.getValue(IN_COVERAGES);
         if (inputCoverage.length == 0) {
             throw new ProcessException("No coverage to combine", this, null);
         } else if (inputCoverage.length == 1) {
             //nothing to do
-            Parameters.getOrCreate(OUT_COVERAGE, outputParameters).setValue(inputCoverage[0]);
+            outputParameters.getOrCreate(OUT_COVERAGE).setValue(inputCoverage[0]);
             return;
         }
 
@@ -111,7 +110,7 @@ public class BandCombineProcess extends AbstractProcess {
             }
 
             final ProcessDescriptor imageCombineDesc = org.geotoolkit.processing.image.bandcombine.BandCombineDescriptor.INSTANCE;
-            final ParameterValueGroup params = imageCombineDesc.getInputDescriptor().createValue();
+            final Parameters params = Parameters.castOrWrap(imageCombineDesc.getInputDescriptor().createValue());
             params.parameter("images").setValue(images);
             final Process process = imageCombineDesc.createProcess(params);
             RenderedImage resultImage = (RenderedImage)process.call().parameter("result").getValue();
@@ -127,7 +126,7 @@ public class BandCombineProcess extends AbstractProcess {
             gcb.setSampleDimensions(sds.toArray(new GridSampleDimension[sds.size()]));
             final GridCoverage2D resultCoverage = gcb.getGridCoverage2D();
 
-            Parameters.getOrCreate(OUT_COVERAGE, outputParameters).setValue(resultCoverage);
+            outputParameters.getOrCreate(OUT_COVERAGE).setValue(resultCoverage);
         } catch (CoverageStoreException e) {
             throw new ProcessException(e.getMessage(),this, e);
         }

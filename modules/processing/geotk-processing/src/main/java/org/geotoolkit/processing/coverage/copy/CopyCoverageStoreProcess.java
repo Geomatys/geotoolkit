@@ -33,7 +33,6 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.opengis.util.GenericName;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
@@ -64,16 +63,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
 
 import org.apache.sis.util.logging.Logging;
-import static org.geotoolkit.parameter.Parameters.value;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.ERASE;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.INSTANCE;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.REDUCE_TO_DOMAIN;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.STORE_IN;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.STORE_OUT;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
@@ -106,11 +104,11 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
     }
 
     private static ParameterValueGroup asParameters(CoverageStore inStore,CoverageStore outStore,boolean erase, boolean reduce){
-        final ParameterValueGroup params = CopyCoverageStoreDescriptor.INPUT_DESC.createValue();
-        ParametersExt.getOrCreateValue(params, CopyCoverageStoreDescriptor.STORE_IN.getName().getCode()).setValue(inStore);
-        ParametersExt.getOrCreateValue(params, CopyCoverageStoreDescriptor.STORE_OUT.getName().getCode()).setValue(outStore);
-        ParametersExt.getOrCreateValue(params, CopyCoverageStoreDescriptor.ERASE.getName().getCode()).setValue(erase);
-        ParametersExt.getOrCreateValue(params, CopyCoverageStoreDescriptor.REDUCE_TO_DOMAIN.getName().getCode()).setValue(reduce);
+        final Parameters params = Parameters.castOrWrap(CopyCoverageStoreDescriptor.INPUT_DESC.createValue());
+        params.getOrCreate(CopyCoverageStoreDescriptor.STORE_IN).setValue(inStore);
+        params.getOrCreate(CopyCoverageStoreDescriptor.STORE_OUT).setValue(outStore);
+        params.getOrCreate(CopyCoverageStoreDescriptor.ERASE).setValue(erase);
+        params.getOrCreate(CopyCoverageStoreDescriptor.REDUCE_TO_DOMAIN).setValue(reduce);
         return params;
     }
 
@@ -128,10 +126,10 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      */
     @Override
     protected void execute() throws ProcessException {
-        final CoverageStore inStore  = value(STORE_IN,  inputParameters);
-        final CoverageStore outStore = value(STORE_OUT, inputParameters);
-        final Boolean       erase    = value(ERASE,     inputParameters);
-        final Boolean       reduce   = value(REDUCE_TO_DOMAIN,     inputParameters);
+        final CoverageStore inStore  = inputParameters.getValue(STORE_IN);
+        final CoverageStore outStore = inputParameters.getValue(STORE_OUT);
+        final Boolean       erase    = inputParameters.getValue(ERASE);
+        final Boolean       reduce   = inputParameters.getValue(REDUCE_TO_DOMAIN);
 
         try {
             final float size = inStore.getNames().size();
@@ -387,25 +385,25 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         GridCoverage2D coverage = (GridCoverage2D) reader.read(imageIndex, params);
 
         //straighten coverage
-        final ParameterValueGroup subParams = StraightenDescriptor.INPUT_DESC.createValue();
-        Parameters.getOrCreate(StraightenDescriptor.COVERAGE_IN, subParams).setValue(coverage);
+        final Parameters subParams = Parameters.castOrWrap(StraightenDescriptor.INPUT_DESC.createValue());
+        subParams.getOrCreate(StraightenDescriptor.COVERAGE_IN).setValue(coverage);
         final Process subprocess = StraightenDescriptor.INSTANCE.createProcess(subParams);
-        ParameterValueGroup result;
+        Parameters result;
         try{
-            result = subprocess.call();
+            result = Parameters.castOrWrap(subprocess.call());
         }catch(ProcessException ex){
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-        coverage = (GridCoverage2D) Parameters.getOrCreate(StraightenDescriptor.COVERAGE_OUT, result).getValue();
+        coverage = (GridCoverage2D) result.getOrCreate(StraightenDescriptor.COVERAGE_OUT).getValue();
 
         //reduce to valid domain
         if(reduce){
-            final ParameterValueGroup redParams = ReduceToDomainDescriptor.INPUT_DESC.createValue();
-            Parameters.getOrCreate(ReduceToDomainDescriptor.COVERAGE_IN, redParams).setValue(coverage);
+            final Parameters redParams = Parameters.castOrWrap(ReduceToDomainDescriptor.INPUT_DESC.createValue());
+            redParams.getOrCreate(ReduceToDomainDescriptor.COVERAGE_IN).setValue(coverage);
             final Process redprocess = ReduceToDomainDescriptor.INSTANCE.createProcess(redParams);
             try{
-                result = redprocess.call();
-                coverage = (GridCoverage2D) Parameters.getOrCreate(StraightenDescriptor.COVERAGE_OUT, result).getValue();
+                result = Parameters.castOrWrap(redprocess.call());
+                coverage = (GridCoverage2D) result.getOrCreate(StraightenDescriptor.COVERAGE_OUT).getValue();
             }catch(ProcessException ex){
                 throw new ProcessException(ex.getMessage(), this, ex);
             }

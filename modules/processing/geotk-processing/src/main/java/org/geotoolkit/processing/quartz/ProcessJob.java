@@ -33,6 +33,7 @@ import org.quartz.UnableToInterruptJobException;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.sis.parameter.Parameters;
 
 /**
  * Quartz job executing a geotoolkit process.
@@ -79,7 +80,7 @@ public class ProcessJob implements InterruptableJob {
 
         final String factoryId = (String) objFactoryId;
         final String processId = (String) objProcessId;
-        final ParameterValueGroup params = (ParameterValueGroup) objProcessParams;
+        final Parameters params = Parameters.castOrWrap((ParameterValueGroup) objProcessParams);
         process = (Process) objProcess;
 
         if(process == null){

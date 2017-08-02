@@ -33,6 +33,7 @@ import java.util.Set;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -44,7 +45,6 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -85,7 +85,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
     public PostgresVersioningTest(){
     }
 
-    private static ParameterValueGroup params;
+    private static Parameters params;
 
     /**
      * <p>Find JDBC connection parameters in specified file at
@@ -111,7 +111,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         Assume.assumeTrue(f.exists());
         final Properties properties = new Properties();
         properties.load(new FileInputStream(f));
-        params = FeatureExt.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
+        params = Parameters.castOrWrap(FeatureExt.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false));
     }
 
     private void reload(boolean simpleType) throws DataStoreException, VersioningException {
@@ -120,7 +120,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         }
 
         //open in complex type to delete all types
-        ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(false);
+        params.getOrCreate(PostgresFeatureStoreFactory.SIMPLETYPE).setValue(false);
         store = (PostgresFeatureStore) DataStores.open(params);
         for(GenericName n : store.getNames()){
             VersionControl vc = store.getVersioning(n.toString());
@@ -131,7 +131,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         store.close();
 
         //reopen the way it was asked
-        ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(simpleType);
+        params.getOrCreate(PostgresFeatureStoreFactory.SIMPLETYPE).setValue(simpleType);
         store = (PostgresFeatureStore) DataStores.open(params);
         assertTrue(store.getNames().isEmpty());
 

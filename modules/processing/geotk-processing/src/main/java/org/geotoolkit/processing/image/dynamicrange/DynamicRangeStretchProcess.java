@@ -20,12 +20,11 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.math.XMath;
-import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchDescriptor.*;
@@ -43,10 +42,10 @@ public class DynamicRangeStretchProcess extends AbstractProcess {
     }
 
     private static ParameterValueGroup asParameters(RenderedImage input, int[] bands, double[][] ranges){
-        final ParameterValueGroup params = DynamicRangeStretchDescriptor.INPUT_DESC.createValue();
-        ParametersExt.getOrCreateValue(params, IN_IMAGE.getName().getCode()).setValue(input);
-        ParametersExt.getOrCreateValue(params, IN_BANDS.getName().getCode()).setValue(bands);
-        ParametersExt.getOrCreateValue(params, IN_RANGES.getName().getCode()).setValue(ranges);
+        final Parameters params = Parameters.castOrWrap(DynamicRangeStretchDescriptor.INPUT_DESC.createValue());
+        params.getOrCreate(IN_IMAGE).setValue(input);
+        params.getOrCreate(IN_BANDS).setValue(bands);
+        params.getOrCreate(IN_RANGES).setValue(ranges);
         return params;
     }
 
@@ -63,9 +62,9 @@ public class DynamicRangeStretchProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
 
-        final RenderedImage inputImage = (RenderedImage) Parameters.getOrCreate(IN_IMAGE, inputParameters).getValue();
-        final int[] bands = (int[]) Parameters.getOrCreate(IN_BANDS, inputParameters).getValue();
-        final double[][] ranges = (double[][]) Parameters.getOrCreate(IN_RANGES, inputParameters).getValue();
+        final RenderedImage inputImage = inputParameters.getValue(IN_IMAGE);
+        final int[] bands              = inputParameters.getValue(IN_BANDS);
+        final double[][] ranges        = inputParameters.getValue(IN_RANGES);
 
         if(bands.length!=4 || ranges.length!=4){
             throw new ProcessException("Bands and Ranges parameters must be of size 4.", this);
@@ -130,7 +129,7 @@ public class DynamicRangeStretchProcess extends AbstractProcess {
             }
         }
 
-        Parameters.getOrCreate(OUT_IMAGE, outputParameters).setValue(resultImage);
+        outputParameters.getOrCreate(OUT_IMAGE).setValue(resultImage);
     }
 
 }

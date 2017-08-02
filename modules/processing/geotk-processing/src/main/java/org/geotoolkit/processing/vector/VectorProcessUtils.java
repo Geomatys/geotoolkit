@@ -69,6 +69,7 @@ import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.opengis.feature.AttributeType;
@@ -381,9 +382,9 @@ public final class VectorProcessUtils extends Static {
 
         //lauch Intersect process to get all features which intersect the inputFeature geometry
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IntersectDescriptor.NAME);
-        final ParameterValueGroup in = desc.getInputDescriptor().createValue();
-        in.parameter(IntersectDescriptor.FEATURE_IN.getName().getCode()).setValue(featureList);
-        in.parameter(IntersectDescriptor.GEOMETRY_IN.getName().getCode()).setValue(inputGeometry);
+        final Parameters in = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
+        in.getOrCreate(IntersectDescriptor.FEATURE_IN).setValue(featureList);
+        in.getOrCreate(IntersectDescriptor.GEOMETRY_IN).setValue(inputGeometry);
         final org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //get all Features which intersects the intput Feature geometry

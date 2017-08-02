@@ -18,9 +18,7 @@ package org.geotoolkit.image.classification;
 
 import java.util.Arrays;
 import java.util.List;
-import junit.framework.Assert;
-import static org.junit.Assert.assertTrue;
-import org.junit.Ignore;
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
@@ -381,12 +379,12 @@ public class ClassificationTest extends org.geotoolkit.test.TestBase {
         try {
             classification.computeJenks();
         } catch(Exception e) {
-            Assert.fail("test should had execute");
+            fail("test should had execute");
         }
         classification.setClassNumber(5);
         try {
             classification.computeJenks();
-            Assert.fail("test should had failed");
+            fail("test should had failed");
         } catch(Exception e) {
             //ok
         }
@@ -401,7 +399,7 @@ public class ClassificationTest extends org.geotoolkit.test.TestBase {
         //ask result before compute
         try {
             classification.getIndex();
-            Assert.fail("test should had failed");
+            fail("test should had failed");
         } catch(Exception e) {
             //ok
         }
@@ -409,7 +407,7 @@ public class ClassificationTest extends org.geotoolkit.test.TestBase {
         //ask compute Jenks before set
         try {
             classification.computeJenks();
-            Assert.fail("test should had failed");
+            fail("test should had failed");
         } catch(Exception e) {
             //ok
         }
@@ -417,7 +415,7 @@ public class ClassificationTest extends org.geotoolkit.test.TestBase {
         //ask compute quantile before set
         try {
             classification.computeQuantile();
-            Assert.fail("test should had failed");
+            fail("test should had failed");
         } catch(Exception e) {
             //ok
         }
@@ -426,7 +424,7 @@ public class ClassificationTest extends org.geotoolkit.test.TestBase {
         //set bad class number value
         try {
             classification.setClassNumber(0);
-            Assert.fail("test should had failed");
+            fail("test should had failed");
         } catch(Exception e) {
             //ok
         }
@@ -435,7 +433,7 @@ public class ClassificationTest extends org.geotoolkit.test.TestBase {
         try {
             classification.setClassNumber(11);
             classification.computeJenks();
-            Assert.fail("test should had failed");
+            fail("test should had failed");
         } catch(Exception e) {
             //ok
         }
@@ -443,7 +441,7 @@ public class ClassificationTest extends org.geotoolkit.test.TestBase {
         //ask result without compute
         try {
             classification.getClasses();
-            Assert.fail("test should had failed");
+            fail("test should had failed");
         } catch(Exception e) {
             //ok
         }
@@ -451,7 +449,7 @@ public class ClassificationTest extends org.geotoolkit.test.TestBase {
         //ask compute quantile with bad data and class number value
         try {
             classification.computeQuantile();
-            Assert.fail("test should had failed");
+            fail("test should had failed");
         } catch(Exception e) {
             //ok
         }
@@ -459,7 +457,7 @@ public class ClassificationTest extends org.geotoolkit.test.TestBase {
         //set null data
         try {
             classification.setData(null);
-            Assert.fail("test should had failed");
+            fail("test should had failed");
         } catch(Exception e) {
             //ok
         }

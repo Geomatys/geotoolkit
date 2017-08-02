@@ -32,8 +32,8 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.parameter.Parameters;
 
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.feature.Feature;
@@ -78,8 +78,8 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
     }
 
     private static ParameterValueGroup asParameters(GridCoverageReader reader){
-        final ParameterValueGroup params = CoverageToFeaturesDescriptor.INPUT_DESC.createValue();
-        ParametersExt.getOrCreateValue(params, CoverageToFeaturesDescriptor.READER_IN.getName().getCode()).setValue(reader);
+        final Parameters params = Parameters.castOrWrap(CoverageToFeaturesDescriptor.INPUT_DESC.createValue());
+        params.getOrCreate(CoverageToFeaturesDescriptor.READER_IN).setValue(reader);
         return params;
     }
 
