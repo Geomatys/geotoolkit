@@ -22,11 +22,7 @@ package org.geotoolkit.parameter;
 
 import java.util.Set;
 import java.util.Objects;
-import java.io.Writer;
-import java.io.FilterWriter;
-import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import javax.measure.Unit;
 
 import org.opengis.parameter.ParameterValue;
@@ -37,14 +33,11 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.InvalidParameterValueException;
 
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.wkt.Formattable;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.io.wkt.FormattableObject;
-import org.apache.sis.util.iso.DefaultNameSpace;
-
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
@@ -220,135 +213,6 @@ public abstract class AbstractParameter extends FormattableObject
     @Override
     public int hashCode() {
         return descriptor.hashCode() ^ (int) serialVersionUID;
-    }
-
-    /**
-     * Returns a string representation of this parameter. The default implementation delegates
-     * the work to {@link #write(TableWriter)}. Subclass can override the later method instead
-     * than {@code toString()}.
-     */
-    @Override
-    public String toString() {
-        final TableWriter table = new TableWriter(null, 1);
-        table.setMultiLinesCells(true);
-        try {
-            write(table);
-        } catch (IOException exception) {
-            // Should never happen, since we write to a StringWriter.
-            throw new AssertionError(exception);
-        }
-        return table.toString();
-    }
-
-    /**
-     * Writes the content of this parameter to the specified table. This method provides a more
-     * convenient way to align the values than overriding the {@link #toString} method. The table
-     * columns are defined as below:
-     * <p>
-     * <ol>
-     *   <li>The parameter name</li>
-     *   <li>The separator</li>
-     *   <li>The parameter value</li>
-     * </ol>
-     * <p>
-     * The default implementation is suitable for most cases. However, subclasses are free to
-     * override this method with the following idiom:
-     *
-     * {@preformat java
-     *     table.write("parameter name");
-     *     table.nextColumn()
-     *     table.write('=');
-     *     table.nextColumn()
-     *     table.write("parameter value");
-     *     table.nextLine()
-     * }
-     *
-     * @param  table The table where to format the parameter value.
-     * @throws IOException if an error occurs during output operation.
-     */
-    protected void write(final TableWriter table) throws IOException {
-        table.write(getName(descriptor));
-        table.nextColumn();
-        if (this instanceof ParameterValue<?>) {
-            /*
-             * Provides a default implementation for parameter value. This implementation doesn't
-             * need to be a Geotk's one. Putting a default implementation here avoid duplication
-             * in all subclasses implementing the same interface.
-             */
-            table.write('=');
-            table.nextColumn();
-            append(table, ((ParameterValue<?>) this).getValue());
-        } else if (this instanceof ParameterValueGroup) {
-            /*
-             * Provides a default implementation for parameter value group, for the same reasons
-             * then the previous block. Reminder: the above 'instanceof' check for interface, not
-             * for subclass. This explain why we use it instead of method overriding.
-             */
-            table.write(DefaultNameSpace.DEFAULT_SEPARATOR);
-            table.nextColumn();
-            TableWriter inner = null;
-            for (final GeneralParameterValue value : ((ParameterValueGroup) this).values()) {
-                if (value instanceof AbstractParameter) {
-                    if (inner == null) {
-                        inner = new TableWriter(new FilterWriter(table) {
-                            @Override public void flush() {} // To be removed after migration to Apache SIS.
-                        }, 1);
-                        inner.setMultiLinesCells(true);
-                    }
-                    ((AbstractParameter) value).write(inner);
-                } else {
-                    // Unknow implementation. It will break the formatting. Too bad...
-                    if (inner != null) {
-                        inner.flush();
-                        inner = null;
-                    }
-                    table.write(value.toString());
-                    table.write('\n');
-                }
-            }
-            if (inner != null) {
-                inner.flush();
-            }
-        } else {
-            /*
-             * No know parameter value for this default implementation.
-             */
-        }
-        table.nextLine();
-    }
-
-    /**
-     * Append the specified value to a stream. If the value is an array, then
-     * the array element are appended recursively (i.e. the array may contains
-     * sub-array).
-     */
-    private static void append(final Writer buffer, final Object value) throws IOException {
-        if (value == null) {
-            buffer.write("null");
-        } else if (value.getClass().isArray()) {
-            buffer.write('{');
-            final int length = Array.getLength(value);
-            final int limit = Math.min(5, length);
-            for (int i=0; i<limit; i++) {
-                if (i != 0) {
-                    buffer.write(", ");
-                }
-                append(buffer, Array.get(value, i));
-            }
-            if (length > limit) {
-                buffer.write(", ...");
-            }
-            buffer.write('}');
-        } else {
-            final boolean isNumeric = (value instanceof Number);
-            if (!isNumeric) {
-                buffer.write('"');
-            }
-            buffer.write(value.toString());
-            if (!isNumeric) {
-                buffer.write('"');
-            }
-        }
     }
 
     /**

@@ -38,13 +38,13 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.metadata.Identifier;
 
-import org.geotoolkit.io.X364;
 import org.apache.sis.io.wkt.Colors;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.StringBuilders;
+import org.geotoolkit.util.StringUtilities;
 
 
 /**
@@ -219,7 +219,7 @@ public class PropertiesSheet extends JComponent {
         buffer.append("<pre>");
         // '\u001A' is the SUBSTITUTE character. We use it as a temporary replacement for avoiding
         // confusion between WKT quotes and HTML quotes while we search for text to make italic.
-        makeItalic(X364.toHTML(text.replace('"', '\u001A')), buffer, '\u001A');
+        makeItalic(StringUtilities.X364toHTML(text.replace('"', '\u001A')), buffer, '\u001A');
         wktArea.setText(buffer.append("</pre></html>").toString());
     }
 

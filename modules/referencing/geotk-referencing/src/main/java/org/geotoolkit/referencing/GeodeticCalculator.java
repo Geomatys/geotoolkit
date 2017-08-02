@@ -1312,7 +1312,7 @@ public class GeodeticCalculator {
     @Override
     public String toString() {
         final Vocabulary resources = Vocabulary.getResources(null);
-        final TableAppender buffer = new TableAppender(null, " ");
+        final TableAppender buffer = new TableAppender(" ");
         if (coordinateReferenceSystem != null) {
             buffer.append(resources.getLabel(Vocabulary.Keys.CoordinateReferenceSystem));
             buffer.nextColumn();

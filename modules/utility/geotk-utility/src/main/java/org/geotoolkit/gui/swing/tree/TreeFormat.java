@@ -28,10 +28,10 @@ import java.text.FieldPosition;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.DefaultTreeModel; // Really the Swing implementation, not the Geotk one.
+import org.apache.sis.io.TableAppender;
 
 import org.geotoolkit.io.LineWriter;
 import org.geotoolkit.io.ExpandedTabWriter;
-import org.geotoolkit.io.TableWriter;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.collection.BackingStoreException;
@@ -352,12 +352,12 @@ final class TreeFormat {
                     ? (isLast ? treeBlank : treeLine)
                     : (isLast ? treeEnd   : treeCross));
         }
-        if ((node instanceof TreeTableNode) && (toAppendTo instanceof TableWriter)) {
+        if ((node instanceof TreeTableNode) && (toAppendTo instanceof TableAppender)) {
             final TreeTableNode tableNode = (TreeTableNode) node;
             final int columnCount = tableNode.getColumnCount();
             for (int i=0; i<columnCount; i++) {
                 if (i != 0) {
-                    ((TableWriter) toAppendTo.append(columnSeparator)).nextColumn(columnSeparator);
+                    ((TableAppender) toAppendTo.append(columnSeparator)).nextColumn(columnSeparator);
                 }
                 final Object value = tableNode.getValueAt(i);
                 if (value != null) {
@@ -403,7 +403,7 @@ final class TreeFormat {
                 } else {
                     writer = buffer = new StringWriter();
                 }
-                out = new TableWriter(new LineWriter(writer, lineSeparator), " ");
+                out = new TableAppender(new LineWriter(writer, lineSeparator), " ");
             }
             ensureInitialized();
             format(tree, root, out, 0, new boolean[64]);

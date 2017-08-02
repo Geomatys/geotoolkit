@@ -38,11 +38,11 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
+import org.apache.sis.io.TableAppender;
 
 import org.geotoolkit.nio.IOUtilities;
 import org.opengis.metadata.spatial.PixelOrientation;
 
-import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.Disposable;
@@ -1078,14 +1078,20 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
          * then the table will be left to null. If non-null, the table will be completed in
          * the loop below.
          */
-        final TableWriter table;
+        final TableAppender table;
         final long startTime;
         int status; // 0=success, 1=cancelled, 2=failure. Used for logging purpose only.
         if (isLoggable()) {
-            table = new TableWriter(null, TableWriter.SINGLE_VERTICAL_LINE);
-            table.writeHorizontalSeparator();
-            table.write("Reader\tTile\tIndex\tSize\tSource\tDestination\tSubsampling");
-            table.writeHorizontalSeparator();
+            table = new TableAppender();
+            table.appendHorizontalSeparator();
+            table.append("Reader").nextColumn();
+            table.append("Tile").nextColumn();
+            table.append("Index").nextColumn();
+            table.append("Size").nextColumn();
+            table.append("Source").nextColumn();
+            table.append("Destination").nextColumn();
+            table.append("ubsampling");
+            table.appendHorizontalSeparator();
             startTime = System.nanoTime();
             status = 2; // To be set to 0 on success.
         } else {
@@ -1194,11 +1200,11 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
                     /*
                      * Add one row in the table if we are logging.
                      */
-                    table.write(Formats.getDisplayName(tile.getImageReaderSpi()));
+                    table.append(Formats.getDisplayName(tile.getImageReaderSpi()));
                     table.nextColumn();
-                    table.write(tile.getInputName());
+                    table.append(tile.getInputName());
                     table.nextColumn();
-                    table.write(String.valueOf(tileIndex));
+                    table.append(String.valueOf(tileIndex));
                     format(table, regionToRead.width,  regionToRead.height);
                     format(table, regionToRead.x,      regionToRead.y);
                     format(table, destinationOffset.x, destinationOffset.y);
@@ -1261,7 +1267,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
                 if (level == null) {
                     level = PerformanceLevel.forDuration(duration, TimeUnit.NANOSECONDS);
                 }
-                table.writeHorizontalSeparator();
+                table.appendHorizontalSeparator();
                 final String message = Loggings.getResources(locale).getString(Loggings.Keys.LoadingRegion_6,
                         new Number[] {
                             sourceRegion.x, sourceRegion.x + sourceRegion.width  - 1,
@@ -1309,13 +1315,13 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
     /**
      * Formats a (x,y) value pair. A call to {@link TableWriter#nextColumn} is performed first.
      */
-    private static void format(final TableWriter table, final int x, final int y) {
+    private static void format(final TableAppender table, final int x, final int y) {
         table.nextColumn();
-        table.write('(');
-        table.write(String.valueOf(x));
-        table.write(',');
-        table.write(String.valueOf(y));
-        table.write(')');
+        table.append('(');
+        table.append(String.valueOf(x));
+        table.append(',');
+        table.append(String.valueOf(y));
+        table.append(')');
     }
 
     /**

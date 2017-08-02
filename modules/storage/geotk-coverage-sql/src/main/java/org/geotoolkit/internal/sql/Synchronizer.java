@@ -33,9 +33,9 @@ import java.util.Objects;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import org.apache.sis.io.TableAppender;
 
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.io.TableWriter;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.logging.Logging;
 
@@ -296,7 +296,7 @@ public final class Synchronizer {
         }
         String sql = buffer.toString();
         PreparedStatement existing = null;
-        TableWriter mismatchs = null;
+        TableAppender mismatchs = null;
         try (Statement sourceStatement = source.createStatement();
              ResultSet sourceResultSet = sourceStatement.executeQuery(sql))
         {
@@ -421,12 +421,12 @@ public final class Synchronizer {
                                                 mismatchs.nextLine();
                                             }
                                             for (int j=0; j<primaryKeyValues.length; j++) {
-                                                mismatchs.write(String.valueOf(primaryKeyValues[j]));
+                                                mismatchs.append(String.valueOf(primaryKeyValues[j]));
                                                 mismatchs.nextColumn();
                                             }
-                                            mismatchs.write(sourceColumns[i]); mismatchs.nextColumn();
-                                            mismatchs.write(source);           mismatchs.nextColumn();
-                                            mismatchs.write(target);           mismatchs.nextLine();
+                                            mismatchs.append(sourceColumns[i]); mismatchs.nextColumn();
+                                            mismatchs.append(source);           mismatchs.nextColumn();
+                                            mismatchs.append(target);           mismatchs.nextLine();
                                         }
                                     }
                                     count++;
@@ -458,7 +458,7 @@ public final class Synchronizer {
             }
         }
         if (mismatchs != null) {
-            mismatchs.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
+            mismatchs.nextLine('\u2500');
             mismatchs.flush();
         }
     }
@@ -471,26 +471,26 @@ public final class Synchronizer {
      * @return A new table of mismatch.
      * @throws IOException if an error occurred while writing to the output stream.
      */
-    private TableWriter createMismatchTable(final String table, final String[] pkColumns)
+    private TableAppender createMismatchTable(final String table, final String[] pkColumns)
             throws IOException
     {
         final String lineSeparator = System.lineSeparator();
         out.write(lineSeparator);
         out.write(table);
         out.write(lineSeparator);
-        final TableWriter mismatchs = new TableWriter(out, TableWriter.SINGLE_VERTICAL_LINE);
-        mismatchs.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
+        final TableAppender mismatchs = new TableAppender(out);
+        mismatchs.nextLine('\u2500');
         for (int j=0; j<pkColumns.length; j++) {
-            mismatchs.write(pkColumns[j]);
+            mismatchs.append(pkColumns[j]);
             mismatchs.nextColumn();
         }
-        mismatchs.write("Colonne");
+        mismatchs.append("Colonne");
         mismatchs.nextColumn();
-        mismatchs.write("Valeur à copier");
+        mismatchs.append("Valeur à copier");
         mismatchs.nextColumn();
-        mismatchs.write("Valeur existante");
+        mismatchs.append("Valeur existante");
         mismatchs.nextLine();
-        mismatchs.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
+        mismatchs.nextLine('\u2500');
         return mismatchs;
     }
 

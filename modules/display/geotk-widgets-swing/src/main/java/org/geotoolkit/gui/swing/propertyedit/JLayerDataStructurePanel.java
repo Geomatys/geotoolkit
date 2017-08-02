@@ -35,7 +35,6 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.opengis.feature.FeatureType;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.io.X364;
 import org.apache.sis.io.wkt.Colors;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -52,6 +51,7 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.InternationalString;
 import org.apache.sis.io.wkt.Warnings;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.util.StringUtilities;
 
 /**
  *
@@ -262,7 +262,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
         buffer.append("<pre>");
         // '\u001A' is the SUBSTITUTE character. We use it as a temporary replacement for avoiding
         // confusion between WKT quotes and HTML quotes while we search for text to make italic.
-        JLayerCRSPane.makeItalic(X364.toHTML(text.replace('"', '\u001A')), buffer, '\u001A');
+        JLayerCRSPane.makeItalic(StringUtilities.X364toHTML(text.replace('"', '\u001A')), buffer, '\u001A');
         return buffer.append("</pre>").toString();
     }
 

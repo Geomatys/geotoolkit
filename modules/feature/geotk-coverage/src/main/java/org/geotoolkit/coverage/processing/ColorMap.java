@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.measure.Unit;
 import javax.measure.IncommensurableException;
+import org.apache.sis.io.TableAppender;
 
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.operation.MathTransform1D;
@@ -35,7 +36,6 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.io.TableWriter;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.MeasurementRange;
@@ -643,22 +643,22 @@ public class ColorMap implements Serializable {
     @Override
     public String toString() {
         final CharSequence[] names = getCategoryNames();
-        final TableWriter writer = new TableWriter(null, 1);
+        final TableAppender writer = new TableAppender(" ");
         for (int i=0; i<names.length; i++) {
             final CharSequence name = names[i];
-            writer.write(name.toString());
+            writer.append(name.toString());
             if (colorRanges != null) {
                 final NumberRange<?> range = getRange(name);
                 if (range != null) {
-                    writer.write(' ');
-                    writer.write(range.toString());
+                    writer.append(' ');
+                    writer.append(range.toString());
                     if (!(range instanceof MeasurementRange<?>)) {
-                        writer.write('%');
+                        writer.append('%');
                     }
                 }
             }
             writer.nextColumn();
-            writer.write(':');
+            writer.append(':');
             writer.nextColumn();
             final Color[] colors = getColors(name);
             if (colors != null) {
@@ -668,7 +668,7 @@ public class ColorMap implements Serializable {
                 } else {
                     message = Vocabulary.format(Vocabulary.Keys.ColorCount_1, colors.length);
                 }
-                writer.write(message);
+                writer.append(message);
             }
             writer.nextLine();
         }

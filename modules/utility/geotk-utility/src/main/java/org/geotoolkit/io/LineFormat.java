@@ -28,10 +28,10 @@ import java.util.Locale;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
+import java.util.function.Predicate;
 
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.converter.ClassFilter;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
@@ -93,6 +93,13 @@ public class LineFormat extends Format {
      * For cross-version compatibility.
      */
     private static final long serialVersionUID = 1257759127594136266L;
+
+
+    /**
+     * Returns a Predicate accepting only classes {@linkplain Class#isAssignableFrom assignable to}
+     * {@link Number}.
+     */
+    private static final Predicate<Class> NUMBER = Number.class::isAssignableFrom;
 
     /**
      * Number of valid data in the {@link #data} array. This is the number of data
@@ -208,7 +215,7 @@ public class LineFormat extends Format {
      *
      * @since 3.00
      */
-    public Class<?> getElementType(final ClassFilter filter) {
+    public Class<?> getElementType(final Predicate<Class> filter) {
         Class<?> type = null;
         final Class<?>[] arguments = new Class<?>[] {String.class};
         for (final Format format : formats) {
@@ -225,7 +232,7 @@ public class LineFormat extends Format {
             }
             if (type == null) {
                 type = candidate;
-            } else if (candidate != null && (filter == null || filter.accepts(candidate))) {
+            } else if (candidate != null && (filter == null || filter.test(candidate))) {
                 type = Classes.findCommonClass(type, candidate);
             }
         }
@@ -400,7 +407,7 @@ load:   while (true) {
         }
         try {
             if (toNumber == null) {
-                final Class<?> type = getElementType(ClassFilter.NUMBER.negate());
+                final Class<?> type = getElementType(NUMBER.negate());
                 toNumber = ObjectConverters.find(type, Number.class);
             }
             @SuppressWarnings({"unchecked","rawtypes"})

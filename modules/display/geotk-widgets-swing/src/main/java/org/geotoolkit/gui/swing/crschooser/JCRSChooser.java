@@ -50,7 +50,6 @@ import org.geotoolkit.gui.swing.render2d.control.JNavigationBar;
 import org.geotoolkit.gui.swing.render2d.control.navigation.PanHandler;
 
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.io.X364;
 import org.apache.sis.measure.Units;
 import org.apache.sis.io.wkt.Colors;
 import org.geotoolkit.io.wkt.WKTFormat;
@@ -76,6 +75,7 @@ import org.opengis.style.Description;
 import org.opengis.style.LineSymbolizer;
 import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -268,7 +268,7 @@ public class JCRSChooser extends javax.swing.JDialog {
         buffer.append("<pre>");
         // '\u001A' is the SUBSTITUTE character. We use it as a temporary replacement for avoiding
         // confusion between WKT quotes and HTML quotes while we search for text to make italic.
-        makeItalic(X364.toHTML(text.replace('"', '\u001A')), buffer, '\u001A');
+        makeItalic(StringUtilities.X364toHTML(text.replace('"', '\u001A')), buffer, '\u001A');
         wktArea.setText(buffer.append("</pre></html>").toString());
 
 
