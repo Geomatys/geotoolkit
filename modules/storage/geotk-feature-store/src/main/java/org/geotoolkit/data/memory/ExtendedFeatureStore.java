@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.data.AbstractFeatureStore;
@@ -46,7 +47,6 @@ import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
-import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Wraps a feature store and store additional queries which will be made available
@@ -70,8 +70,8 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public ParameterValueGroup getConfiguration() {
-        return wrapped.getConfiguration();
+    public Parameters getConfiguration() {
+        return Parameters.castOrWrap(wrapped.getConfiguration());
     }
 
     @Override

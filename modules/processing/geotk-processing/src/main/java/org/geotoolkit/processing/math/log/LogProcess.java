@@ -19,7 +19,6 @@ package org.geotoolkit.processing.math.log;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
  * @module
@@ -32,11 +31,9 @@ public class LogProcess extends AbstractProcess {
 
     @Override
     protected void execute() {
-
-        final double first = value(LogDescriptor.FIRST_NUMBER, inputParameters);
-
+        final double first = inputParameters.getValue(LogDescriptor.FIRST_NUMBER);
         final double result = Math.log(first);
-        getOrCreate(LogDescriptor.RESULT_NUMBER, outputParameters).setValue(result);
+        outputParameters.getOrCreate(LogDescriptor.RESULT_NUMBER).setValue(result);
     }
 
 }

@@ -19,8 +19,6 @@ package org.geotoolkit.processing.math.floor;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
-
-import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
  * @module
@@ -33,12 +31,9 @@ public class FloorProcess extends AbstractProcess {
 
     @Override
     protected void execute() {
-
-        final double first = value(FloorDescriptor.FIRST_NUMBER, inputParameters);
-
+        final double first = inputParameters.getValue(FloorDescriptor.FIRST_NUMBER);
         final double result = Math.floor(first);
-
-        getOrCreate(FloorDescriptor.RESULT_NUMBER, outputParameters).setValue(result);
+        outputParameters.getOrCreate(FloorDescriptor.RESULT_NUMBER).setValue(result);
     }
 
 }

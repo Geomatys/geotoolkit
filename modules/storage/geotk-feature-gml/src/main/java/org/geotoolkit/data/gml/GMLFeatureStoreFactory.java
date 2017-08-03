@@ -23,6 +23,7 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStore;
 
@@ -32,7 +33,6 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -124,7 +124,7 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     @Override
     public DataStore open(final ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
-        final Boolean sparse = ParametersExt.getOrCreateValue(params, SPARSE.getName().getCode()).booleanValue();
+        final Boolean sparse = Parameters.castOrWrap(params).getValue(SPARSE);
         if(sparse){
             return new GMLSparseFeatureStore(params);
         }else{

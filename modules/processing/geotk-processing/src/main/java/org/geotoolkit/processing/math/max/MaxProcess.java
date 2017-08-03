@@ -18,9 +18,8 @@ package org.geotoolkit.processing.math.max;
 
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
-
 import static org.geotoolkit.processing.math.max.MaxDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
+
 /**
  * @author Quentin Boileau (Geomatys)
  * @module
@@ -34,14 +33,14 @@ public class MaxProcess extends AbstractProcess {
     @Override
     protected void execute() {
 
-        final Double[] set = value(SET, inputParameters);
+        final Double[] set = inputParameters.getValue(SET);
 
         double max = Math.max(set[0].doubleValue(), set[1].doubleValue());
         for (int i=1; i<set.length; i++) {
             max = Math.max(max, set[i].doubleValue());
         }
 
-        getOrCreate(RESULT_NUMBER, outputParameters).setValue(max);
+        outputParameters.getOrCreate(RESULT_NUMBER).setValue(max);
     }
 
 }

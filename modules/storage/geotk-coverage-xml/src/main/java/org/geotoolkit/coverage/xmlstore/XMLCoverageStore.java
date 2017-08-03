@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
+import org.apache.sis.parameter.Parameters;
 
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
@@ -37,7 +38,6 @@ import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DefaultDataSet;
 import org.geotoolkit.storage.Resource;
@@ -86,17 +86,17 @@ public class XMLCoverageStore extends AbstractCoverageStore {
 
     public XMLCoverageStore(ParameterValueGroup params) throws URISyntaxException, IOException {
         super(params);
-        final URI rootPath = Parameters.value(XMLCoverageStoreFactory.PATH, params);
+        final URI rootPath = Parameters.castOrWrap(params).getValue(XMLCoverageStoreFactory.PATH);
         root = Paths.get(rootPath);
-        Boolean tmpCacheState = Parameters.value(XMLCoverageStoreFactory.CACHE_TILE_STATE, params);
+        Boolean tmpCacheState = Parameters.castOrWrap(params).getValue(XMLCoverageStoreFactory.CACHE_TILE_STATE);
         cacheTileState = (tmpCacheState == null)? true : tmpCacheState;
         explore();
     }
 
     private static ParameterValueGroup toParameters(URI rootPath, boolean cacheState) {
-        final ParameterValueGroup params = XMLCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(XMLCoverageStoreFactory.PATH, params).setValue(rootPath);
-        Parameters.getOrCreate(XMLCoverageStoreFactory.CACHE_TILE_STATE, params).setValue(cacheState);
+        final Parameters params = Parameters.castOrWrap(XMLCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(XMLCoverageStoreFactory.PATH).setValue(rootPath);
+        params.getOrCreate(XMLCoverageStoreFactory.CACHE_TILE_STATE).setValue(cacheState);
         return params;
     }
 

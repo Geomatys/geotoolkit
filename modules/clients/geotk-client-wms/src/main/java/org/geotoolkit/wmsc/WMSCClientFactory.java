@@ -24,11 +24,11 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.internal.ClassLoaderInternationalString;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -89,7 +89,7 @@ public class WMSCClientFactory extends AbstractClientFactory implements Coverage
     @Override
     public WebMapClientCached open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
-        final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
+        final URL url = Parameters.castOrWrap(params).getValue(URL);
         ClientSecurity security = null;
         try{
             final ParameterValue val = params.parameter(SECURITY.getName().getCode());

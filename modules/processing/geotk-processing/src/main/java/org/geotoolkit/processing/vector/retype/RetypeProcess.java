@@ -24,8 +24,6 @@ import org.opengis.feature.FeatureType;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.parameter.Parameters.*;
-
 /**
  * Apply a mask to a FeatureCollection FeatureType.
  * @author Quentin Boileau
@@ -45,8 +43,8 @@ public class RetypeProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList = value(VectorDescriptor.FEATURE_IN, inputParameters);
-        final FeatureType mask = value(RetypeDescriptor.MASK_IN, inputParameters);
+        final FeatureCollection inputFeatureList = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
+        final FeatureType mask = inputParameters.getValue(RetypeDescriptor.MASK_IN);
         final FeatureCollection resultFeatureList;
         if(mask instanceof ViewFeatureType){
             resultFeatureList = FeatureStreams.decorate(inputFeatureList, (ViewFeatureType) mask);
@@ -54,6 +52,6 @@ public class RetypeProcess extends AbstractProcess {
             resultFeatureList = inputFeatureList;
         }
 
-        getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+        outputParameters.getOrCreate(VectorDescriptor.FEATURE_OUT).setValue(resultFeatureList);
     }
 }

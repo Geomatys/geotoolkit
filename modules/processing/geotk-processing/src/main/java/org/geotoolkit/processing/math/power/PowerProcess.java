@@ -19,7 +19,6 @@ package org.geotoolkit.processing.math.power;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
  * @module
@@ -32,13 +31,10 @@ public class PowerProcess extends AbstractProcess {
 
     @Override
     protected void execute() {
-
-        final double first = value(PowerDescriptor.FIRST_NUMBER, inputParameters);
-        final double second = value(PowerDescriptor.SECOND_NUMBER, inputParameters);
-
+        final double first = inputParameters.getValue(PowerDescriptor.FIRST_NUMBER);
+        final double second = inputParameters.getValue(PowerDescriptor.SECOND_NUMBER);
         final double result = Math.pow(first, second);
-
-        getOrCreate(PowerDescriptor.RESULT_NUMBER, outputParameters).setValue(result);
+        outputParameters.getOrCreate(PowerDescriptor.RESULT_NUMBER).setValue(result);
     }
 
 }

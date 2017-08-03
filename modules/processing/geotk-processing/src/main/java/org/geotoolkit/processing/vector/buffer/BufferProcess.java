@@ -41,7 +41,6 @@ import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 
 import static org.geotoolkit.processing.vector.buffer.BufferDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 import org.opengis.feature.AttributeType;
 
 
@@ -69,15 +68,15 @@ public class BufferProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList = value(FEATURE_IN, inputParameters);
-        final double inputDistance               = value(DISTANCE_IN, inputParameters).doubleValue();
-        Boolean inputLenient                     = value(LENIENT_TRANSFORM_IN, inputParameters);
+        final FeatureCollection inputFeatureList = inputParameters.getValue(FEATURE_IN);
+        final double inputDistance               = inputParameters.getValue(DISTANCE_IN);
+        Boolean inputLenient                     = inputParameters.getValue(LENIENT_TRANSFORM_IN);
         if (inputLenient == null) {
             inputLenient = Boolean.TRUE;
         }
         final FeatureCollection resultFeatureList =
                 new BufferFeatureCollection(inputFeatureList, inputDistance, inputLenient);
-        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+        outputParameters.getOrCreate(FEATURE_OUT).setValue(resultFeatureList);
     }
 
     /**

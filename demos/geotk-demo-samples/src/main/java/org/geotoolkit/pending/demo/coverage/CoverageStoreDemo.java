@@ -2,6 +2,7 @@
 package org.geotoolkit.pending.demo.coverage;
 
 import java.nio.file.Path;
+import org.apache.sis.parameter.Parameters;
 
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.CoverageStore;
@@ -12,14 +13,12 @@ import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.util.GenericName;
-import org.opengis.parameter.ParameterValueGroup;
 
 
 public class CoverageStoreDemo {
@@ -33,9 +32,9 @@ public class CoverageStoreDemo {
 
         Path dataResources = IOUtilities.getResourceAsPath("data");
 
-        final ParameterValueGroup params = FileCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(FileCoverageStoreFactory.PATH, params).setValue(dataResources.toUri());
-        Parameters.getOrCreate(FileCoverageStoreFactory.TYPE, params).setValue("jpg-wf");
+        final Parameters params = Parameters.castOrWrap(FileCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(FileCoverageStoreFactory.PATH).setValue(dataResources.toUri());
+        params.getOrCreate(FileCoverageStoreFactory.TYPE).setValue("jpg-wf");
 
         final CoverageStore store = (CoverageStore) DataStores.open(params);
 

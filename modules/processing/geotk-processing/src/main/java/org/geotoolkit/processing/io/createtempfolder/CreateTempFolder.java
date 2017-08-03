@@ -24,7 +24,6 @@ import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.processing.io.createtempfolder.CreateTempFolderDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Create a temporary folder.
@@ -46,7 +45,7 @@ public class CreateTempFolder extends AbstractProcess {
 
         fireProcessStarted("Starting create temporary folder");
 
-        final String prefix = getOrCreate(PREFIX_IN, inputParameters).stringValue();
+        final String prefix = inputParameters.getValue(PREFIX_IN);
 
         final File file;
         try {
@@ -54,7 +53,7 @@ public class CreateTempFolder extends AbstractProcess {
             file.delete();
             file.mkdirs();
 
-            getOrCreate(FILE_OUT, outputParameters).setValue(file.toURI().toURL());
+            outputParameters.getOrCreate(FILE_OUT).setValue(file.toURI().toURL());
 
         } catch (IOException ex) {
             fireProcessFailed("Failed creating temp folder", ex);

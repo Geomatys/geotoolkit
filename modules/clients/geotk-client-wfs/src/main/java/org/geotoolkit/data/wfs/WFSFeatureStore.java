@@ -60,7 +60,6 @@ import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.ows.xml.BoundingBox;
-import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.wfs.xml.FeatureTypeList;
@@ -206,11 +205,11 @@ public class WFSFeatureStore extends AbstractFeatureStore{
     }
 
     public boolean getUsePost(){
-        return Parameters.value(WFSFeatureStoreFactory.POST_REQUEST, parameters);
+        return parameters.getValue(WFSFeatureStoreFactory.POST_REQUEST);
     }
 
     public boolean getLongitudeFirst(){
-        return Parameters.getOrCreate(WFSFeatureStoreFactory.LONGITUDE_FIRST, parameters).booleanValue();
+        return parameters.getValue(WFSFeatureStoreFactory.LONGITUDE_FIRST);
     }
 
     @Override

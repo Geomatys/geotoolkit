@@ -18,8 +18,8 @@
 package org.geotoolkit.filter.binding;
 
 import java.io.Serializable;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.apache.sis.util.ObjectConverters;
+import org.geotoolkit.parameter.Parameters;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValue;
@@ -45,7 +45,7 @@ public final class ParameterBinding extends AbstractBinding<ParameterValueGroup>
     public <T> T get(ParameterValueGroup candidate, String xpath, Class<T> target) throws IllegalArgumentException {
         Object value = null;
         try{
-            GeneralParameterValue param = ParametersExt.getParameter(candidate, xpath);
+            GeneralParameterValue param = Parameters.getParameterOrGroup(candidate, xpath);
             if(param instanceof ParameterValue){
                 value = ((ParameterValue)param).getValue();
             }else if(param instanceof ParameterValueGroup){
@@ -65,7 +65,7 @@ public final class ParameterBinding extends AbstractBinding<ParameterValueGroup>
         if(candidate == null) return;
 
         try{
-            GeneralParameterValue param = ParametersExt.getParameter(candidate, xpath);
+            GeneralParameterValue param = Parameters.getParameterOrGroup(candidate, xpath);
             if(param instanceof ParameterValue){
                 final ParameterValue pm = (ParameterValue) param;
                 pm.setValue(ObjectConverters.convert(value, pm.getDescriptor().getValueClass()));

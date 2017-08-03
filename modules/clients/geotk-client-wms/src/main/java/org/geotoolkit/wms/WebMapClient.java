@@ -22,7 +22,6 @@ import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DefaultDataSet;
 import org.geotoolkit.wms.auto.GetCapabilitiesAuto;
@@ -179,7 +178,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
                 version = WMSVersion.v130;
             }
         }
-        Parameters.getOrCreate(WMSClientFactory.VERSION, parameters).setValue(version.getCode());
+        parameters.getOrCreate(WMSClientFactory.VERSION).setValue(version.getCode());
     }
 
     public WebMapClient(ParameterValueGroup params) {
@@ -289,7 +288,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
         }
 
         WMSVersion version = WMSVersion.getVersion(this.capabilities.getVersion());
-        Parameters.getOrCreate(WMSClientFactory.VERSION, parameters).setValue(version.getCode());
+        parameters.getOrCreate(WMSClientFactory.VERSION).setValue(version.getCode());
         return capabilities;
     }
 
@@ -298,7 +297,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
      * @return
      */
     public WMSVersion getVersion() {
-            return WMSVersion.getVersion(Parameters.value(WMSClientFactory.VERSION, parameters));
+            return WMSVersion.getVersion(parameters.getValue(WMSClientFactory.VERSION));
     }
 
     /**

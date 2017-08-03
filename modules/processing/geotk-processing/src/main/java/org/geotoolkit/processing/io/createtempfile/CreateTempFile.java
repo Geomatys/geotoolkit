@@ -24,7 +24,6 @@ import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.processing.io.createtempfile.CreateTempFileDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Create a temporary file.
@@ -46,9 +45,9 @@ public class CreateTempFile extends AbstractProcess {
 
         fireProcessStarted("Starting create temporary file");
 
-        final String prefix = getOrCreate(PREFIX_IN, inputParameters).stringValue();
-        final String postfix = getOrCreate(POSTFIX_IN, inputParameters).stringValue();
-        final boolean eraseParam = getOrCreate(DELETE_IN, inputParameters).booleanValue();
+        final String prefix = inputParameters.getValue(PREFIX_IN);
+        final String postfix = inputParameters.getValue(POSTFIX_IN);
+        final boolean eraseParam = inputParameters.getValue(DELETE_IN);
 
         final File file;
         try {
@@ -58,7 +57,7 @@ public class CreateTempFile extends AbstractProcess {
                 file.deleteOnExit();
             }
 
-            getOrCreate(FILE_OUT, outputParameters).setValue(file.toURI().toURL());
+            outputParameters.getOrCreate(FILE_OUT).setValue(file.toURI().toURL());
 
         } catch (IOException ex) {
             fireProcessFailed("Failed creating temp file", ex);

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBElement;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
@@ -31,7 +32,6 @@ import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.util.NamesExt;
-import org.opengis.util.GenericName;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -40,12 +40,9 @@ import org.geotoolkit.owc.xml.OwcExtension;
 import org.geotoolkit.owc.xml.v10.OfferingType;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.opengis.parameter.GeneralParameterDescriptor;
-import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
 import org.geotoolkit.storage.coverage.CoverageResource;
@@ -138,18 +135,16 @@ public class OwcDataStoreExtension extends OwcExtension {
         }
 
         //write store creation parameters
-        final ParameterValueGroup params = getParams(mapLayer);
+        final Parameters params = Parameters.castOrWrap(getParams(mapLayer));
 
         final ParameterDescriptorGroup desc = params.getDescriptor();
         for(GeneralParameterDescriptor pdesc : desc.descriptors()){
-            final GeneralParameterValue param = ParametersExt.getParameter(params, pdesc.getName().getCode());
-            if(param instanceof ParameterValue){
-                final ParameterDescriptor pvdesc = (ParameterDescriptor) pdesc;
-                final Object value = ((ParameterValue)param).getValue();
-                if(value!=null){
+            if (pdesc instanceof ParameterDescriptor) {
+                final Object value = params.getValue((ParameterDescriptor) pdesc);
+                if (value!=null) {
                     fieldList.add(new ParameterType(
                             pdesc.getName().getCode(),
-                            pvdesc.getValueClass().getName(),
+                            ((ParameterDescriptor)pdesc).getValueClass().getName(),
                             String.valueOf(value)));
                 }
             }

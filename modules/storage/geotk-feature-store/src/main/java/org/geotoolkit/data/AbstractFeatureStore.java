@@ -63,6 +63,7 @@ import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.MetadataBuilder;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.storage.DefaultDataSet;
@@ -94,15 +95,15 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
 
     private static final Logger logger = Logging.getLogger("org.geotoolkit.data");
 
-    protected final ParameterValueGroup parameters;
+    protected final Parameters parameters;
     protected final Set<StorageListener> listeners = new HashSet<>();
 
     protected AbstractFeatureStore(final ParameterValueGroup params) {
-        this.parameters = params;
+        this.parameters = Parameters.castOrWrap(params);
     }
 
     @Override
-    public ParameterValueGroup getConfiguration() {
+    public Parameters getConfiguration() {
         return parameters;
     }
 

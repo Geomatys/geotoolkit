@@ -18,21 +18,18 @@ package org.geotoolkit.process.mapfile;
 
 import java.util.List;
 import java.util.ArrayList;
-
 import org.geotoolkit.process.mapfile.MapfileExpressionTokenizer.Token;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.FilterFactory;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.process.mapfile.MapfileFilterToOGCFilterDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -49,11 +46,11 @@ public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
 
     @Override
     protected void execute() throws ProcessException {
-        final String text  = value(IN_TEXT, inputParameters);
-        final Expression ref  = value(IN_REFERENCE, inputParameters);
+        final String text  = inputParameters.getValue(IN_TEXT);
+        final Expression ref  = inputParameters.getValue(IN_REFERENCE);
         final List<Token> tokens = MapfileExpressionTokenizer.toTokens(text);
         final Object result = parse(ref, tokens);
-        getOrCreate(OUT_OGC, outputParameters).setValue(result);
+        outputParameters.getOrCreate(OUT_OGC).setValue(result);
     }
 
     private Object parse(final Expression ref,final List<Token> tokens) throws ProcessException{

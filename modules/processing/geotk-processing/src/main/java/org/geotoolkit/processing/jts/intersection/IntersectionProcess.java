@@ -21,12 +21,10 @@ import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.processing.jts.intersection.IntersectionDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Compute the intersection geometry of the two inputs geometries.
@@ -46,8 +44,8 @@ public class IntersectionProcess extends AbstractProcess {
 
          try {
 
-            final Geometry geom1 = value(GEOM1, inputParameters);
-            Geometry geom2 = value(GEOM2, inputParameters);
+            final Geometry geom1 = inputParameters.getValue(GEOM1);
+            Geometry geom2 = inputParameters.getValue(GEOM2);
 
             // ensure geometries are in the same CRS
             final CoordinateReferenceSystem resultCRS = JTS.getCommonCRS(geom1, geom2);
@@ -60,7 +58,7 @@ public class IntersectionProcess extends AbstractProcess {
                 JTS.setCRS(result, resultCRS);
             }
 
-            getOrCreate(RESULT_GEOM, outputParameters).setValue(result);
+            outputParameters.getOrCreate(RESULT_GEOM).setValue(result);
 
         } catch (Exception ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

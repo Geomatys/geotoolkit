@@ -43,7 +43,6 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.internal.feature.AttributeConvention;
 
-import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.processing.coverage.isoline.IsolineDescriptor.*;
 
 
@@ -59,8 +58,8 @@ public class Isoline extends AbstractProcess {
 
     @Override
     protected void execute() throws ProcessException {
-        final GridCoverage2D coverage = value(COVERAGE, inputParameters);
-        final double[] intervals = value(INTERVALS, inputParameters);
+        final GridCoverage2D coverage = inputParameters.getValue(COVERAGE);
+        final double[] intervals = inputParameters.getValue(INTERVALS);
 
         final CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem2D();
         final RenderedImage image = coverage.getRenderedImage();
@@ -101,6 +100,6 @@ public class Isoline extends AbstractProcess {
             f.setPropertyValue("value", value);
             col.add(f);
         }
-        getOrCreate(FCOLL, outputParameters).setValue(col);
+        outputParameters.getOrCreate(FCOLL).setValue(col);
     }
 }

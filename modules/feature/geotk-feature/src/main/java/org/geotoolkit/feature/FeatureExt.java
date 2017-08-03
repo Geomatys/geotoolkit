@@ -47,7 +47,6 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotoolkit.parameter.Parameters;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
@@ -76,6 +75,7 @@ import org.apache.sis.internal.system.DefaultFactories;
 
 import static org.apache.sis.feature.AbstractIdentifiedType.NAME_KEY;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.geometry.jts.JTS;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.util.FactoryException;
@@ -743,7 +743,7 @@ public final class FeatureExt extends Static {
 
         ArgumentChecks.ensureNonNull("source", source);
         ArgumentChecks.ensureNonNull("desc", desc);
-        final ParameterValueGroup target = desc.createValue();
+        final Parameters target = Parameters.castOrWrap(desc.createValue());
         fill(source,target);
         return target;
     }
@@ -874,7 +874,7 @@ public final class FeatureExt extends Static {
             }
         }
 
-        final ParameterValueGroup parameter = desc.createValue();
+        final Parameters parameter = Parameters.castOrWrap(desc.createValue());
 
         for(final Entry<String, ?> entry : params.entrySet()){
 
@@ -895,7 +895,7 @@ public final class FeatureExt extends Static {
 
             final ParameterValue param;
             try{
-                param = Parameters.getOrCreate(pd,parameter);
+                param = parameter.getOrCreate(pd);
             }catch(ParameterNotFoundException ex){
                 //do nothing, the map may contain other values for other uses
                 continue;
@@ -966,7 +966,7 @@ public final class FeatureExt extends Static {
 
     }
 
-    private static void fill(final Feature source, final ParameterValueGroup target){
+    private static void fill(final Feature source, final Parameters target){
 
         for(final GeneralParameterDescriptor gpd : target.getDescriptor().descriptors()){
 
@@ -976,7 +976,7 @@ public final class FeatureExt extends Static {
                 final ParameterDescriptor desc = (ParameterDescriptor) gpd;
 
                 for(final Object v : ((Attribute)property).getValues()){
-                    Parameters.getOrCreate(desc, target).setValue(v);
+                    target.getOrCreate(desc).setValue(v);
                 }
             }else if(gpd instanceof ParameterDescriptorGroup){
                 final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) gpd;
@@ -994,7 +994,7 @@ public final class FeatureExt extends Static {
                             subGroup = target.addGroup(desc.getName().getCode());
                         }
                     }
-                    fill(prop,subGroup);
+                    fill(prop,Parameters.castOrWrap(subGroup));
                 }
             }
         }

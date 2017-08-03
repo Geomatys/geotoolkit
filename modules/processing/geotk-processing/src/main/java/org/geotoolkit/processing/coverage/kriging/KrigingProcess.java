@@ -55,7 +55,6 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 
-import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.processing.coverage.kriging.KrigingDescriptor.*;
 
 
@@ -71,10 +70,10 @@ public class KrigingProcess extends AbstractProcess {
 
     @Override
     protected void execute() throws ProcessException{
-        final CoordinateReferenceSystem crs = value(IN_CRS, inputParameters);
-        double step                         = value(IN_STEP, inputParameters);
-        final DirectPosition[] coords       = value(IN_POINTS, inputParameters);
-        final Dimension maxDim              = value(IN_DIMENSION, inputParameters);
+        final CoordinateReferenceSystem crs = inputParameters.getValue(IN_CRS);
+        double step                         = inputParameters.getValue(IN_STEP);
+        final DirectPosition[] coords       = inputParameters.getValue(IN_POINTS);
+        final Dimension maxDim              = inputParameters.getValue(IN_DIMENSION);
 
         //calculate the envelope
         double minx = Double.POSITIVE_INFINITY;
@@ -172,7 +171,7 @@ public class KrigingProcess extends AbstractProcess {
         env.setCoordinateReferenceSystem(crs);
 
         final GridCoverage2D coverage = toCoverage(cz, cx, cy, env);
-        getOrCreate(OUT_COVERAGE, outputParameters).setValue(coverage);
+        outputParameters.getOrCreate(OUT_COVERAGE).setValue(coverage);
 
         //test
         renderedImage = coverage.getRenderedImage();
@@ -230,60 +229,54 @@ public class KrigingProcess extends AbstractProcess {
             col.add(f);
         }
 
-        ///////////////  debug///////////////////////
-        FeatureIterator featIter = col.iterator();
+//        ///////////////  debug///////////////////////
+//        FeatureIterator featIter = col.iterator();
+//
+//        final List<Shape> shapes = new ArrayList<>();
+//
+//
+//        while (featIter.hasNext()) {
+//            Feature  feaTemp = featIter.next();
+//            LineString lineS = (LineString)feaTemp.getProperty("geometry").getValue();
+//            Coordinate[] coordst = lineS.getCoordinates();
+//            GeneralPath isoline = null;
+//            for(final Coordinate coord : coordst) {
+//                if(isoline == null){
+//                    isoline = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
+//                    isoline.moveTo(coord.x, coord.y);
+//                }else{
+//                    isoline.lineTo(coord.x, coord.y);
+//                }
+//            }
+//            shapes.add(isoline);
+//        }
+//
+//        final JFrame frm = new JFrame();
+//        JPanel jp = new JPanel(){
+//            @Override
+//            protected void paintComponent(Graphics g) {
+//                super.paintComponent(g);
+//
+//                Graphics2D g2 = (Graphics2D) g;
+//                g2.setTransform(new AffineTransform2D(1, 0, 0, 1, this.getWidth()/2.0, this.getHeight()/2.0));
+////                g2.drawRenderedImage(renderImage, new AffineTransform2D(1, 0, 0, 1, 0,0));
+//                g2.setColor(Color.BLACK);
+//                for(Shape shape : shapes){
+//                    g2.draw(shape);
+//                }
+//            }
+//        };
+//        ////////////////////////////////////FIN ISOLINE////////////////////////////////
+//
+//        frm.setTitle("isoline");
+//        frm.setSize(1200, 1200);
+//        frm.setLocationRelativeTo(null);
+//        frm.add(jp);
+//        frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frm.setVisible(true);
+//        /////////////////////////////////////////////
 
-        final List<Shape> shapes = new ArrayList<>();
-
-
-        while (featIter.hasNext()) {
-            Feature  feaTemp = featIter.next();
-            LineString lineS = (LineString)feaTemp.getProperty("geometry").getValue();
-            Coordinate[] coordst = lineS.getCoordinates();
-            GeneralPath isoline = null;
-            for(final Coordinate coord : coordst) {
-                if(isoline == null){
-                    isoline = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
-                    isoline.moveTo(coord.x, coord.y);
-                }else{
-                    isoline.lineTo(coord.x, coord.y);
-                }
-            }
-            shapes.add(isoline);
-        }
-
-        final JFrame frm = new JFrame();
-        JPanel jp = new JPanel(){
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-
-                Graphics2D g2 = (Graphics2D) g;
-                g2.setTransform(new AffineTransform2D(1, 0, 0, 1, this.getWidth()/2.0, this.getHeight()/2.0));
-//                g2.drawRenderedImage(renderImage, new AffineTransform2D(1, 0, 0, 1, 0,0));
-                g2.setColor(Color.BLACK);
-                for(Shape shape : shapes){
-                    g2.draw(shape);
-                }
-            }
-        };
-////////////////////////////////////FIN ISOLINE////////////////////////////////
-
-        frm.setTitle("isoline");
-        frm.setSize(1200, 1200);
-        frm.setLocationRelativeTo(null);
-        frm.add(jp);
-        frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frm.setVisible(true);
-
-
-
-        /////////////////////////////////////////////
-
-
-
-
-        getOrCreate(OUT_LINES, outputParameters).setValue(col);
+        outputParameters.getOrCreate(OUT_LINES).setValue(col);
     }
 
     private static GridCoverage2D toCoverage(final double[] computed, final double[] xs, final double[] ys,

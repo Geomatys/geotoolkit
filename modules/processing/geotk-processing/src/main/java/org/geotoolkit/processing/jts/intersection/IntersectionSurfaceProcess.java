@@ -18,7 +18,6 @@ package org.geotoolkit.processing.jts.intersection;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.geometry.jts.JTS;
-import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.processing.jts.intersection.IntersectionSurfaceDescriptor.*;
@@ -52,8 +51,8 @@ public class IntersectionSurfaceProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
         try {
 
-            final Geometry geom1 = value(GEOM1, inputParameters);
-            Geometry geom2 = value(GEOM2, inputParameters);
+            final Geometry geom1 = inputParameters.getValue(GEOM1);
+            Geometry geom2 = inputParameters.getValue(GEOM2);
 
             // ensure geometries are in the same CRS
             final CoordinateReferenceSystem resultCRS = JTS.getCommonCRS(geom1, geom2);
@@ -67,7 +66,7 @@ public class IntersectionSurfaceProcess extends AbstractProcess {
             }
 
             final double area = (intersection == null) ? 0d : intersection.getArea();
-            getOrCreate(RESULT_SURFACE, outputParameters).setValue(area);
+            outputParameters.getOrCreate(RESULT_SURFACE).setValue(area);
 
         } catch (Exception ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

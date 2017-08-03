@@ -24,10 +24,13 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.border.EmptyBorder;
+import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.parameter.ParameterBuilder;
 
 import org.apache.sis.util.iso.SimpleInternationalString;
@@ -35,11 +38,11 @@ import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.FontIconJButton;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.gui.swing.util.SwingUtilities;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.InternationalString;
 
 /**
@@ -468,7 +471,12 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
         }
 
         final InternationalString remark = remarks != null ? new SimpleInternationalString(remarks) : null;
-        return ParametersExt.createParameterDescriptorGroup(code, remark, minOccurs, maxOccurs, descriptors);
+
+        final Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put(IdentifiedObject.NAME_KEY, code);
+        paramMap.put(IdentifiedObject.REMARKS_KEY, remark);
+        return new DefaultParameterDescriptorGroup(paramMap, minOccurs, maxOccurs,
+                descriptors.toArray(new GeneralParameterDescriptor[descriptors.size()]));
     }
 
     @Override

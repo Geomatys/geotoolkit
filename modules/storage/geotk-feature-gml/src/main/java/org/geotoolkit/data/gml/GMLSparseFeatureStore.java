@@ -30,6 +30,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
@@ -45,7 +46,6 @@ import org.opengis.util.GenericName;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
@@ -92,11 +92,11 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     private static ParameterValueGroup toParameters(final Path f,String xsd, String typeName) throws MalformedURLException{
-        final ParameterValueGroup params = GMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(GMLFeatureStoreFactory.PATH, params).setValue(f.toUri());
-        Parameters.getOrCreate(GMLFeatureStoreFactory.SPARSE, params).setValue(true);
-        if(xsd!=null) Parameters.getOrCreate(GMLFeatureStoreFactory.XSD, params).setValue(xsd);
-        if(typeName!=null) Parameters.getOrCreate(GMLFeatureStoreFactory.XSD_TYPE_NAME, params).setValue(typeName);
+        final Parameters params = Parameters.castOrWrap(GMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(GMLFeatureStoreFactory.PATH).setValue(f.toUri());
+        params.getOrCreate(GMLFeatureStoreFactory.SPARSE).setValue(true);
+        if(xsd!=null) params.getOrCreate(GMLFeatureStoreFactory.XSD).setValue(xsd);
+        if(typeName!=null) params.getOrCreate(GMLFeatureStoreFactory.XSD_TYPE_NAME).setValue(typeName);
         return params;
     }
 

@@ -2,11 +2,11 @@
 package org.geotoolkit.pending.demo.clients.ignrm;
 
 import java.net.URL;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.BasicAuthenticationSecurity;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.style.DefaultDescription;
@@ -17,7 +17,6 @@ import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.wmts.WMTSClientFactory;
 import org.geotoolkit.wmts.WebMapTileClient;
 import org.opengis.util.GenericName;
-import org.opengis.parameter.ParameterValueGroup;
 
 public class IGN_GEOPORTAIL_WMTS {
 
@@ -31,11 +30,11 @@ public class IGN_GEOPORTAIL_WMTS {
         final ClientSecurity authentication = new BasicAuthenticationSecurity(login,password);
         final URL url = new URL("https://wxs.ign.fr/"+key+"/wmts?");
 
-        final ParameterValueGroup params = WMTSClientFactory.PARAMETERS.createValue();
-        Parameters.getOrCreate(WMTSClientFactory.URL, params).setValue(url);
-        Parameters.getOrCreate(WMTSClientFactory.SECURITY, params).setValue(authentication);
-        Parameters.getOrCreate(WMTSClientFactory.IMAGE_CACHE, params).setValue(true);
-        Parameters.getOrCreate(WMTSClientFactory.NIO_QUERIES, params).setValue(true);
+        final Parameters params = Parameters.castOrWrap(WMTSClientFactory.PARAMETERS.createValue());
+        params.getOrCreate(WMTSClientFactory.URL).setValue(url);
+        params.getOrCreate(WMTSClientFactory.SECURITY).setValue(authentication);
+        params.getOrCreate(WMTSClientFactory.IMAGE_CACHE).setValue(true);
+        params.getOrCreate(WMTSClientFactory.NIO_QUERIES).setValue(true);
 
         final WebMapTileClient store = (WebMapTileClient) DataStores.open(params);
 

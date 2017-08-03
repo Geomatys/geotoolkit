@@ -39,7 +39,6 @@ import org.geotoolkit.image.io.large.LargeRenderedImage;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -124,12 +123,12 @@ public class IOResampleProcess extends AbstractProcess {
         final MathTransform operator = (MathTransform) inputParameters.parameter("operation").getValue();
         final String interpolation = (String) inputParameters.parameter("interpolation").getValue();
 
-        threadNumber = Parameters.value(IOResampleDescriptor.THREAD_COUNT, inputParameters);
+        threadNumber = inputParameters.getValue(IOResampleDescriptor.THREAD_COUNT);
         if (threadNumber == null || threadNumber != threadNumber || threadNumber < 1) {
             threadNumber = Math.min(5, Math.max(2, Runtime.getRuntime().availableProcessors() / 2));
         }
 
-        Dimension tileSize = Parameters.value(IOResampleDescriptor.TILE_SIZE, inputParameters);
+        Dimension tileSize = inputParameters.getValue(IOResampleDescriptor.TILE_SIZE);
         if (tileSize == null || tileSize.width <= 0 || tileSize.height <= 0) {
             tileSize = DEFAULT_TILE_SIZE;
         }
@@ -156,8 +155,8 @@ public class IOResampleProcess extends AbstractProcess {
              * Prepare output image for writing. If no file location is given, we create a new TIF temporary file to
              * store result. If user did not specified size for target image, we compute one from given transformation.
              */
-            Integer width = Parameters.value(IOResampleDescriptor.OUT_WIDTH, inputParameters);
-            Integer height = Parameters.value(IOResampleDescriptor.OUT_HEIGHT, inputParameters);
+            Integer width = inputParameters.getValue(IOResampleDescriptor.OUT_WIDTH);
+            Integer height = inputParameters.getValue(IOResampleDescriptor.OUT_HEIGHT);
             if (width == null || height == null || width <= 0 || height <= 0) {
                 final GeneralEnvelope transformed = Envelopes.transform(operator, new GeneralEnvelope(new double[]{0, 0}, new double[]{rawImage.getWidth(), rawImage.getHeight()}));
                 width = (int) Math.ceil(transformed.getSpan(0));
@@ -250,7 +249,7 @@ public class IOResampleProcess extends AbstractProcess {
             writer.setOutput(null);
             writer.dispose();
 
-            Parameters.getOrCreate(IOResampleDescriptor.OUT_COVERAGE, outputParameters).setValue(output);
+            outputParameters.getOrCreate(IOResampleDescriptor.OUT_COVERAGE).setValue(output);
 
             LOGGER.log(Level.INFO, "Data preparation lasts " + (execTimes.get(1) - execTimes.get(0)) + " ms\n");
             LOGGER.log(Level.INFO, "Resample lasts " + (System.currentTimeMillis() - execTimes.get(1)) + " ms\n");

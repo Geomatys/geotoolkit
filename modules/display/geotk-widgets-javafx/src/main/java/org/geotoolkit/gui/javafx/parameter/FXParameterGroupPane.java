@@ -17,8 +17,10 @@
 package org.geotoolkit.gui.javafx.parameter;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import javafx.beans.binding.Bindings;
@@ -48,13 +50,11 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.internal.GeotkFX;
-import org.geotoolkit.parameter.ParameterGroup;
-import org.geotoolkit.utility.parameter.ParametersExt;
-import org.opengis.metadata.Identifier;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
@@ -314,7 +314,7 @@ public class FXParameterGroupPane extends BorderPane {
 
             uiAdd.getStyleClass().add(FLAT_BUTTON_CLASS);
             uiAdd.managedProperty().bind(uiAdd.visibleProperty());
-            uiAdd.setVisible((ParametersExt.getParameters(inputGroup.get(), descriptor.getName().getCode()).size() < descriptor.getMaximumOccurs()));
+            uiAdd.setVisible((getParameters(inputGroup.get(), descriptor.getName().getCode()).size() < descriptor.getMaximumOccurs()));
             uiAdd.setOnAction(event -> addParameterEditor());
 
             // Make panel visible only in advanced mode for optional / preconfigured parameters.
@@ -379,7 +379,7 @@ public class FXParameterGroupPane extends BorderPane {
                     value = inputGroup.get().addGroup(descriptor.getName().getCode());
                     currentOccurs++;
                 } else if (descriptor instanceof ParameterDescriptor) {
-                    value = ParametersExt.getOrCreateValue(inputGroup.get(), descriptor.getName().getCode());
+                    value = Parameters.castOrWrap(inputGroup.get()).getOrCreate((ParameterDescriptor)descriptor);
                     currentOccurs++;
                 }
 
@@ -412,5 +412,18 @@ public class FXParameterGroupPane extends BorderPane {
             }
             return editor;
         }
+    }
+
+    /**
+     * List of all parameters, ParameterValue OR ParameterGroups of this name.
+     */
+    private static List<GeneralParameterValue> getParameters(ParameterValueGroup group,String name){
+        final List<GeneralParameterValue> result = new ArrayList<GeneralParameterValue>();
+        for(GeneralParameterValue p : group.values()){
+            if(p.getDescriptor().getName().getCode().equalsIgnoreCase(name)){
+                result.add(p);
+            }
+        }
+        return result;
     }
 }

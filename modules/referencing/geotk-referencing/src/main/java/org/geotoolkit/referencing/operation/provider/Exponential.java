@@ -35,7 +35,7 @@ import org.geotoolkit.resources.Vocabulary;
 
 import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.ParameterBuilder;
-import static org.geotoolkit.parameter.Parameters.*;
+import org.apache.sis.parameter.Parameters;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
 
 
@@ -164,8 +164,8 @@ public class Exponential extends MathTransformProvider {
     {
         final TransferFunction f = new TransferFunction();
         f.setType(TransferFunctionType.EXPONENTIAL);
-        f.setBase(doubleValue(BASE,  values));
-        f.setScale(doubleValue(SCALE, values));
+        f.setBase(Parameters.castOrWrap(values).getValue(BASE));
+        f.setScale(Parameters.castOrWrap(values).getValue(SCALE));
         return f.getTransform();
     }
 }

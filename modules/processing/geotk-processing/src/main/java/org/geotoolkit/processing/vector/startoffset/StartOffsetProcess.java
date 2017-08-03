@@ -18,12 +18,9 @@ package org.geotoolkit.processing.vector.startoffset;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStreams;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
-
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Start FeatureCollection iteration at given offset
@@ -45,11 +42,9 @@ public class StartOffsetProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList   = Parameters.value(VectorDescriptor.FEATURE_IN, inputParameters);
-        final int offset                                    = Parameters.value(StartOffsetDescriptor.OFFSET_IN, inputParameters);
-
+        final FeatureCollection inputFeatureList   = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
+        final int offset                           = inputParameters.getValue(StartOffsetDescriptor.OFFSET_IN);
         final FeatureCollection resultFeatureList = FeatureStreams.skip(inputFeatureList, offset);
-
-        getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+        outputParameters.getOrCreate(VectorDescriptor.FEATURE_OUT).setValue(resultFeatureList);
     }
 }

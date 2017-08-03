@@ -32,7 +32,6 @@ import javax.media.jai.RasterFactory;
 
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -54,13 +53,13 @@ public class ReformatProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
 
-        final RenderedImage inputImage = (RenderedImage) Parameters.getOrCreate(IN_IMAGE, inputParameters).getValue();
-        final int inputType = (Integer) Parameters.getOrCreate(IN_DATATYPE, inputParameters).getValue();
+        final RenderedImage inputImage = inputParameters.getValue(IN_IMAGE);
+        final int inputType = inputParameters.getValue(IN_DATATYPE);
         final SampleModel inputSampleModel = inputImage.getSampleModel();
 
         //check type, if same return the original coverage
         if(inputSampleModel.getDataType() == inputType){
-            Parameters.getOrCreate(OUT_IMAGE, outputParameters).setValue(inputImage);
+            outputParameters.getOrCreate(OUT_IMAGE).setValue(inputImage);
             return;
         }
 
@@ -99,7 +98,7 @@ public class ReformatProcess extends AbstractProcess {
             }
         }
 
-        Parameters.getOrCreate(OUT_IMAGE, outputParameters).setValue(resultImage);
+        outputParameters.getOrCreate(OUT_IMAGE).setValue(resultImage);
     }
 
     public static WritableRaster createRaster(int inputType, int width, int height, int nbBand, Point upperLeft) throws IllegalArgumentException{

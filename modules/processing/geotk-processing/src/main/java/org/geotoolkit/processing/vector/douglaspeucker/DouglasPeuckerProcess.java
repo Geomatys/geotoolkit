@@ -18,10 +18,7 @@ package org.geotoolkit.processing.vector.douglaspeucker;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
-
-import java.util.Collections;
 
 import org.apache.sis.measure.Units;
 import org.geotoolkit.data.FeatureCollection;
@@ -44,7 +41,6 @@ import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 
 import static org.geotoolkit.processing.vector.douglaspeucker.DouglasPeuckerDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 import org.opengis.feature.AttributeType;
 
 
@@ -69,20 +65,20 @@ public class DouglasPeuckerProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList = value(FEATURE_IN, inputParameters);
-        final Double inputAccuracy               = value(ACCURACY_IN, inputParameters);
-        final Boolean inputBehavior              = value(DEL_SMALL_GEO_IN, inputParameters) != null ?
-                                                   value(DEL_SMALL_GEO_IN, inputParameters) :
+        final FeatureCollection inputFeatureList = inputParameters.getValue(FEATURE_IN);
+        final Double inputAccuracy               = inputParameters.getValue(ACCURACY_IN);
+        final Boolean inputBehavior              = inputParameters.getValue(DEL_SMALL_GEO_IN) != null ?
+                                                   inputParameters.getValue(DEL_SMALL_GEO_IN) :
                                                          DEL_SMALL_GEO_IN.getDefaultValue();
 
-        final Boolean inputLenient               = value(LENIENT_TRANSFORM_IN, inputParameters) != null ?
-                                                   value(LENIENT_TRANSFORM_IN, inputParameters) :
+        final Boolean inputLenient               = inputParameters.getValue(LENIENT_TRANSFORM_IN) != null ?
+                                                   inputParameters.getValue(LENIENT_TRANSFORM_IN) :
                                                          LENIENT_TRANSFORM_IN.getDefaultValue();
 
         final FeatureCollection resultFeatureList =
                 new DouglasPeuckerFeatureCollection(inputFeatureList, inputAccuracy, inputBehavior, inputLenient);
 
-        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+        outputParameters.getOrCreate(FEATURE_OUT).setValue(resultFeatureList);
     }
 
     /**

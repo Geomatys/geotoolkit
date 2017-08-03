@@ -45,7 +45,6 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
-import static org.geotoolkit.parameter.Parameters.*;
 
 
 /**
@@ -100,14 +99,14 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException{
         try {
-            final GridCoverageReader reader = value(CoverageToFeaturesDescriptor.READER_IN, inputParameters);
+            final GridCoverageReader reader = inputParameters.getValue(CoverageToFeaturesDescriptor.READER_IN);
             final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
             final GeneralGridGeometry gridGeom = reader.getGridGeometry(0);
 
             final CoverageToFeatureCollection resultFeatureList =
                     new CoverageToFeatureCollection(reader, gridGeom.getExtent(), coverage, gridGeom);
 
-            getOrCreate(CoverageToFeaturesDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+            outputParameters.getOrCreate(CoverageToFeaturesDescriptor.FEATURE_OUT).setValue(resultFeatureList);
         } catch (CoverageStoreException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }

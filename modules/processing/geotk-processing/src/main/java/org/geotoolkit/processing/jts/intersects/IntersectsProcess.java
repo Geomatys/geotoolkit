@@ -27,8 +27,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
-import static org.geotoolkit.parameter.Parameters.*;
-
 /**
  * @author Quentin Boileau (Geomatys)
  * @module
@@ -44,8 +42,8 @@ public class IntersectsProcess extends AbstractProcess {
 
         try {
 
-            final Geometry geom1 = value(IntersectsDescriptor.GEOM1, inputParameters);
-            Geometry geom2 = value(IntersectsDescriptor.GEOM2, inputParameters);
+            final Geometry geom1 = inputParameters.getValue(IntersectsDescriptor.GEOM1);
+            Geometry geom2 = inputParameters.getValue(IntersectsDescriptor.GEOM2);
 
             // ensure geometries are in the same CRS
             final CoordinateReferenceSystem resultCRS = JTS.getCommonCRS(geom1, geom2);
@@ -55,7 +53,7 @@ public class IntersectsProcess extends AbstractProcess {
 
             final boolean result = (Boolean) geom1.intersects(geom2);
 
-            getOrCreate(IntersectsDescriptor.RESULT, outputParameters).setValue(result);
+            outputParameters.getOrCreate(IntersectsDescriptor.RESULT).setValue(result);
 
         } catch (FactoryException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

@@ -17,13 +17,13 @@
 package org.geotoolkit.osmtms;
 
 import java.net.URL;
+import org.apache.sis.parameter.Parameters;
 
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.storage.coverage.PyramidSet;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.osmtms.model.OSMTMSPyramidSet;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.Client;
@@ -92,9 +92,9 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client{
     private static ParameterValueGroup toParameters(
             final URL serverURL, final ClientSecurity security,
             final int maxZoomLevel, boolean cacheImage){
-        final ParameterValueGroup params = create(OSMTMSClientFactory.PARAMETERS, serverURL, security);
-        Parameters.getOrCreate(OSMTMSClientFactory.MAX_ZOOM_LEVEL, params).setValue(maxZoomLevel);
-        Parameters.getOrCreate(OSMTMSClientFactory.IMAGE_CACHE, params).setValue(cacheImage);
+        final Parameters params = create(OSMTMSClientFactory.PARAMETERS, serverURL, security);
+        params.getOrCreate(OSMTMSClientFactory.MAX_ZOOM_LEVEL).setValue(maxZoomLevel);
+        params.getOrCreate(OSMTMSClientFactory.IMAGE_CACHE).setValue(cacheImage);
         return params;
     }
 
@@ -109,7 +109,7 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client{
     }
 
     public boolean getCacheImage(){
-        return (Boolean)Parameters.getOrCreate(OSMTMSClientFactory.IMAGE_CACHE, parameters).getValue();
+        return parameters.getValue(OSMTMSClientFactory.IMAGE_CACHE);
     }
 
     public PyramidSet getPyramidSet(){
@@ -120,7 +120,7 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client{
      * @return maximum scale level available on this server.
      */
     public int getMaxZoomLevel() {
-        return Parameters.value(OSMTMSClientFactory.MAX_ZOOM_LEVEL, parameters);
+        return parameters.getValue(OSMTMSClientFactory.MAX_ZOOM_LEVEL);
     }
 
     /**

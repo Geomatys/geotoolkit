@@ -40,7 +40,6 @@ import org.opengis.feature.PropertyType;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.processing.vector.regroup.RegroupDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 
 /**
@@ -62,11 +61,11 @@ public class RegroupProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList  = value(FEATURE_IN, inputParameters);
-        final String inputAttributeName           = value(REGROUP_ATTRIBUTE, inputParameters);
-        final String inputGeometryName            = value(GEOMETRY_NAME, inputParameters);
+        final FeatureCollection inputFeatureList  = inputParameters.getValue(FEATURE_IN);
+        final String inputAttributeName           = inputParameters.getValue(REGROUP_ATTRIBUTE);
+        final String inputGeometryName            = inputParameters.getValue(GEOMETRY_NAME);
         final FeatureCollection resultFeatureList = new RegroupFeatureCollection(inputFeatureList, inputAttributeName, inputGeometryName);
-        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+        outputParameters.getOrCreate(FEATURE_OUT).setValue(resultFeatureList);
     }
 
     /**

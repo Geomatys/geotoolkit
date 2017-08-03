@@ -19,8 +19,6 @@ package org.geotoolkit.processing.math.add;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.parameter.Parameters.*;
-
 /**
  * Addition process between two numbers.
  *
@@ -35,13 +33,10 @@ public class AddProcess extends AbstractProcess {
 
     @Override
     protected void execute() {
-
-        final double first = value(AddDescriptor.FIRST_NUMBER, inputParameters);
-        final double second = value(AddDescriptor.SECOND_NUMBER, inputParameters);
-
+        final double first = inputParameters.getValue(AddDescriptor.FIRST_NUMBER);
+        final double second = inputParameters.getValue(AddDescriptor.SECOND_NUMBER);
         final double result = first + second;
-
-        getOrCreate(AddDescriptor.RESULT_NUMBER, outputParameters).setValue(result);
+        outputParameters.getOrCreate(AddDescriptor.RESULT_NUMBER).setValue(result);
     }
 
 }

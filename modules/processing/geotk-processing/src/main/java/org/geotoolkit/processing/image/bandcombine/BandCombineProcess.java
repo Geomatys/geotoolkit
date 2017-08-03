@@ -34,7 +34,6 @@ import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PlanarConfiguration;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 
@@ -71,14 +70,14 @@ public class BandCombineProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
 
-        final RenderedImage[] inputImages = (RenderedImage[]) Parameters.getOrCreate(BandCombineDescriptor.IN_IMAGES, inputParameters).getValue();
+        final RenderedImage[] inputImages = inputParameters.getValue(BandCombineDescriptor.IN_IMAGES);
 
         if (inputImages.length == 0)
             throw new ProcessException("No image to combine", this, null);
 
         if (inputImages.length == 1) {
             //nothing to do
-            Parameters.getOrCreate(BandCombineDescriptor.OUT_IMAGE, outputParameters).setValue(inputImages[0]);
+            outputParameters.getOrCreate(BandCombineDescriptor.OUT_IMAGE).setValue(inputImages[0]);
             return;
         }
 
@@ -240,7 +239,7 @@ public class BandCombineProcess extends AbstractProcess {
                 }
             }
         }
-        Parameters.getOrCreate(BandCombineDescriptor.OUT_IMAGE, outputParameters).setValue(resultImage);
+        outputParameters.getOrCreate(BandCombineDescriptor.OUT_IMAGE).setValue(resultImage);
     }
 
     /**

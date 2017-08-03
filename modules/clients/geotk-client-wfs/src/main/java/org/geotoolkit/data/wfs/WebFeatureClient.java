@@ -23,21 +23,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.client.AbstractFeatureClient;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.data.wfs.v110.*;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
@@ -80,11 +76,11 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
     public WebFeatureClient(final URL serverURL, final ClientSecurity security, final String version) {
         this(create(WFSFeatureStoreFactory.PARAMETERS_DESCRIPTOR, serverURL, security));
         if(version.equals("1.1.0")){
-            Parameters.getOrCreate(WFSFeatureStoreFactory.VERSION, parameters).setValue(version);
+            parameters.getOrCreate(WFSFeatureStoreFactory.VERSION).setValue(version);
         }else{
             throw new IllegalArgumentException("unknowned version : "+ version);
         }
-        Parameters.getOrCreate(WFSFeatureStoreFactory.POST_REQUEST, parameters).setValue(false);
+        parameters.getOrCreate(WFSFeatureStoreFactory.POST_REQUEST).setValue(false);
     }
 
     public WebFeatureClient(final URL serverURL, final ClientSecurity security, final WFSVersion version, final boolean usePost) {
@@ -92,13 +88,13 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
         if(version == null){
             throw new IllegalArgumentException("unknowned version : "+ version);
         }
-        Parameters.getOrCreate(WFSFeatureStoreFactory.VERSION, parameters).setValue(version.getCode());
-        Parameters.getOrCreate(WFSFeatureStoreFactory.POST_REQUEST, parameters).setValue(usePost);
+        parameters.getOrCreate(WFSFeatureStoreFactory.VERSION).setValue(version.getCode());
+        parameters.getOrCreate(WFSFeatureStoreFactory.POST_REQUEST).setValue(usePost);
     }
 
     public WebFeatureClient(final ParameterValueGroup params) {
         super(params);
-        Parameters.getOrCreate(WFSFeatureStoreFactory.VERSION, parameters).setValue("1.1.0");
+        parameters.getOrCreate(WFSFeatureStoreFactory.VERSION).setValue("1.1.0");
         parameters.parameter(WFSFeatureStoreFactory.POST_REQUEST.getName().getCode());
     }
 
@@ -108,15 +104,15 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
     }
 
     public WFSVersion getVersion(){
-        return WFSVersion.fromCode(Parameters.value(WFSFeatureStoreFactory.VERSION, parameters));
+        return WFSVersion.fromCode(parameters.getValue(WFSFeatureStoreFactory.VERSION));
     }
 
     public boolean getUsePost(){
-        return Parameters.value(WFSFeatureStoreFactory.POST_REQUEST, parameters);
+        return parameters.getValue(WFSFeatureStoreFactory.POST_REQUEST);
     }
 
     public boolean getLongitudeFirst(){
-        return Parameters.getOrCreate(WFSFeatureStoreFactory.LONGITUDE_FIRST, parameters).booleanValue();
+        return parameters.getValue(WFSFeatureStoreFactory.LONGITUDE_FIRST);
     }
 
     private synchronized FeatureStore getStore() {

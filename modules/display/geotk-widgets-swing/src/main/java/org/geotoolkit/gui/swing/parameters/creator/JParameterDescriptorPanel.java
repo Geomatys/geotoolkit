@@ -19,15 +19,12 @@ package  org.geotoolkit.gui.swing.parameters.creator;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.beans.PropertyChangeEvent;
-
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.FontIconJButton;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
-import org.opengis.util.InternationalString;
 
 /**
  *
@@ -73,8 +70,11 @@ public final class JParameterDescriptorPanel extends GeneralParameterDescriptorP
 
     @Override
     public GeneralParameterDescriptor getDescriptor() {
-        final InternationalString remark = remarks != null ? new SimpleInternationalString(remarks) : null;
-        return ParametersExt.createParameterDescriptor(code, remark, type, null, defaultValue, null, null, null, mandatory);
+        final ParameterBuilder pb = new ParameterBuilder();
+        pb.addName(code);
+        if (remarks!=null) pb.setRemarks(remarks);
+        pb.setRequired(mandatory);
+        return pb.create(type, defaultValue);
     }
 
     @Override

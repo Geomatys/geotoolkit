@@ -27,8 +27,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
-import static org.geotoolkit.parameter.Parameters.*;
-
 /**
  * Compute if the first geometry contained the second one.
  * The process ensure that two geometries are into the same CoordinateReferenceSystem.
@@ -44,8 +42,8 @@ public class ContainProcess extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         try {
-            final Geometry geom1 = value(ContainDescriptor.GEOM1, inputParameters);
-            Geometry geom2 = value(ContainDescriptor.GEOM2, inputParameters);
+            final Geometry geom1 = inputParameters.getValue(ContainDescriptor.GEOM1);
+            Geometry geom2 = inputParameters.getValue(ContainDescriptor.GEOM2);
 
             // ensure geometries are in the same CRS
             final CoordinateReferenceSystem resultCRS = JTS.getCommonCRS(geom1, geom2);
@@ -55,7 +53,7 @@ public class ContainProcess extends AbstractProcess {
 
             final Boolean result = (Boolean) geom1.contains(geom2);
 
-            getOrCreate(ContainDescriptor.RESULT, outputParameters).setValue(result);
+            outputParameters.getOrCreate(ContainDescriptor.RESULT).setValue(result);
 
         } catch (FactoryException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

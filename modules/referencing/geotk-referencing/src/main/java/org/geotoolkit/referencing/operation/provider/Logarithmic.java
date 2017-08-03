@@ -35,7 +35,7 @@ import org.geotoolkit.resources.Vocabulary;
 
 import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.ParameterBuilder;
-import static org.geotoolkit.parameter.Parameters.*;
+import org.apache.sis.parameter.Parameters;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
 
 
@@ -165,8 +165,8 @@ public class Logarithmic extends MathTransformProvider {
     {
         final TransferFunction f = new TransferFunction();
         f.setType(TransferFunctionType.LOGARITHMIC);
-        f.setBase(doubleValue(BASE,  values));
-        f.setOffset(doubleValue(OFFSET, values));
+        f.setBase(Parameters.castOrWrap(values).getValue(BASE));
+        f.setOffset(Parameters.castOrWrap(values).getValue(OFFSET));
         return f.getTransform();
     }
 }

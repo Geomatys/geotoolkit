@@ -19,8 +19,6 @@ package org.geotoolkit.processing.math.asin;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.parameter.Parameters.*;
-
 /**
  * @author Quentin Boileau (Geomatys)
  * @module
@@ -33,11 +31,9 @@ public class AsinProcess extends AbstractProcess {
 
     @Override
     protected void execute() {
-
-        final double first = value(AsinDescriptor.FIRST_NUMBER, inputParameters);
-
+        final double first = inputParameters.getValue(AsinDescriptor.FIRST_NUMBER);
         final double result = Math.asin(first);
-        getOrCreate(AsinDescriptor.RESULT_NUMBER, outputParameters).setValue(result);
+        outputParameters.getOrCreate(AsinDescriptor.RESULT_NUMBER).setValue(result);
     }
 
 }

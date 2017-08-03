@@ -32,7 +32,6 @@ import org.geotoolkit.csw.v202.Transaction202;
 import org.geotoolkit.csw.xml.AbstractCapabilities;
 import org.geotoolkit.csw.xml.CSWBindingUtilities;
 import org.geotoolkit.csw.xml.CSWVersion;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
@@ -117,7 +116,7 @@ public class CatalogServicesClient extends AbstractClient {
      * Returns the currently used version for this server
      */
     public CSWVersion getVersion() {
-        return CSWVersion.fromCode(Parameters.value(CSWClientFactory.VERSION, parameters));
+        return CSWVersion.fromCode(parameters.getValue(CSWClientFactory.VERSION));
     }
 
     /**

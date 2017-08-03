@@ -24,7 +24,6 @@ import org.geotoolkit.factory.Factory;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -90,7 +89,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
     public DataStore open(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
 
-        final ParameterValueGroup prm = ParametersExt.toParameter(params,getParametersDescriptor());
+        final ParameterValueGroup prm = Parameters.toParameter(params, getParametersDescriptor());
         if(prm == null){
             return null;
         }
@@ -108,7 +107,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
     public DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
 
-        final ParameterValueGroup prm = ParametersExt.toParameter(params,getParametersDescriptor());
+        final ParameterValueGroup prm = Parameters.toParameter(params, getParametersDescriptor());
         if(prm == null){
             return null;
         }
@@ -126,7 +125,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
     public boolean canProcess(Map<String, ? extends Serializable> params) {
         params = forceIdentifier(params);
 
-        final ParameterValueGroup prm = ParametersExt.toParameter(params,getParametersDescriptor());
+        final ParameterValueGroup prm = Parameters.toParameter(params, getParametersDescriptor());
         if(prm == null){
             return false;
         }

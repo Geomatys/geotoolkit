@@ -22,7 +22,6 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
@@ -34,8 +33,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
-
-import static org.geotoolkit.parameter.Parameters.*;
 import org.opengis.feature.AttributeType;
 
 /**
@@ -57,10 +54,10 @@ public class DifferenceProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList         = value(VectorDescriptor.FEATURE_IN, inputParameters);
-        final FeatureCollection inputFeatureClippingList = value(DifferenceDescriptor.FEATURE_DIFF, inputParameters);
+        final FeatureCollection inputFeatureList         = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
+        final FeatureCollection inputFeatureClippingList = inputParameters.getValue(DifferenceDescriptor.FEATURE_DIFF);
         final FeatureCollection resultFeatureList = new DifferenceFeatureCollection(inputFeatureList, inputFeatureClippingList);
-        getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+        outputParameters.getOrCreate(VectorDescriptor.FEATURE_OUT).setValue(resultFeatureList);
     }
 
     /**

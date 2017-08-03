@@ -19,7 +19,6 @@ package org.geotoolkit.processing.math.sin;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
  * @module
@@ -32,11 +31,9 @@ public class SinProcess extends AbstractProcess {
 
     @Override
     protected void execute() {
-
-        final double first = value(SinDescriptor.FIRST_NUMBER, inputParameters);
-
+        final double first = inputParameters.getValue(SinDescriptor.FIRST_NUMBER);
         final double result = Math.sin(first);
-        getOrCreate(SinDescriptor.RESULT_NUMBER, outputParameters).setValue(result);
+        outputParameters.getOrCreate(SinDescriptor.RESULT_NUMBER).setValue(result);
     }
 
 }

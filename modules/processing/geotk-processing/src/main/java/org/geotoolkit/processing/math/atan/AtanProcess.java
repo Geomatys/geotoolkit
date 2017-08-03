@@ -19,8 +19,6 @@ package org.geotoolkit.processing.math.atan;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.parameter.Parameters.*;
-
 /**
  * @author Quentin Boileau (Geomatys)
  * @module
@@ -33,11 +31,9 @@ public class AtanProcess extends AbstractProcess {
 
     @Override
     protected void execute() {
-
-        final double first = value(AtanDescriptor.FIRST_NUMBER, inputParameters);
-
+        final double first = inputParameters.getValue(AtanDescriptor.FIRST_NUMBER);
         final double result = Math.atan(first);
-        getOrCreate(AtanDescriptor.RESULT_NUMBER, outputParameters).setValue(result);
+        outputParameters.getOrCreate(AtanDescriptor.RESULT_NUMBER).setValue(result);
     }
 
 }

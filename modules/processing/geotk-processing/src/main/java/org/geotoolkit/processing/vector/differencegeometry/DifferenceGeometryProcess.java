@@ -30,7 +30,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 
-import static org.geotoolkit.parameter.Parameters.*;
 import org.opengis.feature.AttributeType;
 
 
@@ -52,11 +51,11 @@ public class DifferenceGeometryProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList  = value(VectorDescriptor.FEATURE_IN, inputParameters);
-        final Geometry inputDifferenceGeometry    = value(DifferenceGeometryDescriptor.DIFF_GEOMETRY_IN, inputParameters);
+        final FeatureCollection inputFeatureList  = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
+        final Geometry inputDifferenceGeometry    = inputParameters.getValue(DifferenceGeometryDescriptor.DIFF_GEOMETRY_IN);
         final FeatureCollection resultFeatureList =
                 new DifferenceGeometryFeatureCollection(inputFeatureList,inputDifferenceGeometry);
-        getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+        outputParameters.getOrCreate(VectorDescriptor.FEATURE_OUT).setValue(resultFeatureList);
     }
 
     /**

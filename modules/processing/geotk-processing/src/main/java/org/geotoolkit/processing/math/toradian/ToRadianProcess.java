@@ -19,7 +19,6 @@ package org.geotoolkit.processing.math.toradian;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
  * @module
@@ -32,11 +31,9 @@ public class ToRadianProcess extends AbstractProcess {
 
     @Override
     protected void execute() {
-
-        final double first = value(ToRadianDescriptor.FIRST_NUMBER, inputParameters);
-
+        final double first = inputParameters.getValue(ToRadianDescriptor.FIRST_NUMBER);
         final double result = Math.toRadians(first);
-        getOrCreate(ToRadianDescriptor.RESULT_NUMBER, outputParameters).setValue(result);
+        outputParameters.getOrCreate(ToRadianDescriptor.RESULT_NUMBER).setValue(result);
     }
 
 }

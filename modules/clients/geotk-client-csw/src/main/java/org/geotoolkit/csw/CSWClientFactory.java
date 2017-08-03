@@ -20,13 +20,12 @@ package org.geotoolkit.csw;
 import java.net.URL;
 import java.util.Collections;
 import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.client.Client;
 import org.geotoolkit.csw.xml.CSWVersion;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.Parameters;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataType;
@@ -101,8 +100,8 @@ public class CSWClientFactory extends AbstractClientFactory{
     @Override
     public CatalogServicesClient open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
-        final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
-        final String version = (String)Parameters.getOrCreate(VERSION, params).getValue();
+        final URL url = Parameters.castOrWrap(params).getValue(URL);
+        final String version = Parameters.castOrWrap(params).getValue(VERSION);
         ClientSecurity security = null;
         try{
             final ParameterValue val = params.parameter(SECURITY.getName().getCode());

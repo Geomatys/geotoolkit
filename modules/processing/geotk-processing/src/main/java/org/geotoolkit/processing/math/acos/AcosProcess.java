@@ -19,7 +19,6 @@ package org.geotoolkit.processing.math.acos;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -33,11 +32,9 @@ public class AcosProcess extends AbstractProcess {
 
     @Override
     protected void execute() {
-
-        final double first = value(AcosDescriptor.FIRST_NUMBER, inputParameters);
-
+        final double first = inputParameters.getValue(AcosDescriptor.FIRST_NUMBER);
         final double result = Math.acos(first);
-        getOrCreate(AcosDescriptor.RESULT_NUMBER, outputParameters).setValue(result);
+        outputParameters.getOrCreate(AcosDescriptor.RESULT_NUMBER).setValue(result);
     }
 
 }

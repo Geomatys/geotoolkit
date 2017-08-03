@@ -26,10 +26,10 @@ import java.util.logging.Level;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.border.EmptyBorder;
+import org.apache.sis.parameter.Parameters;
 
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -105,7 +105,7 @@ public final class JParameterValueGroupPanel extends JPanel implements PropertyC
 
     public ParameterValueGroup getParameterValue() {
         //valueGroup to fill
-        final ParameterValueGroup valueGroup = descGroup.createValue();
+        final Parameters valueGroup = Parameters.castOrWrap(descGroup.createValue());
 
         for (GeneralParameterDescriptor desc : descGroup.descriptors()) {
             final String paramCode = desc.getName().getCode();
@@ -122,7 +122,7 @@ public final class JParameterValueGroupPanel extends JPanel implements PropertyC
                 }
 
                 if (paramValue != null) {
-                    ParametersExt.getOrCreateValue(valueGroup, paramCode).setValue(paramValue.getValue());
+                    valueGroup.parameter(paramCode).setValue(paramValue.getValue());
                 } else {
                     if (desc.getMinimumOccurs() > 0) {
                         Logging.getLogger("org.geotoolkit.gui.swing.parameters.editor").log(Level.WARNING, "Mandatory parameter {0} doesn't have a value", paramCode);
@@ -155,7 +155,7 @@ public final class JParameterValueGroupPanel extends JPanel implements PropertyC
                     List<ParameterValueGroup> groups = valueGroup.groups(paramCode);
 
                     for (int i=0; i<paramValues.size(); i++) {
-                        ParametersExt.deepCopy(paramValues.get(i), groups.get(i));
+                        Parameters.copy(paramValues.get(i), groups.get(i));
                     }
 
                 } else {

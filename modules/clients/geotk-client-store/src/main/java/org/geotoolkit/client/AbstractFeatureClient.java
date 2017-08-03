@@ -25,10 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.AbstractFeatureStore;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -45,7 +45,7 @@ public abstract class AbstractFeatureClient extends AbstractFeatureStore {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.client");
 
-    protected final ParameterValueGroup parameters;
+    protected final Parameters parameters;
     protected final URL serverURL;
 
     private final Map<String,Object> userProperties = new HashMap<>();
@@ -54,13 +54,13 @@ public abstract class AbstractFeatureClient extends AbstractFeatureStore {
 
     public AbstractFeatureClient(final ParameterValueGroup params) {
         super(params);
-        this.parameters = params;
-        this.serverURL = Parameters.value(AbstractClientFactory.URL,params);
+        this.parameters = Parameters.castOrWrap(params);
+        this.serverURL = parameters.getValue(AbstractClientFactory.URL);
         ArgumentChecks.ensureNonNull("server url", serverURL);
     }
 
     @Override
-    public ParameterValueGroup getConfiguration() {
+    public Parameters getConfiguration() {
         if(parameters != null){
             //defensive copy
             return parameters.clone();
@@ -93,7 +93,7 @@ public abstract class AbstractFeatureClient extends AbstractFeatureStore {
     public ClientSecurity getClientSecurity() {
         ClientSecurity securityManager = null;
         try {
-            securityManager = Parameters.value(AbstractClientFactory.SECURITY,parameters);
+            securityManager = parameters.getValue(AbstractClientFactory.SECURITY);
         } catch (ParameterNotFoundException ex) {
             // do nothing
         }
@@ -103,7 +103,7 @@ public abstract class AbstractFeatureClient extends AbstractFeatureStore {
     public int getTimeOutValue() {
         Integer timeout = null;
         try {
-            timeout = Parameters.value(AbstractClientFactory.TIMEOUT,parameters);
+            timeout = parameters.getValue(AbstractClientFactory.TIMEOUT);
         } catch (ParameterNotFoundException ex) {
             // do nothing
         }
@@ -160,10 +160,10 @@ public abstract class AbstractFeatureClient extends AbstractFeatureStore {
 
     protected static ParameterValueGroup create(final ParameterDescriptorGroup desc,
             final URL url, final ClientSecurity security){
-        final ParameterValueGroup param = desc.createValue();
-        param.parameter(AbstractClientFactory.URL.getName().getCode()).setValue(url);
+        final Parameters param = Parameters.castOrWrap(desc.createValue());
+        param.getOrCreate(AbstractClientFactory.URL).setValue(url);
         if (security != null) {
-            Parameters.getOrCreate(AbstractClientFactory.SECURITY, param).setValue(security);
+            param.getOrCreate(AbstractClientFactory.SECURITY).setValue(security);
         }
         return param;
     }

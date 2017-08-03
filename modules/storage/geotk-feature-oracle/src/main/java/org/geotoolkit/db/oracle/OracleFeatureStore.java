@@ -17,9 +17,9 @@
 package org.geotoolkit.db.oracle;
 
 import javax.sql.DataSource;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
-import org.geotoolkit.parameter.Parameters;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -39,13 +39,13 @@ public class OracleFeatureStore extends DefaultJDBCFeatureStore {
 
     private static ParameterValueGroup toParameters(String host, int port,
             String database, String schema, String user, String password){
-        final ParameterValueGroup params = OracleFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(OracleFeatureStoreFactory.HOST,    params).setValue(host);
-        Parameters.getOrCreate(OracleFeatureStoreFactory.PORT,    params).setValue(port);
-        Parameters.getOrCreate(OracleFeatureStoreFactory.DATABASE,params).setValue(database);
-        Parameters.getOrCreate(OracleFeatureStoreFactory.SCHEMA,  params).setValue(schema);
-        Parameters.getOrCreate(OracleFeatureStoreFactory.USER,    params).setValue(user);
-        Parameters.getOrCreate(OracleFeatureStoreFactory.PASSWORD,params).setValue(password);
+        final Parameters params = Parameters.castOrWrap(OracleFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(OracleFeatureStoreFactory.HOST).setValue(host);
+        params.getOrCreate(OracleFeatureStoreFactory.PORT).setValue(port);
+        params.getOrCreate(OracleFeatureStoreFactory.DATABASE).setValue(database);
+        params.getOrCreate(OracleFeatureStoreFactory.SCHEMA).setValue(schema);
+        params.getOrCreate(OracleFeatureStoreFactory.USER).setValue(user);
+        params.getOrCreate(OracleFeatureStoreFactory.PASSWORD).setValue(password);
         return params;
     }
 

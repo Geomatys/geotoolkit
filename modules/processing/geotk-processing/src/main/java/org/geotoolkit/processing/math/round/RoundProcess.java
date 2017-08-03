@@ -20,7 +20,6 @@ import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.processing.math.round.RoundDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
  * @module
@@ -33,12 +32,9 @@ public class RoundProcess extends AbstractProcess {
 
     @Override
     protected void execute() {
-
-        final double first = value(FIRST_NUMBER, inputParameters);
-
+        final double first = inputParameters.getValue(FIRST_NUMBER);
         final long result = Math.round(first);
-
-        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
+        outputParameters.getOrCreate(RESULT_NUMBER).setValue(result);
     }
 
 }

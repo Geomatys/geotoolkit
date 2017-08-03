@@ -28,7 +28,6 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.opengis.util.GenericName;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataFileStore;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -52,6 +51,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.sis.internal.storage.gpx.Store;
 import org.apache.sis.internal.storage.gpx.Metadata;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.collection.BackingStoreException;
 
@@ -111,8 +111,8 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     private static ParameterValueGroup toParameter(final Path f) throws MalformedURLException{
-        final ParameterValueGroup params = GPXFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(GPXFeatureStoreFactory.PATH, params).setValue(f.toUri());
+        final Parameters params = Parameters.castOrWrap(GPXFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(GPXFeatureStoreFactory.PATH).setValue(f.toUri());
         return params;
     }
 

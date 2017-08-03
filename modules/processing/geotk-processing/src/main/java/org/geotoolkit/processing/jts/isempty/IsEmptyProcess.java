@@ -23,7 +23,6 @@ import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.processing.jts.isempty.IsEmptyDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -37,12 +36,9 @@ public class IsEmptyProcess extends AbstractProcess {
 
     @Override
     protected void execute() {
-
-        final Geometry geom1 = value(GEOM, inputParameters);
-
+        final Geometry geom1 = inputParameters.getValue(GEOM);
         final boolean result = geom1.isEmpty();
-
-        getOrCreate(RESULT, outputParameters).setValue(result);
+        outputParameters.getOrCreate(RESULT).setValue(result);
     }
 
 }

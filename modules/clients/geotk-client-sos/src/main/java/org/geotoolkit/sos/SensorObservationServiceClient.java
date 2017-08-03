@@ -19,7 +19,6 @@ package org.geotoolkit.sos;
 import java.net.URL;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.sos.v100.*;
 import org.geotoolkit.sos.xml.SOSVersion;
@@ -42,7 +41,7 @@ public class SensorObservationServiceClient extends AbstractClient {
     public SensorObservationServiceClient(final URL serverURL, final ClientSecurity security, final String version) {
         super(create(SOSClientFactory.PARAMETERS, serverURL, security));
         if (version.equals("1.0.0")){
-            Parameters.getOrCreate(SOSClientFactory.VERSION, parameters).setValue(version);
+            parameters.getOrCreate(SOSClientFactory.VERSION).setValue(version);
         } else {
             throw new IllegalArgumentException("unknowned version : "+ version);
         }
@@ -68,7 +67,7 @@ public class SensorObservationServiceClient extends AbstractClient {
      * Returns the currently used version for this server
      */
     public SOSVersion getVersion() {
-        return SOSVersion.fromCode(Parameters.value(SOSClientFactory.VERSION, parameters));
+        return SOSVersion.fromCode(parameters.getValue(SOSClientFactory.VERSION));
     }
 
     /**

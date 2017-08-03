@@ -64,9 +64,9 @@ import org.opengis.style.Symbolizer;
 import org.opengis.filter.expression.Literal;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.measure.Units;
+import org.apache.sis.parameter.Parameters;
 
 import static org.geotoolkit.process.mapfile.MapfileToSLDDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.process.mapfile.MapfileTypes.*;
 import static org.geotoolkit.style.StyleConstants.*;
 import org.opengis.feature.Feature;
@@ -90,8 +90,8 @@ public class MapfileToSLDProcess extends AbstractProcess{
     @Override
     protected void execute() throws ProcessException {
 
-        final File mapfile  = value(IN_FILE, inputParameters);
-        final File sldfile  = value(IN_OUTPUT, inputParameters);
+        final File mapfile  = inputParameters.getValue(IN_FILE);
+        final File sldfile  = inputParameters.getValue(IN_OUTPUT);
 
         final MapfileReader reader = new MapfileReader();
         reader.setInput(mapfile);
@@ -523,13 +523,13 @@ public class MapfileToSLDProcess extends AbstractProcess{
 
     private static Filter toFilter(final Expression ref, final String text) throws ProcessException{
         final ProcessDescriptor desc = MapfileFilterToOGCFilterDescriptor.INSTANCE;
-        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
-        getOrCreate(MapfileFilterToOGCFilterDescriptor.IN_TEXT, input).setValue(text);
-        getOrCreate(MapfileFilterToOGCFilterDescriptor.IN_REFERENCE, input).setValue(ref);
+        final Parameters input = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
+        input.getOrCreate(MapfileFilterToOGCFilterDescriptor.IN_TEXT).setValue(text);
+        input.getOrCreate(MapfileFilterToOGCFilterDescriptor.IN_REFERENCE).setValue(ref);
 
         final org.geotoolkit.process.Process process = desc.createProcess(input);
-        final ParameterValueGroup output = process.call();
-        final Filter result = (Filter) value(MapfileFilterToOGCFilterDescriptor.OUT_OGC, output);
+        final Parameters output = Parameters.castOrWrap(process.call());
+        final Filter result = (Filter) output.getValue(MapfileFilterToOGCFilterDescriptor.OUT_OGC);
         return result;
     }
 }

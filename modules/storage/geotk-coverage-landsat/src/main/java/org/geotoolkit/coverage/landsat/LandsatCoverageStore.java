@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import org.apache.sis.parameter.Parameters;
 
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
@@ -34,7 +35,6 @@ import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.utility.parameter.ParametersExt;
 
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
 import org.geotoolkit.storage.DataStores;
@@ -103,7 +103,7 @@ public class LandsatCoverageStore extends AbstractCoverageStore {
             throws DataStoreException {
         super(params);
 
-        final Object uri = ParametersExt.getOrCreateValue(params, LandsatStoreFactory.PATH.getName().getCode()).getValue();
+        final Object uri = Parameters.castOrWrap(params).getValue(LandsatStoreFactory.PATH);
         final Path path;
         if (uri != null) {
             path = Paths.get((URI) uri);
@@ -132,8 +132,8 @@ public class LandsatCoverageStore extends AbstractCoverageStore {
      * @return
      */
     private static ParameterValueGroup toParameters(URI uri) {
-        final ParameterValueGroup params = LandsatStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        ParametersExt.getOrCreateValue(params, LandsatStoreFactory.PATH.getName().getCode()).setValue(uri);
+        final Parameters params = Parameters.castOrWrap(LandsatStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(LandsatStoreFactory.PATH).setValue(uri);
         return params;
     }
 

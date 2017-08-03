@@ -32,6 +32,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.parameter.Parameters;
 
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
@@ -44,8 +45,6 @@ import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.metadata.MetadataUtilities;
-import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataSet;
 import org.geotoolkit.storage.DataStores;
@@ -99,9 +98,11 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
 
     public FileCoverageStore(ParameterValueGroup params) throws URISyntaxException, IOException {
         super(params);
-        rootPath = (URI) params.parameter(FileCoverageStoreFactory.PATH.getName().getCode()).getValue();
+        Parameters p = Parameters.castOrWrap(params);
+        rootPath = p.getValue(FileCoverageStoreFactory.PATH);
+        separator = p.getValue(FileCoverageStoreFactory.PATH_SEPARATOR);
+        format = p.getValue(FileCoverageStoreFactory.TYPE);
         root = Paths.get(rootPath);
-        format = (String) params.parameter(FileCoverageStoreFactory.TYPE.getName().getCode()).getValue();
 
         if("AUTO".equalsIgnoreCase(format)){
             spi = null;
@@ -109,14 +110,13 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
             spi = XImageIO.getReaderSpiByFormatName(format);
         }
 
-        separator = Parameters.value(FileCoverageStoreFactory.PATH_SEPARATOR, params);
     }
 
     private static ParameterValueGroup toParameters(URI uri, String format){
-        final ParameterValueGroup params = FileCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        ParametersExt.getOrCreateValue(params,"path").setValue(uri);
-        if(format!=null){
-            ParametersExt.getOrCreateValue(params,"type").setValue(format);
+        final Parameters params = Parameters.castOrWrap(FileCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(FileCoverageStoreFactory.PATH).setValue(uri);
+        if (format!=null) {
+            params.getOrCreate(FileCoverageStoreFactory.TYPE).setValue(format);
         }
         return params;
     }

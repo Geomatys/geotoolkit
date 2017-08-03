@@ -24,8 +24,6 @@ import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.parameter.Parameters.*;
-
 /**
  * Apply an affine transformation to all FeatureCollection geometries
  * @author Quentin Boileau
@@ -45,11 +43,11 @@ public class AffineTransformProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList   = value(VectorDescriptor.FEATURE_IN, inputParameters);
-        final java.awt.geom.AffineTransform transform       = value(AffineTransformDescriptor.TRANSFORM_IN, inputParameters);
+        final FeatureCollection inputFeatureList = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
+        final java.awt.geom.AffineTransform transform = inputParameters.getValue(AffineTransformDescriptor.TRANSFORM_IN);
         final AffineTransformGeometryTransformer trs = new AffineTransformGeometryTransformer(transform);
         final TransformFeatureType ttype = new TransformFeatureType(inputFeatureList.getType(), trs);
         final FeatureCollection resultFeatureList = FeatureStreams.decorate(inputFeatureList,ttype);
-        getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+        outputParameters.getOrCreate(VectorDescriptor.FEATURE_OUT).setValue(resultFeatureList);
     }
 }

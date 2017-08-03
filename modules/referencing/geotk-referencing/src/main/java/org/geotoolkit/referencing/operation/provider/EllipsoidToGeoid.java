@@ -35,8 +35,8 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
-import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
 import static org.geotoolkit.referencing.operation.transform.EarthGravitationalModel.*;
 
@@ -159,7 +159,7 @@ public class EllipsoidToGeoid extends MathTransformProvider {
             throws ParameterNotFoundException, FactoryException
     {
         final GeodeticDatum datum;
-        final String name = stringValue(DATUM, values);
+        final String name = Parameters.castOrWrap(values).getValue(DATUM);
         if ("WGS84".equalsIgnoreCase(name)) {
             datum = CommonCRS.WGS84.datum();
         } else if ("WGS72".equalsIgnoreCase(name)) {
@@ -167,7 +167,7 @@ public class EllipsoidToGeoid extends MathTransformProvider {
         } else {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.UnsupportedDatum_1, name));
         }
-        final Integer order = integerValue(ORDER, values);
+        final Integer order = Parameters.castOrWrap(values).getValue(ORDER);
         int nmax = (order != null) ? order : DEFAULT_ORDER;
         return create(datum, nmax);
     }

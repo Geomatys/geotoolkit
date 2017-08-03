@@ -28,7 +28,6 @@ import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
@@ -139,8 +138,8 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
     public WebMapTileClient(final URL serverURL, final ClientSecurity security,
             final WMTSVersion version, final Capabilities capabilities, boolean cacheImage) {
         super(create(WMTSClientFactory.PARAMETERS, serverURL, security));
-        Parameters.getOrCreate(WMTSClientFactory.VERSION, parameters).setValue(version.getCode());
-        Parameters.getOrCreate(WMTSClientFactory.IMAGE_CACHE, parameters).setValue(cacheImage);
+        parameters.getOrCreate(WMTSClientFactory.VERSION).setValue(version.getCode());
+        parameters.getOrCreate(WMTSClientFactory.IMAGE_CACHE).setValue(cacheImage);
         this.capabilities = capabilities;
     }
 
@@ -213,11 +212,11 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
      * Returns the request version.
      */
     public WMTSVersion getVersion() {
-        return WMTSVersion.getVersion(Parameters.value(WMTSClientFactory.VERSION, parameters));
+        return WMTSVersion.getVersion(parameters.getValue(WMTSClientFactory.VERSION));
     }
 
     public boolean getImageCache(){
-        return (Boolean)Parameters.getOrCreate(AbstractClientFactory.IMAGE_CACHE, parameters).getValue();
+        return parameters.getValue(AbstractClientFactory.IMAGE_CACHE);
     }
 
     /**

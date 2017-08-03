@@ -19,7 +19,6 @@ package org.geotoolkit.processing.math.divide;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
  * @module
@@ -32,12 +31,10 @@ public class DivideProcess extends AbstractProcess {
 
     @Override
     protected void execute() {
-
-        final double first = value(DivideDescriptor.FIRST_NUMBER, inputParameters);
-        final double second = value(DivideDescriptor.SECOND_NUMBER, inputParameters);
-
+        final double first = inputParameters.getValue(DivideDescriptor.FIRST_NUMBER);
+        final double second = inputParameters.getValue(DivideDescriptor.SECOND_NUMBER);
         final double result = first / second;
-        getOrCreate(DivideDescriptor.RESULT_NUMBER, outputParameters).setValue(result);
+        outputParameters.getOrCreate(DivideDescriptor.RESULT_NUMBER).setValue(result);
     }
 
 }

@@ -17,18 +17,14 @@
 package org.geotoolkit.processing.jts.within;
 
 import com.vividsolutions.jts.geom.Geometry;
-
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-
 import org.geotoolkit.processing.jts.overlaps.OverlapsDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
-
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Compute if the first geometry within the second one.
@@ -47,8 +43,8 @@ public class WithinProcess extends AbstractProcess {
 
         try {
 
-            final Geometry geom1 = value(OverlapsDescriptor.GEOM1, inputParameters);
-            Geometry geom2 = value(OverlapsDescriptor.GEOM2, inputParameters);
+            final Geometry geom1 = inputParameters.getValue(OverlapsDescriptor.GEOM1);
+            Geometry geom2 = inputParameters.getValue(OverlapsDescriptor.GEOM2);
 
             // ensure geometries are in the same CRS
             final CoordinateReferenceSystem resultCRS = JTS.getCommonCRS(geom1, geom2);
@@ -58,7 +54,7 @@ public class WithinProcess extends AbstractProcess {
 
             final boolean result = geom1.within(geom2);
 
-            getOrCreate(OverlapsDescriptor.RESULT, outputParameters).setValue(result);
+            outputParameters.getOrCreate(OverlapsDescriptor.RESULT).setValue(result);
 
         } catch (FactoryException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

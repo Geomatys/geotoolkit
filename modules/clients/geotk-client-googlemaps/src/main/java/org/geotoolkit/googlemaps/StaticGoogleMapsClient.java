@@ -18,12 +18,12 @@ package org.geotoolkit.googlemaps;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.apache.sis.parameter.Parameters;
 
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.Client;
@@ -94,8 +94,8 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Cl
 
     private static ParameterValueGroup toParameters(final URL serverURL, final String key,
             final ClientSecurity security, boolean cacheImage){
-        final ParameterValueGroup params = create(StaticGoogleClientFactory.PARAMETERS, serverURL, security);
-        Parameters.getOrCreate(StaticGoogleClientFactory.IMAGE_CACHE, params).setValue(cacheImage);
+        final Parameters params = create(StaticGoogleClientFactory.PARAMETERS, serverURL, security);
+        params.getOrCreate(StaticGoogleClientFactory.IMAGE_CACHE).setValue(cacheImage);
         return params;
     }
 
@@ -111,7 +111,7 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Cl
     }
 
     public boolean getCacheImage(){
-        return (Boolean)Parameters.getOrCreate(AbstractClientFactory.IMAGE_CACHE, parameters).getValue();
+        return parameters.getValue(AbstractClientFactory.IMAGE_CACHE);
     }
 
     @Override

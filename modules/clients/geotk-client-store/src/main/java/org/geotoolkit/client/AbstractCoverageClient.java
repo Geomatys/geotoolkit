@@ -24,9 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -45,7 +45,7 @@ public abstract class AbstractCoverageClient extends AbstractCoverageStore {
 
     public AbstractCoverageClient(ParameterValueGroup params){
         super(params);
-        this.serverURL = Parameters.value(AbstractClientFactory.URL,params);
+        this.serverURL = parameters.getValue(AbstractClientFactory.URL);
         ArgumentChecks.ensureNonNull("server url", serverURL);
     }
 
@@ -74,7 +74,7 @@ public abstract class AbstractCoverageClient extends AbstractCoverageStore {
     public ClientSecurity getClientSecurity() {
         ClientSecurity securityManager = null;
         try {
-            securityManager = Parameters.value(AbstractClientFactory.SECURITY,parameters);
+            securityManager = parameters.getValue(AbstractClientFactory.SECURITY);
         } catch (ParameterNotFoundException ex) {
             // do nothing
         }
@@ -84,7 +84,7 @@ public abstract class AbstractCoverageClient extends AbstractCoverageStore {
     public int getTimeOutValue() {
         Integer timeout = null;
         try {
-            timeout = Parameters.value(AbstractClientFactory.TIMEOUT,parameters);
+            timeout = parameters.getValue(AbstractClientFactory.TIMEOUT);
         } catch (ParameterNotFoundException ex) {
             // do nothing
         }
@@ -133,12 +133,12 @@ public abstract class AbstractCoverageClient extends AbstractCoverageStore {
         }
     }
 
-    protected static ParameterValueGroup create(final ParameterDescriptorGroup desc,
+    protected static Parameters create(final ParameterDescriptorGroup desc,
             final URL url, final ClientSecurity security){
-        final ParameterValueGroup param = desc.createValue();
-        param.parameter(AbstractClientFactory.URL.getName().getCode()).setValue(url);
+        final Parameters param = Parameters.castOrWrap(desc.createValue());
+        param.getOrCreate(AbstractClientFactory.URL).setValue(url);
         if (security != null) {
-            Parameters.getOrCreate(AbstractClientFactory.SECURITY, param).setValue(security);
+            param.getOrCreate(AbstractClientFactory.SECURITY).setValue(security);
         }
         return param;
     }

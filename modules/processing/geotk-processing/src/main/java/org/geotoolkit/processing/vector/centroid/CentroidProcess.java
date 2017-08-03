@@ -29,7 +29,6 @@ import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 
 import static org.geotoolkit.processing.vector.centroid.CentroidDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 import org.opengis.feature.AttributeType;
 
 
@@ -51,9 +50,9 @@ public class CentroidProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList = value(FEATURE_IN, inputParameters);
+        final FeatureCollection inputFeatureList = inputParameters.getValue(FEATURE_IN);
         final FeatureCollection resultFeatureList = new CentroidFeatureCollection(inputFeatureList);
-        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+        outputParameters.getOrCreate(FEATURE_OUT).setValue(resultFeatureList);
     }
 
     /**

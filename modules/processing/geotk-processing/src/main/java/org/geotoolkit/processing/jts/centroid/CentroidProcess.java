@@ -29,7 +29,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.processing.jts.centroid.CentroidDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Compute input geometry centroid.
@@ -46,14 +45,14 @@ public class CentroidProcess extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         try {
-            final Geometry geom = value(GEOM, inputParameters);
+            final Geometry geom = inputParameters.getValue(GEOM);
 
             final CoordinateReferenceSystem geomCRS = JTS.findCoordinateReferenceSystem(geom);
 
             final Point result = geom.getCentroid();
             JTS.setCRS(result, geomCRS);
 
-            getOrCreate(RESULT_GEOM, outputParameters).setValue(result);
+            outputParameters.getOrCreate(RESULT_GEOM).setValue(result);
 
         } catch (NoSuchAuthorityCodeException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

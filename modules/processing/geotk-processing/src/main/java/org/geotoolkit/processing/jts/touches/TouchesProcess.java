@@ -28,7 +28,6 @@ import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.processing.jts.touches.TouchesDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Compute if the first geometry touch the second one.
@@ -47,8 +46,8 @@ public class TouchesProcess extends AbstractProcess {
 
         try {
 
-            final Geometry geom1 = value(GEOM1, inputParameters);
-            Geometry geom2 = value(GEOM2, inputParameters);
+            final Geometry geom1 = inputParameters.getValue(GEOM1);
+            Geometry geom2 = inputParameters.getValue(GEOM2);
 
             // ensure geometries are in the same CRS
             final CoordinateReferenceSystem resultCRS = JTS.getCommonCRS(geom1, geom2);
@@ -58,7 +57,7 @@ public class TouchesProcess extends AbstractProcess {
 
             final boolean result = geom1.touches(geom2);
 
-            getOrCreate(RESULT, outputParameters).setValue(result);
+            outputParameters.getOrCreate(RESULT).setValue(result);
 
         } catch (FactoryException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

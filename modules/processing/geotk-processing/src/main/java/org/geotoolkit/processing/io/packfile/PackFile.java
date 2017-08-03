@@ -28,7 +28,6 @@ import java.util.zip.CheckedOutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 
@@ -52,8 +51,8 @@ public class PackFile extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         fireProcessStarted("Start pack");
-        final File[] source = (File[]) getOrCreate(PackFileDescriptor.SOURCE_IN, inputParameters).getValue();
-        final File target   = (File) getOrCreate(PackFileDescriptor.TARGET_IN, inputParameters).getValue();
+        final File[] source = inputParameters.getValue(PackFileDescriptor.SOURCE_IN);
+        final File target   = inputParameters.getValue(PackFileDescriptor.TARGET_IN);
 
         //Prepare compression
         try {
@@ -76,7 +75,7 @@ public class PackFile extends AbstractProcess {
             throw new ProcessException("IO exception while packing files", this, ex);
         }
 
-        getOrCreate(PackFileDescriptor.RESULT_OUT, outputParameters).setValue(target);
+        outputParameters.getOrCreate(PackFileDescriptor.RESULT_OUT).setValue(target);
 
         fireProcessCompleted("Pack done.");
     }

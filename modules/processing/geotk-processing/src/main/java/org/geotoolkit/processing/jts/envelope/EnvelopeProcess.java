@@ -27,8 +27,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.parameter.Parameters.*;
-
 /**
  * Compute input geometry envelope.
  * The returned convexHull geometry keep input geometry CoordinateReferenceSystem.
@@ -45,14 +43,14 @@ public class EnvelopeProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
 
          try {
-            final Geometry geom = value(EnvelopeDescriptor.GEOM, inputParameters);
+            final Geometry geom = inputParameters.getValue(EnvelopeDescriptor.GEOM);
 
             final CoordinateReferenceSystem geomCRS = JTS.findCoordinateReferenceSystem(geom);
 
             final Geometry result =  geom.getEnvelope();
             JTS.setCRS(result, geomCRS);
 
-            getOrCreate(EnvelopeDescriptor.RESULT_GEOM, outputParameters).setValue(result);
+            outputParameters.getOrCreate(EnvelopeDescriptor.RESULT_GEOM).setValue(result);
 
         } catch (NoSuchAuthorityCodeException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

@@ -29,7 +29,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.processing.vector.intersection.IntersectionDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Generate a FeatureCollection where each Feature are the intersections of the two input
@@ -51,13 +50,13 @@ public class IntersectionProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList               = value(FEATURE_IN, inputParameters);
-        final FeatureCollection inputFeatureIntersectionList   = value(FEATURE_INTER, inputParameters);
-        final String inputGeometryName                         = value(GEOMETRY_NAME, inputParameters);
+        final FeatureCollection inputFeatureList               = inputParameters.getValue(FEATURE_IN);
+        final FeatureCollection inputFeatureIntersectionList   = inputParameters.getValue(FEATURE_INTER);
+        final String inputGeometryName                         = inputParameters.getValue(GEOMETRY_NAME);
 
         final FeatureCollection resultFeatureList = new IntersectionFeatureCollection(inputFeatureList, inputFeatureIntersectionList, inputGeometryName);
 
-        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+        outputParameters.getOrCreate(FEATURE_OUT).setValue(resultFeatureList);
     }
 
     /**
