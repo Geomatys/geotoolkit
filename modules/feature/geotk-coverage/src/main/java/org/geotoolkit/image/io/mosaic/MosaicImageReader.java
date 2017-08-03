@@ -1090,7 +1090,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
             table.append("Size").nextColumn();
             table.append("Source").nextColumn();
             table.append("Destination").nextColumn();
-            table.append("ubsampling");
+            table.append("Subsampling");
             table.appendHorizontalSeparator();
             startTime = System.nanoTime();
             status = 2; // To be set to 0 on success.
