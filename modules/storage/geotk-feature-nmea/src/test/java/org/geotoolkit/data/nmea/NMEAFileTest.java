@@ -22,7 +22,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.BeforeClass;
 import org.opengis.feature.Feature;

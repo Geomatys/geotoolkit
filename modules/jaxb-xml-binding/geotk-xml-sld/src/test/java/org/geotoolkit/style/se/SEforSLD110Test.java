@@ -25,7 +25,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import junit.framework.TestCase;
 import org.apache.sis.measure.Units;
 
 import org.geotoolkit.factory.FactoryFinder;
@@ -44,6 +43,7 @@ import org.geotoolkit.sld.xml.SE110toGTTransformer;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
@@ -64,10 +64,11 @@ import org.opengis.style.TextSymbolizer;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class SEforSLD110Test extends TestCase{
+public class SEforSLD110Test {
 
     private static final FilterFactory2 FILTER_FACTORY;
     private static final MutableStyleFactory STYLE_FACTORY;
+    private static final double DELTA = 0.00001;
 
     static{
         final Hints hints = new Hints();
@@ -284,8 +285,8 @@ public class SEforSLD110Test extends TestCase{
         assertEquals(rule.getName(), valueName);
         assertEquals(rule.getDescription().getTitle().toString(), valueTitle);
         assertEquals(rule.getDescription().getAbstract().toString(), valueAbstract);
-        assertEquals(rule.getMinScaleDenominator(),500d);
-        assertEquals(rule.getMaxScaleDenominator(),1000d);
+        assertEquals(rule.getMinScaleDenominator(),500d, DELTA);
+        assertEquals(rule.getMaxScaleDenominator(),1000d, DELTA);
 
         assertNull(rule.getLegend());
         assertNotNull(rule.getFilter());
@@ -300,8 +301,8 @@ public class SEforSLD110Test extends TestCase{
         assertEquals(pvt.getName(), valueName);
         assertEquals(String.valueOf(pvt.getDescription().getTitle()), valueTitle);
         assertEquals(String.valueOf(pvt.getDescription().getAbstract()), valueAbstract);
-        assertEquals(pvt.getMinScaleDenominator(),500d);
-        assertEquals(pvt.getMaxScaleDenominator(),1000d);
+        assertEquals(pvt.getMinScaleDenominator(),500d, DELTA);
+        assertEquals(pvt.getMaxScaleDenominator(),1000d, DELTA);
 
         assertNull(pvt.getLegendGraphic());
 
@@ -336,19 +337,19 @@ public class SEforSLD110Test extends TestCase{
         assertEquals(Units.POINT, pointSymbol.getUnitOfMeasure());
         assertNotNull(pointSymbol.getGraphic());
 
-        assertEquals(pointSymbol.getGraphic().getOpacity().evaluate(null, Float.class), 0.7f);
-        assertEquals(pointSymbol.getGraphic().getRotation().evaluate(null, Float.class), 110f);
-        assertEquals(pointSymbol.getGraphic().getSize().evaluate(null, Float.class), 32f);
+        assertEquals(pointSymbol.getGraphic().getOpacity().evaluate(null, Float.class), 0.7f, DELTA);
+        assertEquals(pointSymbol.getGraphic().getRotation().evaluate(null, Float.class), 110f, DELTA);
+        assertEquals(pointSymbol.getGraphic().getSize().evaluate(null, Float.class), 32f, DELTA);
         Mark mark = (Mark) pointSymbol.getGraphic().graphicalSymbols().get(0);
         assertEquals(mark.getWellKnownName().evaluate(null, String.class), "square");
-        assertEquals(mark.getStroke().getWidth().evaluate(null, Float.class), 13f);
-        assertEquals(mark.getStroke().getOpacity().evaluate(null, Float.class), 0.4f);
+        assertEquals(mark.getStroke().getWidth().evaluate(null, Float.class), 13f, DELTA);
+        assertEquals(mark.getStroke().getOpacity().evaluate(null, Float.class), 0.4f, DELTA);
         assertEquals(mark.getStroke().getLineJoin().evaluate(null, String.class), "bevel");
         assertEquals(mark.getStroke().getLineCap().evaluate(null, String.class), "butt");
-        assertEquals(mark.getStroke().getDashOffset().evaluate(null, Float.class), 2.3f);
+        assertEquals(mark.getStroke().getDashOffset().evaluate(null, Float.class), 2.3f, DELTA);
         assertEquals(mark.getStroke().getColor().evaluate(null, Color.class), ObjectConverters.convert("#404040",Color.class));
 
-        assertEquals(mark.getFill().getOpacity().evaluate(null, Float.class), 1.0f);
+        assertEquals(mark.getFill().getOpacity().evaluate(null, Float.class), 1.0f, DELTA);
         assertEquals(mark.getFill().getColor().evaluate(null, Color.class), ObjectConverters.convert("#808080",Color.class));
 
         //Write test
@@ -389,11 +390,11 @@ public class SEforSLD110Test extends TestCase{
         assertEquals(Units.METRE, lineSymbol.getUnitOfMeasure());
         assertNotNull(lineSymbol.getStroke());
 
-        assertEquals(lineSymbol.getStroke().getWidth().evaluate(null, Float.class), 13f);
-        assertEquals(lineSymbol.getStroke().getOpacity().evaluate(null, Float.class), 0.4f);
+        assertEquals(lineSymbol.getStroke().getWidth().evaluate(null, Float.class), 13f, DELTA);
+        assertEquals(lineSymbol.getStroke().getOpacity().evaluate(null, Float.class), 0.4f, DELTA);
         assertEquals(lineSymbol.getStroke().getLineJoin().evaluate(null, String.class), "bevel");
         assertEquals(lineSymbol.getStroke().getLineCap().evaluate(null, String.class), "butt");
-        assertEquals(lineSymbol.getStroke().getDashOffset().evaluate(null, Float.class), 2.3f);
+        assertEquals(lineSymbol.getStroke().getDashOffset().evaluate(null, Float.class), 2.3f, DELTA);
         assertEquals(lineSymbol.getStroke().getColor().evaluate(null, Color.class), ObjectConverters.convert("#FF0000",Color.class));
 
         //Write test
@@ -427,14 +428,14 @@ public class SEforSLD110Test extends TestCase{
         assertEquals(Units.FOOT, polySymbol.getUnitOfMeasure());
         assertNotNull(polySymbol.getStroke());
 
-        assertEquals(polySymbol.getStroke().getWidth().evaluate(null, Float.class), 13f);
-        assertEquals(polySymbol.getStroke().getOpacity().evaluate(null, Float.class), 0.4f);
+        assertEquals(polySymbol.getStroke().getWidth().evaluate(null, Float.class), 13f, DELTA);
+        assertEquals(polySymbol.getStroke().getOpacity().evaluate(null, Float.class), 0.4f, DELTA);
         assertEquals(polySymbol.getStroke().getLineJoin().evaluate(null, String.class), "bevel");
         assertEquals(polySymbol.getStroke().getLineCap().evaluate(null, String.class), "butt");
-        assertEquals(polySymbol.getStroke().getDashOffset().evaluate(null, Float.class), 2.3f);
+        assertEquals(polySymbol.getStroke().getDashOffset().evaluate(null, Float.class), 2.3f, DELTA);
         assertEquals(polySymbol.getStroke().getColor().evaluate(null, Color.class), ObjectConverters.convert("#FF0000",Color.class));
 
-        assertEquals(polySymbol.getFill().getOpacity().evaluate(null, Float.class), 1.0f);
+        assertEquals(polySymbol.getFill().getOpacity().evaluate(null, Float.class), 1.0f, DELTA);
         assertEquals(polySymbol.getFill().getColor().evaluate(null, Color.class), ObjectConverters.convert("#0000FF",Color.class));
 
         //Write test
@@ -469,17 +470,17 @@ public class SEforSLD110Test extends TestCase{
         assertEquals(Units.FOOT, textSymbol.getUnitOfMeasure());
         assertNotNull(textSymbol.getFill());
 
-        assertEquals(textSymbol.getFill().getOpacity().evaluate(null, Float.class), 1.0f);
+        assertEquals(textSymbol.getFill().getOpacity().evaluate(null, Float.class), 1.0f, DELTA);
         assertEquals(textSymbol.getFill().getColor().evaluate(null, Color.class), ObjectConverters.convert("#FFC800",Color.class));
 
-        assertEquals(textSymbol.getHalo().getRadius().evaluate(null, Float.class), 5f);
-        assertEquals(textSymbol.getHalo().getFill().getOpacity().evaluate(null, Float.class), 0.52f);
+        assertEquals(textSymbol.getHalo().getRadius().evaluate(null, Float.class), 5f, DELTA);
+        assertEquals(textSymbol.getHalo().getFill().getOpacity().evaluate(null, Float.class), 0.52f, DELTA);
 
         assertEquals(textSymbol.getLabel().toString(), "aField");
 
         assertEquals(textSymbol.getFont().getFamily().get(0).evaluate(null,String.class), "arial");
         assertEquals(textSymbol.getFont().getFamily().get(1).evaluate(null,String.class), "serif");
-        assertEquals(textSymbol.getFont().getSize().evaluate(null,Float.class), 17f);
+        assertEquals(textSymbol.getFont().getSize().evaluate(null,Float.class), 17f, DELTA);
         assertEquals(textSymbol.getFont().getStyle().evaluate(null,String.class), "italic");
         assertEquals(textSymbol.getFont().getWeight().evaluate(null,String.class), "bold");
 
@@ -523,19 +524,19 @@ public class SEforSLD110Test extends TestCase{
 
         assertNotNull(rasterSymbol.getContrastEnhancement());
         assertEquals(rasterSymbol.getContrastEnhancement().getMethod(), ContrastMethod.NORMALIZE);
-        assertEquals(rasterSymbol.getContrastEnhancement().getGammaValue().evaluate(null,Float.class), 3f);
+        assertEquals(rasterSymbol.getContrastEnhancement().getGammaValue().evaluate(null,Float.class), 3f, DELTA);
 
         assertNotNull(rasterSymbol.getImageOutline());
 
         assertNotNull(rasterSymbol.getOpacity());
-        assertEquals(rasterSymbol.getOpacity().evaluate(null,Float.class), 0.32f);
+        assertEquals(rasterSymbol.getOpacity().evaluate(null,Float.class), 0.32f, DELTA);
 
         assertNotNull(rasterSymbol.getOverlapBehavior());
         assertEquals(rasterSymbol.getOverlapBehavior(), OverlapBehavior.EARLIEST_ON_TOP);
 
         assertNotNull(rasterSymbol.getShadedRelief());
         assertEquals(rasterSymbol.getShadedRelief().isBrightnessOnly(), true);
-        assertEquals(rasterSymbol.getShadedRelief().getReliefFactor().evaluate(null, Float.class), 5f);
+        assertEquals(rasterSymbol.getShadedRelief().getReliefFactor().evaluate(null, Float.class), 5f, DELTA);
 
 
         //Write test
@@ -557,12 +558,12 @@ public class SEforSLD110Test extends TestCase{
         assertNotNull(rs.getContrastEnhancement());
         assertNotNull(rs.getContrastEnhancement().getNormalize());
         assertNull(rs.getContrastEnhancement().getHistogram());
-        assertEquals(rs.getContrastEnhancement().getGammaValue().doubleValue(), 3d);
+        assertEquals(rs.getContrastEnhancement().getGammaValue().doubleValue(), 3d, DELTA);
 
         assertNotNull(rs.getImageOutline());
 
         assertNotNull(rs.getOpacity());
-        assertEquals(rs.getContrastEnhancement().getGammaValue().doubleValue(), 3d);
+        assertEquals(rs.getContrastEnhancement().getGammaValue().doubleValue(), 3d, DELTA);
 
         assertNotNull(rs.getOverlapBehavior());
 //        assertNotNull(rs.getOverlapBehavior().getEARLIESTONTOP());
@@ -572,7 +573,7 @@ public class SEforSLD110Test extends TestCase{
 
         assertNotNull(rs.getShadedRelief());
         assertEquals(rs.getShadedRelief().isBrightnessOnly().booleanValue(), true);
-        assertEquals(rs.getShadedRelief().getReliefFactor().doubleValue(), 5d);
+        assertEquals(rs.getShadedRelief().getReliefFactor().doubleValue(), 5d, DELTA);
 
         MARSHALLER.marshal(pvt, TEST_FILE_SE_SYMBOL_RASTER);
         POOL.recycle(MARSHALLER);

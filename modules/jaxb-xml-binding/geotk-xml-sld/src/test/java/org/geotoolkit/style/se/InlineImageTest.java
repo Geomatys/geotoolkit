@@ -6,7 +6,6 @@ import java.io.File;
 import java.util.Collections;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import static junit.framework.Assert.*;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.StyleXmlIO;
@@ -21,6 +20,7 @@ import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.Symbolizer;
 import org.apache.sis.measure.Units;
+import static org.junit.Assert.*;
 
 /**
  *

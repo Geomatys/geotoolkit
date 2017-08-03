@@ -21,19 +21,21 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.PositionFactory;
 import org.opengis.geometry.primitive.Point;
 
-import junit.framework.TestCase;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.JTSPositionFactory;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * @author gdavis
  *
  * @module
  */
-public class PointImplTest extends TestCase {
+public class PointImplTest {
 
+    @Test
     public void testNewEmptyPoint() {
         Point point = new JTSPoint();
         assertNotNull(point.getCoordinateReferenceSystem());
@@ -41,6 +43,7 @@ public class PointImplTest extends TestCase {
         assertNotNull(position);
     }
 
+    @Test
     public void testNewPointHere() {
         DirectPosition here = new GeneralDirectPosition(CommonCRS.WGS84.normalizedGeographic());
         here.setOrdinate(0, 48.44);
@@ -54,6 +57,7 @@ public class PointImplTest extends TestCase {
         assertEquals(here.hashCode(), point.getDirectPosition().hashCode());
     }
 
+    @Test
     public void testNewFactoryPointHere() {
         PositionFactory gFact = new JTSPositionFactory(
                 CommonCRS.WGS84.normalizedGeographic());
@@ -68,6 +72,7 @@ public class PointImplTest extends TestCase {
         assertEquals(here.hashCode(), point.getDirectPosition().hashCode());
     }
 
+    @Test
     public void testPicoStuff() {
 //      DefaultPicoContainer container = new DefaultPicoContainer(); // parent
 //
@@ -129,6 +134,7 @@ public class PointImplTest extends TestCase {
 //      assertEquals(here.hashCode(), point.getPosition().hashCode());
 //  }
 
+    @Test
     public void testWSG843DPoint(){
 
         // Do actually test stuff

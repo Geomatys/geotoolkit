@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry;
 
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.TransfiniteSet;

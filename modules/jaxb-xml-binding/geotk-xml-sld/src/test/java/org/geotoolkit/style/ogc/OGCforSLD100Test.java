@@ -23,7 +23,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import junit.framework.TestCase;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.ogc.xml.OGC100toGTTransformer;
@@ -44,6 +43,7 @@ import org.geotoolkit.sld.xml.GTtoSE100Transformer;
 import org.geotoolkit.sld.xml.JAXBSLDUtilities;
 import org.geotoolkit.sld.xml.SEJAXBStatics;
 import org.apache.sis.xml.MarshallerPool;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
@@ -67,7 +67,7 @@ import org.opengis.filter.expression.Subtract;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class OGCforSLD100Test extends TestCase{
+public class OGCforSLD100Test {
 
     private static final double DELTA = 0.00000001;
 
@@ -332,7 +332,7 @@ public class OGCforSLD100Test extends TestCase{
         assertNotNull(right);
 
         assertEquals(left.getPropertyName(), valueStr);
-        assertEquals(right.evaluate( null, Float.class ), valueF);
+        assertEquals(right.evaluate( null, Float.class ), valueF, DELTA);
 
 
         //Write test
@@ -373,7 +373,7 @@ public class OGCforSLD100Test extends TestCase{
         assertNotNull(right);
 
         assertEquals(left.getPropertyName(), valueStr);
-        assertEquals(right.evaluate( null, Float.class ), valueF);
+        assertEquals(right.evaluate( null, Float.class ), valueF, DELTA);
 
 
         //Write test
@@ -409,7 +409,7 @@ public class OGCforSLD100Test extends TestCase{
         assertNotNull(exp);
 
         float val = exp.evaluate( null, Float.class );
-        assertEquals(val, valueF);
+        assertEquals(val, valueF, DELTA);
 
         //Write test
         ParameterValueType pvt = TRANSFORMER_OGC.visitExpression(exp);
@@ -419,7 +419,7 @@ public class OGCforSLD100Test extends TestCase{
         assertNotNull(jax);
 
         String str = jax.getValue().getContent().get(0).toString().trim();
-        assertEquals(Float.valueOf(str), valueF);
+        assertEquals(Float.valueOf(str), valueF, DELTA);
 
         MARSHALLER.marshal(jax, TEST_FILE_EXP_LITERAL);
         POOL.recycle(MARSHALLER);
@@ -447,7 +447,7 @@ public class OGCforSLD100Test extends TestCase{
         assertNotNull(right);
 
         assertEquals(left.getPropertyName(), valueStr);
-        assertEquals(right.evaluate( null, Float.class ), valueF);
+        assertEquals(right.evaluate( null, Float.class ), valueF, DELTA);
 
 
         //Write test
@@ -521,7 +521,7 @@ public class OGCforSLD100Test extends TestCase{
         assertNotNull(right);
 
         assertEquals(left.getPropertyName(), valueStr);
-        assertEquals(right.evaluate( null, Float.class ), valueF);
+        assertEquals(right.evaluate( null, Float.class ), valueF, DELTA);
 
 
         //Write test
@@ -569,8 +569,8 @@ public class OGCforSLD100Test extends TestCase{
         Literal upper = (Literal) prop.getUpperBoundary();
 
         assertEquals( center.getPropertyName() , valueStr);
-        assertEquals( lower.evaluate(null, Float.class) , 455f);
-        assertEquals( upper.evaluate(null, Float.class) , 457f);
+        assertEquals( lower.evaluate(null, Float.class) , 455f, DELTA);
+        assertEquals( upper.evaluate(null, Float.class) , 457f, DELTA);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.visit(filter);
@@ -613,7 +613,7 @@ public class OGCforSLD100Test extends TestCase{
         Literal right = (Literal) prop.getExpression2();
 
         assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , valueF);
+        assertEquals( right.evaluate(null, Float.class) , valueF, DELTA);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.visit(filter);
@@ -655,7 +655,7 @@ public class OGCforSLD100Test extends TestCase{
         Literal right = (Literal) prop.getExpression2();
 
         assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , valueF);
+        assertEquals( right.evaluate(null, Float.class) , valueF, DELTA);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.visit(filter);
@@ -697,7 +697,7 @@ public class OGCforSLD100Test extends TestCase{
         Literal right = (Literal) prop.getExpression2();
 
         assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , valueF);
+        assertEquals( right.evaluate(null, Float.class) , valueF, DELTA);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.visit(filter);
@@ -738,7 +738,7 @@ public class OGCforSLD100Test extends TestCase{
         Literal right = (Literal) prop.getExpression2();
 
         assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , valueF);
+        assertEquals( right.evaluate(null, Float.class) , valueF, DELTA);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.visit(filter);
@@ -779,7 +779,7 @@ public class OGCforSLD100Test extends TestCase{
         Literal right = (Literal) prop.getExpression2();
 
         assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , valueF);
+        assertEquals( right.evaluate(null, Float.class) , valueF, DELTA);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.visit(filter);
@@ -874,7 +874,7 @@ public class OGCforSLD100Test extends TestCase{
         Literal right = (Literal) prop.getExpression2();
 
         assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , valueF);
+        assertEquals( right.evaluate(null, Float.class) , valueF, DELTA);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.visit(filter);
@@ -962,12 +962,12 @@ public class OGCforSLD100Test extends TestCase{
         PropertyName left = (PropertyName) leftop.getExpression1();
         Literal right = (Literal) leftop.getExpression2();
         assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , 455f);
+        assertEquals( right.evaluate(null, Float.class) , 455f, DELTA);
 
         left = (PropertyName) rightop.getExpression1();
         right = (Literal) rightop.getExpression2();
         assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , 457f);
+        assertEquals( right.evaluate(null, Float.class) , 457f, DELTA);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.visit(filter);
@@ -1022,12 +1022,12 @@ public class OGCforSLD100Test extends TestCase{
         PropertyName left = (PropertyName) leftop.getExpression1();
         Literal right = (Literal) leftop.getExpression2();
         assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , 455f);
+        assertEquals( right.evaluate(null, Float.class) , 455f, DELTA);
 
         left = (PropertyName) rightop.getExpression1();
         right = (Literal) rightop.getExpression2();
         assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , 457f);
+        assertEquals( right.evaluate(null, Float.class) , 457f, DELTA);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.visit(filter);
@@ -1081,7 +1081,7 @@ public class OGCforSLD100Test extends TestCase{
         PropertyName left = (PropertyName) subfilter.getExpression1();
         Literal right = (Literal) subfilter.getExpression2();
         assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , valueF);
+        assertEquals( right.evaluate(null, Float.class) , valueF, DELTA);
 
 
         //write test

@@ -26,7 +26,6 @@ import static java.lang.Math.*;
 /**
  * Utility methods for affine transforms.
  */
-@Deprecated
 public final class XAffineTransform {
     /**
      * Do not allow instantiation of this class.

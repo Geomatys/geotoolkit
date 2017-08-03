@@ -35,7 +35,6 @@ import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
 import org.opengis.geometry.primitive.Surface;
 
-import junit.framework.TestCase;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 import org.apache.sis.util.logging.Logging;
@@ -47,7 +46,7 @@ import org.apache.sis.util.logging.Logging;
  * @author Joel Skelton
  * @module
  */
-public abstract class AbstractGeometryTest extends TestCase{
+public abstract class AbstractGeometryTest {
 
     protected static final GeometryFactory GEOMETRY_FACTORY;
 

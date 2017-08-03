@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import junit.framework.TestCase;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -62,6 +61,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.junit.Assert;
+import static org.junit.Assert.*;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.FeatureCatalogueDescription;
 import org.opengis.referencing.ReferenceSystem;
@@ -73,9 +73,10 @@ import org.opengis.referencing.crs.ProjectedCRS;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class MemoryDatastoreTest extends TestCase{
+public class MemoryDatastoreTest {
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final double DELTA = 0.00001;
 
     public MemoryDatastoreTest() {
     }
@@ -628,8 +629,8 @@ public class MemoryDatastoreTest extends TestCase{
             Feature sf;
             reader.hasNext();
             sf = reader.next();
-            assertEquals( ((Point)sf.getPropertyValue("geometry")).getX(), gf.createPoint(new Coordinate(10, 10)).getX() );
-            assertEquals( ((Point)sf.getPropertyValue("geometry")).getY(), gf.createPoint(new Coordinate(10, 10)).getY() );
+            assertEquals( ((Point)sf.getPropertyValue("geometry")).getX(), gf.createPoint(new Coordinate(10, 10)).getX(),DELTA );
+            assertEquals( ((Point)sf.getPropertyValue("geometry")).getY(), gf.createPoint(new Coordinate(10, 10)).getY(),DELTA );
 
             assertFalse(reader.hasNext());
         }finally{
@@ -826,7 +827,7 @@ public class MemoryDatastoreTest extends TestCase{
     }
 
     @Test
-    public static void testMetadata() throws DataStoreException {
+    public void testMetadata() throws DataStoreException {
         final ProjectedCRS utmMontpellier = CommonCRS.NAD27.universal(43.61, 3.88);
 
         FeatureTypeBuilder builder = new FeatureTypeBuilder();
