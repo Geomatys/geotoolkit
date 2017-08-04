@@ -56,8 +56,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.CancellationException;
 
-import static org.geotoolkit.parameter.Parameters.getOrCreate;
-import static org.geotoolkit.parameter.Parameters.value;
 import static org.geotoolkit.display2d.process.pyramid.MapcontextPyramidDescriptor.*;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
@@ -83,13 +81,13 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameters", inputParameters);
 
-        final MapContext context = value(IN_MAPCONTEXT, inputParameters);
-        final Envelope envelope = value(IN_EXTENT, inputParameters);
-        final Dimension tileSize = value(IN_TILE_SIZE, inputParameters);
-        final double[] scales = value(IN_SCALES, inputParameters);
-        Integer nbpainter = value(IN_NBPAINTER, inputParameters);
-        final PyramidalCoverageResource container = value(IN_CONTAINER, inputParameters);
-        final Boolean update = value(IN_UPDATE, inputParameters);
+        final MapContext context = inputParameters.getValue(IN_MAPCONTEXT);
+        final Envelope envelope = inputParameters.getValue(IN_EXTENT);
+        final Dimension tileSize = inputParameters.getValue(IN_TILE_SIZE);
+        final double[] scales = inputParameters.getValue(IN_SCALES);
+        Integer nbpainter = inputParameters.getValue(IN_NBPAINTER);
+        final PyramidalCoverageResource container = inputParameters.getValue(IN_CONTAINER);
+        final Boolean update = inputParameters.getValue(IN_UPDATE);
 
         if(nbpainter == null){
             nbpainter = Runtime.getRuntime().availableProcessors();
@@ -97,7 +95,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
 
         Hints hints = null;
         try{
-            hints = value(IN_HINTS, inputParameters);
+            hints = inputParameters.getValue(IN_HINTS);
         } catch (ParameterNotFoundException ex) {
             // Get the hint parameter if exist, otherwise keep it to null.
         }
@@ -200,7 +198,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                     throw new CancellationException();
                 }
 
-                getOrCreate(OUT_CONTAINER, outputParameters).setValue(container);
+                outputParameters.getOrCreate(OUT_CONTAINER).setValue(container);
             }
 
         } catch (DataStoreException | FactoryException | TransformException | PortrayalException ex) {

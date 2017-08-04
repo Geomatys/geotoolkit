@@ -41,13 +41,11 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersioningException;
 
-import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.processing.datastore.copy.CopyDescriptor.*;
 
 
@@ -76,14 +74,14 @@ public class Copy extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
 
-        final FeatureStore sourceDS = value(SOURCE_STORE, inputParameters);
-        final FeatureStore targetDS = value(TARGET_STORE, inputParameters);
-        Session targetSS = value(TARGET_SESSION, inputParameters);
-        final Boolean eraseParam    = value(ERASE,        inputParameters);
-        final Boolean newVersion    = value(NEW_VERSION,  inputParameters);
+        final FeatureStore sourceDS = inputParameters.getValue(SOURCE_STORE);
+        final FeatureStore targetDS = inputParameters.getValue(TARGET_STORE);
+        Session targetSS            = inputParameters.getValue(TARGET_SESSION);
+        final Boolean eraseParam    = inputParameters.getValue(ERASE);
+        final Boolean newVersion    = inputParameters.getValue(NEW_VERSION);
         // Type name can be removed, it's embedded in the query param.
-        final String typenameParam  = value(TYPE_NAME,    inputParameters);
-        final Query queryParam      = value(QUERY, inputParameters);
+        final String typenameParam  = inputParameters.getValue(TYPE_NAME);
+        final Query queryParam      = inputParameters.getValue(QUERY);
 
         final boolean doCommit = targetSS == null;
 
@@ -173,7 +171,7 @@ public class Copy extends AbstractProcess {
             }
 
             if(lastVersionDate != null) {
-                Parameters.getOrCreate(VERSION, outputParameters).setValue(lastVersionDate);
+                outputParameters.getOrCreate(VERSION).setValue(lastVersionDate);
             }
 
         } catch (DataStoreException ex) {

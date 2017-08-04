@@ -18,8 +18,8 @@
 
 package org.geotoolkit.data.query;
 
-import junit.framework.TestCase;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -47,9 +47,10 @@ import org.apache.sis.internal.feature.AttributeConvention;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class QueryTest extends TestCase{
+public class QueryTest {
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final double DELTA = 0.00001;
 
 
     private final MemoryFeatureStore store = new MemoryFeatureStore();
@@ -212,8 +213,8 @@ public class QueryTest extends TestCase{
         assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
         assertEquals(query.getMaxFeatures(), null);
-        assertEquals(query.getPropertyNames(), null);
-        assertEquals(query.getSortBy(), null);
+        assertArrayEquals(query.getPropertyNames(), null);
+        assertArrayEquals(query.getSortBy(), null);
         assertEquals(query.getStartIndex(), 0);
 
         //only ids--------------------------------------------------------------
@@ -225,7 +226,7 @@ public class QueryTest extends TestCase{
         assertEquals(query.getMaxFeatures(), null);
         assertNotNull(query.getPropertyNames()); //must be an empty array, not null
         assertTrue(query.getPropertyNames().length == 1); //must have only one value
-        assertEquals(query.getSortBy(), null);
+        assertArrayEquals(query.getSortBy(), null);
         assertEquals(query.getStartIndex(), 0);
 
         //only filter-----------------------------------------------------------
@@ -235,8 +236,8 @@ public class QueryTest extends TestCase{
         assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
         assertEquals(query.getMaxFeatures(), null);
-        assertEquals(query.getPropertyNames(), null);
-        assertEquals(query.getSortBy(), null);
+        assertArrayEquals(query.getPropertyNames(), null);
+        assertArrayEquals(query.getSortBy(), null);
         assertEquals(query.getStartIndex(), 0);
 
         //only sort by----------------------------------------------------------
@@ -246,7 +247,7 @@ public class QueryTest extends TestCase{
         assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
         assertEquals(query.getMaxFeatures(), null);
-        assertEquals(query.getPropertyNames(), null);
+        assertArrayEquals(query.getPropertyNames(), null);
         assertNotNull(query.getSortBy());
         assertTrue(query.getSortBy().length == 1);
         assertEquals(query.getSortBy()[0], FF.sort("att1", SortOrder.DESCENDING));
@@ -285,8 +286,8 @@ public class QueryTest extends TestCase{
 
         assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getCoordinateSystemReproject(), CommonCRS.WGS84.normalizedGeographic());
-        assertEquals(query.getResolution()[0], 45d);
-        assertEquals(query.getResolution()[1], 31d);
+        assertEquals(query.getResolution()[0], 45d,DELTA);
+        assertEquals(query.getResolution()[1], 31d,DELTA);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
         assertEquals(query.getMaxFeatures(), Integer.valueOf(10));
         assertEquals(query.getPropertyNames()[0], "att1");
@@ -306,8 +307,8 @@ public class QueryTest extends TestCase{
         assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
         assertEquals(query.getMaxFeatures(), null);
-        assertEquals(query.getPropertyNames(), null);
-        assertEquals(query.getSortBy(), null);
+        assertArrayEquals(query.getPropertyNames(), null);
+        assertArrayEquals(query.getSortBy(), null);
         assertEquals(query.getStartIndex(), 0);
 
         //test copy-------------------------------------------------------------
@@ -316,8 +317,8 @@ public class QueryTest extends TestCase{
 
         assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getCoordinateSystemReproject(), CommonCRS.WGS84.normalizedGeographic());
-        assertEquals(query.getResolution()[0], 45d);
-        assertEquals(query.getResolution()[1], 31d);
+        assertEquals(query.getResolution()[0], 45d, DELTA);
+        assertEquals(query.getResolution()[1], 31d, DELTA);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
         assertEquals(query.getMaxFeatures(), Integer.valueOf(10));
         assertEquals(query.getPropertyNames()[0], "att1");
@@ -331,8 +332,8 @@ public class QueryTest extends TestCase{
 
         assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getCoordinateSystemReproject(), CommonCRS.WGS84.normalizedGeographic());
-        assertEquals(query.getResolution()[0], 45d);
-        assertEquals(query.getResolution()[1], 31d);
+        assertEquals(query.getResolution()[0], 45d, DELTA);
+        assertEquals(query.getResolution()[1], 31d, DELTA);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
         assertEquals(query.getMaxFeatures(), Integer.valueOf(10));
         assertEquals(query.getPropertyNames()[0], "att1");
@@ -349,8 +350,8 @@ public class QueryTest extends TestCase{
         assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
         assertEquals(query.getMaxFeatures(), null);
-        assertEquals(query.getPropertyNames(), null);
-        assertEquals(query.getSortBy(), null);
+        assertArrayEquals(query.getPropertyNames(), null);
+        assertArrayEquals(query.getSortBy(), null);
         assertEquals(query.getStartIndex(), 0);
 
     }

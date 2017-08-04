@@ -97,7 +97,6 @@ import org.geotoolkit.ogc.xml.v110.UnaryLogicOpType;
 import org.geotoolkit.ogc.xml.v110.UpperBoundaryType;
 import org.geotoolkit.ogc.xml.v110.WithinType;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.se.xml.v110.AnchorPointType;
 import org.geotoolkit.se.xml.v110.CategorizeType;
 import org.geotoolkit.se.xml.v110.ChannelSelectionType;
@@ -235,6 +234,8 @@ import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 import org.apache.sis.measure.Units;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.geotoolkit.referencing.ReferencingUtilities;
 
 /**
  *
@@ -572,7 +573,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
                     miny = env.getMinimum(1);
                     maxy = env.getMaximum(1);
                     try {
-                        srs = IdentifiedObjects.lookupIdentifier(env.getCoordinateReferenceSystem(), true);
+                        srs = ReferencingUtilities.lookupIdentifier(env.getCoordinateReferenceSystem(), true);
                     } catch (FactoryException ex) {
                         throw new IllegalArgumentException("invalide bbox element : " + filter + " " + ex.getMessage(), ex);
                     }
@@ -599,7 +600,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
                     miny = env.getMinimum(1);
                     maxy = env.getMaximum(1);
                     try {
-                        srs = IdentifiedObjects.lookupIdentifier(env.getCoordinateReferenceSystem(), true);
+                        srs = IdentifiedObjects.lookupURN(env.getCoordinateReferenceSystem(), null);
                     } catch (FactoryException ex) {
                         throw new IllegalArgumentException("invalide bbox element : " + filter + " " + ex.getMessage(), ex);
                     }
@@ -736,7 +737,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
                 final org.opengis.geometry.Envelope genv = (org.opengis.geometry.Envelope) geom;
                 EnvelopeType ee = gml_factory.createEnvelopeType();
                 try {
-                    ee.setSrsName(IdentifiedObjects.lookupIdentifier(genv.getCoordinateReferenceSystem(), true));
+                    ee.setSrsName(IdentifiedObjects.lookupURN(genv.getCoordinateReferenceSystem(), null));
                 } catch (FactoryException ex) {
                     Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
                 }

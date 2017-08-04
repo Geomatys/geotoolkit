@@ -129,42 +129,6 @@ public final class CRS extends Static {
     }
 
     /**
-     * Returns the domain of validity for the specified coordinate reference system,
-     * or {@code null} if unknown. The returned envelope is expressed in terms of the
-     * specified CRS.
-     * <p>
-     * This method looks in two places:
-     * <p>
-     * <ul>
-     *   <li>First, it checks the {@linkplain CoordinateReferenceSystem#getDomainOfValidity domain
-     *       of validity} associated with the given CRS. Only {@linkplain GeographicExtent
-     *       geographic extents} of kind {@linkplain BoundingPolygon bounding polygon} are
-     *       taken in account.</li>
-     *   <li>If the above step does not found found any bounding polygon, then the
-     *       {@linkplain #getGeographicBoundingBox geographic bounding boxes} are
-     *       used as a fallback.</li>
-     * </ul>
-     * <p>
-     * Note that this method is also accessible from the {@link Envelopes} class.
-     *
-     * @param  crs The coordinate reference system, or {@code null}.
-     * @return The envelope in terms of the specified CRS, or {@code null} if none.
-     *
-     * @see #getGeographicBoundingBox(CoordinateReferenceSystem)
-     * @see Envelopes#getDomainOfValidity(CoordinateReferenceSystem)
-     * @see GeneralEnvelope#reduceToDomain(boolean)
-     *
-     * @category information
-     * @since 2.2
-     *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.referencing.CRS#getDomainOfValidity}.
-     */
-    @Deprecated
-    public static Envelope getEnvelope(final CoordinateReferenceSystem crs) {
-        return org.apache.sis.referencing.CRS.getDomainOfValidity(crs);
-    }
-
-    /**
      * Returns the first compound CRS which contains only the given components, in any order.
      * First, this method gets the {@link SingleCRS} components of the given compound CRS. If
      * all those components are {@linkplain #equalsIgnoreMetadata equal, ignoring metadata}

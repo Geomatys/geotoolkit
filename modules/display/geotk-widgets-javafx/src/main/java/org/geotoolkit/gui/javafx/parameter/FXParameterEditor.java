@@ -34,7 +34,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
-import org.geotoolkit.utility.parameter.ParametersExt;
+import org.apache.sis.parameter.Parameters;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
@@ -97,10 +97,11 @@ public class FXParameterEditor extends BorderPane {
 
             for(GeneralParameterDescriptor childDesc : descGroup.descriptors()){
                 //TODO , handle multiplicity
-                if(childDesc.getMaximumOccurs()>1) continue;
-                GeneralParameterValue childVal = ParametersExt.getParameter(group, childDesc.getName().getCode());
-                if(childVal==null && childDesc.getMinimumOccurs()>0){
-                    childVal = ParametersExt.getOrCreateParameter(group, childDesc.getName().getCode());
+                if (childDesc.getMaximumOccurs()>1) continue;
+                GeneralParameterValue childVal = org.geotoolkit.parameter.Parameters.getParameterOrGroup(group, childDesc.getName().getCode());
+                if (childVal==null && childDesc.getMinimumOccurs()>0) {
+                    childVal = childDesc.createValue();
+                    group.values().add(childVal);
                 }
 
                 final TreeItem item = toTree(group, childDesc, childVal);
@@ -113,12 +114,12 @@ public class FXParameterEditor extends BorderPane {
 
     private static class ParamEntry {
 
-        public ParameterValueGroup parent;
+        public Parameters parent;
         public GeneralParameterDescriptor desc;
         public final SimpleObjectProperty<GeneralParameterValue> value;
 
         public ParamEntry(ParameterValueGroup parent, GeneralParameterDescriptor desc, GeneralParameterValue value) {
-            this.parent = parent;
+            this.parent = Parameters.castOrWrap(parent);
             this.desc = desc;
             this.value = new SimpleObjectProperty<>(value);
         }
@@ -257,7 +258,7 @@ public class FXParameterEditor extends BorderPane {
                     if(entry!=null){
                         if(cb.isSelected()){
                             if(entry.value.getValue()==null){
-                                final ParameterValue val = ParametersExt.getOrCreateValue(entry.parent,entry.desc.getName().getCode());
+                                final ParameterValue val = entry.parent.getOrCreate((ParameterDescriptor)entry.desc);
                                 entry.value.setValue(val);
                             }
                         }else{

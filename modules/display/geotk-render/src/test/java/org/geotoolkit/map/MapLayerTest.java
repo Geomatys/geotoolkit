@@ -19,7 +19,6 @@ package org.geotoolkit.map;
 
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.TestCase;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 
 import org.geotoolkit.data.FeatureStore;
@@ -33,13 +32,9 @@ import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.feature.FeatureType;
-
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 
@@ -48,25 +43,9 @@ import org.opengis.filter.Filter;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class MapLayerTest extends TestCase{
+public class MapLayerTest {
 
     public MapLayerTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test

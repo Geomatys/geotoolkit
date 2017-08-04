@@ -22,7 +22,6 @@ import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.processing.vector.filter.FilterDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Adding on the fly attributes of Feature contents.
@@ -43,11 +42,9 @@ public class FilterProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList   = value(FEATURE_IN, inputParameters);
-        final org.opengis.filter.Filter filter              = value(FILTER_IN, inputParameters);
-
+        final FeatureCollection inputFeatureList   = inputParameters.getValue(FEATURE_IN);
+        final org.opengis.filter.Filter filter     = inputParameters.getValue(FILTER_IN);
         final FeatureCollection resultFeatureList = FeatureStreams.filter(inputFeatureList, filter);
-
-        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+        outputParameters.getOrCreate(FEATURE_OUT).setValue(resultFeatureList);
     }
 }

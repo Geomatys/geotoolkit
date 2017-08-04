@@ -31,8 +31,8 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.gml.xml.v311.CodeType;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -142,7 +142,7 @@ public class GridCrsType {
             final CoordinateReferenceSystem crss = grid.getCoordinateReferenceSystem();
             if (crss != null) {
                 try {
-                    srsName = new CodeType("EPSG:" + IdentifiedObjects.lookupEpsgCode(crss, true));
+                    srsName = new CodeType("EPSG:" + IdentifiedObjects.lookupEPSG(crss));
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.WARNING, "Factory exception while creating WCS GRIDType from opengis one", ex);
                 }  catch (NullPointerException ex) {

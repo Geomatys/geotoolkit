@@ -45,11 +45,11 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.mathml.xml.*;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.ZipUtilities;
-import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
@@ -368,22 +368,19 @@ public class WPSConvertersUtils {
                 final GridCoverage2D coverage = (GridCoverage2D) object;
                 CoverageIO.write(coverage, "GEOTIFF", coverageFile);
                 env = Envelopes.transform(coverage.getEnvelope2D(), outCRS);
-                crsCode = org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(
-                        coverage.getCoordinateReferenceSystem(), false);
+                crsCode = IdentifiedObjects.lookupEPSG(coverage.getCoordinateReferenceSystem());
 
             } else if (object instanceof File || object instanceof Path) {
                 final Path objPath = (object instanceof File) ? ((File) object).toPath() : (Path) object;
                 final GridCoverageReader reader = CoverageIO.createSimpleReader(objPath);
                 env = Envelopes.transform(reader.getGridGeometry(0).getEnvelope(), outCRS);
-                crsCode = org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(
-                        reader.getGridGeometry(0).getCoordinateReferenceSystem(), false);
+                crsCode = IdentifiedObjects.lookupEPSG(reader.getGridGeometry(0).getCoordinateReferenceSystem());
                 IOUtilities.copy(objPath, coverageFile, StandardCopyOption.REPLACE_EXISTING);
 
             } else if (object instanceof GridCoverageReader) {
                 final GridCoverageReader reader = (GridCoverageReader) object;
                 env = Envelopes.transform(reader.getGridGeometry(0).getEnvelope(), outCRS);
-                crsCode = org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(
-                        reader.getGridGeometry(0).getCoordinateReferenceSystem(), false);
+                crsCode = IdentifiedObjects.lookupEPSG(reader.getGridGeometry(0).getCoordinateReferenceSystem());
                 Object in = reader.getInput();
                 if(in == null) {
                     throw new IOException("Input coverage is invalid.");
@@ -684,6 +681,7 @@ public class WPSConvertersUtils {
         ArgumentChecks.ensureNonNull("ParameterGroup", toFill);
 
         final WPSConverterRegistry registry = WPSConverterRegistry.getInstance();
+        final Parameters toFill2 = Parameters.castOrWrap(toFill);
         for (final GeneralParameterDescriptor gpd : toFill.getDescriptor().descriptors()) {
 
             if (gpd instanceof ParameterDescriptor) {
@@ -693,12 +691,12 @@ public class WPSConvertersUtils {
                 }
                 final ParameterDescriptor desc = (ParameterDescriptor) gpd;
                 if (prop.getValue().getClass().isAssignableFrom(desc.getValueClass()) || desc.getValueClass().isAssignableFrom(prop.getValue().getClass())) {
-                    Parameters.getOrCreate(desc, toFill).setValue(prop.getValue());
+                    toFill2.getOrCreate(desc).setValue(prop.getValue());
                 } else {
                     if (prop.getValue().getClass().isAssignableFrom(URI.class)) {
                         Reference type = UriToReference(version, (URI) prop.getValue(), WPSIO.IOType.INPUT, null);
                         WPSObjectConverter converter = registry.getConverter(type.getClass(), desc.getValueClass());
-                        Parameters.getOrCreate(desc, toFill).setValue(converter.convert(type, null));
+                        toFill2.getOrCreate(desc).setValue(converter.convert(type, null));
                     }
                 }
             } else if (gpd instanceof ParameterDescriptorGroup) {

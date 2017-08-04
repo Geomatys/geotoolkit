@@ -20,7 +20,6 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.processing.Operations;
-import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -78,7 +77,7 @@ public class StraightenProcess extends AbstractProcess {
      */
     @Override
     protected void execute() throws ProcessException {
-        final GridCoverage2D candidate = (GridCoverage2D) value(StraightenDescriptor.COVERAGE_IN, inputParameters);
+        final GridCoverage2D candidate = (GridCoverage2D) inputParameters.getValue(StraightenDescriptor.COVERAGE_IN);
 
         //resample coverage, we want it to be 'straight', no rotation or different axe scale.
         final CoordinateReferenceSystem crs = candidate.getCoordinateReferenceSystem2D();

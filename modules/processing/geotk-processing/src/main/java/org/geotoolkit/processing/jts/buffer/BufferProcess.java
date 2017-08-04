@@ -18,20 +18,16 @@ package org.geotoolkit.processing.jts.buffer;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-
 import java.util.Collections;
-
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.processing.jts.buffer.BufferDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Compute a buffer around a geometry.
@@ -48,17 +44,17 @@ public class BufferProcess extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         try {
-            final Geometry geom = value(GEOM, inputParameters);
-            final double distance = value(DISTANCE, inputParameters);
+            final Geometry geom = inputParameters.getValue(GEOM);
+            final double distance = inputParameters.getValue(DISTANCE);
 
             int segments = 0;
-            if(value(SEGMENTS, inputParameters) != null) {
-                segments = value(SEGMENTS, inputParameters);
+            if(inputParameters.getValue(SEGMENTS) != null) {
+                segments = inputParameters.getValue(SEGMENTS);
             }
 
             int endStyle = 2;
-            if(value(ENDSTYLE, inputParameters) != null) {
-                 endStyle = value(ENDSTYLE, inputParameters);
+            if(inputParameters.getValue(ENDSTYLE) != null) {
+                 endStyle = inputParameters.getValue(ENDSTYLE);
             }
 
             final CoordinateReferenceSystem geomCRS = JTS.findCoordinateReferenceSystem(geom);
@@ -76,7 +72,7 @@ public class BufferProcess extends AbstractProcess {
             }
 
             JTS.setCRS(result, geomCRS);
-            getOrCreate(RESULT_GEOM, outputParameters).setValue(result);
+            outputParameters.getOrCreate(RESULT_GEOM).setValue(result);
 
         } catch (NoSuchAuthorityCodeException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

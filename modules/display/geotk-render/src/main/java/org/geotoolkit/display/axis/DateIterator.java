@@ -23,7 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-import org.geotoolkit.io.TableWriter;
+import org.apache.sis.io.TableAppender;
 
 
 /**
@@ -663,36 +663,36 @@ final class DateIterator implements TickIterator {
      */
     @Override
     public String toString() {
-        final TableWriter out = new TableWriter(null, " ");
+        final TableAppender out = new TableAppender(" ");
         final DateFormat format = DateFormat.getDateTimeInstance();
         format.setTimeZone(calendar.getTimeZone());
 
-        out.write("Minimum\t=\t");
-        out.write(format.format(new Date(minimum)));
+        out.append("Minimum\t=\t");
+        out.append(format.format(new Date(minimum)));
 
-        out.write("\nMaximum\t=\t");
-        out.write(format.format(new Date(maximum)));
+        out.append("\nMaximum\t=\t");
+        out.append(format.format(new Date(maximum)));
 
-        out.write("\nIncrement\t=\t");
-        out.write(String.valueOf(increment / (24*3600000f)));
-        out.write(" days");
+        out.append("\nIncrement\t=\t");
+        out.append(String.valueOf(increment / (24*3600000f)));
+        out.append(" days");
 
-        out.write("\nTick inc.\t=\t");
-        out.write(tickAdd);
-        out.write(' ');
-        out.write(getFieldName(tickField));
+        out.append("\nTick inc.\t=\t");
+        out.append(""+tickAdd);
+        out.append(' ');
+        out.append(getFieldName(tickField));
 
-        out.write("\nSubTick inc.\t=\t");
-        out.write(subTickAdd);
-        out.write(' ');
-        out.write(getFieldName(subTickField));
+        out.append("\nSubTick inc.\t=\t");
+        out.append(""+subTickAdd);
+        out.append(' ');
+        out.append(getFieldName(subTickField));
 
-        out.write("\nNext tick\t=\t");
-        out.write(format.format(new Date(nextTick)));
+        out.append("\nNext tick\t=\t");
+        out.append(format.format(new Date(nextTick)));
 
-        out.write("\nNext subtick\t=\t");
-        out.write(format.format(new Date(nextSubTick)));
-        out.write('\n');
+        out.append("\nNext subtick\t=\t");
+        out.append(format.format(new Date(nextSubTick)));
+        out.append('\n');
 
         return out.toString();
     }

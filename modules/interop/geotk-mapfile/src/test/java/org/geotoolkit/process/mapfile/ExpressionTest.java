@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.process.mapfile;
 
-import org.junit.Ignore;
 import org.opengis.filter.Filter;
 import java.io.IOException;
 
@@ -31,14 +30,13 @@ import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.style.DefaultStyleFactory;
 
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.parameter.Parameters;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
-import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
 
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.process.mapfile.MapfileFilterToOGCFilterDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Test mapfile expression to OGC Filter.
@@ -62,13 +60,13 @@ public class ExpressionTest extends org.geotoolkit.test.TestBase {
 
         final Expression reference = FF.property("name");
 
-        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
-        getOrCreate(IN_TEXT, input).setValue("husky");
-        getOrCreate(IN_REFERENCE, input).setValue(reference);
+        final Parameters input = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
+        input.getOrCreate(IN_TEXT).setValue("husky");
+        input.getOrCreate(IN_REFERENCE).setValue(reference);
 
         final Process process = desc.createProcess(input);
-        final ParameterValueGroup output = process.call();
-        final Object result = value(OUT_OGC, output);
+        final Parameters output = Parameters.castOrWrap(process.call());
+        final Object result = output.getValue(OUT_OGC);
 
         assertEquals(FF.equals(reference, FF.literal("husky")), result);
     }
@@ -78,13 +76,13 @@ public class ExpressionTest extends org.geotoolkit.test.TestBase {
 
         final Expression reference = FF.property("name");
 
-        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
-        getOrCreate(IN_TEXT, input).setValue("\'husky\'");
-        getOrCreate(IN_REFERENCE, input).setValue(reference);
+        final Parameters input = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
+        input.getOrCreate(IN_TEXT).setValue("\'husky\'");
+        input.getOrCreate(IN_REFERENCE).setValue(reference);
 
         final Process process = desc.createProcess(input);
-        final ParameterValueGroup output = process.call();
-        final Object result = value(OUT_OGC, output);
+        final Parameters output = Parameters.castOrWrap(process.call());
+        final Object result = output.getValue(OUT_OGC);
 
         assertEquals(FF.equals(reference, FF.literal("husky")), result);
     }
@@ -94,13 +92,13 @@ public class ExpressionTest extends org.geotoolkit.test.TestBase {
 
         final Expression reference = FF.property("name");
 
-        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
-        getOrCreate(IN_TEXT, input).setValue("\"husky\"");
-        getOrCreate(IN_REFERENCE, input).setValue(reference);
+        final Parameters input = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
+        input.getOrCreate(IN_TEXT).setValue("\"husky\"");
+        input.getOrCreate(IN_REFERENCE).setValue(reference);
 
         final Process process = desc.createProcess(input);
-        final ParameterValueGroup output = process.call();
-        final Object result = value(OUT_OGC, output);
+        final Parameters output = Parameters.castOrWrap(process.call());
+        final Object result = output.getValue(OUT_OGC);
 
         assertEquals(FF.equals(reference, FF.literal("husky")), result);
     }
@@ -110,13 +108,13 @@ public class ExpressionTest extends org.geotoolkit.test.TestBase {
 
         final Expression reference = FF.property("name");
 
-        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
-        getOrCreate(IN_TEXT, input).setValue("/joe|marcel|emile/");
-        getOrCreate(IN_REFERENCE, input).setValue(reference);
+        final Parameters input = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
+        input.getOrCreate(IN_TEXT).setValue("/joe|marcel|emile/");
+        input.getOrCreate(IN_REFERENCE).setValue(reference);
 
         final Process process = desc.createProcess(input);
-        final ParameterValueGroup output = process.call();
-        final Object result = value(OUT_OGC, output);
+        final Parameters output = Parameters.castOrWrap(process.call());
+        final Object result = output.getValue(OUT_OGC);
 
 
         final Filter f1 = FF.equals(reference,FF.literal("joe"));
@@ -130,12 +128,12 @@ public class ExpressionTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testSinglePropertyExpression() throws IOException, ProcessException {
 
-        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
-        getOrCreate(IN_TEXT, input).setValue("(\"[ref]\")");
+        final Parameters input = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
+        input.getOrCreate(IN_TEXT).setValue("(\"[ref]\")");
 
         final Process process = desc.createProcess(input);
-        final ParameterValueGroup output = process.call();
-        final Object result = value(OUT_OGC, output);
+        final Parameters output = Parameters.castOrWrap(process.call());
+        final Object result = output.getValue(OUT_OGC);
 
         assertEquals(FF.property("ref"), result);
     }
@@ -143,12 +141,12 @@ public class ExpressionTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testConcatenatePropertyExpression() throws IOException, ProcessException {
 
-        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
-        getOrCreate(IN_TEXT, input).setValue("(\"hello [name] my name is [pc]\")");
+        final Parameters input = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
+        input.getOrCreate(IN_TEXT).setValue("(\"hello [name] my name is [pc]\")");
 
         final Process process = desc.createProcess(input);
-        final ParameterValueGroup output = process.call();
-        final Object result = value(OUT_OGC, output);
+        final Parameters output = Parameters.castOrWrap(process.call());
+        final Object result = output.getValue(OUT_OGC);
 
 
 
@@ -163,12 +161,12 @@ public class ExpressionTest extends org.geotoolkit.test.TestBase {
     public void testEqualExpression() throws IOException, ProcessException {
 
 
-        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
-        getOrCreate(IN_TEXT, input).setValue("([tunnel]=0)");
+        final Parameters input = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
+        input.getOrCreate(IN_TEXT).setValue("([tunnel]=0)");
 
         final Process process = desc.createProcess(input);
-        final ParameterValueGroup output = process.call();
-        final Object result = value(OUT_OGC, output);
+        final Parameters output = Parameters.castOrWrap(process.call());
+        final Object result = output.getValue(OUT_OGC);
 
 
         final Filter expected = FF.equals(FF.property("tunnel"), FF.literal(0));
@@ -180,12 +178,12 @@ public class ExpressionTest extends org.geotoolkit.test.TestBase {
     public void testAndOrExpression() throws IOException, ProcessException {
 
 
-        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
-        getOrCreate(IN_TEXT, input).setValue("((\"[type]\"=\"tertiary\" or \"[type]\"=\"tertiary_link\") and \"[tunnel]\"=\"1\")");
+        final Parameters input = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
+        input.getOrCreate(IN_TEXT).setValue("((\"[type]\"=\"tertiary\" or \"[type]\"=\"tertiary_link\") and \"[tunnel]\"=\"1\")");
 
         final Process process = desc.createProcess(input);
-        final ParameterValueGroup output = process.call();
-        final Object result = value(OUT_OGC, output);
+        final Parameters output = Parameters.castOrWrap(process.call());
+        final Object result = output.getValue(OUT_OGC);
 
 
         final Filter f1 = FF.equals(FF.property("type"),FF.literal("tertiary"));

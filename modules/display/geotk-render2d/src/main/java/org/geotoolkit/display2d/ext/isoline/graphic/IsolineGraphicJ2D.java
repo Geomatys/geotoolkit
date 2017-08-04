@@ -41,7 +41,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
@@ -53,10 +52,10 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.parameter.Parameters;
 import org.opengis.feature.Feature;
 
 /**
@@ -204,27 +203,27 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             };
 
             final ProcessDescriptor desc = KrigingDescriptor.INSTANCE;
-            final ParameterValueGroup input = desc.getInputDescriptor().createValue();
-            Parameters.getOrCreate(KrigingDescriptor.IN_POINTS, input)
+            final Parameters input = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
+            input.getOrCreate(KrigingDescriptor.IN_POINTS)
                     .setValue(coordinates.toArray(new DirectPosition[coordinates.size()]));
-            Parameters.getOrCreate(KrigingDescriptor.IN_CRS, input)
+            input.getOrCreate(KrigingDescriptor.IN_CRS)
                     .setValue(crs);
-            Parameters.getOrCreate(KrigingDescriptor.IN_STEP, input)
+            input.getOrCreate(KrigingDescriptor.IN_STEP)
                     .setValue(step);
-            Parameters.getOrCreate(KrigingDescriptor.IN_DIMENSION, input)
+            input.getOrCreate(KrigingDescriptor.IN_DIMENSION)
                     .setValue(new Dimension(150, 150));
             final Process p = desc.createProcess(input);
 
             p.addListener(redirect);
-            final ParameterValueGroup output;
+            final Parameters output;
             try {
-                output = p.call();
+                output = Parameters.castOrWrap(p.call());
             } catch (ProcessException ex) {
                 getLogger().log(Level.WARNING, null, ex);
                 return;
             }
-            final GridCoverage2D coverage = Parameters.value(KrigingDescriptor.OUT_COVERAGE, output);
-            final FeatureCollection isolines = Parameters.value(KrigingDescriptor.OUT_LINES, output);
+            final GridCoverage2D coverage = output.getValue(KrigingDescriptor.OUT_COVERAGE);
+            final FeatureCollection isolines = output.getValue(KrigingDescriptor.OUT_LINES);
 
             if(coverage != null){
                 if(interpolateCoverageColor){

@@ -28,7 +28,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.processing.jts.covers.CoversDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Compute if the first geometry covers the second one.
@@ -47,8 +46,8 @@ public class CoversProcess extends AbstractProcess {
 
         try {
 
-            final Geometry geom1 = value(GEOM1, inputParameters);
-            Geometry geom2 = value(GEOM2, inputParameters);
+            final Geometry geom1 = inputParameters.getValue(GEOM1);
+            Geometry geom2 = inputParameters.getValue(GEOM2);
 
             // ensure geometries are in the same CRS
             final CoordinateReferenceSystem resultCRS = JTS.getCommonCRS(geom1, geom2);
@@ -58,7 +57,7 @@ public class CoversProcess extends AbstractProcess {
 
             final Boolean result = (Boolean) geom1.covers(geom2);
 
-            getOrCreate(RESULT, outputParameters).setValue(result);
+            outputParameters.getOrCreate(RESULT).setValue(result);
 
         } catch (FactoryException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

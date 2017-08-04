@@ -21,13 +21,10 @@ import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
-
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Compute input geometry convex hull.
@@ -45,14 +42,11 @@ public class ConvexHullProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
 
         try {
-            final Geometry geom = value(ConvexHullDescriptor.GEOM, inputParameters);
-
+            final Geometry geom = inputParameters.getValue(ConvexHullDescriptor.GEOM);
             final CoordinateReferenceSystem geomCRS = JTS.findCoordinateReferenceSystem(geom);
-
             final Geometry result =  geom.convexHull();
             JTS.setCRS(result, geomCRS);
-
-            getOrCreate(ConvexHullDescriptor.RESULT_GEOM, outputParameters).setValue(result);
+            outputParameters.getOrCreate(ConvexHullDescriptor.RESULT_GEOM).setValue(result);
 
         } catch (NoSuchAuthorityCodeException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

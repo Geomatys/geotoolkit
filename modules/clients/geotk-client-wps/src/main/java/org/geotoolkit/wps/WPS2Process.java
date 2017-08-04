@@ -29,12 +29,10 @@ import org.geotoolkit.ows.xml.ExceptionResponse;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.wps.adaptor.ComplexAdaptor;
 import org.geotoolkit.wps.adaptor.DataAdaptor;
 import org.geotoolkit.wps.adaptor.LiteralAdaptor;
 import org.geotoolkit.wps.xml.ExecuteResponse;
-import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.DataInputType;
 import org.geotoolkit.wps.xml.v200.DataOutputType;
 import org.geotoolkit.wps.xml.v200.OutputDefinitionType;
@@ -318,7 +316,7 @@ public class WPS2Process extends AbstractProcess {
                         final ExtendedParameterDescriptor outDesc = (ExtendedParameterDescriptor) outputParameters.getDescriptor().descriptor(out.getId());
                         final DataAdaptor adaptor = (DataAdaptor) outDesc.getUserObject().get(DataAdaptor.USE_ADAPTOR);
                         final Object value = adaptor.fromWPS2Input(out);
-                        ParametersExt.getOrCreateValue(outputParameters, out.getId()).setValue(value);
+                        outputParameters.getOrCreate(outDesc).setValue(value);
                     } else {
                         throw new UnsupportedOperationException("unsupported data type");
                     }

@@ -34,10 +34,15 @@ import org.geotoolkit.resources.Vocabulary;
 
 import org.apache.sis.measure.Units;
 import org.apache.sis.math.MathFunctions;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.cs.DefaultCartesianCS;
 import org.apache.sis.referencing.cs.DefaultEllipsoidalCS;
+import org.opengis.metadata.citation.Citation;
+import org.opengis.referencing.IdentifiedObject;
 
 import static org.opengis.referencing.IdentifiedObject.ALIAS_KEY;
+import static org.opengis.referencing.IdentifiedObject.IDENTIFIERS_KEY;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 
@@ -295,7 +300,7 @@ public final class PredefinedCS extends Static {
         if (axes == null) {
             return cs;
         }
-        return createCartesian(org.geotoolkit.referencing.IdentifiedObjects.getProperties(cs, null), axes);
+        return createCartesian(getProperties(cs, null), axes);
     }
 
     /**
@@ -317,6 +322,37 @@ public final class PredefinedCS extends Static {
         if (axes == null) {
             return cs;
         }
-        return createEllipsoidal(org.geotoolkit.referencing.IdentifiedObjects.getProperties(cs, null), axes);
+        return createEllipsoidal(getProperties(cs, null), axes);
+    }
+
+
+    /**
+     * Returns the properties to be given to an identified object derived from the specified one.
+     * This method returns the same properties than the supplied argument (as of
+     * <code>{@linkplain #getProperties(IdentifiedObject) getProperties}(info)</code>), except for
+     * the following:
+     * <p>
+     * <ul>
+     *   <li>The {@linkplain IdentifiedObject#getName() name}'s authority is replaced by the specified one.</li>
+     *   <li>All {@linkplain IdentifiedObject#getIdentifiers identifiers} are removed, because the new object
+     *       to be created is probably not endorsed by the original authority.</li>
+     * </ul>
+     * <p>
+     * This method returns a mutable map. Consequently, callers can add their own identifiers
+     * directly to this map if they wish.
+     *
+     * @param  info The identified object to view as a properties map.
+     * @param  authority The new authority for the object to be created, or {@code null} if it
+     *         is not going to have any declared authority.
+     * @return The identified object properties in a mutable map.
+     *
+     * @deprecated Will be removed.
+     */
+    @Deprecated // Now a package-private method in DefaultOperationMethod.
+    static Map<String,Object> getProperties(final IdentifiedObject info, final Citation authority) {
+        final Map<String,Object> properties = new HashMap<>(org.apache.sis.referencing.IdentifiedObjects.getProperties(info));
+        properties.put(NAME_KEY, new NamedIdentifier(authority, info.getName().getCode()));
+        properties.remove(IDENTIFIERS_KEY);
+        return properties;
     }
 }

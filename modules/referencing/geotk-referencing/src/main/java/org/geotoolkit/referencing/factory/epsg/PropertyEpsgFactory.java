@@ -23,6 +23,7 @@ import java.util.TreeSet;
 import java.util.TreeMap;
 import java.io.PrintWriter;
 import java.io.IOException;
+import org.apache.sis.io.TableAppender;
 
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
@@ -34,7 +35,6 @@ import org.geotoolkit.factory.Hints;
 import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
 import org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactory;
 import org.geotoolkit.metadata.Citations;
-import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.IndentedLineWriter;
 import org.geotoolkit.resources.Vocabulary;
 
@@ -270,12 +270,12 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
             }
         }
         if (!failures.isEmpty()) {
-            final TableWriter writer = new TableWriter(out, " ");
+            final TableAppender writer = new TableAppender(out, " ");
             for (final Map.Entry<String,String> entry : failures.entrySet()) {
-                writer.write(entry.getKey());
-                writer.write(':');
+                writer.append(entry.getKey());
+                writer.append(':');
                 writer.nextColumn();
-                writer.write(entry.getValue());
+                writer.append(entry.getValue());
                 writer.nextLine();
             }
             try {

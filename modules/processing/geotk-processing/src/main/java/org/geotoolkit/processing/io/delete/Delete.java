@@ -26,7 +26,6 @@ import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.processing.io.delete.DeleteDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Delete a file or folder recursivly.
@@ -48,9 +47,9 @@ public class Delete extends AbstractProcess {
 
         fireProcessStarted("Start deletion");
 
-        Object path = getOrCreate(PATH_IN, inputParameters).getValue();
+        Object path = inputParameters.getValue(PATH_IN);
 
-        getOrCreate(RESULT_OUT, outputParameters).setValue(Boolean.FALSE);
+        outputParameters.getOrCreate(RESULT_OUT).setValue(Boolean.FALSE);
 
         try {
             if(!(path instanceof Path)){
@@ -59,7 +58,7 @@ public class Delete extends AbstractProcess {
 
             if(path instanceof Path){
                 IOUtilities.deleteRecursively((Path) path);
-                getOrCreate(RESULT_OUT, outputParameters).setValue(Boolean.TRUE);
+                outputParameters.getOrCreate(RESULT_OUT).setValue(Boolean.TRUE);
             }else{
                 throw new IOException("Path is not a file.");
             }

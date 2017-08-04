@@ -22,7 +22,7 @@ import java.util.logging.Level;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 
 import org.geotoolkit.ncwms.AbstractNcGetFeatureInfo;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.security.ClientSecurity;
 
 import org.opengis.geometry.Envelope;
@@ -65,9 +65,9 @@ public class NcGetFeatureInfo130 extends AbstractNcGetFeatureInfo {
         map.put("BBOX", sb.toString());
 
         try {
-            String code = IdentifiedObjects.lookupIdentifier(env.getCoordinateReferenceSystem(), true);
+            String code = ReferencingUtilities.lookupIdentifier(env.getCoordinateReferenceSystem(), true);
             if (code == null) {
-                code = IdentifiedObjects.lookupIdentifier(CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem()), true);
+                code = ReferencingUtilities.lookupIdentifier(CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem()), true);
             }
             map.put("CRS", code);
         } catch (FactoryException ex) {

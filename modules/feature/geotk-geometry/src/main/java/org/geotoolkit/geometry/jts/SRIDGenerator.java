@@ -19,7 +19,7 @@ package org.geotoolkit.geometry.jts;
 import java.util.Set;
 
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -115,7 +115,7 @@ public final class SRIDGenerator {
             }else{
                 try {
                     CoordinateReferenceSystem crs = CRS.forCode(srs);
-                    Integer epsgCode = IdentifiedObjects.lookupEpsgCode(crs, true);
+                    Integer epsgCode = IdentifiedObjects.lookupEPSG(crs);
                     if (epsgCode != null) {
                         authorityCode = 0;
                         code = epsgCode;

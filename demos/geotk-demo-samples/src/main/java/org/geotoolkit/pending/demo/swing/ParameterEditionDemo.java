@@ -2,13 +2,11 @@ package org.geotoolkit.pending.demo.swing;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import javax.swing.*;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.gui.swing.parameters.editor.JParameterValuesEditor;
 import org.geotoolkit.gui.swing.propertyedit.JAttributeEditor;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
@@ -19,16 +17,17 @@ public class ParameterEditionDemo {
 
     public static void main(String[] args) {
 
-        List<GeneralParameterDescriptor> params = new ArrayList<>();
-        params.add(ParametersExt.createParameterDescriptor("strParam", null, String.class, null, "Test", null, null, null, true));
-        params.add(ParametersExt.createParameterDescriptor("boolParam", null, Boolean.class, null, true, null, null, null, true));
-        params.add(ParametersExt.createParameterDescriptor("doubleParam", null, Double.class, null, 10.5, null, null, null, false));
+        final ParameterDescriptorGroup subGroupDesc = new ParameterBuilder().addName("subgroup").createGroup(2, 5,
+                new ParameterBuilder().addName("dateParam").setRequired(true).create(Date.class, null));
 
-        List<GeneralParameterDescriptor> subParams = new ArrayList<>();
-        subParams.add(ParametersExt.createParameterDescriptor("dateParam", null, Date.class, null, null, null, null, null, true));
-        params.add(ParametersExt.createParameterDescriptorGroup("subgroup", null, 2, 5, subParams));
+        final GeneralParameterDescriptor[] params = new GeneralParameterDescriptor[5];
+        params[0] = new ParameterBuilder().addName("strParam").setRequired(true).create(String.class, "Test");
+        params[1] = new ParameterBuilder().addName("boolParam").setRequired(true).create(Boolean.class, true);
+        params[2] = new ParameterBuilder().addName("doubleParam").setRequired(false).create(Double.class, 10.5);
+        params[3] = subGroupDesc;
 
-        final ParameterDescriptorGroup descGroup = ParametersExt.createParameterDescriptorGroup("group", null, 1, 1, params);
+
+        final ParameterDescriptorGroup descGroup = new ParameterBuilder().addName("group").createGroup(params);
         final JAttributeEditor editors = new JAttributeEditor();
 
 

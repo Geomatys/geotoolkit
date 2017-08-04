@@ -34,7 +34,6 @@ import org.geotoolkit.display2d.style.CachedRule;
 import org.opengis.util.GenericName;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -55,6 +54,7 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
@@ -167,7 +167,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
 
 
         //ensure we don't go out of the crs envelope
-        final Envelope maxExt = CRS.getEnvelope(pyramidCRS);
+        final Envelope maxExt = CRS.getDomainOfValidity(pyramidCRS);
         if(maxExt != null){
             if(Double.isNaN(wantedEnv2D.getMinimum(0))){ wantedEnv2D.setRange(0, maxExt.getMinimum(0), wantedEnv2D.getMaximum(0));  }
             if(Double.isNaN(wantedEnv2D.getMaximum(0))){ wantedEnv2D.setRange(0, wantedEnv2D.getMinimum(0), maxExt.getMaximum(0));  }

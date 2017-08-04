@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStores;
@@ -22,7 +21,7 @@ public class ShapefileDemo {
         System.out.println(ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
 
         final ParameterValueGroup parameters = ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(ShapefileFeatureStoreFactory.PATH,parameters).setValue(
+        parameters.parameter(ShapefileFeatureStoreFactory.PATH.getName().getCode()).setValue(
                 ShapefileDemo.class.getResource("/data/world/Countries.shp").toURI());
 
         final FeatureStore store1 = (FeatureStore) DataStores.open(parameters);

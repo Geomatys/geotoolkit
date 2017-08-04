@@ -43,7 +43,6 @@ import java.lang.reflect.Field;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.opengis.metadata.spatial.PixelOrientation;
 
-import org.geotoolkit.io.TableWriter;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
@@ -59,6 +58,7 @@ import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 
 import static java.lang.Math.min;
 import static java.lang.Math.max;
+import org.apache.sis.io.TableAppender;
 import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.*;
 
@@ -1533,25 +1533,26 @@ public class Tile implements Comparable<Tile>, Serializable {
             throws IOException
     {
         int remaining = maximum;
-        final TableWriter table = new TableWriter(out);
-        table.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
-        table.write("Format\tInput\tindex\tx\ty\twidth\theight\tdx\tdy\n");
-        table.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
+        final TableAppender table = new TableAppender(out);
+        table.setMultiLinesCells(false);
+        table.nextLine('\u2550');
+        table.append("Format\tInput\tindex\tx\ty\twidth\theight\tdx\tdy\n");
+        table.nextLine('\u2500');
         table.setMultiLinesCells(true);
         for (final Tile tile : tiles) {
             if (--remaining < 0) {
                 break;
             }
-            table.setAlignment(TableWriter.ALIGN_LEFT);
+            table.setCellAlignment(TableAppender.ALIGN_LEFT);
             final String format = tile.getFormatName();
             if (format != null) {
-                table.write(format);
+                table.append(format);
             }
             table.nextColumn();
-            table.write(tile.getInputName());
+            table.append(tile.getInputName());
             table.nextColumn();
-            table.setAlignment(TableWriter.ALIGN_RIGHT);
-            table.write(String.valueOf(tile.getImageIndex()));
+            table.setCellAlignment(TableAppender.ALIGN_RIGHT);
+            table.append(String.valueOf(tile.getImageIndex()));
             table.nextColumn();
             /*
              * Extracts now the tile information that we are going to format, but those
@@ -1584,27 +1585,27 @@ public class Tile implements Comparable<Tile>, Serializable {
                     height = 0;
                 }
             }
-            table.write(String.valueOf(x));
+            table.append(String.valueOf(x));
             table.nextColumn();
-            table.write(String.valueOf(y));
+            table.append(String.valueOf(y));
             if (width != 0 || height != 0) {
                 table.nextColumn();
-                table.write(String.valueOf(width));
+                table.append(String.valueOf(width));
                 table.nextColumn();
-                table.write(String.valueOf(height));
+                table.append(String.valueOf(height));
             } else {
                 table.nextColumn();
                 table.nextColumn();
             }
             if (xSubsampling != 0 || ySubsampling != 0) {
                 table.nextColumn();
-                table.write(String.valueOf(xSubsampling));
+                table.append(String.valueOf(xSubsampling));
                 table.nextColumn();
-                table.write(String.valueOf(ySubsampling));
+                table.append(String.valueOf(ySubsampling));
             }
             table.nextLine();
         }
-        table.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+        table.nextLine('\u2550');
         /*
          * Table completed. Flushs to the writer and appends additional text if we have
          * not formatted every tiles. IOException may be trown starting from this point

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.sld.xml;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -39,6 +38,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import net.iharder.Base64;
 import org.apache.sis.measure.Units;
 
 import org.geotoolkit.util.NamesExt;

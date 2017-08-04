@@ -29,13 +29,13 @@ import java.io.Writer;
 import java.io.IOException;
 import java.awt.RenderingHints;
 import javax.imageio.spi.ServiceRegistry;
+import org.apache.sis.io.TableAppender;
 
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.quality.ConformanceResult;
 
-import org.geotoolkit.io.TableWriter;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
@@ -817,9 +817,9 @@ public abstract class Factory {
      * point for {@link #format(Writer, Map, String, Map)} below.
      */
     private static String format(final Map<?,?> hints, final Map<Factory,String> done) {
-        final Writer table;
+        final TableAppender table;
         try {
-            table = new TableWriter(null, " ");
+            table = new TableAppender(" ");
             format(table, hints, "  ", done);
         } catch (IOException e) {
             // Should never happen, since we are writing in a buffer.
@@ -831,7 +831,7 @@ public abstract class Factory {
     /**
      * Formats recursively the tree. This method invoke itself.
      */
-    private static void format(final Writer table, final Map<?,?> hints, final String indent,
+    private static void format(final TableAppender table, final Map<?,?> hints, final String indent,
             final Map<Factory,String> done) throws IOException
     {
         for (final Map.Entry<?,?> entry : hints.entrySet()) {
@@ -839,8 +839,8 @@ public abstract class Factory {
             String key = (k instanceof RenderingHints.Key) ?
                     Hints.nameOf((RenderingHints.Key) k) : String.valueOf(k);
             Object value = entry.getValue();
-            table.write(indent);
-            table.write(key);
+            table.append(indent);
+            table.append(key);
             char separator = ':';
             Factory recursive = null;
             if (value instanceof Factory) {
@@ -854,11 +854,11 @@ public abstract class Factory {
                     recursive = null;
                 }
             }
-            table.write('\t');
-            table.write(separator);
-            table.write(' ');
-            table.write(String.valueOf(value));
-            table.write('\n');
+            table.nextColumn();
+            table.append(separator);
+            table.append(' ');
+            table.append(String.valueOf(value));
+            table.nextLine();
             if (recursive != null) {
                 final String nextIndent = CharSequences.spaces(indent.length() + 2).toString();
                 format(table, recursive.getImplementationHints(), nextIndent, done);

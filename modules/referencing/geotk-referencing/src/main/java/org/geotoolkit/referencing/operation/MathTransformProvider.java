@@ -25,9 +25,8 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.MathTransform;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.referencing.operation.DefaultOperationMethod;
-
-import static org.geotoolkit.referencing.IdentifiedObjects.EMPTY_ALIAS_ARRAY;
-import static org.geotoolkit.referencing.IdentifiedObjects.EMPTY_IDENTIFIER_ARRAY;
+import org.opengis.metadata.Identifier;
+import org.opengis.util.GenericName;
 
 
 /**
@@ -66,6 +65,30 @@ public abstract class MathTransformProvider extends DefaultOperationMethod
      * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 7530475536803158473L;
+
+    /**
+     * An empty array of identifiers. This is useful for fetching identifiers as an array,
+     * using the following idiom:
+     *
+     * {@preformat java
+     *     getIdentifiers().toArray(EMPTY_IDENTIFIER_ARRAY);
+     * }
+     *
+     * @see IdentifiedObject#getIdentifiers()
+     */
+    private static final Identifier[] EMPTY_IDENTIFIER_ARRAY = new Identifier[0];
+
+    /**
+     * An empty array of alias. This is useful for fetching alias as an array,
+     * using the following idiom:
+     *
+     * {@preformat java
+     *     getAlias().toArray(EMPTY_ALIAS_ARRAY);
+     * }
+     *
+     * @see IdentifiedObject#getAlias()
+     */
+    private static final GenericName[] EMPTY_ALIAS_ARRAY = new GenericName[0];
 
     /**
      * Constructs a math transform provider from a set of parameters. The provider

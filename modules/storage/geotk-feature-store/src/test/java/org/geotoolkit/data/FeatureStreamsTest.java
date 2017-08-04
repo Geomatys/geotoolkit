@@ -27,11 +27,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
@@ -51,7 +46,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 import org.geotoolkit.feature.ReprojectFeatureType;
 import org.geotoolkit.feature.TransformFeatureType;
 import org.geotoolkit.feature.ViewFeatureType;
@@ -62,7 +57,6 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.iterator.CheckCloseFeatureIterator;
 
 /**

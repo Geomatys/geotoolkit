@@ -22,6 +22,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Set;
+import org.apache.sis.io.TableAppender;
 
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
@@ -31,7 +32,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.io.TableWriter;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.Citations;
@@ -117,34 +117,34 @@ public class DirectPostgisFactory extends WKTParsingAuthorityFactory implements 
     @Override
     public String getBackingStoreDescription() throws FactoryException {
         final Citation   authority = getAuthority();
-        final TableWriter    table = new TableWriter(null, " ");
+        final TableAppender    table = new TableAppender(" ");
         final Vocabulary resources = Vocabulary.getResources(null);
         CharSequence cs;
         if ((cs=authority.getEdition()) != null) {
             final String identifier = org.apache.sis.metadata.iso.citation.Citations.getIdentifier(authority);
-            table.write(resources.getString(Vocabulary.Keys.VersionOf_1, identifier));
-            table.write(':');
+            table.append(resources.getString(Vocabulary.Keys.VersionOf_1, identifier));
+            table.append(':');
             table.nextColumn();
-            table.write(cs.toString());
+            table.append(cs.toString());
             table.nextLine();
         }
         try {
             String s;
             final DatabaseMetaData metadata = ((SpatialRefSysMap) definitions).connection.getMetaData();
             if ((s=metadata.getDatabaseProductName()) != null) {
-                table.write(resources.getLabel(Vocabulary.Keys.DatabaseEngine));
+                table.append(resources.getLabel(Vocabulary.Keys.DatabaseEngine));
                 table.nextColumn();
-                table.write(s);
+                table.append(s);
                 if ((s = metadata.getDatabaseProductVersion()) != null) {
-                    table.write(' ');
-                    table.write(resources.getString(Vocabulary.Keys.Version_1, s));
+                    table.append(' ');
+                    table.append(resources.getString(Vocabulary.Keys.Version_1, s));
                 }
                 table.nextLine();
             }
             if ((s = metadata.getURL()) != null) {
-                table.write(resources.getLabel(Vocabulary.Keys.DatabaseUrl));
+                table.append(resources.getLabel(Vocabulary.Keys.DatabaseUrl));
                 table.nextColumn();
-                table.write(s);
+                table.append(s);
                 table.nextLine();
             }
         } catch (SQLException exception) {

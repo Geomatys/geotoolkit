@@ -138,7 +138,7 @@ public abstract class CoverageFinder {
      */
     public final Pyramid findPyramid(final PyramidSet set, final CoordinateReferenceSystem crs) throws FactoryException {
         final CoordinateReferenceSystem crs2D = CRS.getHorizontalComponent(crs);
-        final Envelope crsBound1 = org.geotoolkit.referencing.CRS.getEnvelope(crs2D);
+        final Envelope crsBound1 = CRS.getDomainOfValidity(crs2D);
         double ratio = Double.NEGATIVE_INFINITY;
         // envelope with crs geographic.
         final GeneralEnvelope intersection = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -148,7 +148,7 @@ public abstract class CoverageFinder {
             noValidityDomainFound :
             for(Pyramid pyramid : set.getPyramids()) {
                 double ratioTemp = 0;
-                Envelope pyramidBound = org.geotoolkit.referencing.CRS.getEnvelope(
+                Envelope pyramidBound = CRS.getDomainOfValidity(
                         CRS.getHorizontalComponent(pyramid.getCoordinateReferenceSystem()));
                 if (pyramidBound == null) {
                     results.add(pyramid);

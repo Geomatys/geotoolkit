@@ -43,6 +43,7 @@ import javax.media.jai.ImageLayout;
 import javax.media.jai.Interpolation;
 import javax.media.jai.RenderedImageAdapter;
 import javax.media.jai.operator.WarpDescriptor;
+import org.apache.sis.io.TableAppender;
 
 import org.opengis.util.InternationalString;
 import org.opengis.geometry.Envelope;
@@ -55,7 +56,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.util.ArraysExt;
 
-import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.MultidimensionalImageStore;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriter;
@@ -651,18 +651,18 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                     if (tr instanceof LinearTransform) {
                         tr = ((LinearTransform) tr).getMatrix();
                     }
-                    final TableWriter table = new TableWriter(null, 1);
+                    final TableAppender table = new TableAppender(" ");
                     table.setMultiLinesCells(true);
-                    table.writeHorizontalSeparator();
-                    table.write("Warping coverage:");                         table.nextColumn();
-                    table.write(String.valueOf(name));                        table.nextLine();
-                    table.write("Grid to source:");                           table.nextColumn();
-                    table.write(String.valueOf(tr));                          table.nextLine();
-                    table.write("Source region:");                            table.nextColumn();
-                    table.write(String.valueOf(sourceRegion));                table.nextLine();
-                    table.write("Warp origin:");                              table.nextColumn();
-                    table.write(Arrays.toString(warp.warpPoint(0, 0, null))); table.nextLine();
-                    table.writeHorizontalSeparator();
+                    table.appendHorizontalSeparator();
+                    table.append("Warping coverage:");                         table.nextColumn();
+                    table.append(String.valueOf(name));                        table.nextLine();
+                    table.append("Grid to source:");                           table.nextColumn();
+                    table.append(String.valueOf(tr));                          table.nextLine();
+                    table.append("Source region:");                            table.nextColumn();
+                    table.append(String.valueOf(sourceRegion));                table.nextLine();
+                    table.append("Warp origin:");                              table.nextColumn();
+                    table.append(Arrays.toString(warp.warpPoint(0, 0, null))); table.nextLine();
+                    table.appendHorizontalSeparator();
                     System.out.println(table);
                 }
                 double[] backgroundValues = param.getBackgroundValues();

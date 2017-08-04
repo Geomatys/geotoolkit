@@ -17,12 +17,9 @@
 package org.geotoolkit.processing.jts.lenght;
 
 import com.vividsolutions.jts.geom.Geometry;
-
 import org.geotoolkit.processing.AbstractProcess;
-
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -36,12 +33,9 @@ public class LenghtProcess extends AbstractProcess {
 
     @Override
     protected void execute() {
-
-        final Geometry geom1 = value(LenghtDescriptor.GEOM, inputParameters);
-
+        final Geometry geom1 = inputParameters.getValue(LenghtDescriptor.GEOM);
         final double result = geom1.getLength();
-
-        getOrCreate(LenghtDescriptor.RESULT, outputParameters).setValue(result);
+        outputParameters.getOrCreate(LenghtDescriptor.RESULT).setValue(result);
     }
 
 }

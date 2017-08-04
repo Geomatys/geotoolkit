@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry;
 
-import junit.framework.TestCase;
 
 import org.xml.sax.InputSource;
 
@@ -27,13 +26,16 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.logging.Logger;
 import org.apache.sis.util.logging.Logging;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * @author Jody Garnett
  * @author Joel Skelton
  * @module
  */
-public class RunStoredTest extends TestCase {
+public class RunStoredTest {
+
     private static final Logger LOG = Logging.getLogger("org.geotoolkit.geometry.isoonjts.spatialschema.geometry");
     private static String TEST_DIRECTORY = "src/main/resources/org/geotoolkit/test-data/xml/geometry";
 
@@ -47,6 +49,7 @@ public class RunStoredTest extends TestCase {
      * Load and run all test files.
      * @throws IOException
      */
+    @Test
     public void testGeometriesFromXML() throws IOException {
         GeometryTestParser parser = new GeometryTestParser();
         File dir = new File(TEST_DIRECTORY);

@@ -389,203 +389,6 @@ public final class Parameters extends Static {
     }
 
     /**
-     * Returns the parameter value as an object for the given descriptor.
-     * The method uses the {@link ParameterValue#getValue()} method for fetching the value.
-     *
-     * @param  <T> The type of the parameter value.
-     * @param  parameter The parameter to look for.
-     * @param  group The parameter value group to search into.
-     * @return The requested parameter value, or {@code null} if the parameter
-     *         is optional and the user didn't provided any value.
-     * @throws ParameterNotFoundException if the parameter is mandatory and not found in the group.
-     *
-     * @since 3.00
-     * @category query
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
-     */
-    @Deprecated
-    public static <T> T value(final ParameterDescriptor<T> parameter, final ParameterValueGroup group)
-            throws ParameterNotFoundException
-    {
-        return castOrWrap(group).getValue(parameter);
-    }
-
-    /**
-     * Returns the parameter value as a string for the given descriptor.
-     * This method uses the {@link ParameterValue#stringValue()} method for fetching the value.
-     * Note that the result may be different than the above {@link #value value} method if the
-     * {@code ParameterValue} implementation performs string conversions.
-     *
-     * @param  parameter The parameter to look for.
-     * @param  group The parameter value group to search into.
-     * @return The requested parameter value, or {@code null} if the parameter
-     *         is optional and the user didn't provided any value.
-     * @throws ParameterNotFoundException if the parameter is mandatory and not found in the group.
-     *
-     * @category query
-     * @since 3.00
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
-     */
-    @Deprecated
-    public static String stringValue(final ParameterDescriptor<?> parameter, final ParameterValueGroup group)
-            throws ParameterNotFoundException
-    {
-        try {
-            return castOrWrap(group).stringValue((ParameterDescriptor) parameter);
-        } catch (IllegalStateException e) {
-            return null; // Deprecated practice, but done for now for compatibility with previous behaviour.
-        }
-    }
-
-    /**
-     * Returns the parameter value as a boolean for the given descriptor.
-     * This method uses the {@link ParameterValue#booleanValue()} method for fetching the value.
-     * Note that the result may be different than the above {@link #value value} method if the
-     * {@code ParameterValue} implementation performs numeric conversions.
-     *
-     * @param  parameter The parameter to look for.
-     * @param  group The parameter value group to search into.
-     * @return The requested parameter value, or {@code null} if the parameter
-     *         is optional and the user didn't provided any value.
-     * @throws ParameterNotFoundException if the parameter is mandatory and not found in the group.
-     *
-     * @category query
-     * @since 3.18
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
-     */
-    @Deprecated
-    public static Boolean booleanValue(final ParameterDescriptor<?> parameter, final ParameterValueGroup group)
-            throws ParameterNotFoundException
-    {
-        try {
-            return castOrWrap(group).booleanValue((ParameterDescriptor) parameter);
-        } catch (IllegalStateException e) {
-            return null; // Deprecated practice, but done for now for compatibility with previous behaviour.
-        }
-    }
-
-    /**
-     * Returns the parameter value as an integer for the given descriptor.
-     * This method uses the {@link ParameterValue#intValue()} method for fetching the value.
-     * Note that the result may be different than the above {@link #value value} method if the
-     * {@code ParameterValue} implementation performs numeric conversions.
-     *
-     * @param  parameter The parameter to look for.
-     * @param  group The parameter value group to search into.
-     * @return The requested parameter value, or {@code null} if the parameter
-     *         is optional and the user didn't provided any value.
-     * @throws ParameterNotFoundException if the parameter is mandatory and not found in the group.
-     *
-     * @category query
-     * @since 3.00
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
-     */
-    @Deprecated
-    public static Integer integerValue(final ParameterDescriptor<?> parameter, final ParameterValueGroup group)
-            throws ParameterNotFoundException
-    {
-        try {
-            return castOrWrap(group).intValue((ParameterDescriptor) parameter);
-        } catch (IllegalStateException e) {
-            return null; // Deprecated practice, but done for now for compatibility with previous behaviour.
-        }
-    }
-
-    /**
-     * Returns the parameter value as a list of integers for the given descriptor.
-     * This method uses the {@link ParameterValue#intValueList()} method for fetching the values.
-     * Note that the result may be different than the above {@link #value value} method if the
-     * {@code ParameterValue} implementation performs numeric conversions.
-     *
-     * @param  parameter The parameter to look for.
-     * @param  group The parameter value group to search into.
-     * @return The requested parameter value, or {@code null} if the parameter
-     *         is optional and the user didn't provided any value.
-     * @throws ParameterNotFoundException if the parameter is mandatory and not found in the group.
-     *
-     * @category query
-     * @since 3.18
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
-     */
-    @Deprecated
-    public static int[] integerValueList(final ParameterDescriptor<?> parameter, final ParameterValueGroup group)
-            throws ParameterNotFoundException
-    {
-        try {
-            return castOrWrap(group).intValueList((ParameterDescriptor) parameter);
-        } catch (IllegalStateException e) {
-            return null; // Deprecated practice, but done for now for compatibility with previous behaviour.
-        }
-    }
-
-    /**
-     * Returns the parameter value as a floating point number for the given descriptor.
-     * Values are automatically converted into the standard units specified by the
-     * supplied {@code param} argument.
-     * <p>
-     * This method uses the {@link ParameterValue#doubleValue(Unit)} method for fetching the value.
-     * Note that the result may be different than the above {@link #value value} method if the
-     * {@code ParameterValue} implementation performs numeric conversions.
-     *
-     * @param  parameter The parameter to look for.
-     * @param  group The parameter value group to search into.
-     * @return The requested parameter value, or {@code NaN} if the parameter
-     *         is optional and the user didn't provided any value.
-     * @throws ParameterNotFoundException if the parameter is mandatory and not found in the group.
-     *
-     * @category query
-     * @since 3.00
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
-     */
-    @Deprecated
-    public static double doubleValue(final ParameterDescriptor<?> parameter, final ParameterValueGroup group)
-            throws ParameterNotFoundException
-    {
-        try {
-            return castOrWrap(group).doubleValue((ParameterDescriptor) parameter);
-        } catch (IllegalStateException e) {
-            return Double.NaN; // Deprecated practice, but done for now for compatibility with previous behaviour.
-        }
-    }
-
-    /**
-     * Returns the parameter value as a list of floating point numbers for the given descriptor.
-     * Values are automatically converted into the standard units specified by the
-     * supplied {@code param} argument.
-     * <p>
-     * This method uses the {@link ParameterValue#doubleValueList(Unit)} method for fetching the
-     * values. Note that the result may be different than the above {@link #value value} method
-     * if the {@code ParameterValue} implementation performs numeric conversions.
-     *
-     * @param  parameter The parameter to look for.
-     * @param  group The parameter value group to search into.
-     * @return The requested parameter value, or {@code null} if the parameter
-     *         is optional and the user didn't provided any value.
-     * @throws ParameterNotFoundException if the parameter is mandatory and not found in the group.
-     *
-     * @category query
-     * @since 3.18
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
-     */
-    @Deprecated
-    public static double[] doubleValueList(final ParameterDescriptor<?> parameter, final ParameterValueGroup group)
-            throws ParameterNotFoundException
-    {
-        try {
-            return castOrWrap(group).doubleValueList((ParameterDescriptor) parameter);
-        } catch (IllegalStateException e) {
-            return null; // Deprecated practice, but done for now for compatibility with previous behaviour.
-        }
-    }
-
-    /**
      * Searches all parameters with the specified name. The given {@code name} is
      * compared against parameter {@linkplain GeneralParameterDescriptor#getName name} and
      * {@linkplain GeneralParameterDescriptor#getAlias alias}. This method search recursively
@@ -935,6 +738,18 @@ public final class Parameters extends Static {
         }
 
         return parameter;
+    }
+
+    /**
+     * Get the first parameter for this name, do not create parameter if missing.
+     */
+    public static GeneralParameterValue getParameterOrGroup(ParameterValueGroup group,String name){
+        for(GeneralParameterValue p : group.values()){
+            if(p.getDescriptor().getName().getCode().equalsIgnoreCase(name)){
+                return p;
+            }
+        }
+        return null;
     }
 
 }

@@ -25,9 +25,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -217,7 +217,7 @@ public abstract class AbstractGetCoverage extends AbstractRequest implements Get
         }
         if (responseCRS != null) {
             try {
-                requestParameters.put("RESPONSECRS", IdentifiedObjects.lookupIdentifier(responseCRS, false));
+                requestParameters.put("RESPONSECRS", ReferencingUtilities.lookupIdentifier(responseCRS, false));
             } catch (FactoryException ex) {
                 LOGGER.log(Level.WARNING, null, ex);
             }
@@ -239,7 +239,7 @@ public abstract class AbstractGetCoverage extends AbstractRequest implements Get
         params.put("BBOX", sb.toString());
         try {
             CoordinateReferenceSystem crs2d = CRSUtilities.getCRS2D(envelope.getCoordinateReferenceSystem());
-            params.put("CRS", IdentifiedObjects.lookupIdentifier(crs2d, true));
+            params.put("CRS", ReferencingUtilities.lookupIdentifier(crs2d, true));
         } catch (FactoryException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         } catch (TransformException ex) {

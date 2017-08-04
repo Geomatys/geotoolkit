@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
@@ -41,7 +42,6 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.collection.CloseableIterator;
@@ -97,8 +97,8 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     private static ParameterValueGroup toParameters(final Path f) throws MalformedURLException{
-        final ParameterValueGroup params = GMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(GMLFeatureStoreFactory.PATH, params).setValue(f.toUri());
+        final Parameters params = Parameters.castOrWrap(GMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(GMLFeatureStoreFactory.PATH).setValue(f.toUri());
         return params;
     }
 

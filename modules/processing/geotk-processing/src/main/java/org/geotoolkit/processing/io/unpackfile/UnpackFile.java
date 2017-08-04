@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import static java.nio.file.StandardOpenOption.WRITE;
-import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.processing.io.unpackfile.UnpackFileDescriptor.*;
 
 /**
@@ -62,8 +61,8 @@ public class UnpackFile extends AbstractProcess {
 
         fireProcessStarted("Start unpack");
 
-        Object source = getOrCreate(SOURCE_IN, inputParameters).getValue();
-        Object target = getOrCreate(TARGET_IN, inputParameters).getValue();
+        Object source = inputParameters.getValue(SOURCE_IN);
+        Object target = inputParameters.getValue(TARGET_IN);
 
         try {
             if (!(source instanceof Path)) {
@@ -151,7 +150,7 @@ public class UnpackFile extends AbstractProcess {
             fireProcessFailed("Failed to unpack, compression unknowned : " + source, null);
         }
 
-        getOrCreate(RESULT_OUT, outputParameters).setValue(urls.toArray(new URL[urls.size()]));
+        outputParameters.getOrCreate(RESULT_OUT).setValue(urls.toArray(new URL[urls.size()]));
 
         fireProcessCompleted("Unpack done.");
     }

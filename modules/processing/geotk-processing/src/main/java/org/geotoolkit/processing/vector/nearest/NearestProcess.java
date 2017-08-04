@@ -28,7 +28,6 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
@@ -48,9 +47,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
-
-import static org.geotoolkit.parameter.Parameters.*;
-
 
 /**
  * Process return the nearest Feature(s) form a FeatureCollection to a geometry
@@ -75,12 +71,12 @@ public class NearestProcess extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         try {
-            final FeatureCollection inputFeatureList  = value(VectorDescriptor.FEATURE_IN, inputParameters);
-            final Geometry interGeom                  = value(NearestDescriptor.GEOMETRY_IN, inputParameters);
+            final FeatureCollection inputFeatureList  = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
+            final Geometry interGeom                  = inputParameters.getValue(NearestDescriptor.GEOMETRY_IN);
             final FeatureCollection resultFeatureList =
                     new NearestFeatureCollection(inputFeatureList.subCollection(nearestQuery(inputFeatureList, interGeom)));
 
-            getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+            outputParameters.getOrCreate(VectorDescriptor.FEATURE_OUT).setValue(resultFeatureList);
         } catch (FactoryException | DataStoreException | TransformException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }

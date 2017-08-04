@@ -25,7 +25,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.internal.metadata.Merger;
 import org.apache.sis.metadata.ModifiableMetadata;
 
-import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.processing.metadata.merge.MergeDescriptor.FIRST_IN;
 import static org.geotoolkit.processing.metadata.merge.MergeDescriptor.INSTANCE;
 import static org.geotoolkit.processing.metadata.merge.MergeDescriptor.RESULT_OUT;
@@ -53,8 +52,8 @@ public class Merge extends AbstractProcess {
 
         fireProcessStarted("Start merge");
 
-        final Metadata first = (Metadata) getOrCreate(FIRST_IN, inputParameters).getValue();
-        final Metadata second = (Metadata) getOrCreate(SECOND_IN, inputParameters).getValue();
+        final Metadata first = inputParameters.getValue(FIRST_IN);
+        final Metadata second = inputParameters.getValue(SECOND_IN);
 
         final DefaultMetadata merged = new DefaultMetadata(first);
         final Merger merger = new Merger(null) {
@@ -66,7 +65,7 @@ public class Merge extends AbstractProcess {
         merger.avoidConflicts = true;
         merger.merge(second, merged);
 
-        getOrCreate(RESULT_OUT, outputParameters).setValue(merged);
+        outputParameters.getOrCreate(RESULT_OUT).setValue(merged);
 
         fireProcessCompleted("Merge done.");
     }

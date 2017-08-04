@@ -19,7 +19,6 @@ package org.geotoolkit.wcs;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wcs.v100.DescribeCoverage100;
 import org.geotoolkit.wcs.v100.GetCapabilities100;
@@ -56,7 +55,7 @@ public class WebCoverageClient extends AbstractClient {
     public WebCoverageClient(final URL serverURL, final ClientSecurity security, final String version) {
         super(create(WCSClientFactory.PARAMETERS, serverURL, security));
         if (version.equals("1.0.0")) {
-            Parameters.getOrCreate(WCSClientFactory.VERSION, parameters).setValue(version);
+            parameters.getOrCreate(WCSClientFactory.VERSION).setValue(version);
         } else {
             throw new IllegalArgumentException("unkonwed version : " + version);
         }
@@ -67,7 +66,7 @@ public class WebCoverageClient extends AbstractClient {
         if(version == null){
             throw new IllegalArgumentException("unkonwed version : " + version);
         }
-        Parameters.getOrCreate(WCSClientFactory.VERSION, parameters).setValue(version.getCode());
+        parameters.getOrCreate(WCSClientFactory.VERSION).setValue(version.getCode());
     }
 
     public WebCoverageClient(final ParameterValueGroup params) {
@@ -83,7 +82,7 @@ public class WebCoverageClient extends AbstractClient {
      * Returns the currently used version for this server
      */
     public WCSVersion getVersion() {
-        return WCSVersion.fromCode(Parameters.value(WCSClientFactory.VERSION, parameters));
+        return WCSVersion.fromCode(parameters.getValue(WCSClientFactory.VERSION));
     }
 
     /**

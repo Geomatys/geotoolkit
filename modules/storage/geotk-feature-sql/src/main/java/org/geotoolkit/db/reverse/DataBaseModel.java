@@ -59,7 +59,6 @@ import org.geotoolkit.db.reverse.MetaDataConstants.Schema;
 import org.geotoolkit.db.reverse.MetaDataConstants.Table;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.parameter.Parameters;
 import org.opengis.coverage.Coverage;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
@@ -375,10 +374,10 @@ public final class DataBaseModel {
         try {
             Filter filter = FF.equals(FF.property(Table.TABLE_SCHEM), FF.literal(schemaName));
 
-            if(Parameters.getOrCreate(AbstractJDBCFeatureStoreFactory.TABLE,store.getConfiguration()).getValue()!=null &&
-               !Parameters.getOrCreate(AbstractJDBCFeatureStoreFactory.TABLE,store.getConfiguration()).getValue().toString().isEmpty()){
+            if(store.getConfiguration().getValue(AbstractJDBCFeatureStoreFactory.TABLE)!=null &&
+               !store.getConfiguration().getValue(AbstractJDBCFeatureStoreFactory.TABLE).isEmpty()){
                 filter = FF.and(filter, FF.equals(FF.property(Table.TABLE_NAME),
-                        FF.literal(Parameters.getOrCreate(AbstractJDBCFeatureStoreFactory.TABLE,store.getConfiguration()).getValue().toString())));
+                        FF.literal(store.getConfiguration().getValue(AbstractJDBCFeatureStoreFactory.TABLE))));
             }
 
             final Iterator<Map> ite = cacheTables.filter(filter);

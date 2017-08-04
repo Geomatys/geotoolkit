@@ -26,8 +26,6 @@ import java.text.ParseException;
 
 import org.opengis.referencing.IdentifiedObject;
 
-import org.geotoolkit.io.X364;
-import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.Classes;
@@ -35,6 +33,8 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.Strings;
 
 import static java.lang.Character.isJavaIdentifierPart;
+import org.apache.sis.internal.util.X364;
+import org.apache.sis.io.TableAppender;
 
 
 /**
@@ -373,9 +373,9 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
     final void print(final Writer out, final boolean colors) throws IOException {
         final Locale locale = null;
         final Vocabulary resources = Vocabulary.getResources(locale);
-        final TableWriter table = new TableWriter(out, TableWriter.SINGLE_VERTICAL_LINE);
+        final TableAppender table = new TableAppender(out);
         table.setMultiLinesCells(true);
-        table.writeHorizontalSeparator();
+        table.appendHorizontalSeparator();
         final short[] keys = { // In reverse ordeR.
             Vocabulary.Keys.Description,
             Vocabulary.Keys.Class,
@@ -383,16 +383,16 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
             Vocabulary.Keys.Name
         };
         for (int i=keys.length; --i>=0;) {
-            if (colors) table.write(X364.BOLD.sequence());
-            table.write(resources.getString(keys[i]));
-            if (colors) table.write(X364.NORMAL.sequence());
+            if (colors) table.append(X364.BOLD.sequence());
+            table.append(resources.getString(keys[i]));
+            if (colors) table.append(X364.NORMAL.sequence());
             if (i != 0) table.nextColumn();
             else table.nextLine();
         }
-        table.writeHorizontalSeparator();
+        table.appendHorizontalSeparator();
         for (final Map.Entry<String,Parsed> entry : definitions.entrySet()) {
             final Object object = entry.getValue().asObject;
-            table.write(entry.getKey());
+            table.append(entry.getKey());
             table.nextColumn();
             Class<?> classe = Classes.getClass(object);
             String type = WKTFormat.getNameOf(classe);
@@ -401,16 +401,16 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
             } else {
                 type = resources.getString(Vocabulary.Keys.Unknown);
             }
-            table.write(type);
+            table.append(type);
             table.nextColumn();
-            table.write(Classes.getShortName(classe));
+            table.append(Classes.getShortName(classe));
             table.nextColumn();
             if (object instanceof IdentifiedObject) {
-                table.write(((IdentifiedObject) object).getName().getCode());
+                table.append(((IdentifiedObject) object).getName().getCode());
             }
             table.nextLine();
         }
-        table.writeHorizontalSeparator();
+        table.appendHorizontalSeparator();
         table.flush();
     }
 

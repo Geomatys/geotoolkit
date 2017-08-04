@@ -21,8 +21,6 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import java.util.Set;
 
-import static org.geotoolkit.parameter.Parameters.getOrCreate;
-import static org.geotoolkit.parameter.Parameters.value;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import java.util.Map;
@@ -43,9 +41,9 @@ public class GroovyConditionProcess extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
 
-        final Map variables = value(GroovyDescriptor.VARIABLES, inputParameters);
-        final String expression = value(GroovyDescriptor.SCRIPT,inputParameters);
-        final String behavior = value(GroovyDescriptor.BEHAVIOR,inputParameters);
+        final Map variables = inputParameters.getValue(GroovyDescriptor.VARIABLES);
+        final String expression = inputParameters.getValue(GroovyDescriptor.SCRIPT);
+        final String behavior = inputParameters.getValue(GroovyDescriptor.BEHAVIOR);
 
         final Binding binding = new Binding();
         final GroovyShell shell = new GroovyShell(binding);
@@ -61,8 +59,7 @@ public class GroovyConditionProcess extends AbstractProcess {
             }
         }
 
-
-        getOrCreate(GroovyDescriptor.RESULT, outputParameters).setValue(result);
+        outputParameters.getOrCreate(GroovyDescriptor.RESULT).setValue(result);
     }
 
 }

@@ -27,10 +27,10 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.geometry.Shapes2D;
+import org.apache.sis.referencing.CRS;
 
 
 /**
@@ -74,7 +74,7 @@ public final class Envelopes extends Static {
      */
     @Deprecated
     public static Envelope getDomainOfValidity(final CoordinateReferenceSystem crs) {
-        return CRS.getEnvelope(crs);
+        return CRS.getDomainOfValidity(crs);
     }
 
     /**

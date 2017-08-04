@@ -19,7 +19,6 @@ package org.geotoolkit.processing.math.tan;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
  * @module
@@ -32,11 +31,9 @@ public class TanProcess extends AbstractProcess {
 
     @Override
     protected void execute() {
-
-        final double first = value(TanDescriptor.FIRST_NUMBER, inputParameters);
-
+        final double first = inputParameters.getValue(TanDescriptor.FIRST_NUMBER);
         final double result  = Math.tan(first);
-        getOrCreate(TanDescriptor.RESULT_NUMBER, outputParameters).setValue(result);
+        outputParameters.getOrCreate(TanDescriptor.RESULT_NUMBER).setValue(result);
     }
 
 }

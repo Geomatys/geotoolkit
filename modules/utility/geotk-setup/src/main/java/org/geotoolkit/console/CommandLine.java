@@ -30,8 +30,8 @@ import java.lang.reflect.Member;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.annotation.Annotation;
+import org.apache.sis.internal.util.X364;
 
-import org.geotoolkit.io.X364;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.logging.Logging;
@@ -248,7 +248,7 @@ public abstract class CommandLine implements Runnable {
          * Set unassigned fields to default values.
          */
         if (colors == null) {
-            colors = (console != null) && X364.isSupported();
+            colors = (console != null) && X364.isAnsiSupported();
         }
         if (encoding == null) {
             encoding = Charset.defaultCharset();

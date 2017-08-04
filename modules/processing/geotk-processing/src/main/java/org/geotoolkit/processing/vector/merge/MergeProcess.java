@@ -41,7 +41,6 @@ import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 
 import static org.geotoolkit.processing.vector.merge.MergeDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 
 /**
@@ -63,12 +62,12 @@ public class MergeProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection[] inputFeaturesList = value(FEATURES_IN, inputParameters);
+        final FeatureCollection[] inputFeaturesList = inputParameters.getValue(FEATURES_IN);
         final FeatureCollection firstFC = inputFeaturesList[0];
 
         final FeatureCollection resultFeatureList = new MergeFeatureCollection(inputFeaturesList,firstFC);
 
-        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+        outputParameters.getOrCreate(FEATURE_OUT).setValue(resultFeatureList);
     }
 
     /**

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.map;
 
-import junit.framework.TestCase;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.CRS;
@@ -29,13 +28,14 @@ import org.opengis.util.FactoryException;
 
 import java.io.IOException;
 import org.apache.sis.util.Utilities;
+import static org.junit.Assert.*;
 
 /**
  * Test MapContext creation and behavior.
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class MapContextTest extends TestCase {
+public class MapContextTest {
 
     @Test
     public void testContextCreation() throws FactoryException {
@@ -160,7 +160,7 @@ public class MapContextTest extends TestCase {
         context = MapBuilder.createContext();
         ctxBounds = context.getBounds(true);
         assertNotNull(ctxBounds);
-        expected = new GeneralEnvelope(org.geotoolkit.referencing.CRS.getEnvelope(CommonCRS.WGS84.defaultGeographic()));
+        expected = new GeneralEnvelope(CRS.getDomainOfValidity(CommonCRS.WGS84.defaultGeographic()));
         assertTrue(expected.equals(ctxBounds, 0.0000001, true));
 
     }

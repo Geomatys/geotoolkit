@@ -25,7 +25,6 @@ import java.awt.image.WritableRaster;
 import java.util.Hashtable;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.image.reformat.ReformatProcess;
@@ -51,8 +50,8 @@ public class BandSelectProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
 
-        final RenderedImage inputImage = (RenderedImage) Parameters.getOrCreate(IN_IMAGE, inputParameters).getValue();
-        final int[] bands = (int[]) Parameters.getOrCreate(IN_BANDS, inputParameters).getValue();
+        final RenderedImage inputImage = inputParameters.getValue(IN_IMAGE);
+        final int[] bands = inputParameters.getValue(IN_BANDS);
 
         final SampleModel inputSampleModel = inputImage.getSampleModel();
         final int inputNbBand = inputSampleModel.getNumBands();
@@ -112,7 +111,7 @@ public class BandSelectProcess extends AbstractProcess {
             }
         }
 
-        Parameters.getOrCreate(OUT_IMAGE, outputParameters).setValue(resultImage);
+        outputParameters.getOrCreate(OUT_IMAGE).setValue(resultImage);
     }
 
 }

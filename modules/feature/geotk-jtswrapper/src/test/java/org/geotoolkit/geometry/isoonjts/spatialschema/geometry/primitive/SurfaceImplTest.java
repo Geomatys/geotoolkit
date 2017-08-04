@@ -19,8 +19,6 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.sis.referencing.CommonCRS;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.LineSegment;
@@ -34,22 +32,25 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.JTSPositionFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
+import org.junit.Before;
+import org.junit.Test;
 
-public class SurfaceImplTest extends TestCase {
+public class SurfaceImplTest {
     private JTSPositionFactory postitionFactory;
     private JTSPrimitiveFactory primitiveFactory;
     private JTSGeometryFactory geometryFactory;
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         postitionFactory = new JTSPositionFactory( CommonCRS.WGS84.normalizedGeographic() );
         primitiveFactory = new JTSPrimitiveFactory( CommonCRS.WGS84.normalizedGeographic() );
         geometryFactory = new JTSGeometryFactory( CommonCRS.WGS84.normalizedGeographic() );
-        // TODO Auto-generated method stub
-        super.setUp();
     }
 
-    /** We need to create a large surface with 7000 points */
+    /**
+     * We need to create a large surface with 7000 points
+     */
+    @Test
     public void testLargeSurface(){
          int NUMBER = 100000;
          double delta = 360.0 / (double) NUMBER;

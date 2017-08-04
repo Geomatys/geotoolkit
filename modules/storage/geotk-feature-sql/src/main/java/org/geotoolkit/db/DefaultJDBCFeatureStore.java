@@ -60,7 +60,6 @@ import org.geotoolkit.filter.visitor.CRSAdaptorVisitor;
 import org.geotoolkit.filter.visitor.FIDFixVisitor;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.jdbc.ManageableDataSource;
-import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import org.opengis.util.GenericName;
@@ -114,12 +113,12 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         super(params);
         this.factoryId = factoryId;
 
-        fetchSize = (Integer)Parameters.getOrCreate(AbstractJDBCFeatureStoreFactory.FETCHSIZE, params).getValue();
-        final boolean simpleTypes = (Boolean)Parameters.getOrCreate(AbstractJDBCFeatureStoreFactory.SIMPLETYPE, params).getValue();
+        fetchSize = parameters.getValue(AbstractJDBCFeatureStoreFactory.FETCHSIZE);
+        final boolean simpleTypes = parameters.getValue(AbstractJDBCFeatureStoreFactory.SIMPLETYPE);
         dbmodel = new DataBaseModel(this, simpleTypes);
 
         try{
-            baseSchema = (String)Parameters.getOrCreate(AbstractJDBCFeatureStoreFactory.SCHEMA, params).getValue();
+            baseSchema = parameters.getValue(AbstractJDBCFeatureStoreFactory.SCHEMA);
             if (baseSchema != null && baseSchema.isEmpty()) {
                 baseSchema = null;
             }

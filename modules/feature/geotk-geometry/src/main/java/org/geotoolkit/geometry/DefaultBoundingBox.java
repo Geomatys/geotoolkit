@@ -17,14 +17,13 @@
  */
 package org.geotoolkit.geometry;
 
-import org.geotoolkit.referencing.CRS;
-
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
 
 /**
  *
@@ -126,7 +125,7 @@ public class DefaultBoundingBox extends GeneralEnvelope implements BoundingBox {
 
     @Override
     public BoundingBox toBounds(final CoordinateReferenceSystem targetCRS) throws TransformException {
-        return new DefaultBoundingBox(CRS.getEnvelope(targetCRS));
+        return new DefaultBoundingBox(CRS.getDomainOfValidity(targetCRS));
     }
 
 }

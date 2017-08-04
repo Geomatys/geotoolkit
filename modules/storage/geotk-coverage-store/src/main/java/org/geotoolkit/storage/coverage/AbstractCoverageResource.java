@@ -28,13 +28,13 @@ import org.opengis.util.GenericName;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.metadata.iso.content.DefaultAttributeGroup;
 import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.metadata.ImageStatistics;
-import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -47,6 +47,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
 
@@ -124,12 +125,14 @@ public abstract class AbstractCoverageResource extends AbstractResource implemen
             if(!(coverage instanceof GridCoverage2D)) return null;
 
             final ProcessDescriptor processDesc = ProcessFinder.getProcessDescriptor("geotoolkit", "coverage:statistic");
-            final ParameterValueGroup processParam = processDesc.getInputDescriptor().createValue();
-            ParametersExt.getOrCreateValue(processParam, "inCoverage").setValue(coverage);
-            ParametersExt.getOrCreateValue(processParam, "inExcludeNoData").setValue(true);
+            final ParameterDescriptorGroup inputDesc = processDesc.getInputDescriptor();
+            final Parameters processParam = Parameters.castOrWrap(inputDesc.createValue());
+            processParam.parameter("inCoverage").setValue(coverage);
+            processParam.parameter("inExcludeNoData").setValue(true);
+
             final Process process = processDesc.createProcess(processParam);
             final ParameterValueGroup result = process.call();
-            final ImageStatistics stats = (ImageStatistics) ParametersExt.getOrCreateValue(result, "outStatistic").getValue();
+            final ImageStatistics stats = (ImageStatistics) result.parameter("outStatistic").getValue();
             desc = new CoverageDescriptionAdapter(stats);
 
         } catch (CoverageStoreException | NoSuchIdentifierException | ProcessException ex) {

@@ -23,7 +23,6 @@ import com.vividsolutions.jts.geom.Point;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
 import org.geotoolkit.factory.HintsPending;
 import org.junit.Test;
 
@@ -33,13 +32,14 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
+import static org.junit.Assert.*;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class SRIDTest extends TestCase{
+public class SRIDTest {
 
     private static final GeometryFactory GF = new GeometryFactory();
 

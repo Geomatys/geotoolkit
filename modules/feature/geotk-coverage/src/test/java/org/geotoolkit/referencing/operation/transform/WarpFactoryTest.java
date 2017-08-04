@@ -32,7 +32,6 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;
 
-import org.geotoolkit.io.TableWriter;
 import org.apache.sis.math.Statistics;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.factory.FactoryFinder;
@@ -45,6 +44,7 @@ import org.apache.sis.test.DependsOn;
 import org.junit.*;
 import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;
+import org.apache.sis.io.TableAppender;
 
 
 /**
@@ -168,14 +168,14 @@ public final strictfp class WarpFactoryTest extends TestBase {
             }
         }
         if (out != null) {
-            final TableWriter table = new TableWriter(null, TableWriter.SINGLE_VERTICAL_LINE);
+            final TableAppender table = new TableAppender();
             table.setMultiLinesCells(true);
-            table.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
-            table.write(sx.toString());
+            table.appendHorizontalSeparator();
+            table.append(sx.toString());
             table.nextColumn();
-            table.write(sy.toString());
+            table.append(sy.toString());
             table.nextLine();
-            table.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
+            table.appendHorizontalSeparator();
             out.println(name);
             out.println(table);
             out.println();

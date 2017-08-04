@@ -7,12 +7,10 @@ import org.geotoolkit.data.mapinfo.mif.MIFFeatureStore;
 import org.geotoolkit.data.mapinfo.mif.MIFFeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
-import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
 
 import java.io.File;
@@ -20,6 +18,7 @@ import java.net.URL;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.storage.DataStores;
 
 /**
@@ -58,16 +57,16 @@ public class MifDemo {
             URL dataLocation = MifDemo.class.getResource("/data/world/HY_WATER_AREA_POLYGON.mif");
             System.out.println(MIFFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
 
-            final ParameterValueGroup parameters = MIFFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-            Parameters.getOrCreate(MIFFeatureStoreFactory.PATH, parameters).setValue(dataLocation.toURI());
+            final Parameters parameters = Parameters.castOrWrap(MIFFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
+            parameters.getOrCreate(MIFFeatureStoreFactory.PATH).setValue(dataLocation.toURI());
 
             // Initialize the store, and create a session to browse it's data.
             final FeatureStore store1 = (FeatureStore) DataStores.open(parameters);
             Session session = store1.createSession(false);
 
             // Create a mif featureStore for writing operation.
-            final ParameterValueGroup writerParam = MIFFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-            Parameters.getOrCreate(MIFFeatureStoreFactory.PATH, writerParam).setValue(destinationURL.toURI());
+            final Parameters writerParam = Parameters.castOrWrap(MIFFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
+            writerParam.getOrCreate(MIFFeatureStoreFactory.PATH).setValue(destinationURL.toURI());
             final MIFFeatureStore writingStore = new MIFFeatureStore(writerParam);
             //Here we get a function to set mid file attributes delimiter. MID file is a sort of CSV, and default
             // delimiter (which is \t) can be changed by user. Here I choose coma.

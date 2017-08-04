@@ -28,7 +28,6 @@ import org.geotoolkit.process.ProcessException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Compute the difference geometry of the two inputs geometries.
@@ -48,8 +47,8 @@ public class DifferenceProcess extends AbstractProcess {
 
         try {
 
-            final Geometry geom1 = value(DifferenceDescriptor.GEOM1, inputParameters);
-            Geometry geom2 = value(DifferenceDescriptor.GEOM2, inputParameters);
+            final Geometry geom1 = inputParameters.getValue(DifferenceDescriptor.GEOM1);
+            Geometry geom2 = inputParameters.getValue(DifferenceDescriptor.GEOM2);
 
             Geometry result = new GeometryFactory().buildGeometry(Collections.emptyList());
 
@@ -64,8 +63,7 @@ public class DifferenceProcess extends AbstractProcess {
                 JTS.setCRS(result, resultCRS);
             }
 
-
-            getOrCreate(DifferenceDescriptor.RESULT_GEOM, outputParameters).setValue(result);
+            outputParameters.getOrCreate(DifferenceDescriptor.RESULT_GEOM).setValue(result);
 
         } catch (Exception ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

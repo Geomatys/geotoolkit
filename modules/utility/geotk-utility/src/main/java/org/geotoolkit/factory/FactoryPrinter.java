@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.Comparator;
 import java.util.Collection;
 import java.util.Collections;
+import org.apache.sis.io.TableAppender;
 
 import org.opengis.util.Factory;
 import org.opengis.metadata.Identifier;
@@ -35,7 +36,6 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.AuthorityFactory;
 
 import org.geotoolkit.lang.Debug;
-import org.geotoolkit.io.TableWriter;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Vocabulary;
 
@@ -109,29 +109,29 @@ final class FactoryPrinter implements Comparator<Class<?>> {
          * Prints the table header.
          */
         final Vocabulary resources = Vocabulary.getResources(locale);
-        final TableWriter table  = new TableWriter(out);
+        final TableAppender table  = new TableAppender(out);
         table.setMultiLinesCells(true);
-        table.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
-        table.write(resources.getString(Vocabulary.Keys.Service));
+        table.nextLine('\u2550');
+        table.append(resources.getString(Vocabulary.Keys.Service));
         table.nextColumn();
-        table.write(resources.getString(Vocabulary.Keys.Implementations));
+        table.append(resources.getString(Vocabulary.Keys.Implementations));
         table.nextColumn();
-        table.write(resources.getString(Vocabulary.Keys.Vendor));
+        table.append(resources.getString(Vocabulary.Keys.Vendor));
         table.nextColumn();
-        table.write(resources.getString(Vocabulary.Keys.Authority));
+        table.append(resources.getString(Vocabulary.Keys.Authority));
         table.nextLine();
-        table.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+        table.nextLine('\u2550');
         final StringBuilder vendors     = new StringBuilder();
         final StringBuilder authorities = new StringBuilder();
         int categoryCount = 0;
         for (final Class<?> category : sorted) {
             if (categoryCount++ != 0) {
-                table.writeHorizontalSeparator();
+                table.appendHorizontalSeparator();
             }
             /*
              * Writes the category name (CRSFactory, DatumFactory, etc.)
              */
-            table.write(Classes.getShortName(category));
+            table.append(Classes.getShortName(category));
             table.nextColumn();
             /*
              * Writes the implementation in a single cell. We will do the same for vendors and
@@ -142,12 +142,12 @@ final class FactoryPrinter implements Comparator<Class<?>> {
             int implementationsCount = 0;
             while (providers.hasNext()) {
                 if (implementationsCount++ != 0) {
-                    table      .write ('\n');
+                    table      .append ('\n');
                     vendors    .append('\n');
                     authorities.append('\n');
                 }
                 final Object provider = providers.next();
-                table.write(Classes.getShortClassName(provider));
+                table.append(Classes.getShortClassName(provider));
                 if (provider instanceof Factory) {
                     final Citation vendor = ((Factory) provider).getVendor();
                     vendors.append(vendor.getTitle().toString(locale));
@@ -166,14 +166,14 @@ final class FactoryPrinter implements Comparator<Class<?>> {
              * Writes all columns (vendors and authorities) that were buffered in the aboved loop.
              */
             table.nextColumn();
-            table.write(vendors.toString());
+            table.append(vendors.toString());
             vendors.setLength(0);
             table.nextColumn();
-            table.write(authorities.toString());
+            table.append(authorities.toString());
             authorities.setLength(0);
             table.nextLine();
         }
-        table.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+        table.nextLine('\u2550');
         table.flush();
     }
 

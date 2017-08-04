@@ -24,8 +24,6 @@ import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import static org.geotoolkit.parameter.Parameters.*;
-
 /**
  * Re-project a FeatureCollection into a target CoordinateReferenceSystem
  * @author Quentin Boileau
@@ -45,12 +43,12 @@ public class ReprojectProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList   = value(VectorDescriptor.FEATURE_IN, inputParameters);
-        final CoordinateReferenceSystem targetCRS           = value(ReprojectDescriptor.CRS_IN, inputParameters);
+        final FeatureCollection inputFeatureList  = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
+        final CoordinateReferenceSystem targetCRS = inputParameters.getValue(ReprojectDescriptor.CRS_IN);
 
         final FeatureCollection resultFeatureList = FeatureStreams.decorate(inputFeatureList,
                 new ReprojectFeatureType(inputFeatureList.getType(), targetCRS));
 
-        getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+        outputParameters.getOrCreate(VectorDescriptor.FEATURE_OUT).setValue(resultFeatureList);
     }
 }

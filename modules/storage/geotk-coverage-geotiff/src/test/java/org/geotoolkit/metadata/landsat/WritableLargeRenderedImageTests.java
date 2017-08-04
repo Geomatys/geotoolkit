@@ -40,8 +40,8 @@ import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.lang.Setup;
+import org.junit.Assert;
 
-import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

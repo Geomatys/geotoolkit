@@ -23,6 +23,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.logging.Level;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.*;
@@ -32,7 +33,6 @@ import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -73,26 +73,26 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
         }
     };
 
-    private final ParameterValueGroup folderParameters;
+    private final Parameters folderParameters;
     private final AbstractFolderFeatureStoreFactory folderFactory;
     private final FileFeatureStoreFactory singleFileFactory;
-    private final ParameterValueGroup singleFileDefaultParameters;
+    private final Parameters singleFileDefaultParameters;
     private GenericNameIndex<FeatureStore> stores = null;
 
     public DefaultFolderFeatureStore(final ParameterValueGroup params, final AbstractFolderFeatureStoreFactory factory){
         super(params);
-        this.folderParameters = params;
+        this.folderParameters = Parameters.castOrWrap(params);
         this.folderFactory = factory;
         this.singleFileFactory = this.folderFactory.getSingleFileFactory();
 
         final ParameterDescriptorGroup desc = singleFileFactory.getParametersDescriptor();
-        singleFileDefaultParameters = desc.createValue();
+        singleFileDefaultParameters = Parameters.castOrWrap(desc.createValue());
         for(GeneralParameterDescriptor pdesc : desc.descriptors()){
             if(pdesc == PATH || pdesc.getName().getCode().equals(IDENTIFIER.getName().getCode())) {
                 continue;
             }
-            Parameters.getOrCreate((ParameterDescriptor)pdesc, singleFileDefaultParameters)
-                    .setValue(folderParameters.parameter(pdesc.getName().getCode()).getValue());
+            singleFileDefaultParameters.getOrCreate((ParameterDescriptor)pdesc)
+                    .setValue(folderParameters.getValue((ParameterDescriptor) pdesc));
         }
 
     }
@@ -142,7 +142,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
                 }
             }
 
-            Boolean recursive = Parameters.value(RECURSIVE, folderParameters);
+            Boolean recursive = folderParameters.getValue(RECURSIVE);
             if (recursive == null) {
                 recursive = RECURSIVE.getDefaultValue();
             }
@@ -184,8 +184,8 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
             return;//skip hidden and sym link files
         }
 
-        final ParameterValueGroup params = singleFileDefaultParameters.clone();
-        Parameters.getOrCreate(PATH, params).setValue(file.toUri());
+        final Parameters params = singleFileDefaultParameters.clone();
+        params.getOrCreate(PATH).setValue(file.toUri());
 
         if (singleFileFactory.canProcess(params)) {
             try {
@@ -209,12 +209,12 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
             throw new DataStoreException("Type name "+ typeName + " already exists.");
         }
 
-        final ParameterValueGroup params = singleFileDefaultParameters.clone();
+        final Parameters params = singleFileDefaultParameters.clone();
         try {
             final Path folder = getFolder(folderParameters);
             final String fileName = typeName.tip().toString() + singleFileFactory.getFileExtensions()[0];
             final Path newFile = folder.resolve(fileName);
-            Parameters.getOrCreate(PATH, params).setValue(newFile.toUri().toURL());
+            params.getOrCreate(PATH).setValue(newFile.toUri().toURL());
         } catch (MalformedURLException ex) {
             throw new DataStoreException(ex);
         }
@@ -249,7 +249,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
                 sourceFiles = ((DataFileStore) store).getDataFiles();
             } else {
                 // Not a file store ? We try to find an url parameter and see if it's a file one.
-                final URI fileURI = Parameters.value(PATH, store.getConfiguration());
+                final URI fileURI = Parameters.castOrWrap(store.getConfiguration()).getValue(PATH);
                 if (fileURI == null) {
                     throw new DataStoreException("Source data cannot be reached for type name : " + typeName);
                 }
@@ -348,8 +348,8 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
         return store.getFeatureWriter(query);
     }
 
-    private Path getFolder(final ParameterValueGroup params) throws DataStoreException{
-        final URI uri = Parameters.value(FOLDER_PATH, params);
+    private Path getFolder(final Parameters params) throws DataStoreException{
+        final URI uri = params.getValue(FOLDER_PATH);
 
         try {
             return Paths.get(uri);

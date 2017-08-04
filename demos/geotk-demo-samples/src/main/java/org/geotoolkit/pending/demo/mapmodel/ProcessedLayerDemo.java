@@ -6,13 +6,13 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.map.ProcessedCollection;
 import org.geotoolkit.map.ProcessedCoverageResource;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
 import static org.geotoolkit.pending.demo.mapmodel.MapContextDemo.openWorldFile;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
@@ -49,10 +49,10 @@ public class ProcessedLayerDemo {
     private static MapLayer createProcessedCollectionLayer() throws Exception{
         final FeatureCollection basedata = MapContextDemo.openShapeFile();
 
-        final ParameterValueGroup parameters = BufferDescriptor.INSTANCE.getInputDescriptor().createValue();
-        Parameters.getOrCreate(BufferDescriptor.FEATURE_IN, parameters).setValue(basedata);
-        Parameters.getOrCreate(BufferDescriptor.LENIENT_TRANSFORM_IN, parameters).setValue(true);
-        Parameters.getOrCreate(BufferDescriptor.DISTANCE_IN, parameters).setValue(50000);
+        final Parameters parameters = Parameters.castOrWrap(BufferDescriptor.INSTANCE.getInputDescriptor().createValue());
+        parameters.getOrCreate(BufferDescriptor.FEATURE_IN).setValue(basedata);
+        parameters.getOrCreate(BufferDescriptor.LENIENT_TRANSFORM_IN).setValue(true);
+        parameters.getOrCreate(BufferDescriptor.DISTANCE_IN).setValue(50000);
 
         final ProcessedCollection processed = new ProcessedCollection();
         processed.setProcessDescriptor(BufferDescriptor.INSTANCE);
@@ -75,9 +75,9 @@ public class ProcessedLayerDemo {
 
         final GridCoverageReader baseData = openWorldFile();
 
-        final ParameterValueGroup parameters = ResampleDescriptor.INSTANCE.getInputDescriptor().createValue();
-        Parameters.getOrCreate(ResampleDescriptor.IN_COVERAGE, parameters).setValue(baseData.read(0, null));
-        Parameters.getOrCreate(ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM, parameters).setValue(env.getCoordinateReferenceSystem());
+        final Parameters parameters = Parameters.castOrWrap(ResampleDescriptor.INSTANCE.getInputDescriptor().createValue());
+        parameters.getOrCreate(ResampleDescriptor.IN_COVERAGE).setValue(baseData.read(0, null));
+        parameters.getOrCreate(ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM).setValue(env.getCoordinateReferenceSystem());
 
         final ProcessedCoverageResource processed = new ProcessedCoverageResource();
         processed.setProcessDescriptor(ResampleDescriptor.INSTANCE);

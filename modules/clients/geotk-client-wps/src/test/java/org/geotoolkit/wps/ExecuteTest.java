@@ -75,7 +75,7 @@ public class ExecuteTest extends org.geotoolkit.test.TestBase {
             inputs.add(InputType.createBoundingBox("bbox", env));
             inputs.add(InputType.createComplex("complex", "UTF-8", WPSMimeType.APP_GML.val(), WPSSchema.OGC_GML_3_1_1.getValue(), point, null, null));
             inputs.add(InputType.createReference("reference", "http://link.to/reference/", null, null, null, null));
-            
+
 
             final List<WPSOutput> outputs = new ArrayList<>();
             outputs.add(new WPSOutput("output"));
@@ -134,8 +134,8 @@ public class ExecuteTest extends org.geotoolkit.test.TestBase {
                 +"            <ows:Identifier>complex</ows:Identifier>\n"
                 +"            <wps:Data>\n"
                 +"                <wps:ComplexData>\n"
-                +"                    <gml:Point srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326\">\n"
-                +"                        <gml:pos srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326\" srsDimension=\"2\">0.0 0.0</gml:pos>\n"
+                +"                    <gml:Point srsName=\"urn:ogc:def:crs:EPSG:" + EPSG_VERSION + ":4326\">\n"
+                +"                        <gml:pos srsName=\"urn:ogc:def:crs:EPSG:" + EPSG_VERSION + ":4326\" srsDimension=\"2\">0.0 0.0</gml:pos>\n"
                 +"                    </gml:Point>\n"
                 +"                </wps:ComplexData>\n"
                 +"            </wps:Data>\n"

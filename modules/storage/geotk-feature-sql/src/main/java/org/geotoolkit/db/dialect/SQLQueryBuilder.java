@@ -27,6 +27,7 @@ import java.util.Map;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStore;
@@ -35,7 +36,6 @@ import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.db.reverse.RelationMetaModel;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.visitor.FIDFixVisitor;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.db.DBRelationOperation;
 import org.opengis.coverage.Coverage;
@@ -701,7 +701,7 @@ public class SQLQueryBuilder {
 
             if (crs != null) {
                 try {
-                    final Integer candidate = IdentifiedObjects.lookupEpsgCode(crs, false);
+                    final Integer candidate = IdentifiedObjects.lookupEPSG(crs);
                     if (candidate != null) {
                         srid = candidate;
                     }

@@ -35,7 +35,6 @@ import org.geotoolkit.coverage.amended.AmendedCoverageResource;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.internal.GeotkFX;
-import org.geotoolkit.io.X364;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -55,6 +54,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.InternationalString;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.util.StringUtilities;
 
 /**
  *
@@ -324,7 +324,7 @@ public class FXLayerStructure extends FXPropertyPane {
         buffer.append("<pre>");
         // '\u001A' is the SUBSTITUTE character. We use it as a temporary replacement for avoiding
         // confusion between WKT quotes and HTML quotes while we search for text to make italic.
-        makeItalic(X364.toHTML(text.replace('"', '\u001A')), buffer, '\u001A');
+        makeItalic(StringUtilities.X364toHTML(text.replace('"', '\u001A')), buffer, '\u001A');
         return buffer.append("</pre>").toString();
     }
 

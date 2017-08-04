@@ -20,11 +20,9 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.processing.AbstractProcess;
-
 import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.parameter.Parameters.*;
 /**
  * This process return all Features from a FeatureCollection that intersect a geometry.
  * @author Quentin Boileau
@@ -44,11 +42,11 @@ public class IntersectProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList   = value(VectorDescriptor.FEATURE_IN, inputParameters);
-        final Geometry interGeom                            = value(IntersectDescriptor.GEOMETRY_IN, inputParameters);
+        final FeatureCollection inputFeatureList = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
+        final Geometry interGeom                 = inputParameters.getValue(IntersectDescriptor.GEOMETRY_IN);
 
         final FeatureCollection resultFeatureList = new IntersectFeatureCollection(inputFeatureList, interGeom);
 
-        getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+        outputParameters.getOrCreate(VectorDescriptor.FEATURE_OUT).setValue(resultFeatureList);
     }
 }

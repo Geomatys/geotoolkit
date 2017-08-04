@@ -23,7 +23,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.ncwms.AbstractNcGetTimeseries;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.geotoolkit.referencing.ReferencingUtilities;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
@@ -59,9 +59,9 @@ public class NcGetTimeseries111 extends AbstractNcGetTimeseries {
         map.put("BBOX", sb.toString());
 
         try {
-            String code = IdentifiedObjects.lookupIdentifier(env.getCoordinateReferenceSystem(), true);
+            String code = ReferencingUtilities.lookupIdentifier(env.getCoordinateReferenceSystem(), true);
             if (code == null) {
-                code = IdentifiedObjects.lookupIdentifier(CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem()), true);
+                code = ReferencingUtilities.lookupIdentifier(CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem()), true);
             }
             map.put("SRS", code);
         } catch (FactoryException ex) {

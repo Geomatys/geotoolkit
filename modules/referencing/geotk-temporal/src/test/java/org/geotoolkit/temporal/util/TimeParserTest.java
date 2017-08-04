@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-import junit.framework.TestCase;
 import org.geotoolkit.temporal.util.TimeParser;
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 
@@ -34,7 +34,7 @@ import org.junit.Test;
  *
  * @author Cédric Briançon
  */
-public class TimeParserTest extends TestCase {
+public class TimeParserTest {
     /**
      * A time period for testing.
      */

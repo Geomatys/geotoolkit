@@ -50,14 +50,12 @@ import org.geotoolkit.gui.swing.render2d.control.JNavigationBar;
 import org.geotoolkit.gui.swing.render2d.control.navigation.PanHandler;
 
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.io.X364;
 import org.apache.sis.measure.Units;
 import org.apache.sis.io.wkt.Colors;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.Classes;
@@ -75,7 +73,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Description;
 import org.opengis.style.LineSymbolizer;
 import org.apache.sis.io.wkt.Warnings;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -268,7 +268,7 @@ public class JCRSChooser extends javax.swing.JDialog {
         buffer.append("<pre>");
         // '\u001A' is the SUBSTITUTE character. We use it as a temporary replacement for avoiding
         // confusion between WKT quotes and HTML quotes while we search for text to make italic.
-        makeItalic(X364.toHTML(text.replace('"', '\u001A')), buffer, '\u001A');
+        makeItalic(StringUtilities.X364toHTML(text.replace('"', '\u001A')), buffer, '\u001A');
         wktArea.setText(buffer.append("</pre></html>").toString());
 
 
@@ -277,7 +277,7 @@ public class JCRSChooser extends javax.swing.JDialog {
         ctx.layers().clear();
 
         if(item instanceof CoordinateReferenceSystem){
-            final Envelope env = CRS.getEnvelope((CoordinateReferenceSystem)item);
+            final Envelope env = CRS.getDomainOfValidity((CoordinateReferenceSystem)item);
 
             if(env != null){
                 final FeatureTypeBuilder ftb = new FeatureTypeBuilder();

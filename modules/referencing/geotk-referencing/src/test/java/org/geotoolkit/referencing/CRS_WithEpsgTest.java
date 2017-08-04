@@ -150,29 +150,6 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
     }
 
     /**
-     * Tests {@link IdentifiedObjects#lookupIdentifier}.
-     *
-     * @throws FactoryException Should not happen.
-     */
-    @Test
-    @Ignore
-    public void testLookupIdentifier() throws FactoryException {
-        CoordinateReferenceSystem crs = getED50("ED50");
-        assertEquals("Should find without scan thanks to the name.", "EPSG:4230",
-                     org.geotoolkit.referencing.IdentifiedObjects.lookupIdentifier(crs, false));
-        assertEquals(Integer.valueOf(4230), org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(crs, false));
-
-        crs = getED50("ED50 with unknown name");
-        assertNull("Should not find the CRS without a scan.",
-                   org.geotoolkit.referencing.IdentifiedObjects.lookupIdentifier(crs, false));
-        assertEquals(null, org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(crs, false));
-
-        assertEquals("With scan allowed, should find the CRS.", "EPSG:4230",
-                     org.geotoolkit.referencing.IdentifiedObjects.lookupIdentifier(crs, true));
-        assertEquals(Integer.valueOf(4230), org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(crs, true));
-    }
-
-    /**
      * Returns a ED50 CRS with the specified name.
      */
     private static CoordinateReferenceSystem getED50(final String name) throws FactoryException {

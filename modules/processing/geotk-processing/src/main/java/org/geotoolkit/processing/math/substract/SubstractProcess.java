@@ -20,7 +20,6 @@ import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.processing.math.substract.SubstractDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -34,13 +33,10 @@ public class SubstractProcess extends AbstractProcess {
 
     @Override
     protected void execute() {
-
-        final double first = value(FIRST_NUMBER, inputParameters);
-        final double second = value(SECOND_NUMBER, inputParameters);
-
+        final double first = inputParameters.getValue(FIRST_NUMBER);
+        final double second = inputParameters.getValue(SECOND_NUMBER);
         final double result = first - second;
-
-        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
+        outputParameters.getOrCreate(RESULT_NUMBER).setValue(result);
     }
 
 }

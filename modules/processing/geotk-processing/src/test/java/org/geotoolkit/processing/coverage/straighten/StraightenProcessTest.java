@@ -21,12 +21,12 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcessTest;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.parameter.Parameters;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.coverage.grid.GridEnvelope;
@@ -64,8 +64,8 @@ public class StraightenProcessTest extends AbstractProcessTest {
 
 
         final ProcessDescriptor desc = StraightenDescriptor.INSTANCE;
-        final ParameterValueGroup in = desc.getInputDescriptor().createValue();
-        Parameters.getOrCreate(StraightenDescriptor.COVERAGE_IN, in).setValue(coverage);
+        final Parameters in = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
+        in.getOrCreate(StraightenDescriptor.COVERAGE_IN).setValue(coverage);
         final Process process = desc.createProcess(in);
         final ParameterValueGroup out = process.call();
 
@@ -102,8 +102,8 @@ public class StraightenProcessTest extends AbstractProcessTest {
 
 
         final ProcessDescriptor desc = StraightenDescriptor.INSTANCE;
-        final ParameterValueGroup in = desc.getInputDescriptor().createValue();
-        Parameters.getOrCreate(StraightenDescriptor.COVERAGE_IN, in).setValue(coverage);
+        final Parameters in = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
+        in.getOrCreate(StraightenDescriptor.COVERAGE_IN).setValue(coverage);
         final Process process = desc.createProcess(in);
         final ParameterValueGroup out = process.call();
 

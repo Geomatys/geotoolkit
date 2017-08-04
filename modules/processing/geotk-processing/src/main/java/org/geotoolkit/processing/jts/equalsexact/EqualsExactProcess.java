@@ -28,7 +28,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.processing.jts.equalsexact.EqualsExactDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Compute if two input geometries are equalExact.
@@ -45,8 +44,8 @@ public class EqualsExactProcess extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         try {
-            final Geometry geom1 = value(GEOM1, inputParameters);
-            Geometry geom2 = value(GEOM2, inputParameters);
+            final Geometry geom1 = inputParameters.getValue(GEOM1);
+            Geometry geom2 = inputParameters.getValue(GEOM2);
 
              // ensure geometries are in the same CRS
             final CoordinateReferenceSystem resultCRS = JTS.getCommonCRS(geom1, geom2);
@@ -56,15 +55,15 @@ public class EqualsExactProcess extends AbstractProcess {
 
             final Boolean result;
 
-            if (value(TOLERANCE, inputParameters) != null) {
-                final Double tolerance = value(TOLERANCE, inputParameters);
+            if (inputParameters.getValue(TOLERANCE) != null) {
+                final Double tolerance = inputParameters.getValue(TOLERANCE);
                 result = (Boolean) geom1.equalsExact(geom2,tolerance);
 
             } else {
                 result = (Boolean) geom1.equalsExact(geom2);
             }
 
-            getOrCreate(RESULT, outputParameters).setValue(result);
+            outputParameters.getOrCreate(RESULT).setValue(result);
 
         } catch (TransformException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

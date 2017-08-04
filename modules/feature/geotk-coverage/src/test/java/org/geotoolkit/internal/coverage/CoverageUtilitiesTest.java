@@ -113,7 +113,7 @@ public strictfp class CoverageUtilitiesTest extends org.geotoolkit.test.TestBase
         final NumberRange<Double> meterRange = new NumberRange<>(Double.class, 200000d, true, 2d, true);
 
         final CoordinateReferenceSystem crs84 = CommonCRS.defaultGeographic();
-        final Envelope domain84 = org.geotoolkit.referencing.CRS.getEnvelope(crs84);
+        final Envelope domain84 = CRS.getDomainOfValidity(crs84);
         Map.Entry<Envelope,double[]> scales = CoverageUtilities.toWellKnownScale(domain84, degreeRange);
         Assert.assertEquals("Input and output envelope must be the same.", domain84, scales.getKey());
         for (final double scale : scales.getValue()) {
@@ -121,7 +121,7 @@ public strictfp class CoverageUtilitiesTest extends org.geotoolkit.test.TestBase
         }
 
         final CoordinateReferenceSystem crsGoogle = CRS.forCode("EPSG:3857");
-        final Envelope domainGoogle = org.geotoolkit.referencing.CRS.getEnvelope(crsGoogle);
+        final Envelope domainGoogle = CRS.getDomainOfValidity(crsGoogle);
         scales = CoverageUtilities.toWellKnownScale(domainGoogle, meterRange);
         Assert.assertEquals("Input and output envelope must be the same.", domainGoogle, scales.getKey());
         for (final double scale : scales.getValue()) {
@@ -129,7 +129,7 @@ public strictfp class CoverageUtilitiesTest extends org.geotoolkit.test.TestBase
         }
 
         final CoordinateReferenceSystem crsMercat = CRS.forCode("EPSG:3395");
-        final Envelope domainMercat = org.geotoolkit.referencing.CRS.getEnvelope(crsMercat);
+        final Envelope domainMercat = CRS.getDomainOfValidity(crsMercat);
         scales = CoverageUtilities.toWellKnownScale(domainMercat, meterRange);
         Assert.assertEquals("Input and output envelope must be the same.", domainMercat, scales.getKey());
         for (final double scale : scales.getValue()) {

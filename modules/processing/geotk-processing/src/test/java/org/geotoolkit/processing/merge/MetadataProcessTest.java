@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.processing.merge;
 
-import junit.framework.Assert;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.geotoolkit.csw.xml.CSWMarshallerPool;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -33,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.junit.Assert;
 
 /**
  * Metadata merge process test.

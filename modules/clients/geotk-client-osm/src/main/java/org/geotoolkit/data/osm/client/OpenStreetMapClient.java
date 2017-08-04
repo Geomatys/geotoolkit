@@ -49,7 +49,6 @@ import org.geotoolkit.data.osm.client.v060.UpdateChangeSet060;
 import org.geotoolkit.data.osm.client.v060.Upload060;
 import org.geotoolkit.data.osm.model.Api;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
@@ -79,7 +78,7 @@ public class OpenStreetMapClient extends AbstractClient{
     public OpenStreetMapClient(final URL url, final ClientSecurity security, final OSMVersion version){
         super(create(OSMClientFactory.PARAMETERS, url, security));
         ArgumentChecks.ensureNonNull("version", version);
-        Parameters.getOrCreate(OSMClientFactory.VERSION, parameters).setValue(version.getCode());
+        parameters.getOrCreate(OSMClientFactory.VERSION).setValue(version.getCode());
     }
 
     public OpenStreetMapClient(final ParameterValueGroup params){
@@ -92,7 +91,7 @@ public class OpenStreetMapClient extends AbstractClient{
     }
 
     public OSMVersion getVersion(){
-        return OSMVersion.getVersion(Parameters.value(OSMClientFactory.VERSION, parameters));
+        return OSMVersion.getVersion(parameters.getValue(OSMClientFactory.VERSION));
     }
 
     public Api getCapabilities(){

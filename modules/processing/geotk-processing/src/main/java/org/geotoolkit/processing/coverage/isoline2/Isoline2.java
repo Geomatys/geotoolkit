@@ -68,7 +68,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.internal.feature.AttributeConvention;
 
-import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2.*;
 
 
@@ -95,11 +94,11 @@ public class Isoline2 extends AbstractProcess {
 
     @Override
     protected void execute() throws ProcessException {
-        final CoverageResource coverageRef = value(COVERAGE_REF, inputParameters);
-        final GridCoverageReadParam readParam = value(READ_PARAM, inputParameters);
-        FeatureStore featureStore = value(FEATURE_STORE, inputParameters);
-        final String featureTypeName = value(FEATURE_NAME, inputParameters);
-        intervals = value(INTERVALS, inputParameters);
+        final CoverageResource coverageRef = inputParameters.getValue(COVERAGE_REF);
+        final GridCoverageReadParam readParam = inputParameters.getValue(READ_PARAM);
+        FeatureStore featureStore = inputParameters.getValue(FEATURE_STORE);
+        final String featureTypeName = inputParameters.getValue(FEATURE_NAME);
+        intervals = inputParameters.getValue(INTERVALS);
 
         if (featureStore == null) {
             featureStore = new MemoryFeatureStore();

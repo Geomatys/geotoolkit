@@ -19,8 +19,6 @@ package org.geotoolkit.processing.math.ceil;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
-
-import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
  * @module
@@ -33,11 +31,9 @@ public class CeilProcess extends AbstractProcess {
 
     @Override
     protected void execute() {
-
-        final double first = value(CeilDescriptor.FIRST_NUMBER, inputParameters);
-
+        final double first = inputParameters.getValue(CeilDescriptor.FIRST_NUMBER);
         final double result = Math.ceil(first);
-        getOrCreate(CeilDescriptor.RESULT_NUMBER, outputParameters).setValue(result);
+        outputParameters.getOrCreate(CeilDescriptor.RESULT_NUMBER).setValue(result);
     }
 
 }

@@ -2,13 +2,13 @@
 package org.geotoolkit.pending.demo.clients.osmtms;
 
 import java.net.URL;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.osmtms.OSMTMSClientFactory;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.DefaultDescription;
@@ -18,7 +18,6 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.CoverageResource;
 import org.opengis.util.GenericName;
-import org.opengis.parameter.ParameterValueGroup;
 
 
 public class OSMTMSClientDemo {
@@ -37,11 +36,11 @@ public class OSMTMSClientDemo {
     public static MapContext createOSMTMSContext() throws Exception{
         final MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
 
-        final ParameterValueGroup params = OSMTMSClientFactory.PARAMETERS.createValue();
-        Parameters.getOrCreate(OSMTMSClientFactory.URL, params).setValue(new URL("http://tile.openstreetmap.org"));
-        Parameters.getOrCreate(OSMTMSClientFactory.IMAGE_CACHE, params).setValue(true);
-        Parameters.getOrCreate(OSMTMSClientFactory.NIO_QUERIES, params).setValue(true);
-        Parameters.getOrCreate(OSMTMSClientFactory.MAX_ZOOM_LEVEL, params).setValue(18);
+        final Parameters params = Parameters.castOrWrap(OSMTMSClientFactory.PARAMETERS.createValue());
+        params.getOrCreate(OSMTMSClientFactory.URL).setValue(new URL("http://tile.openstreetmap.org"));
+        params.getOrCreate(OSMTMSClientFactory.IMAGE_CACHE).setValue(true);
+        params.getOrCreate(OSMTMSClientFactory.NIO_QUERIES).setValue(true);
+        params.getOrCreate(OSMTMSClientFactory.MAX_ZOOM_LEVEL).setValue(18);
 
         final CoverageStore store = (CoverageStore) DataStores.open(params);
 

@@ -25,9 +25,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.lang.reflect.Array;
-import javax.swing.JTree;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeModel;
@@ -367,35 +364,4 @@ public final class Trees extends Static {
         out.flush();
     }
 
-    /**
-     * Display the given tree in a Swing frame. This is a convenience
-     * method for debugging purpose only.
-     *
-     * @param node The root of the tree to display in a Swing frame.
-     * @param title The frame title, or {@code null} if none.
-     *
-     * @since 2.5
-     */
-    @Debug
-    public static void show(final TreeNode node, final String title) {
-        show(new DefaultTreeModel(node, true), title);
-    }
-
-    /**
-     * Display the given tree in a Swing frame. This is a convenience
-     * method for debugging purpose only.
-     *
-     * @param tree The tree to display in a Swing frame.
-     * @param title The frame title, or {@code null} if none.
-     *
-     * @since 2.5
-     */
-    @Debug
-    public static void show(final TreeModel tree, final String title) {
-        final JFrame frame = new JFrame(title);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.add(new JScrollPane(new JTree(tree)));
-        frame.pack();
-        frame.setVisible(true);
-    }
 }

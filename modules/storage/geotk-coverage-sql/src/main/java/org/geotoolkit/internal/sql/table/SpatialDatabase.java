@@ -41,9 +41,8 @@ import org.apache.sis.metadata.iso.extent.Extents;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.IdentifiedObjects;
 
-import org.geotoolkit.metadata.Citations;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory;
 import org.geotoolkit.referencing.factory.wkt.AuthorityFactoryProvider;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
@@ -54,6 +53,8 @@ import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.geotoolkit.metadata.Citations;
+import org.opengis.metadata.Identifier;
 
 
 /**
@@ -257,9 +258,9 @@ public class SpatialDatabase extends Database {
             horizontalSRID = 0;
             return;
         }
-        final String code = IdentifiedObjects.lookupIdentifier(Citations.POSTGIS, horizontalCRS, false);
+        final Identifier code = IdentifiedObjects.getIdentifier(horizontalCRS, Citations.POSTGIS);
         if (code != null) try {
-            horizontalSRID = Integer.parseInt(code);
+            horizontalSRID = Integer.parseInt(code.getCode());
             return;
         } catch (NumberFormatException e) {
             throw new FactoryException(Errors.format(Errors.Keys.NotAnInteger_1, code), e);
@@ -267,7 +268,7 @@ public class SpatialDatabase extends Database {
         /*
          * No PostGIS code. Search for an EPSG code...
          */
-        Integer id = IdentifiedObjects.lookupEpsgCode(horizontalCRS, true);
+        Integer id = org.apache.sis.referencing.IdentifiedObjects.lookupEPSG(horizontalCRS);
         if (id != null) {
             try (Connection c = getDataSource(true).getConnection()) {
                 final DirectPostgisFactory postgis = new DirectPostgisFactory(null, c);

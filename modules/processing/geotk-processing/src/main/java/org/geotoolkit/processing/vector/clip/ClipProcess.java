@@ -40,7 +40,6 @@ import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 
 import static org.geotoolkit.processing.vector.clip.ClipDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 import org.opengis.feature.AttributeType;
 
 
@@ -65,10 +64,10 @@ public class ClipProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList         = value(FEATURE_IN, inputParameters);
-        final FeatureCollection inputFeatureClippingList = value(FEATURE_CLIP, inputParameters);
+        final FeatureCollection inputFeatureList         = inputParameters.getValue(FEATURE_IN);
+        final FeatureCollection inputFeatureClippingList = inputParameters.getValue(FEATURE_CLIP);
         final FeatureCollection resultFeatureList = new ClipFeatureCollection(inputFeatureList,inputFeatureClippingList);
-        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+        outputParameters.getOrCreate(FEATURE_OUT).setValue(resultFeatureList);
     }
 
     /**

@@ -82,7 +82,7 @@ public class GraduationTest extends org.geotoolkit.test.TestBase {
 
         final SceneDef sdef = new SceneDef(context);
         final CanvasDef cdef = new CanvasDef(new Dimension(100, 100), Color.darkGray);
-        final ViewDef vdef = new ViewDef(org.geotoolkit.referencing.CRS.getEnvelope(crs));
+        final ViewDef vdef = new ViewDef(CRS.getDomainOfValidity(crs));
 
         final BufferedImage img = DefaultPortrayalService.portray(cdef, sdef, vdef);
         Assert.assertNotNull(img);

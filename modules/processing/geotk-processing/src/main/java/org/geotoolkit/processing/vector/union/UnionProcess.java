@@ -44,7 +44,6 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 
-import static org.geotoolkit.parameter.Parameters.*;
 import org.opengis.feature.AttributeType;
 
 
@@ -72,12 +71,12 @@ public class UnionProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList  = value(VectorDescriptor.FEATURE_IN, inputParameters);
-        final FeatureCollection unionFeatureList  = value(UnionDescriptor.FEATURE_UNION, inputParameters);
-        final String inputGeometryName            = value(UnionDescriptor.INPUT_GEOMETRY_NAME, inputParameters);
-        final String unionGeometryName            = value(UnionDescriptor.UNION_GEOMETRY_NAME, inputParameters);
+        final FeatureCollection inputFeatureList  = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
+        final FeatureCollection unionFeatureList  = inputParameters.getValue(UnionDescriptor.FEATURE_UNION);
+        final String inputGeometryName            = inputParameters.getValue(UnionDescriptor.INPUT_GEOMETRY_NAME);
+        final String unionGeometryName            = inputParameters.getValue(UnionDescriptor.UNION_GEOMETRY_NAME);
         final FeatureCollection resultFeatureList = new UnionFeatureCollection(inputFeatureList, unionFeatureList, inputGeometryName, unionGeometryName);
-        getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+        outputParameters.getOrCreate(VectorDescriptor.FEATURE_OUT).setValue(resultFeatureList);
     }
 
     /**

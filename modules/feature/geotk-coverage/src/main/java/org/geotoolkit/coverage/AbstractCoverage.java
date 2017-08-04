@@ -72,7 +72,6 @@ import org.opengis.util.RecordType;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.iso.SimpleInternationalString;
@@ -81,6 +80,7 @@ import org.geotoolkit.io.LineWriter;
 import org.apache.sis.util.Localized;
 import org.apache.sis.util.Classes;
 import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Debug;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
@@ -250,7 +250,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
      */
     @Override
     public Envelope getEnvelope() {
-        return CRS.getEnvelope(crs);
+        return CRS.getDomainOfValidity(crs);
     }
 
     /**

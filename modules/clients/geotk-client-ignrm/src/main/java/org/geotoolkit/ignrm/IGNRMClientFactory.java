@@ -23,7 +23,7 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.Parameters;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataType;
@@ -34,7 +34,6 @@ import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
-import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -89,11 +88,10 @@ public class IGNRMClientFactory extends AbstractClientFactory{
     @Override
     public IGNRMClient open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
-        final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
+        final URL url = Parameters.castOrWrap(params).getValue(URL);
         ClientSecurity security = null;
         try{
-            final ParameterValue val = params.parameter(SECURITY.getName().getCode());
-            security = (ClientSecurity) val.getValue();
+            security = Parameters.castOrWrap(params).getValue(SECURITY);
         }catch(ParameterNotFoundException ex){}
 
         return new IGNRMClient(url,security);

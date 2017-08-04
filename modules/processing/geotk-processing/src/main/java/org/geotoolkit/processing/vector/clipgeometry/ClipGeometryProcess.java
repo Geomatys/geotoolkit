@@ -30,7 +30,6 @@ import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 
 import static org.geotoolkit.processing.vector.clipgeometry.ClipGeometryDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 import org.opengis.feature.AttributeType;
 
 
@@ -52,10 +51,10 @@ public class ClipGeometryProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList  = value(FEATURE_IN, inputParameters);
-        final Geometry inputClippingGeometry      = value(CLIP_GEOMETRY_IN, inputParameters);
+        final FeatureCollection inputFeatureList  = inputParameters.getValue(FEATURE_IN);
+        final Geometry inputClippingGeometry      = inputParameters.getValue(CLIP_GEOMETRY_IN);
         final FeatureCollection resultFeatureList = new ClipGeometryFeatureCollection(inputFeatureList,inputClippingGeometry);
-        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+        outputParameters.getOrCreate(FEATURE_OUT).setValue(resultFeatureList);
     }
 
     /**

@@ -25,8 +25,6 @@ import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import static org.geotoolkit.parameter.Parameters.*;
-
 /**
  * Compute the union geometry of the two inputs geometries.
  * The process ensure that two geometries are into the same CoordinateReferenceSystem.
@@ -44,9 +42,8 @@ public class UnionProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
 
         try {
-
-            Geometry geom1 = value(UnionDescriptor.GEOM1, inputParameters);
-            Geometry geom2 = value(UnionDescriptor.GEOM2, inputParameters);
+            Geometry geom1 = inputParameters.getValue(UnionDescriptor.GEOM1);
+            Geometry geom2 = inputParameters.getValue(UnionDescriptor.GEOM2);
 
             // ensure geometries are in the same CRS
             final CoordinateReferenceSystem resultCRS = JTS.getCommonCRS(geom1, geom2);
@@ -59,7 +56,7 @@ public class UnionProcess extends AbstractProcess {
                 JTS.setCRS(result, resultCRS);
             }
 
-            getOrCreate(UnionDescriptor.RESULT_GEOM, outputParameters).setValue(result);
+            outputParameters.getOrCreate(UnionDescriptor.RESULT_GEOM).setValue(result);
 
         } catch (Exception ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

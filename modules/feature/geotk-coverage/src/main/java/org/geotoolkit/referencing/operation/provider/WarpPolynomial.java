@@ -37,7 +37,7 @@ import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import static org.geotoolkit.parameter.Parameters.*;
+import org.apache.sis.parameter.Parameters;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
 
 
@@ -277,13 +277,14 @@ public class WarpPolynomial extends MathTransformProvider {
     public MathTransform createMathTransform(MathTransformFactory factory, final ParameterValueGroup values)
             throws ParameterNotFoundException
     {
-        final int      degree   = integerValue(DEGREE, values);
-        final float[] xCoeffs   = value(X_COEFFS,      values);
-        final float[] yCoeffs   = value(Y_COEFFS,      values);
-        final float   preScaleX = scale( PRE_SCALE_X,  values);
-        final float   preScaleY = scale( PRE_SCALE_Y,  values);
-        final float  postScaleX = scale(POST_SCALE_X,  values);
-        final float  postScaleY = scale(POST_SCALE_Y,  values);
+        Parameters params = Parameters.castOrWrap(values);
+        final int      degree   = params.getValue(DEGREE);
+        final float[] xCoeffs   = params.getValue(X_COEFFS);
+        final float[] yCoeffs   = params.getValue(Y_COEFFS);
+        final float   preScaleX = scale( PRE_SCALE_X,  params);
+        final float   preScaleY = scale( PRE_SCALE_Y,  params);
+        final float  postScaleX = scale(POST_SCALE_X,  params);
+        final float  postScaleY = scale(POST_SCALE_Y,  params);
         final Warp warp;
         switch (degree) {
             case 1:  warp = new WarpAffine           (xCoeffs, yCoeffs, preScaleX, preScaleY, postScaleX, postScaleY); break;
@@ -302,10 +303,10 @@ public class WarpPolynomial extends MathTransformProvider {
      * @return The requested parameter value, or {@code 1} if none.
      */
     private static float scale(final ParameterDescriptor<Float> param,
-                               final ParameterValueGroup group)
+                               final Parameters group)
             throws ParameterNotFoundException
     {
-        final Object value = value(param, group);
+        final Object value = group.getValue(param);
         return (value != null) ? ((Number) value).floatValue() : 1;
     }
 }

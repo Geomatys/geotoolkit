@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.logging.Level;
 import javax.measure.Unit;
 import javax.xml.bind.JAXBException;
-import junit.framework.TestCase;
 import org.apache.sis.measure.Units;
 
 import org.geotoolkit.factory.FactoryFinder;
@@ -67,6 +66,7 @@ import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 import org.geotoolkit.sld.xml.Specification;
 import org.apache.sis.util.logging.Logging;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -79,7 +79,7 @@ import org.opengis.filter.PropertyIsBetween;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class XMLUtilitiesTest extends TestCase{
+public class XMLUtilitiesTest {
 
     private static final FilterFactory2 FILTER_FACTORY;
     private static final MutableStyleFactory STYLE_FACTORY;

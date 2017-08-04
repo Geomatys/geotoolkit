@@ -32,9 +32,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 
-import static org.geotoolkit.parameter.Parameters.*;
-
-
 /**
  * Compute the convex hull from a FeatureCollection. An optional parameter
  * geometry_name set the GeometryAttribute name used to compute the convex hull.
@@ -55,10 +52,10 @@ public class ConvexHullProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList = value(ConvexHullDescriptor.FEATURE_IN, inputParameters);
-        final String geometryName                = value(ConvexHullDescriptor.GEOMETRY_NAME, inputParameters);
+        final FeatureCollection inputFeatureList = inputParameters.getValue(ConvexHullDescriptor.FEATURE_IN);
+        final String geometryName                = inputParameters.getValue(ConvexHullDescriptor.GEOMETRY_NAME);
         final Geometry hull = computeConvexHull(inputFeatureList, geometryName);
-        getOrCreate(ConvexHullDescriptor.GEOMETRY_OUT, outputParameters).setValue(hull);
+        outputParameters.getOrCreate(ConvexHullDescriptor.GEOMETRY_OUT).setValue(hull);
     }
 
     /**

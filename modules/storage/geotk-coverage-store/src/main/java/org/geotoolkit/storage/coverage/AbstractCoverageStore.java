@@ -33,6 +33,7 @@ import java.util.stream.Stream;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.util.Classes;
@@ -65,13 +66,13 @@ import org.opengis.referencing.operation.TransformException;
 public abstract class AbstractCoverageStore extends DataStore implements CoverageStore {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
-    protected final ParameterValueGroup parameters;
+    protected final Parameters parameters;
     protected final Set<StorageListener> storeListeners = new HashSet<>();
 
     private GenericNameIndex<CoverageResource> cachedRefs = null;
 
     protected AbstractCoverageStore(final ParameterValueGroup params) {
-        this.parameters = params;
+        this.parameters = Parameters.castOrWrap(params);
 
         //redirect warning listener events to default logger
         listeners.getLogger().setUseParentHandlers(false);

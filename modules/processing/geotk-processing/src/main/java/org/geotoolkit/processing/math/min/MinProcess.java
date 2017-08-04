@@ -20,7 +20,6 @@ import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.processing.math.min.MinDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -35,14 +34,14 @@ public class MinProcess extends AbstractProcess {
     @Override
     protected void execute() {
 
-        final Double[] set = value(SET, inputParameters);
+        final Double[] set = inputParameters.getValue(SET);
 
         double min = Math.min(set[0].doubleValue(), set[1].doubleValue());
         for (int i=1; i<set.length; i++) {
             min = Math.min(min, set[i].doubleValue());
         }
 
-        getOrCreate(RESULT_NUMBER, outputParameters).setValue(min);
+        outputParameters.getOrCreate(RESULT_NUMBER).setValue(min);
     }
 
 }

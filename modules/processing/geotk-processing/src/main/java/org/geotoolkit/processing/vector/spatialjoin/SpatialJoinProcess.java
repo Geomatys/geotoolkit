@@ -45,7 +45,6 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.logging.Logging;
 
-import static org.geotoolkit.parameter.Parameters.*;
 
 
 /**
@@ -67,14 +66,14 @@ public class SpatialJoinProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection sourceFeatureList = value(VectorDescriptor.FEATURE_IN, inputParameters);
-        final FeatureCollection targetFeatureList = value(SpatialJoinDescriptor.FEATURE_TARGET, inputParameters);
-        final boolean method = value(SpatialJoinDescriptor.INTERSECT, inputParameters);
+        final FeatureCollection sourceFeatureList = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
+        final FeatureCollection targetFeatureList = inputParameters.getValue(SpatialJoinDescriptor.FEATURE_TARGET);
+        final boolean method = inputParameters.getValue(SpatialJoinDescriptor.INTERSECT);
 
         final FeatureCollection resultFeatureList =
                 new SpatialJoinFeatureCollection(sourceFeatureList, targetFeatureList, method);
 
-        getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
+        outputParameters.getOrCreate(VectorDescriptor.FEATURE_OUT).setValue(resultFeatureList);
     }
 
     /**

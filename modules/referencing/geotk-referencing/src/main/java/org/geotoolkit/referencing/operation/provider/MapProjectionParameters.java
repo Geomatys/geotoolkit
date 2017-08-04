@@ -28,10 +28,10 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.parameter.Parameter;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.parameter.FloatParameter;
 import org.apache.sis.internal.referencing.Formulas;
+import org.apache.sis.parameter.Parameters;
 
 import org.geotoolkit.parameter.AbstractParameterValue;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
@@ -169,7 +169,7 @@ final class MapProjectionParameters extends ParameterGroup {
         private void update(final double value) {
             final ParameterValue<?> semiMajor;
             try {
-                semiMajor = Parameters.getOrCreate(SEMI_MAJOR, MapProjectionParameters.this);
+                semiMajor = Parameters.castOrWrap(MapProjectionParameters.this).getOrCreate(SEMI_MAJOR);
             } catch (IllegalStateException e) {
                 // Semi-major axis is not yet defined.
                 // Ignore - we will try to compute gain later.
@@ -274,14 +274,14 @@ final class MapProjectionParameters extends ParameterGroup {
      * Returns the value associated to the given parameter descriptor.
      */
     final double get(final ParameterDescriptor<Double> parameter) {
-        return Parameters.doubleValue(parameter, this);
+        return Parameters.castOrWrap(this).getValue(parameter);
     }
 
     /**
      * Sets the value associated to the given parameter descriptor.
      */
     final void set(final ParameterDescriptor<Double> parameter, final double value, final Unit<?> unit) {
-        Parameters.getOrCreate(parameter, this).setValue(value, unit);
+        Parameters.castOrWrap(this).getOrCreate(parameter).setValue(value, unit);
     }
 
     /**

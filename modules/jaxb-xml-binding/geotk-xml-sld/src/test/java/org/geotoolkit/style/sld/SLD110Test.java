@@ -23,7 +23,6 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import junit.framework.TestCase;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -36,6 +35,7 @@ import org.geotoolkit.sld.xml.GTtoSLD110Transformer;
 import org.geotoolkit.sld.xml.JAXBSLDUtilities;
 import org.geotoolkit.sld.xml.SLD110toGTTransformer;
 import org.apache.sis.xml.MarshallerPool;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
@@ -54,7 +54,7 @@ import org.opengis.sld.UserLayer;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class SLD110Test extends TestCase{
+public class SLD110Test {
 
     private static final FilterFactory2 FILTER_FACTORY;
     private static final MutableStyleFactory STYLE_FACTORY;
