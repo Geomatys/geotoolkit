@@ -25,19 +25,32 @@ import org.geotoolkit.nio.IOUtilities;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalQueries;
+import java.time.temporal.TemporalQuery;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.feature.FeatureExt;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 
 /**
@@ -53,7 +66,7 @@ public class MIFFeatureReader implements FeatureReader {
 
     private static final Pattern GEOMETRY_ID_PATTERN;
     static {
-        final StringBuilder patternBuilder = new StringBuilder();
+        final StringBuilder patternBuilder = new StringBuilder("\\s*");
         final MIFUtils.GeometryType[] types = MIFUtils.GeometryType.values();
         patternBuilder.append(types[0].name());
         for(int i = 1 ; i < types.length; i++) {
@@ -89,33 +102,42 @@ public class MIFFeatureReader implements FeatureReader {
 
     final MIFManager master;
     final FeatureType readType;
-    final PropertyType[] baseTypeAtts;
 
-    final MIFUtils.GeometryType geometryType;
-    final String geometryId;
-    final Pattern geometryPattern;
+    final Function[] converters;
+    final Map<String, Integer> propertiesToRead;
 
-    public MIFFeatureReader(MIFManager parent, String typeName) throws DataStoreException {
+    public MIFFeatureReader(final MIFManager parent, final FeatureType ft) throws DataStoreException {
         ArgumentChecks.ensureNonNull("Parent reader", parent);
         master = parent;
-        readType = master.getType(typeName);
-        if(readType.equals(master.getBaseType()) || readType.getSuperTypes().contains(master.getBaseType())) {
-            readMid = true;
+        readType = ft;
+        final Collection<? extends PropertyType> properties = master.getMIDType().getProperties(true);
+
+        int i = 0;
+        propertiesToRead = new HashMap<>(properties.size());
+        converters = new Function[properties.size()];
+        for (final PropertyType pt : properties) {
+            final String pName = pt.getName().toString();
+            try {
+                converters[i] = FeatureExt.castOrUnwrap(readType.getProperty(pName))
+                        .map(AttributeType::getValueClass)
+                        .map(MIFFeatureReader::findConverter)
+                        .orElse(Function.identity());
+                propertiesToRead.put(pName, i);
+            } catch (PropertyNotFoundException e) {
+                LOGGER.log(Level.FINER, e, () -> "Filtered property " + pName);
+            }
+            i++;
         }
 
-        final Optional<MIFUtils.GeometryType> geomType = MIFUtils.identifyFeature(readType);
-        if(geomType.isPresent()) {
+        readMid = !properties.isEmpty();
+
+        try {
+            final PropertyType defaultGeometry = FeatureExt.getDefaultGeometry(ft);
             readMif = true;
-            geometryType = geomType.get();
-            geometryId = geometryType.name();
-            geometryPattern = Pattern.compile(geometryId, Pattern.CASE_INSENSITIVE);
-        } else {
-            geometryType = null;
-            geometryId = null;
-            geometryPattern = null;
+        } catch (PropertyNotFoundException | IllegalStateException e) {
+            LOGGER.log(Level.FINER, "Geometries will be ignored", e);
+            readMif = false;
         }
-
-        baseTypeAtts = master.getBaseType().getProperties(true).toArray(new PropertyType[0]);
     }
 
     /**
@@ -131,88 +153,69 @@ public class MIFFeatureReader implements FeatureReader {
      */
     @Override
     public Feature next() throws FeatureStoreRuntimeException {
+        try {
+            checkScanners();
+        } catch (DataStoreException | IOException ex) {
+            throw new FeatureStoreRuntimeException("Cannot read data", ex);
+        }
 
         Feature resFeature = null;
 
-        try {
-            checkScanners();
-
-            resFeature = readType.newInstance();
-
-            // We check the MIF file first, because it will define the feature count to reach the next good typed data.
-            if(readMif) {
-                String currentPattern;
-                while(mifScanner.hasNextLine()) {
-                    currentPattern = mifScanner.findInLine(GEOMETRY_ID_PATTERN);
-                    if(geometryId.equalsIgnoreCase(currentPattern)) {
-                        //geometryType.readGeometry(mifScanner, resFeature, master.getTransform());
-                        try{
-                            geometryType.readGeometry(mifScanner, resFeature, master.getTransform());
-                        }catch(Exception ex){
-                            LOGGER.log(Level.WARNING,ex.getLocalizedMessage(),ex);
+        // We check the MIF file first, because it will define the feature count to reach the next good typed data.
+        if (readMif) {
+            String currentPattern;
+            while (mifScanner.hasNextLine()) {
+                currentPattern = mifScanner.findInLine(GEOMETRY_ID_PATTERN);
+                if (currentPattern == null) {
+                    // Empty or non-compliant line. We just ignore it.
+                    LOGGER.log(Level.FINE, "Invalid line : "+mifScanner.findInLine(".*"));
+                } else {
+                    final MIFUtils.GeometryType geomType = MIFUtils.getGeometryType(currentPattern);
+                    if (geomType == null) {
+                        LOGGER.log(Level.WARNING, "Unrecognized geometry flag in MIF file : " + currentPattern);
+                    } else {
+                        resFeature = geomType.binding.buildType(master.getMifCRS(), readType).newInstance();
+                        try {
+                            geomType.readGeometry(mifScanner, resFeature, master.getTransform());
+                        } catch (Exception ex) {
+                            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
                         }
                         break;
                         // We must check if we're on a Geometry naming line to increment the counter of past geometries.
-                    } else if(currentPattern != null) {
-                        mifCounter++;
                     }
-                    mifScanner.nextLine();
                 }
+                mifScanner.nextLine();
             }
+        }
 
-            if(readMid) {
-                //parse MID line.
-                while(midCounter < mifCounter) {
-                    midScanner.nextLine();
-                    midCounter++;
-                }
-                final String line = midScanner.nextLine();
-                final CharSequence[] split = CharSequences.split(line, master.mifDelimiter);
-                for (int i = 0; i < split.length; i++) {
-                    //AttributeType att = baseType.getType(i);
-                    AttributeType att = null;
-                    try{
-                        att = (AttributeType)baseTypeAtts[i];
-                    }catch(Exception ex){
-                        LOGGER.finer(ex.getMessage());
-                    }
-                    if(att == null) continue;
-                    Object value = null;
-                    try{
-                        if (split[i].length() != 0) {
-                            // We don't use geotoolkit to parse date, because we have to use a specific date pattern.
-                            if(Date.class.isAssignableFrom(att.getValueClass())) {
-                                SimpleDateFormat format = new SimpleDateFormat();
-                                if(split[i].length() > 14) {
-                                    format.applyPattern("yyyyMMddHHmmss.SSS");
-                                } else if(split[i].length() == 14) {
-                                    format.applyPattern("yyyyMMddHHmmss");
-                                } else {
-                                     format.applyPattern("yyyyMMdd");
-                                }
-                                value = format.parse(split[i].toString());
-                            } else try {
-                                value = ObjectConverters.convert(split[i], att.getValueClass());
-                            } catch (UnconvertibleObjectException e) {
-                                Logging.recoverableException(LOGGER, MIFFeatureReader.class, "next", e);
-                                value = null;
-                                // TODO - do we really want to ignore the problem?
-                            }
-                        }
-                        resFeature.setPropertyValue(att.getName().toString(),value);
-                    }catch(Exception ex){
-                        LOGGER.finer(ex.getMessage());
-                    }
-                }
+        // No geometry has been read.
+        if (resFeature == null) {
+            resFeature = readType.newInstance();
+        }
+
+        if (readMid) {
+            //parse MID line.
+            while (midCounter < mifCounter) {
+                midScanner.nextLine();
                 midCounter++;
             }
-
-            if(readMif) {
-                mifCounter++;
+            final String line = midScanner.nextLine();
+            final CharSequence[] split = CharSequences.split(line, master.mifDelimiter);
+            for (final Map.Entry<String, Integer> entry : propertiesToRead.entrySet()) {
+                final Integer idx = entry.getValue();
+                try {
+                    resFeature.setPropertyValue(entry.getKey(), converters[idx].apply(split[idx]));
+                } catch (RuntimeException e) {
+                    Logging.recoverableException(LOGGER, MIFFeatureReader.class, "next", e);
+                }
             }
-        } catch (Exception ex) {
-            throw new FeatureStoreRuntimeException("Can't reach next feature with type name " + readType.getName().tip(), ex);
+            midCounter++;
         }
+
+        if (readMif) {
+            mifCounter++;
+        }
+
         return resFeature;
     }
 
@@ -226,51 +229,37 @@ public class MIFFeatureReader implements FeatureReader {
         boolean mifNext = false;
 
         try {
-            try {
             checkScanners();
-            } catch (IOException e) {
-                // If we can't access source files, maybe we're in creation mode, so we just say we can't find next.
-                return false;
-            }
+        } catch (IOException e) {
+            // If we can't access source files, maybe we're in creation mode, so we just say we can't find next.
+            return false;
+        } catch (DataStoreException e) {
+            throw new FeatureStoreRuntimeException(e);
+        }
 
-            if (readMif) {
-                // Check the MapInfo geometry typename to see if there's some next in the file.
-                while(mifScanner.hasNext()) {
-                    if (mifScanner.hasNext(geometryPattern)) {
-                        mifNext = true;
-                        break;
-                    } else {
-                        // We must check if we're on a Geometry naming line to increment the counter of past geometries.
-                        if(mifScanner.hasNext(GEOMETRY_ID_PATTERN)) {
-                            mifCounter++;
-                        }
-                    }
+        if (readMif) {
+            // Check the MapInfo geometry typename to see if there's some next in the file.
+            mifNext = mifScanner.hasNext(GEOMETRY_ID_PATTERN);
+        }
 
-                    mifScanner.next();
+        // Once we know the number of the next geometry data, we can check if we can go as far in the mid file.
+        if (readMid) {
+            for (; midCounter < mifCounter; midCounter++) {
+                if (midScanner.hasNextLine()) {
+                    midScanner.nextLine();
+                } else {
+                    break;
                 }
             }
-
-            // Once we know the number of the next geometry data, we can check if we can go as far in the mid file.
-            if (readMid) {
-                for( ; midCounter < mifCounter ; midCounter++) {
-                    if(midScanner.hasNextLine()) {
-                        midScanner.nextLine();
-                    } else {
-                        break;
-                    }
-                }
-                midNext = midScanner.hasNextLine();
-            }
-
-        } catch (Exception ex) {
-            throw new FeatureStoreRuntimeException(ex);
+            midNext = midScanner.hasNextLine();
         }
 
         if (readMid && !readMif) {
             return midNext;
         } else if (readMif && !readMid) {
             return mifNext;
-        } else return (midNext && mifNext);
+        } else
+            return (midNext && mifNext);
     }
 
     /**
@@ -395,4 +384,74 @@ public class MIFFeatureReader implements FeatureReader {
         }
     }
 
+    private static Function<String, ?> findConverter(final Class dataType) {
+        if (String.class.isAssignableFrom(dataType))
+            return Function.identity();
+        else if (Date.class.isAssignableFrom(dataType)) {
+            // We don't use geotoolkit to parse date, because we have to use a specific date pattern.
+            return new DateConverter();
+        } else if (LocalDate.class.isAssignableFrom(dataType)) {
+            return new TemporalConverter<>(TemporalQueries.localDate());
+        } else if (LocalTime.class.isAssignableFrom(dataType)) {
+            return new TemporalConverter<>(TemporalQueries.localTime());
+        } else if (LocalDateTime.class.isAssignableFrom(dataType)) {
+            return new TemporalConverter<>(LocalDateTime::from);
+        } else {
+            return ObjectConverters.find(String.class, dataType);
+        }
+    }
+
+    private static class DateConverter implements Function<String, Date> {
+
+        final SimpleDateFormat format = new SimpleDateFormat();
+        int previousLength = -1;
+
+        @Override
+        public Date apply(String t) {
+            final int length = t.length();
+            if (previousLength != length) {
+                previousLength = length;
+                adaptFormat(length);
+            }
+
+            try {
+                return format.parse(t);
+            } catch (ParseException ex) {
+                Logging.recoverableException(LOGGER, MIFFeatureReader.class, "next", ex);
+                return null;
+            }
+        }
+
+        private void adaptFormat(final int patternLength) {
+            if (patternLength > 14) {
+                format.applyPattern("yyyyMMddHHmmss.SSS");
+            } else if (patternLength == 14) {
+                format.applyPattern("yyyyMMddHHmmss");
+            } else {
+                format.applyPattern("yyyyMMdd");
+            }
+        }
+    }
+
+    private static class TemporalConverter<T> implements Function<String, T> {
+
+        final DateTimeFormatter format = new DateTimeFormatterBuilder().appendPattern("yyyyMMdd[HHmmss.SSS]")
+                .parseLenient()
+                .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+                .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
+                .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
+                .parseDefaulting(ChronoField.MILLI_OF_SECOND, 0)
+                .toFormatter();
+
+        final TemporalQuery<T> query;
+
+        TemporalConverter(final TemporalQuery query) {
+            this.query = query;
+        }
+
+        @Override
+        public T apply(String t) {
+            return format.parse(t, query);
+        }
+    }
 }

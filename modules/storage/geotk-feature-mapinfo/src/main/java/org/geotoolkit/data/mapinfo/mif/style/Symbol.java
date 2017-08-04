@@ -17,7 +17,6 @@
 package org.geotoolkit.data.mapinfo.mif.style;
 
 import org.geotoolkit.data.mapinfo.mif.geometry.MIFPointBuilder;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.style.DefaultDescription;
 import org.opengis.util.GenericName;
 import org.opengis.style.Description;
@@ -32,6 +31,7 @@ import java.util.Collections;
 import java.util.regex.Pattern;
 import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.measure.Units;
+import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.opengis.feature.AttributeType;
@@ -45,7 +45,7 @@ import org.opengis.filter.expression.Expression;
  */
 public class Symbol implements MIFSymbolizer, PointSymbolizer {
 
-    public static final GenericName NAME = NamesExt.create("SYMBOL");
+    public static final GenericName NAME = Names.createLocalName("style-rule", ":", "SYMBOL");
     public static final AttributeType SYMBOL = new DefaultAttributeType(Collections.singletonMap("name", NAME), Symbol.class, 1, 1, null);
 
     public final static Pattern SYMBOL_PATTERN = Pattern.compile(NAME.tip().toString()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);

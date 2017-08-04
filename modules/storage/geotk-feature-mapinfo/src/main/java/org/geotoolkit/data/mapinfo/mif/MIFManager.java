@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.data.mapinfo.mif;
 
+import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.nio.IOUtilities;
 import org.opengis.util.GenericName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
-import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -47,14 +47,17 @@ import org.apache.sis.util.logging.Logging;
 
 import org.apache.sis.util.Utilities;
 import static java.nio.file.StandardOpenOption.*;
+import java.util.stream.Collectors;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.IllegalNameException;
-import org.geotoolkit.internal.data.GenericNameIndex;
+import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.IdentifiedType;
 import org.opengis.feature.PropertyType;
 import org.opengis.util.FactoryException;
 
@@ -96,7 +99,6 @@ public class MIFManager {
     private final ArrayList<Short> mifIndex = new ArrayList<>();
     private CoordinateReferenceSystem mifCRS = CommonCRS.WGS84.normalizedGeographic();
     private MathTransform mifTransform = null;
-    private int mifColumnsCount = -1;
 
     /**
      * The mif crs as it will be defined in final MIF file. We need it because it could be some differences between the
@@ -111,13 +113,28 @@ public class MIFManager {
     private boolean crsSet = false;
 
     /**
-     * Type and data containers
+     * Feature type corresponding to MID file content. It contains all properties
+     * except geometries and related style rules. Needed to isolate feature properties
+     * and building / reading more easily.
      */
-    private GenericNameIndex<GenericName> names = null;
-    private FeatureType mifBaseType = null;
-    private final ArrayList<FeatureType> mifChildTypes = new ArrayList<>();
+    private FeatureType midType;
 
+    /**
+     * Base mif data type. Inherits from {@link #midType}, adding a generic
+     * geometry property. Ignores styling rules. This data type is needed to
+     * allow end users to read all features of the datasource indifferently.
+     */
+    private FeatureType mifBaseType;
 
+    /**
+     *
+     * @param mifFile MIF File to read or modify.
+     * @throws NullArgumentException If the given file is null.
+     * @throws DataStoreException If there's a problem with file naming.
+     * @throws IOException If we cannot reach input file.
+     * @throws URISyntaxException If we cannot make an URI from the file.
+     * @deprecated Use {@link #MIFManager(java.net.URI) } instead.
+     */
     public MIFManager(File mifFile) throws NullArgumentException, DataStoreException, IOException, URISyntaxException {
         ArgumentChecks.ensureNonNull("Input file", mifFile);
         mifPath = mifFile.toURI();
@@ -143,11 +160,22 @@ public class MIFManager {
         buildMIDPath();
     }
 
-
+    /**
+     *
+     * @return Coordinate reference system described in underlying mif file. Can
+     * be null.
+     */
     public CoordinateReferenceSystem getMifCRS() {
         return mifCRS;
     }
 
+    /**
+     * Note : this transform is already used at read time. Therefore, it's only
+     * provided for information purpose.
+     *
+     * @return The math transform which must be applied to the geometries in the
+     * MIF file before being used.
+     */
     public MathTransform getTransform() {
         return mifTransform;
     }
@@ -162,26 +190,13 @@ public class MIFManager {
      * @throws DataStoreException if we get a problem parsing the file.
      */
     public Set<GenericName> getTypeNames() throws DataStoreException {
-        if (names == null) {
-            names = new GenericNameIndex<>();
-            checkDataTypes();
-        }
+        checkDataTypes();
 
-        for (FeatureType t : mifChildTypes) {
-            if(!names.getNames().contains(t.getName())) {
-                names.add(null, t.getName(),t.getName());
-            }
+        if (mifBaseType == null) {
+            return Collections.EMPTY_SET;
+        } else {
+            return Collections.singleton(mifBaseType.getName());
         }
-
-        if(names.getNames().isEmpty()) {
-            if(mifBaseType!=null) {
-                names.add(null, mifBaseType.getName(),mifBaseType.getName());
-            }/* else {
-                throw new DataStoreException("No valid type can be found into this feature store.");
-            }*/
-        }
-
-        return names.getNames();
     }
 
 
@@ -191,6 +206,7 @@ public class MIFManager {
      * @param toAdd The type to add.
      * @throws DataStoreException If an unexpected error occurs while referencing given type.
      * @throws URISyntaxException If the URL specified at store creation is invalid.
+     * @throws java.io.IOException If an error occurs while writing given schema on underlying storage.
      */
     public void addSchema(GenericName typeName, FeatureType toAdd) throws DataStoreException, URISyntaxException, IOException {
         ArgumentChecks.ensureNonNull("New feature type", toAdd);
@@ -222,47 +238,72 @@ public class MIFManager {
         //We check for the crs first
         checkTypeCRS(toAdd);
 
-        boolean isBaseType = false;
-        // If we're on a new store, we must set the base type and write the header. If the source type is non-geometric,
-        // we save it as our base type. Otherwise, we set it's super type as base type, and if there's not, we set it as
-        // base type, but we extract geometry first.
-        if (mifBaseType == null) {
-            final IdentifiedType geom = FeatureExt.getDefaultGeometry(toAdd);
-            if (geom == null) {
-                mifBaseType = toAdd;
-                isBaseType = true;
+        // If we're on a new store, we must set the base type and write the header.
+       deriveBaseTypes(toAdd);
+       flushHeader();
+    }
 
-            } else if (!toAdd.getSuperTypes().isEmpty()) {
-                mifBaseType = (FeatureType) toAdd.getSuperTypes().iterator().next();
-                checkTypeCRS(toAdd);
+    /**
+     * Try to compute {@link #midType} and {@link #mifBaseType} from input feature type.
+     * Implementation note : We'll try to remove reserved attributes (style rules), then we'll remove geometry to build mid type.
+     * Finally, if input type contained a geometry, we use it to build the mif base type.
+     *
+     * @param ft The data type to analyze and decompose.
+     */
+    private void deriveBaseTypes(final FeatureType ft) {
+        FeatureTypeBuilder ftb = new FeatureTypeBuilder(ft);
+        ftb.setName(ft.getName().toString()+"_properties");
+        final Iterator<PropertyTypeBuilder> it = ftb.properties().iterator();
+        AttributeType geometry = null;
+        boolean sisGeometry = false;
+        while (it.hasNext()) {
+            final PropertyTypeBuilder next = it.next();
+            /*  We have to determine if it's a geometry we should override (generify).
+             * We'll also check if it's a supported type.
+             */
+            if (next instanceof AttributeTypeBuilder) {
+                final AttributeTypeBuilder builder = (AttributeTypeBuilder) next;
+                final Class valueClass = builder.getValueClass();
+                if (Geometry.class.isAssignableFrom(valueClass)) {
+                    if (geometry != null) {
+                        throw new IllegalArgumentException("Only one geometry is accepted for mif-mid, but given type contains multiple : " + System.lineSeparator() + ft);
+                    } else if (!Geometry.class.equals(valueClass)) {
+                        builder.setValueClass(Geometry.class);
+                    }
+                    geometry = builder.build();
+                    // Geometry property is set aside, because we'll build mid type without geometry, then use it to build mif-type with geometry.
+                    it.remove();
 
-            } else {
-                final FeatureTypeBuilder builder = new FeatureTypeBuilder(toAdd);
-                builder.getProperty(geom.getName().toString()).remove();
-                builder.setName(mifName+".baseType");
-
-                mifBaseType = builder.build();
+                } else if (MIFUtils.getColumnMIFType(valueClass) == null) {
+                    // not supported
+                    throw new IllegalArgumentException("MIF-MID format cannot write elements of type " + valueClass);
+                }
+            } else if (AttributeConvention.GEOMETRY_PROPERTY.equals(next.getName())) {
+                sisGeometry = true;
+                it.remove();
             }
-            mifColumnsCount = mifBaseType.getProperties(true).size();
-
-            flushHeader();
         }
 
-       // If the given type has not been added as is as base type, we try to put it into our childTypes.
-       if(!isBaseType) {
-           FeatureType childType = toAdd;
-           if(!toAdd.getSuperTypes().contains(mifBaseType)) {
-               FeatureTypeBuilder builder = new FeatureTypeBuilder(toAdd);
-               builder.setSuperTypes(mifBaseType);
-               childType = builder.build();
-           }
-
-           MIFUtils.identifyFeature(childType)
-                   .orElseThrow(() -> new DataStoreException("The geometry for the given type is not supported for MIF geometry"));
-
-           mifChildTypes.add(childType);
+        if (ftb.properties().size() < 1 && ftb.getSuperTypes().length == 1) {
+            midType = ft.getSuperTypes().iterator().next();
+            mifBaseType = ft;
+        } else {
+            midType = ftb.build();
+            if (geometry != null || sisGeometry) {
+                ftb = new FeatureTypeBuilder();
+                ftb.setSuperTypes(midType);
+                ftb.setName(ft.getName());
+                if (geometry != null) {
+                    final AttributeTypeBuilder geomBuilder = ftb.addAttribute(geometry);
+                    if (sisGeometry) {
+                        geomBuilder.addRole(AttributeRole.DEFAULT_GEOMETRY);
+                    }
+                } else {
+                    ftb.addProperty(ft.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString()));
+                }
+                mifBaseType = ftb.build();
+            }
         }
-
     }
 
     private void checkTypeCRS(FeatureType toCheck) throws DataStoreException {
@@ -299,48 +340,42 @@ public class MIFManager {
     public void deleteSchema(String typeName) throws DataStoreException {
         getTypeNames();
 
-        final GenericName fullName = names.get(null, typeName);
-        if (fullName!=null) {
-            if (mifBaseType.getName().equals(fullName)) {
+        if (mifBaseType != null) {
+            final GenericName name = mifBaseType.getName();
+            if (name.tip().toString().equals(typeName) || name.toString().equals(typeName)) {
                 mifBaseType = null;
-            } else {
-                for (int i = 0 ; i < mifChildTypes.size() ; i++) {
-                    if(mifChildTypes.get(i).getName().equals(fullName)) {
-                        mifChildTypes.remove(i);
-                        break;
-                    }
-                }
+                midType = null;
+                return;
             }
-        } else {
-            throw new DataStoreException("Unable to delete the feature type named " + typeName + "because it does not exists in this data store.");
         }
+
+        throw new DataStoreException("Unable to delete the feature type named " + typeName + "because it does not exists in this data store.");
     }
+
 
 
     public FeatureType getType(String typeName) throws DataStoreException {
         getTypeNames();
 
-        final GenericName fullName = names.get(null, typeName);
-        if(mifBaseType.getName().equals(fullName)) {
-            return mifBaseType;
-        }
-
-        if(names.getNames().contains(fullName)) {
-            for(FeatureType t : mifChildTypes) {
-                if(t.getName().equals(fullName)) {
-                    return t;
-                }
+        if (mifBaseType != null) {
+            final GenericName name = mifBaseType.getName();
+            if (name.tip().toString().equals(typeName) || name.toString().equals(typeName)) {
+                return mifBaseType;
             }
         }
+
         throw new DataStoreException("No type matching the given name have been found.");
     }
 
 
-    public FeatureType getBaseType() throws DataStoreException {
-        if(mifBaseType == null && mifColumnsCount <0) {
-            parseHeader();
-        }
+    FeatureType getBaseType() throws DataStoreException {
+        checkDataTypes();
         return mifBaseType;
+    }
+
+    FeatureType getMIDType() throws DataStoreException {
+        checkDataTypes();
+        return midType;
     }
 
     public URI getMIFPath() {
@@ -505,14 +540,15 @@ public class MIFManager {
                     mifTransform = new AffineTransform2D(xResample, 0, 0, yResample, xTranslate, yTranslate);
                     //Build the parent feature type for data contained in this MIF.
                 } else if (matched.equalsIgnoreCase(MIFUtils.HeaderCategory.COLUMNS.name())) {
+                    final int count;
                     if (mifScanner.hasNextShort()) {
-                        mifColumnsCount = mifScanner.nextShort();
+                        count = mifScanner.nextShort();
                     } else {
                         throw new DataStoreException("MIF Columns has no attribute count specified.");
                     }
                     // If there's no defined column, there will not be any base type, only pure geometry features.
-                    if (mifColumnsCount > 0) {
-                        parseColumns();
+                    if (count > 0) {
+                        parseColumns(count);
                     }
                     columnsParsed = true;
                 } else if (matched.equalsIgnoreCase(MIFUtils.HeaderCategory.DATA.name())) {
@@ -545,65 +581,23 @@ public class MIFManager {
      * @throws DataStoreException If we cannot read header to build data types.
      */
     public void checkDataTypes() throws DataStoreException {
-        if (mifBaseType == null && mifColumnsCount < 0) {
+        if (mifBaseType == null) {
             parseHeader();
-        }
-
-        if (mifChildTypes.isEmpty() && mifScanner!=null) {
-            try {
-                mifScanner.close();
-                RWLock.readLock().lock();
-                mifScanner = new Scanner(IOUtilities.open(mifPath), getCharset().name());
-                buildDataTypes();
-            } catch (Exception e) {
-                LOGGER.log(Level.WARNING, "Reading types from MIF file failed.", e);
-            } finally {
-                mifScanner.close();
-                RWLock.readLock().unlock();
-            }
-        }
-    }
-
-    /**
-     * Browse the MIF file to get the geometry types it contained. With it, we create a new feature type
-     * for each geometry type found. They'll all get the base feature type (defining MID attributes) as parent.
-     * <p/>
-     * IMPORTANT :  we'll browse the file only for geometry TYPES, so no other data is read.
-     * <p/>
-     * MORE IMPORTANT : This method does not manage scanner start position, we assume that caller have prepared it
-     * itself (to avoid close / re-open each time).
-     */
-    private void buildDataTypes() {
-        mifChildTypes.clear();
-
-        ArrayList<String> triggeredTypes = new ArrayList<>();
-        while (mifScanner.hasNextLine()) {
-            final String typename = mifScanner.findInLine(ALPHA_PATTERN);
-            if (typename != null) {
-                if (triggeredTypes.contains(typename)) {
-                    continue;
-                }
-                triggeredTypes.add(typename);
-                final FeatureType bind = MIFUtils.getGeometryType(typename, mifCRS, mifBaseType);
-                if (bind != null) {
-                    FeatureTypeBuilder builder = new FeatureTypeBuilder(bind);
-                    builder.setName(NamesExt.getNamespace(bind.getName()), mifBaseType.getName().tip() + "_" + bind.getName().tip());
-                    mifChildTypes.add(builder.build());
-                }
-            }
-            mifScanner.nextLine();
         }
     }
 
     /**
      * Parse Column section of MIF file header.
+     *
+     * @param count Expected number of columns.
      */
-    private void parseColumns() throws DataStoreException {
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(mifName);
+    private void parseColumns(final int count) throws DataStoreException {
+        FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName(mifName+"_properties");
 
         // Check the attributes
-        for (int i = 0; i < mifColumnsCount; i++) {
+        final List<String> cols = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
             mifScanner.nextLine();
             final String attName = mifScanner.findInLine(ALPHA_PATTERN);
             final String tmpType = mifScanner.findInLine(ALPHA_PATTERN);
@@ -618,7 +612,19 @@ public class MIFManager {
             }
             /** todo : instantiate filters for String & Double type (length limitations). */
             ftb.addAttribute(binding).setName(attName);
+            cols.add(attName);
         }
+
+        midType = ftb.build();
+
+        ftb = new FeatureTypeBuilder();
+        ftb.setName(mifName);
+        ftb.setSuperTypes(midType);
+        ftb.addAttribute(Geometry.class)
+                .setName("geometry")
+                .setCRS(mifCRS)
+                .addRole(AttributeRole.DEFAULT_GEOMETRY);
+
         mifBaseType = ftb.build();
     }
 
@@ -667,10 +673,11 @@ public class MIFManager {
      * @throws DataStoreException If the current FeatureType is not fully compliant with MIF constraints. If there's a
      * problem while writing the featureType in MIF header.
      */
-    public String buildHeader() throws DataStoreException {
+    private String buildHeader() throws DataStoreException {
+        if (midType == null) {
+            throw new DataStoreException("No schema has been created yet !");
+        }
 
-        final FeatureType toWorkWith = mifBaseType;
-        int tmpCount = toWorkWith.getProperties(true).size();
         final StringBuilder headBuilder = new StringBuilder();
         try {
             headBuilder.append(MIFUtils.HeaderCategory.VERSION).append(' ').append(mifVersion).append('\n');
@@ -686,20 +693,8 @@ public class MIFManager {
                 }
             }
 
-            // Check the number of attributes, as the fact we've got at most one geometry.
-            boolean geometryFound = false;
-            for (PropertyType desc : toWorkWith.getProperties(true)) {
-                if (AttributeConvention.isGeometryAttribute(desc)) {
-                    if (geometryFound) {
-                        throw new DataStoreException("Only mono geometry types are managed for MIF format, but given featureType get at least 2 geometry descriptor.");
-                    } else {
-                        tmpCount--;
-                        geometryFound = true;
-                    }
-                }
-            }
-            headBuilder.append(MIFUtils.HeaderCategory.COLUMNS).append(' ').append(mifColumnsCount).append('\n');
-            MIFUtils.featureTypeToMIFSyntax(toWorkWith, headBuilder);
+            headBuilder.append(MIFUtils.HeaderCategory.COLUMNS).append(' ').append(midType.getProperties(true).size()).append('\n');
+            MIFUtils.featureTypeToMIFSyntax(midType, headBuilder);
 
             headBuilder.append(MIFUtils.HeaderCategory.DATA).append('\n');
 
@@ -707,13 +702,8 @@ public class MIFManager {
             throw new DataStoreException("Datastore can't write MIF file header.", e);
         }
 
-        // Header successfully built, we can report featureType values on datastore attributes.
-        mifColumnsCount = tmpCount;
-        mifBaseType = toWorkWith;
-
         return headBuilder.toString();
     }
-
 
     private void flushHeader() throws DataStoreException, IOException {
         // Cache the header in memory.
@@ -729,10 +719,12 @@ public class MIFManager {
         }
     }
 
-
     /**
      * When opening MIF file in writing mode, we write all data in tmp file. This function is used for writing tmp file
-     * data into the real file.
+     * data at the end of the the real file.
+     * @param mifToFlush Geometries to append in MIF file.
+     * @param midToFlush properties to append in MID file.
+     * @throws java.io.IOException If an error occurs while replacing files.
      */
     public void flushData(final Path mifToFlush, final Path midToFlush) throws IOException {
         RWLock.writeLock().lock();
@@ -759,32 +751,26 @@ public class MIFManager {
      * @return A string representation of the given feature. Never null, but empty string is possible.
      */
     public String buildMIDAttributes(Feature toParse) {
-        final StringBuilder builder = new StringBuilder();
         final FeatureType fType = toParse.getType();
 
-
-        if(mifBaseType.isAssignableFrom(fType)) {
-            int i=0;
-            for(PropertyType pt : mifBaseType.getProperties(true)){
-                if(AttributeConvention.contains(pt.getName())) continue;
-                if(i!=0) builder.append(mifDelimiter);
-                builder.append(MIFUtils.getStringValue(toParse.getPropertyValue(pt.getName().toString())));
-                i++;
-            }
-            builder.append('\n');
+        if(midType.isAssignableFrom(fType)) {
+            return midType.getProperties(true).stream()
+                    .map(PropertyType::getName)
+                    .map(Object::toString)
+                    .map(toParse::getPropertyValue)
+                    .map(MIFUtils::getStringValue)
+                    .collect(Collectors.joining(String.valueOf(mifDelimiter), "", "\n"));
         }
-        return builder.toString();
+
+        return "";
     }
 
     /**
      * {@inheritDoc}
      */
     public void refreshMetaModel() throws IllegalNameException {
-        names.clear();
-        names = null;
+        midType = null;
         mifBaseType = null;
-        mifChildTypes.clear();
-        mifColumnsCount = -1;
     }
 
     public void setDelimiter(char delimiter) {

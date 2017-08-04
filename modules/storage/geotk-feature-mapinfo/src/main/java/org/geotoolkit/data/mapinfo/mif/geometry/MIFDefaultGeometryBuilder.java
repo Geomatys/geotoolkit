@@ -91,7 +91,7 @@ public class MIFDefaultGeometryBuilder extends MIFGeometryBuilder{
     }
 
     @Override
-    protected List<AttributeType> getAttributes() {
+    public List<AttributeType> getAttributes() {
         final AttributeType attType = new DefaultAttributeType(Collections.singletonMap("name", NAME), Feature.class, 1, 3, null);
         return Collections.singletonList(attType);
     }

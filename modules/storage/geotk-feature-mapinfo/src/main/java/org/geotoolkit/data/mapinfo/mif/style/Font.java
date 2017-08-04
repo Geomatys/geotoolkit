@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.mapinfo.mif.style;
 
-import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import org.opengis.style.Description;
 import org.opengis.style.StyleVisitor;
@@ -25,6 +24,7 @@ import javax.measure.quantity.Length;
 import javax.measure.Unit;
 import java.util.regex.Pattern;
 import org.apache.sis.measure.Units;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.opengis.filter.expression.Expression;
 
@@ -36,7 +36,7 @@ import org.opengis.filter.expression.Expression;
  */
 public class Font implements MIFSymbolizer {
 
-    public static final GenericName NAME = NamesExt.create("FONT");
+    public static final GenericName NAME = Names.createLocalName("style-rule", ":", "FONT");
 
     public static final Pattern PATTERN = Pattern.compile(NAME.tip().toString()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
 

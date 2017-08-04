@@ -29,13 +29,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
-import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.feature.DefaultFeatureType;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.feature.FeatureExt;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.InvalidPropertyValueException;
+import org.opengis.feature.PropertyNotFoundException;
 
 /**
  * Build features representing MIF Collection geometries.
@@ -45,14 +47,11 @@ import org.opengis.feature.FeatureType;
  */
 public class MIFCollectionBuilder extends MIFGeometryBuilder {
     public static final GenericName NAME = NamesExt.create("COLLECTION");
-    public static final GenericName GEOM_NAME = NamesExt.create("GEOMETRY");
+    public static final GenericName GEOM_NAME = NamesExt.create("STYLE_RULES").push(NAME);
     public static final FeatureType EMPTY_TYPE = new DefaultFeatureType(Collections.singletonMap("name", "abstract"), true, null);
-
-    private CoordinateReferenceSystem collectionCRS = null;
 
     @Override
     public void buildGeometry(Scanner scanner, Feature toFill, MathTransform toApply) throws DataStoreException {
-
         int numGeom = 0;
         try {
             numGeom = scanner.nextInt();
@@ -60,27 +59,34 @@ public class MIFCollectionBuilder extends MIFGeometryBuilder {
             throw new DataStoreException("Number of geometries in Collection is not specified", e);
         }
 
+        final List<Feature> features = new ArrayList<>();
         for(int geomCount=0 ; geomCount < numGeom ; geomCount++ ) {
             while(scanner.hasNextLine()) {
                 final MIFUtils.GeometryType enumType = MIFUtils.getGeometryType(scanner.findInLine("\\w+"));
                 if (enumType != null) {
-                    final FeatureType type = enumType.getBinding(collectionCRS, EMPTY_TYPE);
+                    final FeatureType type = enumType.getBinding(null, EMPTY_TYPE);
                     final Feature currentFeature = type.newInstance();
-                    enumType.readGeometry(scanner, toFill, toApply);
-                    ((Collection)toFill.getPropertyValue(GEOM_NAME.toString())).add(currentFeature);
+                    enumType.readGeometry(scanner, currentFeature, toApply);
+                    features.add(currentFeature);
                     break;
+                } else {
+                    scanner.nextLine();
                 }
             }
         }
+
+        toFill.setPropertyValue(GEOM_NAME.toString(), features);
+
+        final String geomName = FeatureExt.getDefaultGeometry(toFill.getType()).getName().toString();
+        toFill.setPropertyValue(geomName, getGeometry(toFill));
     }
 
     @Override
     public FeatureType buildType(CoordinateReferenceSystem crs, FeatureType parent) {
-        collectionCRS = crs;
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(NAME);
-        ftb.setSuperTypes(parent);
-        ftb.addAssociation(EMPTY_TYPE).setName(NAME).setMinimumOccurs(1).setMaximumOccurs(3);
+        final FeatureType type = super.buildType(crs, parent);
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder(type);
+        ftb.addAssociation(EMPTY_TYPE).setName(GEOM_NAME).setMinimumOccurs(1).setMaximumOccurs(3);
+
         return ftb.build();
     }
 
@@ -137,12 +143,12 @@ public class MIFCollectionBuilder extends MIFGeometryBuilder {
 
         builder.append(count).append('\n');
         for(String mifMulti : geomsStr) {
-            builder.append(mifMulti).append('\n');
+            builder.append(mifMulti);
         }
     }
 
     private String convert(final GeometryCollection col, MIFUtils.GeometryType mifType) throws DataStoreException {
-        final FeatureType type = mifType.getBinding(collectionCRS, null);
+        final FeatureType type = mifType.getBinding(null, null);
         final Feature feature = type.newInstance();
         feature.setPropertyValue(FeatureExt.getDefaultGeometry(type).getName().toString(), col);
         return mifType.toMIFSyntax(feature);
@@ -181,7 +187,7 @@ public class MIFCollectionBuilder extends MIFGeometryBuilder {
 
     @Override
     public Class getGeometryBinding() {
-        return Feature.class;
+        return GeometryCollection.class;
     }
 
     @Override
@@ -196,7 +202,40 @@ public class MIFCollectionBuilder extends MIFGeometryBuilder {
 
     @Override
     protected List<AttributeType> getAttributes() {
-        final AttributeType attType = new DefaultAttributeType(Collections.singletonMap("name", NAME), Feature.class, 1, 3, null);
-        return Collections.singletonList(attType);
+        return Collections.EMPTY_LIST;
+    }
+
+    @Override
+    public GeometryCollection getGeometry(Feature f) throws PropertyNotFoundException, InvalidPropertyValueException {
+        final Object value = f.getPropertyValue(GEOM_NAME.toString());
+        if (value == null)
+            return null;
+        else if (!(value instanceof Collection)) {
+            throw new InvalidPropertyValueException("A collection of features was expected, but we've got "+value.getClass());
+        }
+
+        final Collection col = (Collection) value;
+        if (col.isEmpty())
+            return null;
+
+        final List<Geometry> geoms = new ArrayList<>(col.size());
+        for (final Object o : col) {
+            if (o == null)
+                continue;
+            if (o instanceof Geometry) {
+                geoms.add((Geometry) o);
+            } else if (o instanceof Feature) {
+                final Object geom = ((Feature) o).getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+                if (geom instanceof Geometry) {
+                    geoms.add((Geometry) geom);
+                } else if (geom != null) {
+                    throw new InvalidPropertyValueException("A non-geometric value has been found : " + geom.getClass());
+                }
+            } else {
+                throw new InvalidPropertyValueException("A geometry or feature was expected, but we found " + o.getClass());
+            }
+        }
+
+        return GEOMETRY_FACTORY.createGeometryCollection(geoms.toArray(new Geometry[geoms.size()]));
     }
 }

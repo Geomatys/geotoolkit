@@ -18,7 +18,6 @@ package org.geotoolkit.data.mapinfo.mif.style;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import java.util.Collections;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import org.opengis.style.Description;
 import org.opengis.style.StyleVisitor;
@@ -28,6 +27,7 @@ import javax.measure.Unit;
 import java.util.regex.Pattern;
 import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.measure.Units;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.opengis.feature.AttributeType;
 import org.opengis.filter.expression.Expression;
@@ -40,7 +40,7 @@ import org.opengis.filter.expression.Expression;
  */
 public class LabelLine implements MIFSymbolizer {
 
-    public static final GenericName NAME = NamesExt.create("LABEL");
+    public static final GenericName NAME = Names.createLocalName("style-rule", ":", "LABEL");
     public static final AttributeType LABEL = new DefaultAttributeType(Collections.singletonMap("name", LabelLine.NAME), LabelLine.class, 1, 1, null);
 
     public static final Pattern PATTERN = Pattern.compile(NAME.tip().toString(), Pattern.CASE_INSENSITIVE);

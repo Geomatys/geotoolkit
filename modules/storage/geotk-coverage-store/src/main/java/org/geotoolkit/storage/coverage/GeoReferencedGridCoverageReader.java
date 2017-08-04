@@ -192,8 +192,9 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
             } catch (MismatchedDimensionException ex) {
                 throw new CoverageStoreException(ex.getMessage(), ex);
             }
-            for(int i=0;i<dim;i++){
-                imgRes[i] = coverageRes[i] * derivative.getElement(i, i);
+            for (int i = 0; i < dim; i++) {
+                // Y scale is often negative, but we need positie values for image resolution.
+                imgRes[i] = Math.abs(coverageRes[i] * derivative.getElement(i, i));
             }
         }else{
             imgRes = new double[dim];

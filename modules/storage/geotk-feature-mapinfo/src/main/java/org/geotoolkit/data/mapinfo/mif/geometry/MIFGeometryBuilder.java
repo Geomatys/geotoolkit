@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import java.util.Collections;
@@ -26,10 +27,12 @@ import org.opengis.referencing.operation.MathTransform;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import org.apache.sis.feature.DefaultAttributeType;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.AttributeRole;
+import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
@@ -37,6 +40,8 @@ import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.InvalidPropertyValueException;
+import org.opengis.feature.PropertyNotFoundException;
 
 /**
  * Used for {@link org.geotoolkit.data.mapinfo.mif.MIFUtils.GeometryType}, to allow us pass a method for building geometry as
@@ -76,18 +81,34 @@ public abstract class MIFGeometryBuilder {
         FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         // As parent's attributes are not shared, we must copy them to the new feature type.
-        if(parent != null) {
+        boolean addGeometry = true;
+        final GenericName name;
+        if (parent != null) {
+            name = getName().push(parent.getName());
+            // Check if there's already a geometric property.
+            try {
+                FeatureExt.getDefaultGeometry(parent);
+                addGeometry = false;
+            } catch (PropertyNotFoundException e) {
+                LOGGER.log(Level.FINEST, "no geometry found in parent data type", e);
+            }
+
             builder.setSuperTypes(parent);
-            for(AttributeType desc : getAttributes()) {
-                if(!parent.getProperties(true).contains(desc)) {
+            for (AttributeType desc : getAttributes()) {
+                if (!parent.getProperties(true).contains(desc)) {
                     builder.addAttribute(desc);
                 }
             }
+        } else {
+            name = getName();
         }
 
-        builder.setName(getName());
-        builder.addAttribute(getGeometryBinding()).setName(getName()).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        // If parent type has no geometry, we add one.
+        if (addGeometry) {
+            builder.addAttribute(getGeometryBinding()).setName(getName()).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        }
 
+        builder.setName(name);
         return builder.build();
     }
 
@@ -144,4 +165,14 @@ public abstract class MIFGeometryBuilder {
 
     protected abstract List<AttributeType> getAttributes();
 
+    public Stream<AttributeType> attributes() {
+        return getAttributes().stream();
+    }
+
+    public Geometry getGeometry(final Feature f) throws PropertyNotFoundException, InvalidPropertyValueException {
+        final Object geom = f.getPropertyValue(getName().toString());
+        if (geom instanceof Geometry || geom == null)
+            return (Geometry) geom;
+        throw new InvalidPropertyValueException("Geometric property contains unknown data of type ".concat(geom.getClass().toString()));
+    }
 }
