@@ -29,7 +29,6 @@ import javax.media.jai.NullOpImage;
 
 
 import org.opengis.coverage.Coverage;
-import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.factory.Hints;
@@ -39,6 +38,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.image.color.ColorUtilities;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
@@ -169,12 +169,14 @@ public abstract class IndexColorOperation extends Operation2D {
          */
         final ImageLayout layout = new ImageLayout().setColorModel(targetModel);
         final RenderedImage newImage = new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
-        final GridCoverage2D target = getFactory(hints).create(
-                    source.getName(), newImage,
-                    source.getCoordinateReferenceSystem(),
-                    source.getGridGeometry().getGridToCRS(),
-                    bands, new GridCoverage[] { source }, null);
-        return target.view(targetView);
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setName(source.getName());
+        gcb.setRenderedImage(newImage);
+        gcb.setCoordinateReferenceSystem(source.getCoordinateReferenceSystem());
+        gcb.setGridToCRS(source.getGridGeometry().getGridToCRS());
+        gcb.setSampleDimensions(bands);
+        gcb.setSources(source);
+        return gcb.getGridCoverage2D().view(targetView);
     }
 
     /**

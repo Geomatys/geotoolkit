@@ -52,6 +52,9 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 @Buffered
 @Decorator(AbstractCoverageProcessor.class)
 public class CachingCoverageProcessor extends AbstractCoverageProcessor {
+
+    public static final CachingCoverageProcessor INSTANCE = new CachingCoverageProcessor();
+
     /**
      * The underlying processor.
      */

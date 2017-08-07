@@ -212,7 +212,7 @@ public abstract class AbstractOperation implements Operation, Serializable {
                 return (AbstractCoverageProcessor) value;
             }
         }
-        return AbstractCoverageProcessor.getInstance();
+        return CachingCoverageProcessor.INSTANCE;
     }
 
     /**

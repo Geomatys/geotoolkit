@@ -72,6 +72,7 @@ import org.geotoolkit.resources.Errors;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 
 
 /**
@@ -621,14 +622,16 @@ public class OperationJAI extends Operation2D {
         final MathTransform           toCRS = primarySource.getGridGeometry().getGridToCRS();
         final RenderedImage            data = createRenderedImage(parameters.parameters, hints);
         final Map<String,?>      properties = getProperties(data,crs,name,toCRS,sources,parameters);
-        return getFactory(parameters.hints)
-                .create(name,        // The grid coverage name
-                        data,        // The underlying data
-                        crs,         // The coordinate system (may not be 2D).
-                        toCRS,       // The grid transform (may not be 2D).
-                        sampleDims,  // The sample dimensions
-                        sources,     // The source grid coverages.
-                        properties); // Properties
+
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setName(name);
+        gcb.setRenderedImage(data);
+        gcb.setCoordinateReferenceSystem(crs);
+        gcb.setGridToCRS(toCRS);
+        gcb.setSampleDimensions(sampleDims);
+        gcb.setSources(sources);
+        gcb.setProperties(properties);
+        return gcb.getGridCoverage2D();
     }
 
     /**
