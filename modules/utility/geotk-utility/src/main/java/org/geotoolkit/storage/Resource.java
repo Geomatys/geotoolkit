@@ -16,15 +16,21 @@
  */
 package org.geotoolkit.storage;
 
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
+import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
+import org.opengis.metadata.extent.Extent;
+import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.metadata.extent.GeographicExtent;
+import org.opengis.metadata.identification.Identification;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface Resource {
+public interface Resource extends org.apache.sis.storage.Resource {
 
     /**
      * Data identifier.
@@ -41,7 +47,31 @@ public interface Resource {
      * @return information about the resource, not null.
      * @throws DataStoreException if an error occurred while reading the data.
      */
+    @Override
     Metadata getMetadata() throws DataStoreException;
+
+    @Override
+    default Envelope getEnvelope() throws DataStoreException {
+        final Metadata metadata = getMetadata();
+        GeneralEnvelope bounds = null;
+        if (metadata != null) {
+            for (final Identification identification : metadata.getIdentificationInfo()) {
+                for (final Extent extent : identification.getExtents()) {
+                    for (final GeographicExtent ge : extent.getGeographicElements()) {
+                        if (ge instanceof GeographicBoundingBox) {
+                            final GeneralEnvelope env = new GeneralEnvelope((GeographicBoundingBox) ge);
+                            if (bounds == null) {
+                                bounds = env;
+                            } else {
+                                bounds.add(env);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return bounds;
+    }
 
     /**
      * Add a storage listener which will be notified when structure changes or

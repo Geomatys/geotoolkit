@@ -170,6 +170,11 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         return ds;
     }
 
+    @Override
+    public Resource findResource(String name) throws DataStoreException {
+        return FeatureStore.super.findResource(name);
+    }
+
     /**
      * Overwrite to enable versioning.
      */

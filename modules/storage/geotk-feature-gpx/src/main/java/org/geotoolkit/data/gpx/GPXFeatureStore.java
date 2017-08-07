@@ -52,6 +52,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.sis.internal.storage.gpx.Store;
 import org.apache.sis.internal.storage.gpx.Metadata;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.collection.BackingStoreException;
 
@@ -220,7 +221,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
         private GPXFeatureReader(final FeatureType restriction) throws DataStoreException{
             RWLock.readLock().lock();
             this.restriction = restriction;
-            features = reader.features(false).iterator();
+            features = ((FeatureSet) reader.getRootResource()).features(false).iterator();
         }
 
         @Override

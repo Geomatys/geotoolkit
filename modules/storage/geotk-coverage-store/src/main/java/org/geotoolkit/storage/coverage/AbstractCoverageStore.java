@@ -259,6 +259,11 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         return map.get(name.toString());
     }
 
+    @Override
+    public Resource findResource(String name) throws DataStoreException {
+        return CoverageStore.super.findResource(name);      // TODO: should it delegates to findResource(GenericName)?
+    }
+
     protected synchronized GenericNameIndex<CoverageResource> listReferences() throws DataStoreException {
         if (cachedRefs==null) {
             cachedRefs = new GenericNameIndex<>();

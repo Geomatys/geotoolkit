@@ -63,6 +63,11 @@ public class WrapCoverageStore extends DataStore implements CoverageStore{
     }
 
     @Override
+    public Resource findResource(String name) throws DataStoreException {
+        return CoverageStore.super.findResource(name);
+    }
+
+    @Override
     public Set<GenericName> getNames() throws DataStoreException {
         return store.getNames();
     }
