@@ -66,6 +66,7 @@
        =========================================================== -->
   <modules>
     <module>geotk-utility</module>
+    <module>geotk-temporal</module>
     <module>geotk-logging-commons</module>
     <module>geotk-logging-log4j</module>
     <module>geotk-setup</module>
