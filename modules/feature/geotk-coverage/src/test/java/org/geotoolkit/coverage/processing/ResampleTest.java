@@ -43,13 +43,13 @@ import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.apache.sis.referencing.crs.DefaultProjectedCRS;
 import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.SampleCoverage;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.apache.sis.referencing.operation.DefaultConversion;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -219,9 +219,14 @@ public final strictfp class ResampleTest extends GridProcessingTestBase {
         AffineTransform expected = getAffineTransform(coverage);
         assertNotNull(expected);
         expected = new AffineTransform(expected); // Get a mutable instance.
-        coverage = CoverageFactoryFinder.getGridCoverageFactory(null).create("Translated",
-                image, coverage.getEnvelope(), coverage.getSampleDimensions(),
-                new GridCoverage2D[]{coverage}, coverage.getProperties());
+        GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setName("Translated");
+        gcb.setRenderedImage(image);
+        gcb.setEnvelope(coverage.getEnvelope());
+        gcb.setSampleDimensions(coverage.getSampleDimensions());
+        gcb.setSources(coverage);
+        gcb.setProperties(coverage.getProperties());
+        coverage = gcb.getGridCoverage2D();
         expected.translate(-transX, -transY);
         assertTransformEquals(expected, getAffineTransform(coverage));
         /*

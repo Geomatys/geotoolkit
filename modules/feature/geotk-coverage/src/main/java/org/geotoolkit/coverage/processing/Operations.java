@@ -34,7 +34,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.processing.operation.Resample;
 
 
@@ -73,7 +72,7 @@ public class Operations {
      */
     public Operations(Hints hints) {
         if (hints == null) {
-            processor = AbstractCoverageProcessor.getInstance();
+            processor = CachingCoverageProcessor.INSTANCE;
         } else {
             Object candidate = hints.get(Hints.GRID_COVERAGE_PROCESSOR);
             if (AbstractCoverageProcessor.class.isInstance(candidate)) {
@@ -85,7 +84,7 @@ public class Operations {
                     hints = hints.clone();
                     hints.put(Hints.GRID_COVERAGE_PROCESSOR, AbstractCoverageProcessor.class);
                 }
-                processor = (AbstractCoverageProcessor) CoverageFactoryFinder.getCoverageProcessor(hints);
+                processor = CachingCoverageProcessor.INSTANCE;
             }
         }
     }

@@ -22,6 +22,8 @@ import java.util.Set;
 import java.util.HashMap;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Locale;
 import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
@@ -33,18 +35,32 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.io.wkt.WKTFormat;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.util.collection.DerivedSet;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.factory.GeodeticObjectFactory;
 import org.apache.sis.util.ArraysExt;
+import org.opengis.referencing.crs.CompoundCRS;
+import org.opengis.referencing.crs.DerivedCRS;
+import org.opengis.referencing.crs.EngineeringCRS;
+import org.opengis.referencing.crs.GeocentricCRS;
+import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.crs.ProjectedCRS;
+import org.opengis.referencing.crs.VerticalCRS;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.datum.Ellipsoid;
+import org.opengis.referencing.datum.EngineeringDatum;
+import org.opengis.referencing.datum.GeodeticDatum;
+import org.opengis.referencing.datum.PrimeMeridian;
+import org.opengis.referencing.datum.VerticalDatum;
+import org.opengis.referencing.operation.MathTransform;
 
 
 /**
@@ -82,6 +98,35 @@ import org.apache.sis.util.ArraysExt;
  * @module
  */
 public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
+
+    /**
+     * The mapping between WKT element name and the object class to be created.
+     * Keys must be upper case.
+     */
+    private static final Map<String,Class<?>> TYPES;
+    static {
+        final Map<String,Class<?>> map = new LinkedHashMap<>(25);
+        map.put(        "GEOGCS",        GeographicCRS.class);
+        map.put(        "PROJCS",         ProjectedCRS.class);
+        map.put(        "GEOCCS",        GeocentricCRS.class);
+        map.put(       "VERT_CS",          VerticalCRS.class);
+        map.put(      "LOCAL_CS",       EngineeringCRS.class);
+        map.put(      "COMPD_CS",          CompoundCRS.class);
+        map.put(     "FITTED_CS",           DerivedCRS.class);
+        map.put(          "AXIS", CoordinateSystemAxis.class);
+        map.put(        "PRIMEM",        PrimeMeridian.class);
+        map.put(       "TOWGS84",  BursaWolfParameters.class);
+        map.put(      "SPHEROID",            Ellipsoid.class);
+        map.put(    "VERT_DATUM",        VerticalDatum.class);
+        map.put(   "LOCAL_DATUM",     EngineeringDatum.class);
+        map.put(         "DATUM",        GeodeticDatum.class);
+        map.put(      "PARAM_MT",        MathTransform.class);
+        map.put(     "CONCAT_MT",        MathTransform.class);
+        map.put(    "INVERSE_MT",        MathTransform.class);
+        map.put("PASSTHROUGH_MT",        MathTransform.class);
+        TYPES = map;
+    }
+
     /**
      * The authority for this factory. Will be computed by
      * {@link #getAuthority()} when first needed.
@@ -315,7 +360,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
             }
             final int length = wkt.length();
             int i=0; while (i<length && Character.isJavaIdentifierPart(wkt.charAt(i))) i++;
-            Class<?> candidate = WKTFormat.getClassOf(wkt.substring(0,i));
+            Class<?> candidate = getWKTClassOf(wkt.substring(0,i));
             if (candidate == null) {
                 candidate = IdentifiedObject.class;
             }
@@ -499,6 +544,46 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
      */
     Comparable<?> getPrimaryKey(Class<? extends IdentifiedObject> type, String code) throws FactoryException {
         return trimAuthority(code);
+    }
+
+    /**
+     * Returns the class of the specified WKT element. For example this method returns
+     * <code>{@linkplain ProjectedCRS}.class</code> for element "{@code PROJCS}".
+     * <p>
+     * This method is the converse of {@link #getNameOf}.
+     *
+     * @param  element The WKT element name.
+     * @return The GeoAPI class of the specified element, or {@code null} if unknown.
+     */
+    static Class<?> getWKTClassOf(String element) {
+        if (element == null) {
+            return null;
+        }
+        element = element.trim().toUpperCase(Locale.US);
+        final Class<?> type = TYPES.get(element);
+        assert type == null || type.equals(MathTransform.class) || element.equals(getWKTNameOf(type)) : type;
+        return type;
+    }
+
+    /**
+     * Returns the WKT name of the specified object type. For example this method returns
+     * "{@code PROJCS}" for type <code>{@linkplain ProjectedCRS}.class</code>.
+     * <p>
+     * This method is the converse of {@link #getClassOf}.
+     *
+     * @param type The GeoAPI class of the specified element.
+     * @return The WKT element name, or {@code null} if unknown.
+     */
+    static String getWKTNameOf(final Class<?> type) {
+        if (type != null) {
+            for (final Map.Entry<String,Class<?>> entry : TYPES.entrySet()) {
+                final Class<?> candidate = entry.getValue();
+                if (candidate.isAssignableFrom(type)) {
+                    return entry.getKey();
+                }
+            }
+        }
+        return null;
     }
 
     /**
