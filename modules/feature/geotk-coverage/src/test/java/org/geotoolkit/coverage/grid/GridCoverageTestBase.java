@@ -33,7 +33,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.test.image.ImageTestBase;
@@ -142,8 +141,13 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
             envelope.setRange(i, min, min + 5);
         }
         final Hints hints = new Hints(Hints.TILE_ENCODING, "raw");
-        final GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(hints);
-        coverage = factory.create("Test", image, envelope, new GridSampleDimension[] {band}, null, null);
+
+        final GridCoverageBuilder gcb = new GridCoverageBuilder(hints);
+        gcb.setName("Test");
+        gcb.setRenderedImage(image);
+        gcb.setEnvelope(envelope);
+        gcb.setSampleDimensions(band);
+        coverage = gcb.getGridCoverage2D();
         assertEquals("raw", coverage.tileEncoding);
         /*
          * Grid coverage construction finished.  Now test it.  First we test the creation of a

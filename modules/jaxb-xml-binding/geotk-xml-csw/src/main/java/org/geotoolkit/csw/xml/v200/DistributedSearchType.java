@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.csw.xml.v200;
 
-import java.math.BigInteger;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -24,7 +23,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.DistributedSearch;
-import org.geotoolkit.util.Utilities;
 
 
 /**

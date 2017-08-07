@@ -87,8 +87,25 @@
       <artifactId>sis-storage</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.sis.core</groupId>
+      <artifactId>sis-referencing</artifactId>
+      <version>${sis.version}</version>
+    </dependency>
+    <dependency>
       <groupId>javax.vecmath</groupId>
       <artifactId>vecmath</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.sis.non-free</groupId>
+      <artifactId>sis-epsg</artifactId>
+      <version>${sis.epsg.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- TEST DEPENDENCIES-->
@@ -107,5 +124,18 @@
       <artifactId>jai_imageio</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.sis.core</groupId>
+      <artifactId>sis-metadata</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.sis.core</groupId>
+      <artifactId>sis-referencing</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 </project>

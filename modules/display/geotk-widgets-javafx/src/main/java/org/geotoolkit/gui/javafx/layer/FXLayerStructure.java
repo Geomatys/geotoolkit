@@ -27,6 +27,8 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javax.measure.Unit;
 import org.apache.sis.io.wkt.Colors;
+import org.apache.sis.io.wkt.Convention;
+import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.Category;
@@ -35,7 +37,6 @@ import org.geotoolkit.coverage.amended.AmendedCoverageResource;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.internal.GeotkFX;
-import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
@@ -289,7 +290,8 @@ public class FXLayerStructure extends FXPropertyPane {
     }
 
     private static String formatWKT(Object item){
-        final WKTFormat formatter = new WKTFormat();
+        final WKTFormat formatter = new WKTFormat(null,null);
+        formatter.setConvention(Convention.WKT1);
         formatter.setColors(Colors.DEFAULT);
 
         final StringBuilder buffer = new StringBuilder();

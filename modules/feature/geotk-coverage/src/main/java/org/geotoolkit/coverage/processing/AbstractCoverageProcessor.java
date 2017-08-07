@@ -35,10 +35,8 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.coverage.AbstractCoverage;
-import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.grid.Interpolator2D;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -112,18 +110,6 @@ public abstract class AbstractCoverageProcessor extends Factory implements GridC
      */
     protected AbstractCoverageProcessor() {
         super();
-    }
-
-    /**
-     * Returns a default processor instance. This method is a shortcut for
-     * {@link CoverageFactoryFinder#getCoverageProcessor(Hints)} with hints
-     * asking for an instance of {@link AbstractCoverageProcessor}.
-     *
-     * @return The default processor instance.
-     */
-    public static AbstractCoverageProcessor getInstance() {
-        return (AbstractCoverageProcessor) CoverageFactoryFinder.getCoverageProcessor(
-                new Hints(Hints.GRID_COVERAGE_PROCESSOR, AbstractCoverageProcessor.class));
     }
 
     /**

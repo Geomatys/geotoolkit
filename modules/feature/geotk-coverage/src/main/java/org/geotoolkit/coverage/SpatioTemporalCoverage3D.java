@@ -43,7 +43,6 @@ import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
@@ -51,6 +50,7 @@ import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.internal.metadata.AxisDirections;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
 
@@ -135,11 +135,6 @@ public class SpatioTemporalCoverage3D extends AbstractCoverage {
      */
     private final GeneralDirectPosition coordinate;
 
-    /**
-     * The grid coverage factory for {@link #getCoverage2D} method.
-     * Will be created only when first needed.
-     */
-    private transient GridCoverageFactory factory;
 
     /**
      * Constructs a new coverage. The coordinate reference system will be the same than the
@@ -557,10 +552,14 @@ control:    for (int p=0; p<=1; p++) {
         }
         final MathTransform gridToCRS;
         gridToCRS = MathTransforms.linear((AffineTransform) image.getProperty("gridToCRS"));
-        if (factory == null) {
-            factory = CoverageFactoryFinder.getGridCoverageFactory(HINTS);
-        }
-        return factory.create(name, image, crs, gridToCRS, bands, null, null);
+
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setName(name);
+        gcb.setRenderedImage(image);
+        gcb.setCoordinateReferenceSystem(crs);
+        gcb.setGridToCRS(gridToCRS);
+        gcb.setSampleDimensions(bands);
+        return gcb.getGridCoverage2D();
     }
 
     /**

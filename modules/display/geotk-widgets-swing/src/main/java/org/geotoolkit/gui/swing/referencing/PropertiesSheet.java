@@ -39,7 +39,8 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.metadata.Identifier;
 
 import org.apache.sis.io.wkt.Colors;
-import org.geotoolkit.io.wkt.WKTFormat;
+import org.apache.sis.io.wkt.Convention;
+import org.apache.sis.io.wkt.WKTFormat;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.util.CharSequences;
@@ -119,7 +120,8 @@ public class PropertiesSheet extends JComponent {
         wktArea = new JEditorPane();
         wktArea.setEditable(false);
         wktArea.setContentType("text/html");
-        formatter = new WKTFormat();
+        formatter = new WKTFormat(null,null);
+        formatter.setConvention(Convention.WKT1);
         formatter.setColors(Colors.DEFAULT);
         /*
          * Add the tabs.

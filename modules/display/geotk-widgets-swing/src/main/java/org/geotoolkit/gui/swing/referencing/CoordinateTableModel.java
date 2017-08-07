@@ -33,8 +33,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 
-import org.geotoolkit.geometry.Envelopes;
 import org.apache.sis.geometry.ImmutableEnvelope;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.geometry.TransformedDirectPosition;
 
 
@@ -111,7 +111,7 @@ public class CoordinateTableModel extends AbstractTableModel {
         for (int i=0; i<columnNames.length; i++){
             columnNames[i] = crs.getCoordinateSystem().getAxis(i).getName().getCode();
         }
-        validArea = new ImmutableEnvelope(Envelopes.getDomainOfValidity(crs));
+        validArea = new ImmutableEnvelope(CRS.getDomainOfValidity(crs));
     }
 
     /**

@@ -52,7 +52,8 @@ import org.geotoolkit.gui.swing.render2d.control.navigation.PanHandler;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.apache.sis.measure.Units;
 import org.apache.sis.io.wkt.Colors;
-import org.geotoolkit.io.wkt.WKTFormat;
+import org.apache.sis.io.wkt.Convention;
+import org.apache.sis.io.wkt.WKTFormat;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -239,7 +240,8 @@ public class JCRSChooser extends javax.swing.JDialog {
     }
 
     private void setIdentifiedObject(final IdentifiedObject item) {
-        final WKTFormat formatter = new WKTFormat();
+        final WKTFormat formatter = new WKTFormat(null,null);
+        formatter.setConvention(Convention.WKT1);
         formatter.setColors(Colors.DEFAULT);
 
         final StringBuilder buffer = new StringBuilder();

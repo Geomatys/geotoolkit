@@ -59,13 +59,10 @@ import org.apache.sis.util.ArraysExt;
 
 import org.apache.sis.measure.Units;
 import org.apache.sis.measure.MeasurementRange;
-import org.apache.sis.metadata.AbstractMetadata;
-import org.apache.sis.metadata.MetadataCopier;
-import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.measure.Quantities;
 import org.apache.sis.metadata.ModifiableMetadata;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.measure.Measure;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
@@ -82,9 +79,7 @@ import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import org.apache.sis.util.iso.Names;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
-import org.opengis.metadata.content.AttributeGroup;
 import org.opengis.metadata.content.CoverageDescription;
-import org.opengis.referencing.operation.MathTransform1D;
 
 
 /**
@@ -475,10 +470,10 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
                      */
                     final GeneralGridGeometry gg = getGridGeometry(i);
                     if (computeResolutions) {
-                        final Measure m = CRSUtilities.getHorizontalResolution(
+                        final Quantity m = CRSUtilities.getHorizontalResolution(
                                 gg.getCoordinateReferenceSystem(), gg.getResolution());
                         if (m != null) {
-                            double  measureValue = m.doubleValue();
+                            double  measureValue = m.getValue().doubleValue();
                             final Unit<?>   unit = m.getUnit();
                             Unit<?> standardUnit = null;
                             double  scaleFactor = 1;

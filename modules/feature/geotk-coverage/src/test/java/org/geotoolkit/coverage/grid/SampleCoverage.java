@@ -32,7 +32,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.geotoolkit.image.SampleImage;
 import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -130,9 +129,13 @@ public strictfp enum SampleCoverage {
             final Color[] colors = new Color[] {
                 Color.BLUE, Color.CYAN, Color.WHITE, Color.YELLOW, Color.RED
             };
-            final GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
-            return factory.create("Float coverage", raster(), new Envelope2D(this.crs, this.bounds),
-                    null, null, null, new Color[][] {colors}, null);
+
+            final GridCoverageBuilder gcb = new GridCoverageBuilder();
+            gcb.setName("Float coverage");
+            gcb.setRenderedImage(raster());
+            gcb.setEnvelope( new Envelope2D(this.crs, this.bounds));
+            gcb.setSampleDimensions(null, null, null, colors);
+            return gcb.getGridCoverage2D();
         }
     };
 
@@ -195,10 +198,16 @@ public strictfp enum SampleCoverage {
      */
     GridCoverage2D load() throws IOException {
         final RenderedImage image = this.image.load();
-        final GeneralEnvelope envelope = new org.geotoolkit.geometry.GeneralEnvelope(bounds);
+        final GeneralEnvelope envelope = new GeneralEnvelope(
+                new double[] {bounds.getMinX(), bounds.getMinY()},
+                new double[] {bounds.getMaxX(), bounds.getMaxY()});
         envelope.setCoordinateReferenceSystem(crs);
-        final GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
-        return factory.create(this.image.filename, image, envelope, bands, null, null);
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setName(this.image.filename);
+        gcb.setRenderedImage(image);
+        gcb.setEnvelope(envelope);
+        gcb.setSampleDimensions(bands);
+        return gcb.getGridCoverage2D();
     }
 
     /**

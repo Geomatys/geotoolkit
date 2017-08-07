@@ -290,12 +290,12 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         resolution = checkResolution(resolution, renderingBound);
 
         final CoverageMapLayer coverageLayer               = projectedCoverage.getLayer();
-        final CoverageResource ref                        = coverageLayer.getCoverageReference();
+        final CoverageResource ref                         = coverageLayer.getCoverageReference();
         final GridCoverageReader reader                    = ref.acquireReader();
         final GeneralGridGeometry gridGeometry             = reader.getGridGeometry(ref.getImageIndex());
         final Envelope inputCoverageEnvelope               = gridGeometry.getEnvelope();
         final CoordinateReferenceSystem inputCoverageCRS   = inputCoverageEnvelope.getCoordinateReferenceSystem();
-        final CoordinateReferenceSystem inputCoverageCRS2D       = CRSUtilities.getCRS2D(inputCoverageCRS);
+        final CoordinateReferenceSystem inputCoverageCRS2D = CRSUtilities.getCRS2D(inputCoverageCRS);
         ref.recycle(reader);
 
 
@@ -318,9 +318,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final GeneralEnvelope renderingBound2D                         = GeneralEnvelope.castOrCopy(Envelopes.transform(renderingBound, renderingContextObjectiveCRS2D));
         GeneralEnvelope coverageIntoRender2DCRS                        = GeneralEnvelope.castOrCopy(Envelopes.transform(inputCoverageEnvelope, renderingContextObjectiveCRS2D));
 
-        if (!org.geotoolkit.geometry.Envelopes.containNAN(renderingBound2D)
-         && !org.geotoolkit.geometry.Envelopes.containNAN(coverageIntoRender2DCRS)
-         && !coverageIntoRender2DCRS.intersects(renderingBound2D, true)) {
+        if (!containNAN(renderingBound2D) && !containNAN(coverageIntoRender2DCRS)
+              && !coverageIntoRender2DCRS.intersects(renderingBound2D, true)) {
             //-- in future jdk8 version return an Optional<Coverage>
             final StringBuilder strB = new StringBuilder(isElevation ? "getObjectiveElevationCoverage()" : "getObjectiveCoverage()");
             strB.append(" : the 2D geographic part of rendering context does not intersect the 2D geographic part of coverage : ");
@@ -336,7 +335,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         //-- else
         //-- Note : in the case of NAN values we try later to clip requested envelope with coverage boundary.
 
-        if (org.geotoolkit.geometry.Envelopes.containNAN(coverageIntoRender2DCRS)) {
+        if (containNAN(coverageIntoRender2DCRS)) {
             /*
              * Envelope might contains NaN when for some reason the envelope is larger then the validity area.
              */
@@ -374,16 +373,16 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         assert paramEnvelope.getCoordinateReferenceSystem() != null : "DefaultRasterSymbolizerRenderer : CRS from param envelope cannot be null.";
 
         //-- Check if projected coverage has NAN values on other dimension than geographic 2D part
-        if (org.geotoolkit.geometry.Envelopes.containNAN(paramEnvelope)
-        && !org.geotoolkit.geometry.Envelopes.containNANInto2DGeographicPart(paramEnvelope))
+        if (containNAN(paramEnvelope) && !containNANInto2DGeographicPart(paramEnvelope)) {
             throw new DisjointCoverageDomainException("Rendering envelope extra dimensions does not intersect data envelope : " +
                     "has some NAN values on other dimension than geographic part."+paramEnvelope);
+        }
 
         //-- We know we don't have NAN values on other dimension than geographic
         //-- We clip envelope with coverage boundary
         clipAndReplaceNANEnvelope(paramEnvelope, inputCoverageEnvelope, paramEnvelope);
 
-        assert !org.geotoolkit.geometry.Envelopes.containNAN(paramEnvelope) : "paramEnvelope can't contain NAN values";
+        assert !containNAN(paramEnvelope) : "paramEnvelope can't contain NAN values";
         //-- paramEnveloppe is into CoverageCRS
         assert Utilities.equalsIgnoreMetadata(paramEnvelope.getCoordinateReferenceSystem(), inputCoverageCRS);
 
@@ -761,4 +760,58 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         env.setRange(horizontalAxis,     geoEnv2D.getMinimum(0), geoEnv2D.getMaximum(0));
         env.setRange(horizontalAxis + 1, geoEnv2D.getMinimum(1), geoEnv2D.getMaximum(1));
     }
+
+
+    /**
+     * Returns {@code true} if {@link Envelope} contain at least one
+     * {@link Double#NaN} value, else {@code false}.
+     *
+     * @param envelope the envelope which will be verify.
+     * @return {@code true} if {@link Envelope} contain at least one {@link Double#NaN} value, else {@code false}.
+     * @see #containNAN(org.opengis.geometry.Envelope, int, int)
+     */
+    private static boolean containNAN(final Envelope envelope) {
+        return containNAN(envelope, 0, envelope.getDimension() - 1);
+    }
+
+    /**
+     * Returns {@code true} if {@link Envelope} contain at least one
+     * {@link Double#NaN} value into its horizontal geographic part, else {@code false}.
+     *
+     * @param envelope the envelope which will be verify.
+     * @return {@code true} if {@link Envelope} contain at least one {@link Double#NaN} value, else {@code false}.
+     * @see CRSUtilities#firstHorizontalAxis(org.opengis.referencing.crs.CoordinateReferenceSystem)
+     * @see #containNAN(org.opengis.geometry.Envelope, int, int)
+     */
+    private static boolean containNANInto2DGeographicPart(final Envelope envelope) {
+        ArgumentChecks.ensureNonNull("Envelopes.containNANInto2DGeographicPart()", envelope);
+        final int minOrdiGeo = CRSUtilities.firstHorizontalAxis(envelope.getCoordinateReferenceSystem());
+        return containNAN(envelope, minOrdiGeo, minOrdiGeo + 1);
+    }
+
+    /**
+     * Returns {@code true} if {@link Envelope} contain at least one
+     * {@link Double#NaN} value on each inclusive dimension stipulate by
+     * firstIndex and lastIndex, else {@code false}.
+     *
+     * @param envelope the envelope which will be verify.
+     * @param firstIndex first inclusive dimension index.
+     * @param lastIndex last <strong>INCLUSIVE</strong> dimension.
+     * @return {@code true} if {@link Envelope} contain at least one {@link Double#NaN} value, else {@code false}.
+     */
+    private static boolean containNAN(final Envelope envelope, final int firstIndex, final int lastIndex) {
+        ArgumentChecks.ensureNonNull("Envelopes.containNAN()", envelope);
+        ArgumentChecks.ensurePositive("firstIndex", firstIndex);
+        ArgumentChecks.ensurePositive("lastIndex", lastIndex);
+        if (lastIndex >= envelope.getDimension())
+            throw new IllegalArgumentException("LastIndex must be strictly lower than "
+                    + "envelope dimension number. Expected maximum valid index = "+(envelope.getDimension() - 1)+". Found : "+lastIndex);
+        ArgumentChecks.ensureValidIndex(lastIndex + 1, firstIndex);
+        for (int d = firstIndex; d <= lastIndex; d++) {
+            if (Double.isNaN(envelope.getMinimum(d))
+             || Double.isNaN(envelope.getMaximum(d))) return true;
+        }
+        return false;
+    }
+
 }

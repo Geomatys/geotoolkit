@@ -28,11 +28,8 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.InvalidParameterValueException;
 
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
-import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.apache.sis.referencing.NamedIdentifier;
@@ -274,15 +271,4 @@ public abstract class Operation2D extends AbstractOperation {
         return targetView;
     }
 
-    /**
-     * Returns the factory to use for creating new {@link GridCoverage2D} objects.
-     *
-     * @param  hints An optional set of hints, or {@code null} if none.
-     * @return The factory to use for creating new {@link GridCoverage2D} objects.
-     *
-     * @since 2.2
-     */
-    static GridCoverageFactory getFactory(final Hints hints) {
-        return CoverageFactoryFinder.getGridCoverageFactory(hints);
-    }
 }

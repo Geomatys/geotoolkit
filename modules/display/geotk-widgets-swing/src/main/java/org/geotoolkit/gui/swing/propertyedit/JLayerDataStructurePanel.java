@@ -36,7 +36,8 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.opengis.feature.FeatureType;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.apache.sis.io.wkt.Colors;
-import org.geotoolkit.io.wkt.WKTFormat;
+import org.apache.sis.io.wkt.Convention;
+import org.apache.sis.io.wkt.WKTFormat;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
@@ -234,7 +235,8 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
     }
 
     private static String formatWKT(Object item){
-        final WKTFormat formatter = new WKTFormat();
+        final WKTFormat formatter = new WKTFormat(null,null);
+        formatter.setConvention(Convention.WKT1);
         formatter.setColors(Colors.DEFAULT);
 
         final StringBuilder buffer = new StringBuilder();

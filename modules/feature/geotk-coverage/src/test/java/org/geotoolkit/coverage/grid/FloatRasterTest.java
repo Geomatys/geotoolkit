@@ -27,7 +27,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.apache.sis.geometry.Envelope2D;
-import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.*;
@@ -75,8 +74,11 @@ public final strictfp class FloatRasterTest extends GridCoverageTestBase {
          */
         CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
         Envelope envelope = new Envelope2D(crs, 0, 0, 30, 30);
-        GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
-        GridCoverage gc = factory.create("My grayscale coverage", raster, envelope);
+        GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setName("My grayscale coverage");
+        gcb.setRenderedImage(raster);
+        gcb.setEnvelope(envelope);
+        GridCoverage gc = gcb.getGridCoverage2D();
         show(gc);
         /*
          * The above example created a grayscale image. The example below creates a new grid
@@ -86,8 +88,12 @@ public final strictfp class FloatRasterTest extends GridCoverageTestBase {
          * default value.
          */
         Color[] colors = new Color[] {Color.BLUE, Color.CYAN, Color.WHITE, Color.YELLOW, Color.RED};
-        gc = factory.create("My colored coverage", raster, envelope,
-                            null, null, null, new Color[][] {colors}, null);
+        gcb = new GridCoverageBuilder();
+        gcb.setName("My colored coverage");
+        gcb.setRenderedImage(raster);
+        gcb.setEnvelope(envelope);
+        gcb.setSampleDimensions(null, null, null, colors);
+        gc = gcb.getGridCoverage2D();
         show(gc);
     }
 
@@ -106,8 +112,11 @@ public final strictfp class FloatRasterTest extends GridCoverageTestBase {
         }
         CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
         Envelope envelope = new Envelope2D(crs, 0, 0, 30, 30);
-        GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
-        GridCoverage gc = factory.create("My grayscale matrix", matrix, envelope);
+        GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setName("My grayscale matrix");
+        gcb.setRenderedImage(matrix);
+        gcb.setEnvelope(envelope);
+        GridCoverage gc = gcb.getGridCoverage2D();
         show(gc);
     }
 }

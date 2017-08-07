@@ -11,8 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import org.apache.sis.io.wkt.Convention;
+import org.apache.sis.io.wkt.WKTFormat;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.pending.demo.Demos;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
@@ -72,7 +73,8 @@ public class ExtractAllCoordinateReferenceSystemDemo {
     }
 
     private static Map<String,String> toWKTMap(final CRSAuthorityFactory factory, final Collection<String> codes){
-        final WKTFormat format = new WKTFormat();
+        final WKTFormat format = new WKTFormat(null,null);
+        format.setConvention(Convention.WKT1);
         format.setIndentation(WKTFormat.SINGLE_LINE);
         final Map<String,String> map = new HashMap<String, String>();
 
