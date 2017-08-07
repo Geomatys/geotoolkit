@@ -1016,8 +1016,12 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
                                                     final RenderingHints hints)
         {
             final GeneralMatrix matrix;
-            final GeneralEnvelope srcEnvelope = new org.geotoolkit.geometry.GeneralEnvelope(bounds);
-            final GeneralEnvelope dstEnvelope = new org.geotoolkit.geometry.GeneralEnvelope(gridBounds);
+            final GeneralEnvelope srcEnvelope = new GeneralEnvelope(
+                    new double[] {bounds.getMinX(), bounds.getMinY()},
+                    new double[] {bounds.getMaxX(), bounds.getMaxY()});
+            final GeneralEnvelope dstEnvelope = new GeneralEnvelope(
+                    new double[] {gridBounds.getMinX(), gridBounds.getMinY()},
+                    new double[] {gridBounds.getMaxX(), gridBounds.getMaxY()});
             if (crs != null) {
                 final CoordinateSystem cs = crs.getCoordinateSystem();
                 final AxisDirection[] axis = new AxisDirection[] {

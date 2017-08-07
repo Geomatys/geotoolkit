@@ -154,13 +154,12 @@ public class ContextContainer2D extends DefaultGraphicContainer implements MapCo
         try {
             final MapContext context = getContext();
             if(context != null){
-                Envelope env = context.getBounds(true);
+                final Envelope env = context.getBounds(true);
                 if( Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ){
-                    org.geotoolkit.geometry.GeneralEnvelope genv = new org.geotoolkit.geometry.GeneralEnvelope(env);
-                    return genv.toRectangle2D();
+                    return new Rectangle2D.Double(env.getMinimum(0), env.getMinimum(1), env.getSpan(0), env.getSpan(1));
                 }else{
-                    org.geotoolkit.geometry.GeneralEnvelope genv = new org.geotoolkit.geometry.GeneralEnvelope(Envelopes.transform(env, crs));
-                    return genv.toRectangle2D();
+                    final Envelope genv = Envelopes.transform(env, crs);
+                    return new Rectangle2D.Double(genv.getMinimum(0), genv.getMinimum(1), genv.getSpan(0), genv.getSpan(1));
                 }
             }
 
