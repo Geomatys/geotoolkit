@@ -46,7 +46,12 @@
       </dependency>
       <dependency>
           <groupId>org.geotoolkit</groupId>
-          <artifactId>geotk-utility-pending</artifactId>
+          <artifactId>geotk-utility</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-referencing</artifactId>
           <version>${project.version}</version>
       </dependency>
 
