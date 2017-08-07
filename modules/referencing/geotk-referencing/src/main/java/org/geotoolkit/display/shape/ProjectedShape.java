@@ -25,12 +25,12 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.FlatteningPathIterator;
 import java.io.Serializable;
+import org.apache.sis.geometry.Shapes2D;
 
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
-import org.geotoolkit.geometry.Envelopes;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -214,7 +214,7 @@ public class ProjectedShape implements Shape, Serializable {
     @Override
     public boolean contains(final Rectangle2D r) {
         try {
-            return shape.contains(Envelopes.transform(inverse(), r, rectangle));
+            return shape.contains(Shapes2D.transform(inverse(), r, rectangle));
         } catch (TransformException exception) {
             Logging.recoverableException(null, ProjectedShape.class, "contains", exception);
             return false; // Consistent with the Shape interface contract.
@@ -256,7 +256,7 @@ public class ProjectedShape implements Shape, Serializable {
     @Override
     public boolean intersects(final Rectangle2D r) {
         try {
-            return shape.intersects(Envelopes.transform(inverse(), r, rectangle));
+            return shape.intersects(Shapes2D.transform(inverse(), r, rectangle));
         } catch (TransformException exception) {
             Logging.recoverableException(null, ProjectedShape.class, "intersects", exception);
             return true; // Consistent with the Shape interface contract.
@@ -284,7 +284,7 @@ public class ProjectedShape implements Shape, Serializable {
     @Override
     public Rectangle2D getBounds2D() {
         try {
-            return Envelopes.transform(projection, shape.getBounds2D(), null);
+            return Shapes2D.transform(projection, shape.getBounds2D(), null);
         } catch (TransformException exception) {
             Logging.recoverableException(null, ProjectedShape.class, "getBounds2D", exception);
             return XRectangle2D.INFINITY;

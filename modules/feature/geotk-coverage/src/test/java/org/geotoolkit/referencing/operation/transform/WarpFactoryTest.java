@@ -33,7 +33,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.apache.sis.math.Statistics;
-import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
@@ -44,6 +43,7 @@ import org.apache.sis.test.DependsOn;
 import org.junit.*;
 import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;
+import org.apache.sis.geometry.Shapes2D;
 import org.apache.sis.io.TableAppender;
 
 
@@ -128,7 +128,7 @@ public final strictfp class WarpFactoryTest extends TestBase {
         mapper.setEnvelope(domain);
         final MathTransform2D pre = (MathTransform2D)
                 org.geotoolkit.referencing.operation.MathTransforms.linear(mapper.createAffineTransform());
-        mapper.setEnvelope(Envelopes.transform(projection, domain, null));
+        mapper.setEnvelope(Shapes2D.transform(projection, domain, null));
         final MathTransform2D post = (MathTransform2D)
                 org.geotoolkit.referencing.operation.MathTransforms.linear(mapper.createAffineTransform()).inverse();
         return MathTransforms.concatenate(pre, projection, post);
