@@ -31,7 +31,6 @@ import java.sql.SQLIntegrityConstraintViolationException;
 
 import org.opengis.referencing.IdentifiedObject;
 
-import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.apache.sis.util.collection.BackingStoreException;
@@ -143,7 +142,7 @@ final class SpatialRefSysMap extends AbstractMap<String,String> {
                 .append(" || '").append(DefaultNameSpace.DEFAULT_SEPARATOR).append("' || ")
                 .append(CODE_COLUMN).append(" END AS code");
         appendFrom(sql);
-        final String type = WKTFormat.getNameOf(category);
+        final String type = WKTParsingAuthorityFactory.getWKTNameOf(category);
         if (type != null) {
             sql.append(" WHERE srtext ILIKE '").append(type).append("%'");
         }
