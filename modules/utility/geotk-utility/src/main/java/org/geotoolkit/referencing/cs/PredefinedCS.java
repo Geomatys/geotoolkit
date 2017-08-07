@@ -22,19 +22,19 @@ import java.util.Map;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import javax.measure.IncommensurableException;
+import javax.measure.Quantity;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.util.InternationalString;
 import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
 import org.apache.sis.measure.Units;
 import org.apache.sis.math.MathFunctions;
-import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.measure.Quantities;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.cs.DefaultCartesianCS;
 import org.apache.sis.referencing.cs.DefaultEllipsoidalCS;
@@ -177,7 +177,7 @@ public final class PredefinedCS extends Static {
      * @throws UnsupportedOperationException if this coordinate system can't compute distances.
      * @throws MismatchedDimensionException if a coordinate doesn't have the expected dimension.
      */
-    public static Measure distance(final CoordinateSystem cs, final double[] coord1, final double[] coord2)
+    public static Quantity<?> distance(final CoordinateSystem cs, final double[] coord1, final double[] coord2)
             throws UnsupportedOperationException, MismatchedDimensionException
     {
         if (cs instanceof CartesianCS) {
@@ -187,7 +187,7 @@ public final class PredefinedCS extends Static {
         ensureDimensionMatch(cs, "coord1", coord1);
         ensureDimensionMatch(cs, "coord2", coord2);
         if (cs.getDimension() == 1) {
-            return new Measure(Math.abs(coord1[0] - coord2[0]), cs.getAxis(0).getUnit());
+            return Quantities.create(Math.abs(coord1[0] - coord2[0]), cs.getAxis(0).getUnit());
         }
         throw new UnsupportedOperationException(Errors.format(Errors.Keys.UnsupportedCoordinateSystem_1, cs.getClass()));
     }
@@ -201,7 +201,7 @@ public final class PredefinedCS extends Static {
      * @throws UnsupportedOperationException if this coordinate system can't compute distances.
      * @throws MismatchedDimensionException if a coordinate doesn't have the expected dimension.
      */
-    private static Measure distance(final CartesianCS cs, final double[] coord1, final double[] coord2)
+    private static Quantity<?> distance(final CartesianCS cs, final double[] coord1, final double[] coord2)
             throws UnsupportedOperationException, MismatchedDimensionException
     {
         ensureDimensionMatch(cs, "coord1", coord1);
@@ -222,7 +222,7 @@ public final class PredefinedCS extends Static {
             final UnitConverter  c = converters[i];
             delta[i] = c.convert(coord1[i]) - c.convert(coord2[i]);
         }
-        return new Measure(MathFunctions.magnitude(delta), unit);
+        return Quantities.create(MathFunctions.magnitude(delta), unit);
     }
 
     /**

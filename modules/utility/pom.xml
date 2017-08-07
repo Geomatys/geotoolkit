@@ -66,10 +66,10 @@
        =========================================================== -->
   <modules>
     <module>geotk-utility</module>
+    <module>geotk-temporal</module>
     <module>geotk-logging-commons</module>
     <module>geotk-logging-log4j</module>
     <module>geotk-setup</module>
-    <module>geotk-utility-pending</module>
     <module>geotk-utility-jdbc</module>
     <module>geotk-analytics</module>
   </modules>

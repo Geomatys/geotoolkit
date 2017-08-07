@@ -195,7 +195,9 @@ public strictfp enum SampleCoverage {
      */
     GridCoverage2D load() throws IOException {
         final RenderedImage image = this.image.load();
-        final GeneralEnvelope envelope = new org.geotoolkit.geometry.GeneralEnvelope(bounds);
+        final GeneralEnvelope envelope = new GeneralEnvelope(
+                new double[] {bounds.getMinX(), bounds.getMinY()},
+                new double[] {bounds.getMaxX(), bounds.getMaxY()});
         envelope.setCoordinateReferenceSystem(crs);
         final GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
         return factory.create(this.image.filename, image, envelope, bands, null, null);

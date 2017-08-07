@@ -39,11 +39,12 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.measure.Units;
 
 import static java.util.Collections.singletonMap;
+import javax.measure.Quantity;
+import org.apache.sis.measure.Quantities;
 
 
 /**
@@ -195,7 +196,7 @@ public final class CRSUtilities extends Static {
      *
      * @since 3.18
      */
-    public static Measure getHorizontalResolution(final CoordinateReferenceSystem crs, double... resolution) {
+    public static Quantity<?> getHorizontalResolution(final CoordinateReferenceSystem crs, double... resolution) {
         if (resolution != null) {
             final SingleCRS horizontalCRS = CRS.getHorizontalComponent(crs);
             if (horizontalCRS != null) {
@@ -211,7 +212,7 @@ public final class CRSUtilities extends Static {
                             if (r > 0 && r < min) min = r;
                         }
                         if (min != Double.POSITIVE_INFINITY) {
-                            return new Measure(min, unit);
+                            return Quantities.create(min, unit);
                         }
                     }
                 }

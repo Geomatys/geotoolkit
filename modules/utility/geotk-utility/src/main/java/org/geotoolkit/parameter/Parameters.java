@@ -50,6 +50,7 @@ import org.apache.sis.util.logging.Logging;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.util.iso.DefaultNameSpace;
+//import org.geotoolkit.parameter.AbstractParameter;
 
 import static org.apache.sis.parameter.Parameters.castOrWrap;
 

@@ -41,9 +41,9 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.internal.sql.table.DefaultEntry;
-import org.geotoolkit.geometry.Envelopes;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.AbstractEnvelope;
+import org.apache.sis.geometry.Shapes2D;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
@@ -342,7 +342,7 @@ final class GridGeometryEntry extends DefaultEntry {
                         center.getX(), center.getY(), resolution[0], resolution[1]);
                 pixel.x -= 0.5 * pixel.width;
                 pixel.y -= 0.5 * pixel.height;
-                Envelopes.transform(toDatabaseHorizontalCRS, pixel, pixel);
+                Shapes2D.transform(toDatabaseHorizontalCRS, pixel, pixel);
                 return new DoubleDimension2D(pixel.width, pixel.height);
             }
         }
