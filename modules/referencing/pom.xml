@@ -71,7 +71,6 @@
            Modules included in the build
        =========================================================== -->
   <modules>
-    <module>geotk-referencing</module>
     <module>geotk-temporal</module>
   </modules>
 </project>

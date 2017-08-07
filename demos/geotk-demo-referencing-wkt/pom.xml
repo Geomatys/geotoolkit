@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-referencing</artifactId>
+            <artifactId>geotk-utility</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
