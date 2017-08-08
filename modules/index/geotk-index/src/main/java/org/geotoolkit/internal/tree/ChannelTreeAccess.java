@@ -96,7 +96,7 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
     protected ChannelTreeAccess(final SeekableByteChannel byteChannel,
             final int magicNumber, final double versionNumber,
             final int byteBufferLength, final int integerNumberPerNode)
-            throws IOException, ClassNotFoundException {
+            throws IOException {
 
         inOutChannel = byteChannel;
         final ByteBuffer magicOrderBuffer = ByteBuffer.allocate(5);//-- a stipuler en bigendian

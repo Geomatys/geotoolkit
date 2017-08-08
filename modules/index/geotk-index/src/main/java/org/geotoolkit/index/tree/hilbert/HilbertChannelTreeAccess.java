@@ -58,7 +58,7 @@ abstract strictfp class HilbertChannelTreeAccess extends ChannelTreeAccess {
      */
     public HilbertChannelTreeAccess(final SeekableByteChannel channel, final int magicNumber,
             final double versionNumber, final int byteBufferLength)
-            throws IOException, ClassNotFoundException {
+            throws IOException {
         super(channel, magicNumber, versionNumber, byteBufferLength, HILBERT_INT_NUMBER);
     }
 

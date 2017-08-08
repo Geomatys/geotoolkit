@@ -68,7 +68,7 @@ public class SQLRtreeManager extends AbstractRtreeManager {
                         TreeElementMapper treeMapper = new LuceneDerbySQLTreeEltMapper(DEFAULT_CRS, ds);
                         tree = new FileStarRTree<>(treeFile.toFile().toPath(), treeMapper);
 
-                    } catch (ClassNotFoundException | IllegalArgumentException | StoreIndexException | IOException e) {
+                    } catch (IllegalArgumentException | StoreIndexException | IOException e) {
                         LOGGER.log(Level.SEVERE, null, e);
                         return null;
                     }

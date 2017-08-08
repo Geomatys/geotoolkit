@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.index.tree.basic;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import org.geotoolkit.internal.tree.TreeAccessFile;
@@ -36,7 +35,7 @@ public final class FileBasicRTree<E> extends BasicRTree<E> {
 
     /**
      * Create a new {@link BasicRTree} implementation which store Tree architecture
-     * into file stored at {@link Path} location.<br/><br/>
+     * into file stored at {@link Path} location.<br><br>
      * Note : the default buffer length which read and write on hard drive  is 4096 {@code Byte}.
      *
      * @param outPut File which contain path where Tree information will be stored.
@@ -57,9 +56,9 @@ public final class FileBasicRTree<E> extends BasicRTree<E> {
 
     /**
      * Create a new {@link BasicRTree} implementation which store Tree architecture
-     * into file stored at {@link Path} location.<br/><br/>
+     * into file stored at {@link Path} location.<br><br>
      *
-     * Note : in this implementation user may choose length of buffer which read and write on hard drive.<br/>
+     * Note : in this implementation user may choose length of buffer which read and write on hard drive.<br>
      * User may increase reading and writing performance in function of the owned memory.
      *
      * @param outPut File which contain path where Tree information will be stored.
@@ -81,7 +80,7 @@ public final class FileBasicRTree<E> extends BasicRTree<E> {
 
     /**
      * Open a {@link BasicRTree} implementation from an already filled file from {@link Path} location
-     * which contain {@link BasicRTree} architecture.<br/><br/>
+     * which contain {@link BasicRTree} architecture.<br><br>
      *
      * Note : the default buffer length which read and write on hard drive is 4096 {@code Byte}.
      *
@@ -89,20 +88,19 @@ public final class FileBasicRTree<E> extends BasicRTree<E> {
      * @param treeEltMap object which store tree identifier and data.
      * @throws IOException if problem during head reading from already filled file.
      * @throws StoreIndexException if file isn't already filled by {@link BasicRTree} implementation.
-     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      * @see BasicRTree
      * @see SplitCase
      * @see TreeElementMapper
      */
-    public FileBasicRTree(final Path input, final TreeElementMapper<E> treeEltMap) throws IOException, StoreIndexException, ClassNotFoundException {
+    public FileBasicRTree(final Path input, final TreeElementMapper<E> treeEltMap) throws IOException, StoreIndexException {
         super(new TreeAccessFile(input, TreeUtilities.BASIC_NUMBER, TreeUtilities.VERSION_NUMBER), treeEltMap);
     }
 
     /**
      * Open a {@link BasicRTree} implementation from an already filled file from {@link Path} location
-     * which contain {@link BasicRTree} architecture.<br/><br/>
+     * which contain {@link BasicRTree} architecture.<br><br>
      *
-     * Note : in this implementation user may choose length of buffer which read and write on hard drive.<br/>
+     * Note : in this implementation user may choose length of buffer which read and write on hard drive.<br>
      * User may increase reading and writing performance in function of the owned memory.
      *
      * @param input File already filled by old {@link BasicRTree} implementation.
@@ -110,13 +108,12 @@ public final class FileBasicRTree<E> extends BasicRTree<E> {
      * @param byteBufferLength length in Byte unit of the buffer which read and write all Tree Node on hard disk by TreeAccess object.
      * @throws IOException if problem during head reading from already filled file.
      * @throws StoreIndexException if file isn't already filled by {@link BasicRTree} implementation.
-     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      * @see BasicRTree
      * @see SplitCase
      * @see TreeElementMapper
      */
     public FileBasicRTree(final Path input, final TreeElementMapper<E> treeEltMap,
-            final int byteBufferLength) throws IOException, StoreIndexException, ClassNotFoundException {
+            final int byteBufferLength) throws IOException, StoreIndexException {
         super(new TreeAccessFile(input, TreeUtilities.BASIC_NUMBER, TreeUtilities.VERSION_NUMBER, byteBufferLength), treeEltMap);
     }
 }
