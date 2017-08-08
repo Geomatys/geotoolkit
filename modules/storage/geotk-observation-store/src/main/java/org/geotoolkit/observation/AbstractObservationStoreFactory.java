@@ -16,17 +16,11 @@
  */
 package org.geotoolkit.observation;
 
-import java.io.Serializable;
 import java.util.Map;
-import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.AbstractDataStoreFactory;
-import org.geotoolkit.storage.DataStore;
 import org.opengis.metadata.quality.ConformanceResult;
-import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
@@ -73,42 +67,6 @@ public abstract class AbstractObservationStoreFactory extends AbstractDataStoreF
      * {@inheritDoc }
      */
     @Override
-    public DataStore open(Map<String, ? extends Serializable> params) throws DataStoreException {
-        params = forceIdentifier(params);
-
-        final ParameterValueGroup prm = FeatureExt.toParameter(params,getParametersDescriptor());
-        if(prm == null){
-            return null;
-        }
-        try{
-            return open(prm);
-        }catch(InvalidParameterValueException ex){
-            throw new DataStoreException(ex);
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
-        params = forceIdentifier(params);
-
-        final ParameterValueGroup prm = FeatureExt.toParameter(params,getParametersDescriptor());
-        if(prm == null){
-            return null;
-        }
-        try{
-            return create(prm);
-        }catch(InvalidParameterValueException ex){
-            throw new DataStoreException(ex);
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public boolean canProcess(Map params) {
         //check the identifier is set
         params = forceIdentifier(params);
@@ -125,15 +83,9 @@ public abstract class AbstractObservationStoreFactory extends AbstractDataStoreF
             //this feature store factory does not declare a identifier id
         }
 
-
-
-        final ParameterValueGroup prm = FeatureExt.toParameter(params,getParametersDescriptor());
-        if(prm == null){
-            return false;
-        }
         try{
-            return canProcess(prm);
-        }catch(InvalidParameterValueException ex){
+            return canProcess(Parameters.toParameter(params, getParametersDescriptor()));
+        }catch(IllegalArgumentException ex){
             return false;
         }
     }

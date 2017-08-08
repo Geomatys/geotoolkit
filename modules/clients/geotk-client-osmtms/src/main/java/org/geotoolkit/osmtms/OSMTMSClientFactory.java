@@ -19,7 +19,6 @@ package org.geotoolkit.osmtms;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
@@ -108,15 +107,6 @@ public class OSMTMSClientFactory extends AbstractClientFactory implements Covera
     @Override
     public OSMTileMapClient open(Map<String, ? extends Serializable> params) throws DataStoreException {
         return (OSMTileMapClient) super.open(params);
-    }
-
-    @Override
-    public OSMTileMapClient create(Map<String, ? extends Serializable> params) throws DataStoreException {
-        try{
-            return create(FeatureExt.toParameter(params,getParametersDescriptor()));
-        }catch(InvalidParameterValueException ex){
-            throw new DataStoreException(ex);
-        }
     }
 
     @Override

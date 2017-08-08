@@ -87,17 +87,13 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      */
     @Override
     public DataStore open(Map<String, ? extends Serializable> params) throws DataStoreException {
-        params = forceIdentifier(params);
-
-        final ParameterValueGroup prm = Parameters.toParameter(params, getParametersDescriptor());
-        if(prm == null){
-            return null;
-        }
+        final ParameterValueGroup prm;
         try{
-            return open(prm);
-        }catch(InvalidParameterValueException ex){
+            prm = Parameters.toParameter(forceIdentifier(params), getParametersDescriptor());
+        }catch(IllegalArgumentException ex){
             throw new DataStoreException(ex);
         }
+        return open(prm);
     }
 
     /**
@@ -105,17 +101,13 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      */
     @Override
     public DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
-        params = forceIdentifier(params);
-
-        final ParameterValueGroup prm = Parameters.toParameter(params, getParametersDescriptor());
-        if(prm == null){
-            return null;
-        }
+        final ParameterValueGroup prm;
         try{
-            return create(prm);
-        }catch(InvalidParameterValueException ex){
+            prm = Parameters.toParameter(forceIdentifier(params), getParametersDescriptor());
+        }catch(IllegalArgumentException ex){
             throw new DataStoreException(ex);
         }
+        return create(prm);
     }
 
     /**
