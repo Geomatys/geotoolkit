@@ -69,6 +69,7 @@ public class WPS1Process extends AbstractProcess {
 
     private final WPSProcessingRegistry registry;
 
+    private ClientSecurity security;
     private boolean asReference = false;
     private boolean statusReport = false;
 
@@ -79,7 +80,29 @@ public class WPS1Process extends AbstractProcess {
     public WPS1Process(WPSProcessingRegistry registry, ProcessDescriptor desc, ParameterValueGroup params) {
         super(desc, params);
         this.registry = registry;
+        this.security = registry.getClient().getClientSecurity();
     }
+
+    /**
+     * Get client securing object.
+     * The default security is the one from the WebProcessingClient.
+     *
+     * @return ClientSecurity, never null.
+     */
+    public ClientSecurity getClientSecurity() {
+        return security;
+    }
+
+    /**
+     * Set client securing object.
+     *
+     * @param security not null
+     */
+    public void setClientSecurity(ClientSecurity security) {
+        ArgumentChecks.ensureNonNull("security", security);
+        this.security = security;
+    }
+
 
     public void setAsReference(boolean asReference) {
         this.asReference = asReference;
@@ -100,6 +123,7 @@ public class WPS1Process extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         final ExecuteRequest exec = createRequest();
+        exec.setClientSecurity(security);
 
         try {
             exec.getResponseStream();
@@ -390,6 +414,7 @@ public class WPS1Process extends AbstractProcess {
             }
 
             final ExecuteRequest request = registry.getClient().createExecute();
+            request.setClientSecurity(security);
             final org.geotoolkit.wps.xml.v100.Execute execute = (org.geotoolkit.wps.xml.v100.Execute) request.getContent();
             execute.setIdentifier(processId);
             request.setInputs(wpsIN);
