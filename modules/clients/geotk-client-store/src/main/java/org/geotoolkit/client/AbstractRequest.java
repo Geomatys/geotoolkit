@@ -32,6 +32,7 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import org.apache.sis.io.TableAppender;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.util.StringUtilities;
@@ -55,9 +56,9 @@ public abstract class AbstractRequest implements Request {
     protected static final String DONT_ENCODE_EQUAL = new String();
 
     /**
-     * Client security.
+     * Client security, never null.
      */
-    protected final ClientSecurity security;
+    protected ClientSecurity security;
 
     /**
      * The address of the web service.
@@ -150,6 +151,25 @@ public abstract class AbstractRequest implements Request {
      */
     public void setTimeout(int timeout) {
         this.timeout = timeout;
+    }
+
+    /**
+     * Get client securing object.
+     *
+     * @return ClientSecurity, never null.
+     */
+    public ClientSecurity getClientSecurity() {
+        return security;
+    }
+
+    /**
+     * Set client securing object.
+     *
+     * @param security not null
+     */
+    public void setClientSecurity(ClientSecurity security) {
+        ArgumentChecks.ensureNonNull("security", security);
+        this.security = security;
     }
 
     /**
