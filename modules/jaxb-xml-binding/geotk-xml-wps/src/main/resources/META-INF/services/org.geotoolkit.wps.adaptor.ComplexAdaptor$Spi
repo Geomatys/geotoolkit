@@ -8,3 +8,4 @@ org.geotoolkit.wps.adaptor.XMLAdaptor$Spi
 org.geotoolkit.wps.adaptor.ZipAdaptor$Spi
 org.geotoolkit.wps.adaptor.CSVAdaptor$Spi
 org.geotoolkit.wps.adaptor.CSVTextAdaptor$Spi
+org.geotoolkit.wps.adaptor.KMLAdaptor$Spi
