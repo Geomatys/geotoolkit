@@ -36,7 +36,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class DefaultFeatureResource extends AbstractResource implements FeatureResource, FeatureStoreListener {
+public final class DefaultFeatureResource extends AbstractResource implements FeatureSet, FeatureStoreListener {
 
     private final FeatureStoreListener.Weak weakListener = new StorageListener.Weak(this);
     private final FeatureStore store;
@@ -59,7 +59,7 @@ public final class DefaultFeatureResource extends AbstractResource implements Fe
     }
 
     @Override
-    public FeatureResource subset(Query query) throws DataStoreException {
+    public FeatureSet subset(Query query) throws DataStoreException {
         if (query==null) return this;
         return new DefaultFeatureResource(store, QueryUtilities.subQuery(this.query, query));
     }

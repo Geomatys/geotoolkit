@@ -135,7 +135,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection{
     }
 
     @Override
-    public FeatureCollection subCollection(final Query query) throws DataStoreException {
+    public FeatureCollection subset(final Query query) throws DataStoreException {
         final Query combine = QueryUtilities.subQuery(this.query, query);
         //the result should be an absolute query too.
         return QueryUtilities.evaluate("sub-"+getID(), combine);
@@ -254,7 +254,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection{
                     qb.setSource(getSource().getRight());
                     qb.setFilter(FF.equals(rightProperty, FF.literal(leftValue)));
                     final Query rightQuery = qb.buildQuery();
-                    rightIterator = rightCollection.subCollection(rightQuery).iterator();
+                    rightIterator = rightCollection.subset(rightQuery).iterator();
                 }
 
                 while(combined== null && rightIterator.hasNext()){
@@ -376,11 +376,11 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection{
                     if(left){
                         qb.setSource(getSource().getRight());
                         qb.setFilter(FF.equals(rightProperty, FF.literal(primeValue)));
-                        secondIterator = rightCollection.subCollection(qb.buildQuery()).iterator();
+                        secondIterator = rightCollection.subset(qb.buildQuery()).iterator();
                     }else{
                         qb.setSource(getSource().getLeft());
                         qb.setFilter(FF.equals(leftProperty, FF.literal(primeValue)));
-                        secondIterator = leftCollection.subCollection(qb.buildQuery()).iterator();
+                        secondIterator = leftCollection.subset(qb.buildQuery()).iterator();
                     }
                 }
 

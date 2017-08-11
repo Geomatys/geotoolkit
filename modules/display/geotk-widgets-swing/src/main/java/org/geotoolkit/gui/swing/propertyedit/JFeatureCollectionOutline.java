@@ -111,7 +111,7 @@ public class JFeatureCollectionOutline extends JPanel{
         qb.setStartIndex(index);
         qb.setMaxFeatures(1);
         try {
-            final FeatureCollection col = collection.subCollection(qb.buildQuery());
+            final FeatureCollection col = collection.subset(qb.buildQuery());
             final FeatureIterator ite = col.iterator();
             try{
                 if(ite.hasNext()){

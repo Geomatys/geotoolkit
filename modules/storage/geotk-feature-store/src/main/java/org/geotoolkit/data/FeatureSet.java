@@ -20,7 +20,6 @@ import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.content.DefaultFeatureCatalogueDescription;
 import org.apache.sis.metadata.iso.content.DefaultFeatureTypeInfo;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.storage.Resource;
 import org.opengis.metadata.Metadata;
@@ -30,7 +29,7 @@ import org.opengis.metadata.Metadata;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface FeatureResource extends Resource, FeatureSet {
+public interface FeatureSet extends Resource, org.apache.sis.storage.FeatureSet {
 
     @Override
     default Metadata getMetadata() throws DataStoreException {
@@ -54,7 +53,7 @@ public interface FeatureResource extends Resource, FeatureSet {
      * @return resource of features matching the given query.
      * @throws DataStoreException if an I/O or decoding error occurs.
      */
-    default FeatureResource subset(Query query) throws DataStoreException {
+    default FeatureSet subset(Query query) throws DataStoreException {
         return new SubsetFeatureResource(this, query);
     }
 

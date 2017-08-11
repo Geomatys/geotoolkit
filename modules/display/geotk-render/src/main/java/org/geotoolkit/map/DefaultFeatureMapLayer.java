@@ -184,7 +184,7 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
         final QueryBuilder qb = new QueryBuilder();
         qb.setTypeName(getCollection().getType().getName());
         qb.setProperties(properties.toArray(new String[properties.size()]));
-        final FeatureCollection col = getCollection().subCollection(qb.buildQuery());
+        final FeatureCollection col = getCollection().subset(qb.buildQuery());
 
         final FeatureIterator ite = col.iterator();
         while(ite.hasNext()){

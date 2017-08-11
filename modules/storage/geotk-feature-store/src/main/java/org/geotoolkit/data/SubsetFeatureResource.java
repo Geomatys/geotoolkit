@@ -34,15 +34,15 @@ import org.opengis.metadata.Metadata;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class SubsetFeatureResource extends AbstractResource implements FeatureResource, FeatureStoreListener {
+final class SubsetFeatureResource extends AbstractResource implements FeatureSet, FeatureStoreListener {
 
     private final FeatureStoreListener.Weak weakListener = new StorageListener.Weak(this);
 
-    private final FeatureResource parent;
+    private final FeatureSet parent;
     private final Query query;
     private FeatureType type;
 
-    public SubsetFeatureResource(FeatureResource parent, Query query) {
+    public SubsetFeatureResource(FeatureSet parent, Query query) {
         super(parent.getIdentifier());
         this.parent = parent;
         this.query = query;
@@ -65,7 +65,7 @@ final class SubsetFeatureResource extends AbstractResource implements FeatureRes
     }
 
     @Override
-    public FeatureResource subset(Query query) throws DataStoreException {
+    public FeatureSet subset(Query query) throws DataStoreException {
         final Query merge = QueryUtilities.subQuery(this.query, query);
         return new SubsetFeatureResource(parent, merge);
     }

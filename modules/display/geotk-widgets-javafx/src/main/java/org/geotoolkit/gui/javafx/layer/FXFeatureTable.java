@@ -281,7 +281,7 @@ public class FXFeatureTable extends FXPropertyPane{
 
             final FeatureCollection subcol;
             try {
-                subcol = features.subCollection(qb.buildQuery());
+                subcol = features.subset(qb.buildQuery());
             } catch (DataStoreException ex) {
                 Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(),ex);
                 return Collections.EMPTY_LIST.listIterator();

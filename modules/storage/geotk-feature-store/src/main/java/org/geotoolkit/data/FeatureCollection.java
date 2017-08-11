@@ -26,12 +26,10 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
-import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Identifier;
 
 /**
@@ -47,7 +45,7 @@ import org.opengis.metadata.Identifier;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface FeatureCollection extends Collection<Feature>, FeatureResource {
+public interface FeatureCollection extends Collection<Feature>, FeatureSet {
 
     /**
      * A feature collection is created with an id.
@@ -90,15 +88,6 @@ public interface FeatureCollection extends Collection<Feature>, FeatureResource 
     FeatureType getType();
 
     /**
-     * Get the envelope of all features in this collection.
-     *
-     * @return envelope or null if there are no features or no geometrics attributes
-     * available.
-     * @throws DataStoreException
-     */
-    Envelope getEnvelope() throws DataStoreException;
-
-    /**
      * Check if we can modify this collection.
      *
      * @return true is edition operation are possible on this collection, false otherwise.
@@ -114,7 +103,7 @@ public interface FeatureCollection extends Collection<Feature>, FeatureResource 
      * @return FeatureCollection , never null.
      * @throws DataStoreException
      */
-    FeatureCollection subCollection(Query query) throws DataStoreException;
+    FeatureCollection subset(Query query) throws DataStoreException;
 
     /**
      * Override Iterator to return a limited type FeatureIterator.

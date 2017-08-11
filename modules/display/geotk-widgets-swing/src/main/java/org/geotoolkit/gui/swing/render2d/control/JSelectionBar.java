@@ -190,7 +190,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
                         final Query sub = QueryUtilities.subQuery(fml.getQuery(), QueryBuilder.filtered("select", selection));
                         FeatureIterator ite = null;
                         try {
-                            final FeatureCollection col = fml.getCollection().subCollection(sub);
+                            final FeatureCollection col = fml.getCollection().subset(sub);
                             selections.add(col);
                             if(systemclipboard){
                                 ite = col.iterator();

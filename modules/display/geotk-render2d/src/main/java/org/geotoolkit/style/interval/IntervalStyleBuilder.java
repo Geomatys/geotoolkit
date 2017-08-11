@@ -389,7 +389,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
         FeatureIterator features = null;
         try{
-            features = layer.getCollection().subCollection(query.buildQuery()).iterator();
+            features = layer.getCollection().subset(query.buildQuery()).iterator();
             List<Double> values = new ArrayList<Double>();
 
             while(features.hasNext()){

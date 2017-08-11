@@ -23,7 +23,6 @@ import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.data.FeatureResource;
 import org.geotoolkit.internal.feature.CoverageFeature;
 import org.geotoolkit.internal.feature.TypeConventions;
 import org.opengis.feature.Feature;
@@ -31,6 +30,7 @@ import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.metadata.content.CoverageDescription;
+import org.geotoolkit.data.FeatureSet;
 
 /**
  * Resource to a coverage in the coverage store.
@@ -38,7 +38,7 @@ import org.opengis.metadata.content.CoverageDescription;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface CoverageResource extends FeatureResource {
+public interface CoverageResource extends FeatureSet {
 
     /**
      * Name of the coverage. act as an identifier in the coverage store

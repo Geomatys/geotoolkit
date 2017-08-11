@@ -275,7 +275,7 @@ public class CategoryStyleBuilder extends Factory {
 
         FeatureIterator features = null;
         try{
-            features = layer.getCollection().subCollection(query).iterator();
+            features = layer.getCollection().subset(query).iterator();
             while(features.hasNext()){
                 final Feature feature = features.next();
                 differentValues.add(property.evaluate(feature));

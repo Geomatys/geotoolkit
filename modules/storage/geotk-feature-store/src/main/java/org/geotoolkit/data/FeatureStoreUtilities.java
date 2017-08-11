@@ -332,7 +332,7 @@ public class FeatureStoreUtilities {
                 }
             }
 
-            cols[i] = col.subCollection( QueryBuilder.filtered(name.toString(), filter) );
+            cols[i] = col.subset( QueryBuilder.filtered(name.toString(), filter) );
 
             //retype the collection
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder(baseType);

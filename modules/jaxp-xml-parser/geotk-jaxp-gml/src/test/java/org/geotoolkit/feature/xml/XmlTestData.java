@@ -315,7 +315,7 @@ public class XmlTestData {
         collectionSimple.add(simpleFeature2);
         collectionSimple.add(simpleFeature3);
         try {
-            collectionSimple = collectionSimple.subCollection(
+            collectionSimple = collectionSimple.subset(
                     QueryBuilder.sorted(collectionSimple.getType().getName().toString(), FF.sort("attDouble", SortOrder.ASCENDING)));
         } catch (DataStoreException ex) {
             throw new RuntimeException(ex.getMessage(),ex);
