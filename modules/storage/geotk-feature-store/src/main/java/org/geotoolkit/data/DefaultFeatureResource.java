@@ -65,7 +65,7 @@ public final class DefaultFeatureResource extends AbstractResource implements Fe
     }
 
     @Override
-    public Stream<Feature> features() throws DataStoreException {
+    public Stream<Feature> features(boolean parallal) throws DataStoreException {
         final FeatureReader reader = store.getFeatureReader(query);
         final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize((Iterator)reader, Spliterator.ORDERED);
         final Stream<Feature> stream = StreamSupport.stream(spliterator, false);

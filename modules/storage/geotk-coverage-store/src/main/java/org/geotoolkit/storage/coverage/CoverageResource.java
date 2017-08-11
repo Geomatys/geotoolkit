@@ -17,21 +17,13 @@
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Image;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureResource;
-import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.internal.feature.CoverageFeature;
 import org.geotoolkit.internal.feature.TypeConventions;
 import org.opengis.feature.Feature;
@@ -128,7 +120,7 @@ public interface CoverageResource extends FeatureResource {
     }
 
     @Override
-    public default Stream<Feature> features() throws DataStoreException {
+    public default Stream<Feature> features(boolean parallal) throws DataStoreException {
         final FeatureType type = getType();
         final FeatureAssociationRole role = (FeatureAssociationRole) type.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
         final Feature feature = type.newInstance();

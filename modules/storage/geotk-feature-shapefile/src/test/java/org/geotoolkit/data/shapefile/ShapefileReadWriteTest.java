@@ -129,11 +129,11 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 
             final Resource r = store.findResource(typeName);
             Assert.assertTrue(r instanceof FeatureResource);
-            final List<Feature> features = ((FeatureResource)r).features().collect(Collectors.toList());
+            final List<Feature> features = ((FeatureResource)r).features(false).collect(Collectors.toList());
             //compare(features, Collections.singleton(f));
             Assert.assertEquals("Written features", 1, features.size());
 
-            final Feature reprojectedFeature = reprojected.features()
+            final Feature reprojectedFeature = reprojected.features(false)
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("The test should define at least a single feature !"));
 

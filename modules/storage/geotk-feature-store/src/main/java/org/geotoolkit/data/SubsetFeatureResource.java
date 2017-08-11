@@ -71,8 +71,8 @@ final class SubsetFeatureResource extends AbstractResource implements FeatureRes
     }
 
     @Override
-    public Stream<Feature> features() throws DataStoreException {
-        return FeatureStreams.subset(parent.features(), getType(), query);
+    public Stream<Feature> features(boolean parallal) throws DataStoreException {
+        return FeatureStreams.subset(parent.features(false), getType(), query);
     }
 
     @Override

@@ -144,7 +144,7 @@ public interface FeatureCollection extends Collection<Feature>, FeatureResource 
     FeatureIterator iterator(Hints hints) throws FeatureStoreRuntimeException;
 
     @Override
-    default Stream<Feature> features() throws DataStoreException {
+    default Stream<Feature> features(boolean parallal) throws DataStoreException {
         return stream();
     }
 
