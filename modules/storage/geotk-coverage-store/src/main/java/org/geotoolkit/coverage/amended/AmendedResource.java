@@ -17,6 +17,9 @@
 package org.geotoolkit.coverage.amended;
 
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataSet;
 import org.geotoolkit.storage.DefaultDataSet;
 import org.geotoolkit.storage.Resource;
@@ -40,7 +43,11 @@ final class AmendedResource extends DefaultDataSet {
     private final StorageListener subListener = new StorageListener(){
         @Override
         public void structureChanged(StorageEvent event) {
-            rebuildNodes();
+            try {
+                rebuildNodes();
+            } catch (DataStoreException ex) {
+                store.getLogger().log(Level.WARNING, ex.getMessage(),ex);
+            }
             sendStructureEvent(event.copy(AmendedResource.this));
         }
         @Override
@@ -49,7 +56,7 @@ final class AmendedResource extends DefaultDataSet {
         }
     };
 
-    AmendedResource(DataSet node, final AmendedCoverageStore store) {
+    AmendedResource(DataSet node, final AmendedCoverageStore store) throws DataStoreException {
         super(node.getIdentifier());
         this.store = store;
         this.base = node;
@@ -60,9 +67,9 @@ final class AmendedResource extends DefaultDataSet {
     /**
      * Wrap node children.
      */
-    private void rebuildNodes(){
-        if(!getResources().isEmpty()) getResources().clear();
-        final Collection<Resource> children = base.getResources();
+    private void rebuildNodes() throws DataStoreException{
+        if(!components().isEmpty()) components().clear();
+        final Collection<Resource> children = base.components();
         for(Resource n : children){
             if(n instanceof PyramidalCoverageResource){
                 //TODO : create an amended reference which declares itself as a pyramid.

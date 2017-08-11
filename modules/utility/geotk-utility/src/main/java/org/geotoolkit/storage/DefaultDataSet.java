@@ -53,7 +53,7 @@ public class DefaultDataSet extends AbstractResource implements DataSet {
     }
 
     @Override
-    public Collection<Resource> getResources() {
+    public Collection<Resource> components() {
         return Collections.unmodifiableList(resources);
     }
 

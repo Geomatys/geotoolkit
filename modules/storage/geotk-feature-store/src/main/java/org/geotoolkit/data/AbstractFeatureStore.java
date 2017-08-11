@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -62,13 +63,17 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.metadata.NameToIdentifier;
 import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.geotoolkit.storage.DataSet;
 import org.geotoolkit.storage.DefaultDataSet;
 import org.geotoolkit.storage.Resource;
 import org.opengis.feature.AttributeType;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.ScopedName;
 
@@ -170,9 +175,58 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         return ds;
     }
 
+    /**
+     * Get a collection of all available names.
+     * @return {@literal Set<Name>}, never null, but can be empty.
+     */
+    public Set<GenericName> getNames() throws DataStoreException {
+        final Set<GenericName> names = new HashSet<>();
+        listNames(getRootResource(), names);
+        return names;
+    }
+
+    private static void listNames(Resource resource, Set<GenericName> names) throws DataStoreException {
+        final Identifier identifier = resource.getIdentifier();
+        if (identifier instanceof GenericName) {
+            names.add((GenericName) identifier);
+        } else {
+            names.add(NamesExt.create(identifier.getCode()));
+        }
+        if (resource instanceof DataSet) {
+            final DataSet ds = (DataSet) resource;
+            for (Resource rs : ds.components()) {
+                listNames(rs,names);
+            }
+        }
+    }
+
     @Override
     public Resource findResource(String name) throws DataStoreException {
-        return FeatureStore.super.findResource(name);
+        Resource res = findResource(getRootResource(), name);
+        if (res==null) {
+            throw new IllegalNameException("No resource for name : "+name);
+        }
+        return (Resource) res;
+    }
+
+    private Resource findResource(final Resource candidate, String name) throws DataStoreException {
+
+        final boolean match = NameToIdentifier.isHeuristicMatchForIdentifier(Collections.singleton(candidate.getIdentifier()), name);
+        Resource result = match ? candidate : null;
+
+        if (candidate instanceof DataSet) {
+            final DataSet ds = (DataSet) candidate;
+            for (Resource rs : ds.components()) {
+                Object rr = findResource(rs,name);
+                if (rr instanceof Resource) {
+                    if (result!=null) {
+                        throw new DataStoreException("Multiple resources match the name : "+name);
+                    }
+                    result = (Resource) rr;
+                }
+            }
+        }
+        return result;
     }
 
     /**

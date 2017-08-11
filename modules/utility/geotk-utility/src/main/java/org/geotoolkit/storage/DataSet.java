@@ -17,6 +17,7 @@
 package org.geotoolkit.storage;
 
 import java.util.Collection;
+import org.apache.sis.storage.DataStoreException;
 
 /**
  *
@@ -24,6 +25,6 @@ import java.util.Collection;
  */
 public interface DataSet extends Resource {
 
-    Collection<Resource> getResources();
+    Collection<Resource> components() throws DataStoreException;
 
 }

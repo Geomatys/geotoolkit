@@ -39,7 +39,7 @@ public class DefaultCollectionCoverageResource extends AbstractCollectionCoverag
     @Override
     public Collection<CoverageResource> getCoverages(GridCoverageReadParam readParam) {
         final List<CoverageResource> resources = new ArrayList<>();
-        for (Resource res : getResources()) {
+        for (Resource res : components()) {
             if (res instanceof CoverageResource) {
                 resources.add((CoverageResource) res);
             }

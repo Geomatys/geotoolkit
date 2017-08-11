@@ -13,6 +13,7 @@ import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.junit.Assert;
@@ -53,7 +54,7 @@ public class MemoryStoreTest {
 
         final Metadata md = store.getMetadata();
 
-        final CoverageResource[] refs = AbstractCoverageStore.flattenSubTree(root)
+        final CoverageResource[] refs = DataStores.flatten(root)
                 .filter(node -> node instanceof CoverageResource)
                 .map(node -> (CoverageResource) node)
                 .toArray(size -> new CoverageResource[size]);

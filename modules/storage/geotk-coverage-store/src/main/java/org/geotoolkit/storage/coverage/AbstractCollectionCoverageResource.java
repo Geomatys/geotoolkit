@@ -91,7 +91,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
     }
 
     @Override
-    public Collection<Resource> getResources() {
+    public Collection<Resource> components() {
         return Collections.unmodifiableList(resources);
     }
 

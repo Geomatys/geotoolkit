@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.coverage.amended;
 
+import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataSet;
 import org.geotoolkit.storage.DataStoreFactory;
@@ -90,6 +91,11 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
     @Override
     public DataStoreFactory getFactory() {
         return store.getFactory();
+    }
+
+    @Override
+    public Logger getLogger() {
+        return super.getLogger();
     }
 
     /**

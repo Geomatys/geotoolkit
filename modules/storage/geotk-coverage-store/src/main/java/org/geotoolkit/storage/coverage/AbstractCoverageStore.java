@@ -19,6 +19,7 @@ package org.geotoolkit.storage.coverage;
 
 import java.awt.Point;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.sis.internal.metadata.NameToIdentifier;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -44,6 +46,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.storage.DataSet;
 import org.geotoolkit.storage.DataStore;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
@@ -115,7 +118,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
         // Queries data specific information
         final Map<GenericName, GeneralGridGeometry> geometries = new HashMap<>();
-        final List<CoverageResource> refs = flattenSubTree(root)
+        final List<CoverageResource> refs = DataStores.flatten(root)
                 .filter(node -> node instanceof CoverageResource)
                 .map(node -> ((CoverageResource) node))
                 .collect(Collectors.toList());
@@ -261,7 +264,31 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
     @Override
     public Resource findResource(String name) throws DataStoreException {
-        return CoverageStore.super.findResource(name);      // TODO: should it delegates to findResource(GenericName)?
+        Resource res = findResource(getRootResource(), name);
+        if (res==null) {
+            throw new IllegalNameException("No resource for name : "+name);
+        }
+        return (Resource) res;
+    }
+
+    private Resource findResource(final Resource candidate, String name) throws DataStoreException {
+
+        final boolean match = NameToIdentifier.isHeuristicMatchForIdentifier(Collections.singleton(candidate.getIdentifier()), name);
+        Resource result = match ? candidate : null;
+
+        if (candidate instanceof DataSet) {
+            final DataSet ds = (DataSet) candidate;
+            for (Resource rs : ds.components()) {
+                Object rr = findResource(rs,name);
+                if (rr instanceof Resource) {
+                    if (result!=null) {
+                        throw new DataStoreException("Multiple resources match the name : "+name);
+                    }
+                    result = (Resource) rr;
+                }
+            }
+        }
+        return result;
     }
 
     protected synchronized GenericNameIndex<CoverageResource> listReferences() throws DataStoreException {
@@ -272,7 +299,8 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         return cachedRefs;
     }
 
-    private GenericNameIndex<CoverageResource> listReferences(Resource candidate, GenericNameIndex<CoverageResource> map) throws IllegalNameException{
+    private GenericNameIndex<CoverageResource> listReferences(Resource candidate, GenericNameIndex<CoverageResource> map)
+            throws IllegalNameException, DataStoreException{
 
         if(candidate instanceof CoverageResource){
             final CoverageResource cr = (CoverageResource) candidate;
@@ -280,7 +308,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         }
 
         if (candidate instanceof DataSet) {
-            for(Resource child : ((DataSet)candidate).getResources()){
+            for(Resource child : ((DataSet)candidate).components()){
                 listReferences(child, map);
             }
         }
@@ -473,22 +501,4 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         sendContentEvent(event.copy(this));
     }
 
-    /**
-     * Send back a list of all nodes in a tree. Nodes are ordered by depth-first
-     * encounter order.
-     *
-     * @param root Node to start flattening from. It will be included in result.
-     * @return A list of all nodes under given root.
-     * @throws NullPointerException If input node is null.
-     */
-    public static Stream<? extends Resource> flattenSubTree(final Resource root) throws NullPointerException {
-        Stream<Resource> nodeStream = Stream.of(root);
-        if (root instanceof DataSet) {
-            nodeStream = Stream.concat( nodeStream,
-                    ((DataSet) root).getResources().stream()
-                            .flatMap(AbstractCoverageStore::flattenSubTree)
-            );
-        }
-        return nodeStream;
-    }
 }

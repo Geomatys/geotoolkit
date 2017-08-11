@@ -123,7 +123,11 @@ public abstract class AbstractResource implements Resource{
             //do nothing
         }
         if (this instanceof DataSet) {
-            return StringUtilities.toStringTree(name.toString(), ((DataSet)this).getResources());
+            try {
+                return StringUtilities.toStringTree(name.toString(), ((DataSet)this).components());
+            } catch (DataStoreException ex) {
+                return name.toString() +" (Failed to list resource components)";
+            }
         } else {
             return name.toString();
         }

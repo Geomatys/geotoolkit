@@ -64,7 +64,7 @@ public class WrapCoverageStore extends DataStore implements CoverageStore{
 
     @Override
     public Resource findResource(String name) throws DataStoreException {
-        return CoverageStore.super.findResource(name);
+        return (Resource) super.findResource(name);
     }
 
     @Override

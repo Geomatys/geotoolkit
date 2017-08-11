@@ -17,11 +17,14 @@
 package org.geotoolkit.storage;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.stream.Stream;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.lang.Static;
@@ -177,6 +180,30 @@ public final class DataStores extends Static {
                     + "Are every required JAR files accessible on the classpath?");
         }
         return null;
+    }
+
+
+    /**
+     * Send back a list of all nodes in a tree. Nodes are ordered by depth-first
+     * encounter order.
+     *
+     * @param root Node to start flattening from. It will be included in result.
+     * @return A list of all nodes under given root.
+     * @throws NullPointerException If input node is null.
+     */
+    public static Stream<? extends Resource> flatten(final Resource root) throws DataStoreException {
+        final List<Resource> lst = new ArrayList<>();
+        flatten(root, lst);
+        return lst.stream();
+    }
+
+    private static void flatten(Resource root, List<Resource> lst) throws DataStoreException {
+        lst.add(root);
+        if (root instanceof DataSet) {
+            for (Resource res : ((DataSet) root).components()) {
+                flatten(res, lst);
+            }
+        }
     }
 
     /**
