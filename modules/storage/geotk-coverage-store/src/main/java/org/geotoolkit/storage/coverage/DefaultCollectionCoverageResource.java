@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.storage.Resource;
 import org.opengis.util.GenericName;
 
 /**

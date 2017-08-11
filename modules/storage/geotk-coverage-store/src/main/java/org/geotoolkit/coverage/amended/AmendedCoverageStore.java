@@ -17,10 +17,10 @@
 package org.geotoolkit.coverage.amended;
 
 import java.util.logging.Logger;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.DataSet;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
@@ -108,7 +108,7 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
             if (res instanceof CoverageResource) {
                 root = new AmendedCoverageResource((CoverageResource) res, this);
             } else {
-                root = new AmendedResource((DataSet) res, this);
+                root = new AmendedResource((Aggregate) res, this);
             }
 
         }

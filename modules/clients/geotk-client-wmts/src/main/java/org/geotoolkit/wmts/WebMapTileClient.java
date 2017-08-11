@@ -33,7 +33,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.wmts.v100.GetCapabilities100;
 import org.geotoolkit.wmts.v100.GetTile100;
@@ -57,7 +57,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wmts");
 
     private Capabilities capabilities;
-    private DefaultDataSet rootNode = null;
+    private DefaultAggregate rootNode = null;
 
     /**
      * Defines the timeout in milliseconds for the GetCapabilities request.
@@ -258,7 +258,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
     @Override
     public synchronized Resource getRootResource() throws DataStoreException {
         if(rootNode == null){
-            rootNode = new DefaultDataSet(NamesExt.create("root"));
+            rootNode = new DefaultAggregate(NamesExt.create("root"));
 
             final Capabilities capa = getCapabilities();
             if(capa == null){

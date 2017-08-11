@@ -30,7 +30,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageType;
@@ -49,7 +49,7 @@ import org.geotoolkit.storage.Resource;
  */
 public class LandsatCoverageStore extends AbstractCoverageStore {
 
-    private final DefaultDataSet root = new DefaultDataSet(NamesExt.create("root"));
+    private final DefaultAggregate root = new DefaultAggregate(NamesExt.create("root"));
 
     /**
      * The current parent landsat8 directory.

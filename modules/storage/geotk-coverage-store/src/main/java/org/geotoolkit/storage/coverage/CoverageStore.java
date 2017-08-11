@@ -18,8 +18,8 @@ package org.geotoolkit.storage.coverage;
 
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -58,7 +58,7 @@ public interface CoverageStore extends AutoCloseable {
      * @return DataNode never null.
      * @throws org.apache.sis.storage.DataStoreException
      */
-    public abstract Resource getRootResource() throws DataStoreException;
+    Resource getRootResource() throws DataStoreException;
 
     /**
      * Get a collection of all available coverage names.
@@ -66,7 +66,7 @@ public interface CoverageStore extends AutoCloseable {
      * @return Set<GenericName> , never null, but can be empty.
      * @throws DataStoreException
      */
-    public Set<GenericName> getNames() throws DataStoreException;
+    Set<GenericName> getNames() throws DataStoreException;
 
     Resource findResource(final String name) throws DataStoreException;
 

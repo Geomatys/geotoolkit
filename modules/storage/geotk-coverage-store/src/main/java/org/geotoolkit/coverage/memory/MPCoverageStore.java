@@ -21,7 +21,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageType;
-import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.Resource;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -34,7 +34,7 @@ import org.geotoolkit.util.NamesExt;
  */
 public class MPCoverageStore extends AbstractCoverageStore {
 
-    private final DefaultDataSet rootNode = new DefaultDataSet(NamesExt.create("root"));
+    private final DefaultAggregate rootNode = new DefaultAggregate(NamesExt.create("root"));
 
     /**
      * Dummy parameter descriptor group.

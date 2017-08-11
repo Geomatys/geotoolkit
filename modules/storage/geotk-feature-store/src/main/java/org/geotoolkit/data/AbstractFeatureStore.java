@@ -66,11 +66,11 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.metadata.NameToIdentifier;
 import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.storage.DataSet;
-import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.Resource;
 import org.opengis.feature.AttributeType;
 import org.opengis.metadata.Identifier;
@@ -168,7 +168,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
 
     @Override
     public Resource getRootResource() throws DataStoreException {
-        final DefaultDataSet ds = new DefaultDataSet(NamesExt.create("root"));
+        final DefaultAggregate ds = new DefaultAggregate(NamesExt.create("root"));
         for (GenericName name : getNames()) {
             ds.addResource(new DefaultFeatureResource(this, name));
         }
@@ -185,16 +185,16 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         return names;
     }
 
-    private static void listNames(Resource resource, Set<GenericName> names) throws DataStoreException {
-        final Identifier identifier = resource.getIdentifier();
+    private static void listNames(org.apache.sis.storage.Resource resource, Set<GenericName> names) throws DataStoreException {
+        final Identifier identifier = ((Resource)resource).getIdentifier();
         if (identifier instanceof GenericName) {
             names.add((GenericName) identifier);
         } else {
             names.add(NamesExt.create(identifier.getCode()));
         }
-        if (resource instanceof DataSet) {
-            final DataSet ds = (DataSet) resource;
-            for (Resource rs : ds.components()) {
+        if (resource instanceof Aggregate) {
+            final Aggregate ds = (Aggregate) resource;
+            for (org.apache.sis.storage.Resource rs : ds.components()) {
                 listNames(rs,names);
             }
         }
@@ -209,14 +209,14 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         return (Resource) res;
     }
 
-    private Resource findResource(final Resource candidate, String name) throws DataStoreException {
+    private Resource findResource(final org.apache.sis.storage.Resource candidate, String name) throws DataStoreException {
 
-        final boolean match = NameToIdentifier.isHeuristicMatchForIdentifier(Collections.singleton(candidate.getIdentifier()), name);
-        Resource result = match ? candidate : null;
+        final boolean match = NameToIdentifier.isHeuristicMatchForIdentifier(Collections.singleton(((Resource)candidate).getIdentifier()), name);
+        Resource result = match ? (Resource)candidate : null;
 
-        if (candidate instanceof DataSet) {
-            final DataSet ds = (DataSet) candidate;
-            for (Resource rs : ds.components()) {
+        if (candidate instanceof Aggregate) {
+            final Aggregate ds = (Aggregate) candidate;
+            for (org.apache.sis.storage.Resource rs : ds.components()) {
                 Object rr = findResource(rs,name);
                 if (rr instanceof Resource) {
                     if (result!=null) {

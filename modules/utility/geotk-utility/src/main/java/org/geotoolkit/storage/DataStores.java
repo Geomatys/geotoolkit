@@ -26,6 +26,7 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Stream;
 import org.apache.sis.metadata.iso.citation.Citations;
+import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArgumentChecks;
@@ -191,16 +192,16 @@ public final class DataStores extends Static {
      * @return A list of all nodes under given root.
      * @throws NullPointerException If input node is null.
      */
-    public static Stream<? extends Resource> flatten(final Resource root) throws DataStoreException {
-        final List<Resource> lst = new ArrayList<>();
+    public static Stream<? extends org.apache.sis.storage.Resource> flatten(final org.apache.sis.storage.Resource root) throws DataStoreException {
+        final List<org.apache.sis.storage.Resource> lst = new ArrayList<>();
         flatten(root, lst);
         return lst.stream();
     }
 
-    private static void flatten(Resource root, List<Resource> lst) throws DataStoreException {
+    private static void flatten(org.apache.sis.storage.Resource root, List<org.apache.sis.storage.Resource> lst) throws DataStoreException {
         lst.add(root);
-        if (root instanceof DataSet) {
-            for (Resource res : ((DataSet) root).components()) {
+        if (root instanceof Aggregate) {
+            for (org.apache.sis.storage.Resource res : ((Aggregate) root).components()) {
                 flatten(res, lst);
             }
         }

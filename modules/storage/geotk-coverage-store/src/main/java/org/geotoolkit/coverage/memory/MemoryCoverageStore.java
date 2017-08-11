@@ -39,7 +39,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.Resource;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -58,7 +58,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
      */
     private static final ParameterDescriptorGroup EMPTY_DESCRIPTOR = new ParameterBuilder().addName("Unamed").createGroup();
 
-    private final DefaultDataSet rootNode = new DefaultDataSet(NamesExt.create("root"));
+    private final DefaultAggregate rootNode = new DefaultAggregate(NamesExt.create("root"));
 
 
     public MemoryCoverageStore() {

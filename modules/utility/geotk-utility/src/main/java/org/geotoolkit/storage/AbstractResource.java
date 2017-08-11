@@ -19,6 +19,7 @@ package org.geotoolkit.storage;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.StringUtilities;
@@ -122,9 +123,9 @@ public abstract class AbstractResource implements Resource{
         } catch (DataStoreException ex) {
             //do nothing
         }
-        if (this instanceof DataSet) {
+        if (this instanceof Aggregate) {
             try {
-                return StringUtilities.toStringTree(name.toString(), ((DataSet)this).components());
+                return StringUtilities.toStringTree(name.toString(), ((Aggregate)this).components());
             } catch (DataStoreException ex) {
                 return name.toString() +" (Failed to list resource components)";
             }

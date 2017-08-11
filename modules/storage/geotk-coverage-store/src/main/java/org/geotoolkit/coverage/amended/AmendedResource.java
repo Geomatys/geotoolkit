@@ -18,11 +18,10 @@ package org.geotoolkit.coverage.amended;
 
 import java.util.Collection;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.DataSet;
-import org.geotoolkit.storage.DefaultDataSet;
-import org.geotoolkit.storage.Resource;
+import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.storage.coverage.CoverageResource;
@@ -33,8 +32,8 @@ import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class AmendedResource extends DefaultDataSet {
-    private final DataSet base;
+final class AmendedResource extends DefaultAggregate {
+    private final Aggregate base;
     private final AmendedCoverageStore store;
 
     /**
@@ -56,11 +55,11 @@ final class AmendedResource extends DefaultDataSet {
         }
     };
 
-    AmendedResource(DataSet node, final AmendedCoverageStore store) throws DataStoreException {
-        super(node.getIdentifier());
+    AmendedResource(Aggregate node, final AmendedCoverageStore store) throws DataStoreException {
+        super(((org.geotoolkit.storage.Resource)node).getIdentifier());
         this.store = store;
         this.base = node;
-        node.addStorageListener(new StorageListener.Weak(store, subListener));
+        ((org.geotoolkit.storage.Resource)node).addStorageListener(new StorageListener.Weak(store, subListener));
         rebuildNodes();
     }
 
@@ -76,8 +75,8 @@ final class AmendedResource extends DefaultDataSet {
                 resources.add(new AmendedCoverageResource((CoverageResource)n, store));
             }else if(n instanceof CoverageResource){
                 resources.add(new AmendedCoverageResource((CoverageResource)n, store));
-            }else if(n instanceof DataSet){
-                resources.add(new AmendedResource((DataSet)n, store));
+            }else if(n instanceof Aggregate){
+                resources.add(new AmendedResource((Aggregate)n, store));
             }
         }
     }

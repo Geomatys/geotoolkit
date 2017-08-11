@@ -36,7 +36,7 @@ import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -103,7 +103,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
 
     @Override
     public Resource getRootResource() throws DataStoreException {
-        final DefaultDataSet root = new DefaultDataSet(NamesExt.create("root"));
+        final DefaultAggregate root = new DefaultAggregate(NamesExt.create("root"));
 
         final StringBuilder query = new StringBuilder();
 

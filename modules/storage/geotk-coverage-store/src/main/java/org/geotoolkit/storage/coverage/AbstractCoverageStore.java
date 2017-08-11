@@ -30,12 +30,13 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.sis.internal.metadata.NameToIdentifier;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.util.Classes;
@@ -44,10 +45,8 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.data.GenericNameIndex;
-import org.geotoolkit.storage.DataSet;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
@@ -268,16 +267,16 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         if (res==null) {
             throw new IllegalNameException("No resource for name : "+name);
         }
-        return (Resource) res;
+        return (org.geotoolkit.storage.Resource) res;
     }
 
-    private Resource findResource(final Resource candidate, String name) throws DataStoreException {
+    private Resource findResource(final org.apache.sis.storage.Resource candidate, String name) throws DataStoreException {
 
-        final boolean match = NameToIdentifier.isHeuristicMatchForIdentifier(Collections.singleton(candidate.getIdentifier()), name);
-        Resource result = match ? candidate : null;
+        final boolean match = NameToIdentifier.isHeuristicMatchForIdentifier(Collections.singleton(((org.geotoolkit.storage.Resource)candidate).getIdentifier()), name);
+        Resource result = match ? (Resource)candidate : null;
 
-        if (candidate instanceof DataSet) {
-            final DataSet ds = (DataSet) candidate;
+        if (candidate instanceof Aggregate) {
+            final Aggregate ds = (Aggregate) candidate;
             for (Resource rs : ds.components()) {
                 Object rr = findResource(rs,name);
                 if (rr instanceof Resource) {
@@ -299,7 +298,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         return cachedRefs;
     }
 
-    private GenericNameIndex<CoverageResource> listReferences(Resource candidate, GenericNameIndex<CoverageResource> map)
+    private GenericNameIndex<CoverageResource> listReferences(org.apache.sis.storage.Resource candidate, GenericNameIndex<CoverageResource> map)
             throws IllegalNameException, DataStoreException{
 
         if(candidate instanceof CoverageResource){
@@ -307,8 +306,8 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
             map.add(cr.getName(), cr);
         }
 
-        if (candidate instanceof DataSet) {
-            for(Resource child : ((DataSet)candidate).components()){
+        if (candidate instanceof Aggregate) {
+            for(org.apache.sis.storage.Resource child : ((Aggregate)candidate).components()){
                 listReferences(child, map);
             }
         }
