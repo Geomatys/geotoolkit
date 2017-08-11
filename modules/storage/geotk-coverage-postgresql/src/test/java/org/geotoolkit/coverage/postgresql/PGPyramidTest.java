@@ -49,10 +49,10 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 
-import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.storage.DataStores;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.measure.Units;
+import org.geotoolkit.parameter.Parameters;
 
 /**
  *
@@ -72,7 +72,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         Assume.assumeTrue(f.exists());
         final Properties properties = new Properties();
         properties.load(new FileInputStream(f));
-        params = FeatureExt.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
+        params = Parameters.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
     }
 
     public PGPyramidTest(){

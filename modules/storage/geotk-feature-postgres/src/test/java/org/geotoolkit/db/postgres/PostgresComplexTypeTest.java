@@ -62,7 +62,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.opengis.util.GenericName;
-import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
@@ -254,7 +253,7 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         Assume.assumeTrue(f.exists());
         final Properties properties = new Properties();
         properties.load(new FileInputStream(f));
-        params = Parameters.castOrWrap(FeatureExt.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false));
+        params = Parameters.castOrWrap(org.geotoolkit.parameter.Parameters.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false));
     }
 
     private void reload(boolean simpleType) throws DataStoreException, VersioningException {

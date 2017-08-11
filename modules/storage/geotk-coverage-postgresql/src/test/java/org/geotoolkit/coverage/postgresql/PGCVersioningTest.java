@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.CoverageStore;
@@ -54,6 +53,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 
 /**
@@ -75,7 +75,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         Assume.assumeTrue(f.exists());
         final Properties properties = new Properties();
         properties.load(new FileInputStream(f));
-        params = FeatureExt.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
+        params = Parameters.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
     }
 
     public PGCVersioningTest(){
