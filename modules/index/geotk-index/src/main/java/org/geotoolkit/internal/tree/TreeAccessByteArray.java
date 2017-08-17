@@ -52,10 +52,9 @@ public class TreeAccessByteArray extends ChannelTreeAccess {
      * @param versionNumber tree version.
      * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
      * @throws IOException if problem during read or write Node.
-     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
     public TreeAccessByteArray(final byte[] data, final int magicNumber, final double versionNumber, final int byteBufferLength)
-            throws IOException, ClassNotFoundException {
+            throws IOException {
         this(data, magicNumber, versionNumber, byteBufferLength, NODE_INT_SIZE);
     }
 
@@ -66,10 +65,9 @@ public class TreeAccessByteArray extends ChannelTreeAccess {
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber tree version.
      * @throws IOException if problem during read or write Node.
-     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
     public TreeAccessByteArray(final byte[] data, final int magicNumber, final double versionNumber)
-            throws IOException, ClassNotFoundException{
+            throws IOException {
         this(data, magicNumber, versionNumber, DEFAULT_BUFFER_LENGTH, NODE_INT_SIZE);
     }
 
@@ -82,10 +80,9 @@ public class TreeAccessByteArray extends ChannelTreeAccess {
      * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
      * @param integerNumberPerNode integer number per Node which will be red/written during Node reading/writing process.
      * @throws IOException if problem during channel read / write operation
-     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
     public TreeAccessByteArray(final byte[] data, int magicNumber, double versionNumber,
-            int byteBufferLength, int integerNumberPerNode) throws IOException, ClassNotFoundException {
+            int byteBufferLength, int integerNumberPerNode) throws IOException {
         super(new SeekableByteArrayChannel(data), magicNumber, versionNumber, byteBufferLength, integerNumberPerNode);
     }
 

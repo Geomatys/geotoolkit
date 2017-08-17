@@ -114,7 +114,7 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
      * {@inheritDoc }
      */
     @Override
-    public void readExternal(final ObjectInput stream) throws IOException, ClassNotFoundException {
+    public void readExternal(final ObjectInput stream) throws IOException {
         final double minx = stream.readDouble();
         final double miny = stream.readDouble();
         final double maxx = stream.readDouble();
