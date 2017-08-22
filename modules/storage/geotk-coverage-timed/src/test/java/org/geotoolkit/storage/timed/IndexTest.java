@@ -35,7 +35,7 @@ import org.junit.Test;
  */
 public class IndexTest extends DirectoryBasedTest {
 
-    private static DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder()
+    private static final DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder()
             .appendPattern("yyyy-MM-dd")
             .parseLenient()
             .parseDefaulting(ChronoField.MILLI_OF_DAY, 0)

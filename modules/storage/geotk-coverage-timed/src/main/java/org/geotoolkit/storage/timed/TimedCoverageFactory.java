@@ -102,11 +102,11 @@ public class TimedCoverageFactory extends AbstractCoverageStoreFactory {
 
     public static final ParameterDescriptorGroup PARAMETERS = new ParameterBuilder()
             .addName("timed-file-parameters")
-            .createGroup(PATH, NAME_PATTERN, TIME_INDEX, TIME_FORMAT, DELAY, DEFAULT_MILLI_OF_DAY, DEFAULT_OFFSET_SECONDS);
+            .createGroup(IDENTIFIER, PATH, NAME_PATTERN, TIME_INDEX, TIME_FORMAT, DELAY, DEFAULT_MILLI_OF_DAY, DEFAULT_OFFSET_SECONDS);
 
     @Override
     public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.OTHER, true, false, false);
+        return new DefaultFactoryMetadata(DataType.COVERAGE, true, false, false);
     }
 
     @Override
@@ -117,7 +117,7 @@ public class TimedCoverageFactory extends AbstractCoverageStoreFactory {
     @Override
     public CharSequence getDescription() {
         return "A coverage store which aims to harvest a directory filled with "
-                + "georeferenced image files, each one containing a date in its"
+                + "georeferenced image files, each one containing a date in its "
                 + "name. All the images are exposed as a single coverage with a "
                 + "time dimension simulated using dates found in file names.";
     }

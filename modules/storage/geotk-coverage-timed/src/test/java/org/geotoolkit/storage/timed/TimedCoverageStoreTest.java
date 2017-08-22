@@ -164,7 +164,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
             // compute the timestamp corresponding to written coverage, to be able to check indexed time.
             final long timestamp = toTimestamp(LocalDate.of(2017, Month.JANUARY, 1));
             // To avoid empty envelope, an offset of one milliseconds is added to the end of the interval.
-            expectedEnvelope.setRange(2, timestamp, timestamp + 1);
+            expectedEnvelope.setRange(2, timestamp, timestamp);
             final GeneralGridEnvelope singleSlice = new GeneralGridEnvelope(new int[]{0, 0, 0}, new int[]{16, 16, 1}, false);
 
             final GridCoverageReader reader = acquireReader(store);
@@ -189,8 +189,12 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
             expectedEnvelope.setRange(1, -10, 1);
             final long secondTimestamp = toTimestamp(LocalDate.of(2017, Month.FEBRUARY, 2));
 
-            // To avoid empty envelope, an offset of one milliseconds is added to the end of the interval.
-            expectedEnvelope.setRange(2, timestamp, secondTimestamp + 1);
+            /* As we've got two images, the envelope will be computed as if time
+             * slices are thick, and so we'll do not find the inserted times,
+             * but a wider envelope.
+            */
+            final long timeResolution = (secondTimestamp - timestamp) / 2;
+            expectedEnvelope.setRange(2, timestamp - timeResolution, secondTimestamp + timeResolution);
             final GridEnvelope twoSlices = new GeneralGridEnvelope(new int[]{0, 0, 0}, new int[]{16, 16, 2}, false);
             checkReferencing(reader.getGridGeometry(0), twoSlices, expectedEnvelope);
 

@@ -25,10 +25,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Spliterators;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.apache.sis.referencing.operation.matrix.Matrix4;
+import org.apache.sis.referencing.operation.matrix.Matrix3;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
@@ -38,9 +39,12 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.index.tree.StoreIndexException;
+import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform1D;
 
 /**
  * The single resource for {@link TimedCoverageStore}. It will analyze (and survey
@@ -70,14 +74,16 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
 
     TimedResource(TimedCoverageStore store, Path directory, long delay) throws DataStoreException {
         super(store, Names.createLocalName(null, ":", directory.getFileName().toString()));
+
+        final Path indexDir = directory.resolve(INDEX_DIR);
         try {
-            index = new Index(directory.resolve(INDEX_DIR), directory, store.fileNameParser);
+            index = new Index(indexDir, directory, store.fileNameParser);
         } catch (IOException | StoreIndexException e) {
             throw new DataStoreException("Cannot initialize spatio-temporal index", e);
         }
 
         try {
-            harvester = new Harvester(directory, this::register, TimeUnit.MILLISECONDS, delay);
+            harvester = new Harvester(directory, this::register, TimeUnit.MILLISECONDS, delay, indexDir);
         } catch (IOException ex) {
             try {
                 index.close();
@@ -138,56 +144,69 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
         // Get grid dimension from a random image from the registered ones.
         // TODO : make more accurate by finding the image with biggest resolution.
         final Path input;
-        final int nbImages;
+        final double[] times;
         try {
             input = index.getObject(1).orElseThrow(() -> new IllegalStateException("Cannot retrieve index data"));
-            nbImages = index.size();
-
         } catch (IOException ex) {
             throw new CoverageStoreException("Cannot get grid geometry", ex);
         }
 
+        try {
+            times = index.getTimes();
+        } catch (IOException ex) {
+            throw new CoverageStoreException("Cannot extract times from index", ex);
+        }
+
+        GridEnvelope extent;
         try (TimedUtils.CloseableCoverageReader reader = new TimedUtils.CloseableCoverageReader()) {
             reader.setInput(input.toFile());
-            GridEnvelope extent = reader.getGridGeometry(0).getExtent2D();
-
-            // Adapt image dimension to contain time
-            final int dimension = treeEnv.getCoordinateReferenceSystem().getCoordinateSystem().getDimension();
-            final int[] low = new int[dimension];
-            final int[] high = new int[dimension];
-            low[index.xIndex] = extent.getLow(0);
-            low[index.xIndex + 1] = extent.getLow(1);
-            low[index.timeIndex] = 0;
-
-            high[index.xIndex] = extent.getHigh(0);
-            high[index.xIndex + 1] = extent.getHigh(1);
-            high[index.timeIndex] = nbImages - 1;
-
-            extent = new GeneralGridEnvelope(low, high, true);
-
-            final double scaleX = treeEnv.getSpan(index.xIndex) / extent.getSpan(0);
-            final double scaleY = -(treeEnv.getSpan(index.xIndex + 1) / extent.getSpan(1));
-            final double scaleT = treeEnv.getSpan(index.timeIndex) / nbImages;
-
-            final double translationX = treeEnv.getMinimum(0);
-            final double translationY = treeEnv.getMaximum(1);
-            final double translationT = treeEnv.getMinimum(2);
-
-            final Matrix4 matrix = new Matrix4(
-                    scaleX, 0, 0, translationX,
-                    0, scaleY, 0, translationY,
-                    0, 0, scaleT, translationT,
-                    0, 0, 0, 1
-            );
-
-            grid = new GeneralGridGeometry(extent, PixelInCell.CELL_CORNER, MathTransforms.linear(matrix), treeEnv.getCoordinateReferenceSystem());
+            extent = reader.getGridGeometry(0).getExtent2D();
         }
+
+        // Adapt image dimension to contain time
+        final int dimension = treeEnv.getCoordinateReferenceSystem().getCoordinateSystem().getDimension();
+        final int[] low = new int[dimension];
+        final int[] high = new int[dimension];
+        low[index.xIndex] = extent.getLow(0);
+        low[index.xIndex + 1] = extent.getLow(1);
+        low[index.timeIndex] = 0;
+
+        high[index.xIndex] = extent.getHigh(0);
+        high[index.xIndex + 1] = extent.getHigh(1);
+        high[index.timeIndex] = times.length - 1; // inclusive upper corner
+
+        extent = new GeneralGridEnvelope(low, high, true);
+
+        final double scaleX = treeEnv.getSpan(index.xIndex) / extent.getSpan(0);
+        final double scaleY = -(treeEnv.getSpan(index.xIndex + 1) / extent.getSpan(1));
+        //final double scaleT = treeEnv.getSpan(index.timeIndex) / nbImages;
+
+        final double translationX = treeEnv.getMinimum(0);
+        final double translationY = treeEnv.getMaximum(1);
+        //final double translationT = treeEnv.getMinimum(2);
+
+        final Matrix3 matrix = new Matrix3(
+                scaleX, 0, translationX,
+                0, scaleY, translationY,
+                0, 0, 1
+        );
+
+        final MathTransform geoTransform = PixelTranslation.translate(
+                MathTransforms.linear(matrix),
+                PixelInCell.CELL_CORNER,
+                PixelInCell.CELL_CENTER
+        );
+        final MathTransform1D timeTransform = MathTransforms.interpolate(null, times);
+        final MathTransform gridToCRS = MathTransforms.compound(geoTransform, timeTransform);
+
+        grid = new GeneralGridGeometry(extent, PixelInCell.CELL_CENTER, gridToCRS, treeEnv.getCoordinateReferenceSystem());
 
         return grid;
     }
 
     private synchronized void invalidateGrid() {
         grid = null;
+        fireDataUpdated();
     }
 
     /**
@@ -213,6 +232,8 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
     @Override
     public void close() throws IOException {
         try (final Index tmpIndex = index;
-                final Harvester tmpHarvester = harvester) {}
+                final Harvester tmpHarvester = harvester) {
+            TimedUtils.LOGGER.log(Level.FINE, "Closing timed resource.");
+        }
     }
 }
