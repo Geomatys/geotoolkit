@@ -22,10 +22,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.logging.Logger;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.parameter.ParameterValueGroup;
 
 
@@ -46,6 +48,8 @@ public final class DataStores extends Static {
      * when doing an iteration, the iterator must be used inside synchronized blocks.
      */
     private static final ServiceLoader<DataStoreFactory> loader = ServiceLoader.load(DataStoreFactory.class);
+
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage");
 
     /**
      * Do not allow instantiation of this class.
@@ -163,18 +167,32 @@ public final class DataStores extends Static {
             final Map<String, Serializable> asMap) throws DataStoreException
     {
         CharSequence unavailable = null;
+        Exception error = null;
         for (final DataStoreFactory factory : loader) {
-            if ((parameters != null) ? factory.canProcess(parameters) : factory.canProcess(asMap)) {
-                if (factory.availability().pass()) {
-                    return (DataStore) ((parameters != null) ? factory.open(parameters) : factory.open(asMap));
-                } else if (unavailable == null) {
-                    unavailable = factory.getDisplayName();
+            try {
+                if ((parameters != null) ? factory.canProcess(parameters) : factory.canProcess(asMap)) {
+                    if (factory.availability().pass()) {
+                        return (DataStore) ((parameters != null) ? factory.open(parameters) : factory.open(asMap));
+                    } else if (unavailable == null) {
+                        unavailable = factory.getDisplayName();
+                    }
+                }
+            } catch (Exception e) {
+                // If an error occurs with a factory, we skip it and try another factory.
+                if (error != null) {
+                    error.addSuppressed(e);
+                } else {
+                    error = e;
                 }
             }
         }
         if (unavailable != null) {
             throw new DataStoreException("The " + unavailable + " data store is not available. "
                     + "Are every required JAR files accessible on the classpath?");
+        } else if (error instanceof DataStoreException) {
+            throw (DataStoreException) error;
+        } else if (error != null) {
+            throw new DataStoreException("An error occurred while searching for a datastore", error);
         }
         return null;
     }
