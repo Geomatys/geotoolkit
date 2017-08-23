@@ -53,7 +53,7 @@ public class WebCoverageClient extends AbstractClient {
     }
 
     public WebCoverageClient(final URL serverURL, final ClientSecurity security, final String version) {
-        super(create(WCSClientFactory.PARAMETERS, serverURL, security));
+        super(create(WCSClientFactory.PARAMETERS, serverURL, security, null));
         if (version.equals("1.0.0")) {
             parameters.getOrCreate(WCSClientFactory.VERSION).setValue(version);
         } else {
@@ -62,7 +62,7 @@ public class WebCoverageClient extends AbstractClient {
     }
 
     public WebCoverageClient(final URL serverURL, final ClientSecurity security, final WCSVersion version) {
-        super(create(WCSClientFactory.PARAMETERS, serverURL, security));
+        super(create(WCSClientFactory.PARAMETERS, serverURL, security, null));
         if(version == null){
             throw new IllegalArgumentException("unkonwed version : " + version);
         }

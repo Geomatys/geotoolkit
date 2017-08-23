@@ -66,9 +66,10 @@ public class ExecuteRequest extends AbstractRequest {
      *
      * @param serverURL
      * @param security
+     * @param timeout
      */
-    public ExecuteRequest(final String serverURL, final ClientSecurity security) {
-        super(serverURL, security, null);
+    public ExecuteRequest(final String serverURL, final ClientSecurity security, Integer timeout) {
+        super(serverURL, security, null, timeout);
         this.status = false;
         this.storage = false;
         this.outputForm = "document";
@@ -211,7 +212,7 @@ public class ExecuteRequest extends AbstractRequest {
 
         final Execute content = getContent();
 
-        final URLConnection conec = openConnection();
+        final URLConnection conec = openPostConnection();
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
 

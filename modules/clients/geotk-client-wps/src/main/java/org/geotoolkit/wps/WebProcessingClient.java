@@ -61,7 +61,7 @@ public class WebProcessingClient extends AbstractClient {
      * @param version
      */
     public WebProcessingClient(final URL serverURL, final String version) {
-        this(serverURL, null, version, true);
+        this(serverURL, null, version, true, null);
     }
 
     /**
@@ -72,7 +72,7 @@ public class WebProcessingClient extends AbstractClient {
      * @param forceGET if true, GetCapabilities and DescribeProcess will be request in GET, otherwise POST is used.
      */
     public WebProcessingClient(final URL serverURL, final String version, final boolean forceGET) {
-        this(serverURL, null, version, forceGET);
+        this(serverURL, null, version, forceGET, null);
     }
 
     /**
@@ -82,7 +82,7 @@ public class WebProcessingClient extends AbstractClient {
      * @param serverURL
      */
     public WebProcessingClient(final URL serverURL) {
-        this(serverURL,null,null,true);
+        this(serverURL,null,null,true, null);
     }
 
     /**
@@ -93,7 +93,7 @@ public class WebProcessingClient extends AbstractClient {
      * @param security
      */
     public WebProcessingClient(final URL serverURL, final ClientSecurity security) {
-        this(serverURL,security,null,true);
+        this(serverURL,security,null,true, null);
     }
 
     /**
@@ -104,7 +104,7 @@ public class WebProcessingClient extends AbstractClient {
      * @param version
      */
     public WebProcessingClient(final URL serverURL, final ClientSecurity security, final String version) {
-        this(serverURL,security,version,true);
+        this(serverURL,security,version,true, null);
     }
 
     /**
@@ -115,7 +115,19 @@ public class WebProcessingClient extends AbstractClient {
      * @param version
      */
     public WebProcessingClient(final URL serverURL, final ClientSecurity security, final WPSVersion version) {
-        this(serverURL, security, version==null?null:version.getCode(), true);
+        this(serverURL, security, version==null?null:version.getCode(), true, null);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param serverURL
+     * @param security
+     * @param version
+     * @param timeout
+     */
+    public WebProcessingClient(final URL serverURL, final ClientSecurity security, final WPSVersion version, final Integer timeout) {
+        this(serverURL, security, version==null?null:version.getCode(), true, timeout);
     }
 
     /**
@@ -125,9 +137,10 @@ public class WebProcessingClient extends AbstractClient {
      * @param security
      * @param version
      * @param forceGET if true, GetCapabilities and DescribeProcess will be request in GET, otherwise POST is used.
+     * @param timeout
      */
-    public WebProcessingClient(final URL serverURL, final ClientSecurity security, String version, final boolean forceGET) {
-        super(create(WPSClientFactory.PARAMETERS, serverURL, security));
+    public WebProcessingClient(final URL serverURL, final ClientSecurity security, String version, final boolean forceGET, final Integer timeout) {
+        super(create(WPSClientFactory.PARAMETERS, serverURL, security, timeout));
 
         if(version==null || "auto".equalsIgnoreCase(version)){
             //if version is null, call getCapabilities to found service version
@@ -228,7 +241,7 @@ public class WebProcessingClient extends AbstractClient {
      */
     public GetCapabilitiesRequest createGetCapabilities() {
 
-        final GetCapabilitiesRequest request = new GetCapabilitiesRequest(serverURL.toString(), getClientSecurity(), forceGET);
+        final GetCapabilitiesRequest request = new GetCapabilitiesRequest(serverURL.toString(), getClientSecurity(), forceGET, getTimeOutValue());
         switch (getVersion()) {
             case v100: {
                 final org.geotoolkit.wps.xml.v100.GetCapabilities cap = new org.geotoolkit.wps.xml.v100.GetCapabilities();
@@ -263,7 +276,7 @@ public class WebProcessingClient extends AbstractClient {
      */
     public DescribeProcessRequest createDescribeProcess() {
 
-        final DescribeProcessRequest request = new DescribeProcessRequest(serverURL.toString(), getClientSecurity(), forceGET);
+        final DescribeProcessRequest request = new DescribeProcessRequest(serverURL.toString(), getClientSecurity(), forceGET, getTimeOutValue());
         switch (getVersion()) {
             case v100: {
                 final org.geotoolkit.wps.xml.v100.DescribeProcess content = new org.geotoolkit.wps.xml.v100.DescribeProcess();
@@ -291,7 +304,7 @@ public class WebProcessingClient extends AbstractClient {
      */
     public ExecuteRequest createExecute() {
 
-        final ExecuteRequest request = new ExecuteRequest(serverURL.toString(), getClientSecurity());
+        final ExecuteRequest request = new ExecuteRequest(serverURL.toString(), getClientSecurity(), getTimeOutValue());
 
         switch (getVersion()) {
             case v100: {
@@ -320,7 +333,7 @@ public class WebProcessingClient extends AbstractClient {
      */
     public GetStatusRequest createGetStatus(final String jobId) {
 
-        final GetStatusRequest request = new GetStatusRequest(serverURL.toString(), getClientSecurity());
+        final GetStatusRequest request = new GetStatusRequest(serverURL.toString(), getClientSecurity(), true, getTimeOutValue());
 
         switch (getVersion()) {
             case v100:
@@ -346,7 +359,7 @@ public class WebProcessingClient extends AbstractClient {
      */
     public GetResultRequest createGetResult(final String jobId) {
 
-        final GetResultRequest request = new GetResultRequest(serverURL.toString(), getClientSecurity());
+        final GetResultRequest request = new GetResultRequest(serverURL.toString(), getClientSecurity(), true, getTimeOutValue());
 
         switch (getVersion()) {
             case v100:
@@ -372,7 +385,7 @@ public class WebProcessingClient extends AbstractClient {
      */
     public DismissRequest createDismiss(final String jobId) {
 
-        final DismissRequest request = new DismissRequest(serverURL.toString(), getClientSecurity());
+        final DismissRequest request = new DismissRequest(serverURL.toString(), getClientSecurity(), true, getTimeOutValue());
 
         switch (getVersion()) {
             case v100:
