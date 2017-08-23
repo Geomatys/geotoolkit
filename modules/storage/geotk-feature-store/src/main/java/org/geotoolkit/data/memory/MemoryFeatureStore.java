@@ -555,7 +555,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
 
         //fall back on generic parameter handling.
         //todo we should handle at least spatial filter here by using a quadtree.
-        return handleRemaining(reader, remaining.buildQuery());
+        return FeatureStreams.subset(reader, remaining.buildQuery());
     }
 
     /**

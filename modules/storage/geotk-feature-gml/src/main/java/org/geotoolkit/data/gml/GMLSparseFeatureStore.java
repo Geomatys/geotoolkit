@@ -36,6 +36,7 @@ import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
@@ -191,14 +192,14 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         typeCheck(query.getTypeName());
         final ReadIterator ite = new ReadIterator(featureType, file);
-        return handleRemaining(ite, query);
+        return FeatureStreams.subset(ite, query);
     }
 
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
         typeCheck(query.getTypeName());
         final WriterIterator ite = new WriterIterator(featureType, file);
-        return handleRemaining(ite, query.getFilter());
+        return FeatureStreams.filter((FeatureWriter)ite, query.getFilter());
     }
 
     @Override

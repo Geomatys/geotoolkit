@@ -38,6 +38,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.FeatureStreams;
 
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
@@ -112,7 +113,7 @@ public class OSMMemoryFeatureStore extends AbstractFeatureStore{
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         final FeatureType ft = getFeatureType(query.getTypeName());
         FeatureReader fr = memoryStore.getFeatureReader(QueryBuilder.all(query.getTypeName()));
-        return handleRemaining(fr, query);
+        return FeatureStreams.subset(fr, query);
     }
 
     @Override

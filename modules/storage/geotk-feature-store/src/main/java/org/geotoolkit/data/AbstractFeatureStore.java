@@ -456,47 +456,6 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     }
 
     /**
-     * Wrap a feature reader with a query.
-     * This method can be use if the FeatureStore implementation can not support all
-     * filtering parameters. The returned reader will repect the remaining query
-     * parameters but keep in mind that this is done in a generic way, which might
-     * not be the most effective way.
-     *
-     * Becareful if you give a sortBy parameter in the query, this can cause
-     * OutOfMemory errors since the generic implementation must iterate over all
-     * feature and holds them in memory before ordering them.
-     * It may be a better solution to say in the query capabilities that sortBy
-     * are not handle by this FeatureStore implementation.
-     *
-     * @param reader FeatureReader to wrap
-     * @param remainingParameters query holding the parameters that where not handle
-     * by the FeatureStore implementation
-     * @return FeatureReader Reader wrapping the given reader with all query parameters
-     */
-    protected FeatureReader handleRemaining(FeatureReader reader, final Query remainingParameters) throws DataStoreException{
-        return FeatureStreams.subset(reader, remainingParameters);
-    }
-
-    /**
-     * Wrap a feature writer with a Filter.
-     * This method can be used when the featurestore implementation is not
-     * intelligent enough to handle filtering.
-     *
-     * @param writer featureWriter to filter
-     * @param filter filter to use for hiding feature while iterating
-     * @return Filtered FeatureWriter
-     */
-    protected FeatureWriter handleRemaining(FeatureWriter writer, Filter filter) throws DataStoreException{
-
-        //wrap filter ----------------------------------------------------------
-        if(filter != null && filter != Filter.INCLUDE){
-            writer = FeatureStreams.filter(writer, filter);
-        }
-
-        return writer;
-    }
-
-    /**
      * Convinient method to handle adding features operation by using the
      * FeatureWriter.
      *

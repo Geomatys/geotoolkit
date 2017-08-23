@@ -47,6 +47,7 @@ import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
@@ -191,7 +192,7 @@ public class KMLFeatureStore extends AbstractFeatureStore {
 
         final FeatureReader reader = GenericWrapFeatureIterator.wrapToReader(features.iterator(), getPlacemarkType());
 
-        return handleRemaining(reader, query);
+        return FeatureStreams.subset(reader, query);
     }
 
     private static synchronized FeatureType getAbstractFeatureType() {

@@ -341,7 +341,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
         typeCheck(query.getTypeName());
 
         final FeatureReader fr = new GeoJSONReader(jsonFile, featureType, rwLock);
-        return handleRemaining(fr, query);
+        return FeatureStreams.subset(fr, query);
     }
 
     /**
@@ -352,7 +352,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
         typeCheck(query.getTypeName());
         final FeatureWriter fw = new GeoJSONFileWriter(jsonFile, featureType, rwLock,
                 GeoJSONFeatureStoreFactory.ENCODING, coordAccuracy);
-        return handleRemaining(fw, query.getFilter());
+        return FeatureStreams.filter(fw, query.getFilter());
     }
 
     ////////////////////////////////////////////////////////////////////////////
