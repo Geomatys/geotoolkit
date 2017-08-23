@@ -406,21 +406,24 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
 
     /**
      * Convenient method to check that the given type name exist.
-     * Will raise a datastore exception if the name do not exist in this FeatureStore.
+     * Will raise a datastore exception if the name does not exist in this FeatureStore.
      *
      * @param candidate Name to test.
-     * @throws DataStoreException if name do not exist.
+     * @throws DataStoreException if name does not exist, or if it'ambiguous.
+     * Ambiguity is raised in case there's not any exact match, but input name
+     * is equal to the local part of multiple names in the store.
      */
     protected void typeCheck(final String candidate) throws DataStoreException{
         ArgumentChecks.ensureNonNull("type name", candidate);
         int count = 0;
-
+        boolean exactMatching = false;
         final Collection<GenericName> names = getNames();
         for (GenericName name : names) {
             if (candidate.equals(name.toString())) {
-                count++;
-                if (count>1) break;
+                exactMatching = true;
+                break;
             }
+
             while (name instanceof ScopedName) {
                 name = ((ScopedName)name).tail();
                 if (candidate.equals(name.toString())) {
@@ -429,6 +432,8 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
                 }
             }
         }
+
+        if (exactMatching) return;
 
         if (count>1) {
             final StringBuilder sb = new StringBuilder();

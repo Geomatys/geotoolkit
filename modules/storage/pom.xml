@@ -107,6 +107,7 @@
     <module>geotk-coverage-store</module>
     <module>geotk-coverage-sql</module>
     <module>geotk-coverage-wkb</module>
+    <module>geotk-coverage-timed</module>
     <module>geotk-observation-store</module>
     <module>geotk-metadata-store</module>
   </modules>
