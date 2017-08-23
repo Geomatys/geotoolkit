@@ -45,6 +45,7 @@ public class GeotkProcessingRegistry extends AbstractProcessingRegistry {
                 //coverage
                 org.geotoolkit.processing.coverage.bandcombine.BandCombineDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.bandselect.BandSelectDescriptor.INSTANCE,
+                org.geotoolkit.processing.coverage.compose.ComposeDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.coveragetofeatures.CoverageToFeaturesDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.coveragetovector.CoverageToVectorDescriptor.INSTANCE,
