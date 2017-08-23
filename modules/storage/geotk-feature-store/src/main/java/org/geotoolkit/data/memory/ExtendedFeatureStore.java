@@ -37,6 +37,7 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.StorageListener;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.opengis.util.GenericName;
 import org.geotoolkit.storage.DataStoreFactory;
@@ -224,7 +225,7 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
         if(queries.get(this, typeName)!=null){
             final Query original = queries.get(this, typeName);
             final FeatureReader baseReader = wrapped.getFeatureReader(original);
-            return handleRemaining(baseReader, query);
+            return FeatureStreams.subset(baseReader, query);
         }
         return wrapped.getFeatureReader(query);
     }

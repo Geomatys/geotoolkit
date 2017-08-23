@@ -36,6 +36,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
@@ -153,7 +154,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         final FeatureType sft = getFeatureType(query.getTypeName());
         try {
-            return handleRemaining(new XmlFeatureReader(xmlFile,sft), query);
+            return FeatureStreams.subset(new XmlFeatureReader(xmlFile,sft), query);
         } catch (IOException | JAXBException ex) {
             throw new DataStoreException(ex);
         }

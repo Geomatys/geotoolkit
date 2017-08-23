@@ -168,7 +168,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
         }
 
         final FeatureReader freader = FeatureStreams.asReader(ite,featureType);
-        return handleRemaining(freader, query);
+        return FeatureStreams.subset(freader, query);
     }
 
     // WRITING SUPPORT : TODO //////////////////////////////////////////////////

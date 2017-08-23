@@ -284,7 +284,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         final QueryBuilder qb = new QueryBuilder();
         qb.setTypeName("remaining");
         qb.setHints(query.getHints());
-        return handleRemaining(reader, qb.buildQuery());
+        return FeatureStreams.subset(reader, qb.buildQuery());
     }
 
     /**

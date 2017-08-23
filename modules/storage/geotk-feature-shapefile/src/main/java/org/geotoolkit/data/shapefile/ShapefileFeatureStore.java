@@ -372,7 +372,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
                 remaining.setSortBy(query.getSortBy());
                 remaining.setStartIndex(query.getStartIndex());
                 remaining.setMaxFeatures(query.getMaxFeatures());
-                reader = handleRemaining(reader, remaining.buildQuery());
+                reader = FeatureStreams.subset(reader, remaining.buildQuery());
 
                 return reader;
             } catch (MismatchedFeatureException se) {
@@ -398,7 +398,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
                 query2.setSortBy(query.getSortBy());
                 query2.setStartIndex(query.getStartIndex());
                 query2.setMaxFeatures(query.getMaxFeatures());
-                reader = handleRemaining(reader, query2.buildQuery());
+                reader = FeatureStreams.subset(reader, query2.buildQuery());
 
                 return reader;
             } catch (MismatchedFeatureException se) {
@@ -423,7 +423,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
             featureReader = FeatureStreams.emptyReader(schema);
         }
         try {
-            return handleRemaining(new ShapefileFeatureWriter(this,type.getName().tip().toString(), shpFiles, attReader, featureReader, dbfCharset),query.getFilter());
+            return FeatureStreams.filter(new ShapefileFeatureWriter(this,type.getName().tip().toString(), shpFiles, attReader, featureReader, dbfCharset),query.getFilter());
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }

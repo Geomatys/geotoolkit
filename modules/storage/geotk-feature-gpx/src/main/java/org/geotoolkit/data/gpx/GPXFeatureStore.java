@@ -54,6 +54,7 @@ import org.apache.sis.internal.storage.gpx.Metadata;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.geotoolkit.data.FeatureStreams;
 
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
@@ -156,14 +157,14 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         final FeatureType ft = getFeatureType(query.getTypeName());
         final FeatureReader fr = new GPXFeatureReader(ft);
-        return handleRemaining(fr, query);
+        return FeatureStreams.subset(fr, query);
     }
 
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
         final FeatureType ft = getFeatureType(query.getTypeName());
         final FeatureWriter fw = new GPXFeatureWriter(ft);
-        return handleRemaining(fw, query.getFilter());
+        return FeatureStreams.filter(fw, query.getFilter());
     }
 
     ////////////////////////////////////////////////////////////////////////////

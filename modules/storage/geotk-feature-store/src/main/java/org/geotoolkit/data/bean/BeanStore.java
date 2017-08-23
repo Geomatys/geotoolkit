@@ -26,6 +26,7 @@ import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
@@ -103,7 +104,7 @@ public class BeanStore extends AbstractFeatureStore implements StorageListener{
         final BeanFeature.Mapping mapping = bt.mapping;
 
         final FeatureReader reader = new BeanFeatureReader(mapping, candidates);
-        return handleRemaining(reader, query);
+        return FeatureStreams.subset(reader, query);
     }
 
     @Override

@@ -418,14 +418,14 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         final Boolean detached = (hints == null) ? null : (Boolean) hints.get(HintsPending.FEATURE_DETACHED);
 
         final FeatureReader fr = new CSVFeatureReader(this,featureType,detached != null && !detached,fileLock);
-        return handleRemaining(fr, query);
+        return FeatureStreams.subset(fr, query);
     }
 
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
         typeCheck(query.getTypeName()); //raise error is type doesnt exist
         final FeatureWriter fw = new CSVFeatureWriter(this,featureType,fileLock);
-        return handleRemaining(fw, query.getFilter());
+        return FeatureStreams.filter(fw, query.getFilter());
     }
 
     @Override
