@@ -24,10 +24,12 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.UnmarshalException;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.ows.xml.ExceptionResponse;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
 import org.geotoolkit.wps.adaptor.ComplexAdaptor;
 import org.geotoolkit.wps.adaptor.DataAdaptor;
@@ -52,6 +54,7 @@ public class WPS2Process extends AbstractProcess {
 
     private final WPSProcessingRegistry registry;
 
+    private ClientSecurity security;
     private boolean asReference    = false;
     private boolean statusReport   = false;
     private boolean rawLiteralData = false;
@@ -73,6 +76,7 @@ public class WPS2Process extends AbstractProcess {
      */
     public WPS2Process(WPSProcessingRegistry registry, WPS2ProcessDescriptor desc, ParameterValueGroup params) {
         super(desc, params);
+        this.security = registry.getClient().getClientSecurity();
         this.desc = desc;
         this.registry = registry;
     }
@@ -89,6 +93,26 @@ public class WPS2Process extends AbstractProcess {
         this.desc = desc;
         this.registry = registry;
         this.jobId = jobId;
+    }
+
+    /**
+     * Get client securing object.
+     * The default security is the one from the WebProcessingClient.
+     *
+     * @return ClientSecurity, never null.
+     */
+    public ClientSecurity getClientSecurity() {
+        return security;
+    }
+
+    /**
+     * Set client securing object.
+     *
+     * @param security not null
+     */
+    public void setClientSecurity(ClientSecurity security) {
+        ArgumentChecks.ensureNonNull("security", security);
+        this.security = security;
     }
 
     public void setRawLiteralData(boolean rawLiteralData) {
@@ -129,6 +153,7 @@ public class WPS2Process extends AbstractProcess {
 
         final GetStatusRequest req = registry.getClient().createGetStatus(jobId);
         req.setDebug(debug);
+        req.setClientSecurity(security);
         final Object response = req.getResponse();
 
         if (response instanceof ExceptionResponse) {
@@ -155,6 +180,7 @@ public class WPS2Process extends AbstractProcess {
         //send a stop request
         final DismissRequest request = registry.getClient().createDismiss(jobId);
         request.setDebug(debug);
+        request.setClientSecurity(security);
 
         try {
             checkResult(request.getResponse());
@@ -173,6 +199,7 @@ public class WPS2Process extends AbstractProcess {
     protected void execute() throws ProcessException {
         final ExecuteRequest exec = createRequest();
         exec.setDebug(debug);
+        exec.setClientSecurity(security);
         final Result result = sendExecuteRequest(exec);
         if (!isCanceled()) {
             fillOutputs(result);
@@ -306,6 +333,7 @@ public class WPS2Process extends AbstractProcess {
                 //request the result from the server
                 final GetResultRequest request = registry.getClient().createGetResult(jobId);
                 request.setDebug(debug);
+                request.setClientSecurity(security);
                 response = request.getResponse();
             }
 
@@ -405,6 +433,7 @@ public class WPS2Process extends AbstractProcess {
             }
 
             final ExecuteRequest request = registry.getClient().createExecute();
+            request.setClientSecurity(security);
             final org.geotoolkit.wps.xml.v200.ExecuteRequestType execute = (org.geotoolkit.wps.xml.v200.ExecuteRequestType) request.getContent();
             execute.setIdentifier(processId);
             if (asReference) {

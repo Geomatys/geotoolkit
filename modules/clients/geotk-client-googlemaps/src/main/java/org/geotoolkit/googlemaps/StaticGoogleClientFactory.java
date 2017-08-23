@@ -19,7 +19,6 @@ package org.geotoolkit.googlemaps;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
@@ -102,15 +101,6 @@ public class StaticGoogleClientFactory extends AbstractClientFactory implements 
     @Override
     public StaticGoogleMapsClient open(Map<String, ? extends Serializable> params) throws DataStoreException {
         return (StaticGoogleMapsClient) super.open(params);
-    }
-
-    @Override
-    public StaticGoogleMapsClient create(Map<String, ? extends Serializable> params) throws DataStoreException {
-        try{
-            return create(FeatureExt.toParameter(params,getParametersDescriptor()));
-        }catch(InvalidParameterValueException ex){
-            throw new DataStoreException(ex);
-        }
     }
 
     @Override

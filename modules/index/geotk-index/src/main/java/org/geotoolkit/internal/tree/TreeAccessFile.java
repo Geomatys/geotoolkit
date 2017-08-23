@@ -17,10 +17,8 @@
 package org.geotoolkit.internal.tree;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -33,7 +31,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 /**
- * {@link TreeAccess} implementation.<br/>
+ * {@link TreeAccess} implementation.<br>
  * Store all {@link Node} architecture use by {@link Tree} on disk drive.
  *
  * @author Rémi Maréchal (Geomatys).
@@ -46,10 +44,10 @@ public class TreeAccessFile extends ChannelTreeAccess {
     private static final int CRS_POSITION = 34;
 
     /**
-     * Number of Integer per Node.<br/><br/>
-     * parent ID<br/>
-     * sibling ID<br/>
-     * child ID<br/>
+     * Number of Integer per Node.<br><br>
+     * parent ID<br>
+     * sibling ID<br>
+     * child ID<br>
      * children number.
      *
      * @see HilbertTreeAccessFile#INT_NUMBER
@@ -57,16 +55,15 @@ public class TreeAccessFile extends ChannelTreeAccess {
     private static final int INT_NUMBER = 4;
 
     /**
-     * Build a {@link Tree} from an already filled file at {@link Path} location.<br/><br/>
+     * Build a {@link Tree} from an already filled file at {@link Path} location.<br><br>
      *
      * @param input {@code File} which already contains {@link Node} architecture.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber tree version.
      * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
      * @throws IOException if problem during read or write Node.
-     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
-    public TreeAccessFile(final Path input, final int magicNumber, final double versionNumber, final int byteBufferLength)  throws IOException, ClassNotFoundException {
+    public TreeAccessFile(final Path input, final int magicNumber, final double versionNumber, final int byteBufferLength)  throws IOException {
         this(input, magicNumber, versionNumber, byteBufferLength, INT_NUMBER);
     }
 
@@ -79,9 +76,8 @@ public class TreeAccessFile extends ChannelTreeAccess {
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber tree version.
      * @throws IOException if problem during read or write Node.
-     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
-    public TreeAccessFile(final Path input, final int magicNumber, final double versionNumber) throws IOException, ClassNotFoundException{
+    public TreeAccessFile(final Path input, final int magicNumber, final double versionNumber) throws IOException {
         this(input, magicNumber, versionNumber, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
     }
 
@@ -94,19 +90,18 @@ public class TreeAccessFile extends ChannelTreeAccess {
      * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
      * @param integerNumberPerNode integer number per Node which will be red/written during Node reading/writing process.
      * @throws IOException if problem during read or write Node.
-     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
     protected TreeAccessFile(final Path input, final int magicNumber, final double versionNumber ,
-            final int byteBufferLength, final int integerNumberPerNode) throws IOException, ClassNotFoundException {
+            final int byteBufferLength, final int integerNumberPerNode) throws IOException {
         super(Files.newByteChannel(input, StandardOpenOption.CREATE, StandardOpenOption.READ,
                 StandardOpenOption.WRITE),
                 magicNumber, versionNumber, byteBufferLength, integerNumberPerNode);
     }
 
     /**
-     * Build and insert {@link Node} architecture in a file at {@link Path} location.<br/>
-     * If file is not empty, data within it will be overwrite.<br/>
-     * If file does not exist a file will be create.<br/><br/>
+     * Build and insert {@link Node} architecture in a file at {@link Path} location.<br>
+     * If file is not empty, data within it will be overwrite.<br>
+     * If file does not exist a file will be create.<br><br>
      *
      * Constructor only use by {@link BasicRTree} implementation.
      *
@@ -125,9 +120,9 @@ public class TreeAccessFile extends ChannelTreeAccess {
     }
 
     /**
-     * Build and insert {@link Node} architecture in a file at {@link Path} location.<br/>
-     * If file is not empty, data within it will be overwrite.<br/>
-     * If file does not exist a file will be create.<br/><br/>
+     * Build and insert {@link Node} architecture in a file at {@link Path} location.<br>
+     * If file is not empty, data within it will be overwrite.<br>
+     * If file does not exist a file will be create.<br><br>
      *
      * Constructor only use by {@link BasicRTree} implementation.
      *
@@ -145,8 +140,8 @@ public class TreeAccessFile extends ChannelTreeAccess {
     }
 
     /**
-     * Build and insert {@link Node} architecture in a file at {@link Path} location.<br/>
-     * If file is not empty, data within it will be overwrite.<br/>
+     * Build and insert {@link Node} architecture in a file at {@link Path} location.<br>
+     * If file is not empty, data within it will be overwrite.<br>
      * If file does not exist a file will be create.
      *
      * @param outPut {@code File} where {@link Node} architecture which will be write.
@@ -163,8 +158,8 @@ public class TreeAccessFile extends ChannelTreeAccess {
     }
 
     /**
-     * Build and insert {@link Node} architecture in a file at {@link Path} location.<br/>
-     * If file is not empty, data within it will be overwrite.<br/>
+     * Build and insert {@link Node} architecture in a file at {@link Path} location.<br>
+     * If file is not empty, data within it will be overwrite.<br>
      * If file does not exist a file will be create.
      *
      * @param outPut {@code File} where {@link Node} architecture which will be write.
@@ -180,8 +175,8 @@ public class TreeAccessFile extends ChannelTreeAccess {
     }
 
     /**
-     * Build and insert {@link Node} architecture in a file at {@link Path} location.<br/>
-     * If file is not empty, data within it will be overwrite.<br/>
+     * Build and insert {@link Node} architecture in a file at {@link Path} location.<br>
+     * If file is not empty, data within it will be overwrite.<br>
      * If file does not exist a file will be create.
      *
      * @param outPut {@code File} where {@link Node} architecture which will be write.

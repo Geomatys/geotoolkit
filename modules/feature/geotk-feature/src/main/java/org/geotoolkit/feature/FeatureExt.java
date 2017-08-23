@@ -43,7 +43,6 @@ import org.apache.sis.feature.DefaultFeatureType;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.Static;
-import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
@@ -64,7 +63,6 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -828,90 +826,6 @@ public final class FeatureExt extends Static {
     public static Map<String,Object> toMap(final ParameterValueGroup source) {
         ArgumentChecks.ensureNonNull("source", source);
         return toMap(toFeature(source));
-    }
-
-    /**
-     * Transform a Map in a ParameterValueGroup.
-     * A default parameter is first created and all key found in the map
-     * that match the descriptor will be completed.
-     *
-     * @param params
-     * @param desc
-     * @return
-     *
-     * @deprecated Use method {@link Parameters#toParameter(java.util.Map, org.opengis.parameter.ParameterDescriptorGroup)} instead.
-     */
-    public static ParameterValueGroup toParameter(final Map<String, ?> params, final ParameterDescriptorGroup desc) {
-        ArgumentChecks.ensureNonNull("params", params);
-        ArgumentChecks.ensureNonNull("desc", desc);
-        return toParameter(params, desc, true);
-    }
-
-    /**
-     * Transform a Map in a ParameterValueGroup.
-     * A default parameter is first created and all key found in the map
-     * that match the descriptor will be completed.
-     *
-     * @param params
-     * @param desc
-     * @param checkMandatory : will return a parameter only if all mandatory values
-     *      have been found in the map.
-     * @return
-     *
-     * @deprecated Use method {@link Parameters#toParameter(java.util.Map, org.opengis.parameter.ParameterDescriptorGroup, boolean)} instead.
-     */
-    public static ParameterValueGroup toParameter(final Map<String, ?> params,
-            final ParameterDescriptorGroup desc, final boolean checkMandatory) {
-
-        ArgumentChecks.ensureNonNull("params", params);
-        ArgumentChecks.ensureNonNull("desc", desc);
-        if(checkMandatory){
-            for(GeneralParameterDescriptor de : desc.descriptors()){
-                if(de.getMinimumOccurs()>0 && !(params.containsKey(de.getName().getCode()))){
-                    //a mandatory parameter is not present
-                    return null;
-                }
-            }
-        }
-
-        final Parameters parameter = Parameters.castOrWrap(desc.createValue());
-
-        for(final Entry<String, ?> entry : params.entrySet()){
-
-            final GeneralParameterDescriptor subdesc;
-            try{
-                subdesc = desc.descriptor(entry.getKey());
-            }catch(ParameterNotFoundException ex){
-                //do nothing, the map may contain other values for other uses
-                continue;
-            }
-
-            if(!(subdesc instanceof ParameterDescriptor)){
-                //we can not recreate value groups
-                continue;
-            }
-
-            final ParameterDescriptor pd = (ParameterDescriptor) subdesc;
-
-            final ParameterValue param;
-            try{
-                param = parameter.getOrCreate(pd);
-            }catch(ParameterNotFoundException ex){
-                //do nothing, the map may contain other values for other uses
-                continue;
-            }
-
-            Object val = entry.getValue();
-            try {
-                val = ObjectConverters.convert(val, pd.getValueClass());
-                param.setValue(val);
-            } catch (UnconvertibleObjectException e) {
-                Logging.recoverableException(Logging.getLogger("org.apache.sis"), FeatureExt.class, "toParameter", e);
-                // TODO - do we really want to ignore?
-            }
-        }
-
-        return parameter;
     }
 
     /**
