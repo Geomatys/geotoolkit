@@ -94,7 +94,6 @@ public abstract class AbstractRequest implements Request {
 
     protected AbstractRequest(final Client server, final String subPath) {
         this(server.getURL().toString(), server.getClientSecurity(), subPath, server.getTimeOutValue());
-        
     }
 
     protected AbstractRequest(final String serverURL) {
@@ -114,6 +113,9 @@ public abstract class AbstractRequest implements Request {
         this.security = (security==null) ? DefaultClientSecurity.NO_SECURITY : security ;
         this.subPath = subPath;
         if (timeout != null) {
+            if (timeout < 0) {
+                throw new IllegalArgumentException("Time out value must be > 0");
+            }
             this.timeout = timeout;
         } else {
             this.timeout = AbstractClientFactory.TIMEOUT.getDefaultValue();
@@ -320,7 +322,7 @@ public abstract class AbstractRequest implements Request {
      * @return URLConnection
      */
     protected URLConnection openPostConnection() throws MalformedURLException, IOException {
-        final URL url = new URL(serverURL);
+        final URL url = security.secure(new URL(serverURL));
         URLConnection cnx = url.openConnection();
         cnx = security.secure(cnx);
         cnx.setReadTimeout(timeout);
