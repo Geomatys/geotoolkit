@@ -48,6 +48,7 @@ import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.geotoolkit.storage.DataFileStore;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -102,8 +103,8 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     @Override
-    public FeatureStoreFactory getFactory() {
-        return (FeatureStoreFactory) DataStores.getFactoryById(GMLFeatureStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(GMLFeatureStoreFactory.NAME);
     }
 
     @Override

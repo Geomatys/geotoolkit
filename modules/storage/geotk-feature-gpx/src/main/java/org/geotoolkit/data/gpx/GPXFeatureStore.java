@@ -56,6 +56,7 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.storage.DataStoreFactory;
 
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
@@ -119,8 +120,8 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public FeatureStoreFactory getFactory() {
-        return (FeatureStoreFactory) DataStores.getFactoryById(GPXFeatureStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(GPXFeatureStoreFactory.NAME);
     }
 
     public Metadata getGPXMetaData() throws DataStoreException{

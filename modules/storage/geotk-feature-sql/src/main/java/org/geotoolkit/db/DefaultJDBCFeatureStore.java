@@ -74,6 +74,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
@@ -142,8 +143,8 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     }
 
     @Override
-    public FeatureStoreFactory getFactory() {
-        return (FeatureStoreFactory) DataStores.getFactoryById(factoryId);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(factoryId);
     }
 
     /**

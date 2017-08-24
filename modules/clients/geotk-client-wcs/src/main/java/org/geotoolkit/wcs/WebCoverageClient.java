@@ -33,6 +33,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 
 
@@ -74,8 +75,8 @@ public class WebCoverageClient extends AbstractClient {
     }
 
     @Override
-    public ClientFactory getFactory() {
-        return (ClientFactory) DataStores.getFactoryById(WCSClientFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(WCSClientFactory.NAME);
     }
 
     /**

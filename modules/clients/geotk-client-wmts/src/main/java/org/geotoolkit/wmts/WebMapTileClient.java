@@ -148,7 +148,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
     }
 
     @Override
-    public WMTSClientFactory getFactory() {
+    public WMTSClientFactory getProvider() {
         return (WMTSClientFactory)DataStores.getFactoryById(WMTSClientFactory.NAME);
     }
 

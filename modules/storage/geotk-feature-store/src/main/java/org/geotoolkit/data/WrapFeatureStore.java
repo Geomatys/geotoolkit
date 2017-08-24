@@ -47,8 +47,8 @@ public class WrapFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public DataStoreFactory getFactory() {
-        return featureStore.getFactory();
+    public DataStoreFactory getProvider() {
+        return featureStore.getProvider();
     }
 
     @Override

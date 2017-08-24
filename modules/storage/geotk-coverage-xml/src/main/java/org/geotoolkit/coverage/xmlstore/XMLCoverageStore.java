@@ -38,6 +38,7 @@ import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.Resource;
@@ -101,8 +102,8 @@ public class XMLCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
-    public CoverageStoreFactory getFactory() {
-        return (CoverageStoreFactory) DataStores.getFactoryById(XMLCoverageStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(XMLCoverageStoreFactory.NAME);
     }
 
     @Override

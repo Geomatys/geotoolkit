@@ -101,7 +101,7 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Cl
 
 
     @Override
-    public StaticGoogleClientFactory getFactory() {
+    public StaticGoogleClientFactory getProvider() {
         return (StaticGoogleClientFactory) DataStores.getFactoryById(StaticGoogleClientFactory.NAME);
     }
 

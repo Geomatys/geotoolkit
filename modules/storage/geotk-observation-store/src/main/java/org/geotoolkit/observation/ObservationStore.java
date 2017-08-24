@@ -46,7 +46,7 @@ public interface ObservationStore {
      *
      * @return this source original factory
      */
-    DataStoreFactory getFactory();
+    DataStoreFactory getProvider();
 
     Metadata getMetadata() throws DataStoreException;
 

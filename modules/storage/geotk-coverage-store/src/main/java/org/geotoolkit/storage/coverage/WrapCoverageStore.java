@@ -53,8 +53,8 @@ public class WrapCoverageStore extends DataStore implements CoverageStore{
     }
 
     @Override
-    public DataStoreFactory getFactory() {
-        return store.getFactory();
+    public DataStoreFactory getProvider() {
+        return store.getProvider();
     }
 
     @Override

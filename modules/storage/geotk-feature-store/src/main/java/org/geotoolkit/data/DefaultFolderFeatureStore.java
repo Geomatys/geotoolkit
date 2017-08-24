@@ -101,7 +101,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
      * {@inheritDoc}
      */
     @Override
-    public FeatureStoreFactory getFactory() {
+    public AbstractFolderFeatureStoreFactory getProvider() {
         return folderFactory;
     }
 

@@ -186,7 +186,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
     }
 
     @Override
-    public WMSClientFactory getFactory() {
+    public WMSClientFactory getProvider() {
         return (WMSClientFactory)DataStores.getFactoryById(WMSClientFactory.NAME);
     }
 

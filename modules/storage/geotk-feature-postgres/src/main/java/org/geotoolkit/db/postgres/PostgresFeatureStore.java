@@ -50,7 +50,7 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
 
     public PostgresFeatureStore(String host, int port, String database, String schema, String user, String password) throws DataStoreException {
         super(toParameters(host,port,database,schema,user,password), PostgresFeatureStoreFactory.NAME);
-        ((PostgresFeatureStoreFactory)getFactory()).prepareStore(this, parameters);
+        ((PostgresFeatureStoreFactory)getProvider()).prepareStore(this, parameters);
     }
 
     public PostgresFeatureStore(ParameterValueGroup params, String factoryId) {

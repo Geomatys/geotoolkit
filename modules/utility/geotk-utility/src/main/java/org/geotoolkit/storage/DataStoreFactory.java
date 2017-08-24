@@ -18,12 +18,12 @@ package org.geotoolkit.storage;
 
 import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.quality.ConformanceResult;
-import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import java.io.Serializable;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 
 /**
  * Base interface for {@link org.apache.sis.storage.DataStore} factories. The aim is to get a factory with metadata which
@@ -32,13 +32,13 @@ import org.apache.sis.storage.DataStoreException;
  * @author Alexis Manin (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public interface DataStoreFactory {
+public abstract class DataStoreFactory extends DataStoreProvider {
 
     /**
      *
      * @return A metadata object giving general information about data support of this factory.
      */
-    public FactoryMetadata getMetadata();
+    public abstract FactoryMetadata getMetadata();
 
     /**
      * General information about this factory.
@@ -48,7 +48,7 @@ public interface DataStoreFactory {
      *
      * @return The identification of this factory.
      */
-    Identification getIdentification();
+    public abstract Identification getIdentification();
 
     /**
      * Test to see if the implementation is available for use.
@@ -67,7 +67,7 @@ public interface DataStoreFactory {
      * @return <tt>true</tt> if and only if this factory has all the
      *         appropriate jars on the classpath to create CoverageStores.
      */
-    ConformanceResult availability();
+    public abstract ConformanceResult availability();
 
     /**
      * Name suitable for display to end user.
@@ -78,7 +78,7 @@ public interface DataStoreFactory {
      *
      * @return A short name suitable for display in a user interface. Must be an International string.
      */
-    CharSequence getDisplayName();
+    public abstract CharSequence getDisplayName();
 
     /**
      * Describe the nature of the data source constructed by this factory.
@@ -90,12 +90,7 @@ public interface DataStoreFactory {
      * @return A human readable description that is suitable for inclusion in a
      *         list of available data sources.
      */
-    CharSequence getDescription();
-
-    /**
-     * @return Description of the parameters required for the creation of a {@link org.apache.sis.storage.DataStore}.
-     */
-    ParameterDescriptorGroup getOpenParameters();
+    public abstract CharSequence getDescription();
 
     /**
      * Test to see if this factory is suitable for processing the data pointed
@@ -117,17 +112,17 @@ public interface DataStoreFactory {
      *         indicated by the param set and all the required params are
      *         present.
      */
-    boolean canProcess(Map<String, ? extends Serializable> params);
+    public abstract boolean canProcess(Map<String, ? extends Serializable> params);
 
     /**
      * @see org.geotoolkit.storage.DataStoreFactory#canProcess(java.util.Map)
      */
-    boolean canProcess(ParameterValueGroup params);
+    public abstract boolean canProcess(ParameterValueGroup params);
 
     /**
      * @see DataStoreFactory#open(org.opengis.parameter.ParameterValueGroup)
      */
-    DataStore open(Map<String, ? extends Serializable> params) throws DataStoreException;
+    public abstract DataStore open(Map<String, ? extends Serializable> params) throws DataStoreException;
 
     /**
      * Open a link to the storage location.
@@ -140,12 +135,13 @@ public interface DataStoreFactory {
      * @return DataStore opened store
      * @throws DataStoreException if parameters are incorrect or connexion failed.
      */
-    DataStore open(ParameterValueGroup params) throws DataStoreException;
+    @Override
+    public abstract DataStore open(ParameterValueGroup params) throws DataStoreException;
 
     /**
      * @see DataStoreFactory#create(org.opengis.parameter.ParameterValueGroup)
      */
-    DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException;
+    public abstract DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException;
 
     /**
      * Create a new storage location.
@@ -158,6 +154,6 @@ public interface DataStoreFactory {
      * @return FeatureStore created store
      * @throws DataStoreException if parameters are incorrect or creation failed.
      */
-    DataStore create(ParameterValueGroup params) throws DataStoreException;
+    public abstract DataStore create(ParameterValueGroup params) throws DataStoreException;
 
 }

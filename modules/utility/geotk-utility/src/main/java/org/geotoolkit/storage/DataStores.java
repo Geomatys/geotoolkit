@@ -70,7 +70,7 @@ public final class DataStores extends Static {
      * @param  all  {@code true} for all factories, or {@code false} for only available factories.
      * @return The set of factories for the given conditions.
      */
-    private static synchronized <T extends DataStoreFactory> Set<T> getFactories(final Class<T> type, final boolean all) {
+    private static synchronized <T> Set<T> getFactories(final Class<T> type, final boolean all) {
         final Set<T> results = new HashSet<>();
         final Iterator<DataStoreFactory> factories = loader.iterator();
 
@@ -93,7 +93,7 @@ public final class DataStores extends Static {
      * @param  type The type of the factories to fetch, or {@code null} for fetching all of them.
      * @return The set of all factories of the given type.
      */
-    public static <T extends DataStoreFactory> Set<T> getAllFactories(final Class<T> type) {
+    public static <T> Set<T> getAllFactories(final Class<T> type) {
         return getFactories(type, true);
     }
 
@@ -105,7 +105,7 @@ public final class DataStores extends Static {
      * @param  type The type of the factories to fetch, or {@code null} for fetching very types.
      * @return The set of available factories of the given type.
      */
-    public static <T extends DataStoreFactory> Set<T> getAvailableFactories(final Class<T> type) {
+    public static <T> Set<T> getAvailableFactories(final Class<T> type) {
         return getFactories(type, false);
     }
 

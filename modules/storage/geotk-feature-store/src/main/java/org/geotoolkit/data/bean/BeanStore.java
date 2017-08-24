@@ -33,6 +33,7 @@ import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.util.GenericName;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
@@ -80,7 +81,7 @@ public class BeanStore extends AbstractFeatureStore implements StorageListener{
     }
 
     @Override
-    public FeatureStoreFactory getFactory() {
+    public DataStoreFactory getProvider() {
         return null;
     }
 

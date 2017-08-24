@@ -67,7 +67,7 @@ public interface FeatureStore extends AutoCloseable {
      *
      * @return this source original factory
      */
-    DataStoreFactory getFactory();
+    DataStoreFactory getProvider();
 
     /**
      * Get version history for given feature type.

@@ -85,7 +85,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
     }
 
     @Override
-    public DataStoreFactory getFactory() {
+    public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(NetcdfObservationStoreFactory.NAME);
     }
 

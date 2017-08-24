@@ -27,7 +27,6 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.storage.coverage.DefaultCoverageResource;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -38,6 +37,7 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.Resource;
@@ -89,7 +89,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
      * Do nothing in this implementation.
      */
     @Override
-    public CoverageStoreFactory getFactory() {
+    public DataStoreFactory getProvider() {
         return null;
     }
 

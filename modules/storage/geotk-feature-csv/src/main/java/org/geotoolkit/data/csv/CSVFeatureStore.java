@@ -68,6 +68,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.geotoolkit.storage.DataStoreFactory;
 
 /**
  * CSV DataStore, holds a single feature type which name match the file name.
@@ -156,8 +157,8 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public FeatureStoreFactory getFactory() {
-        return (FeatureStoreFactory) DataStores.getFactoryById(CSVFeatureStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(CSVFeatureStoreFactory.NAME);
     }
 
     Path getFile() {

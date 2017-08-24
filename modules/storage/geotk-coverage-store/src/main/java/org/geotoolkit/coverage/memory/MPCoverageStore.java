@@ -18,8 +18,8 @@ package org.geotoolkit.coverage.memory;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.Resource;
@@ -59,7 +59,7 @@ public class MPCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
-    public CoverageStoreFactory getFactory() {
+    public DataStoreFactory getProvider() {
         return null;
     }
 

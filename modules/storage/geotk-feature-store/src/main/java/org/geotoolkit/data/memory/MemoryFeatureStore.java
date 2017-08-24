@@ -63,6 +63,7 @@ import org.apache.sis.storage.IllegalNameException;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.internal.data.GenericNameIndex;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.feature.PropertyNotFoundException;
 
 
@@ -185,7 +186,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      * @return null
      */
     @Override
-    public FeatureStoreFactory getFactory() {
+    public DataStoreFactory getProvider() {
         return null;
     }
 

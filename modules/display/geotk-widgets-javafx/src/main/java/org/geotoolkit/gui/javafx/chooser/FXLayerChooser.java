@@ -136,7 +136,7 @@ public class FXLayerChooser extends BorderPane{
 
                 if(source instanceof FeatureStore){
                     final FeatureStore store = (FeatureStore) source;
-                    final DataStoreFactory factory = store.getFactory();
+                    final DataStoreFactory factory = store.getProvider();
                     final Session session = store.createSession(true);
                     final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name.toString()));
 

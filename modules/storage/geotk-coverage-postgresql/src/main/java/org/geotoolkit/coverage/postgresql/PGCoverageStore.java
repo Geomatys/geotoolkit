@@ -44,6 +44,7 @@ import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.factory.sql.EPSGFactory;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.coverage.CoverageResource;
 
@@ -97,8 +98,8 @@ public class PGCoverageStore extends AbstractCoverageStore{
      * {@inheritDoc}
      */
     @Override
-    public CoverageStoreFactory getFactory() {
-        return (CoverageStoreFactory) DataStores.getFactoryById(PGCoverageStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(PGCoverageStoreFactory.NAME);
     }
 
     @Override

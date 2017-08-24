@@ -89,8 +89,8 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
      * {@inheritDoc }
      */
     @Override
-    public DataStoreFactory getFactory() {
-        return store.getFactory();
+    public DataStoreFactory getProvider() {
+        return store.getProvider();
     }
 
     @Override

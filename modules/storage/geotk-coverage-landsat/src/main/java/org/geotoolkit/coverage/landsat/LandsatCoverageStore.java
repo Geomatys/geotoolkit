@@ -32,11 +32,11 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
 
@@ -149,8 +149,8 @@ public class LandsatCoverageStore extends AbstractCoverageStore {
      * {@inheritDoc }.
      */
     @Override
-    public CoverageStoreFactory getFactory() {
-        return (CoverageStoreFactory) DataStores.getFactoryById(LandsatStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(LandsatStoreFactory.NAME);
     }
 
     /**

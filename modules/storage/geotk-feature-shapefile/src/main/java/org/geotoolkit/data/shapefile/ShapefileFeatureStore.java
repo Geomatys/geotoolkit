@@ -91,6 +91,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -194,8 +195,8 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     @Override
-    public FeatureStoreFactory getFactory() {
-        return (FeatureStoreFactory) DataStores.getFactoryById(ShapefileFeatureStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(ShapefileFeatureStoreFactory.NAME);
     }
 
     @Override

@@ -181,14 +181,14 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
     public static Image getTypeIcon(MapItem mapItem){
         if(mapItem instanceof FeatureMapLayer){
             final FeatureStore store = ((FeatureMapLayer)mapItem).getCollection().getSession().getFeatureStore();
-            if(store!=null && store.getFactory() instanceof ClientFactory){
+            if(store!=null && store.getProvider() instanceof ClientFactory){
                 return ICON_SERVICE;
             }else{
                 return ICON_VECTOR;
             }
         }else if(mapItem instanceof CoverageMapLayer){
             final CoverageStore store = ((CoverageMapLayer)mapItem).getCoverageReference().getStore();
-            if(store!=null && store.getFactory() instanceof ClientFactory){
+            if(store!=null && store.getProvider() instanceof ClientFactory){
                 return ICON_SERVICE;
             }else{
                 return ICON_RASTER;

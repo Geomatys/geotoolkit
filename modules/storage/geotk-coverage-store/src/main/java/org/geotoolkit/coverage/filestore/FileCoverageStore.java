@@ -39,7 +39,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.image.io.NamedImageStore;
@@ -47,6 +46,7 @@ import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.storage.DataFileStore;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DefaultAggregate;
 import org.opengis.metadata.Metadata;
@@ -122,8 +122,8 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
     }
 
     @Override
-    public CoverageStoreFactory getFactory() {
-        return (CoverageStoreFactory) DataStores.getFactoryById(FileCoverageStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(FileCoverageStoreFactory.NAME);
     }
 
     @Override

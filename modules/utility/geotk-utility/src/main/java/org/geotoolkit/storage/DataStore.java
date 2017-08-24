@@ -44,7 +44,10 @@ public abstract class DataStore extends org.apache.sis.storage.DataStore {
      *
      * @return this source original factory
      */
-    public abstract DataStoreFactory getFactory();
+    @Override
+    public DataStoreFactory getProvider() {
+        return (DataStoreFactory)super.getProvider();
+    }
 
     @Override
     public Metadata getMetadata() throws DataStoreException {

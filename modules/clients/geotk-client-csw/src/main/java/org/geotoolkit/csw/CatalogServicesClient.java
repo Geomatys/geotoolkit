@@ -35,6 +35,7 @@ import org.geotoolkit.csw.xml.CSWVersion;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 
 
@@ -100,8 +101,8 @@ public class CatalogServicesClient extends AbstractClient {
     }
 
     @Override
-    public ClientFactory getFactory() {
-        return (ClientFactory) DataStores.getFactoryById(CSWClientFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(CSWClientFactory.NAME);
     }
 
     private static CSWVersion toVersion(final String version){

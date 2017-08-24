@@ -47,7 +47,7 @@ public interface CoverageStore extends AutoCloseable {
      *
      * @return this source original factory
      */
-    DataStoreFactory getFactory();
+    DataStoreFactory getProvider();
 
     Metadata getMetadata() throws DataStoreException;
 

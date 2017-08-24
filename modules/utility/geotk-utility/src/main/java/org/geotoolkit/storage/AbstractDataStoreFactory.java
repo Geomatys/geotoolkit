@@ -20,9 +20,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.factory.Factory;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.parameter.Parameters;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterValue;
@@ -37,7 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractDataStoreFactory extends Factory implements DataStoreFactory {
+public abstract class AbstractDataStoreFactory extends DataStoreFactory {
 
     /**
      * Identifier, Mandatory.
@@ -80,6 +81,22 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
             name = name.substring(0, name.length() - 7);
         }
         return name;
+    }
+
+    @Override
+    public String getShortName() {
+        return getDisplayName().toString();
+    }
+
+
+    @Override
+    public org.apache.sis.storage.DataStore open(StorageConnector connector) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**

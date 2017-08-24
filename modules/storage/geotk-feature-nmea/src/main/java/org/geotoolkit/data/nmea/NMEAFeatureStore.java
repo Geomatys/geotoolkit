@@ -41,6 +41,7 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.util.GenericName;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
@@ -84,8 +85,8 @@ public class NMEAFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public FeatureStoreFactory getFactory() {
-        return (FeatureStoreFactory) DataStores.getFactoryById(NMEAFeatureStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(NMEAFeatureStoreFactory.NAME);
     }
 
     @Override

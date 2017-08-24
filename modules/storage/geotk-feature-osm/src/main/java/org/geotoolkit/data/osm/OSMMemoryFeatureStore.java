@@ -21,14 +21,12 @@ package org.geotoolkit.data.osm;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.data.AbstractFeatureStore;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
@@ -46,6 +44,7 @@ import org.opengis.filter.identity.FeatureId;
 
 import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -95,8 +94,8 @@ public class OSMMemoryFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public FeatureStoreFactory getFactory() {
-        return (FeatureStoreFactory) DataStores.getFactoryById(OSMMemoryFeatureStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(OSMMemoryFeatureStoreFactory.NAME);
     }
 
     @Override
