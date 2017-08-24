@@ -92,7 +92,7 @@ public class TimedCoverageStore extends AbstractCoverageStore {
 
     @Override
     public Resource getRootResource() throws DataStoreException {
-        return resource;
+            return resource;
     }
 
     @Override

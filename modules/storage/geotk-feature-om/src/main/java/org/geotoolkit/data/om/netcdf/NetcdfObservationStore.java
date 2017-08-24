@@ -29,6 +29,7 @@ import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
@@ -136,7 +137,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         final FeatureType sft = getFeatureType(query.getTypeName());
         try {
-            return handleRemaining(new NetcdfFeatureReader(dataFile,sft), query);
+            return FeatureStreams.subset(new NetcdfFeatureReader(dataFile,sft), query);
         } catch (NetCDFParsingException ex) {
             throw new DataStoreException(ex);
         }

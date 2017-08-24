@@ -234,7 +234,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
             query = qb.buildQuery();
         }
 
-        return handleRemaining(new MIFFeatureReader(manager, ft), query);
+        return FeatureStreams.subset(new MIFFeatureReader(manager, ft), query);
     }
 
     /**

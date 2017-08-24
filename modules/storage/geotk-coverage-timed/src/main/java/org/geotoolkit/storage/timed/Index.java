@@ -27,8 +27,10 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAccessor;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Stack;
 import java.util.function.Function;
 import java.util.logging.Level;
 import org.apache.sis.geometry.Envelopes;
@@ -40,11 +42,13 @@ import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeElementMapper;
 import org.geotoolkit.index.tree.star.FileStarRTree;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -69,6 +73,7 @@ public class Index implements Closeable {
     private static final String HISTORY_NAME = ".history";
 
     private final Path indexDir;
+    private Path treePath;
     private final Path relativizer;
 
     private final Path history;
@@ -107,14 +112,17 @@ public class Index implements Closeable {
         this.relativizer = relativizer;
         this.timeReader = timeReader;
 
-        final Path treePath = indexDir.resolve(TREE_NAME);
+        treePath = indexDir.resolve(TREE_NAME);
         treeLock = TimedUtils.acquireLock(treePath);
-        if (Files.exists(treePath)) {
-            synchronized (treeLock) {
+
+        synchronized (treeLock) {
+            if (Files.exists(treePath)) {
                 tree = new FileStarRTree<>(treePath, new SimpleImageMapping(indexDir, relativizer, this::compute));
                 treeCRS = tree.getCrs();
             }
+        }
 
+        if (treeCRS != null) {
             final TemporalCRS timeCRS = CRS.getTemporalComponent(treeCRS);
             if (timeCRS == null) {
                 throw new StoreIndexException("The resource index has no temporal component, that's forbidden.");
@@ -122,6 +130,41 @@ public class Index implements Closeable {
             xIndex = CRSUtilities.firstHorizontalAxis(treeCRS);
             timeIndex = AxisDirections.indexOfColinear(treeCRS.getCoordinateSystem(), timeCRS.getCoordinateSystem());
         }
+    }
+
+    double[] getTimes() throws IOException {
+        final Stack<Node> stack = new Stack<>();
+        double[] timeBuffer = new double[32];
+        int count = 0;
+        synchronized (treeLock) {
+            stack.add(tree.getRoot());
+            while (!stack.isEmpty()) {
+                final Node n = stack.pop();
+                if (n.getChildId() > 0) {
+                    final Node[] children = n.getChildren();
+                    for (final Node child : children) {
+                        stack.push(child);
+                    }
+                }
+
+                if (n.isData()) {
+                    if (count >= timeBuffer.length) {
+                        final double[] expanded = new double[(int)Math.min(Integer.MAX_VALUE, 2l * timeBuffer.length)];
+                        System.arraycopy(timeBuffer, 0, expanded, 0, timeBuffer.length);
+                        timeBuffer = expanded;
+                    }
+
+                    timeBuffer[count++] = n.getBoundary()[timeIndex];
+                }
+            }
+        }
+
+        if (timeBuffer.length > count) {
+            timeBuffer = Arrays.copyOf(timeBuffer, count);
+        }
+
+        Arrays.sort(timeBuffer);
+        return timeBuffer;
     }
 
     public Optional<Envelope> getEnvelope() throws StoreIndexException {
@@ -175,8 +218,32 @@ public class Index implements Closeable {
         return false;
     }
 
+    boolean tryForget(final Path image) {
+        try {
+            if (!isIndexed(image)) {
+                return true;
+            }
+
+            synchronized (treeLock) {
+                if (tree == null) {
+                    return true;
+                }
+
+                if (tree.remove(image)) {
+                    unmark(image);
+                    return true;
+                }
+            }
+        } catch (StoreIndexException | IOException e) {
+            TimedUtils.LOGGER.log(Level.WARNING, e, () -> String.format("Cannot read input image. It will be ignored.%nPath : %s", image));
+        }
+
+        return false;
+    }
+
     private void ensureTreeExists(final Path imageFile) throws CoverageStoreException, IOException, StoreIndexException {
-        if (tree == null) {
+        if (tree == null || !Files.exists(treePath)) {
+            // First, we ensure given data is readable
             final CoordinateReferenceSystem imageCRS;
             try (final TimedUtils.CloseableCoverageReader reader = new TimedUtils.CloseableCoverageReader()) {
                 reader.setInput(imageFile);
@@ -187,10 +254,15 @@ public class Index implements Closeable {
                 throw new CoverageStoreException("Given image has no spatial information.");
             }
 
+            // After it, we prepare index
+            Files.createDirectories(indexDir);
+
+            clearHistory();
+
             synchronized (treeLock) {
                 if (tree == null) {
                     treeCRS = new DefaultCompoundCRS(Collections.singletonMap("name", "Timed"), imageCRS, CommonCRS.Temporal.JAVA.crs());
-                    tree = new FileStarRTree<>(indexDir.resolve(TREE_NAME), 7, treeCRS, new SimpleImageMapping(indexDir, relativizer, this::compute));
+                    tree = new FileStarRTree<>(treePath, 7, treeCRS, new SimpleImageMapping(indexDir, relativizer, this::compute));
                 }
             }
 
@@ -321,10 +393,23 @@ public class Index implements Closeable {
                 Files.createFile(imageHistory);
             }
 
-            try (final BufferedWriter writer = Files.newBufferedWriter(imageHistory, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
+            try (final BufferedWriter writer = Files.newBufferedWriter(imageHistory, StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING)) {
                 writer.append("INDEXED ON "+OffsetDateTime.now(ZoneId.of("Z")));
-                writer.newLine();
             }
+        }
+    }
+
+    private void unmark(final Path image) throws IOException {
+        final Path imageHistory = getHistory(image);
+        synchronized (historyLock) {
+            Files.deleteIfExists(imageHistory);
+        }
+    }
+
+    private void clearHistory() throws IOException {
+        synchronized (historyLock) {
+            IOUtilities.deleteRecursively(history);
+            Files.createDirectory(history);
         }
     }
 

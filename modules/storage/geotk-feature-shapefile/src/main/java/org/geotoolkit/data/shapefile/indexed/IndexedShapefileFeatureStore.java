@@ -286,7 +286,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         qb.setSortBy(query.getSortBy());
         qb.setStartIndex(query.getStartIndex());
         qb.setMaxFeatures(query.getMaxFeatures());
-        return handleRemaining(reader, qb.buildQuery());
+        return FeatureStreams.subset(reader, qb.buildQuery());
     }
 
     protected FeatureReader createFeatureReader(
@@ -563,7 +563,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             final FeatureReader reader = createFeatureReader(attReader, schema, null);
             FeatureWriter writer = new IndexedShapefileFeatureWriter(
                     schema.getName().tip().toString(), shpFiles, attReader, reader, this, dbfCharset);
-            return handleRemaining(writer, query.getFilter());
+            return FeatureStreams.filter(writer, query.getFilter());
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }

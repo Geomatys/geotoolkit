@@ -168,6 +168,7 @@ public final class FeatureStreams {
      * @return filtered iterator
      */
     public static <F> Iterator<F> filter(final Iterator<F> iterator, final Filter filter){
+        if (filter==null || Filter.INCLUDE.equals(filter)) return iterator;
         return GenericFilterIterator.wrap(iterator, filter);
     }
 
@@ -178,6 +179,7 @@ public final class FeatureStreams {
      * @return filtered iterator
      */
     public static FeatureIterator filter(final FeatureIterator iterator, final Filter filter){
+        if (filter==null || Filter.INCLUDE.equals(filter)) return iterator;
         return GenericFilterFeatureIterator.wrap(iterator, filter);
     }
 
@@ -188,6 +190,7 @@ public final class FeatureStreams {
      * @return filtered reader
      */
     public static FeatureReader filter(final FeatureReader reader, final Filter filter){
+        if (filter==null || Filter.INCLUDE.equals(filter)) return reader;
         return GenericFilterFeatureIterator.wrap(reader, filter);
     }
 
@@ -199,6 +202,7 @@ public final class FeatureStreams {
      * @return filtered writer
      */
     public static FeatureWriter filter(final FeatureWriter writer, final Filter filter){
+        if (filter==null || Filter.INCLUDE.equals(filter)) return writer;
         return GenericFilterFeatureIterator.wrap(writer, filter);
     }
 
@@ -210,6 +214,7 @@ public final class FeatureStreams {
      * @return filtered collection
      */
     public static FeatureCollection filter(final FeatureCollection col, final Filter filter){
+        if (filter==null || Filter.INCLUDE.equals(filter)) return col;
         return GenericFilterFeatureIterator.wrap(col, filter);
     }
 

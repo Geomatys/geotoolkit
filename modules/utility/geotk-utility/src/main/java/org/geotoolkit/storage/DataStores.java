@@ -167,18 +167,32 @@ public final class DataStores extends Static {
             final Map<String, Serializable> asMap) throws DataStoreException
     {
         CharSequence unavailable = null;
+        Exception error = null;
         for (final DataStoreFactory factory : loader) {
-            if ((parameters != null) ? factory.canProcess(parameters) : factory.canProcess(asMap)) {
-                if (factory.availability().pass()) {
-                    return (DataStore) ((parameters != null) ? factory.open(parameters) : factory.open(asMap));
-                } else if (unavailable == null) {
-                    unavailable = factory.getDisplayName();
+            try {
+                if ((parameters != null) ? factory.canProcess(parameters) : factory.canProcess(asMap)) {
+                    if (factory.availability().pass()) {
+                        return (DataStore) ((parameters != null) ? factory.open(parameters) : factory.open(asMap));
+                    } else if (unavailable == null) {
+                        unavailable = factory.getDisplayName();
+                    }
+                }
+            } catch (Exception e) {
+                // If an error occurs with a factory, we skip it and try another factory.
+                if (error != null) {
+                    error.addSuppressed(e);
+                } else {
+                    error = e;
                 }
             }
         }
         if (unavailable != null) {
             throw new DataStoreException("The " + unavailable + " data store is not available. "
                     + "Are every required JAR files accessible on the classpath?");
+        } else if (error instanceof DataStoreException) {
+            throw (DataStoreException) error;
+        } else if (error != null) {
+            throw new DataStoreException("An error occurred while searching for a datastore", error);
         }
         return null;
     }

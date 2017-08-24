@@ -44,6 +44,7 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.storage.DataFileStore;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -175,7 +176,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         typeCheck(query.getTypeName()); //raise error is type doesnt exist
         final FeatureReader fr = new DBFFeatureReader();
-        return handleRemaining(fr, query);
+        return FeatureStreams.subset(fr, query);
     }
 
 

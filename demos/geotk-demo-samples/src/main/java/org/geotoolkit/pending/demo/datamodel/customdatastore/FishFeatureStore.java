@@ -23,6 +23,7 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.FeatureStreams;
 
 import org.opengis.util.GenericName;
 import org.geotoolkit.storage.DataStores;
@@ -80,7 +81,7 @@ public class FishFeatureStore extends AbstractFeatureStore{
         }
 
         //use the generic methode to take to care of everything for us.
-        reader = handleRemaining(reader, query);
+        reader = FeatureStreams.subset(reader, query);
         return reader;
     }
 

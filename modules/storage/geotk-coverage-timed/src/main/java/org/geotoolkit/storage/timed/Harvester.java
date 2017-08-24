@@ -22,7 +22,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
 import java.nio.file.WatchService;
 import java.util.Iterator;
 import java.util.Objects;
@@ -33,6 +32,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.nio.DirectoryWatcher;
 import org.geotoolkit.nio.PathChangeListener;
 import org.geotoolkit.nio.PathChangedEvent;
@@ -60,6 +60,8 @@ import org.geotoolkit.nio.PathChangedEvent;
  */
 class Harvester implements PathChangeListener, Closeable {
 
+    private final Path source;
+
     private final Consumer<FileSet> target;
 
     private final DelayQueue<DelayedFileSet> delayQueue;
@@ -69,10 +71,18 @@ class Harvester implements PathChangeListener, Closeable {
     private final TimeUnit delayUnit;
     private final long delay;
 
+    final Path resetTrigger;
+
     Harvester(final Path source, final Consumer<FileSet> target, final TimeUnit delayUnit, final long delay) throws IOException {
+        this(source, target, delayUnit, delay, null);
+    }
+
+    Harvester(final Path source, final Consumer<FileSet> target, final TimeUnit delayUnit, final long delay, final Path resetTrigger) throws IOException {
+        this.source = source;
         this.target = target;
         this.delayUnit = delayUnit;
         this.delay = delay;
+        this.resetTrigger = resetTrigger;
 
         delayQueue = new DelayQueue<>();
 
@@ -102,16 +112,38 @@ class Harvester implements PathChangeListener, Closeable {
 
     @Override
     public void pathChanged(PathChangedEvent event) {
-        if (event.isDirectory)
+        final boolean isDeleted = StandardWatchEventKinds.ENTRY_DELETE.equals(event.kind);
+        if (event.isDirectory && !isDeleted)
             return;
-        final WatchEvent.Kind eventKind = event.kind;
         final DelayedFileSet dfs = new DelayedFileSet(event.target, delayUnit, delay);
-        if (StandardWatchEventKinds.ENTRY_CREATE.equals(eventKind) || StandardWatchEventKinds.ENTRY_MODIFY.equals(eventKind)) {
+        if (StandardWatchEventKinds.ENTRY_CREATE.equals(event.kind) || StandardWatchEventKinds.ENTRY_MODIFY.equals(event.kind)) {
                 updateFileSet(dfs);
-        } else if (StandardWatchEventKinds.ENTRY_DELETE.equals(eventKind)) {
-            // TODO : Complex case.
+        } else if (isDeleted) {
+            if (resetTrigger != null && event.target.startsWith(resetTrigger)) {
+                try {
+                    scanDirectory();
+                } catch (IOException ex) {
+                    Logger.getLogger(Harvester.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                // TODO : Complex case : single image removal.
+            }
         } else {
-            TimedUtils.LOGGER.fine(() -> "Unexpected file event : "+eventKind);
+            TimedUtils.LOGGER.fine(() -> "Unexpected file event : "+event.kind);
+        }
+    }
+
+    final void scanDirectory() throws IOException {
+        try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(source, Files::isRegularFile)) {
+            final Iterator<Path> it = dirStream.iterator();
+            try {
+                while (it.hasNext()) {
+                    final DelayedFileSet dfs = new DelayedFileSet(it.next(), delayUnit, delay);
+                    updateFileSet(dfs);
+                }
+            } catch (Exception e) {
+                TimedUtils.LOGGER.log(Level.WARNING, "A file cannot be harvested.", e);
+            }
         }
     }
 

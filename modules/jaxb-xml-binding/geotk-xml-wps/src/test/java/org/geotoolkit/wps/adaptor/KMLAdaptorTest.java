@@ -16,7 +16,13 @@
  */
 package org.geotoolkit.wps.adaptor;
 
-import static org.junit.Assert.assertEquals;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import javax.xml.bind.JAXBException;
+import org.geotoolkit.wps.xml.v200.DataInputType;
+import org.geotoolkit.wps.xml.v200.Format;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.util.FactoryException;
 
@@ -24,13 +30,21 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ComplexAdaptorTest {
+public class KMLAdaptorTest {
 
     @Test
-    public void count() throws FactoryException {
+    public void kmlCdataWPS2() throws FactoryException, IOException, JAXBException {
 
-        assertEquals(11, ComplexAdaptor.getAdaptorCount());
+        final Format format = new Format(null, "application/vnd.google-earth.kml+xml", null, null);
 
+        final ComplexAdaptor adaptor = ComplexAdaptor.getAdaptor(format);
+        assertEquals(Path.class, adaptor.getValueClass());
+
+        Path path = Files.createTempFile("cdata", ".kml");
+        Files.write(path, "some text".getBytes());
+
+        DataInputType out = adaptor.toWPS2Input(path);
+        assertNotNull(out);
 
     }
 }
