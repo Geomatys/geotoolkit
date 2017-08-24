@@ -19,7 +19,6 @@ package org.geotoolkit.storage;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.metadata.Identifier;
@@ -119,8 +118,8 @@ public abstract class AbstractResource implements Resource{
         CharSequence name = "";
         try {
             name = getMetadata().getIdentificationInfo().iterator().next().getCitation().getIdentifiers().iterator().next().getCode();
-        } catch (DataStoreException ex) {
-            //do nothing
+        } catch (Exception ex) {
+            //do nothing : various errors can happen here : null pointer, no such element, etc.
         }
         if (this instanceof DataSet) {
             return StringUtilities.toStringTree(name.toString(), ((DataSet)this).getResources());
