@@ -41,7 +41,9 @@ import org.geotoolkit.wps.xml.v200.OutputDefinitionType;
 import org.geotoolkit.wps.xml.v200.Result;
 import org.geotoolkit.wps.xml.v200.StatusInfo;
 import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -376,6 +378,7 @@ public class WPS2Process extends AbstractProcess {
         try {
             final ParameterValueGroup inputs = getInput();
             final List<GeneralParameterDescriptor> inputParamDesc = inputs.getDescriptor().descriptors();
+
             final List<GeneralParameterDescriptor> outputParamDesc = descriptor.getOutputDescriptor().descriptors();
 
             final List<DataInputType> wpsIN = new ArrayList<>();
@@ -386,12 +389,14 @@ public class WPS2Process extends AbstractProcess {
             /*
              * INPUTS
              */
-            for (final GeneralParameterDescriptor inputGeneDesc : inputParamDesc) {
+
+            for (final GeneralParameterValue inputValue : inputs.values()) {
+                GeneralParameterDescriptor inputGeneDesc = inputValue.getDescriptor();
                 if (inputGeneDesc instanceof ParameterDescriptor) {
                     final ParameterDescriptor inputDesc = (ParameterDescriptor) inputGeneDesc;
                     final DataAdaptor adaptor = (DataAdaptor) ((ExtendedParameterDescriptor)inputDesc).getUserObject().get(DataAdaptor.USE_ADAPTOR);
 
-                    final Object value = Parameters.castOrWrap(inputParameters).getValue(inputDesc);
+                    final Object value = ((ParameterValue)inputValue).getValue();
                     if (value==null) continue;
 
                     final DataInputType dataInput;

@@ -19,7 +19,6 @@ package org.geotoolkit.wps;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.net.URLConnection;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -44,11 +43,11 @@ public class GetResultRequest extends AbstractRequest {
     protected final boolean doGET;
 
     public GetResultRequest(final String serverURL, final ClientSecurity security){
-        this(serverURL, security, true);
+        this(serverURL, security, true, null);
     }
 
-    public GetResultRequest(final String serverURL, final ClientSecurity security, final boolean doGET){
-        super(serverURL, security, null);
+    public GetResultRequest(final String serverURL, final ClientSecurity security, final boolean doGET, final Integer timeout){
+        super(serverURL, security, null, timeout);
         this.doGET = doGET;
     }
 
@@ -77,15 +76,16 @@ public class GetResultRequest extends AbstractRequest {
         if (doGET) {
 
             //GET
-            final URL url = getURL(); //build GET request
-            final URLConnection conec = security.secure(url.openConnection());
+            if (debug) {
+                System.out.println("GET " + getURL());
+            }
+            final URLConnection conec = openConnection();
             return conec.getInputStream();
 
         } else {
 
             //POST
-            final URL url = new URL(serverURL);
-            final URLConnection conec = security.secure(url.openConnection());
+            final URLConnection conec = openPostConnection();
             conec.setDoOutput(true);
             conec.setRequestProperty("Content-Type", "text/xml");
 

@@ -66,7 +66,7 @@ public class CatalogServicesClient extends AbstractClient {
      * @throws IllegalStateException throws an exception if the capabilities cannot be resolved for serverUrl
      */
     public CatalogServicesClient(final URL serverURL) throws IllegalStateException{
-        super(create(CSWClientFactory.PARAMETERS, serverURL, null));
+        super(create(CSWClientFactory.PARAMETERS, serverURL, null, null));
         final AbstractCapabilities capa = getCapabilities();
         if(capa == null){
             throw new IllegalStateException("Cannot get Capabilities document from the server "+serverURL.toString());
@@ -94,7 +94,7 @@ public class CatalogServicesClient extends AbstractClient {
     }
 
     public CatalogServicesClient(final URL serverURL, final ClientSecurity security, final String version) {
-        super(create(CSWClientFactory.PARAMETERS, serverURL, security));
+        super(create(CSWClientFactory.PARAMETERS, serverURL, security, null));
         ArgumentChecks.ensureNonNull("version", version);
         parameters.parameter(CSWClientFactory.VERSION.getName().getCode()).setValue(version);
     }

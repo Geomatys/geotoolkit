@@ -41,11 +41,11 @@ public class GetCapabilitiesRequest extends AbstractRequest {
     protected final boolean doGET;
 
     public GetCapabilitiesRequest(final String serverURL, final ClientSecurity security){
-        this(serverURL, security, true);
+        this(serverURL, security, true, null);
     }
 
-    public GetCapabilitiesRequest(final String serverURL, final ClientSecurity security, final boolean doGET){
-        super(serverURL, security, null);
+    public GetCapabilitiesRequest(final String serverURL, final ClientSecurity security, final boolean doGET, Integer timeout) {
+        super(serverURL, security, null, timeout);
         this.doGET = doGET;
     }
 
@@ -74,25 +74,23 @@ public class GetCapabilitiesRequest extends AbstractRequest {
         if (doGET) {
 
             //GET
-            final URL url = getURL(); //build GET request
-            URLConnection conec = url.openConnection();
-            conec = security.secure(conec);
+            if (debug) {
+                System.out.println("GET " + getURL());
+            }
+            URLConnection conec = openConnection();
             return conec.getInputStream();
 
         } else {
 
             //POST
-            final URL url = new URL(serverURL);
-            URLConnection conec = url.openConnection();
-            conec = security.secure(conec);
+            URLConnection conec = openPostConnection();
             conec.setDoOutput(true);
             conec.setRequestProperty("Content-Type", "text/xml");
 
             OutputStream stream = conec.getOutputStream();
             stream = security.encrypt(stream);
-            Marshaller marshaller = null;
             try {
-                marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
+                Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
                 marshaller.marshal(request, stream);
                 WPSMarshallerPool.getInstance().recycle(marshaller);
             } catch (JAXBException ex) {
