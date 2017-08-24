@@ -74,7 +74,7 @@ public abstract class AbstractObservationStoreFactory extends AbstractDataStoreF
         //ensure it's the valid identifier
         final Object id = params.get(IDENTIFIER.getName().getCode());
         try{
-            final String expectedId = ((ParameterDescriptor<String>)getParametersDescriptor()
+            final String expectedId = ((ParameterDescriptor<String>)getOpenParameters()
                 .descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
             if(!expectedId.equals(id)){
                 return false;
@@ -84,7 +84,7 @@ public abstract class AbstractObservationStoreFactory extends AbstractDataStoreF
         }
 
         try{
-            return canProcess(Parameters.toParameter(params, getParametersDescriptor()));
+            return canProcess(Parameters.toParameter(params, getOpenParameters()));
         }catch(IllegalArgumentException ex){
             return false;
         }
@@ -105,7 +105,7 @@ public abstract class AbstractObservationStoreFactory extends AbstractDataStoreF
             return false;
         }
 
-        final ParameterDescriptorGroup desc = getParametersDescriptor();
+        final ParameterDescriptorGroup desc = getOpenParameters();
         if(!desc.getName().getCode().equalsIgnoreCase(params.getDescriptor().getName().getCode())){
             return false;
         }

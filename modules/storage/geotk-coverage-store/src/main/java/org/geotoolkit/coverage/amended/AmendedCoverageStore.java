@@ -61,7 +61,7 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
      * @param store wrapped store
      */
     public AmendedCoverageStore(CoverageStore store) {
-        super(store.getConfiguration());
+        super(store.getOpenParameters());
         this.store = store;
 
         store.addStorageListener(new CoverageStoreListener() {
@@ -81,8 +81,8 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
      * {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup getConfiguration() {
-        return store.getConfiguration();
+    public ParameterValueGroup getOpenParameters() {
+        return store.getOpenParameters();
     }
 
     /**

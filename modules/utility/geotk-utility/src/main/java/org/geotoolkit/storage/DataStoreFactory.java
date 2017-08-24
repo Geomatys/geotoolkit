@@ -95,7 +95,7 @@ public interface DataStoreFactory {
     /**
      * @return Description of the parameters required for the creation of a {@link org.apache.sis.storage.DataStore}.
      */
-    ParameterDescriptorGroup getParametersDescriptor();
+    ParameterDescriptorGroup getOpenParameters();
 
     /**
      * Test to see if this factory is suitable for processing the data pointed

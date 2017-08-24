@@ -75,7 +75,7 @@ public class SOSClientFactory extends AbstractClientFactory{
     }
 
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS;
     }
 

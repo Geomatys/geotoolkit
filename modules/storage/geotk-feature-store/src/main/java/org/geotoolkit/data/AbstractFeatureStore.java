@@ -108,7 +108,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     }
 
     @Override
-    public Parameters getConfiguration() {
+    public Parameters getOpenParameters() {
         return parameters;
     }
 

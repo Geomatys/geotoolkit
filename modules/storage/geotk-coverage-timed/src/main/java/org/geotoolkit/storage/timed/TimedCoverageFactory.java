@@ -123,7 +123,7 @@ public class TimedCoverageFactory extends AbstractCoverageStoreFactory {
     }
 
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS;
     }
 

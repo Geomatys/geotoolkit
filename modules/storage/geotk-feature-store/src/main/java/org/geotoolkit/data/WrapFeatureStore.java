@@ -42,7 +42,7 @@ public class WrapFeatureStore extends AbstractFeatureStore {
     protected FeatureStore featureStore;
 
     public WrapFeatureStore (final FeatureStore featureStore) {
-        super(featureStore.getConfiguration());
+        super(featureStore.getOpenParameters());
         this.featureStore = featureStore;
     }
 

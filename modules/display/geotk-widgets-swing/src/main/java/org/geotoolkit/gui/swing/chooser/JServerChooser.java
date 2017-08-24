@@ -81,7 +81,7 @@ public class JServerChooser extends javax.swing.JPanel {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 final ClientFactory factory = (ClientFactory) guiList.getSelectedValue();
-                final ParameterValueGroup param = factory.getParametersDescriptor().createValue();
+                final ParameterValueGroup param = factory.getOpenParameters().createValue();
                 guiEditor.setParameterValue(param);
             }
         });

@@ -125,7 +125,7 @@ public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory {
     }
 
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS;
     }
 

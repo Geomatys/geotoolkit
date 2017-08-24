@@ -20,7 +20,6 @@ import org.apache.sis.metadata.MetadataCopier;
 import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.metadata.Metadata;
-import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
@@ -39,13 +38,6 @@ public abstract class DataStore extends org.apache.sis.storage.DataStore {
      * for further information.
      */
     private final Object mdLock = new Object();
-
-    /**
-     * Get the parameters used to initialize this source from it's factory.
-     *
-     * @return source configuration parameters
-     */
-    public abstract ParameterValueGroup getConfiguration();
 
     /**
      * Get the factory which created this source.

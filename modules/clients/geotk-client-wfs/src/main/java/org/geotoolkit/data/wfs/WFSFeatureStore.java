@@ -103,7 +103,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
 
     public WFSFeatureStore(WebFeatureClient server) throws WebFeatureException {
-        super(server.getConfiguration());
+        super(server.getOpenParameters());
 
         this.server = server;
         try {

@@ -48,8 +48,8 @@ public class WrapCoverageStore extends DataStore implements CoverageStore{
     }
 
     @Override
-    public ParameterValueGroup getConfiguration() {
-        return store.getConfiguration();
+    public ParameterValueGroup getOpenParameters() {
+        return store.getOpenParameters();
     }
 
     @Override

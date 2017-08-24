@@ -40,7 +40,7 @@ public interface CoverageStore extends AutoCloseable {
      *
      * @return source configuration parameters
      */
-    ParameterValueGroup getConfiguration();
+    ParameterValueGroup getOpenParameters();
 
     /**
      * Get the factory which created this source.

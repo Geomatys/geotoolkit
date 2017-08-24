@@ -43,7 +43,7 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
     }
 
     @Override
-    public ParameterValueGroup getConfiguration() {
+    public ParameterValueGroup getOpenParameters() {
         return parameters;
     }
 

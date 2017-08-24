@@ -71,8 +71,8 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public Parameters getConfiguration() {
-        return Parameters.castOrWrap(wrapped.getConfiguration());
+    public Parameters getOpenParameters() {
+        return Parameters.castOrWrap(wrapped.getOpenParameters());
     }
 
     @Override

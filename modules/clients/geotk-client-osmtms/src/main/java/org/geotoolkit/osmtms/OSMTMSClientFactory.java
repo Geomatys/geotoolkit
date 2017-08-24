@@ -75,7 +75,7 @@ public class OSMTMSClientFactory extends AbstractClientFactory implements Covera
     }
 
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS;
     }
 

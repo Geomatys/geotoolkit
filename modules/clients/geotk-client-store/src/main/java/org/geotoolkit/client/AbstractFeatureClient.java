@@ -60,7 +60,7 @@ public abstract class AbstractFeatureClient extends AbstractFeatureStore {
     }
 
     @Override
-    public Parameters getConfiguration() {
+    public Parameters getOpenParameters() {
         if(parameters != null){
             //defensive copy
             return parameters.clone();

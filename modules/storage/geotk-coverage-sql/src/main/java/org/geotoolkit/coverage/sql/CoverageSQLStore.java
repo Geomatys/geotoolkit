@@ -83,7 +83,7 @@ public class CoverageSQLStore extends AbstractCoverageStore {
 
     public CoverageSQLStore(ParameterValueGroup parameters) {
         super(adaptParameter(parameters));
-        this.db = new CoverageDatabase(getConfiguration());
+        this.db = new CoverageDatabase(getOpenParameters());
     }
 
     @Override

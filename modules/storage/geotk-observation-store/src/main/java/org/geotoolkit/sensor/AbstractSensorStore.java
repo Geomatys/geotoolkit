@@ -45,7 +45,7 @@ public abstract class AbstractSensorStore extends DataStore implements SensorSto
     }
 
     @Override
-    public ParameterValueGroup getConfiguration() {
+    public ParameterValueGroup getOpenParameters() {
         return config;
     }
 

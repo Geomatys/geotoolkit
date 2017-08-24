@@ -72,7 +72,7 @@ public abstract class AbstractClient extends DataStore implements Client{
     }
 
     @Override
-    public ParameterValueGroup getConfiguration() {
+    public ParameterValueGroup getOpenParameters() {
         if(parameters != null){
             //defensive copy
             return parameters.clone();

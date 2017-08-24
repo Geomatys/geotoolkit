@@ -141,8 +141,8 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
     @Test
     public void testGetParametersInfo() {
         //check that we have those two parameters descriptors.
-        factory.getParametersDescriptor().descriptor(ShapefileFeatureStoreFactory.CREATE_SPATIAL_INDEX.getName().toString());
-        factory.getParametersDescriptor().descriptor(ShapefileFeatureStoreFactory.PATH.getName().toString());
+        factory.getOpenParameters().descriptor(ShapefileFeatureStoreFactory.CREATE_SPATIAL_INDEX.getName().toString());
+        factory.getOpenParameters().descriptor(ShapefileFeatureStoreFactory.PATH.getName().toString());
     }
 
     /*

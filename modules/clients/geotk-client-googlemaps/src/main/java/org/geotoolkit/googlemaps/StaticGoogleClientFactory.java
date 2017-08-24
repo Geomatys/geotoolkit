@@ -65,7 +65,7 @@ public class StaticGoogleClientFactory extends AbstractClientFactory implements 
     }
 
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS;
     }
 

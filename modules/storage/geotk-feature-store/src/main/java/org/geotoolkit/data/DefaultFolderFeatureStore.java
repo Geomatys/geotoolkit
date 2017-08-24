@@ -85,7 +85,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
         this.folderFactory = factory;
         this.singleFileFactory = this.folderFactory.getSingleFileFactory();
 
-        final ParameterDescriptorGroup desc = singleFileFactory.getParametersDescriptor();
+        final ParameterDescriptorGroup desc = singleFileFactory.getOpenParameters();
         singleFileDefaultParameters = Parameters.castOrWrap(desc.createValue());
         for(GeneralParameterDescriptor pdesc : desc.descriptors()){
             if(pdesc == PATH || pdesc.getName().getCode().equals(IDENTIFIER.getName().getCode())) {
@@ -249,7 +249,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
                 sourceFiles = ((DataFileStore) store).getDataFiles();
             } else {
                 // Not a file store ? We try to find an url parameter and see if it's a file one.
-                final URI fileURI = Parameters.castOrWrap(store.getConfiguration()).getValue(PATH);
+                final URI fileURI = Parameters.castOrWrap(store.getOpenParameters()).getValue(PATH);
                 if (fileURI == null) {
                     throw new DataStoreException("Source data cannot be reached for type name : " + typeName);
                 }

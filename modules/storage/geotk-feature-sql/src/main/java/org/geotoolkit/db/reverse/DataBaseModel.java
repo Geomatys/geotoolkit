@@ -374,10 +374,10 @@ public final class DataBaseModel {
         try {
             Filter filter = FF.equals(FF.property(Table.TABLE_SCHEM), FF.literal(schemaName));
 
-            if(store.getConfiguration().getValue(AbstractJDBCFeatureStoreFactory.TABLE)!=null &&
-               !store.getConfiguration().getValue(AbstractJDBCFeatureStoreFactory.TABLE).isEmpty()){
+            if(store.getOpenParameters().getValue(AbstractJDBCFeatureStoreFactory.TABLE)!=null &&
+               !store.getOpenParameters().getValue(AbstractJDBCFeatureStoreFactory.TABLE).isEmpty()){
                 filter = FF.and(filter, FF.equals(FF.property(Table.TABLE_NAME),
-                        FF.literal(store.getConfiguration().getValue(AbstractJDBCFeatureStoreFactory.TABLE))));
+                        FF.literal(store.getOpenParameters().getValue(AbstractJDBCFeatureStoreFactory.TABLE))));
             }
 
             final Iterator<Map> ite = cacheTables.filter(filter);

@@ -96,7 +96,7 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
     }
 
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS_DESCRIPTOR;
     }
 

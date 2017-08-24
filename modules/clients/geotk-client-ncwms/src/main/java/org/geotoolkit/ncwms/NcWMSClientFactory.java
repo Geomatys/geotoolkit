@@ -77,7 +77,7 @@ public class NcWMSClientFactory extends AbstractClientFactory implements Coverag
     }
 
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS;
     }
 

@@ -211,7 +211,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
     }
 
     @Override
-    public ParameterValueGroup getConfiguration() {
+    public ParameterValueGroup getOpenParameters() {
         return parameters;
     }
 

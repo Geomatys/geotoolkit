@@ -89,7 +89,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
     public DataStore open(Map<String, ? extends Serializable> params) throws DataStoreException {
         final ParameterValueGroup prm;
         try{
-            prm = Parameters.toParameter(forceIdentifier(params), getParametersDescriptor());
+            prm = Parameters.toParameter(forceIdentifier(params), getOpenParameters());
         }catch(IllegalArgumentException ex){
             throw new DataStoreException(ex);
         }
@@ -103,7 +103,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
     public DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
         final ParameterValueGroup prm;
         try{
-            prm = Parameters.toParameter(forceIdentifier(params), getParametersDescriptor());
+            prm = Parameters.toParameter(forceIdentifier(params), getOpenParameters());
         }catch(IllegalArgumentException ex){
             throw new DataStoreException(ex);
         }
@@ -117,7 +117,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
     public boolean canProcess(Map<String, ? extends Serializable> params) {
         params = forceIdentifier(params);
 
-        final ParameterValueGroup prm = Parameters.toParameter(params, getParametersDescriptor());
+        final ParameterValueGroup prm = Parameters.toParameter(params, getOpenParameters());
         if(prm == null){
             return false;
         }
@@ -143,7 +143,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
             return false;
         }
 
-        final ParameterDescriptorGroup desc = getParametersDescriptor();
+        final ParameterDescriptorGroup desc = getOpenParameters();
         if(!desc.getName().getCode().equalsIgnoreCase(params.getDescriptor().getName().getCode())){
             return false;
         }
@@ -169,7 +169,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
 
         if(!params.containsKey(IDENTIFIER.getName().getCode())){
             //identifier is not specified, force it
-            final ParameterDescriptorGroup desc = getParametersDescriptor();
+            final ParameterDescriptorGroup desc = getOpenParameters();
             params = new HashMap<String, Serializable>(params);
             final Object value = ((ParameterDescriptor)desc.descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
             params.put(IDENTIFIER.getName().getCode(), (Serializable)value);
@@ -184,7 +184,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * @return
      */
     protected boolean checkIdentifier(final ParameterValueGroup params){
-        final String expectedId = ((ParameterDescriptor<String>)getParametersDescriptor()
+        final String expectedId = ((ParameterDescriptor<String>)getOpenParameters()
                 .descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
 
         for(GeneralParameterValue val : params.values()){

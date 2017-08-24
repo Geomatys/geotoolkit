@@ -82,7 +82,7 @@ public class WMSClientFactory extends AbstractClientFactory implements CoverageS
     }
 
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS;
     }
 
