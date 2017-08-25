@@ -103,10 +103,14 @@ public abstract class AbstractProcess implements org.geotoolkit.process.Process 
     public ParameterValueGroup call() throws ProcessException {
         fireProcessStarted(null);
         boolean success = false;
+        boolean dismissed = false;
         Exception exception = null;
         try {
             execute();
             success = true;
+        } catch (DismissProcessException e) {
+            exception = e;
+            dismissed = true;
         } catch (ProcessException | RuntimeException e) {
             exception = e;
             throw e; // Will execute 'finally' before to exit.
@@ -116,8 +120,10 @@ public abstract class AbstractProcess implements org.geotoolkit.process.Process 
         } finally {
             if (success) {
                 fireProcessCompleted(null);
+            } else if (dismissed) {
+                fireProcessDismissed(exception.getMessage(),Float.NaN,true);
             } else {
-                fireProcessFailed(null, exception);
+                fireProcessFailed(exception.getMessage(), exception);
             }
         }
         return outputParameters;

@@ -23,10 +23,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.UnmarshalException;
-import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.ows.xml.ExceptionResponse;
+import org.geotoolkit.process.DismissProcessException;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.security.ClientSecurity;
@@ -193,6 +193,8 @@ public class WPS2Process extends AbstractProcess {
             registry.getClient().getLogger().log(Level.WARNING, ex.getMessage(), ex);
         } catch (InterruptedException ex) {
             registry.getClient().getLogger().log(Level.WARNING, ex.getMessage(), ex);
+        } catch (DismissProcessException ex) {
+            //do nothing, normal behaviour
         } catch (ProcessException ex) {
             registry.getClient().getLogger().log(Level.WARNING, ex.getMessage(), ex);
         }
@@ -254,8 +256,7 @@ public class WPS2Process extends AbstractProcess {
             } else if (StatusInfo.STATUS_FAILED.equalsIgnoreCase(status)) {
                 throw new ProcessException("Process failed", this);
             } else if (StatusInfo.STATUS_DISSMISED.equalsIgnoreCase(status)) {
-                fireProcessDismissed("WPS remote process has been canceled", lastProgress, false);
-                return null;
+                throw new DismissProcessException("WPS remote process has been canceled",this);
             }
 
             //loop until we have an answer
@@ -279,7 +280,7 @@ public class WPS2Process extends AbstractProcess {
                         failCount++;
                         continue;
                     } else if (isCanceled()) {
-                        return null;
+                        throw new DismissProcessException("WPS remote process has been canceled",this);
                     } else {
                         //server seems to have a issue or can't provide status
                         //informations in any case we don't known what is
@@ -298,8 +299,7 @@ public class WPS2Process extends AbstractProcess {
                     } else if (StatusInfo.STATUS_FAILED.equalsIgnoreCase(stat)) {
                         throw new ProcessException("Process failed", this);
                     } else if (StatusInfo.STATUS_DISSMISED.equalsIgnoreCase(stat)) {
-                        fireProcessDismissed("WPS remote process has been canceled", lastProgress, false);
-                        return null;
+                        throw new DismissProcessException("WPS remote process has been canceled",this);
                     }
 
                     lastMessage = stat;
