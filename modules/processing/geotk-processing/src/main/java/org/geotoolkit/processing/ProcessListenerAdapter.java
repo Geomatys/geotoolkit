@@ -37,6 +37,10 @@ public class ProcessListenerAdapter implements ProcessListener {
     }
 
     @Override
+    public void dismissed(final ProcessEvent event) {
+    }
+
+    @Override
     public void completed(final ProcessEvent event) {
     }
 

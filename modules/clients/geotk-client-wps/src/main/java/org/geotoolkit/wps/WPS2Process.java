@@ -43,6 +43,7 @@ import org.geotoolkit.wps.xml.v200.StatusInfo;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -253,7 +254,7 @@ public class WPS2Process extends AbstractProcess {
             } else if (StatusInfo.STATUS_FAILED.equalsIgnoreCase(status)) {
                 throw new ProcessException("Process failed", this);
             } else if (StatusInfo.STATUS_DISSMISED.equalsIgnoreCase(status)) {
-                fireProgressing("WPS remote process has been canceled", 100f, false);
+                fireProcessDismissed("WPS remote process has been canceled", lastProgress, false);
                 return null;
             }
 
@@ -297,7 +298,7 @@ public class WPS2Process extends AbstractProcess {
                     } else if (StatusInfo.STATUS_FAILED.equalsIgnoreCase(stat)) {
                         throw new ProcessException("Process failed", this);
                     } else if (StatusInfo.STATUS_DISSMISED.equalsIgnoreCase(stat)) {
-                        fireProgressing("WPS remote process has been canceled", 100f, false);
+                        fireProcessDismissed("WPS remote process has been canceled", lastProgress, false);
                         return null;
                     }
 
@@ -433,6 +434,10 @@ public class WPS2Process extends AbstractProcess {
                     out.setEncoding(encoding);
                     out.setMimeType(mime);
                     out.setSchema(schema);
+                    wpsOUT.add(out);
+                } else if(outputGeneDesc instanceof ParameterDescriptorGroup) {
+                    final ParameterDescriptorGroup outputDesc = (ParameterDescriptorGroup) outputGeneDesc;
+                    final OutputDefinitionType out = new OutputDefinitionType(outputDesc.getName().getCode(), asReference);
                     wpsOUT.add(out);
                 }
             }
