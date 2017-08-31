@@ -292,6 +292,12 @@ public abstract class ProgressController implements Localized, ProcessListener {
         progressing(event);
     }
 
+    @Override
+    public void dismissed(final ProcessEvent event) {
+        canceled = true;
+        failed(event);
+    }
+
     /**
      * Indicates that this job should be canceled.
      */

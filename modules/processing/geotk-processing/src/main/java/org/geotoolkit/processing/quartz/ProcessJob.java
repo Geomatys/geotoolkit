@@ -144,6 +144,10 @@ public class ProcessJob implements InterruptableJob {
         }
 
         @Override
+        public void dismissed(ProcessEvent event) {
+        }
+
+        @Override
         public void paused(ProcessEvent event) {
         }
 

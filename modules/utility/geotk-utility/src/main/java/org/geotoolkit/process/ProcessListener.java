@@ -59,6 +59,13 @@ public interface ProcessListener extends EventListener {
     void progressing(ProcessEvent event);
 
     /**
+     * Reports that a process has been dismissed.
+     *
+     * @param event The progress event.
+     */
+    void dismissed(ProcessEvent event);
+
+    /**
      * Reports that a process has been paused. In addition to the
      * source and task name, the event argument may contain the following optional information:
      * <p>

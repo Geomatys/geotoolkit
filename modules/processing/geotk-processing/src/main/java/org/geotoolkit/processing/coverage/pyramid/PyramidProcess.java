@@ -185,6 +185,14 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
     }
 
     /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void dismissed(ProcessEvent event) {
+        fireProcessDismissed(event.getTask(),event.getProgress(),false);
+    }
+
+    /**
      * Allow to cancel the tiles creation process.
      */
     private class PyramidMonitor extends ProgressMonitor {
