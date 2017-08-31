@@ -149,7 +149,7 @@ public class GMLAdaptor extends ComplexAdaptor {
             final String schema = format.getSchema();
 
             if (!MIME_TYPE.equalsIgnoreCase(mimeType)) return null;
-            if (!(ENC_UTF8.equalsIgnoreCase(encoding) || ENC_BASE64.equalsIgnoreCase(encoding))) return null;
+            if (encoding != null && !(ENC_UTF8.equalsIgnoreCase(encoding) || ENC_BASE64.equalsIgnoreCase(encoding))) return null;
             if (!ArraysExt.contains(FEATURE_SCHEMAS, schema)) return null;
 
             return new GMLAdaptor(mimeType, encoding, schema);

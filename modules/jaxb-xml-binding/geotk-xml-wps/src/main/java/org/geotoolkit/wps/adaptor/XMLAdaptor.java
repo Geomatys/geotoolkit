@@ -98,7 +98,7 @@ public class XMLAdaptor extends ComplexAdaptor<Node> {
             final String schema = format.getSchema();
 
             if (!MIME_TYPE.equalsIgnoreCase(mimeType)) return null;
-            if (!ENC_UTF8.equalsIgnoreCase(encoding)) return null;
+            if (encoding != null && !ENC_UTF8.equalsIgnoreCase(encoding)) return null;
 
             return new XMLAdaptor(mimeType, encoding, schema);
         }
