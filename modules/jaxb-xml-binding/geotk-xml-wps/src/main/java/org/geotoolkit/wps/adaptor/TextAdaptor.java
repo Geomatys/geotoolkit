@@ -103,7 +103,7 @@ public class TextAdaptor extends ComplexAdaptor<String> {
             final String schema = format.getSchema();
 
             if (!MIME_TYPE.equalsIgnoreCase(mimeType)) return null;
-            if (!ENC_UTF8.equalsIgnoreCase(encoding)) return null;
+            if (encoding != null && !ENC_UTF8.equalsIgnoreCase(encoding)) return null;
 
             return new TextAdaptor(mimeType, encoding, schema);
         }
