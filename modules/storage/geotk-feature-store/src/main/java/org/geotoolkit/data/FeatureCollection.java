@@ -19,6 +19,7 @@ package org.geotoolkit.data;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
@@ -159,5 +160,10 @@ public interface FeatureCollection extends Collection<Feature>, FeatureSet {
      * @throws DataStoreException
      */
     void remove(Filter filter) throws DataStoreException;
+
+    @Override
+    default boolean removeIf(Predicate<? super Feature> predicate) {
+        return Collection.super.removeIf(predicate);
+    }
 
 }
