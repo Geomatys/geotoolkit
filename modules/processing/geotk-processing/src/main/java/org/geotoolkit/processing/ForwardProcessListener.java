@@ -73,6 +73,11 @@ public class ForwardProcessListener implements ProcessListener {
         fireProgressing(msg, progress, processEvent.getException());
     }
 
+    @Override
+    public void dismissed(ProcessEvent processEvent) {
+        //no forward
+    }
+
     private void fireProgressing(String message, float progress, Exception ex) {
         final ProcessEvent event = new ProcessEvent(parentProcess, message, progress, ex);
         final ProcessListener[] listeners = parentProcess.getListeners();

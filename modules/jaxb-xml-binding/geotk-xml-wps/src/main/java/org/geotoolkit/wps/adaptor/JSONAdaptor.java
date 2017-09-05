@@ -97,7 +97,7 @@ public class JSONAdaptor extends ComplexAdaptor<TreeNode> {
             final String schema = format.getSchema();
 
             if (!MIME_TYPE.equalsIgnoreCase(mimeType)) return null;
-            if (!ENC_UTF8.equalsIgnoreCase(encoding)) return null;
+            if (encoding != null && !ENC_UTF8.equalsIgnoreCase(encoding)) return null;
 
             return new JSONAdaptor(mimeType, encoding, schema);
         }

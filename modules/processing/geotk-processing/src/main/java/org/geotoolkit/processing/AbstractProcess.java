@@ -103,10 +103,14 @@ public abstract class AbstractProcess implements org.geotoolkit.process.Process 
     public ParameterValueGroup call() throws ProcessException {
         fireProcessStarted(null);
         boolean success = false;
+        boolean dismissed = false;
         Exception exception = null;
         try {
             execute();
             success = true;
+        } catch (DismissProcessException e) {
+            exception = e;
+            dismissed = true;
         } catch (ProcessException | RuntimeException e) {
             exception = e;
             throw e; // Will execute 'finally' before to exit.
@@ -116,8 +120,10 @@ public abstract class AbstractProcess implements org.geotoolkit.process.Process 
         } finally {
             if (success) {
                 fireProcessCompleted(null);
+            } else if (dismissed) {
+                fireProcessDismissed(exception.getMessage(),Float.NaN,true);
             } else {
-                fireProcessFailed(null, exception);
+                fireProcessFailed(exception.getMessage(), exception);
             }
         }
         return outputParameters;
@@ -252,6 +258,26 @@ public abstract class AbstractProcess implements org.geotoolkit.process.Process 
                 hasIntermediateResults ? outputParameters : null);
         for (ProcessListener listener : listeners.getListeners(ProcessListener.class)) {
             listener.progressing(event);
+        }
+    }
+
+
+    /**
+     * Invoked when the process was dismiss. This method invokes
+     * {@link ProcessListener#dismissed(ProcessEvent)} for all registered listeners.
+     *
+     * @param task A description of the task which is progressing, or {@code null} if none.
+     * @param progress The progress as a number between 0 and 100, or {@link Float#NaN} if undetermined.
+     * @param hasIntermediateResults {@code true} if the {@link #outputParameters} contains
+     *        intermediate results that can be sent to the listeners.
+     */
+    protected void fireProcessDismissed(final CharSequence task, final float progress,
+                                   final boolean hasIntermediateResults)
+    {
+        final ProcessEvent event = new ProcessEvent(this, task, progress,
+                hasIntermediateResults ? outputParameters : null);
+        for (ProcessListener listener : listeners.getListeners(ProcessListener.class)) {
+            listener.dismissed(event);
         }
     }
 

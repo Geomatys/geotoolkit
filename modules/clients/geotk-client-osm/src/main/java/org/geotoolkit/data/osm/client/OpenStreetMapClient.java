@@ -77,7 +77,7 @@ public class OpenStreetMapClient extends AbstractClient{
     }
 
     public OpenStreetMapClient(final URL url, final ClientSecurity security, final OSMVersion version){
-        super(create(OSMClientFactory.PARAMETERS, url, security));
+        super(create(OSMClientFactory.PARAMETERS, url, security, null));
         ArgumentChecks.ensureNonNull("version", version);
         parameters.getOrCreate(OSMClientFactory.VERSION).setValue(version.getCode());
     }

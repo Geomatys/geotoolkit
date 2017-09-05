@@ -55,7 +55,7 @@ public abstract class AbstractClient extends DataStore implements Client{
     protected final Parameters parameters;
     protected final URL serverURL;
 
-    private final Map<String,Object> userProperties = new HashMap<String,Object>();
+    private final Map<String,Object> userProperties = new HashMap<>();
     private String sessionId = null;
     protected final Set<StorageListener> listeners = new HashSet<>();
 
@@ -183,11 +183,14 @@ public abstract class AbstractClient extends DataStore implements Client{
     }
 
     protected static ParameterValueGroup create(final ParameterDescriptorGroup desc,
-            final URL url, final ClientSecurity security){
+            final URL url, final ClientSecurity security, final Integer timeout){
         final Parameters param = Parameters.castOrWrap(desc.createValue());
         param.getOrCreate(AbstractClientFactory.URL).setValue(url);
         if (security != null) {
             param.getOrCreate(AbstractClientFactory.SECURITY).setValue(security);
+        }
+        if (timeout != null) {
+            param.getOrCreate(AbstractClientFactory.TIMEOUT).setValue(timeout);
         }
         return param;
     }

@@ -120,8 +120,8 @@ public abstract class AbstractResource implements Resource{
         CharSequence name = "";
         try {
             name = getMetadata().getIdentificationInfo().iterator().next().getCitation().getIdentifiers().iterator().next().getCode();
-        } catch (DataStoreException ex) {
-            //do nothing
+        } catch (Exception ex) {
+            //do nothing : various errors can happen here : null pointer, no such element, etc.
         }
         if (this instanceof Aggregate) {
             try {

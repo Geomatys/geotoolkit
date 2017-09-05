@@ -39,7 +39,7 @@ public class SensorObservationServiceClient extends AbstractClient {
     }
 
     public SensorObservationServiceClient(final URL serverURL, final ClientSecurity security, final String version) {
-        super(create(SOSClientFactory.PARAMETERS, serverURL, security));
+        super(create(SOSClientFactory.PARAMETERS, serverURL, security, null));
         if (version.equals("1.0.0")){
             parameters.getOrCreate(SOSClientFactory.VERSION).setValue(version);
         } else {
@@ -48,7 +48,7 @@ public class SensorObservationServiceClient extends AbstractClient {
     }
 
     public SensorObservationServiceClient(final URL serverURL, final ClientSecurity security, final SOSVersion version) {
-        super(create(SOSClientFactory.PARAMETERS, serverURL, security));
+        super(create(SOSClientFactory.PARAMETERS, serverURL, security, null));
         if(version == null){
             throw new IllegalArgumentException("unknowned version : "+ version);
         }

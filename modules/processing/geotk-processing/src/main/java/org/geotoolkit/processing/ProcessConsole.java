@@ -84,6 +84,12 @@ public final class ProcessConsole {
         public void progressing(final ProcessEvent event) {
             printEvent(event, FOREGROUND_DEFAULT.sequence());
         }
+
+        public void dismissed(final ProcessEvent event) {
+            failed = true;
+            printEvent(event, FOREGROUND_RED.sequence());
+        }
+
         @Override
         public void completed(final ProcessEvent event) {
             printEvent(event, BOLD.sequence()+FOREGROUND_GREEN.sequence());

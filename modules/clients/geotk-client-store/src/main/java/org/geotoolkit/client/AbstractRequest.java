@@ -93,8 +93,7 @@ public abstract class AbstractRequest implements Request {
     }
 
     protected AbstractRequest(final Client server, final String subPath) {
-        this(server.getURL().toString(), server.getClientSecurity(), subPath);
-        this.timeout = server.getTimeOutValue();
+        this(server.getURL().toString(), server.getClientSecurity(), subPath, server.getTimeOutValue());
     }
 
     protected AbstractRequest(final String serverURL) {
@@ -102,14 +101,25 @@ public abstract class AbstractRequest implements Request {
     }
 
     protected AbstractRequest(final String serverURL, final String subPath) {
-        this(serverURL,null,subPath);
+        this(serverURL,null,subPath, null);
     }
 
     protected AbstractRequest(final String serverURL, final ClientSecurity security, final String subPath) {
+        this(serverURL,security,subPath, null);
+    }
+
+    protected AbstractRequest(final String serverURL, final ClientSecurity security, final String subPath, final Integer timeout) {
         this.serverURL = serverURL;
         this.security = (security==null) ? DefaultClientSecurity.NO_SECURITY : security ;
         this.subPath = subPath;
-        this.timeout = AbstractClientFactory.TIMEOUT.getDefaultValue();
+        if (timeout != null) {
+            if (timeout < 0) {
+                throw new IllegalArgumentException("Time out value must be > 0");
+            }
+            this.timeout = timeout;
+        } else {
+            this.timeout = AbstractClientFactory.TIMEOUT.getDefaultValue();
+        }
     }
 
     /**
@@ -301,7 +311,22 @@ public abstract class AbstractRequest implements Request {
         URLConnection cnx = getURL().openConnection();
         cnx = security.secure(cnx);
         cnx.setReadTimeout(timeout);
+        cnx.setConnectTimeout(timeout);
+        return cnx;
+    }
+
+    /**
+     * Open an url connection from base server URL.
+     * connection timeout and security are configured.
+     *
+     * @return URLConnection
+     */
+    protected URLConnection openPostConnection() throws MalformedURLException, IOException {
+        final URL url = security.secure(new URL(serverURL));
+        URLConnection cnx = url.openConnection();
+        cnx = security.secure(cnx);
         cnx.setReadTimeout(timeout);
+        cnx.setConnectTimeout(timeout);
         return cnx;
     }
 
@@ -392,8 +417,12 @@ public abstract class AbstractRequest implements Request {
             }
             if (cnx instanceof HttpURLConnection) {
                 HttpURLConnection httpCnx = (HttpURLConnection) cnx;
-                String serverError = IOUtilities.toString(httpCnx.getErrorStream());
-                writer.append("Error response from server:\n" + serverError);
+                if (httpCnx.getErrorStream() != null) {
+                    String serverError = IOUtilities.toString(httpCnx.getErrorStream());
+                    writer.append("Error response from server:\n" + serverError);
+                } else {
+                    writer.append("No error response from server.");
+                }
             }
             throw new IOException('\n'+ writer.toString(), ex);
         }

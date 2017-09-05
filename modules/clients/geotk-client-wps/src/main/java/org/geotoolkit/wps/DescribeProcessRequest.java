@@ -19,7 +19,6 @@ package org.geotoolkit.wps;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.net.URLConnection;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -41,11 +40,11 @@ public class DescribeProcessRequest extends AbstractRequest {
     protected final boolean doGET;
 
     public DescribeProcessRequest(final String serverURL, final ClientSecurity security){
-        this(serverURL, security, true);
+        this(serverURL, security, true, null);
     }
 
-    public DescribeProcessRequest(final String serverURL, final ClientSecurity security, final boolean doGET){
-        super(serverURL,security,null);
+    public DescribeProcessRequest(final String serverURL, final ClientSecurity security, final boolean doGET, Integer timeout) {
+        super(serverURL,security,null, timeout);
         this.doGET = doGET;
     }
 
@@ -77,18 +76,15 @@ public class DescribeProcessRequest extends AbstractRequest {
         if (doGET) {
 
             //GET
-            final URL url = getURL(); //build GET request
-            URLConnection conec = url.openConnection();
-            conec.setReadTimeout(timeout);
-            conec.setConnectTimeout(timeout);
-            conec = security.secure(conec);
+            if (debug) {
+                System.out.println("GET " + getURL());
+            }
+            URLConnection conec = openConnection();
             return conec.getInputStream();
         } else {
 
             //POST
-            final URL url = new URL(serverURL);
-            URLConnection conec = url.openConnection();
-            conec = security.secure(conec);
+            URLConnection conec = openPostConnection();
             conec.setDoOutput(true);
             conec.setRequestProperty("Content-Type", "text/xml");
 

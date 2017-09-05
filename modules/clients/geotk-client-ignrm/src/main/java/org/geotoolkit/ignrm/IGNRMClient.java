@@ -42,7 +42,7 @@ public class IGNRMClient extends AbstractClient {
     }
 
     public IGNRMClient(final URL serverURL, final ClientSecurity security){
-        super(create(IGNRMClientFactory.PARAMETERS, serverURL, security));
+        super(create(IGNRMClientFactory.PARAMETERS, serverURL, security, null));
     }
 
     public IGNRMClient(final ParameterValueGroup params){
