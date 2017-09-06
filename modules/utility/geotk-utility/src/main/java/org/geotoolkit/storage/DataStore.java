@@ -17,6 +17,8 @@
 package org.geotoolkit.storage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.metadata.MetadataCopier;
@@ -29,7 +31,7 @@ import org.opengis.metadata.Metadata;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class DataStore extends org.apache.sis.storage.DataStore {
+public abstract class DataStore extends org.apache.sis.storage.DataStore implements Aggregate {
 
     /**
      * Cached value for the store metadata. Initialized when first queried. See
@@ -52,6 +54,24 @@ public abstract class DataStore extends org.apache.sis.storage.DataStore {
     public DataStoreFactory getProvider() {
         return (DataStoreFactory)super.getProvider();
     }
+
+    @Override
+    public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+        return Arrays.asList(getRootResource());
+    }
+
+    /**
+     * Returns the starting point from which all resources in this data store can be accessed.
+     * A resource can be for example a air temperature map or the set of all bridges in a city.
+     * If this data store contains only one resource, then that resource is returned directly.
+     * Otherwise if this data store contains more than one resource, then this method returns
+     * an {@link Aggregate} from which other resources can be accessed.
+     *
+     * @return the starting point of all resources in this data store,
+     *         or {@code null} if this data store does not contain any resources.
+     * @throws DataStoreException if an error occurred while reading the data.
+     */
+    public abstract org.apache.sis.storage.Resource getRootResource() throws DataStoreException;
 
     @Override
     public Metadata getMetadata() throws DataStoreException {

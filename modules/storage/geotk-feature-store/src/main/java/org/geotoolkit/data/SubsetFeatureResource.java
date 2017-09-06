@@ -23,7 +23,7 @@ import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectFeatureType;
 import org.geotoolkit.feature.ViewFeatureType;
-import org.geotoolkit.storage.AbstractResource;
+import org.geotoolkit.storage.AbstractFeatureSet;
 import org.geotoolkit.storage.StorageListener;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -34,7 +34,7 @@ import org.opengis.metadata.Metadata;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class SubsetFeatureResource extends AbstractResource implements FeatureSet, FeatureStoreListener {
+final class SubsetFeatureResource extends AbstractFeatureSet implements FeatureSet, FeatureStoreListener {
 
     private final FeatureStoreListener.Weak weakListener = new StorageListener.Weak(this);
 

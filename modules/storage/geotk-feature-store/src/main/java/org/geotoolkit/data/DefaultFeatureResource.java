@@ -25,7 +25,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
-import org.geotoolkit.storage.AbstractResource;
+import org.geotoolkit.storage.AbstractFeatureSet;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
@@ -36,7 +36,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class DefaultFeatureResource extends AbstractResource implements FeatureSet, FeatureStoreListener {
+public final class DefaultFeatureResource extends AbstractFeatureSet implements FeatureSet, FeatureStoreListener {
 
     private final FeatureStoreListener.Weak weakListener = new StorageListener.Weak(this);
     private final FeatureStore store;

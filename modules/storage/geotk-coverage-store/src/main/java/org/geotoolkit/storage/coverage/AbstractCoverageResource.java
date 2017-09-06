@@ -39,7 +39,7 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.storage.AbstractResource;
+import org.geotoolkit.storage.AbstractFeatureSet;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
@@ -56,7 +56,7 @@ import org.opengis.util.NoSuchIdentifierException;
  * @author Johann Sorel (Geomatys)
  */
 @XmlTransient
-public abstract class AbstractCoverageResource extends AbstractResource implements CoverageResource {
+public abstract class AbstractCoverageResource extends AbstractFeatureSet implements CoverageResource {
 
     protected final CoverageStore store;
 
