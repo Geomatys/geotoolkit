@@ -46,7 +46,6 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.storage.DataStore;
-import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
@@ -117,7 +116,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
         // Queries data specific information
         final Map<GenericName, GeneralGridGeometry> geometries = new HashMap<>();
-        final List<CoverageResource> refs = DataStores.flatten(root)
+        final List<CoverageResource> refs = flatten(root)
                 .filter(node -> node instanceof CoverageResource)
                 .map(node -> ((CoverageResource) node))
                 .collect(Collectors.toList());

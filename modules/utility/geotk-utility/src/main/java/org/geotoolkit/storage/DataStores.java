@@ -17,17 +17,14 @@
 package org.geotoolkit.storage;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.sis.metadata.iso.citation.Citations;
-import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.parameter.ParameterValueGroup;
@@ -45,11 +42,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  */
 public final class DataStores extends Static {
-    /**
-     * The service loader. This loader and its iterator are not synchronized;
-     * when doing an iteration, the iterator must be used inside synchronized blocks.
-     */
-    private static final ServiceLoader<DataStoreFactory> loader = ServiceLoader.load(DataStoreFactory.class);
+
 
     /**
      * Do not allow instantiation of this class.
@@ -70,19 +63,12 @@ public final class DataStores extends Static {
      * @param  all  {@code true} for all factories, or {@code false} for only available factories.
      * @return The set of factories for the given conditions.
      */
-    private static synchronized <T> Set<T> getFactories(final Class<T> type, final boolean all) {
-        final Set<T> results = new HashSet<>();
-        final Iterator<DataStoreFactory> factories = loader.iterator();
-
-        while (factories.hasNext()) {
-            final DataStoreFactory candidate = factories.next();
-            if (type == null || type.isInstance(candidate)) {
-                if (all || candidate.availability().pass()) {
-                    results.add((T)candidate);
-                }
-            }
-        }
-        return results;
+    private static synchronized <T> Set<T> getFactories(Class type, final boolean all) {
+        if (type==null) type = DataStoreFactory.class;
+        Stream<DataStoreProvider> stream = org.apache.sis.storage.DataStores.providers().stream();
+        stream = stream.filter(type::isInstance);
+        if (!all) stream = stream.filter((DataStoreProvider t) -> ((DataStoreFactory)t).availability().pass());
+        return (Set)stream.collect(Collectors.toSet());
     }
 
     /**
@@ -119,7 +105,7 @@ public final class DataStores extends Static {
      * @return A factory for the given identifier, or {@code null} if none.
      */
     public static synchronized DataStoreFactory getFactoryById(final String identifier) {
-        for (final DataStoreFactory factory : loader) {
+        for (final DataStoreFactory factory : getAllFactories(DataStoreFactory.class)) {
             if (Citations.identifierMatches(factory.getIdentification().getCitation(), identifier)) {
                 return factory;
             }
@@ -168,7 +154,7 @@ public final class DataStores extends Static {
     {
         CharSequence unavailable = null;
         Exception error = null;
-        for (final DataStoreFactory factory : loader) {
+        for (final DataStoreFactory factory : getAllFactories(DataStoreFactory.class)) {
             try {
                 if ((parameters != null) ? factory.canProcess(parameters) : factory.canProcess(asMap)) {
                     if (factory.availability().pass()) {
@@ -195,42 +181,6 @@ public final class DataStores extends Static {
             throw new DataStoreException("An error occurred while searching for a datastore", error);
         }
         return null;
-    }
-
-
-    /**
-     * Send back a list of all nodes in a tree. Nodes are ordered by depth-first
-     * encounter order.
-     *
-     * @param root Node to start flattening from. It will be included in result.
-     * @return A list of all nodes under given root.
-     * @throws NullPointerException If input node is null.
-     */
-    public static Stream<? extends org.apache.sis.storage.Resource> flatten(final org.apache.sis.storage.Resource root) throws DataStoreException {
-        final List<org.apache.sis.storage.Resource> lst = new ArrayList<>();
-        flatten(root, lst);
-        return lst.stream();
-    }
-
-    private static void flatten(org.apache.sis.storage.Resource root, List<org.apache.sis.storage.Resource> lst) throws DataStoreException {
-        lst.add(root);
-        if (root instanceof Aggregate) {
-            for (org.apache.sis.storage.Resource res : ((Aggregate) root).components()) {
-                flatten(res, lst);
-            }
-        }
-    }
-
-    /**
-     * Scans for factory plug-ins on the application class path. This method is needed because the
-     * application class path can theoretically change, or additional plug-ins may become available.
-     * Rather than re-scanning the classpath on every invocation of the API, the class path is scanned
-     * automatically only on the first invocation. Clients can call this method to prompt a re-scan.
-     * Thus this method need only be invoked by sophisticated applications which dynamically make
-     * new plug-ins available at runtime.
-     */
-    public static synchronized void scanForPlugins() {
-        loader.reload();
     }
 
 }
