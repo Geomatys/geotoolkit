@@ -49,7 +49,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import org.apache.sis.gui.dataset.ResourceTree;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.DataStores;
 import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.coverage.amended.AmendedCoverageStore;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
@@ -65,7 +69,6 @@ import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.ParameterValueGroup;
@@ -99,6 +102,8 @@ public class FXStoreChooser extends SplitPane {
         private String getText(Object candidate){
             if(candidate instanceof DataStoreFactory){
                 return ((DataStoreFactory)candidate).getDisplayName().toString();
+            }else if(candidate instanceof DataStoreProvider){
+                return ((DataStoreProvider)candidate).getShortName();
             }else if(candidate instanceof ClientFactory){
                 return ((ClientFactory)candidate).getDisplayName().toString();
             }else{
@@ -140,7 +145,7 @@ public class FXStoreChooser extends SplitPane {
     public FXStoreChooser(Predicate factoryFilter) {
 
         final Set factoriesLst = new HashSet();
-        factoriesLst.addAll(DataStores.getAvailableFactories(null));
+        factoriesLst.addAll(DataStores.providers());
 
         ObservableList factories = FXCollections.observableArrayList(factoriesLst);
         Collections.sort(factories, SORTER);
@@ -181,7 +186,9 @@ public class FXStoreChooser extends SplitPane {
                 final Object factory = factoryView.getSelectionModel().getSelectedItem();
 
                 final ParameterValueGroup param;
-                if(factory instanceof FeatureStoreFactory){
+                if(factory instanceof DataStoreProvider){
+                    param = ((DataStoreProvider)factory).getOpenParameters().createValue();
+                }else if(factory instanceof FeatureStoreFactory){
                     param = ((FeatureStoreFactory)factory).getOpenParameters().createValue();
                 }else if(factory instanceof CoverageStoreFactory){
                     param = ((CoverageStoreFactory)factory).getOpenParameters().createValue();
@@ -201,7 +208,7 @@ public class FXStoreChooser extends SplitPane {
             public void handle(ActionEvent event) {
                 try {
                     layerChooser.setSource(null);
-                    Object store = getStore();
+                    DataStore store = getStore();
 
                     if(decorateProperty.get() && store instanceof CoverageStore){
                         //decorate store
@@ -230,11 +237,13 @@ public class FXStoreChooser extends SplitPane {
      * @return FeatureStore, CoverageStore or Client
      * @throws DataStoreException if store creation failed
      */
-    private Object getStore() throws DataStoreException {
+    private DataStore getStore() throws DataStoreException {
         final Object factory = factoryView.getSelectionModel().getSelectedItem();
         final ParameterValueGroup param = (ParameterValueGroup) paramEditor.getParameter();
 
-        if(factory instanceof FeatureStoreFactory){
+        if(factory instanceof DataStoreProvider){
+            return ((DataStoreProvider)factory).open(param);
+        }else if(factory instanceof FeatureStoreFactory){
             return ((FeatureStoreFactory)factory).open(param);
         }else if(factory instanceof CoverageStoreFactory){
             return ((CoverageStoreFactory)factory).open(param);
@@ -325,6 +334,8 @@ public class FXStoreChooser extends SplitPane {
             if(!empty && item!=null){
                 if(item instanceof DataStoreFactory){
                     setText(((DataStoreFactory)item).getDisplayName().toString());
+                }else if(item instanceof DataStoreProvider){
+                    setText(((DataStoreProvider)item).getShortName());
                 }else if(item instanceof ClientFactory){
                     setText(((ClientFactory)item).getDisplayName().toString());
                 }
@@ -340,6 +351,7 @@ public class FXStoreChooser extends SplitPane {
     private static final Image ICON_COVERAGE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PICTURE_O, 24, FontAwesomeIcons.DISABLE_COLOR),null);
     private static final Image ICON_FOLDER = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FOLDER, 24, FontAwesomeIcons.DISABLE_COLOR),null);
     private static final Image ICON_FILE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FILE, 24, FontAwesomeIcons.DISABLE_COLOR),null);
+    private static final Image ICON_OTHER = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_ARCHIVE, 24, FontAwesomeIcons.DISABLE_COLOR),null);
 
     private static Image findIcon(Object candidate){
 
@@ -356,6 +368,8 @@ public class FXStoreChooser extends SplitPane {
             icon = ICON_COVERAGE;
         }else if(candidate instanceof FeatureStoreFactory){
             icon = ICON_VECTOR;
+        }else if(candidate instanceof DataStoreProvider){
+            icon = ICON_OTHER;
         }
 
         return icon;

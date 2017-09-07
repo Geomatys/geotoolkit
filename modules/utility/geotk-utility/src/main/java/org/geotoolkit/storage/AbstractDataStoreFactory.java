@@ -17,6 +17,7 @@
 package org.geotoolkit.storage;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
@@ -26,10 +27,12 @@ import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.parameter.Parameters;
 import org.opengis.metadata.quality.ConformanceResult;
+import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -91,12 +94,51 @@ public abstract class AbstractDataStoreFactory extends DataStoreFactory {
 
     @Override
     public org.apache.sis.storage.DataStore open(StorageConnector connector) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        GeneralParameterDescriptor desc;
+        try {
+            desc = getOpenParameters().descriptor(LOCATION);
+        } catch (ParameterNotFoundException e) {
+            throw new DataStoreException("Unsupported input");
+        }
+
+        if (!(desc instanceof ParameterDescriptor)) {
+            throw new DataStoreException("Unsupported input");
+        }
+
+        try {
+            final Object locationValue = connector.getStorageAs(((ParameterDescriptor)desc).getValueClass());
+            final Map params = Collections.singletonMap(LOCATION, locationValue);
+            if (canProcess(params)) {
+                return open(params);
+            }
+        } catch(IllegalArgumentException ex) {}
+
+        throw new DataStoreException("Unsupported input");
     }
 
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        GeneralParameterDescriptor desc;
+        try {
+            desc = getOpenParameters().descriptor(LOCATION);
+        } catch (ParameterNotFoundException e) {
+            return new ProbeResult(false, null, null);
+        }
+
+        if (!(desc instanceof ParameterDescriptor)) {
+            return new ProbeResult(false, null, null);
+        }
+
+        try {
+            final Object locationValue = connector.getStorageAs(((ParameterDescriptor)desc).getValueClass());
+            final Map params = Collections.singletonMap(LOCATION, locationValue);
+            if (canProcess(params)) {
+                return new ProbeResult(true, null, null);
+            }
+        } catch(IllegalArgumentException ex) {}
+
+        return new ProbeResult(false, null, null);
     }
 
     /**

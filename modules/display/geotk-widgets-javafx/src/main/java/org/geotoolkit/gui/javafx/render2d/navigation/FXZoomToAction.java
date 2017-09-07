@@ -34,10 +34,10 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.gui.crs.CRSButton;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
-import org.geotoolkit.gui.javafx.crs.FXCRSButton;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
 import org.geotoolkit.internal.GeotkFX;
@@ -64,7 +64,7 @@ public final class FXZoomToAction extends FXMapAction {
 
             final Alert alert = new Alert(Alert.AlertType.NONE);
 
-            final FXCRSButton crsButton = new FXCRSButton();
+            final CRSButton crsButton = new CRSButton();
             crsButton.crsProperty().set(CommonCRS.WGS84.normalizedGeographic());
 
             final GridPane grid = new GridPane();

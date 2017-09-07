@@ -118,14 +118,11 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
 
     @Override
     protected Metadata createMetadata() throws DataStoreException {
+        final MetadataBuilder builder = new MetadataBuilder();
+        builder.addIdentifier(null, "InMemory", MetadataBuilder.Scope.ALL);
+
         final Set<GenericName> names = getNames();
-        if (names == null || names.isEmpty()) {
-            return null;
-        }
-
         try {
-            final MetadataBuilder builder = new MetadataBuilder();
-
             // Retrieve all feature types in the data source
             names.stream()
                     .flatMap(this::getFeatureTypeHierarchy)

@@ -47,8 +47,13 @@
             </plugin>
         </plugins>
     </build>
-    
+
     <dependencies>
+        <dependency>
+            <groupId>org.apache.sis.application</groupId>
+            <artifactId>sis-javafx</artifactId>
+            <version>${sis.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-feature-sql</artifactId>
@@ -95,7 +100,7 @@
             <version>0.9.1-b128</version>
     </dependency>
 
-            
+
     </dependencies>
 
 

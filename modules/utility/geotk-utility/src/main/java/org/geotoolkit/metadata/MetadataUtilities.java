@@ -7,7 +7,9 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.util.Static;
+import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
+import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.metadata.identification.Identification;
 
@@ -18,6 +20,19 @@ import org.opengis.metadata.identification.Identification;
 public class MetadataUtilities extends Static {
 
     private MetadataUtilities() {}
+
+    public static String getIdentifier(Metadata metadata) {
+        final Collection<? extends Identification> identifications = metadata.getIdentificationInfo();
+        for (Identification identification : identifications) {
+            final Citation citation = identification.getCitation();
+            if (citation != null) {
+                for (Identifier identifier : citation.getIdentifiers()) {
+                    return identifier.getCode();
+                }
+            }
+        }
+        return null;
+    }
 
     /**
      * Update input metadata by adding given URI to its online resources. If the

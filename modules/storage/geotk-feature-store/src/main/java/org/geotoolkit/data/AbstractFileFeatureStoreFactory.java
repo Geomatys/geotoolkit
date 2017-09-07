@@ -38,6 +38,7 @@ public abstract class AbstractFileFeatureStoreFactory extends AbstractFeatureSto
     public static final ParameterDescriptor<URI> PATH = new ParameterBuilder()
             .addName("path")
             .addName(Bundle.formatInternational(Bundle.Keys.paramPathAlias))
+            .addName(LOCATION)
             .setRemarks(Bundle.formatInternational(Bundle.Keys.paramPathRemarks))
             .setRequired(true)
             .create(URI.class, null);

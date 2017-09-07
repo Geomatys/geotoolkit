@@ -18,7 +18,7 @@ package org.geotoolkit.gui.javafx.parameter;
 
 import javafx.beans.property.Property;
 import javafx.scene.Node;
-import org.geotoolkit.gui.javafx.crs.FXCRSButton;
+import org.apache.sis.gui.crs.CRSButton;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -27,7 +27,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class FXCRSEditor extends FXValueEditor {
 
-    private final FXCRSButton button = new FXCRSButton();
+    private final CRSButton button = new CRSButton();
 
     public FXCRSEditor(FXValueEditorSpi originatingSpi) {
         super(originatingSpi);

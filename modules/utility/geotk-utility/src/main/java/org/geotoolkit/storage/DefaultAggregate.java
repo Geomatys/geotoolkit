@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.Resource;
 import org.opengis.metadata.Identifier;
-import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 
 /**
@@ -57,11 +56,6 @@ public class DefaultAggregate extends AbstractResource implements Aggregate {
     @Override
     public Collection<Resource> components() {
         return Collections.unmodifiableList(resources);
-    }
-
-    @Override
-    public Metadata getMetadata() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }
