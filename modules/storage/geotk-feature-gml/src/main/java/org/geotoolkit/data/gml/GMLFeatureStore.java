@@ -43,6 +43,7 @@ import org.geotoolkit.factory.Hints;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.storage.DataFileStore;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
@@ -103,8 +104,8 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public FeatureStoreFactory getFactory() {
-        return (FeatureStoreFactory) DataStores.getFactoryById(GMLFeatureStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(GMLFeatureStoreFactory.NAME);
     }
 
     @Override

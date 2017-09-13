@@ -33,12 +33,12 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.Aggregate;
 
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.image.io.NamedImageStore;
@@ -46,9 +46,9 @@ import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.storage.DataFileStore;
-import org.geotoolkit.storage.DataSet;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.DefaultAggregate;
 import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
@@ -79,7 +79,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
 
     //initialized at first access, this is not done in the constructor to
     //ensure whoever created the store to be able to attach warning listeners on it.
-    private DefaultDataSet rootNode;
+    private DefaultAggregate rootNode;
 
     //default spi
     final ImageReaderSpi spi;
@@ -122,14 +122,14 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
     }
 
     @Override
-    public CoverageStoreFactory getFactory() {
-        return (CoverageStoreFactory) DataStores.getFactoryById(FileCoverageStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(FileCoverageStoreFactory.NAME);
     }
 
     @Override
-    public synchronized DataSet getRootResource() throws DataStoreException{
+    public synchronized Aggregate getRootResource() throws DataStoreException{
         if(rootNode==null){
-            rootNode = new DefaultDataSet(NamesExt.create("root"));
+            rootNode = new DefaultAggregate(NamesExt.create("root"));
             try {
                 visit(root);
             } catch (DataStoreException ex) {

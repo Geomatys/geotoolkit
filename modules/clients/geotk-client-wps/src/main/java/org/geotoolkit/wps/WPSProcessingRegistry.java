@@ -69,7 +69,7 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
 
     @Override
     public Identification getIdentification() {
-        return client.getFactory().getIdentification();
+        return client.getProvider().getIdentification();
     }
 
     @Override

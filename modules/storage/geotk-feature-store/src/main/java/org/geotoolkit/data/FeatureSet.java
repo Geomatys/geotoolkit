@@ -16,15 +16,12 @@
  */
 package org.geotoolkit.data;
 
-import java.util.stream.Stream;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.content.DefaultFeatureCatalogueDescription;
 import org.apache.sis.metadata.iso.content.DefaultFeatureTypeInfo;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.storage.Resource;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
 import org.opengis.metadata.Metadata;
 
 /**
@@ -32,21 +29,7 @@ import org.opengis.metadata.Metadata;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface FeatureResource extends Resource {
-
-    /**
-     * Gets resource feature type.
-     * The feature type contains the definition of all fields including:
-     * <ul>
-     * <li>type</li>
-     * <li>cardinality</li>
-     * <li>{@link CoordinateReferenceSystem}</li>
-     * </ul>
-     *
-     * @return the feature type, never null.
-     * @throws DataStoreException if an I/O or decoding error occurs.
-     */
-    FeatureType getType() throws DataStoreException;
+public interface FeatureSet extends Resource, org.apache.sis.storage.FeatureSet {
 
     @Override
     default Metadata getMetadata() throws DataStoreException {
@@ -55,7 +38,7 @@ public interface FeatureResource extends Resource {
 
         final DefaultFeatureCatalogueDescription fcd = new DefaultFeatureCatalogueDescription();
         final DefaultFeatureTypeInfo info = new DefaultFeatureTypeInfo();
-        info.setFeatureInstanceCount((int)features().count());
+        info.setFeatureInstanceCount((int)features(false).count());
         fcd.getFeatureTypeInfo().add(info);
 
         metadata.getContentInfo().add(fcd);
@@ -70,16 +53,8 @@ public interface FeatureResource extends Resource {
      * @return resource of features matching the given query.
      * @throws DataStoreException if an I/O or decoding error occurs.
      */
-    default FeatureResource subset(Query query) throws DataStoreException {
+    default FeatureSet subset(Query query) throws DataStoreException {
         return new SubsetFeatureResource(this, query);
     }
-
-    /**
-     * Reads features from the resource.
-     *
-     * @return stream of features.
-     * @throws DataStoreException if an I/O or decoding error occurs.
-     */
-    Stream<Feature> features() throws DataStoreException;
 
 }

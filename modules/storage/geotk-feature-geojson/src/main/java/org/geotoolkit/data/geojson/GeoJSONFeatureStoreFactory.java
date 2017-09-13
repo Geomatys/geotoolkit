@@ -77,7 +77,7 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
      * {@inheritDoc }
      */
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS_DESCRIPTOR;
     }
 

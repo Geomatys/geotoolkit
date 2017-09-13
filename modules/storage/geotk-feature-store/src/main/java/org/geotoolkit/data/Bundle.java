@@ -49,6 +49,26 @@ public final class Bundle extends IndexedResourceBundle {
         public static final short emptyDirectory_remarks = 2;
 
         /**
+         * Folder URI
+         */
+        public static final short folderLocationAlias = 13;
+
+        /**
+         * Root folder
+         */
+        public static final short folderLocationRemarks = 14;
+
+        /**
+         * Versatile store capable of aggregating multiple file stores.
+         */
+        public static final short folderStoreDescription = 11;
+
+        /**
+         * Folder store
+         */
+        public static final short folderStoreName = 12;
+
+        /**
          * Source type
          */
         public static final short paramIdentifierAlias = 3;

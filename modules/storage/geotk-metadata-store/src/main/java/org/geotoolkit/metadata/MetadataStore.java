@@ -41,7 +41,7 @@ public abstract class MetadataStore extends DataStore{
     }
 
     @Override
-    public ParameterValueGroup getConfiguration() {
+    public ParameterValueGroup getOpenParameters() {
         return params;
     }
 

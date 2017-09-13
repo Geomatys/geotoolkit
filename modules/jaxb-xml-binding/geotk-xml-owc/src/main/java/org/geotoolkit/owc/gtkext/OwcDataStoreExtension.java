@@ -164,7 +164,7 @@ public class OwcDataStoreExtension extends OwcExtension {
                 if(session!=null){
                     final FeatureStore store = session.getFeatureStore();
                     if(store!=null){
-                        final DataStoreFactory factory = store.getFactory();
+                        final DataStoreFactory factory = store.getProvider();
                         final InternationalString id = factory.getIdentification().getCitation().getTitle();
                         return id.toString();
                     }
@@ -175,7 +175,7 @@ public class OwcDataStoreExtension extends OwcExtension {
             final CoverageResource covref = cml.getCoverageReference();
             final CoverageStore store = covref.getStore();
             if(store!=null){
-                final DataStoreFactory factory = store.getFactory();
+                final DataStoreFactory factory = store.getProvider();
                 final InternationalString id = factory.getIdentification().getCitation().getTitle();
                 return id.toString();
             }
@@ -193,7 +193,7 @@ public class OwcDataStoreExtension extends OwcExtension {
                 if(session!=null){
                     final FeatureStore store = session.getFeatureStore();
                     if(store!=null){
-                        return store.getConfiguration();
+                        return store.getOpenParameters();
                     }
                 }
             }
@@ -202,7 +202,7 @@ public class OwcDataStoreExtension extends OwcExtension {
             final CoverageResource covref = cml.getCoverageReference();
             final CoverageStore store = covref.getStore();
             if(store!=null){
-                return store.getConfiguration();
+                return store.getOpenParameters();
             }
         }
         return null;

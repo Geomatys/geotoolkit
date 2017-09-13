@@ -35,6 +35,7 @@ import org.geotoolkit.storage.DataStores;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.ows.xml.v110.AcceptVersionsType;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.wps.xml.WPSCapabilities;
 
 /**
@@ -182,8 +183,8 @@ public class WebProcessingClient extends AbstractClient {
     }
 
     @Override
-    public ClientFactory getFactory() {
-        return (ClientFactory) DataStores.getFactoryById(WPSClientFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(WPSClientFactory.NAME);
     }
 
     /**

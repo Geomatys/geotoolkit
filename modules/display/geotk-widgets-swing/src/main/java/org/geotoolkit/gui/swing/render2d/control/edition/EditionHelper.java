@@ -316,7 +316,7 @@ public class EditionHelper {
             QueryBuilder qb = new QueryBuilder(editedLayer.getCollection().getType().getName().toString());
             //we filter in the map CRS
             qb.setCRS(map.getCanvas().getObjectiveCRS2D());
-            editgeoms = editedLayer.getCollection().subCollection(qb.buildQuery());
+            editgeoms = editedLayer.getCollection().subset(qb.buildQuery());
 
             //we filter ourself since we want the filter to occure after the reprojection
             editgeoms = FeatureStreams.filter(editgeoms, flt);
@@ -333,7 +333,7 @@ public class EditionHelper {
                 qb.reset();
                 qb.setTypeName(editedLayer.getCollection().getType().getName());
                 qb.setFilter(flt);
-                editgeoms = editedLayer.getCollection().subCollection(qb.buildQuery());
+                editgeoms = editedLayer.getCollection().subset(qb.buildQuery());
                 fi = editgeoms.iterator();
                 if (fi.hasNext()){
                     sf = fi.next();

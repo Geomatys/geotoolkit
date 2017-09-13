@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.storage.Resource;
 import org.opengis.util.GenericName;
 
 /**
@@ -39,7 +39,7 @@ public class DefaultCollectionCoverageResource extends AbstractCollectionCoverag
     @Override
     public Collection<CoverageResource> getCoverages(GridCoverageReadParam readParam) {
         final List<CoverageResource> resources = new ArrayList<>();
-        for (Resource res : getResources()) {
+        for (Resource res : components()) {
             if (res instanceof CoverageResource) {
                 resources.add((CoverageResource) res);
             }

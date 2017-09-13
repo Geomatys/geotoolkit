@@ -52,6 +52,7 @@ import org.geotoolkit.data.osm.xml.OSMXMLReader;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -86,8 +87,8 @@ public class OpenStreetMapClient extends AbstractClient{
     }
 
     @Override
-    public ClientFactory getFactory() {
-        return (ClientFactory) DataStores.getFactoryById(OSMClientFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(OSMClientFactory.NAME);
     }
 
     public OSMVersion getVersion(){

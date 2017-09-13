@@ -114,7 +114,7 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory {
     }
 
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS_DESCRIPTOR;
     }
 

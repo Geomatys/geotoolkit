@@ -53,6 +53,7 @@ import org.apache.sis.util.iso.DefaultNameSpace;
 //import org.geotoolkit.parameter.AbstractParameter;
 
 import static org.apache.sis.parameter.Parameters.castOrWrap;
+import org.opengis.util.GenericName;
 
 
 /**
@@ -666,7 +667,7 @@ public final class Parameters extends Static {
         ArgumentChecks.ensureNonNull("desc", desc);
         if (checkMandatory) {
             for (GeneralParameterDescriptor de : desc.descriptors()) {
-                if (de.getMinimumOccurs() > 0 && !(params.containsKey(de.getName().getCode()))) {
+                if (de.getMinimumOccurs() > 0 && !containsKey(params, de)) {
                     if (de instanceof ParameterDescriptor && ((ParameterDescriptor) de).getDefaultValue() == null) {
                         //a mandatory parameter is not present
                         throw new ParameterNotFoundException("A mandatory parameter "+de.getName()+" was not found in the input parameters.", de.getName().getCode());
@@ -751,6 +752,23 @@ public final class Parameters extends Static {
             }
         }
         return null;
+    }
+
+    /**
+     * Check if given descriptor name or aliases are contained in the map.
+     */
+    private static boolean containsKey(Map<String,?> params, GeneralParameterDescriptor desc) {
+        //check the name
+        if (params.containsKey(desc.getName().getCode())) {
+            return true;
+        }
+        //check alias
+        for (GenericName alias : desc.getAlias()) {
+            if (params.containsKey(alias.tip().toString())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

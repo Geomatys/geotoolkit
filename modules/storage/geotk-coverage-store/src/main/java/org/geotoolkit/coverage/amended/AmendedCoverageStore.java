@@ -16,10 +16,11 @@
  */
 package org.geotoolkit.coverage.amended;
 
+import java.util.logging.Logger;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.DataSet;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
@@ -60,7 +61,7 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
      * @param store wrapped store
      */
     public AmendedCoverageStore(CoverageStore store) {
-        super(store.getConfiguration());
+        super(store.getOpenParameters());
         this.store = store;
 
         store.addStorageListener(new CoverageStoreListener() {
@@ -80,16 +81,21 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
      * {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup getConfiguration() {
-        return store.getConfiguration();
+    public ParameterValueGroup getOpenParameters() {
+        return store.getOpenParameters();
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public DataStoreFactory getFactory() {
-        return store.getFactory();
+    public DataStoreFactory getProvider() {
+        return store.getProvider();
+    }
+
+    @Override
+    public Logger getLogger() {
+        return super.getLogger();
     }
 
     /**
@@ -102,7 +108,7 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
             if (res instanceof CoverageResource) {
                 root = new AmendedCoverageResource((CoverageResource) res, this);
             } else {
-                root = new AmendedResource((DataSet) res, this);
+                root = new AmendedResource((Aggregate) res, this);
             }
 
         }

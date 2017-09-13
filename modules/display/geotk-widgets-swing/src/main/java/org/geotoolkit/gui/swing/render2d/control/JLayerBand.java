@@ -236,7 +236,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
 
                 FeatureIterator ite = null;
                 try{
-                    col = col.subCollection(qb.buildQuery());
+                    col = col.subset(qb.buildQuery());
                     ite = col.iterator();
                     while(ite.hasNext()){
                         final Feature f = ite.next();

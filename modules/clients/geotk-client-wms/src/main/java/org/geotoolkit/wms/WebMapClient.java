@@ -23,7 +23,7 @@ import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.wms.auto.GetCapabilitiesAuto;
 import org.geotoolkit.wms.v111.GetCapabilities111;
 import org.geotoolkit.wms.v111.GetFeatureInfo111;
@@ -73,7 +73,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
     private static final long TIMEOUT_GETCAPS = 20000L;
 
     private AbstractWMSCapabilities capabilities;
-    private DefaultDataSet rootNode = null;
+    private DefaultAggregate rootNode = null;
 
     /**
      * The request header map for this server
@@ -186,7 +186,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
     }
 
     @Override
-    public WMSClientFactory getFactory() {
+    public WMSClientFactory getProvider() {
         return (WMSClientFactory)DataStores.getFactoryById(WMSClientFactory.NAME);
     }
 
@@ -382,7 +382,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
     @Override
     public synchronized Resource getRootResource() throws DataStoreException {
         if(rootNode == null){
-            rootNode = new DefaultDataSet(NamesExt.create("root"));
+            rootNode = new DefaultAggregate(NamesExt.create("root"));
             final AbstractWMSCapabilities capa;
             try {
                 capa = getCapabilities();

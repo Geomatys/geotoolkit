@@ -17,21 +17,12 @@
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Image;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureResource;
-import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.internal.feature.CoverageFeature;
 import org.geotoolkit.internal.feature.TypeConventions;
 import org.opengis.feature.Feature;
@@ -39,6 +30,7 @@ import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.metadata.content.CoverageDescription;
+import org.geotoolkit.data.FeatureSet;
 
 /**
  * Resource to a coverage in the coverage store.
@@ -46,7 +38,7 @@ import org.opengis.metadata.content.CoverageDescription;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface CoverageResource extends FeatureResource {
+public interface CoverageResource extends FeatureSet {
 
     /**
      * Name of the coverage. act as an identifier in the coverage store
@@ -128,7 +120,7 @@ public interface CoverageResource extends FeatureResource {
     }
 
     @Override
-    public default Stream<Feature> features() throws DataStoreException {
+    public default Stream<Feature> features(boolean parallal) throws DataStoreException {
         final FeatureType type = getType();
         final FeatureAssociationRole role = (FeatureAssociationRole) type.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
         final Feature feature = type.newInstance();

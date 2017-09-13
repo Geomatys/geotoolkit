@@ -17,9 +17,11 @@
 package org.geotoolkit.coverage.amended;
 
 import java.util.Collection;
-import org.geotoolkit.storage.DataSet;
-import org.geotoolkit.storage.DefaultDataSet;
-import org.geotoolkit.storage.Resource;
+import java.util.logging.Level;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.storage.coverage.CoverageResource;
@@ -30,8 +32,8 @@ import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class AmendedResource extends DefaultDataSet {
-    private final DataSet base;
+final class AmendedResource extends DefaultAggregate {
+    private final Aggregate base;
     private final AmendedCoverageStore store;
 
     /**
@@ -40,7 +42,11 @@ final class AmendedResource extends DefaultDataSet {
     private final StorageListener subListener = new StorageListener(){
         @Override
         public void structureChanged(StorageEvent event) {
-            rebuildNodes();
+            try {
+                rebuildNodes();
+            } catch (DataStoreException ex) {
+                store.getLogger().log(Level.WARNING, ex.getMessage(),ex);
+            }
             sendStructureEvent(event.copy(AmendedResource.this));
         }
         @Override
@@ -49,28 +55,28 @@ final class AmendedResource extends DefaultDataSet {
         }
     };
 
-    AmendedResource(DataSet node, final AmendedCoverageStore store) {
-        super(node.getIdentifier());
+    AmendedResource(Aggregate node, final AmendedCoverageStore store) throws DataStoreException {
+        super(((org.geotoolkit.storage.Resource)node).getIdentifier());
         this.store = store;
         this.base = node;
-        node.addStorageListener(new StorageListener.Weak(store, subListener));
+        ((org.geotoolkit.storage.Resource)node).addStorageListener(new StorageListener.Weak(store, subListener));
         rebuildNodes();
     }
 
     /**
      * Wrap node children.
      */
-    private void rebuildNodes(){
-        if(!getResources().isEmpty()) getResources().clear();
-        final Collection<Resource> children = base.getResources();
+    private void rebuildNodes() throws DataStoreException{
+        if(!components().isEmpty()) components().clear();
+        final Collection<Resource> children = base.components();
         for(Resource n : children){
             if(n instanceof PyramidalCoverageResource){
                 //TODO : create an amended reference which declares itself as a pyramid.
                 resources.add(new AmendedCoverageResource((CoverageResource)n, store));
             }else if(n instanceof CoverageResource){
                 resources.add(new AmendedCoverageResource((CoverageResource)n, store));
-            }else if(n instanceof DataSet){
-                resources.add(new AmendedResource((DataSet)n, store));
+            }else if(n instanceof Aggregate){
+                resources.add(new AmendedResource((Aggregate)n, store));
             }
         }
     }

@@ -23,8 +23,9 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.Resource;
 import org.opengis.metadata.Identifier;
-import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 
 /**
@@ -32,15 +33,15 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  */
 @XmlTransient
-public class DefaultDataSet extends AbstractResource implements DataSet {
+public class DefaultAggregate extends AbstractResource implements Aggregate {
 
     protected final List<Resource> resources = new CopyOnWriteArrayList<Resource>();
 
-    public DefaultDataSet(GenericName name) {
+    public DefaultAggregate(GenericName name) {
         super(name);
     }
 
-    public DefaultDataSet(Identifier identifier) {
+    public DefaultAggregate(Identifier identifier) {
         super(identifier);
     }
 
@@ -53,13 +54,8 @@ public class DefaultDataSet extends AbstractResource implements DataSet {
     }
 
     @Override
-    public Collection<Resource> getResources() {
+    public Collection<Resource> components() {
         return Collections.unmodifiableList(resources);
-    }
-
-    @Override
-    public Metadata getMetadata() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

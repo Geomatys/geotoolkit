@@ -38,8 +38,9 @@ import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.Resource;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
@@ -54,7 +55,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
 public class XMLCoverageStore extends AbstractCoverageStore {
 
     private final Path root;
-    private final DefaultDataSet rootNode = new DefaultDataSet(NamesExt.create("root"));
+    private final DefaultAggregate rootNode = new DefaultAggregate(NamesExt.create("root"));
 
     final boolean cacheTileState;
 
@@ -101,8 +102,8 @@ public class XMLCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
-    public CoverageStoreFactory getFactory() {
-        return (CoverageStoreFactory) DataStores.getFactoryById(XMLCoverageStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(XMLCoverageStoreFactory.NAME);
     }
 
     @Override

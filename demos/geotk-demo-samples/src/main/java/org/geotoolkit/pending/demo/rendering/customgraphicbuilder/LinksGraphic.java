@@ -49,7 +49,7 @@ public class LinksGraphic extends GraphicJ2D{
         FeatureCollection collection = layer.getCollection();
         try {
             //we reproject our collection
-            collection = collection.subCollection(QueryBuilder.reprojected(
+            collection = collection.subset(QueryBuilder.reprojected(
                     collection.getType().getName().toString(), renderingContext.getObjectiveCRS2D()));
         } catch (DataStoreException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);

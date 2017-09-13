@@ -17,18 +17,22 @@
 package org.geotoolkit.storage;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.factory.Factory;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.parameter.Parameters;
 import org.opengis.metadata.quality.ConformanceResult;
+import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -37,7 +41,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractDataStoreFactory extends Factory implements DataStoreFactory {
+public abstract class AbstractDataStoreFactory extends DataStoreFactory {
 
     /**
      * Identifier, Mandatory.
@@ -82,6 +86,61 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
         return name;
     }
 
+    @Override
+    public String getShortName() {
+        return getDisplayName().toString();
+    }
+
+
+    @Override
+    public org.apache.sis.storage.DataStore open(StorageConnector connector) throws DataStoreException {
+        GeneralParameterDescriptor desc;
+        try {
+            desc = getOpenParameters().descriptor(LOCATION);
+        } catch (ParameterNotFoundException e) {
+            throw new DataStoreException("Unsupported input");
+        }
+
+        if (!(desc instanceof ParameterDescriptor)) {
+            throw new DataStoreException("Unsupported input");
+        }
+
+        try {
+            final Object locationValue = connector.getStorageAs(((ParameterDescriptor)desc).getValueClass());
+            final Map params = Collections.singletonMap(LOCATION, locationValue);
+            if (canProcess(params)) {
+                return open(params);
+            }
+        } catch(IllegalArgumentException ex) {}
+
+        throw new DataStoreException("Unsupported input");
+    }
+
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+
+        GeneralParameterDescriptor desc;
+        try {
+            desc = getOpenParameters().descriptor(LOCATION);
+        } catch (ParameterNotFoundException e) {
+            return new ProbeResult(false, null, null);
+        }
+
+        if (!(desc instanceof ParameterDescriptor)) {
+            return new ProbeResult(false, null, null);
+        }
+
+        try {
+            final Object locationValue = connector.getStorageAs(((ParameterDescriptor)desc).getValueClass());
+            final Map params = Collections.singletonMap(LOCATION, locationValue);
+            if (canProcess(params)) {
+                return new ProbeResult(true, null, null);
+            }
+        } catch(IllegalArgumentException ex) {}
+
+        return new ProbeResult(false, null, null);
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -89,7 +148,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
     public DataStore open(Map<String, ? extends Serializable> params) throws DataStoreException {
         final ParameterValueGroup prm;
         try{
-            prm = Parameters.toParameter(forceIdentifier(params), getParametersDescriptor());
+            prm = Parameters.toParameter(forceIdentifier(params), getOpenParameters());
         }catch(IllegalArgumentException ex){
             throw new DataStoreException(ex);
         }
@@ -103,7 +162,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
     public DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
         final ParameterValueGroup prm;
         try{
-            prm = Parameters.toParameter(forceIdentifier(params), getParametersDescriptor());
+            prm = Parameters.toParameter(forceIdentifier(params), getOpenParameters());
         }catch(IllegalArgumentException ex){
             throw new DataStoreException(ex);
         }
@@ -117,7 +176,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
     public boolean canProcess(Map<String, ? extends Serializable> params) {
         params = forceIdentifier(params);
 
-        final ParameterValueGroup prm = Parameters.toParameter(params, getParametersDescriptor());
+        final ParameterValueGroup prm = Parameters.toParameter(params, getOpenParameters());
         if(prm == null){
             return false;
         }
@@ -143,7 +202,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
             return false;
         }
 
-        final ParameterDescriptorGroup desc = getParametersDescriptor();
+        final ParameterDescriptorGroup desc = getOpenParameters();
         if(!desc.getName().getCode().equalsIgnoreCase(params.getDescriptor().getName().getCode())){
             return false;
         }
@@ -169,7 +228,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
 
         if(!params.containsKey(IDENTIFIER.getName().getCode())){
             //identifier is not specified, force it
-            final ParameterDescriptorGroup desc = getParametersDescriptor();
+            final ParameterDescriptorGroup desc = getOpenParameters();
             params = new HashMap<String, Serializable>(params);
             final Object value = ((ParameterDescriptor)desc.descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
             params.put(IDENTIFIER.getName().getCode(), (Serializable)value);
@@ -184,7 +243,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * @return
      */
     protected boolean checkIdentifier(final ParameterValueGroup params){
-        final String expectedId = ((ParameterDescriptor<String>)getParametersDescriptor()
+        final String expectedId = ((ParameterDescriptor<String>)getOpenParameters()
                 .descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
 
         for(GeneralParameterValue val : params.values()){

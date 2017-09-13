@@ -22,10 +22,10 @@ import java.util.logging.Level;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.client.ClientFactory;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.DataStoreFactory;
 
 /**
  *
@@ -55,7 +55,7 @@ public class MockClient extends AbstractClient{
     }
 
     @Override
-    public ClientFactory getFactory() {
+    public DataStoreFactory getProvider() {
         return null;
     }
 

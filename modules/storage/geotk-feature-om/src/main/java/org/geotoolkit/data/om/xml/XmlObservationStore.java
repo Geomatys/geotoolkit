@@ -109,7 +109,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
     }
 
     @Override
-    public DataStoreFactory getFactory() {
+    public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(XmlObservationStoreFactory.NAME);
     }
 

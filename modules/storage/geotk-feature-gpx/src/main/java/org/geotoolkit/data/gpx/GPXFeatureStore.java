@@ -52,9 +52,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.sis.internal.storage.gpx.Store;
 import org.apache.sis.internal.storage.gpx.Metadata;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.storage.DataStoreFactory;
 
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
@@ -118,8 +120,8 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public FeatureStoreFactory getFactory() {
-        return (FeatureStoreFactory) DataStores.getFactoryById(GPXFeatureStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(GPXFeatureStoreFactory.NAME);
     }
 
     public Metadata getGPXMetaData() throws DataStoreException{
@@ -221,7 +223,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
         private GPXFeatureReader(final FeatureType restriction) throws DataStoreException{
             RWLock.readLock().lock();
             this.restriction = restriction;
-            features = reader.features(false).iterator();
+            features = ((FeatureSet) reader).features(false).iterator();
         }
 
         @Override

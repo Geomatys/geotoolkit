@@ -84,7 +84,7 @@ public class PostgresFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory
     }
 
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS_DESCRIPTOR;
     }
 

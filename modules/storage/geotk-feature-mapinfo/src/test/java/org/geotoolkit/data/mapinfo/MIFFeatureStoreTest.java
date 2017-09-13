@@ -104,7 +104,7 @@ public class MIFFeatureStoreTest extends org.geotoolkit.test.TestBase {
         final Path f = Files.createTempFile(tempDir, "test", ".mif");
 
         final FeatureStoreFactory ff = (FeatureStoreFactory) DataStores.getFactoryById("MIF-MID");
-        final Parameters params = Parameters.castOrWrap(ff.getParametersDescriptor().createValue());
+        final Parameters params = Parameters.castOrWrap(ff.getOpenParameters().createValue());
         params.getOrCreate(MIFFeatureStoreFactory.PATH).setValue(f.toUri());
 
         //create new store from scratch

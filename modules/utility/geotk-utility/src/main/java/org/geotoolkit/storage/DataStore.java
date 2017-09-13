@@ -16,17 +16,22 @@
  */
 package org.geotoolkit.storage;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Stream;
 import org.apache.sis.metadata.MetadataCopier;
 import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.metadata.Metadata;
-import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class DataStore extends org.apache.sis.storage.DataStore {
+public abstract class DataStore extends org.apache.sis.storage.DataStore implements Aggregate {
 
     /**
      * Cached value for the store metadata. Initialized when first queried. See
@@ -41,18 +46,32 @@ public abstract class DataStore extends org.apache.sis.storage.DataStore {
     private final Object mdLock = new Object();
 
     /**
-     * Get the parameters used to initialize this source from it's factory.
-     *
-     * @return source configuration parameters
-     */
-    public abstract ParameterValueGroup getConfiguration();
-
-    /**
      * Get the factory which created this source.
      *
      * @return this source original factory
      */
-    public abstract DataStoreFactory getFactory();
+    @Override
+    public DataStoreFactory getProvider() {
+        return (DataStoreFactory)super.getProvider();
+    }
+
+    @Override
+    public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+        return Arrays.asList(getRootResource());
+    }
+
+    /**
+     * Returns the starting point from which all resources in this data store can be accessed.
+     * A resource can be for example a air temperature map or the set of all bridges in a city.
+     * If this data store contains only one resource, then that resource is returned directly.
+     * Otherwise if this data store contains more than one resource, then this method returns
+     * an {@link Aggregate} from which other resources can be accessed.
+     *
+     * @return the starting point of all resources in this data store,
+     *         or {@code null} if this data store does not contain any resources.
+     * @throws DataStoreException if an error occurred while reading the data.
+     */
+    public abstract org.apache.sis.storage.Resource getRootResource() throws DataStoreException;
 
     @Override
     public Metadata getMetadata() throws DataStoreException {
@@ -78,6 +97,30 @@ public abstract class DataStore extends org.apache.sis.storage.DataStore {
      */
     protected Metadata createMetadata() throws DataStoreException {
         return null;
+    }
+
+
+    /**
+     * Send back a list of all nodes in a tree. Nodes are ordered by depth-first
+     * encounter order.
+     *
+     * @param root Node to start flattening from. It will be included in result.
+     * @return A list of all nodes under given root.
+     * @throws NullPointerException If input node is null.
+     */
+    public static Stream<? extends org.apache.sis.storage.Resource> flatten(final org.apache.sis.storage.Resource root) throws DataStoreException {
+        final List<org.apache.sis.storage.Resource> lst = new ArrayList<>();
+        flatten(root, lst);
+        return lst.stream();
+    }
+
+    private static void flatten(org.apache.sis.storage.Resource root, List<org.apache.sis.storage.Resource> lst) throws DataStoreException {
+        lst.add(root);
+        if (root instanceof Aggregate) {
+            for (org.apache.sis.storage.Resource res : ((Aggregate) root).components()) {
+                flatten(res, lst);
+            }
+        }
     }
 
 }

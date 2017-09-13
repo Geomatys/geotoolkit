@@ -334,7 +334,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         FeatureCollection result = (FeatureCollection) obj;
         try {
             String id = result.getID();
-            result = result.subCollection(QueryBuilder.sorted(
+            result = result.subset(QueryBuilder.sorted(
                     result.getType().getName().toString(), FF.sort("attDouble", SortOrder.ASCENDING)));
             ((AbstractFeatureCollection)result).setId(id);
         } catch (DataStoreException ex) {

@@ -45,7 +45,6 @@ import org.apache.sis.math.MathFunctions;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.Numbers;
-import org.geotoolkit.data.FeatureResource;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -59,6 +58,7 @@ import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.IdentifiedType;
+import org.geotoolkit.data.FeatureSet;
 
 /**
  *
@@ -119,7 +119,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         f.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), sourcePoint);
 
         final FeatureCollection reprojected = FeatureStoreUtilities.collection(f)
-                .subCollection(QueryBuilder.reprojected(type.getName().toString(), CRS.forCode("EPSG:2154")));
+                .subset(QueryBuilder.reprojected(type.getName().toString(), CRS.forCode("EPSG:2154")));
 
         final Path tmpDir = Files.createTempDirectory("reprojected_shp");
         try (final ShapefileFeatureStore store = new ShapefileFeatureStore(tmpDir.resolve("reprojection_test.shp").toUri())) {
@@ -128,12 +128,12 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
             store.addFeatures(typeName, reprojected);
 
             final Resource r = store.findResource(typeName);
-            Assert.assertTrue(r instanceof FeatureResource);
-            final List<Feature> features = ((FeatureResource)r).features().collect(Collectors.toList());
+            Assert.assertTrue(r instanceof FeatureSet);
+            final List<Feature> features = ((FeatureSet)r).features(false).collect(Collectors.toList());
             //compare(features, Collections.singleton(f));
             Assert.assertEquals("Written features", 1, features.size());
 
-            final Feature reprojectedFeature = reprojected.features()
+            final Feature reprojectedFeature = reprojected.features(false)
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("The test should define at least a single feature !"));
 

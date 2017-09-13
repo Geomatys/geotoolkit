@@ -100,7 +100,7 @@ public class GenericMappingFeatureCollection extends AbstractCollection<Feature>
     }
 
     @Override
-    public FeatureCollection subCollection(final Query query) throws DataStoreException {
+    public FeatureCollection subset(final Query query) throws DataStoreException {
         throw new UnsupportedOperationException("Mapping feature collection is not made to allow sub query.");
     }
 

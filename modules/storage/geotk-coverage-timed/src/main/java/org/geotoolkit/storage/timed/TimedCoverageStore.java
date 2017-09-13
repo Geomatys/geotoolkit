@@ -77,7 +77,7 @@ public class TimedCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
-    public DataStoreFactory getFactory() {
+    public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(TimedCoverageFactory.NAME);
     }
 

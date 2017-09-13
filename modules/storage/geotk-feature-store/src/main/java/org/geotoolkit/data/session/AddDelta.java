@@ -122,7 +122,7 @@ public class AddDelta extends AbstractDelta{
         final QueryBuilder qb = new QueryBuilder(query);
         qb.setFilter(Filter.INCLUDE);
 
-        final FeatureIterator affected = features.subCollection(qb.buildQuery()).iterator();
+        final FeatureIterator affected = features.subset(qb.buildQuery()).iterator();
 
         final SortBy[] sort = query.getSortBy();
         if(sort != null && sort.length > 0){
@@ -139,7 +139,7 @@ public class AddDelta extends AbstractDelta{
     public long modify(final Query query, final long count) throws DataStoreException{
         if(!query.getTypeName().equals(type)) return count;
 
-        final int affected = features.subCollection(query).size();
+        final int affected = features.subset(query).size();
 
         return count + affected;
     }
@@ -151,7 +151,7 @@ public class AddDelta extends AbstractDelta{
     public Envelope modify(final Query query, final Envelope env) throws DataStoreException {
         if(!query.getTypeName().equals(type)) return env;
 
-        final Envelope affected = features.subCollection(query).getEnvelope();
+        final Envelope affected = features.subset(query).getEnvelope();
         final JTSEnvelope2D combine = new JTSEnvelope2D(env);
         combine.expandToInclude(new JTSEnvelope2D(affected));
 

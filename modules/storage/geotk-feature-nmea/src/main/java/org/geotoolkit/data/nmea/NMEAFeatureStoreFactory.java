@@ -60,7 +60,7 @@ public class NMEAFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     }
 
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS_DESCRIPTOR;
     }
 

@@ -135,7 +135,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
 
         FeatureCollection collection = item.getCollection();
         try {
-            collection = collection.subCollection(item.getQuery());
+            collection = collection.subset(item.getQuery());
         } catch (DataStoreException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
             return;

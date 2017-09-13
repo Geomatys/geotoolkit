@@ -72,6 +72,7 @@ import org.geotoolkit.kml.xml.v220.PhotoOverlayType;
 import org.geotoolkit.kml.xml.v220.PlacemarkType;
 import org.geotoolkit.kml.xml.v220.PointType;
 import org.geotoolkit.kml.xml.v220.PolygonType;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -117,8 +118,8 @@ public class KMLFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public FeatureStoreFactory getFactory() {
-        return (FeatureStoreFactory) DataStores.getFactoryById(KMLFeatureStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(KMLFeatureStoreFactory.NAME);
     }
 
     @Override

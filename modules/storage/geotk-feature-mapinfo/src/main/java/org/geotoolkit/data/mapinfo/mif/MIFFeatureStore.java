@@ -45,6 +45,7 @@ import org.geotoolkit.feature.ReprojectFeatureType;
 import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -93,8 +94,8 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc}
      */
     @Override
-    public FeatureStoreFactory getFactory() {
-        return (FeatureStoreFactory) DataStores.getFactoryById(MIFFeatureStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(MIFFeatureStoreFactory.NAME);
     }
 
     /**

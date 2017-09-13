@@ -75,7 +75,7 @@ public class GPXFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     }
 
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS_DESCRIPTOR;
     }
 

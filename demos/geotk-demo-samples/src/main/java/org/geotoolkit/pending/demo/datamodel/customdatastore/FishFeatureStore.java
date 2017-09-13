@@ -24,6 +24,7 @@ import org.geotoolkit.factory.Hints;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.storage.DataStoreFactory;
 
 import org.opengis.util.GenericName;
 import org.geotoolkit.storage.DataStores;
@@ -54,8 +55,8 @@ public class FishFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public FeatureStoreFactory getFactory() {
-        return (FeatureStoreFactory) DataStores.getFactoryById(FishDatastoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(FishDatastoreFactory.NAME);
     }
 
     @Override

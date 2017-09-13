@@ -18,21 +18,15 @@
 package org.geotoolkit.data;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import org.apache.sis.internal.metadata.NameToIdentifier;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.storage.DataSet;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -41,13 +35,10 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.Resource;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.Identifier;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -69,14 +60,14 @@ public interface FeatureStore extends AutoCloseable {
      *
      * @return source configuration parameters
      */
-    ParameterValueGroup getConfiguration();
+    ParameterValueGroup getOpenParameters();
 
     /**
      * Get the factory which created this source.
      *
      * @return this source original factory
      */
-    DataStoreFactory getFactory();
+    DataStoreFactory getProvider();
 
     /**
      * Get version history for given feature type.
@@ -118,74 +109,15 @@ public interface FeatureStore extends AutoCloseable {
      * @return Resource, should not be null
      * @throws DataStoreException
      */
-    public abstract Resource getRootResource() throws DataStoreException;
+    Resource getRootResource() throws DataStoreException;
 
     /**
      * Get a collection of all available names.
      * @return {@literal Set<Name>}, never null, but can be empty.
      */
-    default Set<GenericName> getNames() throws DataStoreException {
-        final Set<GenericName> names = new HashSet<>();
+    Set<GenericName> getNames() throws DataStoreException;
 
-        //recursively fill names
-        new Consumer<Resource>() {
-            @Override
-            public void accept(final Resource candidate) {
-                final Identifier identifier = candidate.getIdentifier();
-                if (identifier instanceof GenericName) {
-                    names.add((GenericName) identifier);
-                } else {
-                    names.add(NamesExt.create(identifier.getCode()));
-                }
-                if (candidate instanceof DataSet) {
-                    final DataSet ds = (DataSet) candidate;
-                    for (Resource rs : ds.getResources()) {
-                        accept(rs);
-                    }
-                }
-            }
-        }.accept(getRootResource());
-
-        return names;
-    }
-
-    default Resource findResource(final String name) throws DataStoreException {
-        ArgumentChecks.ensureNonEmpty("Name for the resource to find", name);
-        //recursive search
-        Object res = new Function<Resource,Object>() {
-            @Override
-            public Object apply(final Resource candidate) {
-                final boolean match =
-                        // We're forced to check strict equality because SIS utility works only with scoped names.
-                        candidate.getIdentifier().getCode().equals(name) ||
-                        NameToIdentifier.isHeuristicMatchForIdentifier(Collections.singleton(candidate.getIdentifier()), name);
-                Object result = match ? candidate : null;
-
-                if (candidate instanceof DataSet) {
-                    final DataSet ds = (DataSet) candidate;
-                    for (Resource rs : ds.getResources()) {
-                        Object rr = apply(rs);
-                        if (rr instanceof DataStoreException) {
-                            return rr;
-                        } else if (rr instanceof Resource) {
-                            if (result!=null) {
-                                return new DataStoreException("Multiple resources match the name : "+name);
-                            }
-                            result = rr;
-                        }
-                    }
-                }
-                return result;
-            }
-        }.apply(getRootResource());
-
-        if (res==null) {
-            throw new DataStoreException("No resource for name : "+name);
-        } else if (res instanceof DataStoreException) {
-            throw (DataStoreException)res;
-        }
-        return (Resource) res;
-    }
+    Resource findResource(final String name) throws DataStoreException;
 
     /**
      * Create a new feature type.

@@ -16,12 +16,19 @@
  */
 package org.geotoolkit.storage;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.metadata.Identifier;
+import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 
 /**
@@ -51,6 +58,17 @@ public abstract class AbstractResource implements Resource{
     @Override
     public Identifier getIdentifier() {
         return identifier;
+    }
+
+    @Override
+    public Metadata getMetadata() throws DataStoreException {
+        final DefaultMetadata mt = new DefaultMetadata();
+        final DefaultDataIdentification idf = new DefaultDataIdentification();
+        final DefaultCitation citation = new DefaultCitation();
+        citation.getIdentifiers().add(identifier);
+        idf.setCitation(citation);
+        mt.setIdentificationInfo(Arrays.asList(idf));
+        return mt;
     }
 
     @Override
@@ -121,8 +139,12 @@ public abstract class AbstractResource implements Resource{
         } catch (Exception ex) {
             //do nothing : various errors can happen here : null pointer, no such element, etc.
         }
-        if (this instanceof DataSet) {
-            return StringUtilities.toStringTree(name.toString(), ((DataSet)this).getResources());
+        if (this instanceof Aggregate) {
+            try {
+                return StringUtilities.toStringTree(name.toString(), ((Aggregate)this).components());
+            } catch (DataStoreException ex) {
+                return name.toString() +" (Failed to list resource components)";
+            }
         } else {
             return name.toString();
         }

@@ -24,7 +24,7 @@ import org.opengis.metadata.Metadata;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface Resource {
+public interface Resource extends org.apache.sis.storage.Resource {
 
     /**
      * Data identifier.
@@ -41,6 +41,7 @@ public interface Resource {
      * @return information about the resource, not null.
      * @throws DataStoreException if an error occurred while reading the data.
      */
+    @Override
     Metadata getMetadata() throws DataStoreException;
 
     /**

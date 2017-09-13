@@ -89,7 +89,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
     private Feature modify2(final Object attributeValue) {
         try {
             if(attributeValue != null){
-                final FeatureCollection fiteredFC = super.getOriginalFeatureCollection().subCollection(filter(attributeValue));
+                final FeatureCollection fiteredFC = super.getOriginalFeatureCollection().subset(filter(attributeValue));
                 return RegroupProcess.regroupFeature(regroupAttribute, attributeValue, newFeatureType, geometryName, fiteredFC);
             }else{
                 //In this case the request is Regroup.regroupFeature(null, null, newFeatureType, geometryName, originalFC);

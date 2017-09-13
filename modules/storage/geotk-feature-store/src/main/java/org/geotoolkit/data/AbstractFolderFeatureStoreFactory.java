@@ -108,7 +108,7 @@ public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureS
      * {@inheritDoc}
      */
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return paramDesc;
     }
 

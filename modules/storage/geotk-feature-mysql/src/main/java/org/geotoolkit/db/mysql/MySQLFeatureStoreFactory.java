@@ -79,7 +79,7 @@ public class MySQLFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory {
      * {@inheritDoc }
      */
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS_DESCRIPTOR;
     }
 

@@ -58,12 +58,11 @@ public class Merge extends AbstractProcess {
         final DefaultMetadata merged = new DefaultMetadata(first);
         final Merger merger = new Merger(null) {
             @Override
-            protected void unmerged(ModifiableMetadata target, String propertyName, Object sourceValue, Object targetValue) {
+            protected void merge(ModifiableMetadata target, String propertyName, Object sourceValue, Object targetValue) {
                 // Ignore (TODO: we should probably emit some kind of warnings).
             }
         };
-        merger.avoidConflicts = true;
-        merger.merge(second, merged);
+        merger.copy(second, merged);
 
         outputParameters.getOrCreate(RESULT_OUT).setValue(merged);
 

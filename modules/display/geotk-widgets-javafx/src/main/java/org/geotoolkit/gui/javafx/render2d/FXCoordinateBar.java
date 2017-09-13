@@ -44,11 +44,11 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.util.converter.LongStringConverter;
 import org.apache.sis.geometry.DirectPosition2D;
+import org.apache.sis.gui.crs.CRSButton;
 import org.controlsfx.control.StatusBar;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.gui.javafx.crs.FXAxisView;
-import org.geotoolkit.gui.javafx.crs.FXCRSButton;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
@@ -125,7 +125,7 @@ public class FXCoordinateBar extends GridPane {
     private final StatusBar statusBar = new StatusBar();
     private final ComboBox scaleCombo = new ComboBox();
     private final ColorPicker colorPicker = new ColorPicker(Color.WHITE);
-    private final FXCRSButton crsButton = new FXCRSButton();
+    private final CRSButton crsButton = new CRSButton();
     private final ToggleButton sliderButton = new ToggleButton(null, new ImageView(GeotkFX.ICON_SLIDERS));
     private final FXAxisView sliderview = new FXAxisView();
 

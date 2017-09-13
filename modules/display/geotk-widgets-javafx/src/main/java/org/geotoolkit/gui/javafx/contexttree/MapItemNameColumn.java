@@ -32,6 +32,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.TextAlignment;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.session.Session;
@@ -44,6 +46,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.CoverageStore;
 
 /**
@@ -181,19 +184,30 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
     public static Image getTypeIcon(MapItem mapItem){
         if(mapItem instanceof FeatureMapLayer){
             final FeatureStore store = ((FeatureMapLayer)mapItem).getCollection().getSession().getFeatureStore();
-            if(store!=null && store.getFactory() instanceof ClientFactory){
+            if(store!=null && store.getProvider() instanceof ClientFactory){
                 return ICON_SERVICE;
             }else{
                 return ICON_VECTOR;
             }
         }else if(mapItem instanceof CoverageMapLayer){
             final CoverageStore store = ((CoverageMapLayer)mapItem).getCoverageReference().getStore();
-            if(store!=null && store.getFactory() instanceof ClientFactory){
+            if(store!=null && store.getProvider() instanceof ClientFactory){
                 return ICON_SERVICE;
             }else{
                 return ICON_RASTER;
             }
         }else{
+            //container
+            return ICON_FOLDER;
+        }
+    }
+
+    public static Image getTypeIcon(Resource resource){
+        if (resource instanceof FeatureSet) {
+            return ICON_VECTOR;
+        } else if(resource instanceof CoverageResource) {
+            return ICON_RASTER;
+        } else {
             //container
             return ICON_FOLDER;
         }

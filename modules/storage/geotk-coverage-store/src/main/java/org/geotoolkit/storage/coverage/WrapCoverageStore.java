@@ -18,9 +18,9 @@ package org.geotoolkit.storage.coverage;
 
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -48,18 +48,23 @@ public class WrapCoverageStore extends DataStore implements CoverageStore{
     }
 
     @Override
-    public ParameterValueGroup getConfiguration() {
-        return store.getConfiguration();
+    public ParameterValueGroup getOpenParameters() {
+        return store.getOpenParameters();
     }
 
     @Override
-    public DataStoreFactory getFactory() {
-        return store.getFactory();
+    public DataStoreFactory getProvider() {
+        return store.getProvider();
     }
 
     @Override
     public Resource getRootResource() throws DataStoreException {
         return store.getRootResource();
+    }
+
+    @Override
+    public Resource findResource(String name) throws DataStoreException {
+        return (Resource) super.findResource(name);
     }
 
     @Override

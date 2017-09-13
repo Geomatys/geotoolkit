@@ -81,6 +81,7 @@ import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -103,7 +104,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
 
     public WFSFeatureStore(WebFeatureClient server) throws WebFeatureException {
-        super(server.getConfiguration());
+        super(server.getOpenParameters());
 
         this.server = server;
         try {
@@ -213,8 +214,8 @@ public class WFSFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public FeatureStoreFactory getFactory() {
-        return (FeatureStoreFactory) DataStores.getFactoryById(WFSFeatureStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(WFSFeatureStoreFactory.NAME);
     }
 
     @Override

@@ -80,7 +80,7 @@ public class WMTSClientFactory extends AbstractClientFactory implements Coverage
     }
 
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS;
     }
 

@@ -23,7 +23,7 @@ import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectFeatureType;
 import org.geotoolkit.feature.ViewFeatureType;
-import org.geotoolkit.storage.AbstractResource;
+import org.geotoolkit.storage.AbstractFeatureSet;
 import org.geotoolkit.storage.StorageListener;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -34,15 +34,15 @@ import org.opengis.metadata.Metadata;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class SubsetFeatureResource extends AbstractResource implements FeatureResource, FeatureStoreListener {
+final class SubsetFeatureResource extends AbstractFeatureSet implements FeatureSet, FeatureStoreListener {
 
     private final FeatureStoreListener.Weak weakListener = new StorageListener.Weak(this);
 
-    private final FeatureResource parent;
+    private final FeatureSet parent;
     private final Query query;
     private FeatureType type;
 
-    public SubsetFeatureResource(FeatureResource parent, Query query) {
+    public SubsetFeatureResource(FeatureSet parent, Query query) {
         super(parent.getIdentifier());
         this.parent = parent;
         this.query = query;
@@ -65,14 +65,14 @@ final class SubsetFeatureResource extends AbstractResource implements FeatureRes
     }
 
     @Override
-    public FeatureResource subset(Query query) throws DataStoreException {
+    public FeatureSet subset(Query query) throws DataStoreException {
         final Query merge = QueryUtilities.subQuery(this.query, query);
         return new SubsetFeatureResource(parent, merge);
     }
 
     @Override
-    public Stream<Feature> features() throws DataStoreException {
-        return FeatureStreams.subset(parent.features(), getType(), query);
+    public Stream<Feature> features(boolean parallal) throws DataStoreException {
+        return FeatureStreams.subset(parent.features(false), getType(), query);
     }
 
     @Override

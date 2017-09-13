@@ -28,10 +28,10 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
+import org.apache.sis.gui.crs.CRSButton;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.coverage.amended.AmendedCoverageResource;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.gui.javafx.crs.FXCRSButton;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -75,7 +75,7 @@ public class FXCoverageDecoratorPane extends GridPane {
     @FXML private CheckBox uiCrs;
     @FXML private CheckBox uiGridToCrs;
 
-    private final FXCRSButton crsButton = new FXCRSButton();
+    private final CRSButton crsButton = new CRSButton();
     private final Spinner<Double> uiScaleX = new Spinner<>(new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1.0, 1.0));
     private final Spinner<Double> uiScaleY = new Spinner<>(new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1.0, 1.0));
     private final Spinner<Double> uiShearX = new Spinner<>(new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0.0, 1.0));

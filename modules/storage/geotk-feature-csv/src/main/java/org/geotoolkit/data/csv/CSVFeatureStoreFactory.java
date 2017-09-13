@@ -89,7 +89,7 @@ public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     }
 
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS_DESCRIPTOR;
     }
 

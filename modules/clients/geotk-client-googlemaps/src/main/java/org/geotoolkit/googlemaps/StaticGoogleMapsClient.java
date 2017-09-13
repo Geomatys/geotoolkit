@@ -28,7 +28,7 @@ import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.Resource;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
@@ -53,7 +53,7 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Cl
         }
     }
 
-    private final DefaultDataSet rootNode = new DefaultDataSet(NamesExt.create("root"));
+    private final DefaultAggregate rootNode = new DefaultAggregate(NamesExt.create("root"));
 
     /**
      * Builds a google maps server with the default google server address.
@@ -101,7 +101,7 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Cl
 
 
     @Override
-    public StaticGoogleClientFactory getFactory() {
+    public StaticGoogleClientFactory getProvider() {
         return (StaticGoogleClientFactory) DataStores.getFactoryById(StaticGoogleClientFactory.NAME);
     }
 

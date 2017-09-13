@@ -26,7 +26,7 @@ public class ListAllFactoriesDemo {
 
             //display the parameter requiered to open a new instance
             //of featurestore of this type
-            final ParameterDescriptorGroup description = factory.getParametersDescriptor();
+            final ParameterDescriptorGroup description = factory.getOpenParameters();
             System.out.println(description);
             System.out.println("\n\n");
 

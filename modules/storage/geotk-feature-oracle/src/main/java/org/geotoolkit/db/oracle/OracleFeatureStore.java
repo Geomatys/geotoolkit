@@ -30,7 +30,7 @@ public class OracleFeatureStore extends DefaultJDBCFeatureStore {
 
     public OracleFeatureStore(String host, int port, String database, String schema, String user, String password) throws DataStoreException {
         super(toParameters(host,port,database,schema,user,password), OracleFeatureStoreFactory.NAME);
-        ((OracleFeatureStoreFactory)getFactory()).prepareStore(this, parameters);
+        ((OracleFeatureStoreFactory)getProvider()).prepareStore(this, parameters);
     }
 
     public OracleFeatureStore(ParameterValueGroup params, String factoryId) {

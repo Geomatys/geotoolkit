@@ -46,6 +46,7 @@ import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.storage.DataFileStore;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
@@ -108,8 +109,8 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc}
      */
     @Override
-    public FeatureStoreFactory getFactory() {
-        return (FeatureStoreFactory) DataStores.getFactoryById(DbaseFeatureStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(DbaseFeatureStoreFactory.NAME);
     }
 
     private synchronized void checkExist() throws DataStoreException{

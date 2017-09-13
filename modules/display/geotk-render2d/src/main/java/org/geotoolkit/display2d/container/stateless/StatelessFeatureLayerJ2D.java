@@ -281,7 +281,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         //we detach feature since we are going to use a cache.
         currentQuery.getHints().put(HintsPending.FEATURE_DETACHED,Boolean.TRUE);
         final Query query = currentQuery;
-        FeatureCollection col = ((FeatureCollection)item.getCollection()).subCollection(query);
+        FeatureCollection col = ((FeatureCollection)item.getCollection()).subset(query);
         col = FeatureStreams.cached(col, 1000);
         return col;
     }
@@ -291,7 +291,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         //we detach feature since we are going to use a cache.
         currentQuery.getHints().put(HintsPending.FEATURE_DETACHED,Boolean.TRUE);
         final Query query = currentQuery;
-        FeatureCollection col = ((FeatureCollection)item.getCollection()).subCollection(query);
+        FeatureCollection col = ((FeatureCollection)item.getCollection()).subset(query);
         col = FeatureStreams.cached(col, 1000);
         return col;
     }
@@ -364,7 +364,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
         final FeatureCollection features;
         try{
-            features = ((FeatureCollection)layer.getCollection()).subCollection(query);
+            features = ((FeatureCollection)layer.getCollection()).subset(query);
         }catch(DataStoreException ex){
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             //can not continue this layer with this error

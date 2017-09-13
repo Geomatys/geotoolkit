@@ -75,7 +75,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
      * {@inheritDoc }
      */
     @Override
-    public FeatureCollection subCollection(final Query query) throws DataStoreException {
+    public FeatureCollection subset(final Query query) throws DataStoreException {
         return getSession().getFeatureCollection(QueryUtilities.subQuery(this.query, query));
     }
 

@@ -29,9 +29,10 @@ import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultDataSet;
+import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
@@ -83,12 +84,12 @@ public class CoverageSQLStore extends AbstractCoverageStore {
 
     public CoverageSQLStore(ParameterValueGroup parameters) {
         super(adaptParameter(parameters));
-        this.db = new CoverageDatabase(getConfiguration());
+        this.db = new CoverageDatabase(getOpenParameters());
     }
 
     @Override
-    public CoverageStoreFactory getFactory() {
-        return (CoverageStoreFactory) DataStores.getFactoryById(CoverageSQLStoreFactory.NAME);
+    public DataStoreFactory getProvider() {
+        return DataStores.getFactoryById(CoverageSQLStoreFactory.NAME);
     }
 
     @Override
@@ -98,7 +99,7 @@ public class CoverageSQLStore extends AbstractCoverageStore {
 
     @Override
     public Resource getRootResource() throws DataStoreException {
-        final DefaultDataSet dn = new DefaultDataSet(NamesExt.create("root"));
+        final DefaultAggregate dn = new DefaultAggregate(NamesExt.create("root"));
         final Set<String> layers = db.getLayers().result();
         for (String layer : layers) {
             dn.addResource(new CoverageSQLLayerResource(NamesExt.create(layer)));

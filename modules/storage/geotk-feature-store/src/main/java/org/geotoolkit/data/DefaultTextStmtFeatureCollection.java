@@ -62,7 +62,7 @@ public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection{
      * {@inheritDoc }
      */
     @Override
-    public FeatureCollection subCollection(final Query query) throws DataStoreException {
+    public FeatureCollection subset(final Query query) throws DataStoreException {
         //we can't make a subcollection, use generic wrapping
         final FeatureCollection col = getSession().getFeatureCollection(this.query);
         return FeatureStreams.subset(col, query);

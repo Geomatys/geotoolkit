@@ -500,7 +500,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
                 final Date d = ((Version)guiVersions.getSelectedItem()).getDate();
                 qb.setVersionDate(d);
             }
-            final FeatureCollection subcol = layer.getCollection().subCollection(qb.buildQuery());
+            final FeatureCollection subcol = layer.getCollection().subset(qb.buildQuery());
             FeatureMapLayer layer = MapBuilder.createFeatureLayer(subcol, RandomStyleBuilder.createDefaultRasterStyle());
             final FeatureCollectionModel m = new FeatureCollectionModel(tab_data, layer, guiShowId.isSelected());
             tab_data.setModel(m);

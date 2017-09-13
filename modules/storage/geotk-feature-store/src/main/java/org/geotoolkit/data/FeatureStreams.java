@@ -642,10 +642,10 @@ public final class FeatureStreams {
         }
 
         @Override
-        public FeatureCollection subCollection(final Query query) throws DataStoreException {
+        public FeatureCollection subset(final Query query) throws DataStoreException {
             FeatureCollection[] subs = new FeatureCollection[wrapped.length];
             for(int i=0;i<subs.length;i++){
-                subs[i] = wrapped[i].subCollection(query);
+                subs[i] = wrapped[i].subset(query);
             }
             return new FeatureCollectionSequence("subid", subs);
         }

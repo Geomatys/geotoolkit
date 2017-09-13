@@ -84,7 +84,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
         features.clear();
 
         try {
-            featureCollection = ((FeatureMapLayer) layer).getCollection().subCollection(query);
+            featureCollection = ((FeatureMapLayer) layer).getCollection().subset(query);
         } catch (DataStoreException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }

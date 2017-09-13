@@ -17,9 +17,7 @@
 package org.geotoolkit.gui.javafx.feature;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -30,14 +28,11 @@ import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.BorderPane;
-import org.apache.sis.feature.DefaultAssociationRole;
 import org.geotoolkit.feature.SingleAttributeTypeBuilder;
-import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.geotoolkit.gui.javafx.crs.FXCRSButton;
+import org.apache.sis.gui.crs.CRSButton;
 import org.geotoolkit.internal.GeotkFX;
 import org.opengis.feature.AttributeType;
-import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -161,7 +156,7 @@ public class FXFeatureTypeEditor extends BorderPane{
 
     private class AttCrsCell extends TreeTableCell<SingleAttributeTypeBuilder, SingleAttributeTypeBuilder>{
 
-        private final FXCRSButton button = new FXCRSButton();
+        private final CRSButton button = new CRSButton();
 
         public AttCrsCell() {
             setContentDisplay(ContentDisplay.GRAPHIC_ONLY);

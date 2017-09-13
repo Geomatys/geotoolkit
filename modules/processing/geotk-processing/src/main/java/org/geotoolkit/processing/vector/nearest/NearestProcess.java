@@ -74,7 +74,7 @@ public class NearestProcess extends AbstractProcess {
             final FeatureCollection inputFeatureList  = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
             final Geometry interGeom                  = inputParameters.getValue(NearestDescriptor.GEOMETRY_IN);
             final FeatureCollection resultFeatureList =
-                    new NearestFeatureCollection(inputFeatureList.subCollection(nearestQuery(inputFeatureList, interGeom)));
+                    new NearestFeatureCollection(inputFeatureList.subset(nearestQuery(inputFeatureList, interGeom)));
 
             outputParameters.getOrCreate(VectorDescriptor.FEATURE_OUT).setValue(resultFeatureList);
         } catch (FactoryException | DataStoreException | TransformException ex) {

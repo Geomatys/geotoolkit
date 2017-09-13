@@ -1058,7 +1058,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
         //-------------- create schema in public2 schema --------------------
         try{
-            store2.getFactory().create(params2);
+            store2.getProvider().create(params2);
         } catch (Exception ex) {
             //schema public2 already exist
         }

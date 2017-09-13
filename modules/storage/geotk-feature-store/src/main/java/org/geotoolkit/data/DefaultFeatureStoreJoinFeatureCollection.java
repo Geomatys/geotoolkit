@@ -87,7 +87,7 @@ public class DefaultFeatureStoreJoinFeatureCollection extends AbstractFeatureCol
     }
 
     @Override
-    public FeatureCollection subCollection(final Query query) throws DataStoreException {
+    public FeatureCollection subset(final Query query) throws DataStoreException {
         final Query combine = QueryUtilities.subQuery(this.query, query);
         //the result should be an absolute query too.
         return QueryUtilities.evaluate("sub-"+getID(), combine);

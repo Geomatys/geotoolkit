@@ -31,6 +31,8 @@ import java.util.logging.Logger;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -50,8 +52,6 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.storage.DataSet;
-import org.geotoolkit.storage.Resource;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
@@ -72,7 +72,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractCollectionCoverageResource extends AbstractCoverageResource implements DataSet,CollectionCoverageResource {
+public abstract class AbstractCollectionCoverageResource extends AbstractCoverageResource implements Aggregate,CollectionCoverageResource {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
 
@@ -91,7 +91,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
     }
 
     @Override
-    public Collection<Resource> getResources() {
+    public Collection<Resource> components() {
         return Collections.unmodifiableList(resources);
     }
 

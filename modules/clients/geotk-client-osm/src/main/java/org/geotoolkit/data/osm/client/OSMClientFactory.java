@@ -73,7 +73,7 @@ public class OSMClientFactory extends AbstractClientFactory{
     }
 
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS;
     }
 

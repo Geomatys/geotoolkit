@@ -39,8 +39,8 @@ import org.geotoolkit.storage.StorageListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.internal.data.GenericNameIndex;
-import org.opengis.util.GenericName;
 import org.geotoolkit.storage.DataStoreFactory;
+import org.opengis.util.GenericName;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -71,13 +71,13 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public Parameters getConfiguration() {
-        return Parameters.castOrWrap(wrapped.getConfiguration());
+    public Parameters getOpenParameters() {
+        return Parameters.castOrWrap(wrapped.getOpenParameters());
     }
 
     @Override
-    public DataStoreFactory getFactory() {
-        return wrapped.getFactory();
+    public DataStoreFactory getProvider() {
+        return wrapped.getProvider();
     }
 
     public Set<GenericName> getQueryNames() {

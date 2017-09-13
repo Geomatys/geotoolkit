@@ -247,7 +247,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
     }
 
     @Override
-    public FeatureCollection subCollection(final Query remainingParameters) throws DataStoreException {
+    public FeatureCollection subset(final Query remainingParameters) throws DataStoreException {
 
         FeatureCollection result = this;
 

@@ -116,7 +116,7 @@ public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implemen
      * {@inheritDoc }
      */
     @Override
-    public ParameterDescriptorGroup getParametersDescriptor() {
+    public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS_DESCRIPTOR;
     }
 

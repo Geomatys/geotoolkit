@@ -100,7 +100,7 @@ public abstract class AbstractFeatureStoreFactory extends AbstractDataStoreFacto
     public DataStore open(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
 
-        final ParameterValueGroup prm = Parameters.toParameter(params,getParametersDescriptor());
+        final ParameterValueGroup prm = Parameters.toParameter(params,getOpenParameters());
         if(prm == null){
             return null;
         }
@@ -118,7 +118,7 @@ public abstract class AbstractFeatureStoreFactory extends AbstractDataStoreFacto
     public DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
 
-        final ParameterValueGroup prm = Parameters.toParameter(params,getParametersDescriptor());
+        final ParameterValueGroup prm = Parameters.toParameter(params,getOpenParameters());
         if(prm == null){
             return null;
         }
@@ -140,7 +140,7 @@ public abstract class AbstractFeatureStoreFactory extends AbstractDataStoreFacto
         //ensure it's the valid identifier
         final Object id = params.get(IDENTIFIER.getName().getCode());
         try{
-            final String expectedId = ((ParameterDescriptor<String>)getParametersDescriptor()
+            final String expectedId = ((ParameterDescriptor<String>)getOpenParameters()
                 .descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
             if(!expectedId.equals(id)){
                 return false;
@@ -151,7 +151,7 @@ public abstract class AbstractFeatureStoreFactory extends AbstractDataStoreFacto
 
 
 
-        final ParameterValueGroup prm = Parameters.toParameter(params,getParametersDescriptor());
+        final ParameterValueGroup prm = Parameters.toParameter(params,getOpenParameters());
         if(prm == null){
             return false;
         }
@@ -171,7 +171,7 @@ public abstract class AbstractFeatureStoreFactory extends AbstractDataStoreFacto
     protected boolean checkIdentifier(final ParameterValueGroup params){
         final String expectedId;
         try{
-            expectedId = ((ParameterDescriptor<String>)getParametersDescriptor()
+            expectedId = ((ParameterDescriptor<String>)getOpenParameters()
                 .descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
         }catch(ParameterNotFoundException ex){
             //this feature store factory does not declare a identifier id

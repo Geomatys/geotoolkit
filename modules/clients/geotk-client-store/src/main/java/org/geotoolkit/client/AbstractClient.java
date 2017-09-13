@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.apache.sis.util.ArgumentChecks;
@@ -71,7 +72,7 @@ public abstract class AbstractClient extends DataStore implements Client{
     }
 
     @Override
-    public ParameterValueGroup getConfiguration() {
+    public ParameterValueGroup getOpenParameters() {
         if(parameters != null){
             //defensive copy
             return parameters.clone();
@@ -154,6 +155,11 @@ public abstract class AbstractClient extends DataStore implements Client{
      */
     protected Logger getLogger(){
         return LOGGER;
+    }
+
+    @Override
+    public Resource getRootResource() {
+        return null;
     }
 
     protected void applySessionId(final URLConnection conec) {
