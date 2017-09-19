@@ -82,7 +82,7 @@ public class DynamicRangeStretchProcess extends AbstractProcess {
         }
 
         //copy datas
-        final PixelIterator readIte = PixelIteratorFactory.createDefaultIterator(inputImage);
+        final PixelIterator readIte = PixelIteratorFactory.createRowMajorIterator(inputImage);
         final PixelIterator writeIte = PixelIteratorFactory.createDefaultWriteableIterator(raster, raster);
         final double[] pixel = new double[inputNbBand];
         final int[] rgba = new int[4];
