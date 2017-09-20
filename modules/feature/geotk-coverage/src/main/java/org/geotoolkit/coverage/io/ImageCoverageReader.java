@@ -958,6 +958,7 @@ public class ImageCoverageReader extends GridCoverageReader {
         final int[] srcBands;
         final int[] dstBands;
         MathTransform2D destToExtractedGrid = null;
+        boolean supportBandSelection = true;
         if (param != null) {
             srcBands = param.getSourceBands();
             dstBands = param.getDestinationBands();
@@ -988,6 +989,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                     imageParam.setSourceBands(srcBands);
                 } catch(UnsupportedOperationException ex) {
                     LOGGER.log(Level.WARNING, ex.getMessage()+"Read coverage without set any source bands.");
+                    supportBandSelection = false;
                 }
             }
 
@@ -1020,7 +1022,9 @@ public class ImageCoverageReader extends GridCoverageReader {
          * declare unsigned range of sample values.
          */
         boolean usePaletteFactory = false;
-        final GridSampleDimension[] bands = getSampleDimensions(index, srcBands, dstBands);
+        final GridSampleDimension[] bands = getSampleDimensions(index,
+                supportBandSelection ? srcBands : null,
+                supportBandSelection ? dstBands : null);
         if (imageParam instanceof SpatialImageReadParam) {
             final SpatialImageReadParam sp = (SpatialImageReadParam) imageParam;
             if (!isRangeSigned(bands)) {

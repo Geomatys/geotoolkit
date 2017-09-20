@@ -36,14 +36,14 @@ public interface SensorStore extends AutoCloseable {
      *
      * @return source configuration parameters
      */
-    ParameterValueGroup getConfiguration();
+    ParameterValueGroup getOpenParameters();
 
     /**
      * Get the factory which created this source.
      *
      * @return this source original factory
      */
-    DataStoreFactory getFactory();
+    DataStoreFactory getProvider();
 
     Metadata getMetadata() throws DataStoreException;
 

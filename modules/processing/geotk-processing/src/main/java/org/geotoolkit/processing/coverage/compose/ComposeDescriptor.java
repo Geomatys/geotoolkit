@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class ComposeDescriptor extends AbstractProcessDescriptor {
 
-    public static final String ID = "coverage.compose";
+    public static final String ID = "coverage:compose";
     public static final ParameterDescriptor<GridCoverage2D> COVERAGE_PARAM = new ParameterBuilder()
             .addName("coverage")
             .setRequired(true)

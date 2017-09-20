@@ -18,6 +18,7 @@ package org.geotoolkit.observation;
 
 import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.DataStore;
 import org.opengis.metadata.Metadata;
@@ -27,7 +28,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public abstract class AbstractObservationStore extends DataStore implements ObservationStore {
+public abstract class AbstractObservationStore extends DataStore implements ObservationStore, Resource {
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.observation");
 
@@ -45,6 +46,11 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
     @Override
     public ParameterValueGroup getOpenParameters() {
         return parameters;
+    }
+
+    @Override
+    public Resource getRootResource() throws DataStoreException {
+        return this;
     }
 
     /**
