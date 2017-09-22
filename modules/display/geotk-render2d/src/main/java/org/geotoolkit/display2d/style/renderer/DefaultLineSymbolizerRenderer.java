@@ -39,7 +39,7 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
+import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.display2d.style.CachedGraphicStroke;
 import org.geotoolkit.display2d.style.CachedLineSymbolizer;
 import org.geotoolkit.display2d.style.CachedStroke;

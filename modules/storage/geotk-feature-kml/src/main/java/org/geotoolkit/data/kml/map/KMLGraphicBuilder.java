@@ -78,7 +78,6 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
 import org.geotoolkit.display2d.style.labeling.DefaultPointLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
@@ -93,6 +92,7 @@ import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.Canvas;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
+import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
