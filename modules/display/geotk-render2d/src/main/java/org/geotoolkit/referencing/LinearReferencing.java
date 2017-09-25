@@ -37,7 +37,7 @@ import javax.vecmath.Vector2d;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.primitive.jts.JTSLineIterator;
+import org.geotoolkit.geometry.jts.awt.JTSLineIterator;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
 import org.geotoolkit.gml.xml.MultiGeometry;
 import org.geotoolkit.math.XMath;

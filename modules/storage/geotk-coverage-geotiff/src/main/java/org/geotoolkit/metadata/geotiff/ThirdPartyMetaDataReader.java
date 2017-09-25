@@ -462,15 +462,18 @@ public strictfp class ThirdPartyMetaDataReader {
         if(offset==null) offset = 0.0;
 
         double currentMinSV  = minSampleValue;
-        double currentMaxSV  = maxSampleValue;
+        final double currentMaxSV  = maxSampleValue;
         boolean isMinInclude = true;
         boolean isMaxInclude = true;
 
         final Iterator<Double> itNoData = nodataValues.iterator();
         while (itNoData.hasNext()) {
-            final double currentNoData = itNoData.next();
-            categories.add(new Category(NODATA_CATEGORY_NAME, new Color(0,0,0,0),
-                                       getTypedRangeNumber(typeClass, currentNoData, true, currentNoData, true)));
+            double currentNoData = itNoData.next();
+            final Category noDataCat = new Category(NODATA_CATEGORY_NAME, new Color(0,0,0,0),
+                    getTypedRangeNumber(typeClass, currentNoData, true, currentNoData, true));
+            categories.add(noDataCat);
+            currentNoData = noDataCat.getRange().getMinDouble();
+
             if (currentNoData == currentMinSV) {
                 isMinInclude = false;
             } else if (currentNoData == currentMaxSV) {
@@ -488,10 +491,12 @@ public strictfp class ThirdPartyMetaDataReader {
         assert currentMaxSV == maxSampleValue : "buildCategories : last category : currentMaxSample "
                 + "value should be equals to maxSampleValues. Expected : "+maxSampleValue+". Found : "+currentMaxSV;
 
-        categories.add(new Category("data", null,
+        if (currentMinSV<currentMaxSV) {
+            categories.add(new Category("data", null,
                     getTypedRangeNumber(typeClass,
                                         currentMinSV, isMinInclude,
                                         currentMaxSV, isMaxInclude), scale, offset));
+        }
 
         return categories;
     }

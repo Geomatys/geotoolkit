@@ -37,7 +37,7 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
+import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.display2d.style.CachedStroke;
 import org.geotoolkit.display2d.style.j2d.GeodeticPathWalker;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;

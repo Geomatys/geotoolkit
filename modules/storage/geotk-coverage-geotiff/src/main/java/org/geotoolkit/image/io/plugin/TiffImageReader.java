@@ -511,62 +511,19 @@ public class TiffImageReader extends SpatialImageReader {
 
 
         //-- verify CRS pertinency
-        {
-            //-- search for the coordinate reference system
-            final CoordinateReferenceSystem crs = spatialMetadata.getInstanceForType(CoordinateReferenceSystem.class);
-
-            if (crs == null)
-                LOGGER.log(Level.FINE, "Current data : "+input.toString()+" doesn't contain any Coordinate Reference System.");
+        //-- search for the coordinate reference system
+        final CoordinateReferenceSystem crs = spatialMetadata.getInstanceForType(CoordinateReferenceSystem.class);
+        if (crs == null) {
+            LOGGER.log(Level.FINE, "Current data : "+input.toString()+" doesn't contain any Coordinate Reference System.");
         }
 
         //-- verify GridToCrs pertinency
-        {
-            //search for the coordinate reference system
-            final RectifiedGrid rectifiedGrid = spatialMetadata.getInstanceForType(RectifiedGrid.class);
-
-            if (rectifiedGrid == null)
-                LOGGER.log(Level.FINE, "Current data : "+input.toString()+" doesn't contain any Tie Points or GridToCrs transformation function.");
+        final RectifiedGrid rectifiedGrid = spatialMetadata.getInstanceForType(RectifiedGrid.class);
+        if (rectifiedGrid == null) {
+            LOGGER.log(Level.FINE, "Current data : "+input.toString()+" doesn't contain any Tie Points or GridToCrs transformation function.");
         }
 
         return spatialMetadata;
-    }
-
-    /**
-     * Returns {@code true} if image contain geographic tiff tags needed to build
-     * related {@link CoordinateReferenceSystem}, else return {@code false}.
-     *
-     * @param headProperties map which contain all red tiff tags.
-     * @return {@code true} if image contain geographic tiff tags needed to build
-     * related {@link CoordinateReferenceSystem}, else return {@code false}.
-     */
-    private boolean hasCRS(final Map<Integer, Map> headProperties) {
-        int result = 0;
-        for (int key : headProperties.keySet()) {
-            if (key == GeoTiffConstants.GeoKeyDirectoryTag
-             || key == GeoTiffConstants.GeoDoubleParamsTag
-             || key == GeoTiffConstants.GeoAsciiParamsTag) result++;
-            if (result == 3) return true;
-        }
-        return false;
-    }
-
-    /**
-     * Returns {@code true} if image contain geographic tiff tags needed to build
-     * related {@link CoordinateReferenceSystem}, else return {@code false}.
-     *
-     * @param headProperties map which contain all red tiff tags.
-     * @return {@code true} if image contain geographic tiff tags needed to build
-     * related {@link CoordinateReferenceSystem}, else return {@code false}.
-     */
-    private boolean hasGridToCrs(final Map<Integer, Map> headProperties) {
-        int result = 0;
-        for (int key : headProperties.keySet()) {
-            if (key == GeoTiffConstants.ModelTransformationTag
-             || key == GeoTiffConstants.ModelPixelScaleTag
-             || key == GeoTiffConstants.ModelTiepointTag) result++;
-            if (result == 3) return true;
-        }
-        return false;
     }
 
     /**
@@ -579,8 +536,8 @@ public class TiffImageReader extends SpatialImageReader {
          * for allowing us to check if the file exists.
          */
         if (IOUtilities.canProcessAsPath(input)) {
-            Path newCRSInput = IOUtilities.toPath(input);
-            Object in = createInput(newCRSInput, part);
+            final Path newCRSInput = IOUtilities.toPath(input);
+            final Object in = createInput(newCRSInput, part);
 
             if (in != null && Files.isRegularFile(IOUtilities.toPath(in))) {
                 return in;
@@ -963,7 +920,6 @@ public class TiffImageReader extends SpatialImageReader {
          * In our case we build a color model from color map (tiff palette) values define between 0 -> 65535.
          * Then build integer value in palette we will shift each color value by normaly shift minus 8, to bring back all values between 0 -> 256.
          */
-
         final int alpha = 0xFF000000;
 
         //-- pixel : 1111 1111 | R | G | B
@@ -1020,26 +976,6 @@ public class TiffImageReader extends SpatialImageReader {
         assert extraSamples != null;
         for (long extraSample : extraSamples) {
             if (extraSample != 0) return (short) extraSample;
-        }
-        throw new IllegalStateException("Alpha value not found. Should never append.");
-    }
-
-    /**
-     * Returns band index of Alpha canal.<br><br>
-     *
-     * Return extraSample Alpha band index added by 3, with 3 related with RGB components.
-     *
-     * @return band index of Alpha canal.
-     * @see GeoTiffConstants#ExtraSamples
-     * @throws IllegalStateException if image do not have any Alpha canal.
-     */
-    private int getAlphaBandIndex() {
-        if (!hasAlpha())
-            throw new IllegalStateException("getAlphaBandIndex : image do not own Alpha canal.");
-        final long[] extraSamples = ((long[]) headProperties.get(ExtraSamples).get(ATT_VALUE));
-        assert extraSamples != null;
-        for (int i = 0, l = extraSamples.length; i < l; i++) {
-            if (extraSamples[i] != 0) return i + 3;//-- In tiff specification extrasample are define after RGB component -> +3.
         }
         throw new IllegalStateException("Alpha value not found. Should never append.");
     }
@@ -1779,49 +1715,6 @@ public class TiffImageReader extends SpatialImageReader {
     };
 
     /**
-     * Convert and return color map array from tiff file to an Integer array adapted to build {@link IndexColorModel} in java.
-     *
-     * @param colorMap array given by tiff reading.
-     * @return an Integer array adapted to build {@link IndexColorModel} in java.
-     */
-    private int[] buildColorMapArray(final long[] colorMap) {
-        final int indexLength = colorMap.length;
-        assert (indexLength % 3 == 0) : "color map array length should be modulo 3";
-        final int length_3 = indexLength / 3;
-        final int[] result = new int[length_3];
-
-        //-- color map in a tiff file : N Red values -> N Green values -> N Blue values
-        int idR = 0;
-        int idG = length_3;
-        int idB = length_3 << 1;// = 2 * length_3
-
-        /*
-         * mask applied to avoid the low-order bits from the red color overlaps the bits of green color.
-         * Moreover to avoid the low-order bits from the green color overlaps the bits of blue color.
-         */
-        final int mask = 0x0000FF00;
-
-        /*
-         * In indexed color model in java, values to defind palette for each color are between 0 -> 255.
-         * To build integer value in palette, we need to shift red value by 16 bits, green value by 8 bits and no shift to blue.
-         *
-         * In our case we build a color model from color map (tiff palette) values define between 0 -> 65535.
-         * Then build integer value in palette we will shift each color value by normaly shift minus 8, to bring back all values between 0 -> 256.
-         */
-
-        final int alpha = 0xFF000000;
-
-        //-- pixel : 1111 1111 | R | G | B
-        for (int i = 0; i < length_3; i++) {
-            final int r = ((int) (colorMap[idR++] & mask) << 8);
-            final int g = ((int) colorMap[idG++] & mask);
-            final int b = ((int) colorMap[idB++] >> 8) ;
-            result[i] = alpha | r | g | b;
-        }
-        return result;
-    }
-
-    /**
      * Ensures that the imageStream is open. If the imageStream is already open, then this method
      * does nothing.
      *
@@ -1951,8 +1844,7 @@ public class TiffImageReader extends SpatialImageReader {
     private int getLayerIndex(final int imageIndex) {
         final Object[] keys = imgAndThumbs.keySet().toArray();
         if (imageIndex >= keys.length)
-            throw new IndexOutOfBoundsException(error(
-                                    Errors.Keys.IndexOutOfBounds_1, imageIndex));
+            throw new IndexOutOfBoundsException(error(Errors.Keys.IndexOutOfBounds_1, imageIndex));
         return (int) keys[imageIndex];
     }
 
@@ -1966,9 +1858,9 @@ public class TiffImageReader extends SpatialImageReader {
     private int getLayerIndex(final int imageIndex, final int thumbnailsIndex) {
         final int imgLayIndex = getLayerIndex(imageIndex);
         final List<Integer> thumbs = imgAndThumbs.get(imgLayIndex);
-        if (thumbnailsIndex >= thumbs.size())
-            throw new IndexOutOfBoundsException(error(
-                                    Errors.Keys.IndexOutOfBounds_1, thumbnailsIndex));
+        if (thumbnailsIndex >= thumbs.size()) {
+            throw new IndexOutOfBoundsException(error(Errors.Keys.IndexOutOfBounds_1, thumbnailsIndex));
+        }
         return thumbs.get(thumbnailsIndex);
     }
 
@@ -1977,45 +1869,39 @@ public class TiffImageReader extends SpatialImageReader {
      * head to define which layers are images and which layers are thumbnails.
      */
     private void checkLayers() throws IOException {
-        if (imgAndThumbs == null) {
-            imgAndThumbs = new HashMap<>();
-            open();
-            int idCuLayer = 0;
-            int idCuImg = -1;
+        if (imgAndThumbs != null) return;
 
-            final int entrySize, shortSize;
-            if (isBigTIFF) {
-                entrySize = SIZE_BIG_ENTRY;
-                shortSize = SIZE_BIG_SHORT;
-            } else {
-                entrySize = SIZE_ENTRY;
-                shortSize = SIZE_SHORT;
-            }
+        imgAndThumbs = new HashMap<>();
+        open();
+        int idCuLayer = 0;
+        int idCuImg = -1;
 
-            do {
-                assert idCuLayer == countIFD - 1;
-                long position = positionIFD[idCuLayer];
-                imageStream.seek(position);
-                final long n = readShort();
-                position += shortSize;
-                selectLayer(idCuLayer);
-                if (isThumbnail()) {
-                    //-- add in thumbnail list at the correct image key --//
-                    final List<Integer> currentThumb = imgAndThumbs.get(idCuImg);
-                    // If we found thumbnail before the actual image, we must create image indice.
-                    if (idCuImg < 0 || currentThumb == null) {
-                        imgAndThumbs.put(++idCuImg, new ArrayList<Integer>());
-                    }
-                    assert idCuImg >= 0;
-                    imgAndThumbs.get(idCuImg).add(idCuLayer++);
-                } else {
-                    //-- add an other key in imgAndThumbs Map --//
-                    idCuImg = idCuLayer;
-                    imgAndThumbs.put(idCuLayer++, new ArrayList<Integer>());
+        final int entrySize = isBigTIFF ? SIZE_BIG_ENTRY : SIZE_ENTRY;
+        final int shortSize = isBigTIFF ? SIZE_BIG_SHORT : SIZE_SHORT;
+
+        do {
+            assert idCuLayer == countIFD - 1;
+            long position = positionIFD[idCuLayer];
+            imageStream.seek(position);
+            final long n = readShort();
+            position += shortSize;
+            selectLayer(idCuLayer);
+            if (isThumbnail()) {
+                //-- add in thumbnail list at the correct image key --//
+                final List<Integer> currentThumb = imgAndThumbs.get(idCuImg);
+                // If we found thumbnail before the actual image, we must create image indice.
+                if (idCuImg < 0 || currentThumb == null) {
+                    imgAndThumbs.put(++idCuImg, new ArrayList<Integer>());
                 }
-                imageStream.seek(position + n * entrySize);
-            } while (nextImageFileDirectory());
-        }
+                assert idCuImg >= 0;
+                imgAndThumbs.get(idCuImg).add(idCuLayer++);
+            } else {
+                //-- add an other key in imgAndThumbs Map --//
+                idCuImg = idCuLayer;
+                imgAndThumbs.put(idCuLayer++, new ArrayList<Integer>());
+            }
+            imageStream.seek(position + n * entrySize);
+        } while (nextImageFileDirectory());
     }
 
     /**
@@ -2030,42 +1916,12 @@ public class TiffImageReader extends SpatialImageReader {
         selectLayer(layerIndex);
         final Rectangle srcRegion = new Rectangle();
         final Rectangle dstRegion = new Rectangle();
-        BufferedImage image = getDestination(param, getImageTypes(layerIndex), imageWidth, imageHeight);
+        final BufferedImage image = getDestination(param, getImageTypes(layerIndex), imageWidth, imageHeight);
 
-        if (image.getRaster().getDataBuffer().getDataType() != sourceDataBufferType)
+        if (image.getRaster().getDataBuffer().getDataType() != sourceDataBufferType) {
             throw new IllegalArgumentException("The destination image datatype doesn't match with read source image datatype. "
                     + "Expected Datatype : "+sourceDataBufferType+" found : "+image.getRaster().getDataBuffer().getDataType());
-
-//        /**
-//         * permettre la lecture d'une image ou les bandes sont selectionnées
-//         * dans une premier temps voir pour readFromStrip()
-//         * etendre a tout les modes de lectures
-//         *
-//         * Dans le cas d'images ou le nombre de band sources differe du nombre de band dest
-//         * ajouter les param dans image read param
-//         * Dans un premier temps prendre les bands source de 0 a n
-//         * ou n est le nombre de band dest.
-//         */
-//        final int destNumBands = image.getSampleModel().getNumBands();
-//        if (destNumBands != samplesPerPixel) {
-//            if (param == null) param = new ImageReadParam();
-//            int[] sourceBands = param.getSourceBands();
-//            int[] destBands   = param.getDestinationBands();
-//            if (sourceBands == null) {
-//                sourceBands = new int[destNumBands];
-//                for (int i = 0; i < destNumBands; i++) {//-- voir plus tard pour mettre le alpha au bon endroit
-//                    sourceBands[i] = i;
-//                }
-//                param.setSourceBands(sourceBands);
-//            }
-//            if (destBands == null) {
-//                destBands = new int[destNumBands];
-//                for (int i = 0; i < destNumBands; i++) {
-//                    destBands[i] = i;
-//                }
-//                param.setDestinationBands(destBands);
-//            }
-//        }
+        }
 
         /*
          * compute region : ajust les 2 rectangles src region et dest region en fonction des coeff subsampling present dans Imagereadparam.
@@ -2097,8 +1953,7 @@ public class TiffImageReader extends SpatialImageReader {
                 readFromTiles(image.getRaster(), param, srcRegion, dstRegion);
             }
         }
-        image = ImageUtils.replaceFloatingColorModel(image);
-        return image;
+        return ImageUtils.replaceFloatingColorModel(image);
     }
 
     /**
@@ -2198,19 +2053,13 @@ public class TiffImageReader extends SpatialImageReader {
 
         Rectangle srcRegion = new Rectangle(0,0,0,0);
         Rectangle destRegion = new Rectangle(0,0,0,0);
-        computeRegions(param,
-                       width,
-                       height,
-                       null,
-                       srcRegion,
-                       destRegion);
+        computeRegions(param, width, height, null, srcRegion, destRegion);
 
-        int destWidth = destRegion.x + destRegion.width;
-        int destHeight = destRegion.y + destRegion.height;
+        final int destWidth = destRegion.x + destRegion.width;
+        final int destHeight = destRegion.y + destRegion.height;
 
         if ((long)destWidth * destHeight > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException
-                ("width*height > Integer.MAX_VALUE!");
+            throw new IllegalArgumentException("width*height > Integer.MAX_VALUE!");
         }
         // Create a new image based on the type specifier
         return imageType.createBufferedImage(destWidth, destHeight);
@@ -2420,59 +2269,6 @@ public class TiffImageReader extends SpatialImageReader {
                 }
             }
         }
-    }
-
-    /**
-     * Effectuate some other verification to allow or not allow reading optimizations.<br>
-     * Returns {@code true} if reading operation may be optimizate, else return {@code false}.<br><br>
-     *
-     * Criterions are : <br>
-     * - same band number for source and destination.<br>
-     * - destination and source array organize in ascending order.
-     *
-     * @param sourceBands selected source bands.
-     * @param destBands selected destination bands.
-     * @param srcNumBand source image numbands.
-     * @param destNumBand destination image numbands.
-     * @return {@code true} if reading operation may be optimizate, else return {@code false}.
-     */
-    private boolean checkBandsSettings(int[] sourceBands, int[] destBands,
-                                       int srcNumBand, int destNumBand) {
-        if (sourceBands == null) {
-            if (destBands == null) {
-                return srcNumBand == destNumBand;
-            }
-            return destBands.length == srcNumBand
-                && destNumBand      == srcNumBand
-                && checkArrayInAscendingOrder(destBands);
-        }
-        if (destBands == null) {
-            assert sourceBands != null;
-            return sourceBands.length == destNumBand
-                && destNumBand      == srcNumBand
-                && checkArrayInAscendingOrder(sourceBands);
-        }
-        assert sourceBands != null && destBands != null;
-        return sourceBands.length == destBands.length
-            && destNumBand        == srcNumBand
-            && sourceBands.length == srcNumBand
-            && checkArrayInAscendingOrder(sourceBands)
-            && checkArrayInAscendingOrder(destBands);
-    }
-
-    /**
-     * Returns {@code true} if internal integer from array is organize in ascending order,
-     * else return {@code false}.
-     *
-     * @param array the checked array.
-     * @return {@code true} if internal integer from array is organize in ascending order,
-     * else return {@code false}.
-     */
-    private boolean checkArrayInAscendingOrder(int[] array) {
-        for (int i = 0, l = array.length; i < l; i++) {
-            if (array[i] != i) return false;
-        }
-        return true;
     }
 
     /**

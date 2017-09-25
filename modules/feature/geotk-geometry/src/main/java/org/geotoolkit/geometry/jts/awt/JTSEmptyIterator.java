@@ -14,30 +14,23 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.primitive.jts;
+package org.geotoolkit.geometry.jts.awt;
 
-import com.vividsolutions.jts.geom.Point;
-import java.awt.geom.AffineTransform;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
- * Simple and efficient path iterator for JTS Point.
+ * An iterator for empty geometries
  *
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  * @since 2.9
  */
-public final class JTSPointIterator extends JTSGeometryIterator<Point> {
+public class JTSEmptyIterator extends JTSGeometryIterator<Geometry> {
 
-    private boolean done = false;
+    public static final JTSEmptyIterator INSTANCE = new JTSEmptyIterator();
 
-    /**
-     * Creates a new PointIterator object.
-     *
-     * @param point The point
-     * @param trs The affine transform applied to coordinates during iteration
-     */
-    public JTSPointIterator(final Point point,final AffineTransform trs) {
-        super(point,trs);
+    private JTSEmptyIterator() {
+        super(null,null);
     }
 
     /**
@@ -45,15 +38,7 @@ public final class JTSPointIterator extends JTSGeometryIterator<Point> {
      */
     @Override
     public int getWindingRule() {
-        return WIND_EVEN_ODD;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void next() {
-        done = true;
+        return WIND_NON_ZERO;
     }
 
     /**
@@ -61,7 +46,15 @@ public final class JTSPointIterator extends JTSGeometryIterator<Point> {
      */
     @Override
     public boolean isDone() {
-        return done;
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void next() {
+        throw new IllegalStateException();
     }
 
     /**
@@ -69,10 +62,7 @@ public final class JTSPointIterator extends JTSGeometryIterator<Point> {
      */
     @Override
     public int currentSegment(final double[] coords) {
-        coords[0] = geometry.getX();
-        coords[1] = geometry.getY();
-        transform.transform(coords, 0, coords, 0, 1);
-        return SEG_MOVETO;
+        return 0;
     }
 
     /**
@@ -80,10 +70,7 @@ public final class JTSPointIterator extends JTSGeometryIterator<Point> {
      */
     @Override
     public int currentSegment(final float[] coords) {
-        coords[0] = (float)geometry.getX();
-        coords[1] = (float)geometry.getY();
-        transform.transform(coords, 0, coords, 0, 1);
-        return SEG_MOVETO;
+        return 0;
     }
 
     /**
@@ -91,7 +78,5 @@ public final class JTSPointIterator extends JTSGeometryIterator<Point> {
      */
     @Override
     public void reset() {
-        done = false;
     }
-
 }

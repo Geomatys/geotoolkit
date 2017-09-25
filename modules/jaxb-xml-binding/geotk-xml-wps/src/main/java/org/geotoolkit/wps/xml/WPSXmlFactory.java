@@ -864,6 +864,19 @@ public class WPSXmlFactory {
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
 
+    public static StatusInfo buildStatusInfoDismissed(String version, XMLGregorianCalendar creationDate, ExceptionResponse exceptionReport, String jobId) {
+        if ("1.0.0".equals(version)) {
+            if (exceptionReport != null && !(exceptionReport instanceof org.geotoolkit.ows.xml.v110.ExceptionReport)) {
+                throw new IllegalArgumentException("Unexpected object class for 1.0.0 exception report.");
+            }
+
+            return new org.geotoolkit.wps.xml.v100.StatusType(creationDate, (org.geotoolkit.ows.xml.v110.ExceptionReport) exceptionReport);
+        } else if ("2.0.0".equals(version)) {
+           return new org.geotoolkit.wps.xml.v200.StatusInfo("Process dismissed:" + exceptionReport.toString(), jobId);
+        }
+        throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
+    }
+
     public static StatusInfo buildStatusInfoPaused(String version, XMLGregorianCalendar creationDate, Integer progression, String msg, String jobId) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wps.xml.v100.StatusType(creationDate, null, new org.geotoolkit.wps.xml.v100.ProcessStartedType(msg, progression));
