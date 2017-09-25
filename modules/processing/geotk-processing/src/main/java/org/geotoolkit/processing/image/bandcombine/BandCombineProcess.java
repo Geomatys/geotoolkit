@@ -17,11 +17,16 @@
 package org.geotoolkit.processing.image.bandcombine;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
 import java.awt.image.WritableRenderedImage;
+import org.apache.sis.image.WritablePixelIterator;
 
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -62,6 +67,17 @@ import org.geotoolkit.process.ProcessException;
  */
 public class BandCombineProcess extends AbstractProcess {
 
+    private RenderedImage[] inputImages;
+    private int sampleType   = -1;
+    private int nbtotalbands = 0;
+    private int width        = 0;
+    private int height       = 0;
+    private int[] nbBands;
+    private int[] nbBandIndex;
+    private PixelIterator[] readItes;
+    private int[][] minXYs;
+    private Dimension[] tilesSize;
+
     public BandCombineProcess(final ParameterValueGroup input) {
         super(BandCombineDescriptor.INSTANCE, input);
     }
@@ -70,7 +86,7 @@ public class BandCombineProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
 
-        final RenderedImage[] inputImages = inputParameters.getValue(BandCombineDescriptor.IN_IMAGES);
+        inputImages = inputParameters.getValue(BandCombineDescriptor.IN_IMAGES);
 
         if (inputImages.length == 0)
             throw new ProcessException("No image to combine", this, null);
@@ -82,19 +98,15 @@ public class BandCombineProcess extends AbstractProcess {
         }
 
         //check and extract informations, all images should have the same size and sample type.
-        int sampleType   = -1;
-        int nbtotalbands = 0;
-        int width        = 0;
-        int height       = 0;
-        final int[] nbBands     = new int[inputImages.length];
-        final int[] nbBandIndex = new int[inputImages.length];
+        nbBands     = new int[inputImages.length];
+        nbBandIndex = new int[inputImages.length];
 
         //-- attribut use only during same tile size
-        final PixelIterator[] readItes = new PixelIterator[inputImages.length];
+        readItes = new PixelIterator[inputImages.length];
         //-- minimum image coordinates only use during assert
-        final int[][] minXYs = new int[inputImages.length][2];
+        minXYs = new int[inputImages.length][2];
 
-        final Dimension[] tilesSize = new Dimension[inputImages.length];
+        tilesSize = new Dimension[inputImages.length];
 
         for(int i = 0; i < inputImages.length; i++) {
             final RenderedImage image = inputImages[i];
@@ -121,6 +133,44 @@ public class BandCombineProcess extends AbstractProcess {
             nbBandIndex[i] = nbtotalbands;
             nbtotalbands  += sm.getNumBands();
         }
+
+        if (width*height <= 2000*2000) {
+            //image fit in memory
+            final BufferedImage img = BufferedImages.createImage(width, height, nbtotalbands, sampleType);
+
+            final org.apache.sis.image.PixelIterator[] ins = new org.apache.sis.image.PixelIterator[inputImages.length];
+            for (int i=0;i<inputImages.length;i++) {
+                ins[i] = org.apache.sis.image.PixelIterator.create(inputImages[i]);
+            }
+
+            final org.apache.sis.image.WritablePixelIterator out = WritablePixelIterator.create(img);
+
+            final double[] sample = new double[nbtotalbands];
+            int y,x,i,b;
+            for (y=0;y<height;y++) {
+                for (x=0;x<width;x++) {
+                    out.moveTo(x, y);
+                    for (i=0;i<inputImages.length;i++) {
+                        ins[i].moveTo(x, y);
+                        if (nbBands[i]==1) {
+                            sample[nbBandIndex[i]] = ins[i].getSampleDouble(0);
+                        } else {
+                            for (b=0;b<nbBands[i];b++) {
+                                sample[nbBandIndex[i]+b] = ins[i].getSampleDouble(b);
+                            }
+                        }
+                    }
+                    out.setPixel(sample);
+                }
+            }
+
+            outputParameters.getOrCreate(BandCombineDescriptor.OUT_IMAGE).setValue(img);
+        } else {
+            combineUsingLargeimage();
+        }
+    }
+
+    private void combineUsingLargeimage() {
 
         //-- try to reuse a java color model for better performances
         final ColorModel cm  = BufferedImages.createGrayScaleColorModel(sampleType,nbtotalbands, 0, 0, 10);

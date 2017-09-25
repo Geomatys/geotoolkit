@@ -28,6 +28,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -140,8 +141,16 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             final int[] mapping = new int[4];
             for(int i=0;i<4;i++){
                 if (bands[i]!=-1){
-                    int index = Arrays.binarySearch(toRead, bands[i]);
-                    if(index<0) {
+                    int index = 0;
+                    boolean contained = false;
+                    for(int k=0;k<toRead.length;k++) {
+                        if(toRead[k]==bands[i]) {
+                            index = k;
+                            contained = true;
+                            break;
+                        }
+                    }
+                    if (!contained) {
                         toRead = Arrays.copyOf(toRead, toRead.length+1);
                         index = toRead.length-1;
                         toRead[index] = bands[i];

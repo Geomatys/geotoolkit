@@ -259,6 +259,13 @@ public final class JTS {
      */
     public static Geometry transform(final Geometry geom, final MathTransform transform)
             throws MismatchedDimensionException, TransformException {
+        if (geom.isEmpty()) {
+            Geometry g = (Geometry) geom.clone();
+            g.setSRID(0);
+            g.setUserData(null);
+            return g;
+        }
+
         final CoordinateSequenceTransformer cstrs = new CoordinateSequenceMathTransformer(transform);
         final GeometryCSTransformer transformer = new GeometryCSTransformer(cstrs);
         return transformer.transform(geom);
