@@ -27,10 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.io.IOException;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
@@ -59,7 +55,6 @@ import org.apache.sis.util.ArraysExt;
 
 import org.apache.sis.measure.Units;
 import org.apache.sis.measure.MeasurementRange;
-import org.apache.sis.measure.Quantities;
 import org.apache.sis.metadata.ModifiableMetadata;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
@@ -199,6 +194,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      *
      * @see ImageReader#getNumImages(boolean)
      */
+    @Override
     public abstract List<? extends GenericName> getCoverageNames()
             throws CoverageStoreException, CancellationException;
 
@@ -233,6 +229,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
      *         the execution of this method.
      */
+    @Override
     public abstract List<GridSampleDimension> getSampleDimensions(int index)
             throws CoverageStoreException, CancellationException;
 
@@ -470,7 +467,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
                      */
                     final GeneralGridGeometry gg = getGridGeometry(i);
                     if (computeResolutions) {
-                        final Quantity m = CRSUtilities.getHorizontalResolution(
+                        final Quantity<?> m = CRSUtilities.getHorizontalResolution(
                                 gg.getCoordinateReferenceSystem(), gg.getResolution());
                         if (m != null) {
                             double  measureValue = m.getValue().doubleValue();
@@ -609,6 +606,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
      *
      * @see ImageReader#read(int)
      */
+    @Override
     public abstract GridCoverage read(int index, GridCoverageReadParam param)
             throws CoverageStoreException, CancellationException;
 
