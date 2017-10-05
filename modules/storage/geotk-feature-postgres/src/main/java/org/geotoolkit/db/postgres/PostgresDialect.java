@@ -128,7 +128,7 @@ import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyType;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.IdentifiedObject;
-import org.postgresql.jdbc4.Jdbc4ResultSetMetaData;
+import org.postgresql.jdbc.PgResultSetMetaData;
 
 /**
  * Postgres/Postgis dialect.
@@ -982,7 +982,7 @@ final class PostgresDialect extends AbstractSQLDialect{
     public void decodeGeometryColumnType(final SingleAttributeTypeBuilder atb, final Connection cx,
             final ResultSet rs, final int columnIndex, boolean customQuery) throws SQLException {
 
-        final Jdbc4ResultSetMetaData metadata = (Jdbc4ResultSetMetaData)rs.getMetaData();
+        final PgResultSetMetaData metadata = (PgResultSetMetaData)rs.getMetaData();
 
         String typeName             = metadata.getColumnTypeName(columnIndex);
         final String columnName     = metadata.getColumnName(columnIndex);
