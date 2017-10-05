@@ -18,7 +18,7 @@
 package org.geotoolkit.factory;
 
 import java.util.List;
-import org.apache.sis.internal.util.LazySet;
+import org.apache.sis.internal.referencing.LazySet;
 import org.geotoolkit.util.collection.LazyList;
 
 import org.junit.*;
