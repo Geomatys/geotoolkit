@@ -1072,5 +1072,44 @@ public final class ReferencingUtilities {
         return null;
     }
 
+    /**
+     * Test if two envelopes intersects.
+     * This method will transform envelopes if needed.
+     *
+     * @param env1
+     * @param env2
+     * @return true if envelopes intersect
+     */
+    public static boolean intersects(Envelope env1, Envelope env2) {
+        final CoordinateReferenceSystem crs1 = env1.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem crs2 = env2.getCoordinateReferenceSystem();
+
+        //try to find a compatible crs
+        final CoordinateReferenceSystem crs = CRS.suggestCommonTarget(null, crs1,crs2);
+        if (crs!=null) {
+            try {
+                final Envelope penv1 = Envelopes.transform(env1, crs);
+                final Envelope penv2 = Envelopes.transform(env2, crs);
+                return GeneralEnvelope.castOrCopy(penv1).intersects(penv2);
+            } catch(TransformException ex) {/*do nothing*/}
+        }
+
+        //try both way intersection
+        cas1:
+        try {
+            final Envelope penv2 = Envelopes.transform(env2, crs1);
+            if (GeneralEnvelope.castOrCopy(penv2).isEmpty()) break cas1;
+            return GeneralEnvelope.castOrCopy(env1).intersects(penv2);
+        } catch(TransformException ex) {/*do nothing*/}
+
+        cas2:
+        try {
+            final Envelope penv1 = Envelopes.transform(env1, crs2);
+            if (GeneralEnvelope.castOrCopy(penv1).isEmpty()) break cas2;
+            return GeneralEnvelope.castOrCopy(penv1).intersects(env2);
+        } catch(TransformException ex) {/*do nothing*/}
+
+        return false;
+    }
 
 }
