@@ -19,6 +19,12 @@ package org.geotoolkit.geometry.jts.awt;
 import com.vividsolutions.jts.geom.Geometry;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
+import java.util.Arrays;
+import java.util.logging.Level;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import static org.geotoolkit.geometry.jts.awt.AbstractJTSGeometryJ2D.LOGGER;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Simple abstract path iterator for JTS Geometry.
@@ -29,16 +35,16 @@ import java.awt.geom.PathIterator;
  */
 public abstract class JTSGeometryIterator<T extends Geometry> implements PathIterator {
 
-    static final AffineTransform IDENTITY = new AffineTransform();
+    static final AffineTransform2D IDENTITY = new AffineTransform2D(new AffineTransform());
 
-    protected AffineTransform transform;
+    protected MathTransform transform;
     protected T geometry;
 
-    protected JTSGeometryIterator(final AffineTransform trs){
+    protected JTSGeometryIterator(final MathTransform trs){
         this(null,trs);
     }
 
-    protected JTSGeometryIterator(final T geometry, final AffineTransform trs){
+    protected JTSGeometryIterator(final T geometry, final MathTransform trs){
         this.transform = (trs == null) ? IDENTITY : trs;
         this.geometry = geometry;
     }
@@ -47,12 +53,12 @@ public abstract class JTSGeometryIterator<T extends Geometry> implements PathIte
         this.geometry = geom;
     }
 
-    public void setTransform(final AffineTransform trs){
+    public void setTransform(final MathTransform trs){
         this.transform = (trs == null) ? IDENTITY : trs;
         reset();
     }
 
-    public AffineTransform getTransform(){
+    public MathTransform getTransform(){
         return transform;
     }
 
@@ -62,4 +68,30 @@ public abstract class JTSGeometryIterator<T extends Geometry> implements PathIte
 
     public abstract void reset();
 
+    protected void safeTransform(float[] in, int offset, float[] out, int outOffset, int nb) {
+        try {
+            transform.transform(in, offset, out, outOffset, nb);
+        } catch (TransformException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(),ex);
+            Arrays.fill(out, outOffset, outOffset+nb*2, Float.NaN);
+        }
+    }
+
+    protected void safeTransform(double[] in, int offset, float[] out, int outOffset, int nb) {
+        try {
+            transform.transform(in, offset, out, outOffset, nb);
+        } catch (TransformException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(),ex);
+            Arrays.fill(out, outOffset, outOffset+nb*2, Float.NaN);
+        }
+    }
+
+    protected void safeTransform(double[] in, int offset, double[] out, int outOffset, int nb) {
+        try {
+            transform.transform(in, offset, out, outOffset, nb);
+        } catch (TransformException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(),ex);
+            Arrays.fill(out, outOffset, outOffset+nb*2, Double.NaN);
+        }
+    }
 }
