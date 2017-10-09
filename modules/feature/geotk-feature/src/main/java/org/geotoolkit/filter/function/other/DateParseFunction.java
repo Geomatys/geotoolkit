@@ -19,6 +19,7 @@ package org.geotoolkit.filter.function.other;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.opengis.filter.expression.Expression;
 
@@ -60,6 +61,7 @@ public class DateParseFunction extends AbstractFunction {
         }
 
         DateFormat dateFormat = new SimpleDateFormat(format);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         try {
             return dateFormat.parse(date);
         } catch(ParseException e) {
