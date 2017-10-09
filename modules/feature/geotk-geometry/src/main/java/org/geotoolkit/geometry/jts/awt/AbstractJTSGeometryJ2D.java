@@ -113,7 +113,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
             final Geometry point = geometry.getFactory().createPoint(coord);
             return geometry.contains(point);
         }
-        
+
         //inverse transform could not be computed
         //fallback on AWT geometries
         return new GeneralPath(this).contains(p);
