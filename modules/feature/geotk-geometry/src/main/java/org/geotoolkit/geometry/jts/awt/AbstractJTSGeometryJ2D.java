@@ -23,13 +23,13 @@ import com.vividsolutions.jts.geom.LinearRing;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -53,7 +53,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
     protected final MathTransform transform;
 
     public AbstractJTSGeometryJ2D(final T geom) {
-        this(geom, JTSGeometryIterator.IDENTITY);
+        this(geom, null);
     }
 
     /**
@@ -63,7 +63,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      */
     public AbstractJTSGeometryJ2D(final T geom, final MathTransform trs) {
         this.geometry = geom;
-        this.transform = trs;
+        this.transform = (trs == null) ? JTSGeometryIterator.IDENTITY : trs;
     }
 
     /**
@@ -106,11 +106,17 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
     @Override
     public boolean contains(final Point2D p) {
         final MathTransform inverse = getInverse();
-        final double[] a = new double[]{p.getX(),p.getY()};
-        safeTransform(inverse, a, a);
-        final Coordinate coord = new Coordinate(a[0], a[1]);
-        final Geometry point = geometry.getFactory().createPoint(coord);
-        return geometry.contains(point);
+        if (inverse!=null) {
+            final double[] a = new double[]{p.getX(),p.getY()};
+            safeTransform(inverse, a, a);
+            final Coordinate coord = new Coordinate(a[0], a[1]);
+            final Geometry point = geometry.getFactory().createPoint(coord);
+            return geometry.contains(point);
+        }
+        
+        //inverse transform could not be computed
+        //fallback on AWT geometries
+        return new GeneralPath(this).contains(p);
     }
 
     /**
@@ -127,8 +133,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      */
     @Override
     public boolean contains(final double x, final double y, final double w, final double h) {
-        Geometry rect = createRectangle(x, y, w, h);
-        return geometry.contains(rect);
+        return intersectOrContains(x, y, w, h, false);
     }
 
     /**
@@ -170,12 +175,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      */
     @Override
     public boolean intersects(final Rectangle2D r) {
-        final Geometry rect = createRectangle(
-                r.getMinX(),
-                r.getMinY(),
-                r.getWidth(),
-                r.getHeight());
-        return geometry.intersects(rect);
+        return intersects(r.getX(),r.getY(),r.getWidth(),r.getHeight());
     }
 
     /**
@@ -183,36 +183,43 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      */
     @Override
     public boolean intersects(final double x, final double y, final double w, final double h) {
-        Geometry rect = createRectangle(x, y, w, h);
-        return geometry.intersects(rect);
+        return intersectOrContains(x, y, w, h, true);
     }
 
     /**
-     * Creates a jts Geometry object representing a rectangle with the given
-     * parameters
+     * Test rectangle intersection or containment.
      *
      * @param x left coordinate
      * @param y bottom coordinate
      * @param w width
-     * @param h height     *
-     * @return a rectangle with the specified position and size
+     * @param h height
+     * @param intersect true for intersection, false for contains
+     * @return true
      */
-    private Geometry createRectangle(final double x, final double y, final double w, final double h) {
+    private boolean intersectOrContains(final double x, final double y, final double w, final double h, boolean intersect) {
         final MathTransform inverse = getInverse();
-        final double[] p1 = new double[]{x, y};
-        safeTransform(inverse, p1, p1);
-        final double[] p2 = new double[]{x+w, y+h};
-        safeTransform(inverse, p2, p2);
+        if (inverse != null) {
+            final double[] p1 = new double[]{x, y};
+            safeTransform(inverse, p1, p1);
+            final double[] p2 = new double[]{x+w, y+h};
+            safeTransform(inverse, p2, p2);
 
-        final Coordinate[] coords = {
-            new Coordinate(p1[0], p1[1]),
-            new Coordinate(p1[0], p2[1]),
-            new Coordinate(p2[0], p2[1]),
-            new Coordinate(p2[0], p1[1]),
-            new Coordinate(p1[0], p1[1])
-        };
-        final LinearRing lr = geometry.getFactory().createLinearRing(coords);
-        return geometry.getFactory().createPolygon(lr, null);
+            final Coordinate[] coords = {
+                new Coordinate(p1[0], p1[1]),
+                new Coordinate(p1[0], p2[1]),
+                new Coordinate(p2[0], p2[1]),
+                new Coordinate(p2[0], p1[1]),
+                new Coordinate(p1[0], p1[1])
+            };
+            final LinearRing lr = geometry.getFactory().createLinearRing(coords);
+            final Geometry rect = geometry.getFactory().createPolygon(lr, null);
+            return intersect ? geometry.intersects(rect) : geometry.contains(rect);
+        }
+
+        //inverse transform could not be computed
+        //fallback on AWT geometries
+        final GeneralPath path = new GeneralPath(this);
+        return intersect ? path.intersects(x, y, w, h) : path.contains(x, y, w, h);
     }
 
     @Override
