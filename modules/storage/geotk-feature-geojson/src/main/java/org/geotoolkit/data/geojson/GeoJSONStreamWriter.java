@@ -8,12 +8,20 @@ import org.geotoolkit.data.FeatureWriter;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.storage.FeatureNaming;
+import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.data.geojson.utils.GeoJSONUtils;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.Operation;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -59,7 +67,41 @@ public class GeoJSONStreamWriter implements FeatureWriter {
 
     public GeoJSONStreamWriter(OutputStream outputStream, FeatureType featureType, final JsonEncoding encoding, final int doubleAccuracy, boolean prettyPrint)
             throws DataStoreException {
-        this.featureType= featureType;
+
+        //remove any operation attribute
+         List<Operation> geometries = featureType.getProperties(true).stream()
+                .filter(Operation.class::isInstance)
+                .map(Operation.class::cast)
+                .filter(AttributeConvention::isGeometryAttribute)
+                .filter(FeatureExt.IS_NOT_CONVENTION)
+                .collect(Collectors.toList());
+
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder(featureType);
+        final Iterator<PropertyTypeBuilder> it = ftb.properties().iterator();
+        final FeatureNaming naming = new FeatureNaming();
+                geometries.stream()
+                .map(Operation::getName)
+                .forEach(name -> {
+                    try {
+                        naming.add(null, name, name);
+                    } catch (IllegalNameException e) {
+                            //hack
+                    }
+                });
+        while (it.hasNext()) {
+            try {
+                naming.get(null, it.next().getName().toString());
+                it.remove();
+            } catch (IllegalNameException e) {
+                // normal behavior
+            }
+        }
+
+        for (final Operation op : geometries) {
+            FeatureExt.castOrUnwrap(op).ifPresent(ftb::addAttribute);
+        }
+
+        this.featureType = ftb.build();
         hasIdentifier = GeoJSONUtils.hasIdentifier(featureType);
         if (hasIdentifier) {
             idConverter = GeoJSONUtils.getIdentifierConverter(featureType);
