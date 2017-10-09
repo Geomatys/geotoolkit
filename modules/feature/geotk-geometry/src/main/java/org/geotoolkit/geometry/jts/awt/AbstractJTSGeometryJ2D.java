@@ -23,12 +23,16 @@ import com.vividsolutions.jts.geom.LinearRing;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Arrays;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.util.logging.Logging;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * A thin wrapper that adapts a JTS geometry to the Shape interface so that the geometry can be used
@@ -40,14 +44,16 @@ import org.apache.sis.util.logging.Logging;
  */
 public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shape, Cloneable {
 
+    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.geometry");
+
     /** The wrapped JTS geometry */
     protected T geometry;
 
     /** An additional AffineTransform */
-    protected final AffineTransform transform;
+    protected final MathTransform transform;
 
     public AbstractJTSGeometryJ2D(final T geom) {
-        this(geom, JTSGeometryIterator.IDENTITY);
+        this(geom, null);
     }
 
     /**
@@ -55,9 +61,9 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      *
      * @param geom - the wrapped geometry
      */
-    public AbstractJTSGeometryJ2D(final T geom, final AffineTransform trs) {
+    public AbstractJTSGeometryJ2D(final T geom, final MathTransform trs) {
         this.geometry = geom;
-        this.transform = trs;
+        this.transform = (trs == null) ? JTSGeometryIterator.IDENTITY : trs;
     }
 
     /**
@@ -77,10 +83,10 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
         return geometry;
     }
 
-    protected AffineTransform getInverse(){
+    protected MathTransform getInverse(){
         try {
-            return transform.createInverse();
-        } catch (NoninvertibleTransformException ex) {
+            return transform.inverse();
+        } catch (org.opengis.referencing.operation.NoninvertibleTransformException ex) {
             Logging.getLogger("org.geotoolkit.display2d.primitive.jts").log(Level.WARNING, ex.getMessage(), ex);
             return null;
         }
@@ -99,11 +105,18 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      */
     @Override
     public boolean contains(final Point2D p) {
-        final AffineTransform inverse = getInverse();
-        inverse.transform(p, p);
-        final Coordinate coord = new Coordinate(p.getX(), p.getY());
-        final Geometry point = geometry.getFactory().createPoint(coord);
-        return geometry.contains(point);
+        final MathTransform inverse = getInverse();
+        if (inverse!=null) {
+            final double[] a = new double[]{p.getX(),p.getY()};
+            safeTransform(inverse, a, a);
+            final Coordinate coord = new Coordinate(a[0], a[1]);
+            final Geometry point = geometry.getFactory().createPoint(coord);
+            return geometry.contains(point);
+        }
+
+        //inverse transform could not be computed
+        //fallback on AWT geometries
+        return new GeneralPath(this).contains(p);
     }
 
     /**
@@ -120,8 +133,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      */
     @Override
     public boolean contains(final double x, final double y, final double w, final double h) {
-        Geometry rect = createRectangle(x, y, w, h);
-        return geometry.contains(rect);
+        return intersectOrContains(x, y, w, h, false);
     }
 
     /**
@@ -140,13 +152,13 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
         if(geometry == null) return null;
 
         final Envelope env = geometry.getEnvelopeInternal();
-        final Point2D p1 = new Point2D.Double(env.getMinX(), env.getMinY());
-        transform.transform(p1, p1);
-        final Point2D p2 = new Point2D.Double(env.getMaxX(), env.getMaxY());
-        transform.transform(p2, p2);
+        final double[] p1 = new double[]{env.getMinX(), env.getMinY()};
+        safeTransform(transform,p1, p1);
+        final double[] p2 = new double[]{env.getMaxX(), env.getMaxY()};
+        safeTransform(transform,p2, p2);
 
-        final Rectangle2D rect = new Rectangle2D.Double(p1.getX(), p1.getY(), 0, 0);
-        rect.add(p2);
+        final Rectangle2D rect = new Rectangle2D.Double(p1[0], p1[1], 0, 0);
+        rect.add(p2[0],p2[1]);
         return rect;
     }
 
@@ -163,12 +175,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      */
     @Override
     public boolean intersects(final Rectangle2D r) {
-        final Geometry rect = createRectangle(
-                r.getMinX(),
-                r.getMinY(),
-                r.getWidth(),
-                r.getHeight());
-        return geometry.intersects(rect);
+        return intersects(r.getX(),r.getY(),r.getWidth(),r.getHeight());
     }
 
     /**
@@ -176,41 +183,77 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      */
     @Override
     public boolean intersects(final double x, final double y, final double w, final double h) {
-        Geometry rect = createRectangle(x, y, w, h);
-        return geometry.intersects(rect);
+        return intersectOrContains(x, y, w, h, true);
     }
 
     /**
-     * Creates a jts Geometry object representing a rectangle with the given
-     * parameters
+     * Test rectangle intersection or containment.
      *
      * @param x left coordinate
      * @param y bottom coordinate
      * @param w width
-     * @param h height     *
-     * @return a rectangle with the specified position and size
+     * @param h height
+     * @param intersect true for intersection, false for contains
+     * @return true
      */
-    private Geometry createRectangle(final double x, final double y, final double w, final double h) {
-        final AffineTransform inverse = getInverse();
-        final Point2D p1 = new Point2D.Double(x, y);
-        inverse.transform(p1, p1);
-        final Point2D p2 = new Point2D.Double(x+w, y+h);
-        inverse.transform(p2, p2);
+    private boolean intersectOrContains(final double x, final double y, final double w, final double h, boolean intersect) {
+        final MathTransform inverse = getInverse();
+        if (inverse != null) {
+            final double[] p1 = new double[]{x, y};
+            safeTransform(inverse, p1, p1);
+            final double[] p2 = new double[]{x+w, y+h};
+            safeTransform(inverse, p2, p2);
 
-        final Coordinate[] coords = {
-            new Coordinate(p1.getX(), p1.getY()),
-            new Coordinate(p1.getX(), p2.getY()),
-            new Coordinate(p2.getX(), p2.getY()),
-            new Coordinate(p2.getX(), p1.getY()),
-            new Coordinate(p1.getX(), p1.getY())
-        };
-        final LinearRing lr = geometry.getFactory().createLinearRing(coords);
-        return geometry.getFactory().createPolygon(lr, null);
+            final Coordinate[] coords = {
+                new Coordinate(p1[0], p1[1]),
+                new Coordinate(p1[0], p2[1]),
+                new Coordinate(p2[0], p2[1]),
+                new Coordinate(p2[0], p1[1]),
+                new Coordinate(p1[0], p1[1])
+            };
+            final LinearRing lr = geometry.getFactory().createLinearRing(coords);
+            final Geometry rect = geometry.getFactory().createPolygon(lr, null);
+            return intersect ? geometry.intersects(rect) : geometry.contains(rect);
+        }
+
+        //inverse transform could not be computed
+        //fallback on AWT geometries
+        final GeneralPath path = new GeneralPath(this);
+        return intersect ? path.intersects(x, y, w, h) : path.contains(x, y, w, h);
     }
 
     @Override
     public AbstractJTSGeometryJ2D clone()  {
         return null; //TODO
     }
+
+
+    protected void safeTransform(MathTransform trs, double[] in, double[] out) {
+        try {
+            trs.transform(in, 0, out, 0, 1);
+        } catch (TransformException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(),ex);
+            Arrays.fill(out, Double.NaN);
+        }
+    }
+
+    protected void safeTransform(double[] in, int offset, float[] out, int outOffset, int nb) {
+        try {
+            transform.transform(in, offset, out, outOffset, nb);
+        } catch (TransformException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(),ex);
+            Arrays.fill(out, outOffset, outOffset+nb*2, Float.NaN);
+        }
+    }
+
+    protected void safeTransform(double[] in, int offset, double[] out, int outOffset, int nb) {
+        try {
+            transform.transform(in, offset, out, outOffset, nb);
+        } catch (TransformException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(),ex);
+            Arrays.fill(out, outOffset, outOffset+nb*2, Double.NaN);
+        }
+    }
+
 
 }

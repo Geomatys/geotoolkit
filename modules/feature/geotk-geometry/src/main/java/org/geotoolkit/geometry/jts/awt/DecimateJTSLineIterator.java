@@ -19,7 +19,7 @@ package org.geotoolkit.geometry.jts.awt;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
-import java.awt.geom.AffineTransform;
+import org.opengis.referencing.operation.MathTransform;
 
 /**
  * Simple and efficient path iterator for JTS LineString.
@@ -48,7 +48,7 @@ public final class DecimateJTSLineIterator extends JTSGeometryIterator<LineStrin
      * @param ls The line string the iterator will use
      * @param trs The affine transform applied to coordinates during iteration
      */
-    public DecimateJTSLineIterator(final LineString ls, final AffineTransform trs, final double[] resolution) {
+    public DecimateJTSLineIterator(final LineString ls, final MathTransform trs, final double[] resolution) {
         super(ls,trs);
         coordinates = ls.getCoordinateSequence();
         coordinateCount = coordinates.size();
@@ -102,16 +102,12 @@ public final class DecimateJTSLineIterator extends JTSGeometryIterator<LineStrin
             double candidateX = coordinates.getX(currentIndex);
             double candidateY = coordinates.getY(currentIndex);
 
-//            System.out.println("res :" + resolution[0] +"  " +resolution[1]);
-//            System.out.println(Math.abs(candidateX-currentCoord[0]) +"  "+ Math.abs(candidateY-currentCoord[1]));
-
             if(Math.abs(candidateX-currentCoord[0]) >= resolution[0] || Math.abs(candidateY-currentCoord[1]) >= resolution[1]){
                 currentCoord[0] = candidateX;
                 currentCoord[1] = candidateY;
                 break;
             }
 
-//            System.out.println("skip a point");
         }
     }
 
@@ -121,12 +117,12 @@ public final class DecimateJTSLineIterator extends JTSGeometryIterator<LineStrin
     @Override
     public int currentSegment(final double[] coords) {
         if (currentIndex == 0) {
-            transform.transform(currentCoord, 0, coords, 0, 1);
+            safeTransform(currentCoord, 0, coords, 0, 1);
             return SEG_MOVETO;
         } else if ((currentIndex == coordinateCount) && isClosed) {
             return SEG_CLOSE;
         } else {
-            transform.transform(currentCoord, 0, coords, 0, 1);
+            safeTransform(currentCoord, 0, coords, 0, 1);
             return SEG_LINETO;
         }
     }
@@ -137,12 +133,12 @@ public final class DecimateJTSLineIterator extends JTSGeometryIterator<LineStrin
     @Override
     public int currentSegment(final float[] coords) {
         if (currentIndex == 0) {
-            transform.transform(currentCoord, 0, coords, 0, 1);
+            safeTransform(currentCoord, 0, coords, 0, 1);
             return SEG_MOVETO;
         } else if ((currentIndex == coordinateCount) && isClosed) {
             return SEG_CLOSE;
         } else {
-            transform.transform(currentCoord, 0, coords, 0, 1);
+            safeTransform(currentCoord, 0, coords, 0, 1);
             return SEG_LINETO;
         }
     }

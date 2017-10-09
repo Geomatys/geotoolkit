@@ -39,6 +39,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -76,14 +77,14 @@ public class ComposeTest {
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
-                    new Coordinate(-0.5, -0.5),
-                    new Coordinate( 1.5, -0.5),
-                    new Coordinate( 1.5,  0.5),
-                    new Coordinate(-0.5,  0.5),
-                    new Coordinate(-0.5, -0.5)
+                    new Coordinate(0, 0),
+                    new Coordinate(2, 0),
+                    new Coordinate(2, 1),
+                    new Coordinate(0, 1),
+                    new Coordinate(0, 0)
                 }
             );
-            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS2D());
+            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER));
 
             inputs.add(new AbstractMap.SimpleImmutableEntry<>(gridCoverage2d,new Geometry[]{geometry,null}));
         }
@@ -103,14 +104,14 @@ public class ComposeTest {
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
-                    new Coordinate(-0.5, -0.5),
-                    new Coordinate( 0.5, -0.5),
-                    new Coordinate( 0.5,  1.5),
-                    new Coordinate(-0.5,  1.5),
-                    new Coordinate(-0.5, -0.5)
+                    new Coordinate(0, 0),
+                    new Coordinate(1, 0),
+                    new Coordinate(1, 2),
+                    new Coordinate(0, 2),
+                    new Coordinate(0, 0)
                 }
             );
-            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS2D());
+            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER));
 
             inputs.add(new AbstractMap.SimpleImmutableEntry<>(gridCoverage2d,new Geometry[]{geometry,null}));
         }
@@ -158,7 +159,7 @@ public class ComposeTest {
                     new Coordinate(0, 0)
                 }
             );
-            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS2D());
+            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER));
 
             inputs.add(new AbstractMap.SimpleImmutableEntry<>(gridCoverage2d,new Geometry[]{geometry,null}));
         }
@@ -185,7 +186,7 @@ public class ComposeTest {
                     new Coordinate(0, 0)
                 }
             );
-            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS2D());
+            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER));
 
             inputs.add(new AbstractMap.SimpleImmutableEntry<>(gridCoverage2d,new Geometry[]{geometry,null}));
         }
@@ -212,7 +213,7 @@ public class ComposeTest {
                     new Coordinate(0, 1)
                 }
             );
-            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS2D());
+            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER));
 
             inputs.add(new AbstractMap.SimpleImmutableEntry<>(gridCoverage2d,new Geometry[]{geometry,null}));
         }
@@ -260,7 +261,7 @@ public class ComposeTest {
                     new Coordinate(0, 0)
                 }
             );
-            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS2D());
+            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER));
 
             inputs.add(new AbstractMap.SimpleImmutableEntry<>(gridCoverage2d,new Geometry[]{geometry,null}));
         }
@@ -294,7 +295,7 @@ public class ComposeTest {
                     new Coordinate(0, 0)
                 }
             );
-            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS2D());
+            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER));
 
             inputs.add(new AbstractMap.SimpleImmutableEntry<>(gridCoverage2d,new Geometry[]{geometry,null}));
         }
@@ -350,7 +351,7 @@ public class ComposeTest {
                     new Coordinate(0, 0)
                 }
             );
-            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS2D());
+            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER));
 
             inputs.add(new AbstractMap.SimpleImmutableEntry<>(gridCoverage2d,new Geometry[]{geometry,null}));
         }
@@ -384,7 +385,7 @@ public class ComposeTest {
                     new Coordinate(1, 0)
                 }
             );
-            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS2D());
+            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER));
 
             inputs.add(new AbstractMap.SimpleImmutableEntry<>(gridCoverage2d,new Geometry[]{geometry,null}));
         }
@@ -434,7 +435,7 @@ public class ComposeTest {
                     new Coordinate(0, 0)
                 }
             );
-            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS2D());
+            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER));
 
             inputs.add(new AbstractMap.SimpleImmutableEntry<>(gridCoverage2d,new Geometry[]{geometry,null}));
         }
@@ -468,7 +469,7 @@ public class ComposeTest {
                     new Coordinate(0, 0)
                 }
             );
-            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS2D());
+            geometry = JTS.transform(geometry, gridCoverage2d.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER));
 
             inputs.add(new AbstractMap.SimpleImmutableEntry<>(gridCoverage2d,new Geometry[]{geometry,null}));
         }

@@ -26,6 +26,9 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.opengis.referencing.operation.MathTransform;
 
 
 /**
@@ -49,7 +52,7 @@ public class JTSGeometryJ2D extends AbstractJTSGeometryJ2D<Geometry> {
      *
      * @param geom - the wrapped geometry
      */
-    public JTSGeometryJ2D(final Geometry geom, final AffineTransform trs) {
+    public JTSGeometryJ2D(final Geometry geom, final MathTransform trs) {
         super(geom, trs);
     }
 
@@ -89,12 +92,11 @@ public class JTSGeometryJ2D extends AbstractJTSGeometryJ2D<Geometry> {
     @Override
     public PathIterator getPathIterator(final AffineTransform at) {
 
-        final AffineTransform concat;
+        final MathTransform concat;
         if(at == null){
             concat = transform;
         }else{
-            concat = (AffineTransform) transform.clone();
-            concat.preConcatenate(at);
+            concat = MathTransforms.concatenate(transform, new AffineTransform2D(at));
         }
 
         if(iterator == null){
@@ -121,7 +123,7 @@ public class JTSGeometryJ2D extends AbstractJTSGeometryJ2D<Geometry> {
         return new JTSGeometryJ2D(this.geometry,this.transform);
     }
 
-    public static AbstractJTSGeometryJ2D best(final Class clazz, final AffineTransform trs){
+    public static AbstractJTSGeometryJ2D best(final Class clazz, final MathTransform trs){
         if(Point.class.isAssignableFrom(clazz)){
             return new JTSGeometryJ2D(null,trs);
         }else if(MultiPoint.class.isAssignableFrom(clazz)){
