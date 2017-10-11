@@ -25,6 +25,7 @@ import javax.imageio.ImageReader;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 
@@ -140,7 +141,7 @@ public final class CoverageUtilities {
         //find index ordinate of crs2D part of this crs.
         int minOrdinate2D = 0;
         boolean find = false;
-        for(CoordinateReferenceSystem ccrrss : ReferencingUtilities.decompose(crs)) {
+        for(CoordinateReferenceSystem ccrrss : CRS.getSingleComponents(crs)) {
             final CoordinateSystem cs = ccrrss.getCoordinateSystem();
             if((cs instanceof CartesianCS)
             || (cs instanceof SphericalCS)
@@ -180,7 +181,7 @@ public final class CoverageUtilities {
      */
     public static int getMinOrdinate(final CoordinateReferenceSystem crs) {
         int tempOrdinate = 0;
-        for(CoordinateReferenceSystem ccrrss : ReferencingUtilities.decompose(crs)) {
+        for(CoordinateReferenceSystem ccrrss : CRS.getSingleComponents(crs)) {
             final CoordinateSystem cs = ccrrss.getCoordinateSystem();
             if((cs instanceof CartesianCS)
             || (cs instanceof SphericalCS)

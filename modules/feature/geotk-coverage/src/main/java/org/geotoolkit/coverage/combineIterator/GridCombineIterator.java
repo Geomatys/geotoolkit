@@ -21,11 +21,11 @@ import java.util.List;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.coverage.grid.GridCoordinates;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
@@ -35,6 +35,7 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.util.Utilities;
+import org.opengis.referencing.crs.SingleCRS;
 
 /**
  * {@link Iterator} to iterate on each {@link Envelope} dimensions from {@link GeneralGridGeometry}.<br>
@@ -390,9 +391,9 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
             throw new MismatchedDimensionException("The parameter crs which define on each axis the ordinate values are compute have a "
                     + "too great dimension number.Expected dimension number 1, found : "+crs.getCoordinateSystem().getDimension());
 
-        final List<CoordinateReferenceSystem> listCrs = ReferencingUtilities.decompose(gridGeometry.getCoordinateReferenceSystem());
+        final List<SingleCRS> listCrs = CRS.getSingleComponents(gridGeometry.getCoordinateReferenceSystem());
         int interestedOrdinateIndex = 0;
-        for (final CoordinateReferenceSystem currentCrs : listCrs) {
+        for (final SingleCRS currentCrs : listCrs) {
             if (Utilities.equalsIgnoreMetadata(currentCrs, crs)) break;
             interestedOrdinateIndex += currentCrs.getCoordinateSystem().getDimension();
         }

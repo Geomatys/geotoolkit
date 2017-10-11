@@ -42,9 +42,9 @@ import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.measure.Units;
 
-import static java.util.Collections.singletonMap;
 import javax.measure.Quantity;
 import org.apache.sis.measure.Quantities;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -158,9 +158,12 @@ public final class CRSUtilities extends Static {
             return envelope;
         }
         toAdd.add(0, currentCRS);
-        final GeneralEnvelope expanded = new GeneralEnvelope(new DefaultCompoundCRS(
-                singletonMap(DefaultCompoundCRS.NAME_KEY, "Temporarily expanded"),
-                toAdd.toArray(new CoordinateReferenceSystem[toAdd.size()])));
+        final GeneralEnvelope expanded;
+        try {
+            expanded = new GeneralEnvelope(CRS.compound(toAdd.toArray(new CoordinateReferenceSystem[toAdd.size()])));
+        } catch (FactoryException e) {
+            throw new IllegalArgumentException("Illegal CRS.", e);
+        }
         expanded.setToNaN();
         expanded.subEnvelope(0, envelope.getDimension()).setEnvelope(envelope);
         return expanded;
