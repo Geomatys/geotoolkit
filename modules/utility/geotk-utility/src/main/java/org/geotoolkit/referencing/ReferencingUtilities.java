@@ -1060,8 +1060,6 @@ public final class ReferencingUtilities {
      * Test if two envelopes intersects.
      * This method will transform envelopes if needed.
      *
-     * @param env1
-     * @param env2
      * @return true if envelopes intersect
      */
     public static boolean intersects(Envelope env1, Envelope env2) {
@@ -1093,6 +1091,12 @@ public final class ReferencingUtilities {
             return GeneralEnvelope.castOrCopy(penv1).intersects(env2);
         } catch(TransformException ex) {/*do nothing*/}
 
+        /*
+         * TODO: an exception means that a value exist, but can not be computed because the calculation
+         *       do not converge. The value that we have not been able to calculate could be inside the
+         *       other envelope. Concequently returning 'false' is not okay - we should propagate the
+         *       exception instead.
+         */
         return false;
     }
 }
