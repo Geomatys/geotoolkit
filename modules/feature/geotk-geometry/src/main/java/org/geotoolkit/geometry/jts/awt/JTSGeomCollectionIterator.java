@@ -21,7 +21,7 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import java.awt.geom.AffineTransform;
+import org.opengis.referencing.operation.MathTransform;
 
 /**
  * Simple and efficient path iterator for JTS GeometryCollection.
@@ -37,7 +37,7 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
     protected JTSGeometryIterator currentIterator;
     protected boolean done = false;
 
-    public JTSGeomCollectionIterator(final GeometryCollection gc, final AffineTransform trs) {
+    public JTSGeomCollectionIterator(final GeometryCollection gc, final MathTransform trs) {
         super(gc,trs);
         reset();
     }
@@ -68,8 +68,6 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
      * Returns the specific iterator for the geometry passed.
      *
      * @param candidate The geometry whole iterator is requested
-     *
-     * @return the specific iterator for the geometry passed.
      */
     protected void prepareIterator(final Geometry candidate) {
 
@@ -116,7 +114,7 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
     }
 
     @Override
-    public void setTransform(final AffineTransform trs) {
+    public void setTransform(final MathTransform trs) {
         if(currentIterator != null){
             currentIterator.setTransform(trs);
         }

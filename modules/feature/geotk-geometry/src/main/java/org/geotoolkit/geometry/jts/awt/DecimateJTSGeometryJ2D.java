@@ -23,6 +23,8 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.opengis.referencing.operation.MathTransform;
 
 /**
  * A thin wrapper that adapts a JTS geometry to the Shape interface so that the geometry can be used
@@ -53,20 +55,22 @@ public class DecimateJTSGeometryJ2D extends JTSGeometryJ2D {
     @Override
     public PathIterator getPathIterator(final AffineTransform at) {
 
+        MathTransform t = (at==null) ? null : new AffineTransform2D(at);
+
         if(iterator == null){
             if (this.geometry.isEmpty()) {
                 iterator = JTSEmptyIterator.INSTANCE;
             }else if (this.geometry instanceof Point) {
-                iterator = new JTSPointIterator((Point) geometry, at);
+                iterator = new JTSPointIterator((Point) geometry, t);
             } else if (this.geometry instanceof Polygon) {
-                iterator = new JTSPolygonIterator((Polygon) geometry, at);
+                iterator = new JTSPolygonIterator((Polygon) geometry, t);
             } else if (this.geometry instanceof LineString) {
-                iterator = new DecimateJTSLineIterator((LineString)geometry, at,resolution);
+                iterator = new DecimateJTSLineIterator((LineString)geometry, t,resolution);
             } else if (this.geometry instanceof GeometryCollection) {
-                iterator = new DecimateJTSGeomCollectionIterator((GeometryCollection)geometry,at,resolution);
+                iterator = new DecimateJTSGeomCollectionIterator((GeometryCollection)geometry,t,resolution);
             }
         }else{
-            iterator.setTransform(at);
+            iterator.setTransform(t);
         }
 
         return iterator;

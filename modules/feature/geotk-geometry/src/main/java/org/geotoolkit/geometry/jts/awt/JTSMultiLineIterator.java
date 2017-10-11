@@ -19,7 +19,7 @@ package org.geotoolkit.geometry.jts.awt;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
-import java.awt.geom.AffineTransform;
+import org.opengis.referencing.operation.MathTransform;
 
 /**
  * Simple and efficient path iterator for JTS LineString.
@@ -47,7 +47,7 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
      * @param ls The line string the iterator will use
      * @param trs The affine transform applied to coordinates during iteration
      */
-    public JTSMultiLineIterator(final MultiLineString ls, final AffineTransform trs) {
+    public JTSMultiLineIterator(final MultiLineString ls, final MathTransform trs) {
         super(ls,trs);
         setGeometry(ls);
     }
@@ -129,14 +129,14 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
         if (currentCoord == 0) {
             coords[0] = currentSequence.getX(currentCoord);
             coords[1] = currentSequence.getY(currentCoord);
-            transform.transform(coords, 0, coords, 0, 1);
+            safeTransform(coords, 0, coords, 0, 1);
             return SEG_MOVETO;
         } else if (currentCoord == coordinateCount) {
             return SEG_CLOSE;
         } else {
             coords[0] = currentSequence.getX(currentCoord);
             coords[1] = currentSequence.getY(currentCoord);
-            transform.transform(coords, 0, coords, 0, 1);
+            safeTransform(coords, 0, coords, 0, 1);
             return SEG_LINETO;
         }
     }
@@ -149,14 +149,14 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
         if (currentCoord == 0) {
             coords[0] = (float) currentSequence.getX(currentCoord);
             coords[1] = (float) currentSequence.getY(currentCoord);
-            transform.transform(coords, 0, coords, 0, 1);
+            safeTransform(coords, 0, coords, 0, 1);
             return SEG_MOVETO;
         } else if (currentCoord == coordinateCount) {
             return SEG_CLOSE;
         } else {
             coords[0] = (float) currentSequence.getX(currentCoord);
             coords[1] = (float) currentSequence.getY(currentCoord);
-            transform.transform(coords, 0, coords, 0, 1);
+            safeTransform(coords, 0, coords, 0, 1);
             return SEG_LINETO;
         }
     }

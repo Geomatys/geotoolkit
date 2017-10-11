@@ -37,7 +37,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.logging.Level;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Extract a maximal envelope from the provided Filter.
@@ -63,6 +67,7 @@ import org.apache.sis.util.logging.Logging;
  * This is a replacement for FilterConsumer.
  *
  * @author Jody Garnett
+ * @author Johann Sorel (Geomatys)
  * @module
  */
 public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
@@ -123,10 +128,19 @@ public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
         if( data == null ) return null;
         JTSEnvelope2D bbox = bbox( data );
 
-        // consider doing reprojection here into data CRS?
-        Envelope bounds = new Envelope(filter.getMinX(), filter.getMaxX(), filter.getMinY(), filter
-                .getMaxY());
-        bbox.expandToInclude(bounds);
+        org.opengis.geometry.Envelope bb = (org.opengis.geometry.Envelope) ((Literal)filter.getExpression2()).getValue();
+        if (bb.getCoordinateReferenceSystem() != null
+                && bbox.getCoordinateReferenceSystem() != null
+                && !Utilities.equalsIgnoreMetadata(bbox.getCoordinateReferenceSystem(), bb.getCoordinateReferenceSystem())) {
+            try {
+                //reproject bbox
+                bb = Envelopes.transform(bb, bbox.getCoordinateReferenceSystem());
+            } catch (TransformException ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+
+        bbox.expandToInclude(new JTSEnvelope2D(bb));
         return bbox;
     }
     /**

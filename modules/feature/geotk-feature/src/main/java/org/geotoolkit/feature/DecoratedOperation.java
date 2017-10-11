@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.feature;
 
+import java.util.Set;
 import org.apache.sis.feature.AbstractOperation;
 import org.opengis.feature.Feature;
 import org.opengis.feature.IdentifiedType;
@@ -54,6 +55,14 @@ public class DecoratedOperation extends AbstractOperation {
         } else {
             throw new IllegalArgumentException("Invalid input feature, was expecting a feature of type DecoratedFeature");
         }
+    }
+
+    @Override
+    public Set<String> getDependencies() {
+        if(base instanceof AbstractOperation) {
+            return ((AbstractOperation)base).getDependencies();
+        }
+        return super.getDependencies();
     }
 
     @Override

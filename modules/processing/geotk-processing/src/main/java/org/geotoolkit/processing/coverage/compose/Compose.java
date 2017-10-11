@@ -22,6 +22,8 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
@@ -49,16 +51,18 @@ import org.geotoolkit.geometry.GeometricUtilities.WrapResolution;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.image.interpolation.GridFactory;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import static org.geotoolkit.processing.coverage.compose.ComposeDescriptor.*;
-import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -127,7 +131,6 @@ public class Compose extends AbstractProcess {
         for (int i = 0; i < nbCoverage; i++) {
             final Parameters covParam = castOrWrap(imageParams.get(i));
             final GridCoverage2D coverage = covParam.getValue(COVERAGE_PARAM);
-            final CoordinateReferenceSystem coverageCrs = coverage.getCoordinateReferenceSystem2D();
 
             //extract image informations
             inGridCoverages[i] = coverage;
@@ -140,27 +143,8 @@ public class Compose extends AbstractProcess {
                 sampleDimensions = coverage.getSampleDimensions();
             }
 
-            Geometry include = covParam.getValue(INCLUDE_PARAM);
-            Geometry exclude = covParam.getValue(EXCLUDE_PARAM);
-            //ensure geometries are in coverage crs
-            try {
-                if (exclude!=null) exclude = JTS.transform(exclude, coverageCrs);
-                if (include!=null) include = JTS.transform(include, coverageCrs);
-            } catch (MismatchedDimensionException | TransformException | FactoryException ex) {
-                throw new ProcessException(ex.getMessage(), this, ex);
-            }
-
-            //set default include to tile area
-            includeGeometries[i] = GeometricUtilities.toJTSGeometry(coverage.getEnvelope(), WrapResolution.NONE);
-            includeGeometries[i].setUserData(coverageCrs);
-
-            if (include!=null) {
-                //merge include and tile area
-                includeGeometries[i] = includeGeometries[i].intersection(include);
-                includeGeometries[i].setUserData(coverageCrs);
-            }
-
-            excludeGeometries[i] = exclude;
+            includeGeometries[i] = covParam.getValue(INCLUDE_PARAM);
+            excludeGeometries[i] = covParam.getValue(EXCLUDE_PARAM);
         }
 
         //compute output grid
@@ -173,7 +157,7 @@ public class Compose extends AbstractProcess {
             }
         }
         final CoordinateReferenceSystem outCrs = outGridGeom.getCoordinateReferenceSystem2D();
-        final AffineTransform2D outGridToCrs = (AffineTransform2D) outGridGeom.getGridToCRS2D();
+        final AffineTransform2D outGridToCrs = (AffineTransform2D) outGridGeom.getGridToCRS(PixelInCell.CELL_CORNER);
         final AffineTransform2D outCrsToGrid;
         try {
             outCrsToGrid = outGridToCrs.inverse();
@@ -188,24 +172,33 @@ public class Compose extends AbstractProcess {
 
         for (int i = 0; i < nbCoverage; i++) {
             final BufferedImage image = new BufferedImage(outWidth, outHeight, BufferedImage.TYPE_BYTE_BINARY);
-
+            final CoordinateReferenceSystem coverageCrs = inGridCoverages[i].getCoordinateReferenceSystem2D();
             try {
-                //convert to output crs
-                Geometry includeGeometry = JTS.transform(includeGeometries[i], outCrs);
+                MathTransform covCrstoOutCrs = CRS.findOperation(coverageCrs, outCrs, null).getMathTransform();
 
                 //paint in white valid area
                 final Graphics2D g = (Graphics2D) image.getGraphics();
-                g.setColor(Color.WHITE);
                 g.setTransform(outCrsToGrid); //convert to output grid crs
-                g.fill(new JTSGeometryJ2D(includeGeometry));
 
-                Geometry excludeGeometry = excludeGeometries[i];
-                if (excludeGeometry!=null) {
-                    //convert to output crs
-                    excludeGeometry = JTS.transform(excludeGeometry, outCrs);
-                    //remove exclusion geometry
+                //set a clip to coverage envelope
+                Geometry clip = GeometricUtilities.toJTSGeometry(inGridCoverages[i].getEnvelope(), WrapResolution.NONE);
+                clip.setUserData(coverageCrs);
+                g.setClip(new JTSGeometryJ2D(clip,covCrstoOutCrs));
+
+                //set the valid area
+                g.setColor(Color.WHITE);
+                if (includeGeometries[i]==null) {
+                    g.fillRect(0, 0, outWidth, outHeight);
+                } else {
+                    covCrstoOutCrs = CRS.findOperation(coverageCrs, outCrs, null).getMathTransform();
+                    g.fill(new JTSGeometryJ2D(includeGeometries[i],covCrstoOutCrs));
+                }
+
+                //remove exclusion geometry
+                if (excludeGeometries[i]!=null) {
+                    covCrstoOutCrs = CRS.findOperation(JTS.findCoordinateReferenceSystem(excludeGeometries[i]), outCrs, null).getMathTransform();
                     g.setColor(Color.BLACK);
-                    g.fill(new JTSGeometryJ2D(excludeGeometry));
+                    g.fill(new JTSGeometryJ2D(excludeGeometries[i],covCrstoOutCrs));
                 }
                 g.dispose();
 
@@ -217,6 +210,8 @@ public class Compose extends AbstractProcess {
 
         //compute output grid crs to source coverage grid crs.
         final MathTransform[] outGridCSToSourceGridCS = new MathTransform[nbCoverage];
+        final Rectangle outRect = new Rectangle(0, 0, outWidth, outHeight);
+        final GridFactory gf = new GridFactory(0.3);
         for (int i = 0; i < nbCoverage; i++) {
             try {
                 final CoordinateReferenceSystem sourceCrs = inGridCoverages[i].getCoordinateReferenceSystem2D();
@@ -228,6 +223,15 @@ public class Compose extends AbstractProcess {
                         outCrsToSourceCrs,
                         sourceCrsToGrid
                 );
+
+                try {
+                    //try to optimize it
+                    Object obj = gf.create((MathTransform2D) outGridCSToSourceGridCS[i], outRect);
+                    if (obj instanceof AffineTransform) {
+                        outGridCSToSourceGridCS[i] = new AffineTransform2D((AffineTransform)obj);
+                    }
+                } catch (Exception e) {}
+
             } catch (NoninvertibleTransformException | FactoryException e) {
                 throw new ProcessException(e.getMessage(),this,e);
             }

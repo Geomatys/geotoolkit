@@ -37,6 +37,7 @@ import java.util.logging.Logger;
 
 import static java.nio.file.Files.*;
 import static java.nio.file.StandardOpenOption.*;
+import java.util.zip.GZIPInputStream;
 
 
 /**
@@ -623,7 +624,17 @@ public final class IOUtilities extends Static {
             }
 
             if (url != null) {
-                return url.openStream();
+                final URLConnection cnx = url.openConnection();
+                if (cnx instanceof HttpURLConnection) {
+                    cnx.setRequestProperty("Accept-Encoding", "gzip");
+                    if ("gzip".equals(cnx.getContentEncoding())) {
+                        return new GZIPInputStream(cnx.getInputStream());
+                     } else {
+                        return cnx.getInputStream();
+                     }
+                } else {
+                    return cnx.getInputStream();
+                }
             }
             throw e;
         }

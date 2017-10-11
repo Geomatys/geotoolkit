@@ -19,7 +19,7 @@ package org.geotoolkit.geometry.jts.awt;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Polygon;
-import java.awt.geom.AffineTransform;
+import org.opengis.referencing.operation.MathTransform;
 
 /**
  * Simple and efficient path iterator for JTS Polygon.
@@ -52,7 +52,7 @@ public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
      * @param p The polygon
      * @param trs The affine transform applied to coordinates during iteration
      */
-    public JTSPolygonIterator(final Polygon p, final AffineTransform trs) {
+    public JTSPolygonIterator(final Polygon p, final MathTransform trs) {
         super(p,trs);
         setGeometry(p);
     }
@@ -96,12 +96,12 @@ public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
         } else if (currentCoord == 0) {
             coords[0] = this.coords.getX(0);
             coords[1] = this.coords.getY(0);
-            transform.transform(coords, 0, coords, 0, 1);
+            safeTransform(coords, 0, coords, 0, 1);
             return SEG_MOVETO;
         } else {
             coords[0] = this.coords.getX(currentCoord);
             coords[1] = this.coords.getY(currentCoord);
-            transform.transform(coords, 0, coords, 0, 1);
+            safeTransform(coords, 0, coords, 0, 1);
             return SEG_LINETO;
         }
     }
@@ -118,12 +118,12 @@ public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
         } else if (currentCoord == 0) {
             coords[0] = (float)this.coords.getX(0);
             coords[1] = (float)this.coords.getY(0);
-            transform.transform(coords, 0, coords, 0, 1);
+            safeTransform(coords, 0, coords, 0, 1);
             return SEG_MOVETO;
         } else {
             coords[0] = (float)this.coords.getX(currentCoord);
             coords[1] = (float)this.coords.getY(currentCoord);
-            transform.transform(coords, 0, coords, 0, 1);
+            safeTransform(coords, 0, coords, 0, 1);
             return SEG_LINETO;
         }
     }

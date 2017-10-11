@@ -18,20 +18,14 @@
 package org.geotoolkit.filter.binaryspatial;
 
 import com.vividsolutions.jts.geom.Geometry;
-
-import java.util.logging.Level;
-
 import org.geotoolkit.filter.DefaultLiteral;
-import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.referencing.CRS;
-
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
-import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.referencing.ReferencingUtilities;
+import org.opengis.geometry.Envelope;
 
 /**
  * Perform the same work as the BBox expect it evaluate intersection only against
@@ -63,17 +57,9 @@ public class LooseBBox extends DefaultBBox{
         //if we don't know the crs, we will assume it's the objective crs already
         if(candidateCrs != null){
             //reproject in objective crs if needed
-            try {
-                final MathTransform trs = CRS.findOperation(candidateCrs, this.crs, null).getMathTransform();
-                if(!trs.isIdentity()){
-                    candidate = JTS.transform(candidate, trs);
-                }
-            } catch (TransformException | FactoryException | IllegalArgumentException ex) {
-                Logging.getLogger("org.geotoolkit.filter.binaryspatial").log(Level.FINE, null, ex);
-                return false;
-            }
+            final Envelope e = new JTSEnvelope2D(candidate.getEnvelopeInternal(),CRS.getHorizontalComponent(candidateCrs));
+            return ReferencingUtilities.intersects(e, right.getValue());
         }
-
         final com.vividsolutions.jts.geom.Envelope candidateEnv = candidate.getEnvelopeInternal();
         return boundingEnv.intersects(candidateEnv);
     }
