@@ -17,6 +17,7 @@
 package org.geotoolkit.display2d.primitive;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.logging.Level;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -33,6 +34,8 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.storage.coverage.CoverageResource;
 
@@ -98,9 +101,13 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
                     final CoverageResource ref = layer.getCoverageReference();
                     final GridCoverageReader reader = ref.acquireReader();
                     try {
-                        final GridCoverage result = reader.read(layer.getCoverageReference().getImageIndex(), param);
+                        GridCoverage result = reader.read(layer.getCoverageReference().getImageIndex(), param);
                         if (result instanceof GridCoverageStack) {
-                            throw new CoverageStoreException("Coverage reader return more than one slice.");
+                            Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, "Coverage reader return more than one slice.");
+                        }
+                        while (result instanceof GridCoverageStack) {
+                            //pick the first slice
+                            result = (GridCoverage) ((GridCoverageStack)result).coverageAtIndex(0);
                         }
                         value = (GridCoverage2D) result;
                         ref.recycle(reader);
