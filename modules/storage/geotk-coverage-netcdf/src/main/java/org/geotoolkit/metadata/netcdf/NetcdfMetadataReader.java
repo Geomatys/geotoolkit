@@ -249,8 +249,11 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
      * @param  name  The name of the attribute to search.
      * @return The attribute value, or {@code null} if none or empty.
      */
-    private String getStringValue(final Group group, final String name) {
-        if (name != null) { // For createResponsibleParty(...) convenience.
+    private String getStringValue(final Group group, String name) {
+        if ("creator_institution".equals(name)) {
+            name = "institution";                                       // Hack while waiting for migration to Apache SIS.
+        }
+        if (name != null) {                                             // For createResponsibleParty(...) convenience.
             final Attribute attribute = getAttribute(group, name);
             if (attribute != null && attribute.isString()) {
                 String value = attribute.getStringValue();

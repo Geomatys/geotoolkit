@@ -228,7 +228,7 @@ public final strictfp class NetcdfMetadataReaderTest extends NetcdfMetadataTest 
         assertSame("hierarchyLevel", ScopeCode.DATASET, getSingleton(metadata.getHierarchyLevels()));
         /*
          * In the Geotk case, the Metadata/Contact and Metadata/Identification/PointOfContact
-         * proprties are not just equals - they are expected to be the exact same instance.
+         * properties are not just equal - they are expected to be the exact same instance.
          */
         assertSame("identificationInfo.pointOfContact", getSingleton(metadata.getContacts()),
                 getSingleton(getSingleton(metadata.getIdentificationInfo()).getPointOfContacts()));
