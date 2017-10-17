@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -125,6 +126,17 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         try {
             // Retrieve all feature types in the data source
             names.stream()
+                    .filter(new Predicate<GenericName>() {
+                            @Override
+                            public boolean test(GenericName t) {
+                                try {
+                                    return findResource(t.toString()) instanceof FeatureSet;
+                                } catch (DataStoreException ex) {
+                                    getLogger().log(Level.WARNING, ex.getMessage(),ex);
+                                    return false;
+                                }
+                            }
+                        })
                     .flatMap(this::getFeatureTypeHierarchy)
                     .distinct()
                     /* Register found types in the metadata. We don't count instances,
