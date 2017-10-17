@@ -32,7 +32,6 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.geotoolkit.lang.Debug;
-import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -238,26 +237,9 @@ public final class Threads extends AtomicInteger implements ThreadFactory, Rejec
     }
 
     /**
-     * Ensures that the shutdown hook is registered. The shutdown process is implemented in the
-     * {@link org.geotoolkit.factory.ShutdownHook#run()} method. This method should be invoked
-     * once by classes that require the service provided in the shutdown hook.
-     *
-     * @since 3.16
-     */
-    static {
-        try {
-            Class.forName("org.geotoolkit.factory.ShutdownHook", true, Threads.class.getClassLoader());
-        } catch (Exception e) {
-            Logging.unexpectedException(null, Threads.class, "<init>", e);
-        }
-    }
-
-    /**
      * Shutdowns the executors and wait for the non-daemon threads to complete.
      * This method should be invoked only when we think that no more tasks are
      * going to be submitted to the executor (it is actually hard to ensure that).
-     *
-     * @see org.geotoolkit.factory.ShutdownHook#run()
      *
      * @since 3.06
      */

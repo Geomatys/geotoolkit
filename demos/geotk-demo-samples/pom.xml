@@ -193,7 +193,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.3-1101-jdbc41</version> <!-- Note that setenv.sh needs to declare the same version number. -->
+            <scope>compile</scope>
         </dependency>
 
         <dependency>

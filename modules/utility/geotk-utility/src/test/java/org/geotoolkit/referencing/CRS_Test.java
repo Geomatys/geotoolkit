@@ -61,11 +61,11 @@ public final strictfp class CRS_Test extends TestBase {
      */
     @Test
     public void testComponentCRS() throws FactoryException {
-        final VerticalCRS ELLIPSOIDAL_HEIGHT = CommonCRS.Vertical.ELLIPSOIDAL.crs();
+        final VerticalCRS MEAN_SEA_LEVEL  = CommonCRS.Vertical.MEAN_SEA_LEVEL.crs();
         final TemporalCRS MODIFIED_JULIAN = CommonCRS.Temporal.MODIFIED_JULIAN.crs();
 
         final SingleCRS          crs2D = (SingleCRS) org.apache.sis.referencing.CRS.fromWKT(WKT.PROJCS_LAMBERT_CONIC_NTF);
-        final DefaultCompoundCRS crs3D = new DefaultCompoundCRS(singletonMap(NAME_KEY, "NTF 3D"), crs2D, ELLIPSOIDAL_HEIGHT);
+        final DefaultCompoundCRS crs3D = new DefaultCompoundCRS(singletonMap(NAME_KEY, "NTF 3D"), crs2D, MEAN_SEA_LEVEL);
         final DefaultCompoundCRS crs4D = new DefaultCompoundCRS(singletonMap(NAME_KEY, "NTF 4D"), crs3D, MODIFIED_JULIAN);
         assertTrue (org.apache.sis.referencing.CRS.isHorizontalCRS(crs2D));
         assertFalse(org.apache.sis.referencing.CRS.isHorizontalCRS(crs3D));
@@ -74,18 +74,18 @@ public final strictfp class CRS_Test extends TestBase {
         assertSame(crs2D, org.apache.sis.referencing.CRS.getHorizontalComponent(crs3D));
         assertSame(crs2D, org.apache.sis.referencing.CRS.getHorizontalComponent(crs4D));
         assertNull("No vertical component expected.",     org.apache.sis.referencing.CRS.getVerticalComponent(crs2D, true));
-        assertSame(ELLIPSOIDAL_HEIGHT, org.apache.sis.referencing.CRS.getVerticalComponent(crs3D, true));
-        assertSame(ELLIPSOIDAL_HEIGHT, org.apache.sis.referencing.CRS.getVerticalComponent(crs4D, true));
+        assertSame(MEAN_SEA_LEVEL, org.apache.sis.referencing.CRS.getVerticalComponent(crs3D, true));
+        assertSame(MEAN_SEA_LEVEL, org.apache.sis.referencing.CRS.getVerticalComponent(crs4D, true));
         assertNull("No temporal component expected.",     org.apache.sis.referencing.CRS.getTemporalComponent(crs2D));
         assertNull("No temporal component expected.",     org.apache.sis.referencing.CRS.getTemporalComponent(crs3D));
         assertSame(MODIFIED_JULIAN,    org.apache.sis.referencing.CRS.getTemporalComponent(crs4D));
-        assertSame(crs3D, org.geotoolkit.referencing.CRS.getCompoundCRS(crs3D, crs2D, ELLIPSOIDAL_HEIGHT));
-        assertSame(crs3D, org.geotoolkit.referencing.CRS.getCompoundCRS(crs4D, crs2D, ELLIPSOIDAL_HEIGHT));
+        assertSame(crs3D, org.geotoolkit.referencing.CRS.getCompoundCRS(crs3D, crs2D, MEAN_SEA_LEVEL));
+        assertSame(crs3D, org.geotoolkit.referencing.CRS.getCompoundCRS(crs4D, crs2D, MEAN_SEA_LEVEL));
         assertNull(       org.geotoolkit.referencing.CRS.getCompoundCRS(crs3D, crs2D, MODIFIED_JULIAN));
         assertNull(       org.geotoolkit.referencing.CRS.getCompoundCRS(crs4D, crs2D, MODIFIED_JULIAN));
-        assertNull(       org.geotoolkit.referencing.CRS.getCompoundCRS(crs3D, crs2D, ELLIPSOIDAL_HEIGHT, MODIFIED_JULIAN));
-        assertSame(crs4D, org.geotoolkit.referencing.CRS.getCompoundCRS(crs4D, crs2D, ELLIPSOIDAL_HEIGHT, MODIFIED_JULIAN));
-        assertSame(crs4D, org.geotoolkit.referencing.CRS.getCompoundCRS(crs4D, ELLIPSOIDAL_HEIGHT, MODIFIED_JULIAN, crs2D));
+        assertNull(       org.geotoolkit.referencing.CRS.getCompoundCRS(crs3D, crs2D, MEAN_SEA_LEVEL, MODIFIED_JULIAN));
+        assertSame(crs4D, org.geotoolkit.referencing.CRS.getCompoundCRS(crs4D, crs2D, MEAN_SEA_LEVEL, MODIFIED_JULIAN));
+        assertSame(crs4D, org.geotoolkit.referencing.CRS.getCompoundCRS(crs4D, MEAN_SEA_LEVEL, MODIFIED_JULIAN, crs2D));
     }
 
     /**

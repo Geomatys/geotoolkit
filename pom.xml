@@ -184,9 +184,8 @@
        =========================================================== -->
   <properties>
     <geoapi.version>4.0-M06</geoapi.version> <!-- Must be same than the version used by SIS. -->
-    <sis.version>0.8-jdk8-MC0017</sis.version>
+    <sis.version>0.8-jdk8-MC0018</sis.version>
     <sis.epsg.version>0.8-M3</sis.epsg.version>
-    <derby.version>10.12.1.1</derby.version>
     <netcdf.version>4.3.21</netcdf.version>
     <lucene.version>5.4.1</lucene.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -212,6 +211,13 @@
         <groupId>org.opengis</groupId>
         <artifactId>geoapi-parent</artifactId>
         <version>${geoapi.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.sis</groupId>
+        <artifactId>parent</artifactId>
+        <version>${sis.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -331,11 +337,6 @@
             <artifactId>xercesImpl</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-      <dependency>
-          <groupId>com.esri.geometry</groupId>
-          <artifactId>esri-geometry-api</artifactId>
-          <version>1.2.1</version>
       </dependency>
 
       <!-- Miscellaneous utilities -->
@@ -491,22 +492,6 @@
       </dependency>
 
       <!-- Database and Server -->
-      <dependency>
-        <groupId>org.apache.derby</groupId>
-        <artifactId>derby</artifactId>
-        <version>${derby.version}</version>
-        <scope>test</scope> <!-- Already included in JDK as JavaDB -->
-      </dependency>
-      <dependency>
-        <groupId>org.hsqldb</groupId>
-        <artifactId>hsqldb</artifactId>
-        <version>2.3.3</version>
-      </dependency>
-      <dependency>
-        <groupId>org.postgresql</groupId>
-        <artifactId>postgresql</artifactId>
-        <version>9.3-1101-jdbc41</version> <!-- Note that setenv.sh needs to declare the same version number. -->
-      </dependency>
       <dependency>
         <groupId>org.postgis</groupId>
         <artifactId>postgis-jdbc</artifactId>

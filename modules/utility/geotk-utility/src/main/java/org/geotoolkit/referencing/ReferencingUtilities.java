@@ -22,9 +22,6 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
-import javax.measure.Unit;
-
-import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.geometry.DirectPosition2D;
@@ -33,7 +30,6 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.internal.metadata.AxisDirections;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 
@@ -66,6 +62,7 @@ import org.apache.sis.referencing.CRS;
 import static org.apache.sis.referencing.CRS.getHorizontalComponent;
 import static org.apache.sis.referencing.CRS.getVerticalComponent;
 import static org.apache.sis.referencing.CRS.getTemporalComponent;
+import static org.apache.sis.referencing.CRS.getSingleComponents;
 import org.apache.sis.util.NullArgumentException;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.apache.sis.referencing.crs.AbstractCRS;
@@ -303,8 +300,8 @@ public final class ReferencingUtilities {
         final GeneralEnvelope result = new GeneralEnvelope(targetCRS);
 
         //decompose crs
-        final List<CoordinateReferenceSystem> sourceParts = ReferencingUtilities.decompose(sourceCRS);
-        final List<CoordinateReferenceSystem> targetParts = ReferencingUtilities.decompose(targetCRS);
+        final List<SingleCRS> sourceParts = getSingleComponents(sourceCRS);
+        final List<SingleCRS> targetParts = getSingleComponents(targetCRS);
 
         int sourceAxeIndex=0;
         sourceLoop:
@@ -347,41 +344,32 @@ public final class ReferencingUtilities {
      * [0, 1] : geographic
      * [2] : elevation
      * [3] : temporal
+     *
+     * @deprecated dimension not found have their index left to 0, which is probably not appropriate
+     *             (they will be taken as longitude or easting).
      */
+    @Deprecated
     private static int[] findDimensionIndexes(CoordinateReferenceSystem crs) {
-
         final CoordinateSystem cs = crs.getCoordinateSystem();
         assert (cs.getDimension() <= 4);
         int[] indexes = new int[4];
-
-        int d =0;
-        for(CoordinateReferenceSystem crs2 : ReferencingUtilities.decompose(crs)) {
-
-            final CoordinateSystem cs2 = crs2.getCoordinateSystem();
-            if (CRS.isHorizontalCRS(crs2)) {
-                assert cs2.getDimension() == 2;
-                indexes[0] = d;
-                indexes[1] = d+1;
+        int d = 0;
+        for (SingleCRS crs2 : getSingleComponents(crs)) {
+            final int dim = crs2.getCoordinateSystem().getDimension();
+            if (crs2 instanceof GeographicCRS || crs2 instanceof ProjectedCRS) {
+                for (int i=0; i<dim; i++) {      // May be 2 or 3 dimensional.
+                    indexes[i] = d++;
+                }
+            } else if (crs2 instanceof VerticalCRS) {
+                assert dim == 1;
+                indexes[2] = d++;
+            } else if (crs2 instanceof TemporalCRS) {
+                assert dim == 1;
+                indexes[3] = d++;
             } else {
-                assert cs2.getDimension() == 1;
-                final AxisDirection direction = cs2.getAxis(0).getDirection();
-                final Unit unit = cs2.getAxis(0).getUnit();
-
-                //Elevation
-                if (direction == AxisDirection.UP || direction == AxisDirection.DOWN && (unit != null && unit.isCompatible(Units.METRE))) {
-                    assert crs2 instanceof VerticalCRS;
-                    indexes[2] = d;
-                }
-
-                //temporal
-                if (direction == AxisDirection.FUTURE || direction == AxisDirection.PAST) {
-                    assert crs2 instanceof TemporalCRS;
-                    indexes[3] = d;
-                }
+                throw new IllegalArgumentException("Unsupported CRS: " + crs2);
             }
-            d += cs2.getDimension();
         }
-
         return indexes;
     }
 
@@ -424,9 +412,12 @@ public final class ReferencingUtilities {
         }
 
         final GeneralEnvelope env;
-        if(temporalDim != null && verticalDim != null){
-            crs = new DefaultCompoundCRS(name(crs2D.getName().getCode() + "/" + verticalDim.getName().getCode() + "/" + temporalDim.getName().getCode()),
-                    crs2D, verticalDim, temporalDim);
+        if (temporalDim != null && verticalDim != null) {
+            try {
+                crs = CRS.compound(crs2D, verticalDim, temporalDim);
+            } catch (FactoryException ex) {
+                throw new TransformException(ex.getMessage(), ex);      // TODO: not appropriate.
+            }
             env = new GeneralEnvelope(crs);
 
             int[] indexes = findDimensionIndexes(crs);
@@ -455,9 +446,12 @@ public final class ReferencingUtilities {
             } catch (FactoryException ex) {
                 throw new TransformException(ex.getMessage(),ex);
             }
-        }else if(temporalDim != null){
-            crs = new DefaultCompoundCRS(name(crs2D.getName().getCode() + "/" + temporalDim.getName().getCode()),
-                    crs2D,  temporalDim);
+        } else if (temporalDim != null) {
+            try {
+                crs = CRS.compound(crs2D,  temporalDim);
+            } catch (FactoryException ex) {
+                throw new TransformException(ex.getMessage(), ex);      // TODO: not appropriate.
+            }
             env = new GeneralEnvelope(crs);
 
             int[] indexes = findDimensionIndexes(crs);
@@ -477,9 +471,12 @@ public final class ReferencingUtilities {
             }
 
 
-        }else if(verticalDim != null){
-            crs = new DefaultCompoundCRS(name(crs2D.getName().getCode() + "/" + verticalDim.getName().getCode()),
-                    crs2D, verticalDim);
+        } else if (verticalDim != null) {
+            try {
+                crs = CRS.compound(crs2D, verticalDim);
+            } catch (FactoryException ex) {
+                throw new TransformException(ex.getMessage(), ex);      // TODO: not appropriate.
+            }
             env = new GeneralEnvelope(crs);
 
             int[] indexes = findDimensionIndexes(crs);
@@ -516,37 +513,36 @@ public final class ReferencingUtilities {
      */
     public static CoordinateReferenceSystem change2DComponent( final CoordinateReferenceSystem originalCRS,
             final CoordinateReferenceSystem crs2D) throws TransformException {
-        if(crs2D.getCoordinateSystem().getDimension() != 2){
+        if (crs2D.getCoordinateSystem().getDimension() != 2) {
             throw new IllegalArgumentException("Expected a 2D CRS");
         }
 
         final CoordinateReferenceSystem targetCRS;
 
-        if(originalCRS instanceof CompoundCRS){
+        if (originalCRS instanceof CompoundCRS) {
             final CompoundCRS ccrs = (CompoundCRS) originalCRS;
             final CoordinateReferenceSystem part2D = CRSUtilities.getCRS2D(originalCRS);
-            final List<CoordinateReferenceSystem> lst = new ArrayList<CoordinateReferenceSystem>();
-            final StringBuilder sb = new StringBuilder();
-            for(CoordinateReferenceSystem c : ccrs.getComponents()){
-                if(c.equals(part2D)){
+            final List<CoordinateReferenceSystem> lst = new ArrayList<>();
+            for (CoordinateReferenceSystem c : ccrs.getComponents()) {
+                if (c.equals(part2D)) {
                     //replace the 2D part
                     lst.add(crs2D);
-                    sb.append(crs2D.getName().toString()).append(' ');
-                }else{
+                } else {
                     //preserve other axis
                     lst.add(c);
-                    sb.append(c.getName().toString()).append(' ');
                 }
             }
-            targetCRS = new DefaultCompoundCRS(name(sb.toString()), lst.toArray(new CoordinateReferenceSystem[lst.size()]));
-
-        }else if(originalCRS.getCoordinateSystem().getDimension() == 2){
+            try {
+                targetCRS = CRS.compound(lst.toArray(new CoordinateReferenceSystem[lst.size()]));
+            } catch (FactoryException ex) {
+                throw new TransformException(ex.getMessage(), ex);      // TODO: not appropriate.
+            }
+        } else if (originalCRS.getCoordinateSystem().getDimension() == 2) {
             //no other axis, just reproject normally
             targetCRS = crs2D;
-        }else{
+        } else {
             throw new UnsupportedOperationException("How do we change the 2D component of a CRS if it's not a CompoundCRS ?");
         }
-
         return targetCRS;
     }
 
@@ -579,41 +575,40 @@ public final class ReferencingUtilities {
      */
     @Deprecated
     public static CoordinateReferenceSystem setLongitudeFirst(final CoordinateReferenceSystem crs) throws FactoryException{
-        if(crs instanceof SingleCRS){
+        if (crs instanceof SingleCRS) {
             final SingleCRS singlecrs = (SingleCRS) crs;
             final CoordinateSystem cs = singlecrs.getCoordinateSystem();
             final int dimension = cs.getDimension();
 
-            if(dimension <=1){
+            if (dimension <= 1) {
                 //can't change anything if it's only one axis
                 return crs;
             }
 
             //find the east axis
             int eastAxis = -1;
-            for(int i=0; i<dimension; i++){
+            for (int i=0; i<dimension; i++) {
                 final AxisDirection firstAxis = cs.getAxis(i).getDirection();
-                if(firstAxis == AxisDirection.EAST || firstAxis == AxisDirection.WEST){
+                if (firstAxis == AxisDirection.EAST || firstAxis == AxisDirection.WEST) {
                     eastAxis = i;
                     break;
                 }
             }
-
-            if(eastAxis == 0){
+            if (eastAxis == 0) {
                 //the crs is already in the correct order or does not have any east axis
                 return singlecrs;
             }
 
             //try to change the crs axis
             final String id = lookupIdentifier(singlecrs, true);
-            if(id != null){
+            if (id != null) {
                 return AbstractCRS.castOrCopy(CRS.forCode(id)).forConvention(AxesConvention.RIGHT_HANDED);
-            }else{
+            } else {
                 //TODO how to manage custom crs ? might be a derivedCRS.
                 throw new FactoryException("Failed to create flipped axis for crs : " + singlecrs);
             }
 
-        }else if(crs instanceof CompoundCRS){
+        } else if (crs instanceof CompoundCRS) {
             final CompoundCRS compoundcrs = (CompoundCRS) crs;
 
             final List<CoordinateReferenceSystem> components = compoundcrs.getComponents();
@@ -622,15 +617,14 @@ public final class ReferencingUtilities {
 
             //only recreate the crs if one element changed.
             boolean changed = false;
-            for(int i=0; i<size; i++){
+            for (int i=0; i<size; i++) {
                 final CoordinateReferenceSystem orig = components.get(i);
                 parts[i] = setLongitudeFirst(orig);
-                if(!parts[i].equals(orig)) changed = true;
+                if (!parts[i].equals(orig)) changed = true;
             }
-
-            if(changed){
-                return new DefaultCompoundCRS(name(compoundcrs.getName().getCode()), parts);
-            }else{
+            if (changed) {
+                return CRS.compound(parts);
+            } else {
                 return crs;
             }
         }
@@ -751,16 +745,6 @@ public final class ReferencingUtilities {
     }
 
     /**
-     * Recursively explore given crs, and return a list of distinct single CRS.
-     *
-     * @deprecated moved to {@link org.apache.sis.referencing.CRS#getSingleComponents(org.opengis.referencing.crs.CoordinateReferenceSystem)}
-     */
-    @Deprecated
-    public static List<CoordinateReferenceSystem> decompose(CoordinateReferenceSystem crs){
-        return (List)org.apache.sis.referencing.CRS.getSingleComponents(crs);
-    }
-
-    /**
      * Decompose CRS and return each sub-crs along with their dimension index.
      *
      * @return Map of index and sub-crs
@@ -770,7 +754,7 @@ public final class ReferencingUtilities {
         int index = 0;
         CoordinateReferenceSystem crsPart;
         CoordinateSystem csPart;
-        final List<CoordinateReferenceSystem> crsParts = ReferencingUtilities.decompose(crs);
+        final List<SingleCRS> crsParts = getSingleComponents(crs);
         for (int j = 0; j < crsParts.size(); j++) {
             crsPart = crsParts.get(j);
             csPart = crsPart.getCoordinateSystem();
@@ -802,10 +786,10 @@ public final class ReferencingUtilities {
         }
 
         // Decompose source and destination CRSs
-        final List<CoordinateReferenceSystem> sourceComponents = decompose(sourceCRS);
-        final List<CoordinateReferenceSystem> destComponents = decompose(destCRS);
+        final List<SingleCRS> sourceComponents = getSingleComponents(sourceCRS);
+        final List<SingleCRS> destComponents = getSingleComponents(destCRS);
         // Store sub-CRSs of destination which have already been used for range transfer.
-        final List<CoordinateReferenceSystem> usedCRS = new ArrayList<CoordinateReferenceSystem>(destComponents.size());
+        final List<CoordinateReferenceSystem> usedCRS = new ArrayList<>(destComponents.size());
 
         boolean searchHorizontal;
         boolean searchTemporal;
@@ -1076,8 +1060,6 @@ public final class ReferencingUtilities {
      * Test if two envelopes intersects.
      * This method will transform envelopes if needed.
      *
-     * @param env1
-     * @param env2
      * @return true if envelopes intersect
      */
     public static boolean intersects(Envelope env1, Envelope env2) {
@@ -1109,7 +1091,12 @@ public final class ReferencingUtilities {
             return GeneralEnvelope.castOrCopy(penv1).intersects(env2);
         } catch(TransformException ex) {/*do nothing*/}
 
+        /*
+         * TODO: an exception means that a value exist, but can not be computed because the calculation
+         *       do not converge. The value that we have not been able to calculate could be inside the
+         *       other envelope. Concequently returning 'false' is not okay - we should propagate the
+         *       exception instead.
+         */
         return false;
     }
-
 }

@@ -29,9 +29,9 @@ import java.lang.reflect.UndeclaredThrowableException;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.logging.MonolineFormatter;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.ShutdownHook;
 import org.geotoolkit.internal.io.JNDI;
 import org.geotoolkit.internal.SetupService;
+import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.resources.Errors;
 
@@ -228,7 +228,12 @@ public final class Setup extends Static {
             for (final SetupService service : ServiceLoader.load(SetupService.class)) {
                 service.shutdown();
             }
-            ShutdownHook.runAndremove();
+            /*
+             * The following method should be invoked only when we think there is not any code still
+             * runnning that may invoke Threads.executor(boolean). It is actually hard to ensure that,
+             * but a search on Threads.SHUTDOWN_HOOKS and Threads.executeDisposal(Runnable) is helpful.
+             */
+            Threads.shutdown();
         }
     }
 

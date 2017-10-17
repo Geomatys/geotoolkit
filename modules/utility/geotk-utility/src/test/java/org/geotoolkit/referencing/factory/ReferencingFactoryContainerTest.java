@@ -125,10 +125,10 @@ public final strictfp class ReferencingFactoryContainerTest extends org.geotoolk
         final ReferencingFactoryContainer factories = ReferencingFactoryContainer.instance(null);
         final CRSFactory crsFactory = factories.getCRSFactory();
         CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
-        crs = crsFactory.createCompoundCRS(name("WGS84 3D"), crs, CommonCRS.Vertical.ELLIPSOIDAL.crs());
+        crs = crsFactory.createCompoundCRS(name("WGS84 3D"), crs, CommonCRS.Vertical.MEAN_SEA_LEVEL.crs());
         assertSame(crs, factories.separate(crs, 0, 1, 2));
         assertSame(CommonCRS.WGS84.normalizedGeographic(), factories.separate(crs, 0, 1));
-        assertSame(CommonCRS.Vertical.ELLIPSOIDAL.crs(), factories.separate(crs, 2));
+        assertSame(CommonCRS.Vertical.MEAN_SEA_LEVEL.crs(), factories.separate(crs, 2));
     }
 
     /**

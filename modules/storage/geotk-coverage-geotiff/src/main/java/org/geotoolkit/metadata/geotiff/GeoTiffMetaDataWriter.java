@@ -31,6 +31,7 @@ import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 
@@ -52,9 +53,9 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.w3c.dom.Node;
 
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
-import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.util.Utilities;
+import org.opengis.referencing.crs.SingleCRS;
 
 /**
  *
@@ -148,9 +149,9 @@ public class GeoTiffMetaDataWriter {
      * @return temporal ordinate if exist else return -1.
      */
     private int getTemporalOrdinate(final CoordinateReferenceSystem crs) {
-        final List<CoordinateReferenceSystem> crss = ReferencingUtilities.decompose(crs);
+        final List<SingleCRS> crss = CRS.getSingleComponents(crs);
         int o = 0;
-        for (final CoordinateReferenceSystem c : crss) {
+        for (final SingleCRS c : crss) {
             if (Utilities.equalsIgnoreMetadata(c, CommonCRS.Temporal.JAVA.crs())) return o;
             o += c.getCoordinateSystem().getDimension();
         }

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 
 /**
@@ -33,6 +34,7 @@ public class HarvesterTest extends DirectoryBasedTest {
 
     @Test
     public void harvestEmptyDir() throws IOException, InterruptedException {
+        Assume.assumeTrue(System.getProperty("os.name").toLowerCase().contains("linux"));
         final long delay = 20;
         final TimeUnit delayUnit = TimeUnit.MILLISECONDS;
 

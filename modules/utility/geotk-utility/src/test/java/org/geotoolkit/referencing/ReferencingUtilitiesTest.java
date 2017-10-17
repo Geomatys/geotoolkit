@@ -19,17 +19,13 @@ package org.geotoolkit.referencing;
 import java.util.Collections;
 import java.awt.geom.AffineTransform;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.opengis.referencing.IdentifiedObject;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.junit.Test;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.geotoolkit.test.Assert.*;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.referencing.CommonCRS;
 import org.opengis.geometry.MismatchedDimensionException;
 
 /**
@@ -44,22 +40,6 @@ public class ReferencingUtilitiesTest extends org.geotoolkit.test.TestBase {
 
     private static Map<String,String> name(final String name) {
         return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
-    }
-
-    @Test
-    public void testDecompose(){
-
-        final CoordinateReferenceSystem crs = new DefaultCompoundCRS(name("group"),
-                CommonCRS.WGS84.normalizedGeographic(),
-                new DefaultCompoundCRS(name("group2"),
-                    CommonCRS.Vertical.MEAN_SEA_LEVEL.crs(),
-                    CommonCRS.Temporal.JULIAN.crs()));
-
-        final List<CoordinateReferenceSystem> parts = ReferencingUtilities.decompose(crs);
-        assertEquals(3, parts.size());
-        assertEquals(CommonCRS.WGS84.normalizedGeographic(), parts.get(0));
-        assertEquals(CommonCRS.Vertical.MEAN_SEA_LEVEL.crs(), parts.get(1));
-        assertEquals(CommonCRS.Temporal.JULIAN.crs(), parts.get(2));
     }
 
     /**

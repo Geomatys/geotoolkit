@@ -32,6 +32,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
+import org.geotoolkit.internal.Threads;
 
 
 /**
@@ -65,20 +66,15 @@ public final class TemporaryFile extends PhantomReference<Path> implements Dispo
      * Registers a shutdown hook which will delete every files not yet deleted.
      */
     static {
-        try {
-            Class.forName("org.geotoolkit.factory.ShutdownHook", true, TemporaryFile.class.getClassLoader())
-                    .getMethod("registerFileDeletor", Runnable.class).invoke(null, new Runnable() {
-                        @Override public void run() {
-                            while (TemporaryFile.deleteAll()) {
-                                Thread.yield();
-                                // The loop exists as a paranoiac action in case TemporaryFile.deleteOnExit(...)
-                                // is being invoked concurrently, but it should never happen.
-                            }
-                        }
-                    });
-        } catch (Exception e) {
-            Logging.unexpectedException(null, TemporaryFile.class, "<init>", e);
-        }
+        Runtime.getRuntime().addShutdownHook(new Thread(Threads.RESOURCE_DISPOSERS, "TemporaryFile") {
+            @Override public void run() {
+                while (deleteAll()) {
+                    Thread.yield();
+                    // The loop exists as a paranoiac action in case TemporaryFile.deleteOnExit(...)
+                    // is being invoked concurrently, but it should never happen.
+                }
+            }
+        });
     }
 
     /**
@@ -208,7 +204,7 @@ public final class TemporaryFile extends PhantomReference<Path> implements Dispo
      *
      * @return {@code true} if at least one file has been successfully deleted.
      */
-    public static boolean deleteAll() {
+    private static boolean deleteAll() {
         boolean deleted = false;
         final Map<String,TemporaryFile> references = REFERENCES;
         if (references != null) { // Safety check against weird behavior at shutdown time.

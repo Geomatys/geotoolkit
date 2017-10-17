@@ -51,6 +51,7 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.junit.Assume;
 
 /**
  *
@@ -137,6 +138,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
 
     @Test
     public void createEmptyThenAddData() throws Exception {
+        Assume.assumeTrue(System.getProperty("os.name").toLowerCase().contains("linux"));
         try (final TimedCoverageStore store = create()) {
 
             final GeographicCRS inputCRS = CommonCRS.SPHERE.normalizedGeographic();

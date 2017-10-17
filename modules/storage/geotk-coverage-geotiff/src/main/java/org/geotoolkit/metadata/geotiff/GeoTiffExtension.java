@@ -30,13 +30,14 @@ import org.opengis.util.FactoryException;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
 
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
-import org.geotoolkit.referencing.ReferencingUtilities;
+import org.opengis.referencing.crs.SingleCRS;
 
 /**
  * Geotiff is a widely used format, many metadata formats may be associated with it.
@@ -127,7 +128,7 @@ public abstract class GeoTiffExtension {
             return;
         }
 
-        final List<CoordinateReferenceSystem> crss = ReferencingUtilities.decompose(crs);
+        final List<SingleCRS> crss = CRS.getSingleComponents(crs);
         int axisIndex = -1;
         int inc = 0;
         for(CoordinateReferenceSystem cs : crss){

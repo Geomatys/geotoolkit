@@ -23,6 +23,8 @@ package org.geotoolkit.util;
  *
  * @author Johann Sorel (Geomatys)
  * @module
+ *
+ * @todo May be replaced by {@code Integer.parseInt(CharSequence, int, int, int)} after upgrade to JDK9.
  */
 public final class XInteger {
 

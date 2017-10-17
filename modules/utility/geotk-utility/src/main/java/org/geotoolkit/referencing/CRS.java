@@ -21,13 +21,11 @@ import java.util.List;
 import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import org.opengis.geometry.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
-import org.opengis.metadata.extent.*;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.lang.Static;
@@ -37,7 +35,6 @@ import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.internal.io.JNDI;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.internal.metadata.NameMeaning;
 import org.apache.sis.internal.metadata.VerticalDatumTypes;
@@ -248,14 +245,10 @@ compare:    for (final SingleCRS component : actualComponents) {
         final int size = parts.size();
         if (size == 1) {
             return parts.get(0);
-        } else {
-            // Aggregate crs parts name
-            final CoordinateReferenceSystem[] array = parts.toArray(new CoordinateReferenceSystem[size]);
-            final StringBuilder sb = new StringBuilder(array[0].getName().toString());
-            for (int i=1; i<size; i++) {
-                sb.append(" with ").append(array[i].getName().toString());
-            }
-            return new DefaultCompoundCRS(Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, sb.toString()), array);
+        } else try {
+            return org.apache.sis.referencing.CRS.compound(parts.toArray(new CoordinateReferenceSystem[size]));
+        } catch (FactoryException e) {
+            throw new IllegalArgumentException("Illegal CRS.", e);
         }
     }
 

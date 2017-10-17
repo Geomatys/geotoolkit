@@ -89,7 +89,6 @@
     <dependency>
       <groupId>org.apache.sis.core</groupId>
       <artifactId>sis-referencing</artifactId>
-      <version>${sis.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.vecmath</groupId>

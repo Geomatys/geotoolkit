@@ -75,12 +75,6 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
      *
      * Checks parameters envelope, CRS and resolution and create or fix them to match
      * this coverage CRS.
-     *
-     * @param index
-     * @param param
-     * @return
-     * @throws CoverageStoreException
-     * @throws CancellationException
      */
     @Override
     public final GridCoverage read(int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
@@ -154,9 +148,6 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
      *
      *
      * @param param Parameters are guarantee to be in coverage CRS.
-     * @return
-     * @throws TransformException
-     * @throws CoverageStoreException
      */
     protected GridCoverage readInNativeCRS(GridCoverageReadParam param) throws CoverageStoreException, TransformException, CancellationException {
 
@@ -226,7 +217,6 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
      * @param areaUpper readInGridCRS upper corner, exclusive
      * @param subsampling image subsampling in pixels
      * @param param grid coverage features parameters in native CRS
-     * @return coverage
      * @throws CoverageStoreException if Coverage readInGridCRS failed
      * @throws CancellationException if reading operation has been canceled
      */
@@ -280,13 +270,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
     /**
      * Read a coverage slice with defined image area.
      *
-     * @param areaLower
-     * @param areaUpper
-     * @param subsampling
      * @param param grid coverage features parameters in native CRS
-     * @return
-     * @throws CoverageStoreException
-     * @throws CancellationException
      */
     protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, GridCoverageReadParam param) throws CoverageStoreException, TransformException, CancellationException {
         throw new UnsupportedOperationException("Subclass must implement either : read, readCoverage, readImage or readSlice methods");
@@ -294,13 +278,6 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
 
     /**
      * Convert resolution from one CRS to another at the center of given envelope.
-     *
-     * @param resolution
-     * @param area
-     * @param targetCRS
-     * @return
-     * @throws FactoryException
-     * @throws TransformException
      */
     private static double[] convertCentralResolution(final double[] resolution, final Envelope area,
             final CoordinateReferenceSystem targetCRS) throws FactoryException, TransformException {
@@ -329,9 +306,6 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
      * @param areaLower image features lower corner
      * @param areaUpper image features upper corner
      * @param subsampling image subsampling
-     * @return
-     * @throws CoverageStoreException
-     * @throws CancellationException
      */
     public static int[] getResultExtent(int[] areaLower, int[] areaUpper, int[] subsampling) {
 
@@ -346,14 +320,13 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
 
     /**
      * Derivate a grid geometry from the origina grid geometry and the features
- image parameters.
+     * image parameters.
      *
      * @param gridGeom original grid geometry
      * @param areaLower image features lower corner
      * @param areaUpper image features upper corner
      * @param subsampling image subsampling
      * @return derivated grid geometry.
-     * @throws CoverageStoreException
      */
     public static GeneralGridGeometry getGridGeometry(GeneralGridGeometry gridGeom,
             int[] areaLower, int[] areaUpper, int[] subsampling) {
