@@ -53,6 +53,9 @@ import org.geotoolkit.client.Client;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.wms.v100.GetCapabilities100;
+import org.geotoolkit.wms.v100.GetFeatureInfo100;
+import org.geotoolkit.wms.v100.GetMap100;
 
 
 /**
@@ -162,7 +165,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
         //if version is null, call getCapabilities to found service version
         if(version==null){
             if(LOGGER.isLoggable(Level.FINE)){
-                LOGGER.log(Level.FINE, "No version define : search it on getCapabilities");
+                LOGGER.log(Level.FINE, "No version defined : search it on getCapabilities");
             }
             try {
                 if(capabilities!=null){
@@ -308,6 +311,8 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
      */
     public GetMapRequest createGetMap() {
         switch (getVersion()) {
+            case v100:
+                return new GetMap100(this,getClientSecurity());
             case v111:
                 return new GetMap111(this,getClientSecurity());
             case v130:
@@ -325,6 +330,8 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
      */
     public GetCapabilitiesRequest createGetCapabilities() {
         switch (getVersion()) {
+            case v100:
+                return new GetCapabilities100(serverURL.toString(),getClientSecurity());
             case v111:
                 return new GetCapabilities111(serverURL.toString(),getClientSecurity());
             case v130:
@@ -362,6 +369,8 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
      */
     public GetFeatureInfoRequest createGetFeatureInfo() {
         switch (getVersion()) {
+            case v100:
+                return new GetFeatureInfo100(this,getClientSecurity());
             case v111:
                 return new GetFeatureInfo111(this,getClientSecurity());
             case v130:

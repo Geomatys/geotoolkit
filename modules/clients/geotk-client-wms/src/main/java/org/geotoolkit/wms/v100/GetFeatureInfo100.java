@@ -14,13 +14,14 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wms.v111;
+package org.geotoolkit.wms.v100;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.AbstractGetFeatureInfo;
 import org.geotoolkit.wms.WebMapClient;
+import org.geotoolkit.wms.xml.WMSVersion;
 
 
 /**
@@ -29,19 +30,19 @@ import org.geotoolkit.wms.WebMapClient;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
-public class GetFeatureInfo111 extends AbstractGetFeatureInfo {
+public class GetFeatureInfo100 extends AbstractGetFeatureInfo {
 
     /**
      * Defines the server url and its version.
      *
      * @param serverURL The url of the webservice.
      */
-    public GetFeatureInfo111(final String serverURL, final ClientSecurity security){
-        super(serverURL, "1.1.1", security);
+    public GetFeatureInfo100(final String serverURL, final ClientSecurity security){
+        super(serverURL, WMSVersion.v100.getCode(), security);
     }
 
-    public GetFeatureInfo111(final WebMapClient server, final ClientSecurity security){
-        super(server,"1.1.1", security);
+    public GetFeatureInfo100(final WebMapClient server, final ClientSecurity security){
+        super(server,WMSVersion.v100.getCode(), security);
     }
 
     /**

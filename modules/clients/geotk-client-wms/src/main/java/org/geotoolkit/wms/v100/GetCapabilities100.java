@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.wms.v100;
 
-import org.geotoolkit.wms.v111.*;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.AbstractGetCapabilities;
+import org.geotoolkit.wms.xml.WMSVersion;
 
 
 /**
@@ -34,7 +34,7 @@ public class GetCapabilities100 extends AbstractGetCapabilities {
      * @param serverURL The url of the webservice.
      */
     public GetCapabilities100(final String serverURL, final ClientSecurity security){
-        super(serverURL, "1.1.1", security);
+        super(serverURL, WMSVersion.v100.getCode(), security);
     }
 
 }

@@ -16,20 +16,10 @@
  */
 package org.geotoolkit.wms.v130;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.AbstractGetMap;
 import org.geotoolkit.wms.WebMapClient;
 
-import org.opengis.geometry.Envelope;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -56,29 +46,7 @@ public class GetMap130 extends AbstractGetMap {
      * {@inheritDoc }
      */
     @Override
-    protected Map<String,String> toString(final Envelope env) {
-        final Map<String,String> map = new HashMap<String,String>();
-        final StringBuilder sb = new StringBuilder();
-        final double minx = env.getMinimum(0);
-        final double maxx = env.getMaximum(0);
-        final double miny = env.getMinimum(1);
-        final double maxy = env.getMaximum(1);
-        sb.append(minx).append(',').append(miny).append(',').append(maxx).append(',').append(maxy);
-
-        map.put("BBOX", sb.toString());
-
-        try {
-            CoordinateReferenceSystem crs2d = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
-            map.put("CRS", ReferencingUtilities.lookupIdentifier(crs2d, true));
-        } catch (FactoryException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        } catch (TransformException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        }
-
-        encodeNDParameters(env, map);
-
-        return map;
+    protected String getCRSParameterName() {
+        return "SRS";
     }
-
 }

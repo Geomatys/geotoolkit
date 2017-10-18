@@ -18,17 +18,9 @@ package org.geotoolkit.wms.v130;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.AbstractGetFeatureInfo;
 import org.geotoolkit.wms.WebMapClient;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 
 /**
@@ -56,33 +48,10 @@ public class GetFeatureInfo130 extends AbstractGetFeatureInfo {
     /**
      * {@inheritDoc }
      */
+
     @Override
-    protected Map<String,String> toString(final Envelope env) {
-        final Map<String,String> map = new HashMap<String,String>();
-        final StringBuilder sb = new StringBuilder();
-        final double minx = env.getMinimum(0);
-        final double maxx = env.getMaximum(0);
-        final double miny = env.getMinimum(1);
-        final double maxy = env.getMaximum(1);
-        sb.append(minx).append(',').append(miny).append(',').append(maxx).append(',').append(maxy);
-
-        map.put("BBOX", sb.toString());
-
-        try {
-            String code = ReferencingUtilities.lookupIdentifier(env.getCoordinateReferenceSystem(), true);
-            if (code == null) {
-                code = ReferencingUtilities.lookupIdentifier(CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem()), true);
-            }
-            map.put("CRS", code);
-        } catch (FactoryException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        } catch (TransformException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        }
-
-        encodeNDParameters(env, map);
-
-        return map;
+    protected String getCRSParameterName() {
+        return "CRS";
     }
 
     @Override
