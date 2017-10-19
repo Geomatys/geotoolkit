@@ -40,7 +40,6 @@ import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -236,57 +235,24 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
      * @return {@linkplain AbstractWMSCapabilities capabilities} response but never {@code null}.
      * @throws CapabilitiesException
      */
-    public AbstractWMSCapabilities getCapabilities(final long timeout) throws CapabilitiesException{
-
+    public AbstractWMSCapabilities getCapabilities(final long timeout) throws CapabilitiesException {
         if (capabilities != null) {
             return capabilities;
         }
+        final GetCapabilitiesRequest getCaps = createGetCapabilities();
+        getCaps.getHeaderMap().putAll(getRequestHeaderMap());
+        getCaps.setTimeout((int) (timeout & Integer.MAX_VALUE));
 
-        final CapabilitiesException[] exception = new CapabilitiesException[1];
-
-        //Thread to prevent infinite request on a server
-        final Thread thread = new Thread() {
-            @Override
-            public void run() {
-                final GetCapabilitiesRequest getCaps = createGetCapabilities();
-
-                //Filling the request header map from the map of the layer's server
-                final Map<String, String> headerMap = getRequestHeaderMap();
-                getCaps.getHeaderMap().putAll(headerMap);
-
-                try {
-                    System.out.println(getCaps.getURL());
-                    capabilities = WMSBindingUtilities.unmarshall(getCaps.getResponseStream(), getVersion());
-                } catch (Exception ex) {
-                    capabilities = null;
-                    try {
-                        exception[0] = new CapabilitiesException("Wrong URL, the server doesn't answer : " +
-                                createGetCapabilities().getURL().toString(), ex);
-                    } catch (MalformedURLException ex1) {
-                        exception[0] = new CapabilitiesException("Malformed URL, the server doesn't answer. ", ex);
-                    }
-                }
-            }
-        };
-
-        thread.start();
-        final long start = System.currentTimeMillis();
+        // Useful, because it serves as trace and URL validation
         try {
-            thread.join(timeout);
-        } catch (InterruptedException ex) {
-            throw new CapabilitiesException("The thread to obtain GetCapabilities doesn't answer.");
-        }
-
-        if(exception[0] != null){
-            throw exception[0];
-        }
-
-        if ((System.currentTimeMillis() - start) > timeout) {
-            throw new CapabilitiesException("TimeOut error, the server takes too much time to answer.");
+            LOGGER.log(Level.FINE, getCaps.getURL().toString());
+            capabilities = WMSBindingUtilities.unmarshall(getCaps.getResponseStream(), getVersion());
+        } catch (Exception ex) {
+            throw new CapabilitiesException("Cannot handle GetCapabilities", ex);
         }
 
         //force throw CapabilitiesException if the returned capabilities object is null
-        if(capabilities == null){
+        if (capabilities == null) {
             throw new CapabilitiesException("The capabilities document is null.");
         }
 

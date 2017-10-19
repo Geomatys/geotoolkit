@@ -47,6 +47,6 @@ public class GetMap130 extends AbstractGetMap {
      */
     @Override
     protected String getCRSParameterName() {
-        return "SRS";
+        return "CRS";
     }
 }

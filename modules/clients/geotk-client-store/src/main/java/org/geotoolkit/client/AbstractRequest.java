@@ -84,7 +84,7 @@ public abstract class AbstractRequest implements Request {
     /**
      * Request timeout in milliseconds
      */
-    protected int timeout;
+    protected long timeout;
 
     protected boolean debug = false;
 
@@ -150,7 +150,8 @@ public abstract class AbstractRequest implements Request {
      *
      * @return timeout in milliseconds.
      */
-    public int getTimeout() {
+    @Override
+    public long getTimeout() {
         return timeout;
     }
 
@@ -159,7 +160,8 @@ public abstract class AbstractRequest implements Request {
      *
      * @param timeout in milliseconds.
      */
-    public void setTimeout(int timeout) {
+    @Override
+    public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
 
@@ -310,8 +312,7 @@ public abstract class AbstractRequest implements Request {
     protected URLConnection openConnection() throws MalformedURLException, IOException {
         URLConnection cnx = getURL().openConnection();
         cnx = security.secure(cnx);
-        cnx.setReadTimeout(timeout);
-        cnx.setConnectTimeout(timeout);
+        setTimeout(cnx, timeout);
         return cnx;
     }
 
@@ -325,8 +326,7 @@ public abstract class AbstractRequest implements Request {
         final URL url = security.secure(new URL(serverURL));
         URLConnection cnx = url.openConnection();
         cnx = security.secure(cnx);
-        cnx.setReadTimeout(timeout);
-        cnx.setConnectTimeout(timeout);
+        setTimeout(cnx, timeout);
         return cnx;
     }
 
@@ -382,10 +382,9 @@ public abstract class AbstractRequest implements Request {
         return openRichException(cnx, security, AbstractClientFactory.TIMEOUT.getDefaultValue());
     }
 
-    public static InputStream openRichException(final URLConnection cnx, final ClientSecurity security, int timeout) throws IOException {
+    public static InputStream openRichException(final URLConnection cnx, final ClientSecurity security, long timeout) throws IOException {
         try {
-            cnx.setConnectTimeout(timeout);
-            cnx.setReadTimeout(timeout*2);
+            setTimeout(cnx, timeout, timeout*2);
             InputStream stream = cnx.getInputStream();
             //security
             stream = security.decrypt(stream);
@@ -428,4 +427,12 @@ public abstract class AbstractRequest implements Request {
         }
     }
 
+    private static void setTimeout(final URLConnection target, final long timeout) {
+        setTimeout(target, timeout, timeout);
+    }
+
+    private static void setTimeout(final URLConnection target, final long connectTimeout, final long readTimeout) {
+        target.setConnectTimeout(Math.toIntExact(Math.min(Integer.MAX_VALUE, connectTimeout)));
+        target.setReadTimeout(Math.toIntExact(Math.min(Integer.MAX_VALUE, readTimeout)));
+    }
 }

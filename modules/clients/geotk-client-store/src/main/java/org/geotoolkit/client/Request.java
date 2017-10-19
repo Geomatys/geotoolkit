@@ -55,4 +55,7 @@ public interface Request {
      */
     InputStream getResponseStream() throws IOException;
 
+    long getTimeout();
+
+    void setTimeout(long timeout);
 }

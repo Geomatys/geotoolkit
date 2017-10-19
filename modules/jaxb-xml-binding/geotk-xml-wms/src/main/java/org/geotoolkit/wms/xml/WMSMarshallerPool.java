@@ -33,14 +33,35 @@ import static org.geotoolkit.gml.xml.GMLMarshallerPool.createJAXBContext;
 public final class WMSMarshallerPool {
 
     /**
-     * we separate the v 1.3.0 instance in order to marshall with no prefix (QGIS issue)
+     * we separate the v 1.0.0 INSTANCE in order to marshall with no prefix. We
+     * have to do so, because old OGC standards where not using namespaces.
      */
-    private static final MarshallerPool instancev130;
+    private static final MarshallerPool V_100;
     static {
         try {
             final Map<String, String> properties = new HashMap<>();
             properties.put(XML.DEFAULT_NAMESPACE, "http://www.opengis.net/wms");
-            instancev130 = new MarshallerPool(createJAXBContext(
+            V_100 = new MarshallerPool(createJAXBContext(
+                    "org.geotoolkit.ogc.xml.exception:" +
+                    "org.geotoolkit.wms.xml.v100:" +
+                    "org.geotoolkit.sld.xml.v110:" +
+                    "org.geotoolkit.inspire.xml.vs:" +
+                    "org.apache.sis.internal.jaxb.geometry",
+                    WMSMarshallerPool.class.getClassLoader()), properties);
+        } catch (JAXBException ex) {
+            throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
+        }
+    }
+
+    /**
+     * we separate the v 1.3.0 INSTANCE in order to marshall with no prefix (QGIS issue)
+     */
+    private static final MarshallerPool V_130;
+    static {
+        try {
+            final Map<String, String> properties = new HashMap<>();
+            properties.put(XML.DEFAULT_NAMESPACE, "http://www.opengis.net/wms");
+            V_130 = new MarshallerPool(createJAXBContext(
                     "org.geotoolkit.ogc.xml.exception:" +
                     "org.geotoolkit.wms.xml.v130:" +
                     "org.geotoolkit.sld.xml.v110:" +
@@ -52,11 +73,12 @@ public final class WMSMarshallerPool {
         }
     }
 
-    private static final MarshallerPool instance;
+    private static final MarshallerPool ALL_VERSIONS;
     static {
         try {
-            instance = new MarshallerPool(createJAXBContext(
+            ALL_VERSIONS = new MarshallerPool(createJAXBContext(
                     "org.geotoolkit.ogc.xml.exception:" +
+                    "org.geotoolkit.wms.xml.v100:" +
                     "org.geotoolkit.wms.xml.v111:" +
                     "org.geotoolkit.wms.xml.v130:" +
                     "org.geotoolkit.sld.xml.v110:" +
@@ -69,12 +91,23 @@ public final class WMSMarshallerPool {
     }
 
     private WMSMarshallerPool() {}
+    public static MarshallerPool getInstance(final WMSVersion version) {
+        switch (version) {
+            case v100: return V_100;
+            case v130: return V_130;
+            default: return ALL_VERSIONS;
+        }
+    }
 
     public static MarshallerPool getInstance() {
-        return instance;
+        return ALL_VERSIONS;
     }
 
     public static MarshallerPool getInstance130() {
-        return instancev130;
+        return V_130;
+    }
+
+    public static MarshallerPool getInstance100() {
+        return V_100;
     }
 }

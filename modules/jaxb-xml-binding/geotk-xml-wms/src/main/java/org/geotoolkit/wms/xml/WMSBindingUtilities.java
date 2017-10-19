@@ -21,14 +21,12 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 
 import org.opengis.metadata.citation.OnlineResource;
@@ -44,17 +42,16 @@ import org.xml.sax.InputSource;
  */
  public class WMSBindingUtilities {
 
-     public static AbstractWMSCapabilities unmarshall(final Object source, final WMSVersion version) throws JAXBException{
-
-        MarshallerPool selectedPool = WMSMarshallerPool.getInstance();
+     public static AbstractWMSCapabilities unmarshall(final Object source, final WMSVersion version) throws JAXBException, MalformedURLException {
+        MarshallerPool selectedPool = WMSMarshallerPool.getInstance(version);
         Unmarshaller unMarshaller = selectedPool.acquireUnmarshaller();
         AbstractWMSCapabilities c = (AbstractWMSCapabilities) unmarshall(source, unMarshaller);
         selectedPool.recycle(unMarshaller);
         return c;
      }
 
-     private static final Object unmarshall(final Object source, final Unmarshaller unMarshaller)
-            throws JAXBException{
+     private static Object unmarshall(final Object source, final Unmarshaller unMarshaller)
+            throws JAXBException, MalformedURLException{
         if(source instanceof File){
             return unMarshaller.unmarshal( (File)source );
         }else if(source instanceof InputSource){
@@ -75,18 +72,10 @@ import org.xml.sax.InputSource;
             return unMarshaller.unmarshal( (XMLStreamReader)source );
         }else if(source instanceof OnlineResource){
             final OnlineResource online = (OnlineResource) source;
-            try {
-                final URL url = online.getLinkage().toURL();
-                return unMarshaller.unmarshal(url);
-            } catch (MalformedURLException ex) {
-                Logging.getLogger("org.geotoolkit.wms.xml").log(Level.WARNING, null, ex);
-                return null;
-            }
-
+            final URL url = online.getLinkage().toURL();
+            return unMarshaller.unmarshal(url);
         }else{
             throw new IllegalArgumentException("Source object is not a valid class :" + source.getClass());
         }
-
     }
-
 }

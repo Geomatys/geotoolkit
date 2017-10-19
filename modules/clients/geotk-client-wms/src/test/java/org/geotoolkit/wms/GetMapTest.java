@@ -27,6 +27,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.wms.v100.GetMap100;
 import static org.junit.Assert.*;
 
 
@@ -46,20 +47,80 @@ public class GetMapTest extends org.geotoolkit.test.TestBase {
      * @throws FactoryException
      */
     @Test
+    public void testGetMap100() throws NoSuchAuthorityCodeException, FactoryException {
+        final GetMap100 map100 = new GetMap100("http://test.com",null);
+        fillGetMap(map100);
+        checkBefore130(map100);
+    }
+
+    /**
+     * Ensures the {@link GetMap111#getURL()} method returns a well-built url,
+     * with the parameters given.
+     *
+     * @throws NoSuchAuthorityCodeException
+     * @throws FactoryException
+     */
+    @Test
     public void testGetMap111() throws NoSuchAuthorityCodeException, FactoryException {
+        final GetMap111 map111 = new GetMap111("http://test.com",null);
+        fillGetMap(map111);
+        checkBefore130(map111);
+    }
+
+    /**
+     * Prepare a Get Map request with parameters fitting {@link #checkBefore130(org.geotoolkit.wms.GetMapRequest) }
+     * and {@link #checkSince130(org.geotoolkit.wms.GetMapRequest) } tests.
+     * @param request
+     */
+    private void fillGetMap(final GetMapRequest request) {
         final CoordinateReferenceSystem crs = CommonCRS.defaultGeographic();
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
-        final GetMap111 map111 = new GetMap111("http://test.com",null);
-        map111.setDimension(new Dimension(800, 600));
-        map111.setFormat("image/png");
-        map111.setLayers("test");
-        map111.setStyles("");
-        map111.setEnvelope(env);
+
+        request.setDimension(new Dimension(800, 600));
+        request.setFormat("image/png");
+        request.setLayers("test");
+        request.setStyles("");
+        request.setEnvelope(env);
+    }
+
+    /**
+     * A test designed to check get map URL compliance with WMS standard 1.3.0
+     * and above.
+     *
+     * @param request The query containing the URL to test.
+     */
+    private void checkSince130(GetMapRequest request) {
         final URL url;
         try {
-            url = map111.getURL();
+            url = request.getURL();
+        } catch (MalformedURLException ex) {
+            fail(ex.getLocalizedMessage());
+            return;
+        }
+        final String sUrl = url.toString();
+        assertTrue(sUrl.startsWith("http://test.com?"));
+        assertTrue(sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
+        assertTrue(sUrl.contains("CRS=CRS%3A84"));
+        assertTrue(sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue(sUrl.contains("WIDTH=800"));
+        assertTrue(sUrl.contains("HEIGHT=600"));
+        assertTrue(sUrl.contains("LAYERS=test"));
+        assertTrue(sUrl.contains("STYLES="));
+    }
+
+    /**
+     * A test designed to check get map URL compliance with WMS standard 1.0.0
+     * and 1.1.1.
+     *
+     * @param request The query containing the URL to test.
+     */
+    private void checkBefore130(GetMapRequest request) {
+        fillGetMap(request);
+        final URL url;
+        try {
+            url = request.getURL();
         } catch (MalformedURLException ex) {
             fail(ex.getLocalizedMessage());
             return;
@@ -84,31 +145,8 @@ public class GetMapTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testGetMap130() throws NoSuchAuthorityCodeException, FactoryException {
-        final CoordinateReferenceSystem crs = CommonCRS.defaultGeographic();
-        final GeneralEnvelope env = new GeneralEnvelope(crs);
-        env.setRange(0, -180, 180);
-        env.setRange(1, -90, 90);
         final GetMap130 map130 = new GetMap130("http://test.com",null);
-        map130.setDimension(new Dimension(800, 600));
-        map130.setFormat("image/png");
-        map130.setLayers("test");
-        map130.setStyles("");
-        map130.setEnvelope(env);
-        final URL url;
-        try {
-            url = map130.getURL();
-        } catch (MalformedURLException ex) {
-            fail(ex.getLocalizedMessage());
-            return;
-        }
-        final String sUrl = url.toString();
-        assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
-        assertTrue(sUrl.contains("CRS=CRS%3A84"));
-        assertTrue(sUrl.contains("FORMAT=image%2Fpng"));
-        assertTrue(sUrl.contains("WIDTH=800"));
-        assertTrue(sUrl.contains("HEIGHT=600"));
-        assertTrue(sUrl.contains("LAYERS=test"));
-        assertTrue(sUrl.contains("STYLES="));
+        fillGetMap(map130);
+        checkSince130(map130);
     }
 }
