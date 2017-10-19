@@ -21,6 +21,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wms.xml.AbstractContactInformation;
+import org.geotoolkit.wms.xml.AbstractKeywordList;
+import org.geotoolkit.wms.xml.AbstractOnlineResource;
+import org.geotoolkit.wms.xml.AbstractService;
+import org.geotoolkit.wms.xml.v111.OnlineResource;
 
 
 /**
@@ -37,7 +42,7 @@ import javax.xml.bind.annotation.XmlType;
     "accessConstraints"
 })
 @XmlRootElement(name = "Service")
-public class Service {
+public class Service implements AbstractService {
 
     @XmlElement(name = "Name", required = true)
     protected String name;
@@ -158,8 +163,8 @@ public class Service {
      *     {@link String }
      *
      */
-    public String getOnlineResource() {
-        return onlineResource;
+    public AbstractOnlineResource getOnlineResource() {
+        return new OnlineResource(onlineResource);
     }
 
     /**
@@ -220,6 +225,16 @@ public class Service {
      */
     public void setAccessConstraints(String value) {
         this.accessConstraints = value;
+    }
+
+    @Override
+    public AbstractKeywordList getKeywordList() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public AbstractContactInformation getContactInformation() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

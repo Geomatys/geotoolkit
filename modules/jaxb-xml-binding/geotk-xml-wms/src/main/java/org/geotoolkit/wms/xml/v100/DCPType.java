@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wms.xml.AbstractDCP;
 
 
 /**
@@ -31,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
     "http"
 })
 @XmlRootElement(name = "DCPType")
-public class DCPType {
+public class DCPType implements AbstractDCP {
 
     @XmlElement(name = "HTTP", required = true)
     protected HTTP http;

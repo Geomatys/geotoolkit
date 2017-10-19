@@ -21,8 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
@@ -34,11 +32,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class ScaleHint {
 
     @XmlAttribute(name = "min", required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String min;
+    protected Double min;
     @XmlAttribute(name = "max", required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String max;
+    protected Double max;
 
     /**
      * Obtient la valeur de la propriété min.
@@ -48,7 +44,7 @@ public class ScaleHint {
      *     {@link String }
      *
      */
-    public String getMin() {
+    public double getMin() {
         return min;
     }
 
@@ -60,7 +56,7 @@ public class ScaleHint {
      *     {@link String }
      *
      */
-    public void setMin(String value) {
+    public void setMin(Double value) {
         this.min = value;
     }
 
@@ -72,7 +68,7 @@ public class ScaleHint {
      *     {@link String }
      *
      */
-    public String getMax() {
+    public double getMax() {
         return max;
     }
 
@@ -84,7 +80,7 @@ public class ScaleHint {
      *     {@link String }
      *
      */
-    public void setMax(String value) {
+    public void setMax(Double value) {
         this.max = value;
     }
 

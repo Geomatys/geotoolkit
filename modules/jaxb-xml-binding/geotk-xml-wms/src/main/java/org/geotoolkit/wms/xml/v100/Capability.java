@@ -16,11 +16,15 @@
  */
 package org.geotoolkit.wms.xml.v100;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wms.xml.AbstractCapability;
+import org.geotoolkit.wms.xml.AbstractLayer;
+import org.geotoolkit.wms.xml.AbstractRequest;
 
 
 /**
@@ -34,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
     "layer"
 })
 @XmlRootElement(name = "Capability")
-public class Capability {
+public class Capability implements AbstractCapability {
 
     @XmlElement(name = "Request", required = true)
     protected Request request;
@@ -53,6 +57,7 @@ public class Capability {
      *     {@link Request }
      *
      */
+    @Override
     public Request getRequest() {
         return request;
     }
@@ -65,8 +70,11 @@ public class Capability {
      *     {@link Request }
      *
      */
-    public void setRequest(Request value) {
-        this.request = value;
+    @Override
+    public void setRequest(AbstractRequest value) {
+        if (value instanceof Request) {
+            this.request = (Request) value;
+        } else throw new UnsupportedOperationException();
     }
 
     /**
@@ -125,6 +133,7 @@ public class Capability {
      *     {@link Layer }
      *
      */
+    @Override
     public Layer getLayer() {
         return layer;
     }
@@ -137,8 +146,34 @@ public class Capability {
      *     {@link Layer }
      *
      */
-    public void setLayer(Layer value) {
-        this.layer = value;
+    @Override
+    public void setLayer(AbstractLayer value) {
+        if (value instanceof AbstractLayer) {
+        this.layer = (Layer) value;
+        } else throw new UnsupportedOperationException();
     }
 
+    /**
+     * Gets the list of exception formats available.
+     * @return
+     */
+    @Override
+    public List<String> getExceptionFormats() {
+        if (exception == null) {
+            exception = new Exception();
+        }
+        return exception.getFormat().formats();
+    }
+
+    @Override
+    public void setExceptionFormats(final List<String> formats) {
+        if (formats != null) {
+            this.exception = new Exception();
+            final Format format = new Format();
+            format.formats().addAll(formats);
+            exception.setFormat(format);
+        } else {
+            this.exception = null;
+        }
+    }
 }

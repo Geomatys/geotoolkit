@@ -31,73 +31,45 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "gifOrJPEGOrPNGOrWebCGMOrSVGOrGML1OrGML2OrGML3OrWBMPOrWMSXMLOrMIMEOrINIMAGEOrTIFFOrGeoTIFFOrPPMOrBLANK"
+    "formats"
 })
 @XmlRootElement(name = "Format")
 public class Format {
 
     @XmlElements({
-        @XmlElement(name = "GIF", required = true, type = GIF.class),
-        @XmlElement(name = "JPEG", required = true, type = JPEG.class),
-        @XmlElement(name = "PNG", required = true, type = PNG.class),
-        @XmlElement(name = "WebCGM", required = true, type = WebCGM.class),
-        @XmlElement(name = "SVG", required = true, type = SVG.class),
-        @XmlElement(name = "GML.1", required = true, type = GML1 .class),
-        @XmlElement(name = "GML.2", required = true, type = GML2 .class),
-        @XmlElement(name = "GML.3", required = true, type = GML3 .class),
-        @XmlElement(name = "WBMP", required = true, type = WBMP.class),
-        @XmlElement(name = "WMS_XML", required = true, type = WMSXML.class),
-        @XmlElement(name = "MIME", required = true, type = MIME.class),
-        @XmlElement(name = "INIMAGE", required = true, type = INIMAGE.class),
-        @XmlElement(name = "TIFF", required = true, type = TIFF.class),
-        @XmlElement(name = "GeoTIFF", required = true, type = GeoTIFF.class),
-        @XmlElement(name = "PPM", required = true, type = PPM.class),
-        @XmlElement(name = "BLANK", required = true, type = BLANK.class)
+        @XmlElement(name = "GIF", required = true, type = String.class, defaultValue = "GIF"),
+        @XmlElement(name = "JPEG", required = true, type = String.class, defaultValue = "JPEG"),
+        @XmlElement(name = "PNG", required = true, type = String.class, defaultValue = "PNG"),
+        @XmlElement(name = "WebCGM", required = true, type = String.class, defaultValue = "WebCGM"),
+        @XmlElement(name = "SVG", required = true, type = String.class, defaultValue = "SVG"),
+        @XmlElement(name = "GML.1", required = true, type = String.class, defaultValue = "GML.1"),
+        @XmlElement(name = "GML.2", required = true, type = String.class, defaultValue = "GML.2"),
+        @XmlElement(name = "GML.3", required = true, type = String.class, defaultValue = "GML.3"),
+        @XmlElement(name = "WBMP", required = true, type = String.class, defaultValue = "WBMP"),
+        @XmlElement(name = "WMS_XML", required = true, type = String.class, defaultValue = "WMS_XML"),
+        @XmlElement(name = "MIME", required = true, type = String.class, defaultValue = "MIME"),
+        @XmlElement(name = "INIMAGE", required = true, type = String.class, defaultValue = "INIMAGE"),
+        @XmlElement(name = "TIFF", required = true, type = String.class, defaultValue = "TIFF"),
+        @XmlElement(name = "GeoTIFF", required = true, type = String.class, defaultValue = "GeoTIFF"),
+        @XmlElement(name = "PPM", required = true, type = String.class, defaultValue = "PPM"),
+        @XmlElement(name = "BLANK", required = true, type = String.class, defaultValue = "BLANK")
     })
-    protected List<Object> gifOrJPEGOrPNGOrWebCGMOrSVGOrGML1OrGML2OrGML3OrWBMPOrWMSXMLOrMIMEOrINIMAGEOrTIFFOrGeoTIFFOrPPMOrBLANK;
+    protected List<String> formats;
 
     /**
-     * Gets the value of the gifOrJPEGOrPNGOrWebCGMOrSVGOrGML1OrGML2OrGML3OrWBMPOrWMSXMLOrMIMEOrINIMAGEOrTIFFOrGeoTIFFOrPPMOrBLANK property.
+     * Gets the value of the formats property.
      *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the gifOrJPEGOrPNGOrWebCGMOrSVGOrGML1OrGML2OrGML3OrWBMPOrWMSXMLOrMIMEOrINIMAGEOrTIFFOrGeoTIFFOrPPMOrBLANK property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getGIFOrJPEGOrPNGOrWebCGMOrSVGOrGML1OrGML2OrGML3OrWBMPOrWMSXMLOrMIMEOrINIMAGEOrTIFFOrGeoTIFFOrPPMOrBLANK().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link GIF }
-     * {@link JPEG }
-     * {@link PNG }
-     * {@link WebCGM }
-     * {@link SVG }
-     * {@link GML1 }
-     * {@link GML2 }
-     * {@link GML3 }
-     * {@link WBMP }
-     * {@link WMSXML }
-     * {@link MIME }
-     * {@link INIMAGE }
-     * {@link TIFF }
-     * {@link GeoTIFF }
-     * {@link PPM }
-     * {@link BLANK }
-     *
-     *
+     * This is why there is not a <CODE>set</CODE> method for the formats property.
      */
-    public List<Object> getGIFOrJPEGOrPNGOrWebCGMOrSVGOrGML1OrGML2OrGML3OrWBMPOrWMSXMLOrMIMEOrINIMAGEOrTIFFOrGeoTIFFOrPPMOrBLANK() {
-        if (gifOrJPEGOrPNGOrWebCGMOrSVGOrGML1OrGML2OrGML3OrWBMPOrWMSXMLOrMIMEOrINIMAGEOrTIFFOrGeoTIFFOrPPMOrBLANK == null) {
-            gifOrJPEGOrPNGOrWebCGMOrSVGOrGML1OrGML2OrGML3OrWBMPOrWMSXMLOrMIMEOrINIMAGEOrTIFFOrGeoTIFFOrPPMOrBLANK = new ArrayList<Object>();
+    public List<String> formats() {
+        if (formats == null) {
+            formats = new ArrayList<>();
         }
-        return this.gifOrJPEGOrPNGOrWebCGMOrSVGOrGML1OrGML2OrGML3OrWBMPOrWMSXMLOrMIMEOrINIMAGEOrTIFFOrGeoTIFFOrPPMOrBLANK;
+        return this.formats;
     }
 
 }

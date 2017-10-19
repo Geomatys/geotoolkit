@@ -85,30 +85,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SVG }
-     *
-     */
-    public SVG createSVG() {
-        return new SVG();
-    }
-
-    /**
-     * Create an instance of {@link WBMP }
-     *
-     */
-    public WBMP createWBMP() {
-        return new WBMP();
-    }
-
-    /**
-     * Create an instance of {@link WebCGM }
-     *
-     */
-    public WebCGM createWebCGM() {
-        return new WebCGM();
-    }
-
-    /**
      * Create an instance of {@link FeatureInfo }
      *
      */
@@ -125,115 +101,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link PNG }
-     *
-     */
-    public PNG createPNG() {
-        return new PNG();
-    }
-
-    /**
-     * Create an instance of {@link JPEG }
-     *
-     */
-    public JPEG createJPEG() {
-        return new JPEG();
-    }
-
-    /**
-     * Create an instance of {@link PPM }
-     *
-     */
-    public PPM createPPM() {
-        return new PPM();
-    }
-
-    /**
-     * Create an instance of {@link MIME }
-     *
-     */
-    public MIME createMIME() {
-        return new MIME();
-    }
-
-    /**
      * Create an instance of {@link LatLonBoundingBox }
      *
      */
     public LatLonBoundingBox createLatLonBoundingBox() {
         return new LatLonBoundingBox();
-    }
-
-    /**
-     * Create an instance of {@link GeoTIFF }
-     *
-     */
-    public GeoTIFF createGeoTIFF() {
-        return new GeoTIFF();
-    }
-
-    /**
-     * Create an instance of {@link TIFF }
-     *
-     */
-    public TIFF createTIFF() {
-        return new TIFF();
-    }
-
-    /**
-     * Create an instance of {@link GIF }
-     *
-     */
-    public GIF createGIF() {
-        return new GIF();
-    }
-
-    /**
-     * Create an instance of {@link GML1 }
-     *
-     */
-    public GML1 createGML1() {
-        return new GML1();
-    }
-
-    /**
-     * Create an instance of {@link GML2 }
-     *
-     */
-    public GML2 createGML2() {
-        return new GML2();
-    }
-
-    /**
-     * Create an instance of {@link GML3 }
-     *
-     */
-    public GML3 createGML3() {
-        return new GML3();
-    }
-
-    /**
-     * Create an instance of {@link WMSXML }
-     *
-     */
-    public WMSXML createWMSXML() {
-        return new WMSXML();
-    }
-
-    /**
-     * Create an instance of {@link INIMAGE }
-     *
-     */
-    public INIMAGE createINIMAGE() {
-        return new INIMAGE();
-    }
-
-    /**
-     * Create an instance of {@link BLANK }
-     *
-     */
-    public BLANK createBLANK() {
-        return new BLANK();
     }
 
     /**

@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLEventReader;
@@ -76,6 +77,70 @@ import org.xml.sax.InputSource;
             return unMarshaller.unmarshal(url);
         }else{
             throw new IllegalArgumentException("Source object is not a valid class :" + source.getClass());
+        }
+    }
+
+    public static void updateLayerURL(final String url, final AbstractLayer layer) {
+        if (layer.getStyle() != null) {
+            for (Style style : layer.getStyle()) {
+                if (style.getLegendURL() != null) {
+                    for (AbstractLegendURL legend : style.getLegendURL()) {
+                        if (legend.getOnlineResource() != null
+                                && legend.getOnlineResource().getHref() != null) {
+                            final String legendURL = legend.getOnlineResource().getHref();
+                            final int index = legendURL.indexOf('?');
+                            if (index != -1) {
+                                final String s = legendURL.substring(index + 1);
+                                legend.getOnlineResource().setHref(url + s);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for (AbstractLayer childLayer : layer.getLayer()) {
+            updateLayerURL(url, childLayer);
+        }
+    }
+
+    /**
+     * @return true if it founds the layer
+     */
+    public static boolean searchLayerByName(final List<AbstractLayer> stack, final AbstractLayer candidate, final String name){
+        if(candidate == null){
+            return false;
+        }
+
+        //add current layer in the stack
+        stack.add(candidate);
+
+        if(name.equals(candidate.getName())){
+            return true;
+        }
+
+        //search it's children
+        final List<? extends AbstractLayer> layers = candidate.getLayer();
+        if(layers != null){
+            for(AbstractLayer layer : layers){
+                if(searchLayerByName(stack, layer, name)){
+                    return true;
+                }
+            }
+        }
+
+        //we didn't find the searched layer in this layer, remove it from the stack
+        stack.remove(stack.size()-1);
+        return false;
+    }
+
+    public static void explore(List<AbstractLayer> buffer, AbstractLayer candidate){
+        buffer.add(candidate);
+        final List<? extends AbstractLayer> layers = candidate.getLayer();
+        if(layers != null){
+            for(AbstractLayer child : layers){
+                explore(buffer, child);
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.geotoolkit.wms.xml.v100;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,6 +27,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.wms.xml.AbstractDimension;
+import org.geotoolkit.wms.xml.AbstractGeographicBoundingBox;
+import org.geotoolkit.wms.xml.AbstractKeywordList;
+import org.geotoolkit.wms.xml.AbstractLayer;
+import org.geotoolkit.wms.xml.AbstractLogoURL;
+import org.geotoolkit.wms.xml.AbstractOnlineResource;
+import org.geotoolkit.wms.xml.AbstractURL;
+import org.geotoolkit.wms.xml.v111.KeywordList;
+import org.geotoolkit.wms.xml.v111.OnlineResource;
+import org.opengis.geometry.Envelope;
 
 
 /**
@@ -46,7 +58,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "layer"
 })
 @XmlRootElement(name = "Layer")
-public class Layer {
+public class Layer implements AbstractLayer {
 
     @XmlAttribute(name = "queryable")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -268,6 +280,7 @@ public class Layer {
      *
      *
      */
+    @Override
     public List<BoundingBox> getBoundingBox() {
         if (boundingBox == null) {
             boundingBox = new ArrayList<BoundingBox>();
@@ -283,8 +296,18 @@ public class Layer {
      *     {@link String }
      *
      */
-    public String getDataURL() {
-        return dataURL;
+    public List<AbstractURL> getDataURL() {
+        return Collections.singletonList(new AbstractURL() {
+            @Override
+            public String getFormat() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public AbstractOnlineResource getOnlineResource() {
+                return new OnlineResource(dataURL);
+            }
+        });
     }
 
     /**
@@ -321,6 +344,7 @@ public class Layer {
      *
      *
      */
+    @Override
     public List<Style> getStyle() {
         if (style == null) {
             style = new ArrayList<Style>();
@@ -374,11 +398,132 @@ public class Layer {
      *
      *
      */
+    @Override
     public List<Layer> getLayer() {
         if (layer == null) {
-            layer = new ArrayList<Layer>();
+            layer = new ArrayList<>();
         }
         return this.layer;
     }
 
+    @Override
+    public void setCrs(final List<String> srs) {
+        this.srs = srs.stream().findAny().orElse(null);
+    }
+
+    /**
+     * @param boundingBox the boundingBox to set
+     */
+    public void setBoundingBox(final List<BoundingBox> boundingBox) {
+        this.boundingBox = boundingBox;
+    }
+
+    @Override
+    public void setAttribution(final String title, final String href, final AbstractLogoURL logo) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setAuthorityURL(final String format, final String href) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * @param identifier the identifier to set
+     */
+    @Override
+    public void setIdentifier(final String authority, final String value) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setMetadataURL(final String format, final String href, final String type) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setDataURL(final String format, final String href) {
+        this.dataURL = href;
+    }
+
+    /**
+     * @param style the style to set
+     */
+    public void setStyle(final List<Style> style) {
+        this.style = style;
+    }
+
+    @Override
+    public void updateStyle(final List<org.geotoolkit.wms.xml.Style> styles) {
+        if (styles != null) {
+            this.style = new ArrayList<>();
+            for (org.geotoolkit.wms.xml.Style s : styles) {
+                if (s instanceof Style) {
+                    this.style.add((Style)s);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param opaque the opaque to set
+     */
+    @Override
+    public void setOpaque(final Integer opaque) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<AbstractDimension> getAbstractDimension() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<? extends AbstractDimension> getDimension() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public AbstractKeywordList getKeywordList() {
+        return new KeywordList(keywords);
+    }
+
+    @Override
+    public void setKeywordList(List<String> kewords) {
+        keywords = kewords.stream().findAny().orElse(null);
+    }
+
+    @Override
+    public List<String> getCRS() {
+        return srs == null? Collections.EMPTY_LIST : Collections.singletonList(srs);
+    }
+
+    @Override
+    public Envelope getEnvelope() {
+        final AbstractGeographicBoundingBox bbox = getLatLonBoundingBox();
+        if(bbox != null){
+            return new GeneralEnvelope(bbox);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isQueryable() {
+        return queryable == null? false : Boolean.parseBoolean(queryable);
+    }
+
+    @Override
+    public List<? extends AbstractURL> getMetadataURL() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Double getMinScaleDenominator() {
+        return scaleHint == null? null : scaleHint.getMin();
+    }
+
+    @Override
+    public Double getMaxScaleDenominator() {
+        return scaleHint == null? null : scaleHint.getMax();
+    }
 }

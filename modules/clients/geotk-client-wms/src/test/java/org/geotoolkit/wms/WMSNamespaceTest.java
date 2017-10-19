@@ -19,11 +19,8 @@ package org.geotoolkit.wms;
 
 import org.opengis.util.GenericName;
 import java.util.Set;
-import java.net.MalformedURLException;
-import javax.xml.bind.JAXBException;
 
 import org.geotoolkit.wms.xml.WMSVersion;
-import org.apache.sis.storage.DataStoreException;
 
 import org.junit.Test;
 
@@ -36,36 +33,39 @@ import static org.junit.Assert.*;
  * @module
  */
 public class WMSNamespaceTest extends org.geotoolkit.test.TestBase {
+    /**
+     * This test proper namespace parsing in v1.1.1
+     */
+    @Test
+    public void test_v100_GetNames() throws Exception {
 
-    private final WebMapClient SERVER_111;
-    private final WebMapClient SERVER_130;
+        final Set<GenericName> names = new MockWebMapClient(WMSVersion.v100).getNames();
 
-    public WMSNamespaceTest() throws MalformedURLException, JAXBException {
-        SERVER_111 = new MockWebMapClient(WMSVersion.v111);
-        SERVER_130 = new MockWebMapClient(WMSVersion.v130);
+        assertEquals(3, names.size());
+        assertTrue(names.stream().anyMatch((GenericName t) -> t.toString().equals("ns1:Sample")));
+        assertTrue(names.stream().anyMatch((GenericName t) -> t.toString().equals("ns2:Sample")));
     }
 
     /**
      * This test proper namespace parsing in v1.1.1
      */
     @Test
-    public void test_v111_GetNames() throws DataStoreException {
+    public void test_v111_GetNames() throws Exception {
 
-        final Set<GenericName> names = SERVER_111.getNames();
+        final Set<GenericName> names = new MockWebMapClient(WMSVersion.v111).getNames();
 
         assertEquals(3, names.size());
         assertTrue(names.stream().anyMatch((GenericName t) -> t.toString().equals("ns1:Sample")));
         assertTrue(names.stream().anyMatch((GenericName t) -> t.toString().equals("ns2:Sample")));
-
     }
 
     /**
      * This test proper namespace parsing in v1.3.0
      */
     @Test
-    public void test_v130_GetNames() throws DataStoreException {
+    public void test_v130_GetNames() throws Exception {
 
-        final Set<GenericName> names = SERVER_130.getNames();
+        final Set<GenericName> names = new MockWebMapClient(WMSVersion.v130).getNames();
 
         assertEquals(3, names.size());
         assertTrue(names.stream().anyMatch((GenericName t) -> t.toString().equals("ns1:Sample")));

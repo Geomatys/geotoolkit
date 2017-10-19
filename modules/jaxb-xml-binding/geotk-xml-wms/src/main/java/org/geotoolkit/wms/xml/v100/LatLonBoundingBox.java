@@ -21,8 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.wms.xml.AbstractGeographicBoundingBox;
 
 
 /**
@@ -31,20 +30,16 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "LatLonBoundingBox")
-public class LatLonBoundingBox {
+public class LatLonBoundingBox implements AbstractGeographicBoundingBox {
 
     @XmlAttribute(name = "minx", required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String minx;
+    protected Double minx;
     @XmlAttribute(name = "miny", required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String miny;
+    protected Double miny;
     @XmlAttribute(name = "maxx", required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String maxx;
+    protected Double maxx;
     @XmlAttribute(name = "maxy", required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String maxy;
+    protected Double maxy;
 
     /**
      * Obtient la valeur de la propriété minx.
@@ -54,7 +49,7 @@ public class LatLonBoundingBox {
      *     {@link String }
      *
      */
-    public String getMinx() {
+    public Double getMinx() {
         return minx;
     }
 
@@ -66,7 +61,7 @@ public class LatLonBoundingBox {
      *     {@link String }
      *
      */
-    public void setMinx(String value) {
+    public void setMinx(Double value) {
         this.minx = value;
     }
 
@@ -78,7 +73,7 @@ public class LatLonBoundingBox {
      *     {@link String }
      *
      */
-    public String getMiny() {
+    public Double getMiny() {
         return miny;
     }
 
@@ -90,7 +85,7 @@ public class LatLonBoundingBox {
      *     {@link String }
      *
      */
-    public void setMiny(String value) {
+    public void setMiny(Double value) {
         this.miny = value;
     }
 
@@ -102,7 +97,7 @@ public class LatLonBoundingBox {
      *     {@link String }
      *
      */
-    public String getMaxx() {
+    public Double getMaxx() {
         return maxx;
     }
 
@@ -114,7 +109,7 @@ public class LatLonBoundingBox {
      *     {@link String }
      *
      */
-    public void setMaxx(String value) {
+    public void setMaxx(Double value) {
         this.maxx = value;
     }
 
@@ -126,7 +121,7 @@ public class LatLonBoundingBox {
      *     {@link String }
      *
      */
-    public String getMaxy() {
+    public Double getMaxy() {
         return maxy;
     }
 
@@ -138,8 +133,33 @@ public class LatLonBoundingBox {
      *     {@link String }
      *
      */
-    public void setMaxy(String value) {
+    public void setMaxy(Double value) {
         this.maxy = value;
+    }
+
+    @Override
+    public double getWestBoundLongitude() {
+        return minx == null? Double.NaN : minx;
+    }
+
+    @Override
+    public double getEastBoundLongitude() {
+        return maxx == null? Double.NaN : maxx;
+    }
+
+    @Override
+    public double getSouthBoundLatitude() {
+        return miny == null? Double.NaN : miny;
+    }
+
+    @Override
+    public double getNorthBoundLatitude() {
+        return maxy == null? Double.NaN : maxy;
+    }
+
+    @Override
+    public Boolean getInclusion() {
+        return false;
     }
 
 }

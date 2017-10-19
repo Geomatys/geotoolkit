@@ -36,7 +36,7 @@ public class GetCapabilitiesTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGetCapabilities100() {
         final GetCapabilities100 caps100 = new GetCapabilities100("http://test.com",null);
-        checkCapabilitiesURL("http://test.com?VERSION=1.0.0&SERVICE=WMS&REQUEST=GetCapabilities", caps100);
+        checkCapabilitiesURL("http://test.com?WMTVER=1.0.0&SERVICE=WMS&REQUEST=GetCapabilities", caps100);
     }
 
     /**

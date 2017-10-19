@@ -31,11 +31,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
+import javax.xml.bind.JAXBContext;
 import org.opengis.metadata.citation.Citation;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import org.apache.sis.internal.jaxb.LegacyNamespaces;
 import org.apache.sis.util.iso.DefaultInternationalString;
 
 import org.geotoolkit.inspire.xml.vs.ExtendedCapabilitiesType;
@@ -68,8 +70,6 @@ import org.opengis.metadata.extent.TemporalExtent;
 import org.opengis.metadata.maintenance.ScopeCode;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.temporal.Period;
-import javax.xml.bind.JAXBContext;
-import org.apache.sis.internal.jaxb.LegacyNamespaces;
 import org.apache.sis.referencing.NamedIdentifier;
 
 import static org.apache.sis.test.TestUtilities.getSingleton;

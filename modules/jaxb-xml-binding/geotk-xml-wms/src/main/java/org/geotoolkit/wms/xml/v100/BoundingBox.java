@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.wms.xml.AbstractBoundingBox;
 
 
 /**
@@ -31,23 +32,19 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "BoundingBox")
-public class BoundingBox {
+public class BoundingBox implements AbstractBoundingBox {
 
     @XmlAttribute(name = "SRS", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String srs;
     @XmlAttribute(name = "minx", required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String minx;
+    protected double minx;
     @XmlAttribute(name = "miny", required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String miny;
+    protected double miny;
     @XmlAttribute(name = "maxx", required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String maxx;
+    protected double maxx;
     @XmlAttribute(name = "maxy", required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String maxy;
+    protected double maxy;
 
     /**
      * Obtient la valeur de la propriété srs.
@@ -81,7 +78,8 @@ public class BoundingBox {
      *     {@link String }
      *
      */
-    public String getMinx() {
+    @Override
+    public double getMinx() {
         return minx;
     }
 
@@ -93,7 +91,7 @@ public class BoundingBox {
      *     {@link String }
      *
      */
-    public void setMinx(String value) {
+    public void setMinx(double value) {
         this.minx = value;
     }
 
@@ -105,7 +103,7 @@ public class BoundingBox {
      *     {@link String }
      *
      */
-    public String getMiny() {
+    public double getMiny() {
         return miny;
     }
 
@@ -117,7 +115,7 @@ public class BoundingBox {
      *     {@link String }
      *
      */
-    public void setMiny(String value) {
+    public void setMiny(double value) {
         this.miny = value;
     }
 
@@ -129,7 +127,7 @@ public class BoundingBox {
      *     {@link String }
      *
      */
-    public String getMaxx() {
+    public double getMaxx() {
         return maxx;
     }
 
@@ -141,7 +139,7 @@ public class BoundingBox {
      *     {@link String }
      *
      */
-    public void setMaxx(String value) {
+    public void setMaxx(double value) {
         this.maxx = value;
     }
 
@@ -153,7 +151,7 @@ public class BoundingBox {
      *     {@link String }
      *
      */
-    public String getMaxy() {
+    public double getMaxy() {
         return maxy;
     }
 
@@ -165,8 +163,23 @@ public class BoundingBox {
      *     {@link String }
      *
      */
-    public void setMaxy(String value) {
+    public void setMaxy(double value) {
         this.maxy = value;
+    }
+
+    @Override
+    public String getCRSCode() {
+        return srs;
+    }
+
+    @Override
+    public Double getResx() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Double getResy() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

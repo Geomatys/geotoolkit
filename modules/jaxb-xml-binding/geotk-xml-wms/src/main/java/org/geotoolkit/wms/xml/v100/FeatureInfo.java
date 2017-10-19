@@ -17,12 +17,14 @@
 package org.geotoolkit.wms.xml.v100;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wms.xml.AbstractOperation;
 
 
 /**
@@ -34,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
     "dcpType"
 })
 @XmlRootElement(name = "FeatureInfo")
-public class FeatureInfo {
+public class FeatureInfo implements AbstractOperation {
 
     @XmlElement(name = "Format", required = true)
     protected Format format;
@@ -89,9 +91,13 @@ public class FeatureInfo {
      */
     public List<DCPType> getDCPType() {
         if (dcpType == null) {
-            dcpType = new ArrayList<DCPType>();
+            dcpType = new ArrayList<>();
         }
         return this.dcpType;
     }
 
+    @Override
+    public List<String> getFormats() {
+        return format == null? Collections.EMPTY_LIST : format.formats();
+    }
 }

@@ -16,11 +16,17 @@
  */
 package org.geotoolkit.wms.xml.v100;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wms.xml.AbstractLegendURL;
+import org.geotoolkit.wms.xml.AbstractStyleSheetURL;
+import org.geotoolkit.wms.xml.AbstractStyleURL;
+import org.geotoolkit.wms.xml.v111.OnlineResource;
+import org.geotoolkit.wms.xml.v111.StyleURL;
 
 
 /**
@@ -34,7 +40,7 @@ import javax.xml.bind.annotation.XmlType;
     "styleURL"
 })
 @XmlRootElement(name = "Style")
-public class Style {
+public class Style implements org.geotoolkit.wms.xml.Style {
 
     @XmlElement(name = "Name", required = true)
     protected String name;
@@ -125,8 +131,9 @@ public class Style {
      *     {@link String }
      *
      */
-    public String getStyleURL() {
-        return styleURL;
+    @Override
+    public AbstractStyleURL getStyleURL() {
+        return new StyleURL("", new OnlineResource(styleURL));
     }
 
     /**
@@ -141,4 +148,13 @@ public class Style {
         this.styleURL = value;
     }
 
+    @Override
+    public AbstractStyleSheetURL getStyleSheetURL() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<? extends AbstractLegendURL> getLegendURL() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

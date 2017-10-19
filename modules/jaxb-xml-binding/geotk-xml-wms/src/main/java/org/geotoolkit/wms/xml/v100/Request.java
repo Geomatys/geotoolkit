@@ -16,14 +16,13 @@
  */
 package org.geotoolkit.wms.xml.v100;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wms.xml.AbstractOperation;
+import org.geotoolkit.wms.xml.AbstractRequest;
 
 
 /**
@@ -31,47 +30,48 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "mapOrCapabilitiesOrFeatureInfo"
+    "riri", "fifi", "loulou"
 })
 @XmlRootElement(name = "Request")
-public class Request {
+public class Request implements AbstractRequest {
 
-    @XmlElements({
-        @XmlElement(name = "Map", required = true, type = Map.class),
-        @XmlElement(name = "Capabilities", required = true, type = Capabilities.class),
-        @XmlElement(name = "FeatureInfo", required = true, type = FeatureInfo.class)
-    })
-    protected List<Object> mapOrCapabilitiesOrFeatureInfo;
+    @XmlElement(name = "Map", required = true, type = Map.class)
+    protected Map riri;
 
-    /**
-     * Gets the value of the mapOrCapabilitiesOrFeatureInfo property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the mapOrCapabilitiesOrFeatureInfo property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getMapOrCapabilitiesOrFeatureInfo().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Map }
-     * {@link Capabilities }
-     * {@link FeatureInfo }
-     *
-     *
-     */
-    public List<Object> getMapOrCapabilitiesOrFeatureInfo() {
-        if (mapOrCapabilitiesOrFeatureInfo == null) {
-            mapOrCapabilitiesOrFeatureInfo = new ArrayList<Object>();
-        }
-        return this.mapOrCapabilitiesOrFeatureInfo;
+    @XmlElement(name = "Capabilities", required = true, type = Capabilities.class)
+    protected Capabilities fifi;
+
+    @XmlElement(name = "FeatureInfo", required = true, type = FeatureInfo.class)
+    protected FeatureInfo loulou;
+
+    @Override
+    public AbstractOperation getGetMap() {
+        return riri;
+    }
+
+    @Override
+    public AbstractOperation getGetCapabilities() {
+        return fifi;
+    }
+
+    @Override
+    public AbstractOperation getGetFeatureInfo() {
+        return loulou;
+    }
+
+    @Override
+    public void updateURL(String url) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public AbstractRequest clone() {
+        final Request clone = new Request();
+        clone.riri = riri;
+        clone.fifi = fifi;
+        clone.loulou = loulou;
+
+        return clone;
     }
 
 }

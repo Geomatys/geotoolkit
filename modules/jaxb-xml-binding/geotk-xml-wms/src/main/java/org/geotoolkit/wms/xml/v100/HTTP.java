@@ -16,14 +16,13 @@
  */
 package org.geotoolkit.wms.xml.v100;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wms.xml.AbstractHTTP;
+import org.geotoolkit.wms.xml.AbstractProtocol;
 
 
 /**
@@ -31,45 +30,25 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "getOrPost"
+    "get", "post"
 })
 @XmlRootElement(name = "HTTP")
-public class HTTP {
+public class HTTP implements AbstractHTTP {
 
-    @XmlElements({
-        @XmlElement(name = "Get", required = true, type = Get.class),
-        @XmlElement(name = "Post", required = true, type = Post.class)
-    })
-    protected List<Object> getOrPost;
+    @XmlElement(name = "Get", required = true, type = Get.class)
+    protected Get get;
 
-    /**
-     * Gets the value of the getOrPost property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the getOrPost property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getGetOrPost().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Get }
-     * {@link Post }
-     *
-     *
-     */
-    public List<Object> getGetOrPost() {
-        if (getOrPost == null) {
-            getOrPost = new ArrayList<Object>();
-        }
-        return this.getOrPost;
+    @XmlElement(name = "Post", required = true, type = Post.class)
+    protected Post post;
+
+    @Override
+    public AbstractProtocol getGet() {
+        return get;
+    }
+
+    @Override
+    public AbstractProtocol getPost() {
+        return post;
     }
 
 }
