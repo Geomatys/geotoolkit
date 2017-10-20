@@ -20,6 +20,7 @@ package org.geotoolkit.wms.xml;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.xml.XML;
 
@@ -40,13 +41,26 @@ public final class WMSMarshallerPool {
     private static final MarshallerPool V_100;
     static {
         try {
-            final Map<String, String> properties = new HashMap<>();
+            final Map<String, Object> properties = new HashMap<>();
             properties.put(XML.DEFAULT_NAMESPACE, "http://www.opengis.net/wms");
             V_100 = new MarshallerPool(createJAXBContext(
-                    "org.geotoolkit.ogc.xml.exception:" +
-                    "org.geotoolkit.wms.xml.v100:" +
-                    "org.apache.sis.internal.jaxb.geometry",
-                    WMSMarshallerPool.class.getClassLoader()), properties);
+                    "org.geotoolkit.ogc.xml.exception:"
+                    + "org.geotoolkit.wms.xml.v100:"
+                    + "org.apache.sis.internal.jaxb.geometry",
+                    WMSMarshallerPool.class.getClassLoader()), properties) {
+                @Override
+                public Unmarshaller acquireUnmarshaller() throws JAXBException {
+                    final Unmarshaller u = super.acquireUnmarshaller();
+                    return new DTDIgnoreUnmarshaller(u);
+                }
+
+                @Override
+                public void recycle(Unmarshaller unmarshaller) {
+                    if (unmarshaller instanceof DTDIgnoreUnmarshaller)
+                        unmarshaller = ((DTDIgnoreUnmarshaller) unmarshaller).source;
+                    super.recycle(unmarshaller);
+                }
+            };
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
