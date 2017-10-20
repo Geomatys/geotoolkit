@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding="UTF-8" ?>
+<wfs:FeatureCollection
+   xmlns:sa="http://xml.sandre.eaufrance.fr/"
+   xmlns:wfs="http://www.opengis.net/wfs"
+   xmlns:gml="http://www.opengis.net/gml"
+   xmlns:ogc="http://www.opengis.net/ogc"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengeospatial.net/wfs/1.0.0/WFS-basic.xsd
+                       http://xml.sandre.eaufrance.fr/ /org/geotoolkit/data/gml/2_1_2/MultiLigne.xsd">
+      <gml:boundedBy>
+      	<gml:Box srsName="EPSG:4326">
+      		<gml:coordinates>-5,41 9,51</gml:coordinates>
+      	</gml:Box>
+      </gml:boundedBy>
+    <gml:featureMember>
+      <sa:CoursEau fid="CoursEau.I0245000">
+        <gml:boundedBy>
+        	<gml:Box srsName="EPSG:4326">
+        		<gml:coordinates>0,49 1,50</gml:coordinates>
+        	</gml:Box>
+        </gml:boundedBy>
+        <sa:msGeometry>
+        <gml:MultiLineString srsName="EPSG:4326">
+          <gml:lineStringMember>
+            <gml:LineString>
+              <gml:coordinates>10,20 30,40 50,60</gml:coordinates>
+            </gml:LineString>
+          </gml:lineStringMember>
+          <gml:lineStringMember>
+            <gml:LineString>
+              <gml:coordinates>1,2 3,4 5,6</gml:coordinates>
+            </gml:LineString>
+          </gml:lineStringMember>
+        </gml:MultiLineString>
+        </sa:msGeometry>
+        <sa:CdEntiteHydrographique>I0245000</sa:CdEntiteHydrographique>
+        <sa:NomEntiteHydrographique>Ruisseau de la Boulaie</sa:NomEntiteHydrographique>
+        <sa:Classe>6</sa:Classe>
+      </sa:CoursEau>
+    </gml:featureMember>
+    <gml:featureMember>
+      <sa:CoursEau fid="CoursEau.M03-4002">
+        <gml:boundedBy>
+        	<gml:Box srsName="EPSG:4326">
+        		<gml:coordinates>0,48 1,49</gml:coordinates>
+        	</gml:Box>
+        </gml:boundedBy>
+        <sa:msGeometry>
+        <gml:MultiLineString srsName="EPSG:4326">
+          <gml:lineStringMember>
+            <gml:LineString>
+              <gml:coordinates>7,8 9,10</gml:coordinates>
+            </gml:LineString>
+          </gml:lineStringMember>
+        </gml:MultiLineString>
+        </sa:msGeometry>
+        <sa:CdEntiteHydrographique>M03-4002</sa:CdEntiteHydrographique>
+        <sa:NomEntiteHydrographique>canal de l&#39;Arcisses</sa:NomEntiteHydrographique>
+        <sa:Classe>7</sa:Classe>
+      </sa:CoursEau>
+    </gml:featureMember>
+
+</wfs:FeatureCollection>

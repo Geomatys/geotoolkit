@@ -53,6 +53,11 @@
             <artifactId>geotk-jaxp-gml</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-jaxp-xsd</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.geotoolkit</groupId>

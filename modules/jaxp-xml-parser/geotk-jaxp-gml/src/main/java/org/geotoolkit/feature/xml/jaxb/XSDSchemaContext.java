@@ -73,6 +73,15 @@ public class XSDSchemaContext {
     private static final Map<String,String> RELOCATIONS = new HashMap<>();
     static {
 
+        //GML 2.1.2
+        RELOCATIONS.put("http://schemas.opengis.net/gml/2.1.2/feature.xsd","/xsd/gml/2.1.2/feature.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/2.1.2/geometry.xsd","/xsd/gml/2.1.2/geometry.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/2.1.2/gml.xsd","/xsd/gml/2.1.2/gml.xsd");
+        RELOCATIONS.put("http://schemas.opengeospatial.net/gml/2.1.2/feature.xsd","/xsd/gml/2.1.2/feature.xsd");
+        RELOCATIONS.put("http://schemas.opengeospatial.net/gml/2.1.2/geometry.xsd","/xsd/gml/2.1.2/geometry.xsd");
+        RELOCATIONS.put("http://schemas.opengeospatial.net/gml/2.1.2/gml.xsd","/xsd/gml/2.1.2/gml.xsd");
+
+
         //GML 3.1.1
         RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd","/xsd/gml/3.1.1/gml.xsd");
         RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/dynamicFeature.xsd","/xsd/gml/3.1.1/dynamicFeature.xsd");

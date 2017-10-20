@@ -691,6 +691,25 @@ public class Utils {
                 if (url != null) {
                     schemaUri = Utils.class.getResource(localUrl).toURI();
                 }
+            } else if (location.startsWith("http://schemas.opengeospatial.net/")) {
+                //obsolete opengeospatial address
+                String localUrl = location.replace("http://schemas.opengeospatial.net/", "/org/geotoolkit/xsd/");
+                URL url = Utils.class.getResource(localUrl);
+                if (url != null) {
+                    schemaUri = Utils.class.getResource(localUrl).toURI();
+                }
+            } else if (location.startsWith("/xsd")) {
+                //internal address
+                String localUrl = location;
+                URL url = Utils.class.getResource(localUrl);
+                if (url==null) {
+                    //check resources from jaxp-xsd module
+                    localUrl = "/org/geotoolkit"+location;
+                    url = Utils.class.getResource(localUrl);
+                }
+                if (url != null) {
+                    schemaUri = Utils.class.getResource(localUrl).toURI();
+                }
             }
 
             if (schemaUri==null) {

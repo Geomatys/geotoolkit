@@ -518,14 +518,13 @@ public class GeometrytoJTS {
     public static MultiLineString toJTS(final org.geotoolkit.gml.xml.MultiLineString gml, boolean longitudeFirst) throws FactoryException{
         final List<? extends LineStringProperty> pos = gml.getLineStringMember();
         final LineString[] members = new LineString[pos.size()];
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem(longitudeFirst);
 
         for(int i=0,n=pos.size(); i<n; i++){
-            members[i] = toJTS(pos.get(i).getLineString());
+            members[i] = toJTS(pos.get(i).getLineString(), longitudeFirst, crs);
         }
 
         final MultiLineString geom = GF.createMultiLineString(members);
-
-        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem(longitudeFirst);
         JTS.setCRS(geom, crs);
         return geom;
     }
@@ -537,7 +536,6 @@ public class GeometrytoJTS {
     public static MultiLineString toJTS(final org.geotoolkit.gml.xml.MultiCurve gml, boolean longitudeFirst) throws FactoryException{
         final List<? extends CurveProperty> pos = gml.getCurveMember();
         final List<LineString> members = new ArrayList<>();
-
         final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem(longitudeFirst);
 
         for (int i=0,n=pos.size(); i<n; i++) {
@@ -552,8 +550,6 @@ public class GeometrytoJTS {
         }
 
         final MultiLineString geom = GF.createMultiLineString(members.toArray(new LineString[members.size()]));
-
-
         JTS.setCRS(geom, crs);
         return geom;
     }
@@ -565,14 +561,13 @@ public class GeometrytoJTS {
     public static MultiPolygon toJTS(final org.geotoolkit.gml.xml.MultiPolygon gml, boolean longitudeFirst) throws FactoryException{
         final List<? extends PolygonProperty> pos = gml.getPolygonMember();
         final Polygon[] members = new Polygon[pos.size()];
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem(longitudeFirst);
 
         for (int i=0,n=pos.size(); i<n; i++) {
             members[i] = toJTS(pos.get(i).getPolygon());
         }
 
         final MultiPolygon geom = GF.createMultiPolygon(members);
-
-        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem(longitudeFirst);
         JTS.setCRS(geom, crs);
         return geom;
     }
@@ -584,6 +579,7 @@ public class GeometrytoJTS {
     public static MultiPolygon toJTS(final MultiSurface gml, boolean longitudeFirst) throws FactoryException{
         final List<? extends SurfaceProperty> pos = gml.getSurfaceMember();
         final List<Polygon> members = new ArrayList<>();
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem(longitudeFirst);
 
         for (int i=0,n=pos.size(); i<n; i++) {
             final MultiPolygon mp = toJTS(pos.get(i).getAbstractSurface());
@@ -592,8 +588,7 @@ public class GeometrytoJTS {
             }
         }
 
-        final MultiPolygon geom             = GF.createMultiPolygon(members.toArray(new Polygon[members.size()]));
-        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem(longitudeFirst);
+        final MultiPolygon geom = GF.createMultiPolygon(members.toArray(new Polygon[members.size()]));
         JTS.setCRS(geom, crs);
         return geom;
     }
