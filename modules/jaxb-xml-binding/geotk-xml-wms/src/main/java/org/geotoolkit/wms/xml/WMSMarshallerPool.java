@@ -36,7 +36,8 @@ public final class WMSMarshallerPool {
     /**
      * we separate the v 1.0.0 INSTANCE in order to marshall with no prefix. We
      * have to do so, because there's a problem with namespaces in old OGC
-     * standards.
+     * standards. Also, we wrap produced unmarshallers to skip dtd download/
+     * validation at read.
      */
     private static final MarshallerPool V_100;
     static {

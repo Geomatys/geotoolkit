@@ -36,7 +36,6 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.NamesExt;
@@ -49,7 +48,9 @@ import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 
 /**
  *
@@ -58,6 +59,7 @@ import org.apache.sis.util.Utilities;
  */
 public class WMSCoverageReader extends GridCoverageReader{
 
+    static final Dimension DEFAULT_SIZE = new Dimension(256, 256);
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
 
     public WMSCoverageReader(final WMSCoverageResource reference) {
@@ -128,42 +130,40 @@ public class WMSCoverageReader extends GridCoverageReader{
         final WebMapClient server = (WebMapClient)ref.getStore();
 
         CoordinateReferenceSystem crs = param.getCoordinateReferenceSystem();
-        Envelope wantedEnv = param.getEnvelope();
-        double[] resolution = param.getResolution();
+        if (crs == null) {
+            crs = ref.getBounds().getCoordinateReferenceSystem();
+        }
+        try {
+            crs = CRSUtilities.getCRS2D(crs);
+        } catch (TransformException ex) {
+            throw new CoverageStoreException("WMS reading expect a CRS whose first component is 2D.", ex);
+        }
 
-        //verify envelope and crs
-        if(crs == null && wantedEnv == null){
-            //use the max extent
-            wantedEnv = ref.getBounds();
-            crs = wantedEnv.getCoordinateReferenceSystem();
-        }else if(crs != null && wantedEnv != null){
-            //check the envelope crs matches given crs
-            if(!Utilities.equalsIgnoreMetadata(wantedEnv.getCoordinateReferenceSystem(),crs)){
-                throw new CoverageStoreException("Invalid parameters : envelope crs do not match given crs.");
-            }
-        }else if(wantedEnv != null){
-            //use the envelope crs
-            crs = wantedEnv.getCoordinateReferenceSystem();
-        }else if(crs != null){
-            //use the given crs
-            wantedEnv = ref.getBounds();
+        GeneralEnvelope env;
+        if (param.getEnvelope() == null) {
+            env = new GeneralEnvelope(ref.getBounds());
+        } else {
+            env = new GeneralEnvelope(param.getEnvelope());
+        }
+
+        if (env.getCoordinateReferenceSystem() != null && !Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), crs)) {
             try {
-                wantedEnv = Envelopes.transform(wantedEnv, crs);
+                env = GeneralEnvelope.castOrCopy(Envelopes.transform(env, crs));
             } catch (TransformException ex) {
-                throw new CoverageStoreException("Could not transform coverage envelope to given crs.");
+                throw new CoverageStoreException("Could not transform coverage envelope to given crs.", ex);
             }
         }
 
-        //estimate resolution if not given
-        if(resolution == null){
-            //we arbitrarly choose 1000 pixel on first axis, wms layer have infinite resolution.
-            resolution = new double[2];
-            resolution[0] = wantedEnv.getSpan(0)/1000;
-            resolution[1] = resolution[0] * (wantedEnv.getSpan(1)/wantedEnv.getSpan(0));
+        final Dimension dim;
+        if (param.getResolution() != null) {
+            final double[] resolution = param.getResolution();
+            // WARNING : we use 0 and 1 indices because we determined input reference system starts
+            // with 2D component above (see CRSUtilities.getCRS2D())
+            dim = new Dimension((int)(env.getSpan(0)/resolution[0]), (int)(env.getSpan(1)/resolution[1]));
+        } else {
+            dim = DEFAULT_SIZE;
         }
 
-
-        final GeneralEnvelope env = new GeneralEnvelope(wantedEnv);
         final GetMapRequest request = server.createGetMap();
 
         //Filling the request header map from the map of the layer's server
@@ -172,28 +172,18 @@ public class WMSCoverageReader extends GridCoverageReader{
             request.getHeaderMap().putAll(headerMap);
         }
 
-        //calculate image dimension
-        final Dimension dim = new Dimension(
-                (int)(env.getSpan(0) / resolution[0]),
-                (int)(env.getSpan(1) / resolution[1]));
-
         try {
             ref.prepareQuery(request, env, dim, null);
-            System.out.println(request.getURL());
-        } catch (TransformException ex) {
-            throw new CoverageStoreException(ex.getMessage(), ex);
+            LOGGER.fine(request.getURL().toExternalForm());
         } catch (Exception ex) {
             throw new CoverageStoreException(ex.getMessage(), ex);
         }
 
         //read image
-        BufferedImage image = null;
-        InputStream stream = null;
-        try {
-            stream = request.getResponseStream();
-            image = ImageIO.read(stream);
+        try (final InputStream stream = request.getResponseStream()) {
+            final BufferedImage image = ImageIO.read(stream);
 
-            final CoordinateReferenceSystem crs2d = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
+            final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(env.getCoordinateReferenceSystem());
             final Envelope env2D = Envelopes.transform(env, crs2d);
             final AffineTransform gridToCRS = ReferencingUtilities.toAffine(dim, env2D);
 
@@ -205,20 +195,9 @@ public class WMSCoverageReader extends GridCoverageReader{
             gcb.setCoordinateReferenceSystem(crs2d);
             return gcb.build();
 
-        } catch (IOException ex) {
+        } catch (IOException|TransformException ex) {
             throw new CoverageStoreException(ex.getMessage(), ex);
-        } catch (TransformException ex) {
-            throw new CoverageStoreException(ex.getMessage(), ex);
-        } finally {
-            if(stream != null){
-                try {
-                    stream.close();
-                } catch (IOException ex) {
-                    throw new CoverageStoreException(ex.getMessage(), ex);
-                }
-            }
         }
-
     }
 
     @Override

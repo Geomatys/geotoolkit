@@ -475,12 +475,12 @@ public class Layer implements AbstractLayer {
 
     @Override
     public List<AbstractDimension> getAbstractDimension() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return Collections.EMPTY_LIST;
     }
 
     @Override
     public List<? extends AbstractDimension> getDimension() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return Collections.EMPTY_LIST;
     }
 
     @Override
@@ -509,7 +509,18 @@ public class Layer implements AbstractLayer {
 
     @Override
     public boolean isQueryable() {
-        return queryable == null? false : Boolean.parseBoolean(queryable);
+        if (queryable == null || queryable.trim().isEmpty()) {
+            // TODO : we should get the value in parent layer
+            return false;
+        }
+
+        try {
+            return Integer.parseInt(queryable) > 0;
+        } catch (NumberFormatException e) {
+            // Well... it should not happen, but just in case, we test if we've
+            // got 'true' value...
+            return Boolean.parseBoolean(queryable);
+        }
     }
 
     @Override

@@ -68,5 +68,4 @@ public interface AbstractWMSCapabilities extends AbstractCapabilitiesCore {
      * List all layers recursivly.
      */
     List<AbstractLayer> getLayers();
-
 }

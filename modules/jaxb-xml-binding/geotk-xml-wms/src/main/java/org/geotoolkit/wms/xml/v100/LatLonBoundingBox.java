@@ -159,7 +159,7 @@ public class LatLonBoundingBox implements AbstractGeographicBoundingBox {
 
     @Override
     public Boolean getInclusion() {
-        return false;
+        return true;
     }
 
 }

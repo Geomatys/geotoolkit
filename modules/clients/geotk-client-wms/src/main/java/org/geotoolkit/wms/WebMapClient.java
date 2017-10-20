@@ -21,7 +21,6 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.storage.coverage.CoverageType;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.wms.auto.GetCapabilitiesAuto;
@@ -44,11 +43,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.client.Client;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.coverage.CoverageResource;
@@ -75,7 +76,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
     private static final long TIMEOUT_GETCAPS = 20000L;
 
     private AbstractWMSCapabilities capabilities;
-    private DefaultAggregate rootNode = null;
+    private Resource rootNode = null;
 
     /**
      * The request header map for this server
@@ -356,8 +357,10 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
 
     @Override
     public synchronized Resource getRootResource() throws DataStoreException {
-        if(rootNode == null){
-            rootNode = new DefaultAggregate(NamesExt.create("root"));
+        if (rootNode != null) {
+            return rootNode;
+        }
+
             final AbstractWMSCapabilities capa;
             try {
                 capa = getCapabilities();
@@ -365,18 +368,32 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
                 throw new DataStoreException(ex);
             }
 
-            final List<AbstractLayer> layers = capa.getLayers();
-            for(AbstractLayer al : layers){
-                final String name = al.getName();
-                if(name != null){
-                    final GenericName nn = NamesExt.valueOf(name);
-                    final CoverageResource ref = createReference(nn);
-                    rootNode.addResource(ref);
-                }
-            }
-        }
+
+        rootNode = asResource(capa.getCapability().getLayer())
+                .orElse(new DefaultAggregate(Names.createLocalName(null, ":", "root")));
 
         return rootNode;
+    }
+
+    Optional<Resource> asResource(final AbstractLayer layer) throws CoverageStoreException {
+        if (layer == null) {
+            return Optional.empty();
+        }
+
+        final boolean isData = layer.getName() != null && layer.isQueryable();
+        final boolean isGroup = layer.getLayer() != null && !layer.getLayer().isEmpty();
+        final Resource result;
+        if (isData && isGroup) {
+            result = new QueryableAggregate(this, layer);
+        } else if (isGroup) {
+            result = new WMSAggregate(this, layer);
+        } else if (isData) {
+            result = new WMSCoverageResource(this, layer.getName());
+        } else {
+            result = null;
+        }
+
+        return Optional.ofNullable(result);
     }
 
     /**
