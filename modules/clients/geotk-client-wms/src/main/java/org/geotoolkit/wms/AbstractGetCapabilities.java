@@ -21,6 +21,7 @@ import org.geotoolkit.security.ClientSecurity;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.geotoolkit.wms.xml.WMSVersion;
 
 
 /**
@@ -77,7 +78,7 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
         requestParameters.put("REQUEST",    "GetCapabilities");
 
         if(version!=null){
-            requestParameters.put("VERSION",    version);
+            requestParameters.put(WMSVersion.v100.getCode().equals(version)? "WMTVER" : "VERSION", version);
         }
 
         if (updateSequence != null && !updateSequence.isEmpty()) {

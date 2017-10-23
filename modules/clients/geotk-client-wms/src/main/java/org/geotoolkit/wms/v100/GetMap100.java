@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011, Geomatys
+ *    (C) 2017, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,28 +14,29 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.ncwms.v111;
+package org.geotoolkit.wms.v100;
 
-import org.geotoolkit.ncwms.AbstractNcGetMap;
 import org.geotoolkit.security.ClientSecurity;
-
+import org.geotoolkit.wms.AbstractGetMap;
+import org.geotoolkit.wms.WebMapClient;
+import org.geotoolkit.wms.xml.WMSVersion;
 
 /**
- * Implementation for the GetMap request version 1.1.1.
  *
- * @author Olivier Terral (Geomatys)
- * @author Cédric Briançon (Geomatys)
- * @author Johann Sorel (Geomatys)
- * @module
+ * @author Alexis Manin (Geomatys)
  */
-public class NcGetMap111 extends AbstractNcGetMap {
+public class GetMap100 extends AbstractGetMap {
     /**
      * Defines the server url and its version.
      *
      * @param serverURL The url of the webservice.
      */
-    public NcGetMap111(final String serverURL, final ClientSecurity security){
-        super(serverURL,"1.1.1",security);
+    public GetMap100(final String serverURL, final ClientSecurity security){
+        super(serverURL,WMSVersion.v100.getCode(), security);
+    }
+
+    public GetMap100(final WebMapClient server, final ClientSecurity security){
+        super(server,WMSVersion.v100.getCode(), security);
     }
 
     @Override

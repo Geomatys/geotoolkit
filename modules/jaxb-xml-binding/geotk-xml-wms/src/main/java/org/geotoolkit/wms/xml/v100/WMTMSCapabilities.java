@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2017, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wms.xml.v111;
+package org.geotoolkit.wms.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.ows.xml.AbstractCapabilitiesCore;
 import org.geotoolkit.ows.xml.Sections;
-import org.geotoolkit.wms.xml.AbstractCapability;
 import org.geotoolkit.wms.xml.AbstractLayer;
-import org.geotoolkit.wms.xml.AbstractService;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import static org.geotoolkit.wms.xml.WMSBindingUtilities.explore;
 import static org.geotoolkit.wms.xml.WMSBindingUtilities.searchLayerByName;
@@ -37,73 +37,113 @@ import org.geotoolkit.wms.xml.WMSResponse;
 
 
 /**
- * <p>Root element of a getCapabilities Document version 1.1.1.
  *
- *
- * @author Guilhem Legal
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "WMT_MS_Capabilities", propOrder = {
+@XmlType(name = "", propOrder = {
     "service",
     "capability"
 })
 @XmlRootElement(name = "WMT_MS_Capabilities")
-public class WMT_MS_Capabilities implements AbstractWMSCapabilities, WMSResponse {
+public class WMTMSCapabilities implements AbstractWMSCapabilities, WMSResponse {
 
+    @XmlAttribute(name = "version")
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String version;
+    @XmlAttribute(name = "updateSequence")
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String updateSequence;
     @XmlElement(name = "Service", required = true)
-    private Service service;
+    protected Service service;
     @XmlElement(name = "Capability", required = true)
-    private Capability capability;
-    @XmlAttribute
-    private String version;
-    @XmlAttribute
-    private String updateSequence;
+    protected Capability capability;
 
     /**
-     * An empty constructor used by JAXB.
-     */
-    WMT_MS_Capabilities() {
-    }
-
-    /**
-     * Build a new WMSCapabilities object.
-     */
-    public WMT_MS_Capabilities(final String version, final String updateSequence) {
-        this(null, null, version, updateSequence);
-    }
-
-    /**
-     * Build a new WMSCapabilities object.
-     */
-    public WMT_MS_Capabilities(final Service service, final Capability capability,
-            final String version, final String updateSequence) {
-        this.capability     = capability;
-        this.service        = service;
-        this.updateSequence = updateSequence;
-        this.version        = version;
-    }
-
-
-    /**
-     * Gets the value of the service property.
+     * Obtient la valeur de la propriété version.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
      *
      */
-    @Override
-    public Service getService() {
-        return service;
-    }
-
-    public void setService(final AbstractService service) {
-        if (service instanceof Service) {
-            this.service = (Service) service;
+    public String getVersion() {
+        if (version == null) {
+            return "1.0.0";
         } else {
-            throw new IllegalArgumentException("not the good version object, expected 1.1.1");
+            return version;
         }
     }
 
     /**
-     * Gets the value of the capability property.
+     * Définit la valeur de la propriété version.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setVersion(String value) {
+        this.version = value;
+    }
+
+    /**
+     * Obtient la valeur de la propriété updateSequence.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getUpdateSequence() {
+        if (updateSequence == null) {
+            return "0";
+        } else {
+            return updateSequence;
+        }
+    }
+
+    /**
+     * Définit la valeur de la propriété updateSequence.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setUpdateSequence(String value) {
+        this.updateSequence = value;
+    }
+
+    /**
+     * Obtient la valeur de la propriété service.
+     *
+     * @return
+     *     possible object is
+     *     {@link Service }
+     *
+     */
+    public Service getService() {
+        return service;
+    }
+
+    /**
+     * Définit la valeur de la propriété service.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link Service }
+     *
+     */
+    public void setService(Service value) {
+        this.service = value;
+    }
+
+    /**
+     * Obtient la valeur de la propriété capability.
+     *
+     * @return
+     *     possible object is
+     *     {@link Capability }
      *
      */
     @Override
@@ -111,16 +151,25 @@ public class WMT_MS_Capabilities implements AbstractWMSCapabilities, WMSResponse
         return capability;
     }
 
-    public void setCapability(final AbstractCapability capability) {
-        if (capability instanceof Capability) {
-            this.capability = (Capability) capability;
-        } else {
-            throw new IllegalArgumentException("not the good version object, expected 1.1.1");
-        }
+    /**
+     * Définit la valeur de la propriété capability.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link Capability }
+     *
+     */
+    public void setCapability(Capability value) {
+        this.capability = value;
     }
 
     @Override
-    public void updateURL(final String url) {
+    public AbstractCapabilitiesCore applySections(Sections sections) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void updateURL(String url) {
         if (capability != null) {
             if (capability.getRequest() != null) {
                 capability.getRequest().updateURL(url);
@@ -130,28 +179,6 @@ public class WMT_MS_Capabilities implements AbstractWMSCapabilities, WMSResponse
                 updateLayerURL(url, mainLayer);
             }
         }
-    }
-
-    /**
-     * Gets the value of the version property.
-     *
-     */
-    @Override
-    public String getVersion() {
-        if (version == null) {
-            return "1.1.1";
-        } else {
-            return version;
-        }
-    }
-
-    /**
-     * Gets the value of the updateSequence property.
-     *
-     */
-    @Override
-    public String getUpdateSequence() {
-        return updateSequence;
     }
 
     /**
@@ -188,10 +215,4 @@ public class WMT_MS_Capabilities implements AbstractWMSCapabilities, WMSResponse
         explore(layers, layer);
         return layers;
     }
-
-    @Override
-    public AbstractCapabilitiesCore applySections(Sections sections) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

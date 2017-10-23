@@ -142,7 +142,7 @@ public final class WMSUtilities {
                     //search and return the first crs that we succesfuly parsed.
                     try{
                         CoordinateReferenceSystem crs = CRS.forCode(srid);
-                        if(crs != null){
+                        if (crs != null) {
                             return crs;
                         }
                     }catch(FactoryException ex){

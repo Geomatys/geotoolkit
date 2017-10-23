@@ -20,6 +20,7 @@ package org.geotoolkit.wms.xml;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.xml.XML;
 
@@ -33,14 +34,48 @@ import static org.geotoolkit.gml.xml.GMLMarshallerPool.createJAXBContext;
 public final class WMSMarshallerPool {
 
     /**
-     * we separate the v 1.3.0 instance in order to marshall with no prefix (QGIS issue)
+     * we separate the v 1.0.0 INSTANCE in order to marshall with no prefix. We
+     * have to do so, because there's a problem with namespaces in old OGC
+     * standards. Also, we wrap produced unmarshallers to skip dtd download/
+     * validation at read.
      */
-    private static final MarshallerPool instancev130;
+    private static final MarshallerPool V_100;
+    static {
+        try {
+            final Map<String, Object> properties = new HashMap<>();
+            properties.put(XML.DEFAULT_NAMESPACE, "http://www.opengis.net/wms");
+            V_100 = new MarshallerPool(createJAXBContext(
+                    "org.geotoolkit.ogc.xml.exception:"
+                    + "org.geotoolkit.wms.xml.v100:"
+                    + "org.apache.sis.internal.jaxb.geometry",
+                    WMSMarshallerPool.class.getClassLoader()), properties) {
+                @Override
+                public Unmarshaller acquireUnmarshaller() throws JAXBException {
+                    final Unmarshaller u = super.acquireUnmarshaller();
+                    return new DTDIgnoreUnmarshaller(u);
+                }
+
+                @Override
+                public void recycle(Unmarshaller unmarshaller) {
+                    if (unmarshaller instanceof DTDIgnoreUnmarshaller)
+                        unmarshaller = ((DTDIgnoreUnmarshaller) unmarshaller).source;
+                    super.recycle(unmarshaller);
+                }
+            };
+        } catch (JAXBException ex) {
+            throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
+        }
+    }
+
+    /**
+     * we separate the v 1.3.0 INSTANCE in order to marshall with no prefix (QGIS issue)
+     */
+    private static final MarshallerPool V_130;
     static {
         try {
             final Map<String, String> properties = new HashMap<>();
             properties.put(XML.DEFAULT_NAMESPACE, "http://www.opengis.net/wms");
-            instancev130 = new MarshallerPool(createJAXBContext(
+            V_130 = new MarshallerPool(createJAXBContext(
                     "org.geotoolkit.ogc.xml.exception:" +
                     "org.geotoolkit.wms.xml.v130:" +
                     "org.geotoolkit.sld.xml.v110:" +
@@ -52,10 +87,10 @@ public final class WMSMarshallerPool {
         }
     }
 
-    private static final MarshallerPool instance;
+    private static final MarshallerPool DEFAULT;
     static {
         try {
-            instance = new MarshallerPool(createJAXBContext(
+            DEFAULT = new MarshallerPool(createJAXBContext(
                     "org.geotoolkit.ogc.xml.exception:" +
                     "org.geotoolkit.wms.xml.v111:" +
                     "org.geotoolkit.wms.xml.v130:" +
@@ -69,12 +104,23 @@ public final class WMSMarshallerPool {
     }
 
     private WMSMarshallerPool() {}
+    public static MarshallerPool getInstance(final WMSVersion version) {
+        switch (version) {
+            case v100: return V_100;
+            case v130: return V_130;
+            default: return DEFAULT;
+        }
+    }
 
     public static MarshallerPool getInstance() {
-        return instance;
+        return DEFAULT;
     }
 
     public static MarshallerPool getInstance130() {
-        return instancev130;
+        return V_130;
+    }
+
+    public static MarshallerPool getInstance100() {
+        return V_100;
     }
 }

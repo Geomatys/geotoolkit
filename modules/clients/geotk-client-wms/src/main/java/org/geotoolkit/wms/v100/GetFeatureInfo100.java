@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2017, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,34 +14,34 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wms.v111;
+package org.geotoolkit.wms.v100;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.AbstractGetFeatureInfo;
 import org.geotoolkit.wms.WebMapClient;
+import org.geotoolkit.wms.xml.WMSVersion;
 
 
 /**
- * Implementation for the GetFeatureInfo request version 1.1.1.
+ * Implementation for the GetFeatureInfo request version 1.0.0.
  *
- * @author Cédric Briançon (Geomatys)
- * @module
+ * @author Alexis Manin (Geomatys)
  */
-public class GetFeatureInfo111 extends AbstractGetFeatureInfo {
+public class GetFeatureInfo100 extends AbstractGetFeatureInfo {
 
     /**
      * Defines the server url and its version.
      *
      * @param serverURL The url of the webservice.
      */
-    public GetFeatureInfo111(final String serverURL, final ClientSecurity security){
-        super(serverURL, "1.1.1", security);
+    public GetFeatureInfo100(final String serverURL, final ClientSecurity security){
+        super(serverURL, WMSVersion.v100.getCode(), security);
     }
 
-    public GetFeatureInfo111(final WebMapClient server, final ClientSecurity security){
-        super(server,"1.1.1", security);
+    public GetFeatureInfo100(final WebMapClient server, final ClientSecurity security){
+        super(server,WMSVersion.v100.getCode(), security);
     }
 
     /**

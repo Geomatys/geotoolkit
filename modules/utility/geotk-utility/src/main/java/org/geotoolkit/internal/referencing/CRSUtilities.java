@@ -111,6 +111,13 @@ public final class CRSUtilities extends Static {
      * @throws TransformException if {@code crs} can't be reduced to a two-coordinate system.
      *         We use this exception class since this method is usually invoked in the context
      *         of a transformation process.
+     * @deprecated The logic behind this method is not safe at all. It will only
+     * check the first component of the input CRS, so a CRS whose 2 dimensional
+     * axis is not in first position, it will return a null value. If the aim is
+     * to retrieve the horizontal component of a crs, please prefer {@link CRS#getHorizontalComponent(org.opengis.referencing.crs.CoordinateReferenceSystem)
+     * }. On the other hand, if you aim to retrieve a 2D CRS, whatever its
+     * signification, you should use a custoam approach better fitting your
+     * need.
      */
     public static CoordinateReferenceSystem getCRS2D(CoordinateReferenceSystem crs)
             throws TransformException

@@ -21,6 +21,7 @@ package org.geotoolkit.wms.xml;
  * @author Johann Sorel (Geomatys)
  */
 public enum WMSVersion {
+    v100("1.0.0"),
     v111("1.1.1"),
     v130("1.3.0"),
     auto("auto");
