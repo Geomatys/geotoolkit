@@ -105,7 +105,21 @@ public class Data implements DataType {
      * This element is used to embed the data in a WPS request or response.
      * The content can be XML data, plain character data, or specially encoded binary data (i.e. base64).
      *
-     * @return Objects of the following type(s) are allowed in the list
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the content property.
+     *
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getContent().add(newItem);
+     * </pre>
+     *
+     *
+     * <p>
+     * Objects of the following type(s) are allowed in the list
      * {@link String }
      * {@link Element }
      *
@@ -193,7 +207,16 @@ public class Data implements DataType {
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
      *
-     * @return always non-null
+     * <p>
+     * the map is keyed by the name of the attribute and
+     * the value is the string value of the attribute.
+     *
+     * the map returned by this method is live, and you can add new attribute
+     * by updating the map directly. Because of this design, there's no setter.
+     *
+     *
+     * @return
+     *     always non-null
      */
     public Map<QName, String> getOtherAttributes() {
         return otherAttributes;
@@ -205,7 +228,7 @@ public class Data implements DataType {
             for (Object obj : content) {
                 if (obj instanceof ComplexDataType) {
                     return (ComplexDataType) obj;
-                }
+}
             }
         }
         return null;
