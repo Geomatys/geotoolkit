@@ -33,7 +33,6 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
@@ -74,11 +73,15 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
      */
     @Deprecated
     public GMLFeatureStore(final File f) throws MalformedURLException, DataStoreException{
-        this(f.toPath());
+        this(f.toURI());
     }
 
     public GMLFeatureStore(final Path f) throws MalformedURLException, DataStoreException{
-        this(toParameters(f));
+        this(f.toUri());
+    }
+
+    public GMLFeatureStore(final URI uri) throws MalformedURLException, DataStoreException{
+        this(toParameters(uri));
     }
 
     public GMLFeatureStore(final ParameterValueGroup params) throws DataStoreException {
@@ -97,9 +100,9 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
         this.longitudeFirst = (Boolean) params.parameter(GMLFeatureStoreFactory.LONGITUDE_FIRST.getName().toString()).getValue();
     }
 
-    private static ParameterValueGroup toParameters(final Path f) throws MalformedURLException{
+    private static ParameterValueGroup toParameters(final URI uri) throws MalformedURLException{
         final Parameters params = Parameters.castOrWrap(GMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
-        params.getOrCreate(GMLFeatureStoreFactory.PATH).setValue(f.toUri());
+        params.getOrCreate(GMLFeatureStoreFactory.PATH).setValue(uri);
         return params;
     }
 
