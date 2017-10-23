@@ -48,7 +48,6 @@ import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 
@@ -129,16 +128,6 @@ public class WMSCoverageReader extends GridCoverageReader{
         final WMSCoverageResource ref = getInput();
         final WebMapClient server = (WebMapClient)ref.getStore();
 
-        CoordinateReferenceSystem crs = param.getCoordinateReferenceSystem();
-        if (crs == null) {
-            crs = ref.getBounds().getCoordinateReferenceSystem();
-        }
-        try {
-            crs = CRSUtilities.getCRS2D(crs);
-        } catch (TransformException ex) {
-            throw new CoverageStoreException("WMS reading expect a CRS whose first component is 2D.", ex);
-        }
-
         GeneralEnvelope env;
         if (param.getEnvelope() == null) {
             env = new GeneralEnvelope(ref.getBounds());
@@ -146,9 +135,36 @@ public class WMSCoverageReader extends GridCoverageReader{
             env = new GeneralEnvelope(param.getEnvelope());
         }
 
-        if (env.getCoordinateReferenceSystem() != null && !Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), crs)) {
+        CoordinateReferenceSystem crs = param.getCoordinateReferenceSystem();
+        if (crs == null) {
+            crs = env.getCoordinateReferenceSystem();
+        }
+
+        /* No CRS given, and an envelope without CRS has been given. In such a
+         * case, we can only fallback on layer base coordinate reference system.
+         * Note that as we're in a confusing situation, the only check we can do
+         * is ensure given envelope dimension is 2D or compatible with the
+         * layer's one. The dimension check will be done after we determined the
+         * reference system and its 2D component. It will allow to set the
+         * envelope CRS according to its number of dimensions.
+         */
+        if (crs == null) {
+            crs = ref.getBounds().getCoordinateReferenceSystem();
+        }
+
+        final CoordinateReferenceSystem crs2d;
+        try {
+            crs2d = CRSUtilities.getCRS2D(crs);
+        } catch (TransformException ex) {
+            throw new CoverageStoreException("WMS reading expect a CRS whose first component is 2D.", ex);
+        }
+
+        final CoordinateReferenceSystem candidateCRS = env.getDimension() > 2? crs : crs2d;
+        if (env.getCoordinateReferenceSystem() == null) {
+            env.setCoordinateReferenceSystem(candidateCRS);
+        } else if (!Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), candidateCRS)) {
             try {
-                env = GeneralEnvelope.castOrCopy(Envelopes.transform(env, crs));
+                env = GeneralEnvelope.castOrCopy(Envelopes.transform(env, candidateCRS));
             } catch (TransformException ex) {
                 throw new CoverageStoreException("Could not transform coverage envelope to given crs.", ex);
             }
@@ -183,7 +199,6 @@ public class WMSCoverageReader extends GridCoverageReader{
         try (final InputStream stream = request.getResponseStream()) {
             final BufferedImage image = ImageIO.read(stream);
 
-            final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(env.getCoordinateReferenceSystem());
             final Envelope env2D = Envelopes.transform(env, crs2d);
             final AffineTransform gridToCRS = ReferencingUtilities.toAffine(dim, env2D);
 
