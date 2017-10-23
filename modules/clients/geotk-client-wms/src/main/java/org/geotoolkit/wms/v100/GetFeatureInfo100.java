@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2017, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,10 +25,9 @@ import org.geotoolkit.wms.xml.WMSVersion;
 
 
 /**
- * Implementation for the GetFeatureInfo request version 1.1.1.
+ * Implementation for the GetFeatureInfo request version 1.0.0.
  *
- * @author Cédric Briançon (Geomatys)
- * @module
+ * @author Alexis Manin (Geomatys)
  */
 public class GetFeatureInfo100 extends AbstractGetFeatureInfo {
 
