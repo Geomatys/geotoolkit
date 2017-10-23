@@ -56,7 +56,10 @@ import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.Style;
 import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.wms.xml.WMSVersion;
 
 /**
  * Convinient WMS methods.
@@ -142,7 +145,13 @@ public final class WMSUtilities {
                     //search and return the first crs that we succesfuly parsed.
                     try{
                         CoordinateReferenceSystem crs = CRS.forCode(srid);
-                        if(crs != null){
+                        if (crs != null) {
+                            /* 1.0.0 standard queries longitude as first axis. For
+                             * more information, see section 6.2.8.3
+                             */
+                            if (server.getVersion() != null && WMSVersion.v100.equals(server.getVersion())) {
+                                crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED);
+                            }
                             return crs;
                         }
                     }catch(FactoryException ex){
