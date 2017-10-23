@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.UnmarshalException;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.ows.xml.ExceptionResponse;
@@ -35,6 +36,7 @@ import org.geotoolkit.wps.adaptor.ComplexAdaptor;
 import org.geotoolkit.wps.adaptor.DataAdaptor;
 import org.geotoolkit.wps.adaptor.LiteralAdaptor;
 import org.geotoolkit.wps.xml.ExecuteResponse;
+import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.DataInputType;
 import org.geotoolkit.wps.xml.v200.DataOutputType;
 import org.geotoolkit.wps.xml.v200.OutputDefinitionType;
@@ -343,14 +345,7 @@ public class WPS2Process extends AbstractProcess {
             if (response instanceof Result) {
                 final Result result = (Result) response;
                 for (DataOutputType out : result.getOutput()) {
-                    if (out != null) {
-                        final ExtendedParameterDescriptor outDesc = (ExtendedParameterDescriptor) outputParameters.getDescriptor().descriptor(out.getId());
-                        final DataAdaptor adaptor = (DataAdaptor) outDesc.getUserObject().get(DataAdaptor.USE_ADAPTOR);
-                        final Object value = adaptor.fromWPS2Input(out);
-                        outputParameters.getOrCreate(outDesc).setValue(value);
-                    } else {
-                        throw new UnsupportedOperationException("unsupported data type");
-                    }
+                    fillOutputs(outputParameters, out);
                 }
 
             } else if (response instanceof ExceptionResponse) {
@@ -362,6 +357,29 @@ public class WPS2Process extends AbstractProcess {
             Logger.getLogger(WPS2Process.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(WPS2Process.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private static void fillOutputs(Parameters outParams, DataOutputType out) {
+        if (out != null) {
+            final GeneralParameterDescriptor param = outParams.getDescriptor().descriptor(out.getId());
+
+            if (param instanceof ParameterDescriptorGroup) {
+                //expecting a complex output
+                final Parameters group = Parameters.castOrWrap(outParams.addGroup(out.getId()));
+                for (DataOutputType output : out.getOutput()) {
+                    fillOutputs(group, output);
+                }
+            } else {
+                //simple output
+                final ExtendedParameterDescriptor outDesc = (ExtendedParameterDescriptor) outParams.getDescriptor().descriptor(out.getId());
+                final DataAdaptor adaptor = (DataAdaptor) outDesc.getUserObject().get(DataAdaptor.USE_ADAPTOR);
+                final Object value = adaptor.fromWPS2Input(out);
+                outParams.getOrCreate(outDesc).setValue(value);
+            }
+
+        } else {
+            throw new UnsupportedOperationException("unsupported data type");
         }
     }
 

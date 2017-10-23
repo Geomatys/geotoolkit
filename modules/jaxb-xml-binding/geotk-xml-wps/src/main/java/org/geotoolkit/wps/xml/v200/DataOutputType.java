@@ -17,6 +17,8 @@
 
 package org.geotoolkit.wps.xml.v200;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -46,7 +48,7 @@ import org.geotoolkit.wps.xml.DataOutput;
  *         &lt;choice>
  *           &lt;element ref="{http://www.opengis.net/wps/2.0}Data"/>
  *           &lt;element ref="{http://www.opengis.net/wps/2.0}Reference"/>
- *           &lt;element name="Output" type="{http://www.opengis.net/wps/2.0}DataOutputType"/>
+ *           &lt;element name="Output" type="{http://www.opengis.net/wps/2.0}DataOutputType" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;/choice>
  *       &lt;/sequence>
  *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
@@ -70,7 +72,7 @@ public class DataOutputType implements DataOutput {
     @XmlElement(name = "Reference")
     protected ReferenceType reference;
     @XmlElement(name = "Output")
-    protected DataOutputType output;
+    protected List<DataOutputType> output;
     @XmlAttribute(name = "id", required = true)
     @XmlSchemaType(name = "anyURI")
     protected String id;
@@ -139,25 +141,30 @@ public class DataOutputType implements DataOutput {
     /**
      * Gets the value of the output property.
      *
-     * @return
-     *     possible object is
-     *     {@link DataOutputType }
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the output property.
+     *
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getOutput().add(newItem);
+     * </pre>
+     *
+     *
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link DataOutputType }
+     *
      *
      */
-    public DataOutputType getOutput() {
-        return output;
-    }
-
-    /**
-     * Sets the value of the output property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link DataOutputType }
-     *
-     */
-    public void setOutput(DataOutputType value) {
-        this.output = value;
+    public List<DataOutputType> getOutput() {
+        if (output == null) {
+            output = new ArrayList<>();
+        }
+        return this.output;
     }
 
     /**

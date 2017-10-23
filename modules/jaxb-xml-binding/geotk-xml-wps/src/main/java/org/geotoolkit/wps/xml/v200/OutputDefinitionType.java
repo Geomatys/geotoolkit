@@ -17,6 +17,8 @@
 
 package org.geotoolkit.wps.xml.v200;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -45,7 +47,7 @@ import org.geotoolkit.wps.xml.OutputDefinition;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="Output" type="{http://www.opengis.net/wps/2.0}OutputDefinitionType" minOccurs="0"/>
+ *         &lt;element name="Output" type="{http://www.opengis.net/wps/2.0}OutputDefinitionType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attGroup ref="{http://www.opengis.net/wps/2.0}dataEncodingAttributes"/>
  *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
@@ -64,7 +66,7 @@ import org.geotoolkit.wps.xml.OutputDefinition;
 public class OutputDefinitionType implements DocumentOutputDefinition {
 
     @XmlElement(name = "Output")
-    protected OutputDefinitionType output;
+    protected List<OutputDefinitionType> output;
     @XmlAttribute(name = "id", required = true)
     @XmlSchemaType(name = "anyURI")
     protected String id;
@@ -97,25 +99,30 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
     /**
      * Gets the value of the output property.
      *
-     * @return
-     *     possible object is
-     *     {@link OutputDefinitionType }
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the output property.
+     *
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getOutput().add(newItem);
+     * </pre>
+     *
+     *
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link OutputDefinitionType }
+     *
      *
      */
-    public OutputDefinitionType getOutput() {
-        return output;
-    }
-
-    /**
-     * Sets the value of the output property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link OutputDefinitionType }
-     *
-     */
-    public void setOutput(OutputDefinitionType value) {
-        this.output = value;
+    public List<OutputDefinitionType> getOutput() {
+        if (output == null) {
+            output = new ArrayList<OutputDefinitionType>();
+        }
+        return this.output;
     }
 
     /**
@@ -256,7 +263,7 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
     public boolean isReference() {
         if (transmission != null) {
             return transmission.equals(DataTransmissionModeType.REFERENCE);
-        }
+}
         return false;
     }
 

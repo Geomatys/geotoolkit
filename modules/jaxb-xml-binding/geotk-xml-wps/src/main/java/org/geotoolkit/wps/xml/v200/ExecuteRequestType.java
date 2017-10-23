@@ -47,7 +47,7 @@ import org.geotoolkit.wps.xml.Execute;
  *       &lt;sequence>
  *         &lt;element ref="{http://www.opengis.net/ows/2.0}Identifier"/>
  *         &lt;element name="Input" type="{http://www.opengis.net/wps/2.0}DataInputType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="Output" type="{http://www.opengis.net/wps/2.0}OutputDefinitionType" maxOccurs="unbounded"/>
+ *         &lt;element name="Output" type="{http://www.opengis.net/wps/2.0}OutputDefinitionType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="mode" use="required">
  *         &lt;simpleType>
@@ -86,7 +86,7 @@ public class ExecuteRequestType extends RequestBaseType implements Execute {
     protected CodeType identifier;
     @XmlElement(name = "Input")
     protected List<DataInputType> input;
-    @XmlElement(name = "Output", required = true)
+    @XmlElement(name = "Output")
     protected List<OutputDefinitionType> output;
     @XmlAttribute(name = "mode", required = true)
     protected String mode;
@@ -143,6 +143,20 @@ public class ExecuteRequestType extends RequestBaseType implements Execute {
     /**
      * Gets the value of the input property.
      *
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the input property.
+     *
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getInput().add(newItem);
+     * </pre>
+     *
+     *
+     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DataInputType }
      *
@@ -160,6 +174,20 @@ public class ExecuteRequestType extends RequestBaseType implements Execute {
     /**
      * Gets the value of the output property.
      *
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the output property.
+     *
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getOutput().add(newItem);
+     * </pre>
+     *
+     *
+     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link OutputDefinitionType }
      *

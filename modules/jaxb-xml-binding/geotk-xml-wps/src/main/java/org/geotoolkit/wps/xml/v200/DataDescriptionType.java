@@ -75,6 +75,20 @@ public abstract class DataDescriptionType implements DataDescription {
     /**
      * Gets the value of the format property.
      *
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the format property.
+     *
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getFormat().add(newItem);
+     * </pre>
+     *
+     *
+     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Format }
      *
@@ -94,7 +108,7 @@ public abstract class DataDescriptionType implements DataDescription {
         for (Format format : getFormat()) {
             if (format.isDefault()) {
                 return format.getMimeType();
-            }
+        }
         }
         if (!format.isEmpty()) {
             return format.get(0).getMimeType();
