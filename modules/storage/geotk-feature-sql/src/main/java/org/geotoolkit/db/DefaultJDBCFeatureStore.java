@@ -33,7 +33,6 @@ import javax.sql.DataSource;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectFeatureType;
-import org.geotoolkit.feature.ViewFeatureType;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
@@ -426,7 +425,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
         //if we need to constraint type
         if(!returnedFeatureType.equals(queryFeatureType)){
-            reader = FeatureStreams.decorate(reader, (ViewFeatureType) returnedFeatureType, query.getHints());
+            reader = FeatureStreams.decorate(reader, returnedFeatureType, query.getHints());
         }
 
         return reader;

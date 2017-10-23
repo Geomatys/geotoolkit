@@ -751,6 +751,7 @@ public final class DataBaseModel {
 
                 final List<PropertyTypeBuilder> descs = ftb.properties();
 
+                boolean defaultGeomSet = false;
                 for(int i=0,n=descs.size(); i<n; i++){
                     final AttributeTypeBuilder atb = (AttributeTypeBuilder) descs.get(i);
                     final String name = atb.getName().tip().toString();
@@ -784,6 +785,10 @@ public final class DataBaseModel {
                         atb.setCRS(crs);
                         if(srid != null){
                             atb.addCharacteristic(JDBCFeatureStore.JDBC_PROPERTY_SRID).setDefaultValue(srid);
+                            if (!defaultGeomSet) {
+                                atb.addRole(AttributeRole.DEFAULT_GEOMETRY);
+                                defaultGeomSet = true;
+                            }
                         }
                     }
                 }
