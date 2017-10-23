@@ -520,13 +520,13 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
         }
         final boolean isData = (info instanceof DataIdentification);
         final Citation citation = info.getCitation();
-        if (!isDefined(IDENTIFIER)) {
+        if (!isDefined(IDENTIFIER.TEXT)) {
             if (citation != null) {
                 for (final Identifier id : nonNull(citation.getIdentifiers())) {
                     if (setAttribute(id)) {
                         // Unconditionally set the naming authority
                         // in order to be consistent with the code.
-                        attributeName = NAMING_AUTHORITY;
+                        attributeName = IDENTIFIER.VOCABULARY;
                         setAttribute(id.getAuthority());
                         fileIdentifier = null;
                         break;
@@ -825,8 +825,8 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
          * This is okay because we accumulated the keywords in a class field, so the previous
          * attribute values are not lost. Similar argument applies to the legal information.
          */
-        if (setAttribute(KEYWORDS, Strings.toString(keywords, ", "))) {
-            setAttribute(VOCABULARY, vocabulary); // Must be consistent with the keywords.
+        if (setAttribute(KEYWORDS.TEXT, Strings.toString(keywords, ", "))) {
+            setAttribute(KEYWORDS.VOCABULARY, vocabulary); // Must be consistent with the keywords.
         }
         if (!isDefined(PROCESSING_LEVEL)) {
             for (final ContentInformation content : nonNull(metadata.getContentInfo())) {

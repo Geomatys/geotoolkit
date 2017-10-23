@@ -532,14 +532,14 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
      * @throws IOException If an I/O operation was necessary but failed.
      */
     private Identifier getFileIdentifier() throws IOException {
-        String identifier = getStringValue(IDENTIFIER);
+        String identifier = getStringValue(IDENTIFIER.TEXT);
         if (identifier == null) {
             identifier = file.getId();
             if (identifier == null) {
                 return null;
             }
         }
-        final String namespace  = getStringValue(NAMING_AUTHORITY);
+        final String namespace  = getStringValue(IDENTIFIER.VOCABULARY);
         return new DefaultIdentifier((namespace != null) ? new DefaultCitation(namespace) : null, identifier);
     }
 
@@ -765,7 +765,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
     private Keywords createKeywords(final Group group, final KeywordType type, final boolean standard)
             throws IOException
     {
-        final String list = getStringValue(group, standard ? STANDARD_NAME : KEYWORDS);
+        final String list = getStringValue(group, (standard ? STANDARD_NAME : KEYWORDS).TEXT);
         DefaultKeywords keywords = null;
         if (list != null) {
             final Set<InternationalString> words = new LinkedHashSet<>();
@@ -779,7 +779,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                 keywords = new DefaultKeywords();
                 keywords.setKeywords(words);
                 keywords.setType(type);
-                final String vocabulary = getStringValue(group, standard ? STANDARD_NAME_VOCABULARY : VOCABULARY);
+                final String vocabulary = getStringValue(group, (standard ? STANDARD_NAME : KEYWORDS).VOCABULARY);
                 if (vocabulary != null) {
                     keywords.setThesaurusName(new DefaultCitation(vocabulary));
                 }
