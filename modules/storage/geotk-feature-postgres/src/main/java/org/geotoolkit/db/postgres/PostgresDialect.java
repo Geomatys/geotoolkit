@@ -129,6 +129,7 @@ import org.opengis.feature.PropertyType;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.IdentifiedObject;
 import org.postgresql.jdbc.PgResultSetMetaData;
+import org.postgresql.util.PSQLException;
 
 /**
  * Postgres/Postgis dialect.
@@ -392,6 +393,7 @@ final class PostgresDialect extends AbstractSQLDialect{
 
     //cache
     private Version version = null;
+    private Boolean hasRasterSchema = null;
 
     PostgresDialect(DefaultJDBCFeatureStore datastore) {
         this.featurestore = datastore;
@@ -1049,6 +1051,23 @@ final class PostgresDialect extends AbstractSQLDialect{
         ResultSet result = null;
         Integer srid = null;
 
+        //check if we have a raster schema installed
+        if (hasRasterSchema==null) {
+            try {
+                final StringBuilder sb = new StringBuilder("SELECT SRID FROM RASTER_COLUMNS LIMIT 1");
+                final String sqlStatement = sb.toString();
+
+                featurestore.getLogger().log(Level.FINE, "Raster type check; {0} ", sqlStatement);
+                statement = cx.createStatement();
+                result = statement.executeQuery(sqlStatement);
+                hasRasterSchema = true;
+            } catch(PSQLException ex) {
+                hasRasterSchema = false;
+            } finally {
+                JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(), null,statement,result);
+            }
+        }
+
         //search in the geometry columns
         try {
             final StringBuilder sb = new StringBuilder("SELECT SRID FROM GEOMETRY_COLUMNS WHERE ");
@@ -1071,7 +1090,7 @@ final class PostgresDialect extends AbstractSQLDialect{
             JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(), null,statement,result);
         }
 
-        if(srid==null || srid==0){
+        if((srid==null || srid==0) && hasRasterSchema){
             //search the raster columns view
             try {
                 final StringBuilder sb = new StringBuilder("SELECT SRID FROM RASTER_COLUMNS WHERE ");

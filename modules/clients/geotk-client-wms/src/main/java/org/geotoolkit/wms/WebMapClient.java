@@ -21,7 +21,6 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.storage.coverage.CoverageType;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.wms.auto.GetCapabilitiesAuto;
@@ -40,19 +39,23 @@ import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.client.Client;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.wms.v100.GetCapabilities100;
+import org.geotoolkit.wms.v100.GetFeatureInfo100;
+import org.geotoolkit.wms.v100.GetMap100;
 
 
 /**
@@ -73,7 +76,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
     private static final long TIMEOUT_GETCAPS = 20000L;
 
     private AbstractWMSCapabilities capabilities;
-    private DefaultAggregate rootNode = null;
+    private Resource rootNode = null;
 
     /**
      * The request header map for this server
@@ -162,7 +165,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
         //if version is null, call getCapabilities to found service version
         if(version==null){
             if(LOGGER.isLoggable(Level.FINE)){
-                LOGGER.log(Level.FINE, "No version define : search it on getCapabilities");
+                LOGGER.log(Level.FINE, "No version defined : search it on getCapabilities");
             }
             try {
                 if(capabilities!=null){
@@ -233,57 +236,24 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
      * @return {@linkplain AbstractWMSCapabilities capabilities} response but never {@code null}.
      * @throws CapabilitiesException
      */
-    public AbstractWMSCapabilities getCapabilities(final long timeout) throws CapabilitiesException{
-
+    public AbstractWMSCapabilities getCapabilities(final long timeout) throws CapabilitiesException {
         if (capabilities != null) {
             return capabilities;
         }
+        final GetCapabilitiesRequest getCaps = createGetCapabilities();
+        getCaps.getHeaderMap().putAll(getRequestHeaderMap());
+        getCaps.setTimeout((int) (timeout & Integer.MAX_VALUE));
 
-        final CapabilitiesException[] exception = new CapabilitiesException[1];
-
-        //Thread to prevent infinite request on a server
-        final Thread thread = new Thread() {
-            @Override
-            public void run() {
-                final GetCapabilitiesRequest getCaps = createGetCapabilities();
-
-                //Filling the request header map from the map of the layer's server
-                final Map<String, String> headerMap = getRequestHeaderMap();
-                getCaps.getHeaderMap().putAll(headerMap);
-
-                try {
-                    System.out.println(getCaps.getURL());
-                    capabilities = WMSBindingUtilities.unmarshall(getCaps.getResponseStream(), getVersion());
-                } catch (Exception ex) {
-                    capabilities = null;
-                    try {
-                        exception[0] = new CapabilitiesException("Wrong URL, the server doesn't answer : " +
-                                createGetCapabilities().getURL().toString(), ex);
-                    } catch (MalformedURLException ex1) {
-                        exception[0] = new CapabilitiesException("Malformed URL, the server doesn't answer. ", ex);
-                    }
-                }
-            }
-        };
-
-        thread.start();
-        final long start = System.currentTimeMillis();
+        // Useful, because it serves as trace and URL validation
         try {
-            thread.join(timeout);
-        } catch (InterruptedException ex) {
-            throw new CapabilitiesException("The thread to obtain GetCapabilities doesn't answer.");
-        }
-
-        if(exception[0] != null){
-            throw exception[0];
-        }
-
-        if ((System.currentTimeMillis() - start) > timeout) {
-            throw new CapabilitiesException("TimeOut error, the server takes too much time to answer.");
+            LOGGER.log(Level.FINE, getCaps.getURL().toString());
+            capabilities = WMSBindingUtilities.unmarshall(getCaps.getResponseStream(), getVersion());
+        } catch (Exception ex) {
+            throw new CapabilitiesException("Cannot handle GetCapabilities", ex);
         }
 
         //force throw CapabilitiesException if the returned capabilities object is null
-        if(capabilities == null){
+        if (capabilities == null) {
             throw new CapabilitiesException("The capabilities document is null.");
         }
 
@@ -308,6 +278,8 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
      */
     public GetMapRequest createGetMap() {
         switch (getVersion()) {
+            case v100:
+                return new GetMap100(this,getClientSecurity());
             case v111:
                 return new GetMap111(this,getClientSecurity());
             case v130:
@@ -325,6 +297,8 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
      */
     public GetCapabilitiesRequest createGetCapabilities() {
         switch (getVersion()) {
+            case v100:
+                return new GetCapabilities100(serverURL.toString(),getClientSecurity());
             case v111:
                 return new GetCapabilities111(serverURL.toString(),getClientSecurity());
             case v130:
@@ -362,6 +336,8 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
      */
     public GetFeatureInfoRequest createGetFeatureInfo() {
         switch (getVersion()) {
+            case v100:
+                return new GetFeatureInfo100(this,getClientSecurity());
             case v111:
                 return new GetFeatureInfo111(this,getClientSecurity());
             case v130:
@@ -381,8 +357,10 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
 
     @Override
     public synchronized Resource getRootResource() throws DataStoreException {
-        if(rootNode == null){
-            rootNode = new DefaultAggregate(NamesExt.create("root"));
+        if (rootNode != null) {
+            return rootNode;
+        }
+
             final AbstractWMSCapabilities capa;
             try {
                 capa = getCapabilities();
@@ -390,18 +368,32 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
                 throw new DataStoreException(ex);
             }
 
-            final List<AbstractLayer> layers = capa.getLayers();
-            for(AbstractLayer al : layers){
-                final String name = al.getName();
-                if(name != null){
-                    final GenericName nn = NamesExt.valueOf(name);
-                    final CoverageResource ref = createReference(nn);
-                    rootNode.addResource(ref);
-                }
-            }
-        }
+
+        rootNode = asResource(capa.getCapability().getLayer())
+                .orElse(new DefaultAggregate(Names.createLocalName(null, ":", "root")));
 
         return rootNode;
+    }
+
+    Optional<Resource> asResource(final AbstractLayer layer) throws CoverageStoreException {
+        if (layer == null) {
+            return Optional.empty();
+        }
+
+        final boolean isData = layer.getName() != null && layer.isQueryable();
+        final boolean isGroup = layer.getLayer() != null && !layer.getLayer().isEmpty();
+        final Resource result;
+        if (isData && isGroup) {
+            result = new QueryableAggregate(this, layer);
+        } else if (isGroup) {
+            result = new WMSAggregate(this, layer);
+        } else if (isData) {
+            result = new WMSCoverageResource(this, layer.getName());
+        } else {
+            result = null;
+        }
+
+        return Optional.ofNullable(result);
     }
 
     /**

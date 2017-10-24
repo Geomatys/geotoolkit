@@ -33,7 +33,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -44,7 +43,6 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.SortByComparator;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.DecoratedFeatureType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -145,7 +143,7 @@ public final class FeatureStreams {
      * @param hints additional hints
      * @return decorated reader
      */
-    public static FeatureReader decorate(final FeatureReader reader, final DecoratedFeatureType mask, Hints hints){
+    public static FeatureReader decorate(final FeatureReader reader, final FeatureType mask, Hints hints){
         return GenericDecoratedFeatureIterator.wrap(reader, mask, hints);
     }
 
@@ -156,7 +154,7 @@ public final class FeatureStreams {
      * @param mask FeatureType mask
      * @return decorated collection
      */
-    public static FeatureCollection decorate(final FeatureCollection col, final DecoratedFeatureType mask){
+    public static FeatureCollection decorate(final FeatureCollection col, final FeatureType mask){
         return GenericDecoratedFeatureIterator.wrap(col, mask);
     }
 

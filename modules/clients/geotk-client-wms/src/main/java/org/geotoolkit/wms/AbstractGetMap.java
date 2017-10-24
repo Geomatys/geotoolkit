@@ -25,21 +25,25 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.referencing.CRS;
 
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.Style;
 
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.util.FactoryException;
 
 /**
  * Abstract implementation of {@link GetMapRequest}, which defines the parameters for
@@ -290,7 +294,11 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
         requestParameters.put("WIDTH", String.valueOf(dimension.width));
         requestParameters.put("HEIGHT", String.valueOf(dimension.height));
         requestParameters.put("LAYERS", StringUtilities.toCommaSeparatedValues((Object[])layers));
-        requestParameters.putAll(toString(envelope));
+        try {
+            requestParameters.putAll(toString(envelope));
+        } catch (FactoryException|NullPointerException ex) {
+            throw new IllegalArgumentException("Cannot define coordinate system from envelope CRS");
+        }
 
 
         // Add optional parameters
@@ -364,8 +372,29 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      *
      * @param env
      * @return
+     */    /**
+     * {@inheritDoc }
      */
-    protected abstract Map<String, String> toString(Envelope env);
+    protected Map<String,String> toString(final Envelope env) throws FactoryException {
+        final Map<String,String> map = new HashMap<>();
+        final StringBuilder sb = new StringBuilder();
+        final double minx = env.getMinimum(0);
+        final double maxx = env.getMaximum(0);
+        final double miny = env.getMinimum(1);
+        final double maxy = env.getMaximum(1);
+        sb.append(minx).append(',').append(miny).append(',').append(maxx).append(',').append(maxy);
+
+        map.put("BBOX", sb.toString());
+
+        CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(env.getCoordinateReferenceSystem());
+        map.put(getCRSParameterName(), ReferencingUtilities.lookupIdentifier(crs2d, true));
+
+        encodeNDParameters(env, map);
+
+        return map;
+    }
+
+    protected abstract String getCRSParameterName();
 
     /**
      * Encode other additional parameters, like TIME, ELEVATION or others which will be put

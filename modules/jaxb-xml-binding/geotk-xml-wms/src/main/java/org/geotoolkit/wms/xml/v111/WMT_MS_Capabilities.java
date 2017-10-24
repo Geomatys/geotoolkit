@@ -30,6 +30,9 @@ import org.geotoolkit.wms.xml.AbstractCapability;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractService;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
+import static org.geotoolkit.wms.xml.WMSBindingUtilities.explore;
+import static org.geotoolkit.wms.xml.WMSBindingUtilities.searchLayerByName;
+import static org.geotoolkit.wms.xml.WMSBindingUtilities.updateLayerURL;
 import org.geotoolkit.wms.xml.WMSResponse;
 
 
@@ -129,28 +132,6 @@ public class WMT_MS_Capabilities implements AbstractWMSCapabilities, WMSResponse
         }
     }
 
-    private void updateLayerURL(final String url, final Layer layer) {
-        if (layer.getStyle() != null) {
-            for (Style style : layer.getStyle()) {
-                if (style.getLegendURL() != null) {
-                    for (LegendURL legend : style.getLegendURL()) {
-                        if (legend.getOnlineResource() != null &&
-                            legend.getOnlineResource().getHref() != null) {
-                            final String legendURL = legend.getOnlineResource().getHref();
-                            final int index = legendURL.indexOf('?');
-                            if (index != -1) {
-                                final String s = legendURL.substring(index + 1);
-                                legend.getOnlineResource().setHref(url + s);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        for (Layer childLayer : layer.getLayer()) {
-            updateLayerURL(url, childLayer);
-        }
-    }
     /**
      * Gets the value of the version property.
      *
@@ -186,36 +167,6 @@ public class WMT_MS_Capabilities implements AbstractWMSCapabilities, WMSResponse
         return null;
     }
 
-    /**
-     * @return true if it founds the layer
-     */
-    private static boolean searchLayerByName(final List<AbstractLayer> stack, final Layer candidate, final String name){
-        if(candidate == null){
-            return false;
-        }
-
-        //add current layer in the stack
-        stack.add(candidate);
-
-        if(name.equals(candidate.getName())){
-            return true;
-        }
-
-        //search it's children
-        final List<Layer> layers = candidate.getLayer();
-        if(layers != null){
-            for(Layer layer : layers){
-                if(searchLayerByName(stack, layer, name)){
-                    return true;
-                }
-            }
-        }
-
-        //we didn't find the searched layer in this layer, remove it from the stack
-        stack.remove(stack.size()-1);
-        return false;
-    }
-
     @Override
     public AbstractLayer[] getLayerStackFromName(final String name) {
         final List<AbstractLayer> stack = new ArrayList<AbstractLayer>();
@@ -236,16 +187,6 @@ public class WMT_MS_Capabilities implements AbstractWMSCapabilities, WMSResponse
         final List<AbstractLayer> layers = new ArrayList<AbstractLayer>();
         explore(layers, layer);
         return layers;
-    }
-
-    private static void explore(List<AbstractLayer> buffer, AbstractLayer candidate){
-        buffer.add(candidate);
-        final List<? extends AbstractLayer> layers = candidate.getLayer();
-        if(layers != null){
-            for(AbstractLayer child : layers){
-                explore(buffer, child);
-            }
-        }
     }
 
     @Override

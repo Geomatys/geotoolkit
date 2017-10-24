@@ -19,12 +19,9 @@ package org.geotoolkit.wms;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSMarshallerPool;
 import org.geotoolkit.wms.xml.WMSVersion;
@@ -38,33 +35,33 @@ import org.apache.sis.xml.MarshallerPool;
  */
 public class MockWebMapClient extends WebMapClient{
 
-    private final static Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
-    private final AbstractWMSCapabilities capa111;
-    private final AbstractWMSCapabilities capa130;
+    private final AbstractWMSCapabilities capa;
 
     public MockWebMapClient(final WMSVersion version) throws MalformedURLException, JAXBException{
         super(new URL("http://localhost/mock/wms?"), version);
-
-        final MarshallerPool pool = WMSMarshallerPool.getInstance();
-        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-        try{
-            capa111 = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapClient.class.getResource("/org/geotoolkit/wms/wms111.xml"));
-            capa130 = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapClient.class.getResource("/org/geotoolkit/wms/wms130.xml"));
-            pool.recycle(unmarshaller);
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-            throw ex;
+        final String capaLocation;
+        switch (version) {
+            case v100:
+                capaLocation = "/org/geotoolkit/wms/wms100.xml";
+                break;
+            case v111:
+                capaLocation = "/org/geotoolkit/wms/wms111.xml";
+                break;
+            case v130:
+                capaLocation = "/org/geotoolkit/wms/wms130.xml";
+                break;
+            default:
+                throw new UnsupportedOperationException("Unsupported Version: " + getVersion());
         }
 
+        final MarshallerPool pool = WMSMarshallerPool.getInstance(version);
+        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapClient.class.getResource(capaLocation));
+        pool.recycle(unmarshaller);
     }
 
     @Override
     public AbstractWMSCapabilities getCapabilities() {
-        if(getVersion() == WMSVersion.v111){
-            return capa111;
-        }else{
-            return capa130;
-        }
+        return capa;
     }
-
 }
