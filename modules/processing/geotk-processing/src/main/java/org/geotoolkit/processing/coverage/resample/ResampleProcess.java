@@ -81,9 +81,6 @@ import org.apache.sis.util.Utilities;
  * @author Johann Sorel (Geomatys)
  */
 public class ResampleProcess extends AbstractProcess {
-
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.processing.coverage.resample");
-
     /**
      * The corner to use for performing calculation. By default {@link GridGeometry#getGridToCRS()}
      * maps to pixel center (as of OGC specification). In JAI, the transforms rather map to the
@@ -407,7 +404,7 @@ public class ResampleProcess extends AbstractProcess {
             final GeneralEnvelope targetEnvelope;
             final CoordinateOperation operation = factory.createOperation(sourceCRS, targetCRS);
             final boolean force2D = (sourceCRS != compatibleSourceCRS);
-            step2          = factory.createOperation(targetCRS, compatibleSourceCRS).getMathTransform();
+            step2          = WraparoundTransform.create(mtFactory, factory.createOperation(targetCRS, compatibleSourceCRS));
             step3          = (force2D ? sourceGG.getGridToCRS2D(PixelOrientation.CENTER) : sourceGG.getGridToCRS(PixelOrientation.CENTER)).inverse();
             sourceEnvelope = sourceCoverage.getEnvelope(); // Don't force this one to 2D.
             targetEnvelope = Envelopes.transform(operation, sourceEnvelope);
