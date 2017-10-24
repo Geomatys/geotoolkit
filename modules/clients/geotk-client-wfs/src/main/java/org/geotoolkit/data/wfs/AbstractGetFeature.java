@@ -182,7 +182,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
                 sbNS.deleteCharAt(sbNS.length()-1);
             }
 
-            requestParameters.put("TYPENAME",sbN.toString());
+            requestParameters.put(getTypeNameParameterKey(),sbN.toString());
             requestParameters.put("NAMESPACE",sbNS.toString());
         }
 
@@ -198,7 +198,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             final StringWriter writer = new StringWriter();
 
             try {
-                util.writeFilter(writer, filter, org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
+                util.writeFilter(writer, filter, getFilterVersion());
             } catch (JAXBException ex) {
                 LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
             }
@@ -272,7 +272,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             }
         }
 
-        final Query query = WFSXmlFactory.buildQuery(version, xmlFilter, typeNames, "1.1.0", null, null, propName);
+        final Query query = WFSXmlFactory.buildQuery(version, xmlFilter, typeNames, null, null, null, propName);
 
         final GetFeature request = WFSXmlFactory.buildGetFeature(version, "WFS", null, null, maxFeatures, query, ResultTypeType.RESULTS, outputFormat);
 
@@ -297,4 +297,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     }
 
 
+    public abstract org.geotoolkit.sld.xml.Specification.Filter getFilterVersion();
+
+    public abstract String getTypeNameParameterKey();
 }

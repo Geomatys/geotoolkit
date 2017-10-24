@@ -309,7 +309,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     fid = reader.getAttributeValue(0);
                 }
 
-                if (name.tip().toString().equals("featureMember") || name.tip().toString().equals("featureMembers")) {
+                if (name.tip().toString().equals("featureMember") || name.tip().toString().equals("featureMembers") || name.tip().toString().equals("member")) {
                     continue;
 
                 } else if (name.tip().toString().equals("boundedBy")) {
@@ -409,9 +409,13 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 }
 
                 final String nameAttribute = reader.getAttributeValue(null, "name");
-                final PropertyType propertyType;
+                PropertyType propertyType;
                 try {
-                    propertyType = featureType.getProperty(propName.toString());
+                    try {
+                        propertyType = featureType.getProperty(propName.toString());
+                    } catch (PropertyNotFoundException e) {
+                        propertyType = featureType.getProperty(propName.tip().toString());
+                    }
 
                 }catch(PropertyNotFoundException ex) {
                     if (Boolean.TRUE.equals(this.properties.get(SKIP_UNEXPECTED_PROPERTY_TAGS))) {

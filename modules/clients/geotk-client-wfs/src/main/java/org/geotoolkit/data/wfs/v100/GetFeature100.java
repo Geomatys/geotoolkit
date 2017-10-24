@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2017, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.wfs.v110;
+package org.geotoolkit.data.wfs.v100;
 
 import org.geotoolkit.data.wfs.AbstractGetFeature;
 import org.geotoolkit.security.ClientSecurity;
@@ -23,15 +23,14 @@ import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.wfs.xml.WFSVersion;
 
 /**
- * Get feature request for WFS 1.1.0
+ * Get feature request for WFS 1.0.0.
  *
- * @author Johann Sorel (Geomatys)
- * @module
+ * @author Alexis Manin (Geomatys)
  */
-public class GetFeature110 extends AbstractGetFeature{
+public class GetFeature100 extends AbstractGetFeature{
 
-    public GetFeature110(final String serverURL, final ClientSecurity security){
-        super(serverURL,WFSVersion.v110.getCode(),security);
+    public GetFeature100(final String serverURL, final ClientSecurity security){
+        super(serverURL,WFSVersion.v100.getCode(),security);
     }
 
     @Override

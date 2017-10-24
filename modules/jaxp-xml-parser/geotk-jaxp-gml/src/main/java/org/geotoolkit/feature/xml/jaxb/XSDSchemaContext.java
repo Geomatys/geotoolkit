@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.feature.xml.jaxb;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -24,13 +25,18 @@ import java.net.URL;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
@@ -201,39 +207,14 @@ public class XSDSchemaContext {
     }
 
     /**
-     *
+     * TODO : redefine : given name is not used.
      * @param candidate
      * @param name
      * @return
      * @throws JAXBException
      */
     public Schema read(final Object candidate, final String name) throws JAXBException {
-        try {
-            final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
-            final Schema schema;
-            String baseLocation = null;
-            if(candidate instanceof Node) schema = (Schema) unmarshaller.unmarshal((Node)candidate);
-            else if(candidate instanceof Reader) schema = (Schema) unmarshaller.unmarshal((Reader)candidate);
-            else if(candidate instanceof InputStream) schema = (Schema) unmarshaller.unmarshal((InputStream)candidate);
-            else if(candidate instanceof String) schema = (Schema) unmarshaller.unmarshal(new StringReader((String)candidate));
-            else if(candidate instanceof URL){
-                schema = (Schema) unmarshaller.unmarshal(((URL)candidate).openStream());
-                // we build the base url to retrieve imported xsd
-                final String location = ((URL)candidate).toString();
-                knownSchemas.put(location, schema);
-                if (location.lastIndexOf('/') != -1) {
-                    baseLocation = location.substring(0, location.lastIndexOf('/') + 1);
-                } else {
-                    baseLocation = location;
-                }
-            }
-            else throw new JAXBException("Unsupported input type : "+candidate);
-            POOL.recycle(unmarshaller);
-            knownSchemas.put("unknow location", schema);
-            return schema;
-        } catch (IOException ex) {
-            throw new JAXBException(ex.getMessage(),ex);
-        }
+        return readSchema(candidate).getKey();
     }
 
     /**
@@ -243,31 +224,62 @@ public class XSDSchemaContext {
      * @throws JAXBException
      */
     public Map.Entry<Schema,String> read(final Object candidate) throws JAXBException {
+        Entry<Schema, String> schemaEntry = readSchema(candidate);
+        final Schema schema = schemaEntry.getKey();
+        targetNamespace = schema.getTargetNamespace();
+        final String location = schemaEntry.getValue();
+        // we build the base url to retrieve imported xsd;
+        final String baseLocation;
+        if (location == null) {
+            baseLocation = null;
+        } else if (location.lastIndexOf('/') != -1) {
+            baseLocation = location.substring(0, location.lastIndexOf('/') + 1);
+        } else {
+            baseLocation = location;
+        }
+        return new AbstractMap.SimpleImmutableEntry<>(schema, baseLocation);
+    }
+
+    /**
+     *
+     * @param candidate The Source pointing on the xsd to read. Can be :
+     * <ol>
+     * <li>{@link File}</li>
+     * <li>{@link Node}</li>
+     * <li>{@link Reader}</li>
+     * <li>{@link InputStream}</li>
+     * <li>{@link String}</li>
+     * <li>{@link URL}</li>
+     * </ol>
+     * @return A tuple whose key is the read schema, and value the location from
+     * which we've read it. The location (value) can be null.
+     * @throws JAXBException If we cannot read content from candidate, or the
+     * read xsd cannot be mapped to java model.
+     */
+    protected Map.Entry<Schema, String> readSchema(final Object candidate) throws JAXBException {
         try {
             final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
             final Schema schema;
-            String baseLocation = null;
-
-            if(candidate instanceof Node) schema = (Schema) unmarshaller.unmarshal((Node)candidate);
+            String location = null;
+            if(candidate instanceof File) schema = (Schema) unmarshaller.unmarshal((File)candidate);
+            else if(candidate instanceof Node) schema = (Schema) unmarshaller.unmarshal((Node)candidate);
             else if(candidate instanceof Reader) schema = (Schema) unmarshaller.unmarshal((Reader)candidate);
             else if(candidate instanceof InputStream) schema = (Schema) unmarshaller.unmarshal((InputStream)candidate);
             else if(candidate instanceof String) schema = (Schema) unmarshaller.unmarshal(new StringReader((String)candidate));
             else if(candidate instanceof URL){
                 schema = (Schema) unmarshaller.unmarshal(((URL)candidate).openStream());
-                // we build the base url to retrieve imported xsd;
-                final String location = ((URL)candidate).toString();
-                knownSchemas.put(location, schema);
-                if (location.lastIndexOf('/') != -1) {
-                    baseLocation = location.substring(0, location.lastIndexOf('/') + 1);
-                } else {
-                    baseLocation = location;
-                }
+                // we build the base url to retrieve imported xsd
+                location = ((URL)candidate).toString();
             }
-            else throw new JAXBException("Unsupported input type : "+candidate);
+            else {
+                POOL.recycle(unmarshaller); // We won't use it, it can be recycled.
+                throw new JAXBException("Unsupported input type : "+candidate);
+            }
             POOL.recycle(unmarshaller);
-            targetNamespace = schema.getTargetNamespace();
-            knownSchemas.put("unknow location", schema);
-            return new AbstractMap.SimpleImmutableEntry<>(schema, baseLocation);
+
+            knownSchemas.put(location == null ? "unknown location" : location, schema);
+
+            return new AbstractMap.SimpleImmutableEntry<>(schema, location);
         } catch (IOException ex) {
             throw new JAXBException(ex.getMessage(),ex);
         }
@@ -311,15 +323,8 @@ public class XSDSchemaContext {
     }
 
     public ComplexType findComplexType(QName typeName) {
-        for (Map.Entry<String,Schema> entry : knownSchemas.entrySet()) {
-            final Schema schema = entry.getValue();
-            if(!schema.getTargetNamespace().equalsIgnoreCase(typeName.getNamespaceURI())) continue;
-            final ComplexType type = schema.getComplexTypeByName(typeName.getLocalPart());
-            if (type != null) {
-                return type;
-            }
-        }
-        return null;
+        return extractForNamespace(typeName.getNamespaceURI(), schema -> schema.getComplexTypeByName(typeName.getLocalPart()))
+                .orElse(null);
     }
 
     /**
@@ -363,45 +368,39 @@ public class XSDSchemaContext {
 
     public NamedGroup findGlobalGroup(final QName typeName) {
         // look in the schemas
-        for (Entry<String,Schema> entry : knownSchemas.entrySet()) {
-            final Schema schema = entry.getValue();
-            if(!schema.getTargetNamespace().equalsIgnoreCase(typeName.getNamespaceURI())) continue;
-            for(OpenAttrs att : schema.getSimpleTypeOrComplexTypeOrGroup()){
-                if(att instanceof NamedGroup){
-                    final NamedGroup candidate = (NamedGroup) att;
-                    if(candidate.getName().equals(typeName.getLocalPart())){
-                        return candidate;
-                    }
-                }
-            }
-        }
-        return null;
+        return extractForNamespace(typeName.getNamespaceURI(), schema
+                -> schema.getSimpleTypeOrComplexTypeOrGroup().stream()
+                        .filter(NamedGroup.class::isInstance)
+                        .map(NamedGroup.class::cast)
+                        .filter(ng -> ng.getName().equals(typeName.getLocalPart()))
+                        .findFirst()
+                        .orElse(null)
+        )
+                .orElse(null);
     }
 
     public Attribute findGlobalAttribute(final QName typeName) {
-        // look in the schemas
-        for (Entry<String,Schema> entry : knownSchemas.entrySet()) {
-            final Schema schema = entry.getValue();
-            if(!schema.getTargetNamespace().equalsIgnoreCase(typeName.getNamespaceURI())) continue;
-            for(OpenAttrs att : schema.getSimpleTypeOrComplexTypeOrGroup()){
-                if(att instanceof Attribute){
+        return extractForNamespace(typeName.getNamespaceURI(), schema -> {
+            for (OpenAttrs att : schema.getSimpleTypeOrComplexTypeOrGroup()) {
+                if (att instanceof Attribute) {
                     final Attribute candidate = (Attribute) att;
-                    if(candidate.getName().equals(typeName.getLocalPart())){
+                    if (candidate.getName().equals(typeName.getLocalPart())) {
                         return candidate;
                     }
                 }
             }
-        }
-        return null;
+            return null;
+        })
+                .orElse(null);
     }
 
-    public Element findGlobalElement(final QName typeName){
+    public Element findGlobalElement(final QName typeName) {
         Element element = null;
+        final Iterator<Schema> schemas = getForNamespace(typeName.getNamespaceURI()).iterator();
+
         // look in the schemas
-        for (Entry<String,Schema> entry : knownSchemas.entrySet()) {
-            final Schema schema = entry.getValue();
-            if(!schema.getTargetNamespace().equalsIgnoreCase(typeName.getNamespaceURI())) continue;
-            loop:
+        while (schemas.hasNext()) {
+            final Schema schema = schemas.next();
             for(OpenAttrs att : schema.getSimpleTypeOrComplexTypeOrGroup()){
                 if(att instanceof Element){
                     final TopLevelElement candidate = (TopLevelElement) att;
@@ -409,50 +408,64 @@ public class XSDSchemaContext {
                         //check if it's a deprecated type, we will return it only in last case
                         if(isDeprecated(candidate)){
                             element = candidate;
-                            continue loop;
+                        } else {
+                            //found it
+                            return candidate;
                         }
-
-                        //found it
-                        return candidate;
                     }
                 }
             }
         }
+
         return element;
     }
 
     public NamedAttributeGroup findAttributeGroup(final QName typeName){
         // look in the schemas
-        for (Entry<String,Schema> entry : knownSchemas.entrySet()) {
-            final Schema schema = entry.getValue();
-            if(!schema.getTargetNamespace().equalsIgnoreCase(typeName.getNamespaceURI())) continue;
-            for(OpenAttrs att : schema.getSimpleTypeOrComplexTypeOrGroup()){
-                if(att instanceof NamedAttributeGroup){
-                    final NamedAttributeGroup candidate = (NamedAttributeGroup) att;
-                    if(candidate.getName().equals(typeName.getLocalPart())){
-                        return candidate;
+        return extractForNamespace(typeName.getNamespaceURI(), schema
+                -> schema.getSimpleTypeOrComplexTypeOrGroup().stream()
+                        .filter(NamedAttributeGroup.class::isInstance)
+                        .map(NamedAttributeGroup.class::cast)
+                        .filter(nag -> nag.getName().equals(typeName.getLocalPart()))
+                        .findFirst()
+                        .orElse(null)
+        )
+                .orElse(null);
+    }
+
+    protected Stream<Schema> getForNamespace(final String namespace) {
+        return knownSchemas.values().stream()
+                .filter(schema -> schema.getTargetNamespace() == namespace || schema.getTargetNamespace() == null || schema.getTargetNamespace().equalsIgnoreCase(namespace))
+                .sorted((s1, s2) -> {
+                    if (s1.getTargetNamespace() == s2.getTargetNamespace()) {
+                        return 0;
+                    } else if (s1.getTargetNamespace() == null) {
+                        return 1;
+                    } else if (s2.getTargetNamespace() == null) {
+                        return -1;
                     }
-                }
-            }
-        }
-        return null;
+
+                    return 0;
+                });
+    }
+
+    protected <T> Optional<T> extractForNamespace(final String namespace, final Function<Schema, T> extractor) {
+        return getForNamespace(namespace)
+                .map(extractor)
+                .filter(Objects::nonNull)
+                .findFirst();
     }
 
     public SimpleType findSimpleType(final QName typeName) {
-
         // look in the schemas
-        for (Schema schema : knownSchemas.values()) {
-            if(!schema.getTargetNamespace().equalsIgnoreCase(typeName.getNamespaceURI())) continue;
-            final SimpleType type = schema.getSimpleTypeByName(typeName.getLocalPart());
-            if (type != null) {
-                return type;
-            }
-        }
-        // look in primitive types
-        if (Utils.existPrimitiveType(typeName.getLocalPart())) {
-            return new LocalSimpleType(typeName.getLocalPart());
-        }
-        return null;
+        return extractForNamespace(typeName.getNamespaceURI(), schema -> schema.getSimpleTypeByName(typeName.getLocalPart()))
+                .orElseGet(() -> {
+                    // look in primitive types
+                    if (Utils.existPrimitiveType(typeName.getLocalPart())) {
+                        return new LocalSimpleType(typeName.getLocalPart());
+                    }
+                    return null;
+                });
     }
 
     public Set<QName> getSubstitutions(QName name){

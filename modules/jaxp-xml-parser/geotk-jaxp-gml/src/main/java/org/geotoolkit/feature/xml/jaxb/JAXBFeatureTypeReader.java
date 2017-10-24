@@ -72,7 +72,6 @@ import org.geotoolkit.xsd.xml.v2001.SimpleType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
 import org.geotoolkit.xsd.xml.v2001.Union;
 import org.opengis.feature.AttributeType;
-import org.opengis.feature.FeatureAssociation;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
@@ -362,7 +361,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
 
             if(particle instanceof Element){
                 final Element ele = (Element) particle;
-                final PropertyType att = elementToAttribute(namespaceURI, ele, stack);
+                final PropertyType att = elementToAttribute(ele, stack);
                 atts.add(att);
 
             }else if(particle instanceof Any){
@@ -400,7 +399,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
         return atts;
     }
 
-    private PropertyType elementToAttribute(String namespaceURI, Element element, BuildStack stack) {
+    private PropertyType elementToAttribute(Element element, BuildStack stack) {
 
         GenericName name = null;
 
@@ -411,7 +410,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
             if (parentElement == null) {
                 throw new MismatchedFeatureException("unable to find referenced element : "+ refName);
             }
-            refType = elementToAttribute(namespaceURI, parentElement, stack);
+            refType = elementToAttribute(parentElement, stack);
             name = refType.getName();
         }
 
@@ -422,7 +421,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
         }
         if (localName != null) {
             //override name
-            name = NamesExt.create(namespaceURI, localName);
+            name = NamesExt.create(localName);
         }
 
         //extract min/max

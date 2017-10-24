@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.wfs.v110;
+package org.geotoolkit.data.wfs.v200;
 
 import org.geotoolkit.data.wfs.AbstractGetFeature;
 import org.geotoolkit.security.ClientSecurity;
@@ -23,24 +23,23 @@ import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.wfs.xml.WFSVersion;
 
 /**
- * Get feature request for WFS 1.1.0
+ * Get feature request for WFS 2.0.0
  *
- * @author Johann Sorel (Geomatys)
- * @module
+ * @author Samuel Andrés (Geomatys)
  */
-public class GetFeature110 extends AbstractGetFeature{
+public class GetFeature200 extends AbstractGetFeature {
 
-    public GetFeature110(final String serverURL, final ClientSecurity security){
-        super(serverURL,WFSVersion.v110.getCode(),security);
+    public GetFeature200(final String serverURL, final ClientSecurity security){
+        super(serverURL, WFSVersion.v200.getCode(), security);
     }
 
     @Override
     public Specification.Filter getFilterVersion() {
-        return Specification.Filter.V_1_1_0;
+        return Specification.Filter.V_2_0_0;
     }
 
     @Override
     public String getTypeNameParameterKey() {
-        return "TYPENAME";
+        return "TYPENAMES";
     }
 }

@@ -158,8 +158,6 @@ public final class StyleXmlIO {
         return transformerXMLv110;
     }
 
-
-
     private Object unmarshall(final Object source, final Unmarshaller unMarshaller)
             throws JAXBException{
         if(source instanceof File){
