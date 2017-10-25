@@ -674,7 +674,11 @@ public class Resample {
      * Fill destination image from source image pixel interpolation.
      */
     public void fillImage() throws TransformException {
-        if (destToSourceMathTransform instanceof MathTransform2D) {
+        fillImage(true);
+    }
+
+    public void fillImage(boolean canUseGrid) throws TransformException {
+        if (canUseGrid && destToSourceMathTransform instanceof MathTransform2D) {
             try {
                 final GridFactory gridFact = new GridFactory(0.125);
                 final Object object = gridFact.create((MathTransform2D) destToSourceMathTransform, destIterator.getBoundary(false));

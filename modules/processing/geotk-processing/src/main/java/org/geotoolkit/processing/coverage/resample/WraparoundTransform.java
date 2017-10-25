@@ -182,7 +182,7 @@ final class WraparoundTransform extends AbstractMathTransform {
         v -= Math.floor(v);
         if (dstPts != null) {
             System.arraycopy(srcPts, srcOff, dstPts, dstOff, dimension);
-            dstPts[dstOff] = v;
+            dstPts[dstOff + wraparoundDimension] = v;
         }
         if (!derivate) {
             return null;

@@ -366,12 +366,14 @@ public class ResampleProcess extends AbstractProcess {
          *                 step 1         step 3
          */
         MathTransform allSteps, allSteps2D;
-        final MathTransform step1, step2, step3 ;
+        final MathTransform step1, step2, step3;
+        final boolean canUseGrid;
         if (Utilities.equalsIgnoreMetadata(sourceCRS, targetCRS)) {
             /*
              * Note: targetGG should not be null, otherwise 'existingCoverage(...)' should
              *       have already detected that this resample is not doing anything.
              */
+            canUseGrid = true;
             if (!targetGG.isDefined(GridGeometry2D.GRID_TO_CRS)) {
                 step1    = sourceGG.getGridToCRS(PixelOrientation.CENTER); // Really sourceGG, not targetGG
                 step2    = MathTransforms.identity(step1.getTargetDimensions());
@@ -403,9 +405,11 @@ public class ResampleProcess extends AbstractProcess {
             final Envelope        sourceEnvelope;
             final GeneralEnvelope targetEnvelope;
             final CoordinateOperation operation = factory.createOperation(sourceCRS, targetCRS);
+            final CoordinateOperation inverseOp = factory.createOperation(targetCRS, compatibleSourceCRS);
             final boolean force2D = (sourceCRS != compatibleSourceCRS);
-            step2          = WraparoundTransform.create(mtFactory, factory.createOperation(targetCRS, compatibleSourceCRS));
+            step2          = WraparoundTransform.create(mtFactory, inverseOp);
             step3          = (force2D ? sourceGG.getGridToCRS2D(PixelOrientation.CENTER) : sourceGG.getGridToCRS(PixelOrientation.CENTER)).inverse();
+            canUseGrid     = step2 == inverseOp.getMathTransform();
             sourceEnvelope = sourceCoverage.getEnvelope(); // Don't force this one to 2D.
             targetEnvelope = Envelopes.transform(operation, sourceEnvelope);
             targetEnvelope.setCoordinateReferenceSystem(targetCRS);
@@ -537,7 +541,7 @@ public class ResampleProcess extends AbstractProcess {
 //                PixelIteratorFactory.createDefaultIterator(sourceImage,sourceBB), interpolationType, 2);
          final Resample resample = new Resample(targetToSource, targetImage, sourceImage,
                 interpolationType, borderComportement, fillValue);
-        resample.fillImage();
+        resample.fillImage(canUseGrid);
 
         return create(sourceCoverage, targetImage, targetGG, finalView, hints);
     }
