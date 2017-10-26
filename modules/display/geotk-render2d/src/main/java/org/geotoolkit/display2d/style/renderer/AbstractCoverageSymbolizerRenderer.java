@@ -564,8 +564,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         * try to reproject a coverage which have already been clipped with the objective rendering context boundary.
         */
         final CoordinateReferenceSystem renderingContextObjectiveCRS2D = renderingContext.getObjectiveCRS2D();
-        final MathTransform coverageToObjective2D = CRS.findOperation(inputCoverageCRS2D, renderingContextObjectiveCRS2D, null).getMathTransform();
-        GeneralEnvelope outputRenderingCoverageEnv2D = GeneralEnvelope.castOrCopy(Envelopes.transform(coverageToObjective2D, paramEnvelope2D));
+        GeneralEnvelope outputRenderingCoverageEnv2D = GeneralEnvelope.castOrCopy(Envelopes.transform(paramEnvelope2D, renderingContextObjectiveCRS2D));
         outputRenderingCoverageEnv2D.setCoordinateReferenceSystem(renderingContextObjectiveCRS2D);
         if (!outputRenderingCoverageEnv2D.isEmpty()) {
             outputRenderingCoverageEnv2D.intersect(renderingBound2D);
