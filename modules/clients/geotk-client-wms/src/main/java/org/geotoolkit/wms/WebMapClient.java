@@ -24,10 +24,10 @@ import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.wms.auto.GetCapabilitiesAuto;
-import org.geotoolkit.wms.v111.GetCapabilities111;
-import org.geotoolkit.wms.v111.GetFeatureInfo111;
-import org.geotoolkit.wms.v111.GetLegend111;
-import org.geotoolkit.wms.v111.GetMap111;
+import org.geotoolkit.wms.v110.GetCapabilities110;
+import org.geotoolkit.wms.v110.GetFeatureInfo110;
+import org.geotoolkit.wms.v110.GetLegend110;
+import org.geotoolkit.wms.v110.GetMap110;
 import org.geotoolkit.wms.v130.GetCapabilities130;
 import org.geotoolkit.wms.v130.GetFeatureInfo130;
 import org.geotoolkit.wms.v130.GetLegend130;
@@ -56,6 +56,10 @@ import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.wms.v100.GetCapabilities100;
 import org.geotoolkit.wms.v100.GetFeatureInfo100;
 import org.geotoolkit.wms.v100.GetMap100;
+import org.geotoolkit.wms.v111.GetCapabilities111;
+import org.geotoolkit.wms.v111.GetFeatureInfo111;
+import org.geotoolkit.wms.v111.GetLegend111;
+import org.geotoolkit.wms.v111.GetMap111;
 
 
 /**
@@ -280,6 +284,8 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
         switch (getVersion()) {
             case v100:
                 return new GetMap100(this,getClientSecurity());
+            case v110:
+                return new GetMap110(this,getClientSecurity());
             case v111:
                 return new GetMap111(this,getClientSecurity());
             case v130:
@@ -299,6 +305,8 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
         switch (getVersion()) {
             case v100:
                 return new GetCapabilities100(serverURL.toString(),getClientSecurity());
+            case v110:
+                return new GetCapabilities110(serverURL.toString(),getClientSecurity());
             case v111:
                 return new GetCapabilities111(serverURL.toString(),getClientSecurity());
             case v130:
@@ -319,6 +327,8 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
      */
     public GetLegendRequest createGetLegend(){
         switch (getVersion()) {
+            case v110:
+                return new GetLegend110(serverURL.toString(),getClientSecurity());
             case v111:
                 return new GetLegend111(serverURL.toString(),getClientSecurity());
             case v130:
@@ -338,6 +348,8 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
         switch (getVersion()) {
             case v100:
                 return new GetFeatureInfo100(this,getClientSecurity());
+            case v110:
+                return new GetFeatureInfo110(this,getClientSecurity());
             case v111:
                 return new GetFeatureInfo111(this,getClientSecurity());
             case v130:

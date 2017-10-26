@@ -29,6 +29,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 
 import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.ows.xml.ExceptionResponse;
 
 import org.opengis.metadata.citation.OnlineResource;
 
@@ -44,11 +45,23 @@ import org.xml.sax.InputSource;
  public class WMSBindingUtilities {
 
      public static AbstractWMSCapabilities unmarshall(final Object source, final WMSVersion version) throws JAXBException, MalformedURLException {
-        MarshallerPool selectedPool = WMSMarshallerPool.getInstance(version);
-        Unmarshaller unMarshaller = selectedPool.acquireUnmarshaller();
-        AbstractWMSCapabilities c = (AbstractWMSCapabilities) unmarshall(source, unMarshaller);
+        return unmarshall(source, version, AbstractWMSCapabilities.class);
+     }
+
+     public static <T> T unmarshall(final Object source, final WMSVersion version, final Class<T> valueType) throws JAXBException, MalformedURLException {
+        final MarshallerPool selectedPool = WMSMarshallerPool.getInstance(version);
+        final Unmarshaller unMarshaller = selectedPool.acquireUnmarshaller();
+        final Object data = unmarshall(source, unMarshaller);
         selectedPool.recycle(unMarshaller);
-        return c;
+        if (data == null) {
+            throw new JAXBException("No value read from given source");
+        } else if (valueType.isAssignableFrom(data.getClass())) {
+            return valueType.cast(data);
+        } else if (data instanceof ExceptionResponse) {
+            throw new JAXBException(((ExceptionResponse)data).toException());
+        } else {
+            throw new JAXBException("Unexpected read data type : "+data.getClass());
+        }
      }
 
      private static Object unmarshall(final Object source, final Unmarshaller unMarshaller)
