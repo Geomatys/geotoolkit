@@ -188,9 +188,10 @@ public class Compose extends AbstractProcess {
                 //set the valid area
                 g.setColor(Color.WHITE);
                 if (includeGeometries[i]==null) {
+                    g.setTransform(new AffineTransform());
                     g.fillRect(0, 0, outWidth, outHeight);
+                    g.setTransform(outCrsToGrid);
                 } else {
-                    covCrstoOutCrs = CRS.findOperation(coverageCrs, outCrs, null).getMathTransform();
                     g.fill(new JTSGeometryJ2D(includeGeometries[i],covCrstoOutCrs));
                 }
 
