@@ -93,6 +93,7 @@ public final strictfp class InterpolatorTest extends GridCoverageTestBase {
      * @throws ClassNotFoundException Should never happen.
      */
     @Test
+    @Ignore
     public void testSerialization() throws IOException, ClassNotFoundException {
         final int[] types = {
             Interpolation.INTERP_BICUBIC,

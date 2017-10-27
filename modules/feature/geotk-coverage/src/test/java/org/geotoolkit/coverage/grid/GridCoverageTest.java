@@ -67,6 +67,7 @@ public final strictfp class GridCoverageTest extends GridCoverageTestBase {
      * @throws ClassNotFoundException Should never happen.
      */
     @Test
+    @Ignore
     public void testSerialization() throws IOException, ClassNotFoundException {
         loadSampleCoverage(SampleCoverage.SST);
         GridCoverage2D serial = serialize();
