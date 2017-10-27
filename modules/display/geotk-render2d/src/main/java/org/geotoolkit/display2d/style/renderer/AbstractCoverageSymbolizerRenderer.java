@@ -39,6 +39,7 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.referencing.CoordinateOperations;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
@@ -591,7 +592,13 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             interpolation = findInterpolationCase(sampleDimensions);
         }
 
+
         final GridGeometry2D gg = new GridGeometry2D(new GridEnvelope2D(0, 0, width, height), outputRenderingCoverageEnv2D);
+
+        //Temporary hack to avoid wrong interpolation on wrap around datas
+        if (!CoordinateOperations.wrapAroundChanges(inputCoverageCRS2D, gg.getCoordinateReferenceSystem().getCoordinateSystem()).isEmpty()) {
+            interpolation = InterpolationCase.NEIGHBOR;
+        }
 
         final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
         final Parameters params = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
