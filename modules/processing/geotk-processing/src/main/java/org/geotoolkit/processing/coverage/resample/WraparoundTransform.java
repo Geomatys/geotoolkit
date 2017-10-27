@@ -30,6 +30,7 @@ import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.factory.InvalidGeodeticParameterException;
 import org.apache.sis.internal.referencing.CoordinateOperations;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.resources.Errors;
@@ -225,13 +226,33 @@ final class WraparoundTransform extends AbstractMathTransform {
     }
 
     /**
-     * The inverse of this operation is itself. If the "wraparound" dimension is not the same or if the
-     * range of values is different, those differences will be handled by the affine transforms before
-     * and after this {@code WraparoundTransform}.
+     * Returns the identity transform as the pseudo-inverse of this transform.
+     * We do not return another {@code WraparoundTransform} for three reasons:
+     *
+     * <ol>
+     *   <li>The inverse wraparound would work on a different range of values, but we do not know that range.</li>
+     *   <li>Even if we knew the original range of values, creating the inverse transform would require the affine
+     *       transforms before and after {@code WraparoundTransform} to be different; it would not be their normal
+     *       inverse. This is impractical, especially since the transform matrices may have been multiplied with
+     *       other affine transforms.</li>
+     *   <li>Even if we were able to build the inverse {@code WraparoundTransform}, it would not necessarily be
+     *       appropriate. For example in "ProjectedCRS → BaseCRS → GeographicCRS" operation chain, wraparound
+     *       may happen after the geographic CRS. But in the "GeographicCRS → BaseCRS → ProjectedCRS" inverse
+     *       operation, the wraparound would be between BaseCRS and ProjectedCRS, which is often not needed.</li>
+     * </ol>
      */
     @Override
     public MathTransform inverse() {
-        return this;
+        return MathTransforms.identity(dimension);
+    }
+
+    /**
+     * If the other transform is also a {@code WraparoundTransform} for the same dimension, then there
+     * is no need to concatenate two consecutive such transforms.
+     */
+    @Override
+    protected MathTransform tryConcatenate(boolean applyOtherFirst, MathTransform other, MathTransformFactory factory) {
+        return equals(other, null) ? this : null;
     }
 
     /**
@@ -239,7 +260,7 @@ final class WraparoundTransform extends AbstractMathTransform {
      */
     @Override
     public boolean equals(final Object object, final ComparisonMode mode) {
-        if (object != null && object.getClass() == getClass()) {
+        if (object instanceof WraparoundTransform) {
             final WraparoundTransform other = (WraparoundTransform) object;
             return other.dimension == dimension && other.wraparoundDimension == wraparoundDimension;
         }
@@ -251,6 +272,6 @@ final class WraparoundTransform extends AbstractMathTransform {
      */
     @Override
     protected int computeHashCode() {
-        return dimension + 31 * wraparoundDimension;
+        return dimension * 31 + wraparoundDimension;
     }
 }
