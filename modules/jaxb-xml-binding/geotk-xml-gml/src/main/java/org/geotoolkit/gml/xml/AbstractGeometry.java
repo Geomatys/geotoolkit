@@ -32,5 +32,12 @@ public interface AbstractGeometry extends AbstractGML {
 
     int getCoordinateDimension();
 
+    /**
+     * Direct binding with "srsDimension" GML attribute.
+     * @return Null if no "srsDimension" attribute is defined on the geometry, or
+     * a positive integer otherwise.
+     */
+    Integer getSrsDimension();
+
     CoordinateReferenceSystem getCoordinateReferenceSystem(final boolean longitudeFirst);
 }

@@ -17,8 +17,11 @@
 package org.geotoolkit.gml.xml;
 
 import java.util.List;
+import java.util.stream.DoubleStream;
 
 /**
+ * TODO : optimize by adding a method to return coordinate values as {@link DoubleStream}.
+ * It will avoid unnecessary value boxing and accumulation.
  *
  * @author Guilhem Legal (Geomatys)
  */

@@ -22,9 +22,7 @@ import java.util.List;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface LineString extends AbstractGeometry {
-
-    Coordinates getCoordinates();
+public interface LineString extends AbstractGeometry, WithCoordinates {
 
     DirectPositionList getPosList();
 

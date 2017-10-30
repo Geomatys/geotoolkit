@@ -309,10 +309,12 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     fid = reader.getAttributeValue(0);
                 }
 
-                if (name.tip().toString().equals("featureMember") || name.tip().toString().equals("featureMembers") || name.tip().toString().equals("member")) {
+                final String markupName = name.tip().toString();
+
+                if (markupName.equals("featureMember") || markupName.equals("featureMembers") || markupName.equals("member")) {
                     continue;
 
-                } else if (name.tip().toString().equals("boundedBy")) {
+                } else if (markupName.equals("boundedBy")) {
                     while (reader.hasNext()) {
                         event = reader.next();
                         if (event == START_ELEMENT) {
@@ -400,7 +402,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             int event = reader.getEventType();
 
             if (event == START_ELEMENT) {
-                final GenericName propName = nameCache.get(reader.getName());
+                GenericName propName = nameCache.get(reader.getName());
 
                 // we skip the boundedby attribute if it's present
                 if ("boundedBy".equals(propName.tip().toString())) {
@@ -415,6 +417,8 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         propertyType = featureType.getProperty(propName.toString());
                     } catch (PropertyNotFoundException e) {
                         propertyType = featureType.getProperty(propName.tip().toString());
+                        // If we can find the property with the local part only, we continue with it.
+                        propName = propName.tip();
                     }
 
                 }catch(PropertyNotFoundException ex) {
@@ -422,20 +426,16 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         toTagEnd(propName.tip().toString());
                         continue;
                     } else {
-                        try {
-                            //convert the content as a dom node
-                            final AttributeType pd = (AttributeType) featureType.getProperty("_any");
-                            final Document doc = readAsDom(propName.tip().toString());
-                            feature.setPropertyValue(pd.getName().toString(), doc);
-                            doNext = false;
-                            continue;
-                        }catch(PropertyNotFoundException e) {
-                            throw new IllegalArgumentException("Unexpected attribute:" + propName + " not found in :\n" + featureType);
-                        }
+                        //convert the content as a dom node
+                        final AttributeType pd = (AttributeType) featureType.getProperty("_any");
+                        final Document doc = readAsDom(propName.tip().toString());
+                        feature.setPropertyValue(pd.getName().toString(), doc);
+                        doNext = false;
+                        continue;
                     }
                 }
 
-                if(propertyType instanceof Operation){
+                if (propertyType instanceof Operation) {
                     final Operation opType = (Operation) propertyType;
                     final PropertyType resultType = (PropertyType) opType.getResult();
                     final Object value = readPropertyValue(resultType,false);
@@ -446,7 +446,6 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     }
                     continue;
                 }
-
 
                 //read attributes
                 if (propertyType instanceof AttributeType) {

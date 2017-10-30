@@ -17,16 +17,20 @@
 package org.geotoolkit.gml.xml;
 
 import java.util.List;
+import java.util.logging.Level;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.util.logging.Logging;
+import org.opengis.metadata.Identifier;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface Envelope extends org.opengis.geometry.Envelope {
-
-    String getSrsName();
-
-    Integer getSrsDimension();
+public interface Envelope extends org.opengis.geometry.Envelope, AbstractGeometry, WithCoordinates {
 
     void setSrsDimension(Integer dim);
 
@@ -40,9 +44,83 @@ public interface Envelope extends org.opengis.geometry.Envelope {
 
     List<String> getUomLabels();
 
-    Coordinates getCoordinates();
-
     List<? extends DirectPosition> getPos();
 
     boolean isCompleteEnvelope2D();
+
+    @Override
+    default public CoordinateReferenceSystem getCoordinateReferenceSystem(boolean longitudeFirst) {
+        if (getSrsName() != null) {
+            try {
+                CoordinateReferenceSystem crs = CRS.forCode(getSrsName());
+                if (longitudeFirst) {
+                    crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED);
+                }
+                return crs;
+            } catch (FactoryException ex) {
+                Logging.getLogger("org.geotoolkit.gml.xml.v321").log(Level.WARNING, "Could not decode CRS which name is : " + getSrsName(), ex);
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    default public int getCoordinateDimension() {
+        Integer bi = getSrsDimension();
+        if(bi == null){
+            return 2;
+        }else{
+            return bi.intValue();
+        }
+    }
+
+    @Override
+    default public void setId(String id) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    default public void setSrsName(String srsName) {
+        throw new UnsupportedOperationException();
+    }
+
+
+
+    @Override
+    default public Code getParameterName() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public default String getDescription() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public default void setDescription(String description) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public default void setName(String name) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public default Reference getDescriptionReference() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public default Identifier getName() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public default String getId() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
 }

@@ -323,7 +323,7 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
         if(bi == null){
             return 2;
         }else{
-            return bi.intValue();
+            return bi;
         }
     }
 

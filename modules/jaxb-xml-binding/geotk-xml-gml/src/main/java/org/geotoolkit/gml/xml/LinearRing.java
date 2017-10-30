@@ -20,9 +20,7 @@ package org.geotoolkit.gml.xml;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface LinearRing extends AbstractRing {
+public interface LinearRing extends AbstractRing, WithCoordinates {
 
     DirectPositionList getPosList();
-
-    Coordinates getCoordinates();
 }
