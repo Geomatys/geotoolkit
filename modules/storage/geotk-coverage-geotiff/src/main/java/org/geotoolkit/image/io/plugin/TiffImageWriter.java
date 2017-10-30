@@ -951,16 +951,17 @@ public class TiffImageWriter extends SpatialImageWriter {
                                      : null;
 
         final String[] formatNames = iioImgMetadata.getMetadataFormatNames();
-        if (!ArraysExt.contains(formatNames, tiffFormatName) &&
-                !ArraysExt.contains(formatNames, SpatialMetadataFormat.GEOTK_FORMAT_NAME)) {
+        if (ArraysExt.contains(formatNames, SpatialMetadataFormat.GEOTK_FORMAT_NAME)) {
+            image.setMetadata(toGTiffFormat(iioImgMetadata));
+        } else if (ArraysExt.contains(formatNames, tiffFormatName)) {
+            image.setMetadata(iioImgMetadata);
+        } else {
             //no tiff metadata, create one
             final ImageTypeSpecifier spec = ImageTypeSpecifier.createFromRenderedImage(image.getRenderedImage());
             iioImgMetadata = getDefaultImageMetadata(spec, param);
             iioImgMetadata = convertImageMetadata(iioImgMetadata, spec, param);
             image.setMetadata(iioImgMetadata);
         }
-
-        image.setMetadata(toGTiffFormat(iioImgMetadata));
     }
 
     /**
