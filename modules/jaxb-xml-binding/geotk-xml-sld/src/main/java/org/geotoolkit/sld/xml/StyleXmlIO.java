@@ -72,6 +72,8 @@ import org.xml.sax.InputSource;
 
 import static java.nio.file.StandardOpenOption.*;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.ogc.xml.FilterMarshallerPool;
+import org.geotoolkit.ogc.xml.FilterToOGC200Converter;
 
 /**
  * Utility class to handle XML reading and writing for OGC SLD, SE and Filter.
@@ -725,6 +727,13 @@ public final class StyleXmlIO {
                     jax = factoryOGCv110.createFilter( (org.geotoolkit.ogc.xml.v110.FilterType) jax);
                 }
                 marshallV110(target,jax);
+                break;
+            case V_2_0_0 :
+                final JAXBElement data = new FilterToOGC200Converter().apply(filter);
+                final MarshallerPool pool = FilterMarshallerPool.getInstance();
+                final Marshaller m = pool.acquireMarshaller();
+                marshall(target, data, m);
+                pool.recycle(m);
                 break;
             default :
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");

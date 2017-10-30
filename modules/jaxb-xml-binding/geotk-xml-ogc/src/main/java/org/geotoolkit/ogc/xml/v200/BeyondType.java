@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.ogc.xml.v200;
 
-import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
 import org.opengis.filter.spatial.Beyond;
 
 /**
@@ -36,7 +35,7 @@ public class BeyondType extends DistanceBufferType implements Beyond {
     /**
      * Build a new Beyond Type
      */
-    public BeyondType(final String propertyName, final AbstractGeometryType geometry, final double distance, final String unit) {
+    public BeyondType(final String propertyName, final Object geometry, final double distance, final String unit) {
         super(propertyName, geometry, distance, unit);
     }
 
