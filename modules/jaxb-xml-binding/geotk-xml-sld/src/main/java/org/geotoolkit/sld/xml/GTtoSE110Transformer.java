@@ -235,7 +235,6 @@ import org.opengis.util.GenericName;
 import org.apache.sis.measure.Units;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.ReferencingUtilities;
 
 /**
  *
@@ -573,7 +572,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
                     miny = env.getMinimum(1);
                     maxy = env.getMaximum(1);
                     try {
-                        srs = ReferencingUtilities.lookupIdentifier(env.getCoordinateReferenceSystem(), true);
+                        srs = IdentifiedObjects.lookupURN(env.getCoordinateReferenceSystem(), null);
                     } catch (FactoryException ex) {
                         throw new IllegalArgumentException("invalide bbox element : " + filter + " " + ex.getMessage(), ex);
                     }
