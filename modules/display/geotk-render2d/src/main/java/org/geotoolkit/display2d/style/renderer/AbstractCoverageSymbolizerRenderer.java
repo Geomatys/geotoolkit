@@ -39,6 +39,7 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.referencing.CoordinateOperations;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
@@ -564,8 +565,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         * try to reproject a coverage which have already been clipped with the objective rendering context boundary.
         */
         final CoordinateReferenceSystem renderingContextObjectiveCRS2D = renderingContext.getObjectiveCRS2D();
-        final MathTransform coverageToObjective2D = CRS.findOperation(inputCoverageCRS2D, renderingContextObjectiveCRS2D, null).getMathTransform();
-        GeneralEnvelope outputRenderingCoverageEnv2D = GeneralEnvelope.castOrCopy(Envelopes.transform(coverageToObjective2D, paramEnvelope2D));
+        GeneralEnvelope outputRenderingCoverageEnv2D = GeneralEnvelope.castOrCopy(Envelopes.transform(paramEnvelope2D, renderingContextObjectiveCRS2D));
         outputRenderingCoverageEnv2D.setCoordinateReferenceSystem(renderingContextObjectiveCRS2D);
         if (!outputRenderingCoverageEnv2D.isEmpty()) {
             outputRenderingCoverageEnv2D.intersect(renderingBound2D);
@@ -592,7 +592,13 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             interpolation = findInterpolationCase(sampleDimensions);
         }
 
+
         final GridGeometry2D gg = new GridGeometry2D(new GridEnvelope2D(0, 0, width, height), outputRenderingCoverageEnv2D);
+
+        //Temporary hack to avoid wrong interpolation on wrap around datas
+        if (!CoordinateOperations.wrapAroundChanges(inputCoverageCRS2D, gg.getCoordinateReferenceSystem().getCoordinateSystem()).isEmpty()) {
+            interpolation = InterpolationCase.NEIGHBOR;
+        }
 
         final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
         final Parameters params = Parameters.castOrWrap(desc.getInputDescriptor().createValue());

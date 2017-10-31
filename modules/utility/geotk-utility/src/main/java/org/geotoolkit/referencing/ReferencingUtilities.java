@@ -1073,7 +1073,7 @@ public final class ReferencingUtilities {
                 final Envelope penv1 = Envelopes.transform(env1, crs);
                 final Envelope penv2 = Envelopes.transform(env2, crs);
                 return GeneralEnvelope.castOrCopy(penv1).intersects(penv2);
-            } catch(TransformException ex) {/*do nothing*/}
+            } catch(Exception ex) {/*do nothing*/}
         }
 
         //try both way intersection
@@ -1082,14 +1082,14 @@ public final class ReferencingUtilities {
             final Envelope penv2 = Envelopes.transform(env2, crs1);
             if (GeneralEnvelope.castOrCopy(penv2).isEmpty()) break cas1;
             return GeneralEnvelope.castOrCopy(env1).intersects(penv2);
-        } catch(TransformException ex) {/*do nothing*/}
+        } catch(Exception ex) {/*do nothing*/}
 
         cas2:
         try {
             final Envelope penv1 = Envelopes.transform(env1, crs2);
             if (GeneralEnvelope.castOrCopy(penv1).isEmpty()) break cas2;
             return GeneralEnvelope.castOrCopy(penv1).intersects(env2);
-        } catch(TransformException ex) {/*do nothing*/}
+        } catch(Exception ex) {/*do nothing*/}
 
         /*
          * TODO: an exception means that a value exist, but can not be computed because the calculation
