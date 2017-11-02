@@ -16,6 +16,10 @@
  */
 package org.geotoolkit.wfs.xml;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -57,4 +61,14 @@ public enum WFSVersion {
         throw new IllegalArgumentException(v);
     }
 
+    /**
+     *
+     * @return Versions supported by the toolkit. Each version is represented as
+     * a string as X.x.x.
+     */
+    public static List<String> codes() {
+        return Stream.of(WFSVersion.values())
+                    .map(WFSVersion::getCode)
+                    .collect(Collectors.toList());
+    }
 }

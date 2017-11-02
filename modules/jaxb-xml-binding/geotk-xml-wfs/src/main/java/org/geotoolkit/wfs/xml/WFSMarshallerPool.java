@@ -46,7 +46,10 @@ public final class WFSMarshallerPool {
     private static final MarshallerPool INSTANCE_100;
     static {
         try {
-            INSTANCE_100 = new MarshallerPool(JAXBContext.newInstance("org.geotoolkit.wfs.xml.v100:org.geotoolkit.gml.xml.v212"), null);
+            INSTANCE_100 = new MarshallerPool(JAXBContext.newInstance(
+                    "org.geotoolkit.wfs.xml.v100:"
+                            + "org.geotoolkit.gml.xml.v212"
+            ), null);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }

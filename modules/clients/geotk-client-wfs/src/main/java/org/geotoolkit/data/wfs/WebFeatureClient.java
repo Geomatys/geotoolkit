@@ -175,12 +175,7 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
      * @return GetCapabilitiesRequest : getCapabilities request.
      */
     public GetCapabilitiesRequest createGetCapabilities() {
-        //switch (getVersion()) {
-          //  case v110:
-                return new AbstractGetCapabilities(serverURL.toString(), getVersion().getCode(), getClientSecurity());
-            //default:
-             //   throw new IllegalArgumentException("Version was not defined");
-        //}
+        return new AbstractGetCapabilities(serverURL.toString(), getVersion(), getClientSecurity());
     }
 
     /**

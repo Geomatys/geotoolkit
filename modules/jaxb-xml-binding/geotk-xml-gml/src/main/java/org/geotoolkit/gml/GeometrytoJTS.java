@@ -18,7 +18,6 @@
 package org.geotoolkit.gml;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import java.io.Reader;
 import java.io.StringReader;
 
@@ -38,8 +37,6 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
  */
 public class GeometrytoJTS {
 
-    private static final GeometryFactory GF = new GeometryFactory();
-
     private GeometrytoJTS(){}
 
     /**
@@ -52,8 +49,6 @@ public class GeometrytoJTS {
      */
     public static Geometry toJTS(String gmlString) throws JAXBException, FactoryException{
         final Reader reader = new StringReader(gmlString);
-
-        final Geometry geom;
         final Unmarshaller unmarshaller = GMLMarshallerPool.getInstance().acquireUnmarshaller();
         Object jax = unmarshaller.unmarshal(reader);
         GMLMarshallerPool.getInstance().recycle(unmarshaller);
