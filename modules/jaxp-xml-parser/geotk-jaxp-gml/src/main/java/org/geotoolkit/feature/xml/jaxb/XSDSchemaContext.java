@@ -21,7 +21,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.StandardOpenOption;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,6 +47,7 @@ import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.feature.xml.Utils;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.xsd.xml.v2001.Appinfo;
 import org.geotoolkit.xsd.xml.v2001.Attribute;
 import org.geotoolkit.xsd.xml.v2001.ComplexType;
@@ -270,6 +274,17 @@ public class XSDSchemaContext {
                 schema = (Schema) unmarshaller.unmarshal(((URL)candidate).openStream());
                 // we build the base url to retrieve imported xsd
                 location = ((URL)candidate).toString();
+            } else if (candidate instanceof URLConnection) {
+                final URLConnection conn = (URLConnection) candidate;
+                try (final InputStream stream = conn.getInputStream()) {
+                    schema = (Schema) unmarshaller.unmarshal(stream);
+                }
+                location = conn.getURL().toString();
+            } else if (candidate instanceof URI) {
+                try (final InputStream stream = IOUtilities.open(candidate, StandardOpenOption.READ)) {
+                    schema = (Schema) unmarshaller.unmarshal(stream);
+                }
+                location = ((URI)candidate).toString();
             }
             else {
                 POOL.recycle(unmarshaller); // We won't use it, it can be recycled.

@@ -35,7 +35,7 @@ public class GetFeature100 extends AbstractGetFeature{
 
     @Override
     public Specification.Filter getFilterVersion() {
-        return Specification.Filter.V_1_1_0;
+        return Specification.Filter.V_1_0_0;
     }
 
     @Override

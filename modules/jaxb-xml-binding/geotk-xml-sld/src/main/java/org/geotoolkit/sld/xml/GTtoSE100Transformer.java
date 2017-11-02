@@ -24,6 +24,7 @@ import javax.measure.quantity.Length;
 import javax.measure.Unit;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
+import org.apache.sis.internal.metadata.AxisDirections;
 import org.geotoolkit.ogc.xml.v100.BinaryComparisonOpType;
 import org.geotoolkit.ogc.xml.v100.BinaryLogicOpType;
 import org.geotoolkit.ogc.xml.v100.BinaryOperatorType;
@@ -118,6 +119,17 @@ import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 import org.opengis.util.GenericName;
 import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.geotoolkit.gml.xml.v212.BoxType;
+import org.geotoolkit.gml.xml.v212.CoordType;
+import org.geotoolkit.ogc.xml.v100.BBOXType;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -403,9 +415,31 @@ public class GTtoSE100Transformer implements StyleVisitor{
                 throw new IllegalArgumentException("invalid filter element : " + sf);
             }
             return ogc_factory.createNot(lot);
-        }else if(filter instanceof BBOX){
+        } else if(filter instanceof BBOX) {
+            final BBOX bbox = (BBOX) filter;
+            final BBOXType bboxType = ogc_factory.createBBOXType();
+            final Expression sourceExp1 = bbox.getExpression1();
+            final JAXBElement<?> exp1 = extract(sourceExp1);
+            final Expression sourceExp2 = bbox.getExpression2();
+            JAXBElement<?> exp2 = extract(sourceExp2);
+            final PropertyNameType pName;
+            final BoxType boxType;
+            if (exp1 != null && exp1.getValue() instanceof PropertyNameType) {
+                pName = (PropertyNameType) exp1.getValue();
+            } else if (exp2 != null && exp2.getValue() instanceof PropertyNameType) {
+                pName = (PropertyNameType) exp2.getValue();
+            } else throw new IllegalArgumentException("No property name found in given bbox filter");
 
-        }else if(filter instanceof Beyond){
+            if (sourceExp1 instanceof Literal) {
+                boxType = toBox((Literal)sourceExp1);
+            } else if (sourceExp2 instanceof Literal) {
+                boxType = toBox((Literal)sourceExp2);
+            } else throw new IllegalArgumentException("No bbox found in given bbox filter");
+
+            bboxType.setPropertyName(pName);
+            bboxType.setBox(boxType);
+            return ogc_factory.createBBOX(bboxType);
+        } else if(filter instanceof Beyond) {
 
         }else if(filter instanceof Contains){
 
@@ -428,6 +462,74 @@ public class GTtoSE100Transformer implements StyleVisitor{
         }
 
         throw new IllegalArgumentException("Unknowed filter element : " + filter +" class :" + filter.getClass());
+    }
+
+    /**
+     * Analyze given literal and try to transform it into GML 2 bbox. The
+     * conversion is possible only if the given literal contains an {@link Envelope}
+     * or a {@link GeographicBoundingBox}.
+     * @param input The literal to extract a bbox from.
+     * @return Built bbox, never null.
+     * @throws IllegalArgumentException If given literal does not contain any
+     * usable envelope. Note that an envelope cannot be used if its dimension is
+     * more than 2D and no CRS is present to allow us to find horizontal piece.
+     */
+    private static BoxType toBox(final Literal input) throws IllegalArgumentException {
+        final Object val = input.getValue();
+        if (val == null) {
+            throw new IllegalArgumentException("No value in input literal object. Conversion to BoxType impossible");
+        }
+
+        final BoxType bType = new BoxType();
+        CoordinateReferenceSystem boxCrs = null;
+        if (val instanceof Envelope) {
+            final Envelope env = (Envelope) val;
+            boxCrs = env.getCoordinateReferenceSystem();
+            final int xAxis;
+            if (env.getDimension() == 2) {
+                xAxis = 0;
+            } else if (env.getDimension() > 2) {
+                if (boxCrs == null) {
+                    throw new IllegalArgumentException("Cannot find horizontal axis of given envelope");
+                }
+
+                final SingleCRS hCrs = CRS.getHorizontalComponent(boxCrs);
+                if (hCrs == null) {
+                    throw new IllegalArgumentException("Cannot find horizontal axis of given envelope");
+                }
+
+                xAxis = AxisDirections.indexOfColinear(boxCrs.getCoordinateSystem(), hCrs.getCoordinateSystem());
+                boxCrs = hCrs;
+            } else
+                throw new IllegalArgumentException(String.format(
+                        "Given envelope has not enough dimension. Cannot build a bbox from it.%nExpected: %d%nBut was: %d",
+                        2, env.getDimension()
+                ));
+
+            final int yAxis = xAxis + 1;
+            bType.getCoord().add(new CoordType(env.getMinimum(xAxis), env.getMinimum(yAxis)));
+            bType.getCoord().add(new CoordType(env.getMaximum(xAxis), env.getMaximum(yAxis)));
+
+        } else if (val instanceof GeographicBoundingBox) {
+            final GeographicBoundingBox e = (GeographicBoundingBox) val;
+            bType.getCoord().add(new CoordType(e.getWestBoundLongitude(), e.getSouthBoundLatitude()));
+            bType.getCoord().add(new CoordType(e.getEastBoundLongitude(), e.getNorthBoundLatitude()));
+            boxCrs = CommonCRS.defaultGeographic();
+        }
+
+        if (boxCrs != null) {
+            String srsName;
+            try {
+                srsName = IdentifiedObjects.lookupURN(boxCrs, null);
+            } catch (FactoryException ex) {
+                srsName = IdentifiedObjects.getUnicodeIdentifier(boxCrs);
+            }
+            if (srsName != null) {
+                bType.setSrsName(srsName);
+            }
+        }
+
+        return bType;
     }
 
     public FilterType visit(final Filter filter) {

@@ -12,6 +12,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -199,10 +200,29 @@ public class GeometryTransformer implements Supplier<Geometry> {
         if (source instanceof WithCoordinates) {
             final Coordinates coords = ((WithCoordinates) source).getCoordinates();
             if (coords != null) {
-                values = coords.getValues();
+                /* HACK : In GML 3, coordinates are just a list of decimal values.
+                 * The grouping by coordinate is done using "srsDimension" attribute
+                 * on parent geometry type. However, with GML 2, there's another
+                 * possibility : Coordinates use two distinct separators : one for
+                 * decimal value separation, and another for coordinate separation.
+                 * To manage both ways, we first check if coordinates object has
+                 * succeeded in splitting underlying decimals in coordinates. If
+                 * it does (return arrays with more than one element), we use
+                 * that approach. Otherwise, we fallback on standard way which
+                 * will try to determine manually the number of dimensions.
+                 */
+                Iterator<double[]> it = coords.points().iterator();
+                if (it.hasNext() && it.next().length > 1) {
+                    return coords.points().map(GeometryTransformer::toCoordinate).spliterator();
+                } else {
+                    values = coords.getValues();
+                }
+
             } else if (source instanceof Point) {
                 DirectPosition dp = ((Point) source).getPos();
-                values = dp == null ? Collections.EMPTY_LIST : dp.getValue();
+                if (dp != null) {
+                    return Stream.of(convertDirectPosition(dp)).spliterator();
+                } else return Spliterators.emptySpliterator(); // recognized object, but no value. Empty geometry
             }
         }
 
@@ -242,7 +262,10 @@ public class GeometryTransformer implements Supplier<Geometry> {
     }
 
     private static Coordinate convertDirectPosition(final org.opengis.geometry.DirectPosition dp) {
-        final double[] values = dp.getCoordinate();
+        return toCoordinate(dp.getCoordinate());
+    }
+
+    private static Coordinate toCoordinate(final double[] values) {
         if (values.length <= 0) {
             return null;
         } else if (values.length == 2) {

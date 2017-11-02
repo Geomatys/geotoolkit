@@ -17,6 +17,7 @@
 
 package org.geotoolkit.feature.xml.jaxb;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,6 +41,7 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.CharacteristicTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.xml.GMLConvention;
@@ -52,6 +54,7 @@ import org.geotoolkit.xsd.xml.v2001.Attribute;
 import org.geotoolkit.xsd.xml.v2001.AttributeGroup;
 import org.geotoolkit.xsd.xml.v2001.AttributeGroupRef;
 import org.geotoolkit.xsd.xml.v2001.ComplexContent;
+import org.geotoolkit.xsd.xml.v2001.ComplexRestrictionType;
 import org.geotoolkit.xsd.xml.v2001.ComplexType;
 import org.geotoolkit.xsd.xml.v2001.Element;
 import org.geotoolkit.xsd.xml.v2001.ExplicitGroup;
@@ -235,9 +238,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
             return featureTypeCache.get(name);
         }
 
-        System.out.println("GET TYPE "+name);
-
-
         //read simple content type if defined
         final SimpleContent simpleContent = type.getSimpleContent();
         if(simpleContent!=null){
@@ -333,6 +333,48 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                 //read groups
                 for (PropertyType property : getGroupAttributes(namespaceURI, extension.getSequence(), stack)) {
                     addProperty(ftb, property);
+                }
+            }
+
+            /* BIG DIRTY HACK: Needed for GML 2.1.2 support.
+             * For geometry definition, GML 2 propose an association to some
+             * data-type defined by restiction over an abstract geometry type.
+             * But, we do not want it to an association, we want it to be an
+             * attribute, for god sake ! So, we cheat and if we find a structure
+             * like that, we transform it into attribute (oh god that's awful).
+             */
+            final ComplexRestrictionType restriction = content.getRestriction();
+            if (restriction != null) {
+                final QName base = restriction.getBase();
+                if (base != null) {
+                    final ComplexType sct = xsdContext.findComplexType(base);
+                    if (sct != null) {
+                        final Object obj = getType(namespaceURI, sct, stack);
+                        if (obj instanceof FeatureType) {
+                            final ExplicitGroup sequence = sct.getSequence();
+                            if (sequence != null) {
+                                final List<Element> elements = sequence.getElements();
+                                if (elements != null && !elements.isEmpty()) {
+                                    Element e = sequence.getElements().get(0);
+                                    return ftb.addAttribute(Geometry.class)
+                                            .setName(e.getRef().getLocalPart())
+                                            .setMinimumOccurs(sequence.getMinOccurs())
+                                            .build();
+                                }
+                            }
+                        } else if (obj instanceof PropertyType) {
+                            final PropertyTypeBuilder ptb = new FeatureTypeBuilder().addProperty((PropertyType) obj);
+                            if (ptb instanceof PropertyTypeBuilder) {
+                                final AttributeTypeBuilder atb = (AttributeTypeBuilder) ptb;
+                                // check characteristics
+                                for (PropertyType property : getAnnotatedAttributes(namespaceURI, restriction.getAttributeOrAttributeGroup(), stack)) {
+                                    if (atb.getCharacteristic(property.getName().toString()) == null) {
+                                        atb.addCharacteristic((AttributeType) property);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

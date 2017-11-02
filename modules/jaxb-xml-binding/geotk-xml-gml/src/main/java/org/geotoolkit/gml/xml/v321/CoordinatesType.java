@@ -18,18 +18,13 @@
 
 package org.geotoolkit.gml.xml.v321;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.StringTokenizer;
-import java.util.logging.Level;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.gml.xml.Coordinates;
-import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -110,44 +105,6 @@ public class CoordinatesType implements Coordinates {
     public void setValue(String value) {
         this.value = value;
     }
-
-    @Override
-    public List<Double> getValues() {
-        final String curentTs;
-        if (ts == null) {
-            curentTs = " ";
-        } else {
-            curentTs = ts;
-        }
-
-        final String curentCs;
-        if (cs == null) {
-            curentCs = ",";
-        } else {
-            curentCs = cs;
-        }
-
-        final List<Double> values = new ArrayList<Double>();
-        if (value != null) {
-            final StringTokenizer tokenizer = new StringTokenizer(value, curentTs);
-            while (tokenizer.hasMoreTokens()) {
-                final String v = tokenizer.nextToken();
-                try {
-                    int i = v.indexOf(curentCs);
-                    if (i != -1) {
-                        String first = v.substring(0, i);
-                        String second = v.substring(i + 1);
-                        values.add(Double.parseDouble(first));
-                        values.add(Double.parseDouble(second));
-                    }
-                } catch (NumberFormatException ex) {
-                    Logging.getLogger("org.geotoolkit.gml.xml.v321").log(Level.WARNING, "unable to parse coordiante value:{0}", v);
-                }
-            }
-        }
-        return values;
-    }
-
 
     /**
      * Gets the value of the decimal property.
