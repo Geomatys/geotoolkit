@@ -338,4 +338,29 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         reader.setSkipStandardObjectProperties(skipStandardObjectProperties);
         return reader;
     }
+
+    @Test
+    public void testReadType212() throws Exception {
+        final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        final FeatureType type = reader.read(XmlFeatureTypeTest.class.getResource("type212.xsd"), "biefType");
+        Assert.assertNotNull("Read feature type is null", type);
+        // First, check geometry
+        final PropertyType geometry = type.getProperty("geom");
+        checkIsAttribute(geometry, Geometry.class);
+
+        // Then, check other attributes are present
+        final long attrCount = type.getProperties(false).stream()
+                .filter(AttributeType.class::isInstance)
+                .count();
+        Assert.assertEquals("Bad number of properties", 11, attrCount);
+
+        checkIsAttribute(type.getProperty("brigade"), String.class);
+    }
+
+    private void checkIsAttribute(final PropertyType toCheck, final Class expectedValueClass) {
+        Assert.assertNotNull("Property not defined", toCheck);
+        Assert.assertTrue("Expected an attribute, but was "+ toCheck.getClass(), toCheck instanceof AttributeType);
+        final AttributeType attr = (AttributeType) toCheck;
+        Assert.assertTrue("Geometric attribute is not a JTS geometry", expectedValueClass.isAssignableFrom(attr.getValueClass()));
+    }
 }

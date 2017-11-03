@@ -310,7 +310,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
                 .findFirst();
     }
 
-    protected boolean isLongitudeFirst() {
+    public boolean isLongitudeFirst() {
         return familyTree()
                 .map(gt -> gt.isLongitudeFirst)
                 .filter(Objects::nonNull)

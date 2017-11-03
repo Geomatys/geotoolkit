@@ -501,7 +501,7 @@ public class FilterToOGC200Converter implements Function<Filter, JAXBElement> {
             function.setName(OGCJAXBStatics.EXPRESSION_SUB);
             jax = ogc_factory.createFunction(function);
         } else if (exp instanceof PropertyName) {
-            jax = new JAXBElement<>(null, String.class, ((PropertyName) exp).getPropertyName());
+            jax = ogc_factory.createValueReference(((PropertyName) exp).getPropertyName());
         } else if (exp instanceof NilExpression) {
             //DO nothing on NILL expression
         } else {
