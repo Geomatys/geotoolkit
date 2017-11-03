@@ -156,7 +156,7 @@ final class MetadataFactory extends Factory {
              */
             throw (ParseException) new ParseException(e.getLocalizedMessage(), position).initCause(e);
         }
-        final Map<String,Object> asMap = standard.asValueMap(metadata,
+        final Map<String,Object> asMap = standard.asValueMap(metadata, null,
                 KeyNamePolicy.UML_IDENTIFIER, ValueExistencePolicy.NON_EMPTY);
         try {
             asMap.putAll(properties);

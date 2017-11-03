@@ -117,7 +117,7 @@ final class Writer {
         if (guard.put(object, Boolean.TRUE) == null) {
             final MetadataStandard previous = standard;
             standard = getStandard(object);
-            formatEntries(standard.asValueMap(object, KeyNamePolicy.UML_IDENTIFIER,
+            formatEntries(standard.asValueMap(object, null, KeyNamePolicy.UML_IDENTIFIER,
                     ValueExistencePolicy.NON_EMPTY).entrySet().iterator());
             standard = previous;
             if (guard.remove(object) != Boolean.TRUE) { // Identity check is okay here.
