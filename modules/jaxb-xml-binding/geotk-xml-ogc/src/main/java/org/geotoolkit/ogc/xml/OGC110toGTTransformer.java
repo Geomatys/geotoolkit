@@ -523,8 +523,13 @@ public class OGC110toGTTransformer {
                             Color c = ObjectConverters.convert(str, Color.class);
                             if(c!=null) obj = c;
                         } catch (UnconvertibleObjectException e) {
-                            Logging.recoverableException(null, OGC110toGTTransformer.class, "visitExpression", e);
                             // TODO - do we really want to ignore?
+                            try {
+                                obj = Color.decode(str);
+                            } catch (Exception bis) {
+                                bis.addSuppressed(e);
+                                Logging.recoverableException(null, OGC110toGTTransformer.class, "visitExpression", e);
+                            }
                         }
                     }else{
                         //try to convert it to a number

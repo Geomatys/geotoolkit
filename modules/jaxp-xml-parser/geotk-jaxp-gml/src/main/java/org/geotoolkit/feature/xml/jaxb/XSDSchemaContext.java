@@ -26,6 +26,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.StandardOpenOption;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -189,7 +190,8 @@ public class XSDSchemaContext {
     }
 
 
-    final Map<String,Schema> knownSchemas = new HashMap<>();
+    final Map<String,Schema> locatedSchemas = new HashMap<>();
+    final Set<Schema> unlocatedSchemas =new HashSet<>();
     final Map<String,String> locationMap = new HashMap<>();
 
     //Substitution group hierarchy
@@ -229,6 +231,7 @@ public class XSDSchemaContext {
      */
     public Map.Entry<Schema,String> read(final Object candidate) throws JAXBException {
         Entry<Schema, String> schemaEntry = readSchema(candidate);
+        listAllSchemas(schemaEntry.getKey(), schemaEntry.getValue(), new ArrayList<>());
         final Schema schema = schemaEntry.getKey();
         targetNamespace = schema.getTargetNamespace();
         final String location = schemaEntry.getValue();
@@ -292,7 +295,11 @@ public class XSDSchemaContext {
             }
             POOL.recycle(unmarshaller);
 
-            knownSchemas.put(location == null ? "unknown location" : location, schema);
+            if (location == null || location.trim().isEmpty()) {
+                unlocatedSchemas.add(schema);
+            } else {
+                locatedSchemas.put(location, schema);
+            }
 
             return new AbstractMap.SimpleImmutableEntry<>(schema, location);
         } catch (IOException ex) {
@@ -300,13 +307,22 @@ public class XSDSchemaContext {
         }
     }
 
+    /**
+     * TODO : Mechanism of schema discovery is messy. The interdependance with
+     * its current state is far too strong, and its use is also strongly
+     * dependant with {@link JAXBFeatureTypeReader}.
+     * @param schema
+     * @param baseLocation
+     * @param refs
+     * @throws MismatchedFeatureException
+     */
     public void listAllSchemas(final Schema schema, final String baseLocation, List<Map.Entry<Schema,String>> refs) throws MismatchedFeatureException{
         fillAllSubstitution(schema);
 
         for (OpenAttrs attr: schema.getIncludeOrImportOrRedefine()) {
             if (attr instanceof Import || attr instanceof Include) {
                 final String schemalocation = Utils.getIncludedLocation(baseLocation, attr);
-                if (schemalocation != null && !knownSchemas.containsKey(schemalocation)) {
+                if (schemalocation != null && !locatedSchemas.containsKey(schemalocation)) {
                     //check for a relocation
                     final String relocation = locationMap.get(schemalocation);
                     final String finalLocation = (relocation==null) ? schemalocation : relocation;
@@ -322,7 +338,7 @@ public class XSDSchemaContext {
                     }
 
                     if (importedSchema != null) {
-                        knownSchemas.put(schemalocation, importedSchema);
+                        locatedSchemas.put(schemalocation, importedSchema);
                         final String newBaseLocation = getNewBaseLocation(schemalocation, baseLocation);
                         refs.add(new AbstractMap.SimpleEntry<>(importedSchema, newBaseLocation));
 
@@ -448,20 +464,53 @@ public class XSDSchemaContext {
                 .orElse(null);
     }
 
+    /**
+     * Return known schemas ordered by respect of given namespace. Schemas
+     * whose location is matching given namespace are returned first. Then
+     * follow schemas whose target namespace are the same as given namespace.
+     * Finally other schemas are returned.
+     *
+     * @param namespace The target namespace.
+     * @return An ordered/sequential stream of schemas.
+     */
     protected Stream<Schema> getForNamespace(final String namespace) {
-        return knownSchemas.values().stream()
-                .filter(schema -> schema.getTargetNamespace() == namespace || schema.getTargetNamespace() == null || schema.getTargetNamespace().equalsIgnoreCase(namespace))
-                .sorted((s1, s2) -> {
+        // If no namespace has been given, we return all known schemas.
+        if (namespace == null) {
+            return Stream.concat(locatedSchemas.values().stream(), unlocatedSchemas.stream());
+        }
+
+        final Set<Schema> sameLocation = new HashSet<>();
+        final Set<Schema> others = new HashSet<>(unlocatedSchemas);
+        for (final Map.Entry<String, Schema> entry : locatedSchemas.entrySet()) {
+            if (namespace.equals(entry.getKey())) {
+                sameLocation.add(entry.getValue());
+            } else {
+                others.add(entry.getValue());
+            }
+        }
+
+        return Stream.concat(
+                sameLocation.stream(),
+                others.stream().sorted((s1, s2) -> {
                     if (s1.getTargetNamespace() == s2.getTargetNamespace()) {
                         return 0;
                     } else if (s1.getTargetNamespace() == null) {
                         return 1;
                     } else if (s2.getTargetNamespace() == null) {
                         return -1;
+                    } else if (s1.getTargetNamespace().equals(s2.getTargetNamespace())) {
+                        return 0;
+                    } else if (s1.getTargetNamespace().equals(namespace)) {
+                        return -1;
+                    } else if (s2.getTargetNamespace().equals(namespace)) {
+                        return 1;
                     }
 
+                    // Both schema have a non-null namespace not equal to the
+                    // searched one.
                     return 0;
-                });
+                })
+        );
     }
 
     protected <T> Optional<T> extractForNamespace(final String namespace, final Function<Schema, T> extractor) {
@@ -527,5 +576,4 @@ public class XSDSchemaContext {
         }
         return false;
     }
-
 }

@@ -27,8 +27,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * TODO : optimize by adding a method to return coordinate values as {@link DoubleStream}.
- * It will avoid unnecessary value boxing and accumulation.
+ * GML definition of coordinate stream.
  *
  * @author Guilhem Legal (Geomatys)
  */
@@ -107,7 +106,7 @@ public interface Coordinates {
                     startIdx = lastIdx + cs.length();
                 }
             } while (lastIdx >= 0);
-            
+
             parts.add(str.substring(startIdx));
 
             final double[] result = new double[parts.size()];

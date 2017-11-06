@@ -18,8 +18,8 @@
 package org.geotoolkit.data.wfs.v110;
 
 import org.geotoolkit.data.wfs.AbstractGetFeature;
+import org.geotoolkit.ogc.xml.FilterVersion;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.wfs.xml.WFSVersion;
 
 /**
@@ -35,8 +35,8 @@ public class GetFeature110 extends AbstractGetFeature{
     }
 
     @Override
-    public Specification.Filter getFilterVersion() {
-        return Specification.Filter.V_1_1_0;
+    public FilterVersion getFilterVersion() {
+        return FilterVersion.V110;
     }
 
     @Override

@@ -2,9 +2,11 @@ package org.geotoolkit.ogc.xml;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import java.awt.Color;
+import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 import javax.xml.bind.JAXBElement;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
@@ -25,6 +27,7 @@ import org.geotoolkit.gml.xml.v321.MultiSurfaceType;
 import org.geotoolkit.gml.xml.v321.PointType;
 import org.geotoolkit.gml.xml.v321.PolygonType;
 import org.geotoolkit.gml.xml.v321.SurfaceType;
+import org.geotoolkit.ogc.xml.v200.AbstractIdType;
 import org.geotoolkit.ogc.xml.v200.FunctionType;
 import org.geotoolkit.ogc.xml.v200.AndType;
 import org.geotoolkit.ogc.xml.v200.BBOXType;
@@ -35,6 +38,7 @@ import org.geotoolkit.ogc.xml.v200.CrossesType;
 import org.geotoolkit.ogc.xml.v200.DWithinType;
 import org.geotoolkit.ogc.xml.v200.DisjointType;
 import org.geotoolkit.ogc.xml.v200.EqualsType;
+import org.geotoolkit.ogc.xml.v200.FilterType;
 import org.geotoolkit.ogc.xml.v200.IntersectsType;
 import org.geotoolkit.ogc.xml.v200.LiteralType;
 import org.geotoolkit.ogc.xml.v200.LogicOpsType;
@@ -105,7 +109,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class FilterToOGC200Converter implements Function<Filter, JAXBElement> {
+public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType> {
 
     private final ObjectFactory ogc_factory;
     private final org.geotoolkit.gml.xml.v321.ObjectFactory gml_factory;
@@ -116,8 +120,7 @@ public class FilterToOGC200Converter implements Function<Filter, JAXBElement> {
         this.gml_factory = new org.geotoolkit.gml.xml.v321.ObjectFactory();
     }
 
-    @Override
-    public JAXBElement apply(Filter filter) {
+    public JAXBElement visit(Filter filter) {
         if (filter.equals(Filter.INCLUDE) || filter.equals(Filter.EXCLUDE)) {
             return null;
         }
@@ -194,8 +197,8 @@ public class FilterToOGC200Converter implements Function<Filter, JAXBElement> {
             final And and = (And) filter;
             final BinaryLogicOpType lot = ogc_factory.createBinaryLogicOpType();
             for (final Filter f : and.getChildren()) {
-                final JAXBElement<? extends LogicOpsType> ele = (JAXBElement<? extends LogicOpsType>) apply(f);
-                if (ele != null) {
+                final JAXBElement<?> ele = visit(f);
+                if (ele != null && ele.getValue() instanceof LogicOpsType) {
                     lot.getLogicOps().add(ele);
                 }
             }
@@ -205,7 +208,7 @@ public class FilterToOGC200Converter implements Function<Filter, JAXBElement> {
             final Or or = (Or) filter;
             final BinaryLogicOpType lot = ogc_factory.createBinaryLogicOpType();
             for (final Filter f : or.getChildren()) {
-                final JAXBElement subFilter = apply(f);
+                final JAXBElement subFilter = visit(f);
                 if (subFilter != null) {
                     lot.getLogicOps().add(subFilter);
                 }
@@ -214,7 +217,7 @@ public class FilterToOGC200Converter implements Function<Filter, JAXBElement> {
         } else if (filter instanceof Not) {
             final Not not = (Not) filter;
             final UnaryLogicOpType lot = ogc_factory.createUnaryLogicOpType();
-            final JAXBElement<?> sf = apply(not.getFilter());
+            final JAXBElement<?> sf = visit(not.getFilter());
 
             if (sf.getValue() instanceof ComparisonOpsType) {
                 lot.setComparisonOps((JAXBElement<? extends ComparisonOpsType>) sf);
@@ -243,7 +246,7 @@ public class FilterToOGC200Converter implements Function<Filter, JAXBElement> {
             final double maxx;
             final double miny;
             final double maxy;
-            final String srs;
+            String srs;
 
             if (left instanceof PropertyName) {
                 property = ((PropertyName) left).getPropertyName();
@@ -256,7 +259,10 @@ public class FilterToOGC200Converter implements Function<Filter, JAXBElement> {
                     miny = env.getMinimum(1);
                     maxy = env.getMaximum(1);
                     try {
-                        srs = ReferencingUtilities.lookupIdentifier(env.getCoordinateReferenceSystem(), true);
+                        srs = IdentifiedObjects.lookupURN(env.getCoordinateReferenceSystem(), null);
+                        if (srs == null) {
+                            srs = ReferencingUtilities.lookupIdentifier(env.getCoordinateReferenceSystem(), true);
+                        }
                     } catch (FactoryException ex) {
                         throw new IllegalArgumentException("invalid bbox element : " + filter + " " + ex.getMessage(), ex);
                     }
@@ -284,6 +290,9 @@ public class FilterToOGC200Converter implements Function<Filter, JAXBElement> {
                     maxy = env.getMaximum(1);
                     try {
                         srs = IdentifiedObjects.lookupURN(env.getCoordinateReferenceSystem(), null);
+                        if (srs == null) {
+                            srs = ReferencingUtilities.lookupIdentifier(env.getCoordinateReferenceSystem(), true);
+                        }
                     } catch (FactoryException ex) {
                         throw new IllegalArgumentException("invalid bbox element : " + filter + " " + ex.getMessage(), ex);
                     }
@@ -476,12 +485,11 @@ public class FilterToOGC200Converter implements Function<Filter, JAXBElement> {
             jax = ogc_factory.createFunction(ft);
         } else if (exp instanceof Literal) {
             final LiteralType literal = ogc_factory.createLiteralType();
-            // TODO : check if all goes well if we do not convert to string
-//            Object value = ((Literal) exp).getValue();
-//            if(value instanceof Color){
-//                value = colorToString((Color)value);
-//            }
-            literal.setContent(((Literal) exp).getValue());
+            Object val = ((Literal) exp).getValue();
+            if (val instanceof Color) {
+                val = FilterUtilities.toString((Color)val);
+            }
+            literal.setContent(val == null? null : val.toString());
             jax = ogc_factory.createLiteral(literal);
 
         } else if (exp instanceof Multiply) {
@@ -511,6 +519,14 @@ public class FilterToOGC200Converter implements Function<Filter, JAXBElement> {
         return jax;
     }
 
+    public List<JAXBElement<? extends AbstractIdType>> visit(final Id filter) {
+        return filter.getIdentifiers().stream()
+                .map(Identifier::getID)
+                .map(id -> new ResourceIdType(id == null? null : id.toString()))
+                .map(rid -> ogc_factory.createResourceId(rid))
+                .collect(Collectors.toList());
+    }
+
     private FunctionType convert(final BinaryExpression source) {
         final FunctionType function = ogc_factory.createFunctionType();
         function.getExpression().add(extract(source.getExpression1()));
@@ -518,23 +534,29 @@ public class FilterToOGC200Converter implements Function<Filter, JAXBElement> {
         return function;
     }
 
-//    static String colorToString(Color color) {
-//        String redCode = Integer.toHexString(color.getRed());
-//        String greenCode = Integer.toHexString(color.getGreen());
-//        String blueCode = Integer.toHexString(color.getBlue());
-//        if (redCode.length() == 1)      redCode = "0" + redCode;
-//        if (greenCode.length() == 1)    greenCode = "0" + greenCode;
-//        if (blueCode.length() == 1)     blueCode = "0" + blueCode;
-//
-//        final String colorCode;
-//        int alpha = color.getAlpha();
-//        if(alpha != 255){
-//            String alphaCode = Integer.toHexString(alpha);
-//            if (alphaCode.length() == 1) alphaCode = "0" + alphaCode;
-//            colorCode = "#" + alphaCode + redCode + greenCode + blueCode;
-//        }else{
-//            colorCode = "#" + redCode + greenCode + blueCode;
-//        }
-//        return colorCode.toUpperCase();
-//    }
+    @Override
+    public FilterType apply(Filter filter) {
+        final FilterType ft = ogc_factory.createFilterType();
+
+        if (filter instanceof Id) {
+            ft.getId().addAll(visit((Id)filter));
+        } else {
+            final JAXBElement<?> sf = visit(filter);
+
+            if (sf == null) {
+                return null;
+            } else if (sf.getValue() instanceof ComparisonOpsType) {
+                ft.setComparisonOps((JAXBElement<? extends ComparisonOpsType>) sf);
+            } else if (sf.getValue() instanceof LogicOpsType) {
+                ft.setLogicOps((JAXBElement<? extends LogicOpsType>) sf);
+            } else if (sf.getValue() instanceof SpatialOpsType) {
+                ft.setSpatialOps((JAXBElement<? extends SpatialOpsType>) sf);
+            } else {
+                //should not happen
+                throw new IllegalArgumentException("invalid filter element : " + sf);
+            }
+        }
+
+        return ft;
+    }
 }

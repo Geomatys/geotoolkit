@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    108 inner polygons.
+    71 inner polygons.
     CRS: EPSG:2154
     Boundary : 99038,6704170 399714,6879408
 --> 

@@ -22,6 +22,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import javafx.util.Pair;
 import org.apache.sis.referencing.CRS;
@@ -52,6 +54,7 @@ import org.geotoolkit.gml.xml.PolygonProperty;
 import org.geotoolkit.gml.xml.Ring;
 import org.geotoolkit.gml.xml.SurfaceProperty;
 import org.geotoolkit.gml.xml.WithCoordinates;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
@@ -353,7 +356,19 @@ public class GeometryTransformer implements Supplier<Geometry> {
     private static CoordinateReferenceSystem loadCRS(final String name, final boolean longitudeFirst) {
         CoordinateReferenceSystem crs;
         try {
-            crs = CRS.forCode(name);
+            try {
+                crs = CRS.forCode(name);
+            } catch (NoSuchAuthorityCodeException e) {
+                // HACK : sometimes, we've got a malformed URN of the form urn:...EPSG:CODE
+                // instead of urn:...EPSG:VERSION:CODE or urn:...EPSG::CODE
+                final Matcher matcher = Pattern.compile("\\w+:\\d+$").matcher(name);
+                if (matcher.find()) {
+                    crs = CRS.forCode(matcher.group());
+                } else {
+                    throw e;
+                }
+            }
+
         } catch (FactoryException ex) {
             throw new UnconvertibleObjectException("Impossible to find a coordinate reference system for code " + name, ex);
         }
@@ -361,6 +376,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
         if (longitudeFirst) {
             crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED);
         }
+
         return crs;
     }
 

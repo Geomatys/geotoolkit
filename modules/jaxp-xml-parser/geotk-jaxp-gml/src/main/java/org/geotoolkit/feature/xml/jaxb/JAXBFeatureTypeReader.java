@@ -30,6 +30,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
@@ -131,7 +132,10 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
     }
 
     public FeatureType read(final Object candidate, final String name) throws JAXBException {
-        final Schema schema = xsdContext.read(candidate,name);
+        final Schema schema = xsdContext.read(candidate).getKey();
+        if (schema == null) {
+            throw new IllegalArgumentException("No schema can be read from given source: "+candidate);
+        }
         return getFeatureTypeFromSchema(schema, name);
     }
 
@@ -196,8 +200,11 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
 
     }
 
-    private FeatureType getFeatureTypeFromSchema(Schema schema, String name){
+    private FeatureType getFeatureTypeFromSchema(Schema schema, String name) {
         final TopLevelElement element = schema.getElementByName(name);
+        if (element == null) {
+            throw new IllegalArgumentException("No type found for name "+name);
+        }
         final QName typeName = element.getType();
         final ComplexType type = xsdContext.findComplexType(typeName);
         final BuildStack stack = new BuildStack();
@@ -349,8 +356,8 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                 if (base != null) {
                     final ComplexType sct = xsdContext.findComplexType(base);
                     if (sct != null) {
-                        final Object obj = getType(namespaceURI, sct, stack);
-                        if (obj instanceof FeatureType) {
+                        final Object obj = getType(base.getNamespaceURI(), sct, stack);
+                        if (obj instanceof FeatureType && isGeometric((FeatureType)obj)) {
                             final ExplicitGroup sequence = sct.getSequence();
                             if (sequence != null) {
                                 final List<Element> elements = sequence.getElements();
@@ -403,7 +410,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
 
             if(particle instanceof Element){
                 final Element ele = (Element) particle;
-                final PropertyType att = elementToAttribute(ele, stack);
+                final PropertyType att = elementToAttribute(namespaceURI, ele, stack);
                 atts.add(att);
 
             }else if(particle instanceof Any){
@@ -441,7 +448,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
         return atts;
     }
 
-    private PropertyType elementToAttribute(Element element, BuildStack stack) {
+    private PropertyType elementToAttribute(final String namespaceURI, Element element, BuildStack stack) {
 
         GenericName name = null;
 
@@ -452,8 +459,8 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
             if (parentElement == null) {
                 throw new MismatchedFeatureException("unable to find referenced element : "+ refName);
             }
-            refType = elementToAttribute(parentElement, stack);
-            name = refType.getName();
+            refType = elementToAttribute(namespaceURI, parentElement, stack);
+            name = NamesExt.create(refName);
         }
 
         //extract name
@@ -463,7 +470,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
         }
         if (localName != null) {
             //override name
-            name = NamesExt.create(localName);
+            name = NamesExt.create(namespaceURI, localName);
         }
 
         //extract min/max
@@ -835,11 +842,24 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                     //but attributes are possible
                     for (PropertyType pt : subProps) {
                         if (pt instanceof FeatureAssociationRole) {
-                            final FeatureAssociationRole subFar = (FeatureAssociationRole)pt;
-                            ftb.addAssociation(subFar)
-                                .setName(far.getName())
-                                .setMinimumOccurs(far.getMinimumOccurs())
-                                .setMaximumOccurs(far.getMaximumOccurs());
+                            /* HACK : GML 3.1.1 : Only way I've found to manage
+                             * geometries as attributes. If we've found an association,
+                             * and if it's feature type is a geometric property
+                             * (derived from abstract geometric type), well, we
+                             * return a geometric property.
+                             */
+                            final FeatureAssociationRole subFar = (FeatureAssociationRole) pt;
+                            final PropertyTypeBuilder propBuilder;
+                            if (isGeometric(subFar)) {
+                                propBuilder = ftb.addAttribute(Geometry.class);
+                            } else {
+                                propBuilder = ftb.addAssociation(subFar);
+                            }
+
+                            propBuilder
+                                    .setMinimumOccurs(far.getMinimumOccurs())
+                                    .setMaximumOccurs(far.getMaximumOccurs())
+                                    .setName(far.getName());
                             break;
                         }
                     }
@@ -853,6 +873,28 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
         } else {
             ftb.addProperty(property);
         }
+    }
+
+    private static boolean isGeometric(FeatureAssociationRole source) {
+        try {
+            return isGeometric(source.getValueType());
+        } catch (IllegalStateException e) {
+            return false; // Cannot know, we assume it's not a geometry.
+        }
+    }
+
+    private static boolean isGeometric(final FeatureType source) {
+        return withSuperTypes(source)
+                .map(FeatureType::getName)
+                .map(name -> name.tip().toString())
+                .anyMatch(name -> "AbstractGeometryType".equals(name) || "GeometryAssociationType".equals(name));
+    }
+
+    private static Stream<FeatureType> withSuperTypes(final FeatureType ft) {
+        return Stream.concat(
+                Stream.of(ft),
+                ft.getSuperTypes().stream().flatMap(JAXBFeatureTypeReader::withSuperTypes)
+        );
     }
 
     private GenericName extractFinalName(String namespaceURI, ComplexType type) {

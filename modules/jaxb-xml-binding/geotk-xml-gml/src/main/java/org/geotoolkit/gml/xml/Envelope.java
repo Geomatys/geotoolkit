@@ -27,6 +27,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 /**
+ * Definition of a GML boundary.
  *
  * @author Guilhem Legal (Geomatys)
  */
@@ -121,6 +122,4 @@ public interface Envelope extends org.opengis.geometry.Envelope, AbstractGeometr
     public default String getId() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    
 }
