@@ -203,6 +203,9 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
                 if (outputFormat.startsWith("responseFormat=")) {
                     return outputFormat.substring(15);
                 }
+                if (outputFormat.startsWith("outputFormat=")) {
+                    return outputFormat.substring(13);
+                }
             }
         }
         return "text/xml";
