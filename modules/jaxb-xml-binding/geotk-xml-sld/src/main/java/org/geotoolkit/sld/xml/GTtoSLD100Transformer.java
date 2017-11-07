@@ -157,7 +157,7 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
         final org.geotoolkit.sld.xml.v100.FeatureTypeConstraint ftc = sld_factory.createFeatureTypeConstraint();
 
         ftc.setFeatureTypeName( visitName((org.opengis.util.GenericName) constraint.getFeatureTypeName()).toString() );
-        ftc.setFilter( visit(constraint.getFilter()));
+        ftc.setFilter(apply(constraint.getFilter()));
 
         for(final Extent ext : constraint.getExtent()){
             ftc.getExtent().add( visit(ext,null) );

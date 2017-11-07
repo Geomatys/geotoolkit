@@ -17,6 +17,7 @@
 package org.geotoolkit.feature;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,6 +41,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.util.Deprecable;
 import org.opengis.feature.AttributeType;
 
 /**
@@ -62,22 +64,33 @@ public final class FeatureTypeExt extends Static {
             return featureType;
         }
 
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder(featureType);
-        ftb.properties().clear();
-        //rebuild type, preserve original property order
-        boolean same = true;
-        loop:
-        for (PropertyType pt : featureType.getProperties(true)) {
-            for (String name : properties) {
-                if(featureType.getProperty(name).equals(pt)){
-                    ftb.addProperty(pt);
-                    continue loop;
-                }
+        final Set<String> requiredProperties = new HashSet<>(Arrays.asList(properties));
+        for (final String p : properties) {
+            final PropertyType property = featureType.getProperty(p);
+            if (property instanceof AbstractOperation) {
+                requiredProperties.addAll(((AbstractOperation)property).getDependencies());
             }
-            same = false;
         }
 
-        return same ? featureType : ftb.build();
+        if (requiredProperties.size() >= featureType.getProperties(true).size()) {
+            return featureType;
+        }
+
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName(featureType.getName());
+        ftb.setDefinition(featureType.getDefinition());
+        ftb.setDescription(featureType.getDescription());
+        ftb.setDesignation(featureType.getDesignation());
+        ftb.setDeprecated(featureType instanceof Deprecable && ((Deprecable)featureType).isDeprecated());
+
+        //rebuild type, preserve original property order
+        for (PropertyType pt : featureType.getProperties(true)) {
+            if (requiredProperties.contains(pt.getName().toString()) || requiredProperties.contains(pt.getName().tip().toString())) {
+                ftb.addProperty(pt);
+            }
+        }
+
+        return ftb.build();
     }
 
     public static FeatureType createSubType(final FeatureType featureType,

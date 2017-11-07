@@ -43,6 +43,9 @@ public class GMLConvention {
     public static final FeatureType ABSTRACTFEATURETYPE_31;
     public static final FeatureType ABSTRACTFEATURETYPE_32;
 
+    //public static final FeatureType BOUNDING_SHAPE_TYPE_32;
+    //public static final FeatureType LOCATION_32;
+
     /**
      * Namespace of all names defined by GML convention.
      */

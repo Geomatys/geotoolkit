@@ -38,6 +38,7 @@ import org.geotoolkit.wfs.xml.AllSomeType;
 //Junit dependencies
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
 import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.wfs.xml.WFSVersion;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -53,7 +54,7 @@ public class WfsXMLBindingTest extends org.geotoolkit.test.TestBase {
 
     @Before
     public void setUp() throws JAXBException {
-        pool         = WFSMarshallerPool.getInstanceV100();
+        pool         = WFSMarshallerPool.getInstance(WFSVersion.v100);
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }

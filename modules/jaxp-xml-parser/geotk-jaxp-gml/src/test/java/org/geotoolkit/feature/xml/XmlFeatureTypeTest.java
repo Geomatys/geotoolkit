@@ -28,6 +28,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -44,6 +45,7 @@ import static org.junit.Assert.*;
 import static org.geotoolkit.feature.xml.XmlTestData.*;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.xml.sax.SAXException;
 
@@ -72,6 +74,9 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleType.xsd"));
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
+
+        // GML defines a lot more properties than what we strictly need. Nonetheless,
+        // we must ensure that required prpoerties are read from xsd.
         assertEquals(simpleTypeFull, types.get(0));
     }
 
@@ -220,7 +225,10 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleTypeEmpty.xsd"));
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
-        assertEquals(typeEmpty, types.get(0));
+        final FeatureType readType = types.get(0);
+
+        assertEquals(typeEmpty.getName(), readType.getName());
+        checkProperties(typeEmpty.getProperties(true), readType);
     }
 
     @Test
@@ -230,8 +238,6 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleTypeEmpty.xsd"));
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
-
-        System.out.println(types.get(0));
 
         //TODO we should check all properties
         final FeatureType type = types.get(0);
@@ -252,7 +258,10 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/TypeWithNil.xsd"));
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
-        assertEquals(typeWithNil, types.get(0));
+        final FeatureType readType = types.get(0);
+
+        assertEquals(typeEmpty.getName(), readType.getName());
+        checkProperties(typeEmpty.getProperties(true), readType);
     }
 
     @Test
@@ -337,5 +346,70 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
         reader.setSkipStandardObjectProperties(skipStandardObjectProperties);
         return reader;
+    }
+
+    @Test
+    public void testReadBiefType212() throws Exception {
+        testReadBiefType(XmlFeatureTypeTest.class.getResource("bief212.xsd"));
+    }
+
+    @Test
+    public void testReadBiefType311() throws Exception {
+        testReadBiefType(XmlFeatureTypeTest.class.getResource("bief311.xsd"));
+    }
+
+    @Test
+    public void testReadBiefType321() throws Exception {
+        testReadBiefType(XmlFeatureTypeTest.class.getResource("bief321.xsd"));
+    }
+    
+    /**
+     * Read and check Bief datatype. The bief type is a schema extracted from
+     * real-world WFS service. We want to ensure that its geometry and simple
+     * attributes are well-extracted.
+     * @param resource The resource in which is stored bief schema. The aim is
+     * to be able to give same schema for different GML version.
+     * @throws Exception Well, if we cannot read the XSD file, or its content is
+     * invalid (cannot be converted to feature type).
+     */
+    public void testReadBiefType(final URL resource) throws Exception {
+        final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        final FeatureType type = reader.read(resource, "bief");
+        Assert.assertNotNull("Read feature type is null", type);
+        // First, check geometry
+        final PropertyType geometry = type.getProperty("geom");
+        checkIsAttribute(geometry, Geometry.class);
+
+        // Then, check other attributes are present
+        final long attrCount = type.getProperties(false).stream()
+                .filter(AttributeType.class::isInstance)
+                .count();
+        Assert.assertEquals("Bad number of properties", 11, attrCount);
+
+        checkIsAttribute(type.getProperty("brigade"), String.class);
+    }
+
+
+    private void checkIsAttribute(final PropertyType toCheck, final Class expectedValueClass) {
+        Assert.assertNotNull("Property not defined", toCheck);
+        Assert.assertTrue("Expected an attribute, but was "+ toCheck.getClass(), toCheck instanceof AttributeType);
+        final AttributeType attr = (AttributeType) toCheck;
+        Assert.assertTrue("Geometric attribute is not a JTS geometry", expectedValueClass.isAssignableFrom(attr.getValueClass()));
+    }
+
+    /**
+     * Ensure that all given properties can be found in input feature type.
+     * @param wantedProperties The properties we need to find.
+     * @param toCheck The feature type to search into.
+     */
+    private static void checkProperties(Collection<? extends PropertyType> wantedProperties, final FeatureType toCheck) {
+        for (PropertyType searched : wantedProperties) {
+            try {
+                final PropertyType found = toCheck.getProperty(searched.getName().toString());
+                Assert.assertEquals(searched, found);
+            } catch (PropertyNotFoundException e) {
+                fail(e.getMessage());
+            }
+        }
     }
 }

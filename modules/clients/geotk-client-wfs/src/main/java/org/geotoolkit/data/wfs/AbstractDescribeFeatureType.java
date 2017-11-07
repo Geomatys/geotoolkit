@@ -39,7 +39,7 @@ import org.geotoolkit.wfs.xml.WFSXmlFactory;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractDescribeFeatureType extends AbstractRequest implements DescribeFeatureTypeRequest{
+public class AbstractDescribeFeatureType extends AbstractRequest implements DescribeFeatureTypeRequest{
 
     protected final String version;
 

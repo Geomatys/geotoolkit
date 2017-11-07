@@ -25,7 +25,6 @@ import java.util.Objects;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.*;
-import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
@@ -80,12 +79,12 @@ public class DistanceBufferType extends SpatialOpsType implements DistanceBuffer
     /**
      * build a new Distance buffer
      */
-    public DistanceBufferType(final String propertyName, final AbstractGeometryType geometry, final double distance, final String unit) {
+    public DistanceBufferType(final String propertyName, final Object geometry, final double distance, final String unit) {
         if (propertyName != null) {
             this.expression = factory.createValueReference(propertyName);
         }
         this.distance       = new MeasureType(distance, unit);
-        this.any            = Arrays.asList((Object)geometry);
+        this.any            = Arrays.asList(geometry);
     }
 
     public DistanceBufferType(final DistanceBufferType that) {
@@ -106,7 +105,7 @@ public class DistanceBufferType extends SpatialOpsType implements DistanceBuffer
             }
 
             if (that.any != null) {
-                this.any = new ArrayList<Object>();
+                this.any = new ArrayList<>();
                 for (Object obj : that.any) {
                     if (obj instanceof EnvelopeType) {
                         this.any.add(new EnvelopeType((EnvelopeType)obj));

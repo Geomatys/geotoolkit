@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
@@ -34,10 +35,12 @@ import javax.xml.namespace.QName;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
-import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.ogc.xml.FilterMarshallerPool;
+import org.geotoolkit.ogc.xml.FilterVersion;
+import org.geotoolkit.ogc.xml.XMLFilter;
 import org.geotoolkit.wfs.xml.GetFeature;
 import org.geotoolkit.wfs.xml.Query;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
@@ -163,11 +166,12 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             requestParameters.put("MAXFEATURES", maxFeatures.toString());
         }
 
+        String prefix = "";
         if(typeName != null){
             final StringBuilder sbN = new StringBuilder();
             final StringBuilder sbNS = new StringBuilder();
 
-            String prefix = typeName.getPrefix();
+            prefix = typeName.getPrefix();
             if (prefix == null || prefix.isEmpty()) {
                 prefix = "ut";
             }
@@ -182,7 +186,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
                 sbNS.deleteCharAt(sbNS.length()-1);
             }
 
-            requestParameters.put("TYPENAME",sbN.toString());
+            requestParameters.put(getTypeNameParameterKey(),sbN.toString());
             requestParameters.put("NAMESPACE",sbNS.toString());
         }
 
@@ -193,23 +197,23 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
         }
 
 
-        if(filter != null && filter != Filter.INCLUDE){
-            final StyleXmlIO util = new StyleXmlIO();
-            final StringWriter writer = new StringWriter();
+        if(filter != null && filter != Filter.INCLUDE) {
+            final String strFilter;
+            try (final StringWriter writer = new StringWriter()) {
+                final MarshallerPool pool = FilterMarshallerPool.getInstance(getFilterVersion());
+                final Marshaller marsh = pool.acquireMarshaller();
+                marsh.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+                marsh.marshal(FilterMarshallerPool.toJAXBElement(filter, getFilterVersion()), writer);
+                pool.recycle(marsh);
 
-            try {
-                util.writeFilter(writer, filter, org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
-            } catch (JAXBException ex) {
-                LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
-            }
+                strFilter = writer.toString()
+                    // Replace full namespace with specified prefix
+                        .replaceAll("([^<])"+Pattern.quote(typeName.getNamespaceURI())+"(:\\w+)", "$1"+prefix+"$2");
+                requestParameters.put("FILTER", strFilter);
 
-            final String strFilter = writer.toString();
-            try {
-                writer.close();
-            } catch (IOException ex) {
-                LOGGER.log(Level.FINER, ex.getLocalizedMessage(), ex);
+            } catch (JAXBException|IOException ex) {
+                LOGGER.log(Level.WARNING, "GetFeature: FILTER parameter cannot be written", ex);
             }
-            requestParameters.put("FILTER", strFilter);
         }
 
         if(propertyNames != null){
@@ -256,10 +260,9 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             filter = (Filter) this.filter.accept(visitor, null);
         }
 
-        FilterType xmlFilter;
-        if(filter != null && filter != Filter.INCLUDE){
-            final StyleXmlIO util = new StyleXmlIO();
-            xmlFilter = util.getTransformerXMLv110().visit(filter);
+        XMLFilter xmlFilter;
+        if(filter != null && filter != Filter.INCLUDE) {
+            xmlFilter = FilterMarshallerPool.transform(filter, getFilterVersion());
         } else {
             xmlFilter = null;
         }
@@ -272,7 +275,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             }
         }
 
-        final Query query = WFSXmlFactory.buildQuery(version, xmlFilter, typeNames, "1.1.0", null, null, propName);
+        final Query query = WFSXmlFactory.buildQuery(version, xmlFilter, typeNames, null, null, null, propName);
 
         final GetFeature request = WFSXmlFactory.buildGetFeature(version, "WFS", null, null, maxFeatures, query, ResultTypeType.RESULTS, outputFormat);
 
@@ -297,4 +300,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     }
 
 
+    public abstract FilterVersion getFilterVersion();
+
+    public abstract String getTypeNameParameterKey();
 }

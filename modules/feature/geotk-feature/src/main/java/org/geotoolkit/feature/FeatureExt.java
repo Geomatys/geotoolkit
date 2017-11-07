@@ -536,7 +536,7 @@ public final class FeatureExt extends Static {
 
     /**
      * Search for a geometric attribute outside SIS conventions. More accurately,
-     * we expect the given type to have a single geometry attribute. I many are
+     * we expect the given type to have a single geometry attribute. If many are
      * found, an exception is thrown.
      *
      * @param type The data type to search into.

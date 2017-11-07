@@ -395,9 +395,4 @@ public class XmlTestData {
         featureNil.setPropertyValue("record",propnil);
 
     }
-
-    private static Object addRole(AttributeRole attributeRole) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }

@@ -19,7 +19,6 @@ package org.geotoolkit.feature.xml.jaxp;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.io.IOException;
 import java.io.StringReader;
@@ -72,7 +71,6 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.nio.IOUtilities;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -275,16 +273,14 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     schemaLocations.put(namespace, fturl);
                     try {
                         final URI uri = Utils.resolveURI(base, fturl);
-                        List<FeatureType> fts = (List<FeatureType>) featureTypeReader.read(IOUtilities.open(uri));
+                        List<FeatureType> fts = (List<FeatureType>) featureTypeReader.read(uri);
                         for (FeatureType ft : fts) {
                             if (!featureTypes.contains(ft)) {
                                 featureTypes.add(ft);
                             }
                         }
-                    } catch (MalformedURLException | URISyntaxException ex) {
-                        LOGGER.log(Level.WARNING, null, ex);
-                    } catch (IOException | JAXBException ex) {
-                        LOGGER.log(Level.WARNING, null, ex);
+                    } catch (IOException | JAXBException | URISyntaxException ex) {
+                        LOGGER.log(Level.WARNING, null, ex); // TODO : should we not crash here ?
                     }
                     i = i + 2;
                 } else if(namespace.equalsIgnoreCase("http://www.opengis.net/gml") || namespace.equalsIgnoreCase("http://www.opengis.net/wfs")) {
@@ -309,10 +305,13 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     fid = reader.getAttributeValue(0);
                 }
 
-                if (name.tip().toString().equals("featureMember") || name.tip().toString().equals("featureMembers")) {
+                final String markupName = name.tip().toString();
+
+                // HACK : In WFS response, GML features are wrapped in a <wfs:(featureM|m)embers?> markup
+                if (markupName.equals("featureMember") || markupName.equals("featureMembers") || markupName.equals("member")) {
                     continue;
 
-                } else if (name.tip().toString().equals("boundedBy")) {
+                } else if (markupName.equals("boundedBy")) {
                     while (reader.hasNext()) {
                         event = reader.next();
                         if (event == START_ELEMENT) {
@@ -400,7 +399,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             int event = reader.getEventType();
 
             if (event == START_ELEMENT) {
-                final GenericName propName = nameCache.get(reader.getName());
+                GenericName propName = nameCache.get(reader.getName());
 
                 // we skip the boundedby attribute if it's present
                 if ("boundedBy".equals(propName.tip().toString())) {
@@ -409,29 +408,31 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 }
 
                 final String nameAttribute = reader.getAttributeValue(null, "name");
-                final PropertyType propertyType;
+                PropertyType propertyType;
                 try {
-                    propertyType = featureType.getProperty(propName.toString());
+                    try {
+                        propertyType = featureType.getProperty(propName.toString());
+                    } catch (PropertyNotFoundException e) {
+                        propertyType = featureType.getProperty(propName.tip().toString());
+                        // If we can find the property with the local part only, we continue with it.
+                        propName = propName.tip();
+                    }
 
                 }catch(PropertyNotFoundException ex) {
                     if (Boolean.TRUE.equals(this.properties.get(SKIP_UNEXPECTED_PROPERTY_TAGS))) {
                         toTagEnd(propName.tip().toString());
                         continue;
                     } else {
-                        try {
-                            //convert the content as a dom node
-                            final AttributeType pd = (AttributeType) featureType.getProperty("_any");
-                            final Document doc = readAsDom(propName.tip().toString());
-                            feature.setPropertyValue(pd.getName().toString(), doc);
-                            doNext = false;
-                            continue;
-                        }catch(PropertyNotFoundException e) {
-                            throw new IllegalArgumentException("Unexpected attribute:" + propName + " not found in :\n" + featureType);
-                        }
+                        //convert the content as a dom node
+                        final AttributeType pd = (AttributeType) featureType.getProperty("_any");
+                        final Document doc = readAsDom(propName.tip().toString());
+                        feature.setPropertyValue(pd.getName().toString(), doc);
+                        doNext = false;
+                        continue;
                     }
                 }
 
-                if(propertyType instanceof Operation){
+                if (propertyType instanceof Operation) {
                     final Operation opType = (Operation) propertyType;
                     final PropertyType resultType = (PropertyType) opType.getResult();
                     final Object value = readPropertyValue(resultType,false);
@@ -442,7 +443,6 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     }
                     continue;
                 }
-
 
                 //read attributes
                 if (propertyType instanceof AttributeType) {

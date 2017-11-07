@@ -27,24 +27,29 @@ import org.apache.sis.xml.MarshallerPool;
  */
 public final class WFSMarshallerPool {
 
-    private static final MarshallerPool instance;
+    private static final MarshallerPool INSTANCE;
     static {
         try {
-            instance = new MarshallerPool(JAXBContext.newInstance(
+            INSTANCE = new MarshallerPool(JAXBContext.newInstance(
                       "org.geotoolkit.wfs.xml.v110:"
                     + "org.geotoolkit.wfs.xml.v200:"
                     + "org.geotoolkit.gml.xml.v311:"
                     + "org.geotoolkit.gml.xml.v321:"
+                    + "org.geotoolkit.ogc.xml.v110:"
+                    + "org.geotoolkit.ogc.xml.v200:"
                     + "org.apache.sis.internal.jaxb.geometry"), null);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
     }
 
-    private static final MarshallerPool instance100;
+    private static final MarshallerPool INSTANCE_100;
     static {
         try {
-            instance100 = new MarshallerPool(JAXBContext.newInstance("org.geotoolkit.wfs.xml.v100:org.geotoolkit.gml.xml.v212"), null);
+            INSTANCE_100 = new MarshallerPool(JAXBContext.newInstance(
+                    "org.geotoolkit.wfs.xml.v100:"
+                            + "org.geotoolkit.gml.xml.v212"
+            ), null);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
@@ -53,10 +58,13 @@ public final class WFSMarshallerPool {
     private WFSMarshallerPool() {}
 
     public static MarshallerPool getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
-    public static MarshallerPool getInstanceV100() {
-        return instance100;
+    public static MarshallerPool getInstance(final WFSVersion version) {
+        switch (version) {
+            case v100: return INSTANCE_100;
+            default: return INSTANCE;
+        }
     }
 }

@@ -18,8 +18,10 @@
 package org.geotoolkit.ogc.xml;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.xml.MarshallerPool;
+import org.opengis.filter.Filter;
 
 /**
  *
@@ -27,10 +29,10 @@ import org.apache.sis.xml.MarshallerPool;
  */
 public final class FilterMarshallerPool {
 
-    private static final MarshallerPool instance;
+    private static final MarshallerPool DEFAULT;
     static {
         try {
-            instance = new MarshallerPool(JAXBContext.newInstance(
+            DEFAULT = new MarshallerPool(JAXBContext.newInstance(
                     "org.geotoolkit.ogc.xml.v110:"           +
                     "org.geotoolkit.ogc.xml.v200:"           +
                     "org.apache.sis.internal.jaxb.geometry:" +
@@ -41,9 +43,51 @@ public final class FilterMarshallerPool {
         }
     }
 
+    private static final MarshallerPool V100;
+    static {
+        try {
+            V100 = new MarshallerPool(JAXBContext.newInstance(
+                    "org.geotoolkit.ogc.xml.v100:"           +
+                    "org.apache.sis.internal.jaxb.geometry:" +
+                    "org.geotoolkit.gml.xml.v212:"
+            ), null);
+        } catch (JAXBException ex) {
+            throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
+        }
+    }
+
     private FilterMarshallerPool() {}
 
-    public static MarshallerPool getInstance() {
-        return instance;
+    public static MarshallerPool getInstance(FilterVersion version) {
+        switch (version) {
+            case V100: return V100;
+            default: return DEFAULT;
+        }
     }
+
+    public static MarshallerPool getInstance() {
+        return DEFAULT;
+    }
+
+    public static XMLFilter transform(final Filter source, final FilterVersion outputVersion) {
+        switch (outputVersion) {
+            case V100: return V100_CONVERTER.apply(source);
+            case V110: return V110_CONVERTER.apply(source);
+            case V200: return V200_CONVERTER.apply(source);
+            default: throw new UnsupportedOperationException("Version not supported yet: "+outputVersion);
+        }
+    }
+
+    public static JAXBElement<?> toJAXBElement(final Filter source, final FilterVersion outputVersion) {
+        switch (outputVersion) {
+            case V100: return V100_CONVERTER.visit(source);
+            case V110: return V110_CONVERTER.visit(source);
+            case V200: return V200_CONVERTER.visit(source);
+            default: throw new UnsupportedOperationException("Version not supported yet: "+outputVersion);
+        }
+    }
+
+    static final FilterToOGC200Converter V200_CONVERTER = new FilterToOGC200Converter();
+    static final FilterToOGC110Converter V110_CONVERTER = new FilterToOGC110Converter();
+    static final FilterToOGC100Converter V100_CONVERTER = new FilterToOGC100Converter();
 }

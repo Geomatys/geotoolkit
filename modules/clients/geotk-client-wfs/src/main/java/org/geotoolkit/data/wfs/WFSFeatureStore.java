@@ -20,8 +20,8 @@ package org.geotoolkit.data.wfs;
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,11 +31,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.feature.AbstractOperation;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectFeatureType;
 import org.apache.sis.feature.builder.AttributeRole;
@@ -44,7 +46,6 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 
 import org.geotoolkit.data.AbstractFeatureStore;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureReader;
@@ -81,9 +82,13 @@ import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyType;
+import org.opengis.filter.expression.PropertyName;
 
 /**
  * WFS Datastore, This implementation is read only.
@@ -486,8 +491,6 @@ public class WFSFeatureStore extends AbstractFeatureStore{
             final List<FeatureType> featureTypes = reader.read(stream);
             return featureTypes.get(0);
 
-        } catch (MalformedURLException ex) {
-            throw new IOException(ex);
         } catch (JAXBException ex) {
             throw new IOException(ex);
         }
@@ -497,18 +500,34 @@ public class WFSFeatureStore extends AbstractFeatureStore{
     private FeatureCollection requestFeature(final QName typeName, final Query query) throws IOException, IllegalNameException {
         final GenericName name = NamesExt.create(typeName);
         FeatureType type = types.get(this, name.toString());
-        type = FeatureTypeExt.createSubType(type, query.getPropertyNames());
-
+        // TODO : remove SIS conventions
         final GetFeatureRequest request = server.createGetFeature();
         request.setTypeName(typeName);
 
-        if(query != null){
+        if (query != null) {
+            type = FeatureTypeExt.createSubType(type, query.getPropertyNames());
 
             final Filter filter = query.getFilter();
             if(filter == null){
                 request.setFilter(Filter.INCLUDE);
-            }else{
-                request.setFilter(filter);
+            } else {
+                final Map<String, String> replacements = type.getProperties(true).stream()
+                        // operations are not data sent back by the server.
+                        .filter(pType -> pType instanceof AbstractOperation)
+                        .map(pType -> new AbstractMap.SimpleEntry<>(pType.getName(), ((AbstractOperation)pType).getDependencies()))
+                        // If dependency is more than one property, we cannot make a simple replacement
+                        .filter(entry -> entry.getValue().size() == 1)
+                        .collect(Collectors.toMap(
+                                entry -> entry.getKey().toString(),
+                                entry -> entry.getValue().iterator().next()
+                        ));
+
+                final Object visited = filter.accept(new PropertyNameReplacement(replacements), null);
+                if (visited instanceof Filter) {
+                    request.setFilter((Filter) visited);
+                } else {
+                    request.setFilter(filter);
+                }
             }
 
             final Integer max = query.getMaxFeatures();
@@ -517,15 +536,15 @@ public class WFSFeatureStore extends AbstractFeatureStore{
             }
 
             final String[] propertyNames = query.getPropertyNames();
-            GenericName[] names = null;
-            if (propertyNames!=null) {
-                names = new GenericName[propertyNames.length];
-                for(int i=0;i<propertyNames.length;i++) {
-                    names[i] = type.getProperty(propertyNames[i]).getName();
-                }
-            }
+            if (propertyNames != null) {
+                final GenericName[] names = type.getProperties(true).stream()
+                        // operations are not data sent back by the server.
+                        .filter(pType -> !(pType instanceof Operation))
+                        .map(PropertyType::getName)
+                        .toArray(size -> new GenericName[size]);
 
-            request.setPropertyNames(names);
+                request.setPropertyNames(names);
+            }
         }
 
         XmlFeatureReader reader = null;
@@ -576,4 +595,23 @@ public class WFSFeatureStore extends AbstractFeatureStore{
         checkTypeExist();
     }
 
+    private static class PropertyNameReplacement extends DuplicatingFilterVisitor {
+
+        private final Map<String, String> nameReplacements;
+
+        public PropertyNameReplacement(Map<String, String> nameReplacements) {
+            this.nameReplacements = nameReplacements;
+        }
+
+        @Override
+        public Object visit(PropertyName expression, Object extraData) {
+            final String newName = nameReplacements.get(expression.getPropertyName());
+
+            if (newName != null) {
+                return getFactory(extraData).property(newName);
+            } else {
+                return super.visit(expression, extraData);
+            }
+        }
+    }
 }

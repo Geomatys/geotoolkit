@@ -16,14 +16,15 @@
  */
 package org.geotoolkit.data.wfs;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
+import javax.xml.bind.JAXBException;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.AbstractFeatureClient;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.data.FeatureReader;
@@ -32,7 +33,15 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.data.wfs.v110.*;
+import org.geotoolkit.data.wfs.v100.DescribeFeatureType100;
+import org.geotoolkit.data.wfs.v100.GetFeature100;
+import org.geotoolkit.data.wfs.v110.Delete110;
+import org.geotoolkit.data.wfs.v110.GetFeature110;
+import org.geotoolkit.data.wfs.v110.Insert110;
+import org.geotoolkit.data.wfs.v110.Native110;
+import org.geotoolkit.data.wfs.v110.Transaction110;
+import org.geotoolkit.data.wfs.v110.Update110;
+import org.geotoolkit.data.wfs.v200.GetFeature200;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.StorageListener;
@@ -69,10 +78,12 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
     private volatile WFSCapabilities capabilities;
     private WFSFeatureStore store; //created when needed
 
+    @Deprecated
     public WebFeatureClient(final URL serverURL, final String version) {
         this(serverURL,null,version);
     }
 
+    @Deprecated
     public WebFeatureClient(final URL serverURL, final ClientSecurity security, final String version) {
         this(create(WFSFeatureStoreFactory.PARAMETERS_DESCRIPTOR, serverURL, security));
         if(version.equals("1.1.0")){
@@ -92,9 +103,20 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
         parameters.getOrCreate(WFSFeatureStoreFactory.POST_REQUEST).setValue(usePost);
     }
 
+    /**
+     *
+     * @param params the {@link ParameterValueGroup} to use
+     * @deprecated because of the version set to {@link WFSVersion#v110}. Please explicitly set the version using
+     * {@link WebFeatureClient#WebFeatureClient(org.opengis.parameter.ParameterValueGroup, org.geotoolkit.wfs.xml.WFSVersion) }
+     */
+    @Deprecated
     public WebFeatureClient(final ParameterValueGroup params) {
         super(params);
-        parameters.getOrCreate(WFSFeatureStoreFactory.VERSION).setValue("1.1.0");
+        /*
+        On ne souhaite plus forcer la version du WFS, mais la lire dans les paramètres
+        Changement de comportement : Cela suppose qu'on ne le remplit plus dans les parameters si les params ne le fournissent pas. (À VALIDER)
+        */
+        //parameters.getOrCreate(WFSFeatureStoreFactory.VERSION).setValue("1.1.0");
         parameters.parameter(WFSFeatureStoreFactory.POST_REQUEST.getName().getCode());
     }
 
@@ -127,47 +149,25 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
      * @throws WebFeatureException if an error occurred while querying the capabilities from the server.
      */
     public WFSCapabilities getCapabilities() throws WebFeatureException {
-        WFSCapabilities cap = capabilities;
-
-        if (cap != null) {
-            return cap;
+        if (capabilities != null) {
+            return capabilities;
         }
-        // Thread to prevent infinite request on a server
-        // TODO: This is costly - we should use an other mechanism.
-        final AtomicReference<Exception> error = new AtomicReference<>();
-        final Thread thread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    capabilities = (WFSCapabilities) WFSBindingUtilities.unmarshall(createGetCapabilities().getResponseStream(), getVersion());
-                } catch (Exception ex) {
-                    error.set(ex);
-                }
-            }
-        };
-        thread.start();
-        final long start = System.currentTimeMillis();
+
+        final GetCapabilitiesRequest capaRequest = createGetCapabilities();
+        final Integer timeout = parameters.getValue(AbstractClientFactory.TIMEOUT);
+        if (timeout != null) {
+            capaRequest.setTimeout(timeout);
+        } else {
+            capaRequest.setTimeout(TIMEOUT);
+        }
+
         try {
-            thread.join(TIMEOUT);
-        } catch (InterruptedException ex) {
-            // Someone doesn't want to let us sleep. Go back to work.
-        }
-        cap = capabilities;
-        if (cap == null) {
-            final Exception cause = error.get();
-            if (cause == null) {
-                throw new WebFeatureException("TimeOut error, the server takes too much time to answer.");
-            }
-            String message;
-            try {
-                message = "Can not parse server answer at URL " + createGetCapabilities().getURL().toString();
-            } catch (MalformedURLException ex1) {
-                message = "Malformed URL, can not get server answer.";
-            }
-            throw new WebFeatureException(message, cause);
+            capabilities = WFSBindingUtilities.unmarshall(capaRequest.getResponseStream(), getVersion());
+        } catch (IOException|JAXBException ex) {
+            throw new WebFeatureException("Cannot read GetCapabilities from server", ex);
         }
 
-        return cap;
+        return capabilities;
     }
 
     /**
@@ -175,13 +175,7 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
      * @return GetCapabilitiesRequest : getCapabilities request.
      */
     public GetCapabilitiesRequest createGetCapabilities() {
-
-        switch (getVersion()) {
-            case v110:
-                return new GetCapabilities110(serverURL.toString(),getClientSecurity());
-            default:
-                throw new IllegalArgumentException("Version was not defined");
-        }
+        return new AbstractGetCapabilities(serverURL.toString(), getVersion(), getClientSecurity());
     }
 
     /**
@@ -189,12 +183,12 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
      * @return DescribeFeatureTypeRequest : describe feature request.
      */
     public DescribeFeatureTypeRequest createDescribeFeatureType(){
-        switch (getVersion()) {
-            case v110:
-                return new DescribeFeatureType110(serverURL.toString(),getClientSecurity());
-            default:
-                throw new IllegalArgumentException("Version was not defined");
-        }
+        //switch (getVersion()) {
+          //  case v110:
+                return new DescribeFeatureType100(serverURL.toString(), getVersion(), getClientSecurity());
+            //default:
+             //   throw new IllegalArgumentException("Version was not defined");
+        //}
     }
 
     /**
@@ -203,8 +197,12 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
      */
     public GetFeatureRequest createGetFeature(){
         switch (getVersion()) {
+            case v100:
+                return new GetFeature100(serverURL.toString(), getClientSecurity());
             case v110:
-                return new GetFeature110(serverURL.toString(),getClientSecurity());
+                return new GetFeature110(serverURL.toString(), getClientSecurity());
+            case v200:
+                return new GetFeature200(serverURL.toString(), getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -215,48 +213,48 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
      * @return TransactionRequest : transaction request.
      */
     public TransactionRequest createTransaction(){
-        switch (getVersion()) {
-            case v110:
+        //switch (getVersion()) {
+          //  case v110:
                 return new Transaction110(serverURL.toString(),getClientSecurity());
-            default:
-                throw new IllegalArgumentException("Version was not defined");
-        }
+            //default:
+             //   throw new IllegalArgumentException("Version was not defined");
+        //}
     }
 
     public Insert createInsertElement(){
-        switch (getVersion()) {
-            case v110:
+        //switch (getVersion()) {
+          //  case v110:
                 return new Insert110();
-            default:
-                throw new IllegalArgumentException("Version was not defined");
-        }
+            //default:
+             //   throw new IllegalArgumentException("Version was not defined");
+        //}
     }
 
     public Update createUpdateElement(){
-        switch (getVersion()) {
-            case v110:
+        //switch (getVersion()) {
+          //  case v110:
                 return new Update110();
-            default:
-                throw new IllegalArgumentException("Version was not defined");
-        }
+            //default:
+             //   throw new IllegalArgumentException("Version was not defined");
+        //}
     }
 
     public Delete createDeleteElement(){
-        switch (getVersion()) {
-            case v110:
+        //switch (getVersion()) {
+          //  case v110:
                 return new Delete110();
-            default:
-                throw new IllegalArgumentException("Version was not defined");
-        }
+            //default:
+             //   throw new IllegalArgumentException("Version was not defined");
+        //}
     }
 
     public Native createNativeElement(){
-        switch (getVersion()) {
-            case v110:
+        //switch (getVersion()) {
+          //  case v110:
                 return new Native110();
-            default:
-                throw new IllegalArgumentException("Version was not defined");
-        }
+            //default:
+             //   throw new IllegalArgumentException("Version was not defined");
+        //}
     }
 
     ////////////////////////////////////////////////////////////////////////////
