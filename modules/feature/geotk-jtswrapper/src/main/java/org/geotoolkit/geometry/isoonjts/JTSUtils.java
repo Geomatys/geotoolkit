@@ -18,6 +18,9 @@ package org.geotoolkit.geometry.isoonjts;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -144,18 +147,24 @@ public final class JTSUtils {
 
         } else if (jtsGeom instanceof GeometryCollection) {
             com.vividsolutions.jts.geom.GeometryCollection jtsCollection = (com.vividsolutions.jts.geom.GeometryCollection) jtsGeom;
-            boolean multiPoint   = true;
-            boolean multiCurve   = true;
-            boolean multiSurface = true;
-            for (int i = 0, n = jtsCollection.getNumGeometries(); i < n; i++) {
-                if (!(jtsCollection.getGeometryN(i) instanceof com.vividsolutions.jts.geom.Point)) {
-                    multiPoint = false;
-                }
-                if (!(jtsCollection.getGeometryN(i) instanceof com.vividsolutions.jts.geom.LineString)) {
-                    multiCurve = false;
-                }
-                if (!(jtsCollection.getGeometryN(i) instanceof com.vividsolutions.jts.geom.Polygon)) {
-                    multiSurface = false;
+            boolean multiPoint   = jtsGeom instanceof MultiPoint;
+            boolean multiCurve   = jtsGeom instanceof MultiLineString;
+            boolean multiSurface = jtsGeom instanceof MultiPolygon;
+
+            // We cannot determine geometry nature using its type. We will try to
+            // determine it by analyzing its content.
+            if (!(multiPoint || multiCurve || multiSurface || jtsGeom.isEmpty())) {
+                multiPoint = multiCurve = multiSurface = true;
+                for (int i = 0, n = jtsCollection.getNumGeometries(); i < n && (multiPoint || multiCurve || multiSurface); i++) {
+                    if (!(jtsCollection.getGeometryN(i) instanceof com.vividsolutions.jts.geom.Point)) {
+                        multiPoint = false;
+                    }
+                    if (!(jtsCollection.getGeometryN(i) instanceof com.vividsolutions.jts.geom.LineString)) {
+                        multiCurve = false;
+                    }
+                    if (!(jtsCollection.getGeometryN(i) instanceof com.vividsolutions.jts.geom.Polygon)) {
+                        multiSurface = false;
+                    }
                 }
             }
             AbstractJTSAggregate result;

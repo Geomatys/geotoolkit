@@ -17,6 +17,7 @@
 
 package org.geotoolkit.feature.xml.jaxb;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +30,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
@@ -40,6 +42,7 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.CharacteristicTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.xml.GMLConvention;
@@ -52,6 +55,7 @@ import org.geotoolkit.xsd.xml.v2001.Attribute;
 import org.geotoolkit.xsd.xml.v2001.AttributeGroup;
 import org.geotoolkit.xsd.xml.v2001.AttributeGroupRef;
 import org.geotoolkit.xsd.xml.v2001.ComplexContent;
+import org.geotoolkit.xsd.xml.v2001.ComplexRestrictionType;
 import org.geotoolkit.xsd.xml.v2001.ComplexType;
 import org.geotoolkit.xsd.xml.v2001.Element;
 import org.geotoolkit.xsd.xml.v2001.ExplicitGroup;
@@ -72,7 +76,6 @@ import org.geotoolkit.xsd.xml.v2001.SimpleType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
 import org.geotoolkit.xsd.xml.v2001.Union;
 import org.opengis.feature.AttributeType;
-import org.opengis.feature.FeatureAssociation;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
@@ -129,7 +132,10 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
     }
 
     public FeatureType read(final Object candidate, final String name) throws JAXBException {
-        final Schema schema = xsdContext.read(candidate,name);
+        final Schema schema = xsdContext.read(candidate).getKey();
+        if (schema == null) {
+            throw new IllegalArgumentException("No schema can be read from given source: "+candidate);
+        }
         return getFeatureTypeFromSchema(schema, name);
     }
 
@@ -194,8 +200,11 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
 
     }
 
-    private FeatureType getFeatureTypeFromSchema(Schema schema, String name){
+    private FeatureType getFeatureTypeFromSchema(Schema schema, String name) {
         final TopLevelElement element = schema.getElementByName(name);
+        if (element == null) {
+            throw new IllegalArgumentException("No type found for name "+name);
+        }
         final QName typeName = element.getType();
         final ComplexType type = xsdContext.findComplexType(typeName);
         final BuildStack stack = new BuildStack();
@@ -235,9 +244,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
         if (featureTypeCache.containsKey(name)) {
             return featureTypeCache.get(name);
         }
-
-        System.out.println("GET TYPE "+name);
-
 
         //read simple content type if defined
         final SimpleContent simpleContent = type.getSimpleContent();
@@ -336,6 +342,48 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                     addProperty(ftb, property);
                 }
             }
+
+            /* BIG DIRTY HACK: Needed for GML 2.1.2 support.
+             * For geometry definition, GML 2 propose an association to some
+             * data-type defined by restiction over an abstract geometry type.
+             * But, we do not want it to an association, we want it to be an
+             * attribute, for god sake ! So, we cheat and if we find a structure
+             * like that, we transform it into attribute (oh god that's awful).
+             */
+            final ComplexRestrictionType restriction = content.getRestriction();
+            if (restriction != null) {
+                final QName base = restriction.getBase();
+                if (base != null) {
+                    final ComplexType sct = xsdContext.findComplexType(base);
+                    if (sct != null) {
+                        final Object obj = getType(base.getNamespaceURI(), sct, stack);
+                        if (obj instanceof FeatureType && isGeometric((FeatureType)obj)) {
+                            final ExplicitGroup sequence = sct.getSequence();
+                            if (sequence != null) {
+                                final List<Element> elements = sequence.getElements();
+                                if (elements != null && !elements.isEmpty()) {
+                                    Element e = sequence.getElements().get(0);
+                                    return ftb.addAttribute(Geometry.class)
+                                            .setName(e.getRef().getLocalPart())
+                                            .setMinimumOccurs(sequence.getMinOccurs())
+                                            .build();
+                                }
+                            }
+                        } else if (obj instanceof PropertyType) {
+                            final PropertyTypeBuilder ptb = new FeatureTypeBuilder().addProperty((PropertyType) obj);
+                            if (ptb instanceof PropertyTypeBuilder) {
+                                final AttributeTypeBuilder atb = (AttributeTypeBuilder) ptb;
+                                // check characteristics
+                                for (PropertyType property : getAnnotatedAttributes(namespaceURI, restriction.getAttributeOrAttributeGroup(), stack)) {
+                                    if (atb.getCharacteristic(property.getName().toString()) == null) {
+                                        atb.addCharacteristic((AttributeType) property);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         //read choice if set
@@ -400,7 +448,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
         return atts;
     }
 
-    private PropertyType elementToAttribute(String namespaceURI, Element element, BuildStack stack) {
+    private PropertyType elementToAttribute(final String namespaceURI, Element element, BuildStack stack) {
 
         GenericName name = null;
 
@@ -412,7 +460,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                 throw new MismatchedFeatureException("unable to find referenced element : "+ refName);
             }
             refType = elementToAttribute(namespaceURI, parentElement, stack);
-            name = refType.getName();
+            name = NamesExt.create(refName);
         }
 
         //extract name
@@ -794,11 +842,24 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                     //but attributes are possible
                     for (PropertyType pt : subProps) {
                         if (pt instanceof FeatureAssociationRole) {
-                            final FeatureAssociationRole subFar = (FeatureAssociationRole)pt;
-                            ftb.addAssociation(subFar)
-                                .setName(far.getName())
-                                .setMinimumOccurs(far.getMinimumOccurs())
-                                .setMaximumOccurs(far.getMaximumOccurs());
+                            /* HACK : GML 3.1.1 : Only way I've found to manage
+                             * geometries as attributes. If we've found an association,
+                             * and if it's feature type is a geometric property
+                             * (derived from abstract geometric type), well, we
+                             * return a geometric property.
+                             */
+                            final FeatureAssociationRole subFar = (FeatureAssociationRole) pt;
+                            final PropertyTypeBuilder propBuilder;
+                            if (isGeometric(subFar)) {
+                                propBuilder = ftb.addAttribute(Geometry.class);
+                            } else {
+                                propBuilder = ftb.addAssociation(subFar);
+                            }
+
+                            propBuilder
+                                    .setMinimumOccurs(far.getMinimumOccurs())
+                                    .setMaximumOccurs(far.getMaximumOccurs())
+                                    .setName(far.getName());
                             break;
                         }
                     }
@@ -812,6 +873,28 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
         } else {
             ftb.addProperty(property);
         }
+    }
+
+    private static boolean isGeometric(FeatureAssociationRole source) {
+        try {
+            return isGeometric(source.getValueType());
+        } catch (IllegalStateException e) {
+            return false; // Cannot know, we assume it's not a geometry.
+        }
+    }
+
+    private static boolean isGeometric(final FeatureType source) {
+        return withSuperTypes(source)
+                .map(FeatureType::getName)
+                .map(name -> name.tip().toString())
+                .anyMatch(name -> "AbstractGeometryType".equals(name) || "GeometryAssociationType".equals(name));
+    }
+
+    private static Stream<FeatureType> withSuperTypes(final FeatureType ft) {
+        return Stream.concat(
+                Stream.of(ft),
+                ft.getSuperTypes().stream().flatMap(JAXBFeatureTypeReader::withSuperTypes)
+        );
     }
 
     private GenericName extractFinalName(String namespaceURI, ComplexType type) {

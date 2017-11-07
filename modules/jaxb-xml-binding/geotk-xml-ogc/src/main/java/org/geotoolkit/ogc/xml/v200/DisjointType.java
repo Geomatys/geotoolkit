@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.ogc.xml.v200;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
 import org.opengis.filter.spatial.Disjoint;
 
 /**
@@ -37,7 +35,7 @@ public class DisjointType extends BinarySpatialOpType implements Disjoint {
     /**
      * Build a new Disjoint Type
      */
-    public DisjointType(final String propertyName, final AbstractGeometryType geometry) {
+    public DisjointType(final String propertyName, final Object geometry) {
         super(propertyName, geometry);
     }
 

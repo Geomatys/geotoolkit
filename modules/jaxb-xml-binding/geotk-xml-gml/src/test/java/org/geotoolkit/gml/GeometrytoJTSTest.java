@@ -21,15 +21,13 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.gml.xml.AbstractGeometry;
-import org.geotoolkit.gml.xml.v321.CoordinatesType;
 import org.geotoolkit.gml.xml.v321.DirectPositionListType;
 import org.geotoolkit.gml.xml.v321.DirectPositionType;
+import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.geotoolkit.gml.xml.v321.LineStringType;
 import org.geotoolkit.gml.xml.v321.LinearRingType;
 import org.geotoolkit.gml.xml.v321.PointType;
@@ -43,9 +41,11 @@ import org.junit.Test;
  */
 public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
 
+    static final GeometryFactory GF = new GeometryFactory();
+
     @Test
     public void gmlPolygonToJTSTest2D() throws Exception {
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = GF;
         final Coordinate[] coordinates = new Coordinate[5];
         coordinates[0] = new Coordinate(0, 0);
         coordinates[1] = new Coordinate(0, 1);
@@ -53,7 +53,7 @@ public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
         coordinates[3] = new Coordinate(1, 0);
         coordinates[4] = new Coordinate(0, 0);
 
-        LinearRing linear = new GeometryFactory().createLinearRing(coordinates);
+        LinearRing linear = GF.createLinearRing(coordinates);
         Polygon expected = new Polygon(linear, null, fact);
         expected.setSRID(2154);
 
@@ -76,7 +76,7 @@ public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void gmlPolygonToJTSTest3D() throws Exception {
-        GeometryFactory fact = new GeometryFactory();
+        GeometryFactory fact = GF;
         final Coordinate[] coordinates = new Coordinate[5];
         coordinates[0] = new Coordinate(0, 0, 1);
         coordinates[1] = new Coordinate(0, 1, 1);
@@ -84,7 +84,7 @@ public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
         coordinates[3] = new Coordinate(1, 0, 1);
         coordinates[4] = new Coordinate(0, 0, 1);
 
-        LinearRing linear = new GeometryFactory().createLinearRing(coordinates);
+        LinearRing linear = GF.createLinearRing(coordinates);
         Polygon expected = new Polygon(linear, null, fact);
         expected.setSRID(2154);
 
@@ -117,7 +117,7 @@ public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
         coordinates[3] = new Coordinate(1, 0);
         coordinates[4] = new Coordinate(0, 0);
 
-        LineString expected = new GeometryFactory().createLineString(coordinates);
+        LineString expected = GF.createLineString(coordinates);
         expected.setSRID(2154);
 
 
@@ -146,7 +146,7 @@ public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
         coordinates[3] = new Coordinate(1, 0, 1);
         coordinates[4] = new Coordinate(0, 0, 1);
 
-        LineString expected = new GeometryFactory().createLineString(coordinates);
+        LineString expected = GF.createLineString(coordinates);
         expected.setSRID(2154);
 
 
@@ -168,7 +168,7 @@ public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
     @Test
     public void gmlPointToJTSTest2D() throws Exception {
 
-        Point expected = new GeometryFactory().createPoint(new Coordinate(0, 1));
+        Point expected = GF.createPoint(new Coordinate(0, 1));
         expected.setSRID(2154);
 
         PointType gml = new PointType(new DirectPositionType(0.0, 1.0));
@@ -181,7 +181,7 @@ public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
     @Test
     public void gmlPointToJTSTest3D() throws Exception {
 
-        Point expected = new GeometryFactory().createPoint(new Coordinate(0, 1, 1));
+        Point expected = GF.createPoint(new Coordinate(0, 1, 1));
         expected.setSRID(2154);
 
         PointType gml = new PointType(new DirectPositionType(0.0, 1.0, 1.0));
@@ -189,6 +189,22 @@ public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
         final Geometry result = GeometrytoJTS.toJTS(gml);
 
         Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void gmlEnvelopeToJTSTest2D() throws Exception {
+        final EnvelopeType env = new EnvelopeType(new DirectPositionType(2.0, 2.0), new DirectPositionType(4.0, 4.0), "EPSG:4326");
+        final Geometry geom = GeometrytoJTS.toJTS(env);
+
+        Coordinate[] expectedPoints = {
+            new Coordinate(2.0, 2.0),
+            new Coordinate(2.0, 4.0),
+            new Coordinate(4.0, 4.0),
+            new Coordinate(4.0, 2.0),
+            new Coordinate(2.0, 2.0)
+        };
+
+        Assert.assertTrue(GF.createPolygon(expectedPoints).equalsTopo(geom));
     }
 
 }

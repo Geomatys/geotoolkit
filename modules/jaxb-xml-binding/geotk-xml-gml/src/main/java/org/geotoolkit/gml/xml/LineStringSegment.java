@@ -22,9 +22,7 @@ import java.util.List;
  *
   * @author Guilhem Legal (Geomatys)
  */
-public interface LineStringSegment extends AbstractCurveSegment{
-
-    Coordinates getCoordinates();
+public interface LineStringSegment extends AbstractCurveSegment, WithCoordinates {
 
     DirectPositionList getPosList();
 

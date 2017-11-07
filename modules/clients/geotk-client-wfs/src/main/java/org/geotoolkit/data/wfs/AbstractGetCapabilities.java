@@ -30,6 +30,7 @@ import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.ows.xml.AcceptVersions;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
 import org.geotoolkit.wfs.xml.GetCapabilities;
+import org.geotoolkit.wfs.xml.WFSVersion;
 import org.geotoolkit.wfs.xml.WFSXmlFactory;
 
 
@@ -39,11 +40,11 @@ import org.geotoolkit.wfs.xml.WFSXmlFactory;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractGetCapabilities extends AbstractRequest implements GetCapabilitiesRequest{
+public class AbstractGetCapabilities extends AbstractRequest implements GetCapabilitiesRequest{
 
-    protected final String version;
+    protected final WFSVersion version;
 
-    protected AbstractGetCapabilities(final String serverURL,final String version, final ClientSecurity security){
+    public AbstractGetCapabilities(final String serverURL,final WFSVersion version, final ClientSecurity security){
         super(serverURL,security,null);
         this.version = version;
     }
@@ -55,7 +56,9 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
     public URL getURL() throws MalformedURLException {
         requestParameters.put("SERVICE",    "WFS");
         requestParameters.put("REQUEST",    "GetCapabilities");
-        requestParameters.put("VERSION",    version);
+        if (version != null) {
+            requestParameters.put("VERSION",    version.getCode());
+        }
         return super.getURL();
     }
 
@@ -64,9 +67,14 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
      */
     @Override
     public InputStream getResponseStream() throws IOException {
+        final AcceptVersions versions;
+        if (version != null) {
+            versions = WFSXmlFactory.buildAcceptVersion(version.getCode(), Arrays.asList(version.getCode()));
+        } else {
+            versions = WFSXmlFactory.buildAcceptVersion(null, WFSVersion.codes());
+        }
 
-        final AcceptVersions versions = WFSXmlFactory.buildAcceptVersion(version, Arrays.asList(version));
-        final GetCapabilities request = WFSXmlFactory.buildGetCapabilities(version, versions, null, null, null, "WFS");
+        final GetCapabilities request = WFSXmlFactory.buildGetCapabilities(version.getCode(), versions, null, null, null, "WFS");
 
         final URL url = new URL(serverURL);
         URLConnection conec = url.openConnection();
@@ -79,7 +87,7 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
         stream = security.encrypt(stream);
         Marshaller marshaller = null;
         try {
-            marshaller = WFSMarshallerPool.getInstance().acquireMarshaller();
+            marshaller = WFSMarshallerPool.getInstance(version).acquireMarshaller();
             marshaller.marshal(request, stream);
             //marshaller.marshal(request, System.out);
             WFSMarshallerPool.getInstance().recycle(marshaller);

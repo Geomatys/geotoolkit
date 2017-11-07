@@ -26,7 +26,8 @@ public final class Specification {
 
     public enum Filter{
         V_1_0_0,
-        V_1_1_0
+        V_1_1_0,
+        V_2_0_0
     }
 
     public enum SymbologyEncoding{

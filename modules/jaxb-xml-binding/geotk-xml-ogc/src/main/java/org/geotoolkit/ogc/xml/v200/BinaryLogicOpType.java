@@ -237,6 +237,10 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
         return result;
     }
 
+    public List<JAXBElement<?>> getLogicOps() {
+        return getComparisonOpsOrSpatialOpsOrTemporalOps();
+    }
+
     @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");

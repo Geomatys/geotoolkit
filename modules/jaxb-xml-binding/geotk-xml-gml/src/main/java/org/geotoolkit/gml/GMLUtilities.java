@@ -69,7 +69,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  *
  * @author Johann Sorel (Geomatys)
  * @author Guilhem Legal (Geomatys)
- * @module
+ * @deprecated Contains only one method, and it's deprecated.
  */
 public class GMLUtilities {
 
@@ -77,6 +77,17 @@ public class GMLUtilities {
 
     public GMLUtilities(){}
 
+    /**
+     *
+     * @param geometry The ISO geometry to convert.
+     * @return A GML 3.1.1 geometry matching given geometry definition.
+     * @deprecated This method should not be used for multiple reasons:
+     * <ol>
+     * <li>OpenGIS definition is based on an obsolete ISO-19107 draft</li>
+     * <li>The GML version is fixed and obsolete</li>
+     * <li>Only partial management of geometries</li>
+     * </ol>
+     */
     public static AbstractGeometryType getGMLFromISO(final org.opengis.geometry.Geometry geometry) {
        if (geometry instanceof Point) {
            Point point     = (Point) geometry;

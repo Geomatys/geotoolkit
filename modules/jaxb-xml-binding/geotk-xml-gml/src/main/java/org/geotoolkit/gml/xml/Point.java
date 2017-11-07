@@ -20,9 +20,7 @@ package org.geotoolkit.gml.xml;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface Point extends AbstractGeometry {
+public interface Point extends AbstractGeometry, WithCoordinates {
 
     DirectPosition getPos();
-
-    Coordinates getCoordinates();
 }

@@ -72,6 +72,10 @@ import org.xml.sax.InputSource;
 
 import static java.nio.file.StandardOpenOption.*;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.ogc.xml.FilterMarshallerPool;
+import org.geotoolkit.ogc.xml.FilterToOGC200Converter;
+import org.geotoolkit.ogc.xml.FilterVersion;
+import org.geotoolkit.ogc.xml.v200.ObjectFactory;
 
 /**
  * Utility class to handle XML reading and writing for OGC SLD, SE and Filter.
@@ -157,8 +161,6 @@ public final class StyleXmlIO {
         if (transformerXMLv110 == null) transformerXMLv110 = new GTtoSLD110Transformer();
         return transformerXMLv110;
     }
-
-
 
     private Object unmarshall(final Object source, final Unmarshaller unMarshaller)
             throws JAXBException{
@@ -702,7 +704,7 @@ public final class StyleXmlIO {
      * Write a GT Filter.
      * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result,
      * XMLEventWriter, XMLStreamWriter
-     *
+     * TODO : unify with {@link FilterVersion}.
      * @throws javax.xml.bind.JAXBException
      */
     public void writeFilter(final Object target, final Filter filter,
@@ -715,18 +717,16 @@ public final class StyleXmlIO {
 
         switch(version){
             case V_1_0_0 :
-                jax = getTransformerXMLv100().visit(filter);
-                if(jax instanceof org.geotoolkit.ogc.xml.v100.FilterType){
-                    jax = factoryOGCv100.createFilter( (org.geotoolkit.ogc.xml.v100.FilterType) jax);
-                }
-                marshallV100(target, jax);
+                marshallV100(target, factoryOGCv100.createFilter(getTransformerXMLv100().apply(filter)));
                 break;
             case V_1_1_0 :
-                jax = getTransformerXMLv110().visit(filter);
-                if(jax instanceof org.geotoolkit.ogc.xml.v110.FilterType){
-                    jax = factoryOGCv110.createFilter( (org.geotoolkit.ogc.xml.v110.FilterType) jax);
-                }
-                marshallV110(target,jax);
+                marshallV110(target,factoryOGCv110.createFilter(getTransformerXMLv110().apply(filter)));
+                break;
+            case V_2_0_0 :
+                final MarshallerPool pool = FilterMarshallerPool.getInstance(FilterVersion.V200);
+                final Marshaller m = pool.acquireMarshaller();
+                marshall(target, new ObjectFactory().createFilter(new FilterToOGC200Converter().apply(filter)), m);
+                pool.recycle(m);
                 break;
             default :
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");

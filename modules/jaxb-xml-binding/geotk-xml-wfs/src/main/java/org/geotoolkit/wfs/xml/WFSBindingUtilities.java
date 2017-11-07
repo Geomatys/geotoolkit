@@ -29,9 +29,11 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
+import org.apache.sis.util.ArgumentChecks;
 
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.ows.xml.ExceptionResponse;
 
 import org.opengis.metadata.citation.OnlineResource;
 
@@ -47,20 +49,33 @@ public class WFSBindingUtilities {
 
 
      public static WFSCapabilities unmarshall(final Object source, final WFSVersion version) throws JAXBException{
+         return unmarshall(source, version, WFSCapabilities.class);
+     }
 
-        final MarshallerPool pool = WFSMarshallerPool.getInstance();
-        switch(version){
-            case v110 : break;
-            case v200 : break;
-            default: throw new IllegalArgumentException("unknonwed version");
-        }
-        Unmarshaller unMarshaller = pool.acquireUnmarshaller();
-        final Object unmarshalled = unmarshall(source, unMarshaller);
+     public static <T> T unmarshall(final Object source, final WFSVersion version, final Class<T> dataType) throws JAXBException {
+        ArgumentChecks.ensureNonNull("Return type", dataType);
+
+        final MarshallerPool pool = WFSMarshallerPool.getInstance(version);
+
+        final Unmarshaller unMarshaller = pool.acquireUnmarshaller();
+        Object unmarshalled = unmarshall(source, unMarshaller);
         pool.recycle(unMarshaller);
+
         if (unmarshalled instanceof JAXBElement) {
-            return (WFSCapabilities) ((JAXBElement)unmarshalled).getValue();
+            unmarshalled = ((JAXBElement)unmarshalled).getValue();
+        }
+
+        if (unmarshalled == null) {
+            throw new JAXBException("No value available in given data source");
+        } else if (dataType.isAssignableFrom(unmarshalled.getClass())) {
+            return (T) unmarshalled;
+        } else if (unmarshalled instanceof ExceptionResponse) {
+            throw new JAXBException(((ExceptionResponse)unmarshalled).toException());
         } else {
-           return (WFSCapabilities) unmarshalled;
+            throw new JAXBException(String.format(
+                    "Read object is not compatible with queried type.%nExpected: %s%nBut was: %s",
+                    dataType, unmarshalled.getClass()
+            ));
         }
      }
 

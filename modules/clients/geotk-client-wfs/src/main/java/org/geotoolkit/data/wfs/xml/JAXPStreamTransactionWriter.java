@@ -48,8 +48,10 @@ import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.GeometryPropertyType;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
-import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.ogc.xml.FilterMarshallerPool;
+import org.geotoolkit.ogc.xml.FilterVersion;
+import org.geotoolkit.ogc.xml.XMLFilter;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.PropertyType;
@@ -272,11 +274,13 @@ public class JAXPStreamTransactionWriter {
         //write typename--------------------------------------------------------
         final GenericName typeName = element.getTypeName();
         final String ns = NamesExt.getNamespace(typeName);
+        final String prefix;
         if (ns != null && !ns.isEmpty()) {
-            final String prefix = "geons"+inc.incrementAndGet();
+            prefix = "geons"+inc.incrementAndGet();
             writer.writeAttribute("xmlns:"+prefix, ns);
             writer.writeAttribute(PROP_TYPENAME, prefix + ':' + typeName.tip());
         } else {
+            prefix = null;
             writer.writeAttribute(PROP_TYPENAME, typeName.tip().toString());
         }
 
@@ -301,13 +305,9 @@ public class JAXPStreamTransactionWriter {
 
         //write filter ---------------------------------------------------------
         final Filter filter = element.getFilter();
-        if(filter != null){
-            final StyleXmlIO util = new StyleXmlIO();
-            final Marshaller marshaller = StyleXmlIO.getJaxbContext110().acquireMarshaller();
-            marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-            final Object jaxbelement = util.getTransformerXMLv110().visit(filter);
-            marshaller.marshal(jaxbelement, writer);
-            StyleXmlIO.getJaxbContext110().recycle(marshaller);
+        if(filter != null) {
+            // TODO : parameterize version
+            writeFilter(element.getFilter(), FilterVersion.V110, writer);
             writer.flush();
         }
 
@@ -398,12 +398,7 @@ public class JAXPStreamTransactionWriter {
         }
 
         //write filter ---------------------------------------------------------
-        final StyleXmlIO util = new StyleXmlIO();
-        final Marshaller marshaller = util.getJaxbContext110().acquireMarshaller();
-        marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-        final Object jaxbelement = util.getTransformerXMLv110().visit(element.getFilter());
-        marshaller.marshal(jaxbelement, writer);
-        util.getJaxbContext110().recycle(marshaller);
+        writeFilter(element.getFilter(), FilterVersion.V110, writer);
 
         writer.writeEndElement();
     }
@@ -440,8 +435,23 @@ public class JAXPStreamTransactionWriter {
         }else{
             throw new IllegalArgumentException("Unexpected attribut type : "+ candidate.getClass());
         }
-
-
     }
 
+    private static void writeFilter(Filter filter, final FilterVersion outputVersion, final XMLStreamWriter output) throws JAXBException {
+        if (filter == null || filter == Filter.INCLUDE) {
+            return;
+        }
+
+        final XMLFilter toWrite;
+        if (filter instanceof XMLFilter) {
+            toWrite = (XMLFilter) filter;
+        } else {
+            toWrite = FilterMarshallerPool.transform(filter, outputVersion);
+        }
+        final MarshallerPool pool = FilterMarshallerPool.getInstance(outputVersion);
+        final Marshaller marsh = pool.acquireMarshaller();
+        marsh.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+        marsh.marshal(toWrite, output);
+        pool.recycle(marsh);
+    }
 }
