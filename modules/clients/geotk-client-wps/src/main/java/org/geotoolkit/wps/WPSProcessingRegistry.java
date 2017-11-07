@@ -19,6 +19,7 @@ package org.geotoolkit.wps;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +35,7 @@ import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessingRegistry;
 import org.geotoolkit.wps.xml.ProcessOffering;
+import org.geotoolkit.wps.xml.ProcessOfferings;
 import org.geotoolkit.wps.xml.WPSCapabilities;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.util.NoSuchIdentifierException;
@@ -54,12 +56,20 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
     private Map<String, Object> descriptors;
     private boolean allLoaded = false;
 
+   /**
+    * If set to true, when asking for a descriptor not yet in the cache,
+    * the registry will perform a GetCapabilities request,
+    * in order to look if the process has been newly added to the WPS server.
+    */
+    private boolean dynamicLoading = false;
+
     private String storageDirectory;
     private String storageURL;
 
 
-    public WPSProcessingRegistry(WebProcessingClient client) throws CapabilitiesException {
+    public WPSProcessingRegistry(WebProcessingClient client, boolean dynamicLoading) throws CapabilitiesException {
         this.client = client;
+        this.dynamicLoading = dynamicLoading;
         client.getCapabilities();
     }
 
@@ -89,13 +99,24 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
     @Override
     public ProcessDescriptor getDescriptor(final String name) throws NoSuchIdentifierException {
         checkDescriptors(false);
-        final Object desc = descriptors.get(name);
+        Object desc = descriptors.get(name);
+
+        // if dynamic loading enabled we check the WPS server to see
+        // if the process has been added after the registry start.
+        if (desc == null && dynamicLoading) {
+            try {
+                desc = checkDescriptor(name);
+            } catch(Exception ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage());
+                throw new NoSuchIdentifierException("No process descriptor for name :" + name, name);
+            }
+        }
 
         if (desc == null) {
-            throw new NoSuchIdentifierException("No process descriptor for name :", name);
+            throw new NoSuchIdentifierException("No process descriptor for name :" + name, name);
         } else if (desc instanceof ProcessOffering) {
             try {
-                final ProcessDescriptor processDesc = toProcessDescriptor((ProcessOffering) desc);
+                final ProcessDescriptor processDesc = toProcessDescriptor(((ProcessOffering) desc).getIdentifier().getValue());
                 descriptors.put(processDesc.getIdentifier().getCode(), processDesc);
                 return processDesc;
             } catch(UnsupportedParameterException ex) {
@@ -150,14 +171,14 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
             final ExecutorService exec = Executors.newFixedThreadPool(8);
 
             for (final ProcessOffering processBriefType : processBrief) {
-
-                if (descriptors.get(processBriefType.getIdentifier().getValue()) instanceof ProcessDescriptor) continue;
+                final String processId = processBriefType.getIdentifier().getValue();
+                if (descriptors.get(processId) instanceof ProcessDescriptor) continue;
 
                 exec.submit(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            final ProcessDescriptor processDesc = toProcessDescriptor(processBriefType);
+                            final ProcessDescriptor processDesc = toProcessDescriptor(processId);
                             descriptors.put(processDesc.getIdentifier().getCode(), processDesc);
                         } catch(UnsupportedParameterException ex) {
                             LOGGER.log(Level.INFO, ex.getMessage());
@@ -183,15 +204,29 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
 
     }
 
-    private ProcessDescriptor toProcessDescriptor(ProcessOffering processBriefType) throws IOException, JAXBException, UnsupportedParameterException {
-        if (processBriefType instanceof org.geotoolkit.wps.xml.v100.ProcessDescriptionType) {
-            return WPS1ProcessDescriptor.create(WPSProcessingRegistry.this, processBriefType);
-        } else if (processBriefType instanceof org.geotoolkit.wps.xml.v100.ProcessBriefType) {
-            return WPS1ProcessDescriptor.create(WPSProcessingRegistry.this, processBriefType);
-        } else if (processBriefType instanceof org.geotoolkit.wps.xml.v200.ProcessSummaryType) {
-            return WPS2ProcessDescriptor.create(WPSProcessingRegistry.this, (org.geotoolkit.wps.xml.v200.ProcessSummaryType)processBriefType);
-        } else {
-            throw new IOException("Unknowned wps brief type : "+ processBriefType);
+    /**
+     * Look for a process in the distant WPS server.
+     * If the process is present in the Capabilities document,
+     * a new descriptor will be added to the list.
+     *
+     * @param name Identifier of the process we search.
+     */
+    private ProcessDescriptor checkDescriptor(String name) throws Exception {
+        ProcessOfferings processBrief = client.getDescribeProcess(Collections.singletonList(name));
+        if (processBrief == null || processBrief.getProcesses().isEmpty()) {
+            return null;
+        }
+
+        final ProcessDescriptor processDesc = toProcessDescriptor(name);
+        descriptors.put(processDesc.getIdentifier().getCode(), processDesc);
+        return processDesc;
+    }
+
+    private ProcessDescriptor toProcessDescriptor(String processID) throws Exception {
+        switch (client.getVersion()) {
+            case v100 : return WPS1ProcessDescriptor.create(WPSProcessingRegistry.this, processID);
+            case v200 : return WPS2ProcessDescriptor.create(WPSProcessingRegistry.this, processID);
+            default : throw new IOException("Unknowned wps version : "+ client.getVersion());
         }
     }
 
