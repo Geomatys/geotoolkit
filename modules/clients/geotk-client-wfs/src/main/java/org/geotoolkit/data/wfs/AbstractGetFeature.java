@@ -198,17 +198,23 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
 
 
         if(filter != null && filter != Filter.INCLUDE) {
-            final String strFilter;
             try (final StringWriter writer = new StringWriter()) {
                 final MarshallerPool pool = FilterMarshallerPool.getInstance(getFilterVersion());
                 final Marshaller marsh = pool.acquireMarshaller();
                 marsh.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-                marsh.marshal(FilterMarshallerPool.toJAXBElement(filter, getFilterVersion()), writer);
+                marsh.marshal(FilterMarshallerPool.transform(filter, getFilterVersion()), writer);
                 pool.recycle(marsh);
 
-                strFilter = writer.toString()
+                String namespace = typeName.getNamespaceURI();
+                final String strFilter;
+                if (namespace == null || (namespace = namespace.trim()).isEmpty()) {
+                    strFilter = writer.toString();
+                } else {
+                    strFilter = writer.toString()
                     // Replace full namespace with specified prefix
                         .replaceAll("([^<])"+Pattern.quote(typeName.getNamespaceURI())+"(:\\w+)", "$1"+prefix+"$2");
+                }
+
                 requestParameters.put("FILTER", strFilter);
 
             } catch (JAXBException|IOException ex) {

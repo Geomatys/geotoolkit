@@ -53,6 +53,9 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
@@ -81,6 +84,21 @@ import org.opengis.feature.PropertyType;
  * @author Guilhem Legal (Geomatys)
  */
 public class Utils {
+
+    private static final Pattern GEOAPI_HOST_PATTERN;
+    static {
+        final String commonHosts = Arrays.asList(
+                "schemas.opengis.net",
+                //obsolete opengeospatial addresses
+                "schemas.opengeospatial.net",
+                "www.opengis.net",
+                "www.opengeospatial.net"
+        ).stream()
+                .map(Pattern::quote)
+                .collect(Collectors.joining("|", "(", ")"));
+
+        GEOAPI_HOST_PATTERN = Pattern.compile("^https?://"+commonHosts);
+    }
 
     /**
      * This named is used for element of type xsd:any.
@@ -681,19 +699,12 @@ public class Utils {
      * @return
      */
     public static Schema getDistantSchema(final String location) {
-
         URI schemaUri = null;
         try {
-            //search in the jar files if we have it
-            if (location.startsWith("http://schemas.opengis.net/")) {
-                String localUrl = location.replace("http://schemas.opengis.net/", "/org/geotoolkit/xsd/");
-                URL url = Utils.class.getResource(localUrl);
-                if (url != null) {
-                    schemaUri = Utils.class.getResource(localUrl).toURI();
-                }
-            } else if (location.startsWith("http://schemas.opengeospatial.net/")) {
-                //obsolete opengeospatial address
-                String localUrl = location.replace("http://schemas.opengeospatial.net/", "/org/geotoolkit/xsd/");
+            final Matcher matcher = GEOAPI_HOST_PATTERN.matcher(location);
+            if (matcher.find()) {
+                //search in the jar files if we have it
+                final String localUrl = matcher.replaceFirst("/org/geotoolkit/xsd");
                 URL url = Utils.class.getResource(localUrl);
                 if (url != null) {
                     schemaUri = Utils.class.getResource(localUrl).toURI();
