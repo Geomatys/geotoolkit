@@ -66,8 +66,16 @@ public class WPSClientFactory extends AbstractClientFactory{
         VERSION = createVersionDescriptor(validValues, WPSVersion.auto.getCode());
     }
 
+     /**
+     * Dynamic loading, Optional.
+     */
+    public static final ParameterDescriptor<Boolean> DYNAMIC_LOADING = new ParameterBuilder()
+            .addName("dynamic_loading")
+            .setRequired(false)
+            .create(Boolean.class, false);
+
     public static final ParameterDescriptorGroup PARAMETERS =
-            new ParameterBuilder().addName("WPSParameters").createGroup(IDENTIFIER, URL,VERSION,SECURITY,TIMEOUT);
+            new ParameterBuilder().addName("WPSParameters").createGroup(IDENTIFIER, URL,VERSION,SECURITY,TIMEOUT, DYNAMIC_LOADING);
 
     @Override
     public Identification getIdentification() {

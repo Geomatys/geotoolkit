@@ -16,15 +16,11 @@
  */
 package org.geotoolkit.wps;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.DefaultInternationalString;
 import org.geotoolkit.ows.xml.v110.AllowedValues;
@@ -39,8 +35,7 @@ import org.geotoolkit.wps.adaptor.DataAdaptor;
 import org.geotoolkit.wps.adaptor.LiteralAdaptor;
 import org.geotoolkit.wps.xml.DataDescription;
 import org.geotoolkit.wps.xml.Format;
-import org.geotoolkit.wps.xml.ProcessOffering;
-import org.geotoolkit.wps.xml.WPSMarshallerPool;
+import org.geotoolkit.wps.xml.ProcessOfferings;
 import org.geotoolkit.wps.xml.v100.ComplexDataCombinationType;
 import org.geotoolkit.wps.xml.v100.DescriptionType;
 import org.geotoolkit.wps.xml.v100.InputDescriptionType;
@@ -48,7 +43,6 @@ import org.geotoolkit.wps.xml.v100.LiteralInputType;
 import org.geotoolkit.wps.xml.v100.LiteralOutputType;
 import org.geotoolkit.wps.xml.v100.OutputDescriptionType;
 import org.geotoolkit.wps.xml.v100.ProcessDescriptionType;
-import org.geotoolkit.wps.xml.v100.ProcessDescriptions;
 import org.geotoolkit.wps.xml.v100.SupportedCRSsType;
 import org.geotoolkit.wps.xml.v100.SupportedComplexDataInputType;
 import org.geotoolkit.wps.xml.v100.ValuesReferenceType;
@@ -110,27 +104,25 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
     }
 
 
-    public static WPS1ProcessDescriptor create(WPSProcessingRegistry registry, ProcessOffering processBriefType)
-            throws IOException, JAXBException, UnsupportedParameterException {
+    public static WPS1ProcessDescriptor create(WPSProcessingRegistry registry, final String processIdentifier)
+            throws Exception {
 
-        final String processIdentifier = processBriefType.getIdentifier().getValue();
+        final ProcessOfferings wpsProcessDescriptions = registry.getClient().getDescribeProcess(Collections.singletonList(processIdentifier));
+        final ProcessDescriptionType wpsProcessDesc = (ProcessDescriptionType) wpsProcessDescriptions.getProcesses().get(0);
 
         final InternationalString processAbstract;
-        if (processBriefType.getFirstAbstract()!= null) {
-            processAbstract = new DefaultInternationalString(processBriefType.getFirstAbstract());
+        if (wpsProcessDesc.getFirstAbstract() != null) {
+            processAbstract = new DefaultInternationalString(wpsProcessDesc.getFirstAbstract());
         } else {
             processAbstract = new DefaultInternationalString("");
         }
 
         final InternationalString processDisplayName;
-        if (processBriefType.getFirstTitle()!= null) {
-            processDisplayName = new DefaultInternationalString(processBriefType.getFirstTitle());
+        if (wpsProcessDesc.getFirstTitle() != null) {
+            processDisplayName = new DefaultInternationalString(wpsProcessDesc.getFirstTitle());
         } else {
             processDisplayName = new DefaultInternationalString("");
         }
-
-        final ProcessDescriptions wpsProcessDescriptions = getDescribeProcess(registry,Collections.singletonList(processIdentifier));
-        final ProcessDescriptionType wpsProcessDesc = wpsProcessDescriptions.getProcessDescription().get(0);
 
         // INPUTS
         final List<GeneralParameterDescriptor> inputDescriptors = new ArrayList<>();
@@ -154,27 +146,6 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
                 outputDescriptors.toArray(new ParameterDescriptor[outputDescriptors.size()]));
 
         return new WPS1ProcessDescriptor(registry, wpsProcessDesc, processIdentifier, processAbstract, processDisplayName, inputs, outputs);
-    }
-
-    /**
-     * @return ProcessDescriptions : WPS process description
-     */
-    private static ProcessDescriptions getDescribeProcess(WPSProcessingRegistry registry, final List<String> processIDs)
-            throws IOException, JAXBException {
-
-        final ProcessDescriptions description;
-
-        //Thread to prevent infinite request on a server
-        final DescribeProcessRequest describe = registry.getClient().createDescribeProcess();
-        describe.setTimeout(10000);
-        describe.getContent().setIdentifier(processIDs);
-        try (final InputStream request = describe.getResponseStream()) {
-            final Unmarshaller unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
-            description = (ProcessDescriptions) unmarshaller.unmarshal(request);
-            WPSMarshallerPool.getInstance().recycle(unmarshaller);
-        }
-
-        return description;
     }
 
     /**
