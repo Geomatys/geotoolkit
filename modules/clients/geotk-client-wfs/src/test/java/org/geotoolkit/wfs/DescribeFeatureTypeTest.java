@@ -20,7 +20,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import javax.xml.namespace.QName;
-import org.geotoolkit.data.wfs.v110.DescribeFeatureType110;
+import org.geotoolkit.data.wfs.AbstractDescribeFeatureType;
+import org.geotoolkit.wfs.xml.WFSVersion;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -39,7 +40,7 @@ public class DescribeFeatureTypeTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testDescribeFeatureType110() {
-        final DescribeFeatureType110 describeFeat110 = new DescribeFeatureType110("http://test.com",null);
+        final AbstractDescribeFeatureType describeFeat110 = new AbstractDescribeFeatureType("http://test.com", WFSVersion.v110, null);
         describeFeat110.setTypeNames(Collections.singletonList(new QName("http://myqnametest.com", "value", "ut")));
         final URL url;
         try {

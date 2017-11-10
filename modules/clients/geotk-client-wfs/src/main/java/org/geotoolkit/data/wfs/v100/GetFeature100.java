@@ -29,8 +29,8 @@ import org.geotoolkit.wfs.xml.WFSVersion;
  */
 public class GetFeature100 extends AbstractGetFeature{
 
-    public GetFeature100(final String serverURL, final ClientSecurity security){
-        super(serverURL,WFSVersion.v100.getCode(),security);
+    public GetFeature100(final String serverURL, final ClientSecurity security) {
+        super(serverURL, WFSVersion.v100, security);
     }
 
     @Override

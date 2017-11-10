@@ -66,6 +66,7 @@ import org.geotoolkit.wfs.xml.DescribeFeatureType;
 @XmlType(name = "DescribeFeatureTypeType", propOrder = {
     "typeName"
 })
+@XmlRootElement(name = "DescribeFeatureType")
 public class DescribeFeatureTypeType implements DescribeFeatureType {
 
     @XmlElement(name = "TypeName")
