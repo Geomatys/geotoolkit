@@ -123,6 +123,8 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
     public JAXBElement visit(Filter filter) {
         if (filter.equals(Filter.INCLUDE) || filter.equals(Filter.EXCLUDE)) {
             return null;
+        } else if (filter instanceof FilterType) {
+
         }
 
         if (filter instanceof PropertyIsBetween) {
@@ -536,6 +538,10 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
 
     @Override
     public FilterType apply(Filter filter) {
+        if (filter instanceof FilterType) {
+            return (FilterType) filter;
+        }
+
         final FilterType ft = ogc_factory.createFilterType();
 
         if (filter instanceof Id) {
