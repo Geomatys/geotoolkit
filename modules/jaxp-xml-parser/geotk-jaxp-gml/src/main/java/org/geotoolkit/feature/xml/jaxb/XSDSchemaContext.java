@@ -41,6 +41,7 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
@@ -266,26 +267,26 @@ public class XSDSchemaContext {
     protected Map.Entry<Schema, String> readSchema(final Object candidate) throws JAXBException {
         try {
             final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
-            final Schema schema;
+            Object schema;
             String location = null;
-            if(candidate instanceof File) schema = (Schema) unmarshaller.unmarshal((File)candidate);
-            else if(candidate instanceof Node) schema = (Schema) unmarshaller.unmarshal((Node)candidate);
-            else if(candidate instanceof Reader) schema = (Schema) unmarshaller.unmarshal((Reader)candidate);
-            else if(candidate instanceof InputStream) schema = (Schema) unmarshaller.unmarshal((InputStream)candidate);
-            else if(candidate instanceof String) schema = (Schema) unmarshaller.unmarshal(new StringReader((String)candidate));
+            if(candidate instanceof File) schema = unmarshaller.unmarshal((File)candidate);
+            else if(candidate instanceof Node) schema = unmarshaller.unmarshal((Node)candidate);
+            else if(candidate instanceof Reader) schema = unmarshaller.unmarshal((Reader)candidate);
+            else if(candidate instanceof InputStream) schema = unmarshaller.unmarshal((InputStream)candidate);
+            else if(candidate instanceof String) schema = unmarshaller.unmarshal(new StringReader((String)candidate));
             else if(candidate instanceof URL){
-                schema = (Schema) unmarshaller.unmarshal(((URL)candidate).openStream());
+                schema = unmarshaller.unmarshal(((URL)candidate).openStream());
                 // we build the base url to retrieve imported xsd
                 location = ((URL)candidate).toString();
             } else if (candidate instanceof URLConnection) {
                 final URLConnection conn = (URLConnection) candidate;
                 try (final InputStream stream = conn.getInputStream()) {
-                    schema = (Schema) unmarshaller.unmarshal(stream);
+                    schema = unmarshaller.unmarshal(stream);
                 }
                 location = conn.getURL().toString();
             } else if (candidate instanceof URI) {
                 try (final InputStream stream = IOUtilities.open(candidate, StandardOpenOption.READ)) {
-                    schema = (Schema) unmarshaller.unmarshal(stream);
+                    schema = unmarshaller.unmarshal(stream);
                 }
                 location = ((URI)candidate).toString();
             }
@@ -295,13 +296,21 @@ public class XSDSchemaContext {
             }
             POOL.recycle(unmarshaller);
 
-            if (location == null || location.trim().isEmpty()) {
-                unlocatedSchemas.add(schema);
-            } else {
-                locatedSchemas.put(location, schema);
+            if (schema instanceof JAXBElement) {
+                schema = ((JAXBElement) schema).getValue();
             }
 
-            return new AbstractMap.SimpleImmutableEntry<>(schema, location);
+            if (schema instanceof Schema) {
+                if (location == null || location.trim().isEmpty()) {
+                    unlocatedSchemas.add((Schema) schema);
+                } else {
+                    locatedSchemas.put(location, (Schema) schema);
+                }
+                return new AbstractMap.SimpleImmutableEntry<>((Schema)schema, location);
+            }
+
+            throw new JAXBException("Unrecognized schema. Mapped to "+schema == null? "null" : schema.getClass().getCanonicalName());
+
         } catch (IOException ex) {
             throw new JAXBException(ex.getMessage(),ex);
         }

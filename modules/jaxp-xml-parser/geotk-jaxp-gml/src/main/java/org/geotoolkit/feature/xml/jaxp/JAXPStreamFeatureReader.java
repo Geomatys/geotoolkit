@@ -27,8 +27,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -58,7 +60,6 @@ import org.opengis.util.GenericName;
 
 import static javax.xml.stream.events.XMLEvent.*;
 import net.iharder.Base64;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 import org.geotoolkit.geometry.jts.JTS;
@@ -67,10 +68,10 @@ import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.Numbers;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.feature.xml.ExceptionReport;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -79,7 +80,6 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.w3c.dom.Document;
 
 
@@ -89,6 +89,8 @@ import org.w3c.dom.Document;
  * @author Johann Sorel (Geomatys)
  */
 public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeatureReader {
+
+    protected static final Predicate<String> EXCEPTION_REPORT_DETECTOR = Pattern.compile("(?i)(Service)?ExceptionReport").asPredicate();
 
     private static final JAXBEventHandler JAXBLOGGER = new JAXBEventHandler();
 
@@ -214,9 +216,16 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
             //we are looking for the root mark
             if (event == START_ELEMENT) {
+                // First, we check if given doc describes an OGC error (data issued from WFS request).
+                QName qName = reader.getName();
+                final String markupName = qName.getLocalPart();
+                if (EXCEPTION_REPORT_DETECTOR.test(markupName)) {
+                    throw ExceptionReport.readException(reader);
+                }
+
                 readFeatureTypes();
 
-                final GenericName name  = nameCache.get(reader.getName());
+                final GenericName name  = nameCache.get(qName);
                 String id = "no-gml-id";
                 for(int i=0,n=reader.getAttributeCount();i<n;i++){
                     final QName attName = reader.getAttributeName(i);
@@ -298,14 +307,18 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
             //we are looking for the root mark
             if (event == START_ELEMENT) {
-                final GenericName name = nameCache.get(reader.getName());
+                QName qName = reader.getName();
+                final String markupName = qName.getLocalPart();
+                if (markupName.equalsIgnoreCase("ExceptionReport")) {
+                    throw ExceptionReport.readException(reader);
+                }
+
+                final GenericName name = nameCache.get(qName);
 
                 String fid = null;
                 if (reader.getAttributeCount() > 0) {
                     fid = reader.getAttributeValue(0);
                 }
-
-                final String markupName = name.tip().toString();
 
                 // HACK : In WFS response, GML features are wrapped in a <wfs:(featureM|m)embers?> markup
                 if (markupName.equals("featureMember") || markupName.equals("featureMembers") || markupName.equals("member")) {
@@ -598,14 +611,6 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 }
                 value = jtsGeom;
 
-                //verify geometry crs
-                final CoordinateReferenceSystem baseCrs = FeatureExt.getCRS(propertyType);
-                if (baseCrs!=null && jtsGeom!=null && jtsGeom.getUserData() instanceof CoordinateReferenceSystem) {
-                   if (!Utilities.equalsIgnoreMetadata(baseCrs,jtsGeom.getUserData())) {
-                       throw new XMLStreamException("Unvalid geometry declaration, propertyType CRS is different from geometry CRS.\n"+baseCrs+"\n"+jtsGeom.getUserData());
-                   }
-                }
-
             } catch (JAXBException ex) {
                 String msg = ex.getMessage();
                 if (msg == null && ex.getLinkedException() != null) {
@@ -815,7 +820,12 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 if (event == START_ELEMENT) {
                     readFeatureTypes();
 
-                    final GenericName name  = nameCache.get(reader.getName());
+                    final QName markupName = reader.getName();
+                    if (EXCEPTION_REPORT_DETECTOR.test(markupName.getLocalPart())) {
+                        throw ExceptionReport.readException(reader);
+                    }
+
+                    final GenericName name  = nameCache.get(markupName);
                     String id = "no-gml-id";
                     for(int i=0,n=reader.getAttributeCount();i<n;i++){
                         final QName attName = reader.getAttributeName(i);
@@ -890,7 +900,12 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
                     //we are looking for the root mark
                     if (event == START_ELEMENT) {
-                        final GenericName name = nameCache.get(reader.getName());
+                        QName qName = reader.getName();
+                        final String markupName = qName.getLocalPart();
+                        if (EXCEPTION_REPORT_DETECTOR.test(markupName)) {
+                            throw ExceptionReport.readException(reader);
+                        }
+                        final GenericName name = nameCache.get(qName);
 
                         String fid = null;
                         if (reader.getAttributeCount() > 0) {
@@ -954,5 +969,4 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             throw new UnsupportedOperationException("not supported");
         }
     }
-
 }
