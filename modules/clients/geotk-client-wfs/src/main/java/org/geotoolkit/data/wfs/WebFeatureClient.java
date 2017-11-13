@@ -33,7 +33,6 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.data.wfs.v100.DescribeFeatureType100;
 import org.geotoolkit.data.wfs.v100.GetFeature100;
 import org.geotoolkit.data.wfs.v110.Delete110;
 import org.geotoolkit.data.wfs.v110.GetFeature110;
@@ -182,13 +181,8 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
      * Create a describe feature request
      * @return DescribeFeatureTypeRequest : describe feature request.
      */
-    public DescribeFeatureTypeRequest createDescribeFeatureType(){
-        //switch (getVersion()) {
-          //  case v110:
-                return new DescribeFeatureType100(serverURL.toString(), getVersion(), getClientSecurity());
-            //default:
-             //   throw new IllegalArgumentException("Version was not defined");
-        //}
+    public DescribeFeatureTypeRequest createDescribeFeatureType() {
+        return new AbstractDescribeFeatureType(serverURL.toString(), getVersion(), getClientSecurity());
     }
 
     /**
@@ -202,6 +196,7 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
             case v110:
                 return new GetFeature110(serverURL.toString(), getClientSecurity());
             case v200:
+            case v202:
                 return new GetFeature200(serverURL.toString(), getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
@@ -213,30 +208,30 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
      * @return TransactionRequest : transaction request.
      */
     public TransactionRequest createTransaction(){
-        //switch (getVersion()) {
-          //  case v110:
+        switch (getVersion()) {
+            case v110:
                 return new Transaction110(serverURL.toString(),getClientSecurity());
-            //default:
-             //   throw new IllegalArgumentException("Version was not defined");
-        //}
+            default:
+                throw new UnsupportedOperationException("Unsupported version: "+getVersion());
+        }
     }
 
     public Insert createInsertElement(){
-        //switch (getVersion()) {
-          //  case v110:
+        switch (getVersion()) {
+            case v110:
                 return new Insert110();
-            //default:
-             //   throw new IllegalArgumentException("Version was not defined");
-        //}
+            default:
+                throw new UnsupportedOperationException("Unsupported version: "+getVersion());
+        }
     }
 
     public Update createUpdateElement(){
-        //switch (getVersion()) {
-          //  case v110:
+        switch (getVersion()) {
+            case v110:
                 return new Update110();
-            //default:
-             //   throw new IllegalArgumentException("Version was not defined");
-        //}
+            default:
+                throw new UnsupportedOperationException("Unsupported version: "+getVersion());
+        }
     }
 
     public Delete createDeleteElement(){
@@ -249,12 +244,12 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
     }
 
     public Native createNativeElement(){
-        //switch (getVersion()) {
-          //  case v110:
+        switch (getVersion()) {
+            case v110:
                 return new Native110();
-            //default:
-             //   throw new IllegalArgumentException("Version was not defined");
-        //}
+            default:
+                throw new UnsupportedOperationException("Unsupported version: "+getVersion());
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////

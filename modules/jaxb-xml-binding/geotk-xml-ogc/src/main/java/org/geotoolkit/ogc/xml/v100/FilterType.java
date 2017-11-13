@@ -57,6 +57,7 @@ import org.opengis.filter.FilterVisitor;
     "logicOps",
     "featureId"
 })
+@XmlRootElement(name = "Filter")
 public class FilterType implements Filter, XMLFilter {
 
     @XmlElementRef(name = "spatialOps", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)

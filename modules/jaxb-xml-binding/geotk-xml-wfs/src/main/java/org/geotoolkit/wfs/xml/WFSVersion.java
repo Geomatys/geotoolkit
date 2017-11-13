@@ -28,7 +28,8 @@ import java.util.stream.Stream;
 public enum WFSVersion {
     v100("1.0.0"),
     v110("1.1.0"),
-    v200("2.0.0");
+    v200("2.0.0"),
+    v202("2.0.2");
 
     private final String code;
 

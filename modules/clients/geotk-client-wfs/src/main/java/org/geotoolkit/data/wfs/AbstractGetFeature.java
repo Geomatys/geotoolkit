@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.wfs;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,10 +25,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
@@ -45,10 +51,14 @@ import org.geotoolkit.wfs.xml.GetFeature;
 import org.geotoolkit.wfs.xml.Query;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
 import org.geotoolkit.wfs.xml.ResultTypeType;
+import org.geotoolkit.wfs.xml.WFSVersion;
 import org.geotoolkit.wfs.xml.WFSXmlFactory;
 
 import org.opengis.util.GenericName;
+import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Literal;
+import org.opengis.geometry.Envelope;
 
 
 /**
@@ -60,7 +70,7 @@ import org.opengis.filter.Filter;
  */
 public abstract class AbstractGetFeature extends AbstractRequest implements GetFeatureRequest{
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.wfs");
-    protected final String version;
+    protected final WFSVersion version;
 
     private QName typeName       = null;
     private Filter filter        = null;
@@ -68,7 +78,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     private GenericName[] propertyNames = null;
     private String outputFormat  = null;
 
-    protected AbstractGetFeature(final String serverURL, final String version, final ClientSecurity security){
+    protected AbstractGetFeature(final String serverURL, final WFSVersion version, final ClientSecurity security) {
         super(serverURL,security,null);
         this.version = version;
     }
@@ -160,81 +170,45 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     public URL getURL() throws MalformedURLException {
         requestParameters.put("SERVICE", "WFS");
         requestParameters.put("REQUEST", "GETFEATURE");
-        requestParameters.put("VERSION", version);
+        requestParameters.put("VERSION", version.getCode());
 
         if(maxFeatures != null){
             requestParameters.put("MAXFEATURES", maxFeatures.toString());
         }
 
         String prefix = "";
-        if(typeName != null){
+        final String namespace = typeName == null? null : typeName.getNamespaceURI();
+        if (typeName != null) {
             final StringBuilder sbN = new StringBuilder();
             final StringBuilder sbNS = new StringBuilder();
 
             prefix = typeName.getPrefix();
-            if (prefix == null || prefix.isEmpty()) {
-                prefix = "ut";
-            }
-            sbN.append(prefix).append(':').append(typeName.getLocalPart()).append(',');
-            sbNS.append("xmlns(").append(prefix).append('=').append(typeName.getNamespaceURI()).append(')').append(',');
-
-            if(sbN.length() > 0 && sbN.charAt(sbN.length()-1) == ','){
-                sbN.deleteCharAt(sbN.length()-1);
+            boolean emptyPrefix = prefix == null || prefix.isEmpty();
+            if (emptyPrefix && namespace != null && !namespace.isEmpty()) {
+                prefix = "ut"; // We've got a namespace to replace, we need a prefix
+                emptyPrefix = false;
             }
 
-            if(sbNS.length() > 0 && sbNS.charAt(sbNS.length()-1) == ','){
-                sbNS.deleteCharAt(sbNS.length()-1);
+            if (emptyPrefix) {
+                requestParameters.put(getTypeNameParameterKey(), typeName.getLocalPart());
+            } else {
+                requestParameters.put(getTypeNameParameterKey(), prefix+":"+typeName.getLocalPart());
             }
 
-            requestParameters.put(getTypeNameParameterKey(),sbN.toString());
-            requestParameters.put("NAMESPACE",sbNS.toString());
-        }
-
-        Filter filter = Filter.INCLUDE;
-        if(this.filter != null && this.filter != Filter.INCLUDE){
-            final SimplifyingFilterVisitor visitor = new SimplifyingFilterVisitor();
-            filter = (Filter) this.filter.accept(visitor, null);
-        }
-
-
-        if(filter != null && filter != Filter.INCLUDE) {
-            final String strFilter;
-            try (final StringWriter writer = new StringWriter()) {
-                final MarshallerPool pool = FilterMarshallerPool.getInstance(getFilterVersion());
-                final Marshaller marsh = pool.acquireMarshaller();
-                marsh.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-                marsh.marshal(FilterMarshallerPool.toJAXBElement(filter, getFilterVersion()), writer);
-                pool.recycle(marsh);
-
-                strFilter = writer.toString()
-                    // Replace full namespace with specified prefix
-                        .replaceAll("([^<])"+Pattern.quote(typeName.getNamespaceURI())+"(:\\w+)", "$1"+prefix+"$2");
-                requestParameters.put("FILTER", strFilter);
-
-            } catch (JAXBException|IOException ex) {
-                LOGGER.log(Level.WARNING, "GetFeature: FILTER parameter cannot be written", ex);
+            if (namespace != null && !namespace.isEmpty()) {
+                requestParameters.put("NAMESPACE", new StringBuilder("xmlns(").append(prefix).append('=').append(namespace).append(')').toString());
             }
         }
 
-        if(propertyNames != null){
-            final StringBuilder sb = new StringBuilder();
+        prepareFilter()
+                .map(this::toString)
+                .ifPresent(text -> requestParameters.put("FILTER", text));
 
-            for(final GenericName prop : propertyNames){
-                final String propNs = NamesExt.getNamespace(prop);
-                if(typeName != null && propNs != null
-                   && propNs.equals(typeName.getNamespaceURI())){
-                    sb.append(typeName.getPrefix()).append(':').append(prop.tip()).append(',');
-                }else{
-                    sb.append(NamesExt.toExtendedForm(prop)).append(',');
-                }
+            final String pNames = preparePropertyNames(prefix, namespace)
+                    .collect(Collectors.joining(","));
+            if (pNames != null && !pNames.isEmpty()) {
+                requestParameters.put("PROPERTYNAME", pNames);
             }
-
-            if(sb.length() > 0 && sb.charAt(sb.length()-1) == ','){
-                sb.deleteCharAt(sb.length()-1);
-            }
-
-            requestParameters.put("PROPERTYNAME", sb.toString());
-        }
 
         if (outputFormat != null) {
             requestParameters.put("OUTPUTFORMAT",outputFormat);
@@ -247,37 +221,20 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
      */
     @Override
     public InputStream getResponseStream() throws IOException {
+        final List<QName> typeNames = new ArrayList<>();
 
-        final List<QName> typeNames = new ArrayList<QName>();
-
-        if(typeName != null){
+        final List<String> propNames;
+        if(typeName != null) {
             typeNames.add(typeName);
-        }
-
-        Filter filter = Filter.INCLUDE;
-        if(this.filter != null && this.filter != Filter.INCLUDE){
-            final SimplifyingFilterVisitor visitor = new SimplifyingFilterVisitor();
-            filter = (Filter) this.filter.accept(visitor, null);
-        }
-
-        XMLFilter xmlFilter;
-        if(filter != null && filter != Filter.INCLUDE) {
-            xmlFilter = FilterMarshallerPool.transform(filter, getFilterVersion());
+            propNames = preparePropertyNames(typeName.getPrefix(), typeName.getNamespaceURI()).collect(Collectors.toList());
         } else {
-            xmlFilter = null;
+            propNames = preparePropertyNames(null, null).collect(Collectors.toList());
         }
 
-        final List<String> propName = new ArrayList<>();
-        if(propertyNames != null){
-            // TODO handle prefix/namespace
-            for(final GenericName prop : propertyNames){
-                propName.add(prop.tip().toString());
-            }
-        }
+        final XMLFilter xmlFilter = prepareFilter().orElse(null);
+        final Query query = WFSXmlFactory.buildQuery(version.getCode(), xmlFilter, typeNames, null, null, null, propNames);
 
-        final Query query = WFSXmlFactory.buildQuery(version, xmlFilter, typeNames, null, null, null, propName);
-
-        final GetFeature request = WFSXmlFactory.buildGetFeature(version, "WFS", null, null, maxFeatures, query, ResultTypeType.RESULTS, outputFormat);
+        final GetFeature request = WFSXmlFactory.buildGetFeature(version.getCode(), "WFS", null, null, maxFeatures, query, ResultTypeType.RESULTS, outputFormat);
 
         final URL url = new URL(serverURL);
         URLConnection conec = url.openConnection();
@@ -288,19 +245,135 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
 
         OutputStream stream = conec.getOutputStream();
         stream = security.encrypt(stream);
-        try {
-            Marshaller marshaller = WFSMarshallerPool.getInstance().acquireMarshaller();
+        try (final OutputStream toClose = stream) {
+            Marshaller marshaller = WFSMarshallerPool.getInstance(version).acquireMarshaller();
             marshaller.marshal(request, stream);
             WFSMarshallerPool.getInstance().recycle(marshaller);
         } catch (JAXBException ex) {
             throw new IOException(ex);
         }
-        stream.close();
+
         return security.decrypt(conec.getInputStream());
     }
-
 
     public abstract FilterVersion getFilterVersion();
 
     public abstract String getTypeNameParameterKey();
+
+    /**
+     * Marshall given XML filter (using version defined by {@link #getFilterVersion() }.
+     * @param source The filter to marshall.
+     * @return XML content of the filter.
+     */
+    private String toString(final XMLFilter source) {
+        try (final StringWriter writer = new StringWriter()) {
+            final MarshallerPool pool = FilterMarshallerPool.getInstance(getFilterVersion());
+            final Marshaller marsh = pool.acquireMarshaller();
+            marsh.marshal(source, writer);
+            pool.recycle(marsh);
+
+            return writer.toString();
+        } catch (JAXBException | IOException ex) {
+            LOGGER.log(Level.WARNING, "GetFeature: FILTER parameter cannot be written", ex);
+        }
+
+        return null;
+    }
+
+    protected Stream<String> preparePropertyNames(final String prefix, final String namespace) {
+        if (propertyNames == null || propertyNames.length < 1) {
+            return Stream.empty();
+        }
+
+        Stream<GenericName> names = Stream.of(propertyNames);
+        if (prefix == null || prefix.isEmpty()) {
+            return names.map(name -> name.tip().toString());
+        } else {
+            final String fPrefix = prefix;
+            return names.map(name -> {
+                final String local = name.tip().toString();
+                return namespace.equals(NamesExt.getNamespace(name)) ? fPrefix + ":" + local : local;
+            });
+        }
+    }
+
+    protected Optional<XMLFilter> prepareFilter() {
+        if (filter == null || Filter.INCLUDE.equals(filter)) {
+            return Optional.empty();
+        }
+
+        final SimplifyingFilterVisitor visitor;
+        String namespace = typeName == null? null : typeName.getNamespaceURI();
+        if (namespace != null && !namespace.isEmpty()) {
+            String prefix = typeName.getPrefix();
+            if (prefix == null || prefix.trim().isEmpty()) {
+                namespace += ":";
+                prefix = "";
+            }
+
+            visitor = new PrefixSwitchVisitor();
+            ((PrefixSwitchVisitor)visitor).setPrefix(namespace, prefix);
+        } else {
+            visitor = new SimplifyingFilterVisitor();
+        }
+
+        final Object result = filter.accept(visitor, null);
+        if (result == null || Filter.INCLUDE.equals(result)) {
+            return Optional.empty();
+        } else if (result instanceof Filter) {
+            return Optional.of(FilterMarshallerPool.transform((Filter)result, getFilterVersion()));
+        }
+
+        throw new IllegalStateException("Filter visit resulted in an unexpected object: "+result.getClass());
+    }
+
+    /**
+     * Check property names, and replace their prefix with a new one configured
+     * beforehand. To configure a replacement, use method {@link #setPrefix(java.lang.String, java.lang.String) }.
+     */
+    protected static class PrefixSwitchVisitor extends SimplifyingFilterVisitor {
+        final Map<String, String> namespaceReplacements = new HashMap<>();
+
+        /**
+         * Specify a prefix replacement.
+         * @param namespace The prefix that must be replaced
+         * @param replacementPrefix The new prefix to set on property name.
+         */
+        public void setPrefix(final String namespace, final String replacementPrefix) {
+            namespaceReplacements.put(namespace, replacementPrefix);
+        }
+
+        @Override
+        public Object visit(PropertyName expression, Object extraData) {
+                final String pName = expression.getPropertyName();
+            for (final Map.Entry<String, String> replacement : namespaceReplacements.entrySet()) {
+                final String namespace = replacement.getKey();
+                if (pName.startsWith(namespace)) {
+                    return getFactory(extraData).property(replacement.getValue() + pName.substring(namespace.length()));
+                }
+            }
+
+            return super.visit(expression, extraData);
+        }
+    }
+
+    protected static class SrsSwitchFilter extends PrefixSwitchVisitor {
+        final Pattern srsFinder;
+        final String newSrs;
+
+        public SrsSwitchFilter(Pattern srsFinder, String newSrs) {
+            this.srsFinder = srsFinder;
+            this.newSrs = newSrs;
+        }
+
+        @Override
+        public Object visit(Literal expression, Object extraData) {
+            if (expression.getValue() instanceof Envelope) {
+                System.out.println("ENVELOPE: "+expression.getValue());
+            } else if (expression.getValue() instanceof Geometry) {
+                System.out.println("GEOMETRY: "+expression.getValue());
+            }
+            return super.visit(expression, extraData);
+        }
+    }
 }

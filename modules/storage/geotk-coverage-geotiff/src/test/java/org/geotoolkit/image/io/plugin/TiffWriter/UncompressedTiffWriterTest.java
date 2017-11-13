@@ -102,7 +102,7 @@ public strictfp class UncompressedTiffWriterTest extends TestTiffImageWriter {
         writer.setOutput(fileTest); //-- to initialize writer
 
         //-- only one strip
-        final int width  = random.nextInt(256) + 16;
+        final int width  = random.nextInt(RANDOM_SIZE_UPPER) + TILE_MIN_SIZE;
         final int height = 1;
 
         /*
@@ -178,8 +178,8 @@ public strictfp class UncompressedTiffWriterTest extends TestTiffImageWriter {
 
         final ImageTypeSpecifier sourceImgSpec = buildImageTypeSpecifier(sampleType, numBand, photometricInterpretation);
 
-        final int width  = random.nextInt(256) + 16;
-        final int height = random.nextInt(256) + 16;
+        final int width  = random.nextInt(RANDOM_SIZE_UPPER) + TILE_MIN_SIZE;
+        final int height = random.nextInt(RANDOM_SIZE_UPPER) + TILE_MIN_SIZE;
 
         writer.prepareWriteEmpty(null, sourceImgSpec, width, height, null, null, writerParam);
 
@@ -329,8 +329,8 @@ public strictfp class UncompressedTiffWriterTest extends TestTiffImageWriter {
 
         final File fileTest = File.createTempFile(message, "tiff", tempDir);
 
-        final int width  = random.nextInt(256) + 16;
-        final int height = random.nextInt(256) + 16;
+        final int width  = random.nextInt(RANDOM_SIZE_UPPER) + TILE_MIN_SIZE;
+        final int height = random.nextInt(RANDOM_SIZE_UPPER) + TILE_MIN_SIZE;
         final WritableRenderedImage sourceImage = createImageTest(width, height, sampleType, numBand, photometricInterpretation);
 
         writer.setOutput(fileTest); //-- to initialize writer
