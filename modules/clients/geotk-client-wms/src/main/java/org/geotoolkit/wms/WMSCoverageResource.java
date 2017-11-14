@@ -50,7 +50,6 @@ import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.util.GenericName;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -498,7 +497,7 @@ public class WMSCoverageResource extends AbstractCoverageResource{
             LOGGER.log(Level.WARNING, ex.toString(), ex);
         }
 
-        final boolean isOldVersion = (server.getVersion() == WMSVersion.v100)||(server.getVersion() == WMSVersion.v111);
+        final boolean longitudeFirst = server.getVersion().longitudeFirst;
         if (isUseLocalReprojection() && !supportCRS) {
             try {
                 crs2D = findOriginalCRS();
@@ -511,7 +510,7 @@ public class WMSCoverageResource extends AbstractCoverageResource{
                 crs2D = CommonCRS.WGS84.geographic();
             }
 
-            if (isOldVersion && (Utilities.equalsIgnoreMetadata(crs2D, CommonCRS.WGS84.normalizedGeographic()))) {
+            if (longitudeFirst && (Utilities.equalsIgnoreMetadata(crs2D, CommonCRS.WGS84.normalizedGeographic()))) {
                 //in case we are asking for a WMS in 1.1.0 and CRS:84
                 //we must change the crs to 4326 but with CRS:84 coordinate
                 final GeneralEnvelope trsEnv = new GeneralEnvelope(ReferencingUtilities.transform2DCRS(env, CommonCRS.WGS84.normalizedGeographic()));
@@ -519,7 +518,7 @@ public class WMSCoverageResource extends AbstractCoverageResource{
                 final CoordinateReferenceSystem fakeCrs = ReferencingUtilities.change2DComponent(crs, CommonCRS.WGS84.geographic());
                 trsEnv.setCoordinateReferenceSystem(fakeCrs);
                 fakeEnv.setEnvelope(trsEnv);
-            }else if (isOldVersion) {
+            }else if (longitudeFirst) {
                 //in case we are asking for a WMS in 1.1.0 and a geographic crs
                 //we must set longitude coordinates first but preserve the crs
                 final CoordinateReferenceSystem lfcrs = ReferencingUtilities.setLongitudeFirst(crs2D);
@@ -535,14 +534,14 @@ public class WMSCoverageResource extends AbstractCoverageResource{
 
         }else{
 
-            if (isOldVersion && (Utilities.equalsIgnoreMetadata(crs2D, CommonCRS.WGS84.normalizedGeographic()))) {
+            if (longitudeFirst && (Utilities.equalsIgnoreMetadata(crs2D, CommonCRS.WGS84.normalizedGeographic()))) {
                 //in case we are asking for a WMS in 1.1.0 and CRS:84
                 //we must change the crs to 4326 but with CRS:84 coordinate
                 final GeneralEnvelope trsEnv = new GeneralEnvelope(env);
                 final CoordinateReferenceSystem fakeCrs = ReferencingUtilities.change2DComponent(crs, CommonCRS.WGS84.geographic());
                 trsEnv.setCoordinateReferenceSystem(fakeCrs);
                 fakeEnv.setEnvelope(trsEnv);
-            } else if (isOldVersion) {
+            } else if (longitudeFirst) {
                 //in case we are asking for a WMS in 1.1.0 and a geographic crs
                 //we must set longitude coordinates first but preserve the crs
                 final GeneralEnvelope trsEnv = new GeneralEnvelope(ReferencingUtilities.setLongitudeFirst(env));

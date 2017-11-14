@@ -21,15 +21,22 @@ package org.geotoolkit.wms.xml;
  * @author Johann Sorel (Geomatys)
  */
 public enum WMSVersion {
-    v100("1.0.0"),
-    v111("1.1.1"),
-    v130("1.3.0"),
-    auto("auto");
+    v100("1.0.0", true),
+    v110("1.1.0", true),
+    v111("1.1.1", true),
+    v130("1.3.0", false),
+    auto("auto", false);
 
     private final String code;
+    /**
+     * Indicates iff this version of WMS standard impose coordinate definition
+     * where longitude is the first (x) component.
+     */
+    public final boolean longitudeFirst;
 
-    WMSVersion(final String code){
+    WMSVersion(final String code, final boolean longitudeFirst) {
         this.code = code;
+        this.longitudeFirst = longitudeFirst;
     }
 
     public String getCode() {

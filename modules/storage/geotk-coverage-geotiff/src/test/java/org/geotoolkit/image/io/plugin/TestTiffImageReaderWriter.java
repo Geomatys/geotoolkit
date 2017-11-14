@@ -58,7 +58,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.image.io.plugin.ImageOrientation.*;
-import org.junit.Ignore;
 
 /**
  * Primary test class to test {@link TiffImageWriter} and {@link TiffImageReader}. <br/><br/>
@@ -81,6 +80,10 @@ import org.junit.Ignore;
  * @author Remi Marechal (Geomatys).
  */
 public strictfp abstract class TestTiffImageReaderWriter {
+
+    protected static final int TILE_MIN_SIZE = 16;
+    protected static final int RANDOM_SIZE_UPPER = 48;
+    protected static final int TILE_MAX_RATIO = RANDOM_SIZE_UPPER / TILE_MIN_SIZE;
 
     protected final double DEFAULT_TOLERANCE = 1E-15;
 
@@ -478,8 +481,8 @@ public strictfp abstract class TestTiffImageReaderWriter {
                              final int numBand, final PhotometricInterpretation photometricInterpretation)
             throws IOException {
 
-        final int width  = random.nextInt(256) + 16;
-        final int height = random.nextInt(256) + 16;
+        final int width  = random.nextInt(RANDOM_SIZE_UPPER) + TILE_MIN_SIZE;
+        final int height = random.nextInt(RANDOM_SIZE_UPPER) + TILE_MIN_SIZE;
         final RenderedImage expected = createImageTest(width, height, sampleType, numBand, photometricInterpretation);
 
         defaultTest(message, fileTest, expected);
@@ -606,8 +609,8 @@ public strictfp abstract class TestTiffImageReaderWriter {
             final SampleType sampleType, final int numBand,
             final PhotometricInterpretation photometricInterpretation,
             final ImageOrientation imageOrientation) throws IOException {
-        int width  = random.nextInt(256) + 16;
-        int height = random.nextInt(256) + 16;
+        int width  = random.nextInt(RANDOM_SIZE_UPPER) + TILE_MIN_SIZE;
+        int height = random.nextInt(RANDOM_SIZE_UPPER) + TILE_MIN_SIZE;
 
         final RenderedImage sourceImage = createImageTest(width, height, sampleType, numBand, photometricInterpretation);
 

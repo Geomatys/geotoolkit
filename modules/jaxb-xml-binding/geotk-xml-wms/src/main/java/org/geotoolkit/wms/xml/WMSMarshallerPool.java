@@ -19,6 +19,7 @@ package org.geotoolkit.wms.xml;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.apache.sis.xml.MarshallerPool;
@@ -42,26 +43,29 @@ public final class WMSMarshallerPool {
     private static final MarshallerPool V_100;
     static {
         try {
-            final Map<String, Object> properties = new HashMap<>();
-            properties.put(XML.DEFAULT_NAMESPACE, "http://www.opengis.net/wms");
-            V_100 = new MarshallerPool(createJAXBContext(
-                    "org.geotoolkit.ogc.xml.exception:"
-                    + "org.geotoolkit.wms.xml.v100:"
-                    + "org.apache.sis.internal.jaxb.geometry",
-                    WMSMarshallerPool.class.getClassLoader()), properties) {
-                @Override
-                public Unmarshaller acquireUnmarshaller() throws JAXBException {
-                    final Unmarshaller u = super.acquireUnmarshaller();
-                    return new DTDIgnoreUnmarshaller(u);
-                }
+            V_100 = createIgnoreDTD(
+                    createJAXBContext(
+                            "org.geotoolkit.ogc.xml.exception:" +
+                            "org.geotoolkit.wms.xml.v100:" +
+                            "org.apache.sis.internal.jaxb.geometry",
+                            WMSMarshallerPool.class.getClassLoader())
+            );
+        } catch (JAXBException ex) {
+            throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
+        }
+    }
 
-                @Override
-                public void recycle(Unmarshaller unmarshaller) {
-                    if (unmarshaller instanceof DTDIgnoreUnmarshaller)
-                        unmarshaller = ((DTDIgnoreUnmarshaller) unmarshaller).source;
-                    super.recycle(unmarshaller);
-                }
-            };
+    private static final MarshallerPool V_110;
+    static {
+        try {
+            V_110 = createIgnoreDTD(
+                    createJAXBContext(
+                            "org.geotoolkit.ogc.xml.exception:" +
+                            "org.geotoolkit.wms.xml.v111:" +
+                            //"org.geotoolkit.sld.xml.v110:" + TODO : find a way to active it back without being annoyed by namespaces.
+                            "org.apache.sis.internal.jaxb.geometry",
+                            WMSMarshallerPool.class.getClassLoader())
+            );
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
@@ -104,9 +108,11 @@ public final class WMSMarshallerPool {
     }
 
     private WMSMarshallerPool() {}
+
     public static MarshallerPool getInstance(final WMSVersion version) {
         switch (version) {
             case v100: return V_100;
+            case v110: return V_110;
             case v130: return V_130;
             default: return DEFAULT;
         }
@@ -122,5 +128,33 @@ public final class WMSMarshallerPool {
 
     public static MarshallerPool getInstance100() {
         return V_100;
+    }
+
+    /**
+     * Create a new marshaller pool from given JAXB context. The returned pool
+     * is configured to ignore any dtd download and validation when unmarshalling
+     * xml.
+     *
+     * @param context The JAXB context to use for marshalling pool creation.
+     * @return A new marshaller pool, ready to use.
+     * @throws JAXBException If we cannot create the marshaller pool.
+     */
+    private static MarshallerPool createIgnoreDTD(JAXBContext context) throws JAXBException {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put(XML.DEFAULT_NAMESPACE, "http://www.opengis.net/wms");
+        return new MarshallerPool(context, properties) {
+            @Override
+            public Unmarshaller acquireUnmarshaller() throws JAXBException {
+                final Unmarshaller u = super.acquireUnmarshaller();
+                return new DTDIgnoreUnmarshaller(u);
+            }
+
+            @Override
+            public void recycle(Unmarshaller unmarshaller) {
+                if (unmarshaller instanceof DTDIgnoreUnmarshaller)
+                    unmarshaller = ((DTDIgnoreUnmarshaller) unmarshaller).source;
+                super.recycle(unmarshaller);
+            }
+        };
     }
 }

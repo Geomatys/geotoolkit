@@ -175,7 +175,7 @@ public final class SRIDGenerator {
             }else if(authorityCode == 1){
                 authority = AUTHORITY_CRS;
             }else{
-                throw new IllegalArgumentException("unknowed authority : " + authorityCode);
+                throw new IllegalArgumentException("unknown authority : " + authorityCode);
             }
 
             final int code = srid & 0xFFFFFFF;

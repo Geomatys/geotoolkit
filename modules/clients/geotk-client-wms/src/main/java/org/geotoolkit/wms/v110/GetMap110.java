@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,33 +14,38 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+package org.geotoolkit.wms.v110;
 
-package org.geotoolkit.data.wfs.v110;
-
-import org.geotoolkit.data.wfs.AbstractGetFeature;
-import org.geotoolkit.ogc.xml.FilterVersion;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.wfs.xml.WFSVersion;
+import org.geotoolkit.wms.AbstractGetMap;
+import org.geotoolkit.wms.WebMapClient;
+
 
 /**
- * Get feature request for WFS 1.1.0
+ * Implementation for the GetMap request version 1.1.1.
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class GetFeature110 extends AbstractGetFeature{
-
-    public GetFeature110(final String serverURL, final ClientSecurity security) {
-        super(serverURL, WFSVersion.v110, security);
+public class GetMap110 extends AbstractGetMap {
+    /**
+     * Defines the server url and its version.
+     *
+     * @param serverURL The url of the webservice.
+     */
+    public GetMap110(final String serverURL, final ClientSecurity security){
+        super(serverURL,"1.1.0", security);
     }
 
-    @Override
-    public FilterVersion getFilterVersion() {
-        return FilterVersion.V110;
+    public GetMap110(final WebMapClient server, final ClientSecurity security){
+        super(server,"1.1.0", security);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public String getTypeNameParameterKey() {
-        return "TYPENAME";
+    protected String getCRSParameterName() {
+        return "SRS";
     }
 }

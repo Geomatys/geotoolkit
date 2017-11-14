@@ -39,7 +39,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.feature.AbstractOperation;
 import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.ReprojectFeatureType;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -70,7 +69,6 @@ import org.geotoolkit.wfs.xml.WFSMarshallerPool;
 
 import org.opengis.util.GenericName;
 import org.geotoolkit.storage.DataStores;
-import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
@@ -82,6 +80,7 @@ import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.feature.Feature;
@@ -318,30 +317,12 @@ public class WFSFeatureStore extends AbstractFeatureStore{
         //will raise an error if typename in unknowned
         final FeatureType sft = getFeatureType(name);
 
-        final QName q = new QName(NamesExt.getNamespace(sft.getName()), sft.getName().tip().toString(), prefixes.get(NamesExt.getNamespace(sft.getName())));
-        final FeatureCollection collection;
-        try {
-            collection = requestFeature(q, query);
-        } catch (IOException ex) {
-            throw new DataStoreException(ex);
-        }
-
-
         FeatureReader reader;
-        if(collection == null){
-            reader = FeatureStreams.emptyReader(sft);
-        }else{
-            reader = FeatureStreams.asReader(collection.iterator(), sft);
-        }
-
-        //we handle reprojection ourself, too complex or never done properly for a large
-        //majority of wfs server tested.
-        if(query.getCoordinateSystemReproject() != null){
-            try {
-                reader = FeatureStreams.decorate(reader, new ReprojectFeatureType(reader.getFeatureType(), query.getCoordinateSystemReproject()), null);
-            } catch (MismatchedFeatureException ex) {
-                getLogger().log(Level.WARNING, ex.getMessage(), ex);
-            }
+        final QName q = new QName(NamesExt.getNamespace(sft.getName()), sft.getName().tip().toString(), prefixes.get(NamesExt.getNamespace(sft.getName())));
+        try {
+            reader = requestFeature(q, query);
+        } catch (IOException|XMLStreamException ex) {
+            throw new DataStoreException(ex);
         }
 
         return reader;
@@ -485,7 +466,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
                 getLogger().log(Level.INFO, "[WFS Client] request type by POST.");
                 stream = request.getResponseStream();
             } else {
-            getLogger().log(Level.INFO, "[WFS Client] request type : {0}", request.getURL());
+                getLogger().log(Level.INFO, "[WFS Client] request type : {0}", request.getURL());
                 stream = request.getURL().openStream();
             }
             final List<FeatureType> featureTypes = reader.read(stream);
@@ -497,18 +478,26 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
     }
 
-    private FeatureCollection requestFeature(final QName typeName, final Query query) throws IOException, IllegalNameException {
+    private FeatureReader requestFeature(final QName typeName, final Query query) throws XMLStreamException, DataStoreException, IOException {
         final GenericName name = NamesExt.create(typeName);
         FeatureType type = types.get(this, name.toString());
         // TODO : remove SIS conventions
         final GetFeatureRequest request = server.createGetFeature();
         request.setTypeName(typeName);
 
+        /* We create a secondary query whose role is to handle mappings we won't
+         * delegate to the WFS service. Examples are start offset, which cannot
+         * be converted to a proper WFS parameter, and the asked reprojection (if
+         * any), because it happens that WFS servers handle it badly.
+         *
+         */
+        final QueryBuilder remainingQuery;
         if (query != null) {
+            remainingQuery = new QueryBuilder(query);
             type = FeatureTypeExt.createSubType(type, query.getPropertyNames());
 
             final Filter filter = query.getFilter();
-            if(filter == null){
+            if (filter == null) {
                 request.setFilter(Filter.INCLUDE);
             } else {
                 final Map<String, String> replacements = type.getProperties(true).stream()
@@ -530,9 +519,22 @@ public class WFSFeatureStore extends AbstractFeatureStore{
                 }
             }
 
+            // Filter is already processed, but a query builder does not support null filter.
+            remainingQuery.setFilter(Filter.INCLUDE);
+
+            final int start = query.getStartIndex();
             final Integer max = query.getMaxFeatures();
-            if(max != null){
+            if (start <= 0 && max != null) {
                 request.setMaxFeatures(max);
+                // For this one, do not remove from remaining queries : If the
+                // wfs service does not manage it, we will do it afterwards.
+            } else if (max != null && max > 0) {
+                /* If an offset is provided, we'll have to skip elements manually,
+                 * so we keep start index in remaining query. All we can do here
+                 * is query that we want no more than the number of features
+                 * needed to do the skip, + the number of features wanted by
+                */
+                request.setMaxFeatures(start + max);
             }
 
             final String[] propertyNames = query.getPropertyNames();
@@ -544,46 +546,28 @@ public class WFSFeatureStore extends AbstractFeatureStore{
                         .toArray(size -> new GenericName[size]);
 
                 request.setPropertyNames(names);
+                remainingQuery.setProperties(null);
             }
+        } else remainingQuery = null;
+
+        final XmlFeatureReader reader = new JAXPStreamFeatureReader(type);
+        reader.getProperties().put(JAXPStreamFeatureReader.SKIP_UNEXPECTED_PROPERTY_TAGS, true);
+        final InputStream stream;
+        if (getUsePost()) {
+            getLogger().log(Level.INFO, "[WFS Client] request feature by POST.");
+            stream = request.getResponseStream();
+        } else {
+            final URL url = request.getURL();
+            getLogger().log(Level.INFO, "[WFS Client] request feature : {0}", url);
+            stream = url.openStream();
         }
 
-        XmlFeatureReader reader = null;
-        try {
-            reader = new JAXPStreamFeatureReader(type);
-            reader.getProperties().put(JAXPStreamFeatureReader.SKIP_UNEXPECTED_PROPERTY_TAGS, true);
-            final InputStream stream;
-            if (getUsePost()) {
-                getLogger().log(Level.INFO, "[WFS Client] request feature by POST.");
-                stream = request.getResponseStream();
-            } else {
-                final URL url = request.getURL();
-                getLogger().log(Level.INFO, "[WFS Client] request feature : {0}", url);
-                stream = url.openStream();
-            }
-            final Object result = reader.read(stream);
-
-
-            if(result instanceof Feature){
-                final Feature sf = (Feature) result;
-                final FeatureCollection col = FeatureStoreUtilities.collection("id", type);
-                col.add(sf);
-                return col;
-            }else if(result instanceof FeatureCollection){
-                final FeatureCollection col = (FeatureCollection) result;
-                return col;
-            }else{
-                final FeatureCollection col = FeatureStoreUtilities.collection("", type);
-                return col;
-            }
-
-        }catch (XMLStreamException ex) {
-            throw new IOException(ex);
-        }finally{
-            if(reader != null){
-                reader.dispose();
-            }
+        FeatureReader streamReader = reader.readAsStream(stream);
+        if (remainingQuery != null) {
+            streamReader = FeatureStreams.subset(streamReader, remainingQuery.buildQuery());
         }
 
+        return streamReader;
     }
 
     @Override

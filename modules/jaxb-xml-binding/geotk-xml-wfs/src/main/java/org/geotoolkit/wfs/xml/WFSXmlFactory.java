@@ -43,11 +43,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return new org.geotoolkit.wfs.xml.v200.FeatureTypeListType();
-            case"1.1.0":
+            case "1.1.0":
                 return new org.geotoolkit.wfs.xml.v110.FeatureTypeListType();
-            case"1.0.0":
+            case "1.0.0":
                 return new org.geotoolkit.wfs.xml.v100.FeatureTypeListType();
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -58,11 +59,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return new org.geotoolkit.wfs.xml.v200.WFSCapabilitiesType(version, updateSequence);
-            case"1.1.0":
+            case "1.1.0":
                 return new org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType(version, updateSequence);
-            case"1.0.0":
+            case "1.0.0":
                 return new org.geotoolkit.wfs.xml.v100.WFSCapabilitiesType(version, updateSequence);
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -73,7 +75,8 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
             {
                 final List<org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType> bboxes = new ArrayList<>();
                 if (bbox != null && !(bbox instanceof org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType)) {
@@ -83,7 +86,7 @@ public class WFSXmlFactory {
                 }
                 return new org.geotoolkit.wfs.xml.v200.FeatureTypeType(name, title, defaultCRS, otherCRS, bboxes);
             }
-            case"1.1.0":
+            case "1.1.0":
             {
                 final List<org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType> bboxes = new ArrayList<>();
                 if (bbox != null && !(bbox instanceof org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType)) {
@@ -93,7 +96,7 @@ public class WFSXmlFactory {
                 }
                 return new org.geotoolkit.wfs.xml.v110.FeatureTypeType(name, title, defaultCRS, otherCRS, bboxes);
             }
-            case"1.0.0":
+            case "1.0.0":
             {
                 final List<org.geotoolkit.wfs.xml.v100.LatLongBoundingBoxType> bboxes = new ArrayList<>();
                 if (bbox != null && !(bbox instanceof org.geotoolkit.wfs.xml.v100.LatLongBoundingBoxType)) {
@@ -112,21 +115,22 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return new org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType(
                         crsName,
                         minx,
                         miny,
                         maxx,
                         maxy);
-            case"1.1.0":
+            case "1.1.0":
                 return new org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType(
                         crsName,
                         minx,
                         miny,
                         maxx,
                         maxy);
-            case"1.0.0":
+            case "1.0.0":
                 return new org.geotoolkit.wfs.xml.v100.LatLongBoundingBoxType(minx, miny, maxx, maxy);
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -139,7 +143,8 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 if ((si  != null && !(si instanceof org.geotoolkit.ows.xml.v110.ServiceIdentification)) ||
                         (sp  != null &&!(sp instanceof org.geotoolkit.ows.xml.v110.ServiceProvider))        ||
                         (om  != null &&!(om instanceof org.geotoolkit.ows.xml.v110.OperationsMetadata))     ||
@@ -162,7 +167,7 @@ public class WFSXmlFactory {
         (org.geotoolkit.wfs.xml.v110.FeatureTypeListType)  ftl,
         (org.geotoolkit.ogc.xml.v110.FilterCapabilities)   fc);
         } */
-            case"1.1.0":
+            case "1.1.0":
                 if ((si  != null && !(si instanceof org.geotoolkit.ows.xml.v100.ServiceIdentification)) ||
                         (sp  != null && !(sp instanceof org.geotoolkit.ows.xml.v100.ServiceProvider))       ||
                         (om  != null && !(om instanceof org.geotoolkit.ows.xml.v100.OperationsMetadata))    ||
@@ -185,13 +190,14 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return new org.geotoolkit.wfs.xml.v200.FeatureCollectionType(numberOfFeatures, timeStamp);
-            case"1.1.0":
+            case "1.1.0":
                 final org.geotoolkit.wfs.xml.v110.FeatureCollectionType fc = new org.geotoolkit.wfs.xml.v110.FeatureCollectionType(numberOfFeatures, timeStamp);
                 fc.setId(id);
                 return fc;
-            case"1.0.0":
+            case "1.0.0":
                 return new org.geotoolkit.wfs.xml.v100.FeatureCollectionType(id);
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -202,11 +208,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return new org.geotoolkit.wfs.xml.v200.ValueCollectionType(numberOfFeatures, timeStamp);
-            case"1.1.0":
+            case "1.1.0":
                 throw new IllegalArgumentException("The operation GetPropertyValue is not available in version:" + version);
-            case"1.0.0":
+            case "1.0.0":
                 throw new IllegalArgumentException("The operation GetPropertyValue is not available in version:" + version);
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -215,7 +222,7 @@ public class WFSXmlFactory {
 
     public static TransactionResponse buildTransactionResponse(final String version, final Integer totalInserted, final Integer totalUpdated, final Integer totalDeleted, final Integer totalReplaced,
             final Map<String, String> inserted, final Map<String, String> replaced) {
-        if (v200.getCode().equals(version)) {
+        if (v200.getCode().equals(version) || v202.getCode().equals(version)) {
             org.geotoolkit.wfs.xml.v200.ActionResultsType insertResults = null;
             if (inserted.size() > 0) {
                 final List<org.geotoolkit.wfs.xml.v200.CreatedOrModifiedFeatureType> ift = new ArrayList<>();
@@ -264,12 +271,13 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 throw new IllegalArgumentException("The operation GetGmlObject is not available in version:" + version);
-            case"1.1.0":
+            case "1.1.0":
                 final org.geotoolkit.ogc.xml.v110.GmlObjectIdType gmlObjectId = new org.geotoolkit.ogc.xml.v110.GmlObjectIdType(id);
                 return new org.geotoolkit.wfs.xml.v110.GetGmlObjectType(service, version, handle, gmlObjectId, outputFormat);
-            case"1.0.0":
+            case "1.0.0":
                 throw new IllegalArgumentException("The operation GetGmlObject is not available in version:" + version);
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -280,17 +288,18 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 if (outputFormat == null) {
                     outputFormat = "application/gml+xml; version=3.2";
                 }
                 return new org.geotoolkit.wfs.xml.v200.DescribeFeatureTypeType(service, version, handle, typeNames, outputFormat);
-            case"1.1.0":
+            case "1.1.0":
                 if (outputFormat == null) {
                     outputFormat = "text/xml; subtype=gml/3.1.1";
                 }
                 return new org.geotoolkit.wfs.xml.v110.DescribeFeatureTypeType(service, version, handle, typeNames, outputFormat);
-            case"1.0.0":
+            case "1.0.0":
                 if (outputFormat == null) {
                     outputFormat = "XMLSCHEMA";
                 }
@@ -304,17 +313,18 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v200.FilterType)) {
                     throw new IllegalArgumentException("unexpected object version for filter element");
                 }
                 return new org.geotoolkit.wfs.xml.v200.DeleteType((org.geotoolkit.ogc.xml.v200.FilterType)filter, handle, typeName);
-            case"1.1.0":
+            case "1.1.0":
                 if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v110.FilterType)) {
                     throw new IllegalArgumentException("unexpected object version for filter element");
                 }
                 return new org.geotoolkit.wfs.xml.v110.DeleteElementType((org.geotoolkit.ogc.xml.v110.FilterType)filter, handle, typeName);
-            case"1.0.0":
+            case "1.0.0":
                 if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v100.FilterType)) {
                     throw new IllegalArgumentException("unexpected object version for filter element");
                 }
@@ -328,14 +338,15 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v200.FilterType)) {
                     throw new IllegalArgumentException("unexpected object version for filter element");
                 }
                 return new org.geotoolkit.wfs.xml.v200.ReplaceType(inputFormat, (org.geotoolkit.ogc.xml.v200.FilterType)filter, any, inputFormat, srsName);
-            case"1.1.0":
+            case "1.1.0":
                 throw new UnsupportedOperationException("not supported for version 1.1.0");
-            case"1.0.0":
+            case "1.0.0":
                 throw new UnsupportedOperationException("not supported for version 1.0.0");
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -346,11 +357,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return new org.geotoolkit.wfs.xml.v200.PropertyType(new ValueReference(propName, null), value);
-            case"1.1.0":
+            case "1.1.0":
                 return new org.geotoolkit.wfs.xml.v110.PropertyType(new QName(propName), new ValueType(value));
-            case"1.0.0":
+            case "1.0.0":
                 return new org.geotoolkit.wfs.xml.v100.PropertyType(propName, value);
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -358,7 +370,7 @@ public class WFSXmlFactory {
     }
 
     public static UpdateElement buildUpdateElement(final String version, final String inputFormat, final String srsName, final XMLFilter filter, final QName typeName, final List<Property> properties) {
-        if (v200.getCode().equals(version)) {
+        if (v202.getCode().equals(version) || v200.getCode().equals(version)) {
             if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v200.FilterType)) {
                 throw new IllegalArgumentException("unexpected object version for filter element");
             }
@@ -402,11 +414,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return new org.geotoolkit.wfs.xml.v200.InsertType(inputFormat, srsName, any);
-            case"1.1.0":
+            case "1.1.0":
                 return new org.geotoolkit.wfs.xml.v110.InsertElementType(inputFormat, srsName, any);
-            case"1.0.0":
+            case "1.0.0":
                 // TODO
                 return new org.geotoolkit.wfs.xml.v100.InsertElementType();
             default:
@@ -418,17 +431,18 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 if (deleteElement != null && !(deleteElement instanceof org.geotoolkit.wfs.xml.v200.DeleteType)) {
                     throw new IllegalArgumentException("unexpected object version for delete element");
                 }
                 return new org.geotoolkit.wfs.xml.v200.TransactionType(service, version, handle, releaseAction, (org.geotoolkit.wfs.xml.v200.DeleteType)deleteElement);
-            case"1.1.0":
+            case "1.1.0":
                 if (deleteElement != null && !(deleteElement instanceof org.geotoolkit.wfs.xml.v110.DeleteElementType)) {
                     throw new IllegalArgumentException("unexpected object version for delete element");
                 }
                 return new org.geotoolkit.wfs.xml.v110.TransactionType(service, version, handle, releaseAction, (org.geotoolkit.wfs.xml.v110.DeleteElementType)deleteElement);
-            case"1.0.0":
+            case "1.0.0":
                 if (deleteElement != null && !(deleteElement instanceof org.geotoolkit.wfs.xml.v100.DeleteElementType)) {
                     throw new IllegalArgumentException("unexpected object version for delete element");
                 }
@@ -442,17 +456,18 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 if (updateElement != null && !(updateElement instanceof org.geotoolkit.wfs.xml.v200.UpdateType)) {
                     throw new IllegalArgumentException("unexpected object version for update element");
                 }
                 return new org.geotoolkit.wfs.xml.v200.TransactionType(service, version, handle, releaseAction, (org.geotoolkit.wfs.xml.v200.UpdateType)updateElement);
-            case"1.1.0":
+            case "1.1.0":
                 if (updateElement != null && !(updateElement instanceof org.geotoolkit.wfs.xml.v110.UpdateElementType)) {
                     throw new IllegalArgumentException("unexpected object version for update element");
                 }
                 return new org.geotoolkit.wfs.xml.v110.TransactionType(service, version, handle, releaseAction, (org.geotoolkit.wfs.xml.v110.UpdateElementType)updateElement);
-            case"1.0.0":
+            case "1.0.0":
                 if (updateElement != null && !(updateElement instanceof org.geotoolkit.wfs.xml.v100.UpdateElementType)) {
                     throw new IllegalArgumentException("unexpected object version for update element");
                 }
@@ -466,17 +481,18 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 if (insertElement != null && !(insertElement instanceof org.geotoolkit.wfs.xml.v200.InsertType)) {
                     throw new IllegalArgumentException("unexpected object version for delete element");
                 }
                 return new org.geotoolkit.wfs.xml.v200.TransactionType(service, version, handle, releaseAction, (org.geotoolkit.wfs.xml.v200.InsertType)insertElement);
-            case"1.1.0":
+            case "1.1.0":
                 if (insertElement != null && !(insertElement instanceof org.geotoolkit.wfs.xml.v110.InsertElementType)) {
                     throw new IllegalArgumentException("unexpected object version for delete element");
                 }
                 return new org.geotoolkit.wfs.xml.v110.TransactionType(service, version, handle, releaseAction, (org.geotoolkit.wfs.xml.v110.InsertElementType)insertElement);
-            case"1.0.0":
+            case "1.0.0":
                 if (insertElement != null && !(insertElement instanceof org.geotoolkit.wfs.xml.v100.InsertElementType)) {
                     throw new IllegalArgumentException("unexpected object version for delete element");
                 }
@@ -490,14 +506,15 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 if (replaceElement != null && !(replaceElement instanceof org.geotoolkit.wfs.xml.v200.ReplaceType)) {
                     throw new IllegalArgumentException("unexpected object version for replace element");
                 }
                 return new org.geotoolkit.wfs.xml.v200.TransactionType(service, version, handle, releaseAction, (org.geotoolkit.wfs.xml.v200.ReplaceType)replaceElement);
-            case"1.1.0":
+            case "1.1.0":
                 throw new IllegalArgumentException("ReplaceElement is not available in version 1.1.0");
-            case"1.0.0":
+            case "1.0.0":
                 throw new IllegalArgumentException("ReplaceElement is not available in version 1.0.0");
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -506,7 +523,7 @@ public class WFSXmlFactory {
 
     public static LockFeature buildLockFeature(final String version,  final String service, final String handle, final AllSomeType releaseAction, final XMLFilter filter,
             final QName typeName, final int expiry) {
-        if (v200.getCode().equals(version)) {
+        if (v200.getCode().equals(version) || v202.getCode().equals(version)) {
             final List<org.geotoolkit.wfs.xml.v200.QueryType> queries = new ArrayList<>();
             if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v200.FilterType)) {
                 throw new IllegalArgumentException("unexpected object version for filter element");
@@ -543,7 +560,7 @@ public class WFSXmlFactory {
     }
 
     public static GetCapabilities buildGetCapabilities(final String version, final AcceptVersions versions, final Sections sections, final AcceptFormats formats, final String updateSequence, final String service) {
-        if (v200.getCode().equals(version)) {
+        if (v200.getCode().equals(version) || v202.getCode().equals(version)) {
             if (versions != null && !(versions instanceof org.geotoolkit.ows.xml.v110.AcceptVersionsType)) {
                 throw new IllegalArgumentException("unexpected object version for AcceptVersion element");
             }
@@ -584,11 +601,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return OWSXmlFactory.buildAcceptVersion("1.1.0", acceptVersion);
-            case"1.1.0":
+            case "1.1.0":
                 return OWSXmlFactory.buildAcceptVersion("1.0.0", acceptVersion);
-            case"1.0.0":
+            case "1.0.0":
                 return OWSXmlFactory.buildAcceptVersion("1.0.0", acceptVersion);
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -599,11 +617,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return OWSXmlFactory.buildAcceptFormat("1.1.0", acceptFormats);
-            case"1.1.0":
+            case "1.1.0":
                 return OWSXmlFactory.buildAcceptFormat("1.0.0", acceptFormats);
-            case"1.0.0":
+            case "1.0.0":
                 return OWSXmlFactory.buildAcceptFormat("1.0.0", acceptFormats);
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -614,11 +633,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return OWSXmlFactory.buildSections("1.1.0", sections);
-            case"1.1.0":
+            case "1.1.0":
                 return OWSXmlFactory.buildSections("1.0.0", sections);
-            case"1.0.0":
+            case "1.0.0":
                 return OWSXmlFactory.buildSections("1.0.0", sections);
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -626,7 +646,7 @@ public class WFSXmlFactory {
     }
 
     public static StoredQuery buildStoredQuery(final String version, final String id, final String handle, final List<Parameter> parameters) {
-        if (v200.getCode().equals(version)) {
+        if (v200.getCode().equals(version) || v202.getCode().equals(version)) {
             final List<org.geotoolkit.wfs.xml.v200.ParameterType> params = new ArrayList<>();
             if (parameters != null) {
                 for (Parameter p : parameters) {
@@ -647,7 +667,8 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.2":
+            case "2.0.0":
                 if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v200.FilterType)) {
                     throw new IllegalArgumentException("unexpected object version for filter element");
                 }
@@ -658,7 +679,7 @@ public class WFSXmlFactory {
                         typeNames, featureVersion, srsName,
                         (org.geotoolkit.ogc.xml.v200.SortByType)sortBy,
                         propertyNames);
-            case"1.1.0":
+            case "1.1.0":
                 if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v110.FilterType)) {
                     throw new IllegalArgumentException("unexpected object version for filter element");
                 }
@@ -669,7 +690,7 @@ public class WFSXmlFactory {
                         typeNames, featureVersion, srsName,
                         (org.geotoolkit.ogc.xml.v110.SortByType)sortBy,
                         propertyNames);
-            case"1.0.0":
+            case "1.0.0":
                 if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v100.FilterType)) {
                     throw new IllegalArgumentException("unexpected object version for filter element");
                 }
@@ -688,19 +709,20 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
             {
                 final List<org.geotoolkit.ogc.xml.v200.SortPropertyType> sortProperties = new ArrayList<>();
                 sortProperties.add(new org.geotoolkit.ogc.xml.v200.SortPropertyType(sortByParam, order));
                 return new org.geotoolkit.ogc.xml.v200.SortByType(sortProperties);
             }
-            case"1.1.0":
+            case "1.1.0":
             {
                 final List<org.geotoolkit.ogc.xml.v110.SortPropertyType> sortProperties = new ArrayList<>();
                 sortProperties.add(new org.geotoolkit.ogc.xml.v110.SortPropertyType(sortByParam, order));
                 return new org.geotoolkit.ogc.xml.v110.SortByType(sortProperties);
             }
-            case"1.0.0":
+            case "1.0.0":
                 return null;
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -711,17 +733,18 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
             {
                 final  org.geotoolkit.ogc.xml.v200.BBOXType bbox = new org.geotoolkit.ogc.xml.v200.BBOXType(propertyName, minx, miny, maxx, maxy, srs);
                 return new org.geotoolkit.ogc.xml.v200.FilterType(bbox);
             }
-            case"1.1.0":
+            case "1.1.0":
             {
                 final  org.geotoolkit.ogc.xml.v110.BBOXType bbox = new org.geotoolkit.ogc.xml.v110.BBOXType(propertyName, minx, miny, maxx, maxy, srs);
                 return new org.geotoolkit.ogc.xml.v110.FilterType(bbox);
             }
-            case"1.0.0":
+            case "1.0.0":
             {
                 final  org.geotoolkit.ogc.xml.v100.BBOXType bbox = new org.geotoolkit.ogc.xml.v100.BBOXType(propertyName, minx, miny, maxx, maxy, srs);
                 return new org.geotoolkit.ogc.xml.v100.FilterType(bbox);
@@ -732,7 +755,7 @@ public class WFSXmlFactory {
     }
 
     public static Parameter buildParameter(final String version, final String name, final Object value) {
-        if (v200.getCode().equals(version)) {
+        if (v200.getCode().equals(version) || v202.getCode().equals(version)) {
             return new org.geotoolkit.wfs.xml.v200.ParameterType(name, value);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
@@ -740,7 +763,7 @@ public class WFSXmlFactory {
     }
 
     public static ParameterExpression buildParameterDescription(final String version, final String name, final QName type) {
-        if (v200.getCode().equals(version)) {
+        if (v200.getCode().equals(version) || v202.getCode().equals(version)) {
             return new org.geotoolkit.wfs.xml.v200.ParameterExpressionType(name, name, null, type);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
@@ -752,21 +775,22 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v200.QueryType)) {
                     throw new IllegalArgumentException("unexpected object version for query element");
                 }
                 return new org.geotoolkit.wfs.xml.v200.GetFeatureType(service, version, handle, startIndex, maxFeature,
                         Arrays.asList((org.geotoolkit.wfs.xml.v200.QueryType)query),
                         resultType, outputFormat);
-            case"1.1.0":
+            case "1.1.0":
                 if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v110.QueryType)) {
                     throw new IllegalArgumentException("unexpected object version for query element");
                 }
                 return new org.geotoolkit.wfs.xml.v110.GetFeatureType(service, version, handle, maxFeature,
                         Arrays.asList((org.geotoolkit.wfs.xml.v110.QueryType)query),
                         resultType, outputFormat);
-            case"1.0.0":
+            case "1.0.0":
                 if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v100.QueryType)) {
                     throw new IllegalArgumentException("unexpected object version for query element");
                 }
@@ -780,7 +804,7 @@ public class WFSXmlFactory {
 
     public static GetFeature buildGetFeature(final String version, final String service, final String handle, final Integer startIndex, final Integer maxFeature,
         final StoredQuery query, final ResultTypeType resultType, String outputFormat) {
-        if (v200.getCode().equals(version)) {
+        if (v200.getCode().equals(version) || v202.getCode().equals(version)) {
             if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v200.StoredQueryType)) {
                 throw new IllegalArgumentException("unexpected object version for query element");
             }
@@ -798,11 +822,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return new org.geotoolkit.wfs.xml.v200.ListStoredQueriesType(service, version, handle);
-            case"1.1.0":
+            case "1.1.0":
                 throw new IllegalArgumentException("ListStoredQueries is not available in version 1.1.0");
-            case"1.0.0":
+            case "1.0.0":
                 throw new IllegalArgumentException("ListStoredQueries is not available in version 1.0.0");
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -813,7 +838,8 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 org.geotoolkit.wfs.xml.v200.QueryExpressionTextType queryEx = null;
                 if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v200.QueryType)) {
                     throw new IllegalArgumentException("unexpected object version for query element");
@@ -829,9 +855,9 @@ public class WFSXmlFactory {
                     parameters200.add((org.geotoolkit.wfs.xml.v200.ParameterExpressionType)param);
                 }
                 return new org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType(id, null, null, parameters200, queryEx);
-            case"1.1.0":
+            case "1.1.0":
                 throw new IllegalArgumentException("ListStoredQueries is not available in version 1.1.0");
-            case"1.0.0":
+            case "1.0.0":
                 throw new IllegalArgumentException("ListStoredQueries is not available in version 1.0.0");
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -841,7 +867,8 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 final List<org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType> storedQuery = new ArrayList<>();
                 for (StoredQueryDescription description : queryDescriptions) {
                     if (!(description instanceof org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType)) {
@@ -850,9 +877,9 @@ public class WFSXmlFactory {
                     storedQuery.add((org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType)description);
                 }
                 return new org.geotoolkit.wfs.xml.v200.CreateStoredQueryType(service, version, handle, storedQuery);
-            case"1.1.0":
+            case "1.1.0":
                 throw new IllegalArgumentException("ListStoredQueries is not available in version 1.1.0");
-            case"1.0.0":
+            case "1.0.0":
                 throw new IllegalArgumentException("ListStoredQueries is not available in version 1.0.0");
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -863,11 +890,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return new org.geotoolkit.wfs.xml.v200.DescribeStoredQueriesType(service, version, handle, storedQueryId);
-            case"1.1.0":
+            case "1.1.0":
                 throw new IllegalArgumentException("DescribeStoredQueries is not available in version 1.1.0");
-            case"1.0.0":
+            case "1.0.0":
                 throw new IllegalArgumentException("DescribeStoredQueries is not available in version 1.0.0");
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -879,15 +907,16 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v200.QueryType)) {
                     throw new IllegalArgumentException("unexpected object version for query element");
                 }
                 return new org.geotoolkit.wfs.xml.v200.GetPropertyValueType(service, version, handle, startIndex, maxFeature,
                         (org.geotoolkit.wfs.xml.v200.QueryType)query, resultType, outputFormat, valueReference);
-            case"1.1.0":
+            case "1.1.0":
                 throw new IllegalArgumentException("GetPropertyValue is not available in version 1.1.0");
-            case"1.0.0":
+            case "1.0.0":
                 throw new IllegalArgumentException("GetPropertyValue is not available in version 1.0.0");
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -898,11 +927,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return new org.geotoolkit.wfs.xml.v200.DropStoredQueryType(service, version, handle, id);
-            case"1.1.0":
+            case "1.1.0":
                 throw new IllegalArgumentException("DropStoredQuery is not available in version 1.1.0");
-            case"1.0.0":
+            case "1.0.0":
                 throw new IllegalArgumentException("DropStoredQuery is not available in version 1.0.0");
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -913,7 +943,8 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 final List<org.geotoolkit.wfs.xml.v200.StoredQueryListItemType> storedQuery = new ArrayList<>();
                 for (StoredQueryDescription description : descriptions) {
                     final List<QName> returnTypes = new ArrayList<>();
@@ -928,9 +959,9 @@ public class WFSXmlFactory {
                             returnTypes));
                 }
                 return new org.geotoolkit.wfs.xml.v200.ListStoredQueriesResponseType(storedQuery);
-            case"1.1.0":
+            case "1.1.0":
                 throw new IllegalArgumentException("StoredQueryListItem is not available in version 1.1.0");
-            case"1.0.0":
+            case "1.0.0":
                 throw new IllegalArgumentException("StoredQueryListItem is not available in version 1.0.0");
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -941,7 +972,7 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.2":
                 final List<org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType> storedQuery = new ArrayList<>();
                 for (StoredQueryDescription description : descriptions) {
                     if (description instanceof org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType) {
@@ -951,9 +982,9 @@ public class WFSXmlFactory {
                     }
                 }
                 return new org.geotoolkit.wfs.xml.v200.DescribeStoredQueriesResponseType(storedQuery);
-            case"1.1.0":
+            case "1.1.0":
                 throw new IllegalArgumentException("DescribeStoredQueriesResponse is not available in version 1.1.0");
-            case"1.0.0":
+            case "1.0.0":
                 throw new IllegalArgumentException("DescribeStoredQueriesResponse is not available in version 1.0.0");
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -964,11 +995,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return new org.geotoolkit.wfs.xml.v200.CreateStoredQueryResponseType(status);
-            case"1.1.0":
+            case "1.1.0":
                 throw new IllegalArgumentException("CreateStoredQueryResponse is not available in version 1.1.0");
-            case"1.0.0":
+            case "1.0.0":
                 throw new IllegalArgumentException("CreateStoredQueryResponse is not available in version 1.0.0");
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -979,11 +1011,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return new org.geotoolkit.wfs.xml.v200.DropStoredQueryResponseType(status);
-            case"1.1.0":
+            case "1.1.0":
                 throw new IllegalArgumentException("CreateStoredQueryResponse is not available in version 1.1.0");
-            case"1.0.0":
+            case "1.0.0":
                 throw new IllegalArgumentException("CreateStoredQueryResponse is not available in version 1.0.0");
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -1009,11 +1042,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return OWSXmlFactory.buildServiceIdentification("1.1.0", title, _abstract, keywords, serviceType, serviceVersion, fees, accessConstraint);
-            case"1.1.0":
+            case "1.1.0":
                 return OWSXmlFactory.buildServiceIdentification("1.0.0", title, _abstract, keywords, serviceType, serviceVersion, fees, accessConstraint);
-            case"1.0.0":
+            case "1.0.0":
                 return OWSXmlFactory.buildServiceIdentification("1.0.0", title, _abstract, keywords, serviceType, serviceVersion, fees, accessConstraint);
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -1026,11 +1060,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return OWSXmlFactory.buildContact("1.1.0", phone, fax, email, address, city, state, zipCode, country, hoursOfService, contactInstructions);
-            case"1.1.0":
+            case "1.1.0":
                 return OWSXmlFactory.buildContact("1.0.0", phone, fax, email, address, city, state, zipCode, country, hoursOfService, contactInstructions);
-            case"1.0.0":
+            case "1.0.0":
                 return OWSXmlFactory.buildContact("1.0.0", phone, fax, email, address, city, state, zipCode, country, hoursOfService, contactInstructions);
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -1041,11 +1076,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return OWSXmlFactory.buildOnlineResource("1.1.0", url);
-            case"1.1.0":
+            case "1.1.0":
                 return OWSXmlFactory.buildOnlineResource("1.0.0", url);
-            case"1.0.0":
+            case "1.0.0":
                 return OWSXmlFactory.buildOnlineResource("1.0.0", url);
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -1057,11 +1093,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return OWSXmlFactory.buildResponsiblePartySubset("1.1.0", individualName, positionName, contact, role);
-            case"1.1.0":
+            case "1.1.0":
                 return OWSXmlFactory.buildResponsiblePartySubset("1.0.0", individualName, positionName, contact, role);
-            case"1.0.0":
+            case "1.0.0":
                 return OWSXmlFactory.buildResponsiblePartySubset("1.0.0", individualName, positionName, contact, role);
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -1073,11 +1110,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return OWSXmlFactory.buildServiceProvider("1.1.0", providerName, providerSite, serviceContact);
-            case"1.1.0":
+            case "1.1.0":
                 return OWSXmlFactory.buildServiceProvider("1.0.0", providerName, providerSite, serviceContact);
-            case"1.0.0":
+            case "1.0.0":
                 return OWSXmlFactory.buildServiceProvider("1.0.0", providerName, providerSite, serviceContact);
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -1089,11 +1127,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return OWSXmlFactory.buildOperation("1.1.0", dcps, parameters, constraints, name);
-            case"1.1.0":
+            case "1.1.0":
                 return OWSXmlFactory.buildOperation("1.0.0", dcps, parameters, constraints, name);
-            case"1.0.0":
+            case "1.0.0":
                 return OWSXmlFactory.buildOperation("1.0.0", dcps, parameters, constraints, name);
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -1104,11 +1143,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return OWSXmlFactory.buildDomain("1.1.0", name, allowedValues);
-            case"1.1.0":
+            case "1.1.0":
                 return OWSXmlFactory.buildDomain("1.0.0", name, allowedValues);
-            case"1.0.0":
+            case "1.0.0":
                 return OWSXmlFactory.buildDomain("1.0.0", name, allowedValues);
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -1119,11 +1159,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return OWSXmlFactory.buildDomainNoValues("1.1.0", name, values);
-            case"1.1.0":
+            case "1.1.0":
                 throw new IllegalArgumentException("Novalues not supported in 1.1.0");
-            case"1.0.0":
+            case "1.0.0":
                 throw new IllegalArgumentException("Novalues not supported in 1.0.0");
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);
@@ -1134,11 +1175,12 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
-            case"2.0.0":
+            case "2.0.0":
+            case "2.0.2":
                 return OWSXmlFactory.buildDCP("1.1.0", getURL, postURL);
-            case"1.1.0":
+            case "1.1.0":
                 return OWSXmlFactory.buildDCP("1.0.0", getURL, postURL);
-            case"1.0.0":
+            case "1.0.0":
                 return OWSXmlFactory.buildDCP("1.0.0", getURL, postURL);
             default:
                 throw new IllegalArgumentException("unexpected version number:" + version);

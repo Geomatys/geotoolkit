@@ -30,6 +30,7 @@ import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
 import org.geotoolkit.wfs.xml.DescribeFeatureType;
+import org.geotoolkit.wfs.xml.WFSVersion;
 import org.geotoolkit.wfs.xml.WFSXmlFactory;
 
 
@@ -41,13 +42,13 @@ import org.geotoolkit.wfs.xml.WFSXmlFactory;
  */
 public class AbstractDescribeFeatureType extends AbstractRequest implements DescribeFeatureTypeRequest{
 
-    protected final String version;
+    protected final WFSVersion version;
 
     private List<QName> typeNames;
 
     private String outputFormat;
 
-    protected AbstractDescribeFeatureType(final String serverURL, final String version, final ClientSecurity security){
+    public AbstractDescribeFeatureType(final String serverURL, final WFSVersion version, final ClientSecurity security){
         super(serverURL,security,null);
         this.version = version;
     }
@@ -91,9 +92,9 @@ public class AbstractDescribeFeatureType extends AbstractRequest implements Desc
     public URL getURL() throws MalformedURLException {
         requestParameters.put("SERVICE",    "WFS");
         requestParameters.put("REQUEST",    "DescribeFeatureType");
-        requestParameters.put("VERSION",    version);
+        requestParameters.put("VERSION",    version.getCode());
 
-        if (typeNames != null) {
+        if (typeNames != null && !typeNames.isEmpty()) {
             final StringBuilder sbN = new StringBuilder();
             final StringBuilder sbNS = new StringBuilder();
             for(QName q : typeNames){
@@ -122,7 +123,7 @@ public class AbstractDescribeFeatureType extends AbstractRequest implements Desc
 
     @Override
     public InputStream getResponseStream() throws IOException {
-        DescribeFeatureType request = WFSXmlFactory.buildDecribeFeatureType(version, "WFS", null, typeNames, outputFormat);
+        DescribeFeatureType request = WFSXmlFactory.buildDecribeFeatureType(version.getCode(), "WFS", null, typeNames, outputFormat);
 
         final URL url = new URL(serverURL);
         URLConnection conec = url.openConnection();
@@ -133,16 +134,14 @@ public class AbstractDescribeFeatureType extends AbstractRequest implements Desc
 
         OutputStream stream = conec.getOutputStream();
         stream = security.encrypt(stream);
-        Marshaller marshaller = null;
-        try {
-            marshaller = WFSMarshallerPool.getInstance().acquireMarshaller();
+        try (final OutputStream toClose = stream) {
+            final Marshaller marshaller = WFSMarshallerPool.getInstance(version).acquireMarshaller();
             marshaller.marshal(request, stream);
-            //marshaller.marshal(request, System.out);
             WFSMarshallerPool.getInstance().recycle(marshaller);
         } catch (JAXBException ex) {
             throw new IOException(ex);
         }
-        stream.close();
+
         return security.decrypt(conec.getInputStream());
     }
 

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2017, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,15 +14,26 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+package org.geotoolkit.wms.v110;
 
-package org.geotoolkit.data.wfs.v100;
+import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.wms.AbstractGetCapabilities;
 
-import org.geotoolkit.data.wfs.AbstractDelete;
 
 /**
+ * Implementation for the GetCapabilities request version 1.1.1.
  *
- * @author Alexis Manin (Geomatys)
+ * @author Olivier Terral (Geomatys)
+ * @module
  */
-public class Delete100 extends AbstractDelete{
+public class GetCapabilities110 extends AbstractGetCapabilities {
+    /**
+     * Defines the server url and its version.
+     *
+     * @param serverURL The url of the webservice.
+     */
+    public GetCapabilities110(final String serverURL, final ClientSecurity security){
+        super(serverURL, "1.1.0", security);
+    }
 
 }

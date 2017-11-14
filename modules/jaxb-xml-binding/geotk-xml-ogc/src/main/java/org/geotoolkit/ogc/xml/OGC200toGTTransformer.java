@@ -145,10 +145,14 @@ public class OGC200toGTTransformer {
         } else if (ops instanceof org.geotoolkit.ogc.xml.v200.DistanceBufferType) {
             final org.geotoolkit.ogc.xml.v200.DistanceBufferType dstOp = (org.geotoolkit.ogc.xml.v200.DistanceBufferType) ops;
             final org.geotoolkit.ogc.xml.v200.MeasureType dt = dstOp.getDistanceType();
-            if (!(dstOp.getAny() instanceof AbstractGeometryType)) {
-                throw new IllegalArgumentException("geometry type is unexpected:" + dstOp.getAny());
+            Object opAny = dstOp.getAny();
+            if (opAny instanceof JAXBElement) {
+                opAny = ((JAXBElement)opAny).getValue();
             }
-            final AbstractGeometryType geom = (AbstractGeometryType) dstOp.getAny();
+            if (!(opAny instanceof AbstractGeometryType)) {
+                throw new IllegalArgumentException("geometry type is unexpected:" + opAny);
+            }
+            final AbstractGeometryType geom = (AbstractGeometryType) opAny;
             final String pnt = dstOp.getPropertyName();
 
             final Expression geom1 = visitPropertyName(pnt);
@@ -168,10 +172,14 @@ public class OGC200toGTTransformer {
 
         } else if (ops instanceof org.geotoolkit.ogc.xml.v200.BBOXType) {
             final org.geotoolkit.ogc.xml.v200.BBOXType binary = (org.geotoolkit.ogc.xml.v200.BBOXType) ops;
-            if (!(binary.getAny() instanceof EnvelopeType)) {
-                throw new IllegalArgumentException("geometry type is unexpected:" + binary.getAny());
+            Object binAny = binary.getAny();
+            if (binAny instanceof JAXBElement) {
+                binAny = ((JAXBElement)binAny).getValue();
             }
-            final EnvelopeType box = (EnvelopeType) binary.getAny();
+            if (!(binAny instanceof EnvelopeType)) {
+                throw new IllegalArgumentException("geometry type is unexpected:" + binAny);
+            }
+            final EnvelopeType box = (EnvelopeType) binAny;
             final String pnt = binary.getPropertyName();
 
             final Expression geom;
@@ -217,7 +225,7 @@ public class OGC200toGTTransformer {
                 else if(unary.getSpatialOps() != null) {filter = visitSpatialOp(unary.getSpatialOps());}
 
                 if(filter == null){
-                    throw new IllegalArgumentException("Invalide filter element" + unary);
+                    throw new IllegalArgumentException("Invalid filter element" + unary);
                 }
 
                 return filterFactory.not(filter);

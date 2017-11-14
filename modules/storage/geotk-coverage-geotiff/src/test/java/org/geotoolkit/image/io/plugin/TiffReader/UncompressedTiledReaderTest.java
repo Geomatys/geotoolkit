@@ -30,8 +30,8 @@ public class UncompressedTiledReaderTest extends UncompressedTiffReaderTest {
     public UncompressedTiledReaderTest() throws IOException {
         super();
         writerParam.setTilingMode(ImageWriteParam.MODE_EXPLICIT);
-        final int tileWidth  = (random.nextInt(7) + 1) * 16;
-        final int tileHeight = (random.nextInt(7) + 1) * 16;
+        final int tileWidth  = (random.nextInt(TILE_MAX_RATIO) + 1) * TILE_MIN_SIZE;
+        final int tileHeight = (random.nextInt(TILE_MAX_RATIO) + 1) * TILE_MIN_SIZE;
 
         writerParam.setTiling(tileWidth, tileHeight, 0, 0);
     }
