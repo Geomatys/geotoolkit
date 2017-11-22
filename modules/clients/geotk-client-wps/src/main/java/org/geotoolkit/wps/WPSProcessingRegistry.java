@@ -29,7 +29,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.bind.JAXBException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -226,7 +225,7 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
         switch (client.getVersion()) {
             case v100 : return WPS1ProcessDescriptor.create(WPSProcessingRegistry.this, processID);
             case v200 : return WPS2ProcessDescriptor.create(WPSProcessingRegistry.this, processID);
-            default : throw new IOException("Unknowned wps version : "+ client.getVersion());
+            default : throw new IOException("Unknown wps version : "+ client.getVersion());
         }
     }
 

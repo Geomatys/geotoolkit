@@ -87,41 +87,10 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
     }
 
     public static ProcessDescriptor create(WPSProcessingRegistry registry, final String processIdentifier) throws Exception {
-
         final ProcessOfferings offerings = registry.getClient().getDescribeProcess(Collections.singletonList(processIdentifier));
         final ProcessOffering offering = (ProcessOffering) offerings.getProcesses().get(0);
-        final ProcessDescriptionType process = offering.getProcess();
 
-        final InternationalString abs;
-        if (process.getFirstAbstract() != null) {
-            abs = new DefaultInternationalString(process.getFirstAbstract());
-        } else {
-            abs = new DefaultInternationalString("");
-        }
-
-        final InternationalString displayName;
-        if (process.getFirstTitle() != null) {
-            displayName = new DefaultInternationalString(process.getFirstTitle());
-        } else {
-            displayName = new DefaultInternationalString("");
-        }
-
-        final List<GeneralParameterDescriptor> inputLst = new ArrayList<>();
-        final List<GeneralParameterDescriptor> outputLst = new ArrayList<>();
-        for (final InputDescriptionType input : process.getInput()) {
-            inputLst.add(toDescriptor(processIdentifier,input));
-        }
-
-        for (final OutputDescriptionType outputDesc : process.getOutput()) {
-            outputLst.add(toDescriptor(processIdentifier,outputDesc));
-        }
-
-        final ParameterDescriptorGroup inputs = new ParameterBuilder().addName("inputs").createGroup(
-                inputLst.toArray(new GeneralParameterDescriptor[inputLst.size()]));
-        final ParameterDescriptorGroup outputs = new ParameterBuilder().addName("ouptuts").createGroup(
-                outputLst.toArray(new GeneralParameterDescriptor[outputLst.size()]));
-
-        return new WPS2ProcessDescriptor(processIdentifier, registry, abs, displayName, inputs, outputs);
+        return create(registry, offering);
     }
 
     public static ProcessDescriptor create(WPSProcessingRegistry registry, ProcessOffering offering) throws IOException, JAXBException, UnsupportedParameterException {
@@ -198,12 +167,8 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
         }
 
         final String inputName = input.getIdentifier().getValue();
-        final String inputAbstract = input.getAbstract().isEmpty() ? null : input.getAbstract().get(0).getValue();
-
-        String remarks = null;
-        if(!input.getAbstract().isEmpty() && !input.getAbstract().get(0).getValue().isEmpty()) {
-            remarks = input.getAbstract().get(0).getValue();
-        }
+        final String title = input.getFirstTitle();
+        final String remarks = input.getFirstAbstract();
 
         Map userObject = new HashMap();
         for (JAXBElement<? extends MetadataType> metaJB : input.getMetadata()) {
@@ -239,7 +204,7 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
                 }
                 try {
                     userObject.put(DataAdaptor.USE_ADAPTOR, adaptor);
-                    return new ExtendedParameterDescriptor(inputName, remarks, min, max, adaptor.getValueClass(), adaptor.convert(defaultValueValue), allowedValues, userObject);
+                    return new ExtendedParameterDescriptor(inputName, title, remarks, min, max, adaptor.getValueClass(), adaptor.convert(defaultValueValue), allowedValues, userObject);
                 } catch (UnconvertibleObjectException ex2) {
                     throw new UnsupportedParameterException(processId, inputName, "Can't convert the default literal input value.", ex2);
                 }
@@ -275,13 +240,13 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
                 throw new UnsupportedParameterException(processId,inputName,"No compatible format found for parameter "+inputName+" formats : "+sb);
             }
             userObject.put(DataAdaptor.USE_ADAPTOR, adaptor);
-            return new ExtendedParameterDescriptor(inputName, remarks, min, max, adaptor.getValueClass(), null, null, userObject);
+            return new ExtendedParameterDescriptor(inputName, title, remarks, min, max, adaptor.getValueClass(), null, null, userObject);
 
         } else if (dataDescType instanceof BoundingBoxData) {
 
             final BboxAdaptor adaptor = BboxAdaptor.create((BoundingBoxData) dataDescType);
             userObject.put(DataAdaptor.USE_ADAPTOR, adaptor);
-            return new ExtendedParameterDescriptor(inputName, remarks, min, max, Envelope.class, null, null, userObject);
+            return new ExtendedParameterDescriptor(inputName, title, remarks, min, max, Envelope.class, null, null, userObject);
 
         } else if (!subInputs.isEmpty()) {
             //sub group type
@@ -293,7 +258,8 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
 
             return new ParameterBuilder()
                     .addName(inputName)
-                    .setRemarks(inputAbstract)
+                    .addName(title)
+                    .setRemarks(remarks)
                     .createGroup(params.toArray(new GeneralParameterDescriptor[0]));
 
         } else {

@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.utility.parameter;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import javax.measure.Unit;
 
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.Range;
+import org.apache.sis.util.ArgumentChecks;
 import org.opengis.metadata.citation.Citation;
 
 /**
@@ -103,6 +103,19 @@ public class ExtendedParameterDescriptor<T> extends org.apache.sis.parameter.Def
         this.userObject = userObject;
     }
 
+    public ExtendedParameterDescriptor(final String name,
+                                       final String alias,
+                                       final CharSequence remarks,
+                                       final int minOccurs,
+                                       final int maxOccurs,
+                                       final Class<T> valueClass,
+                                       final T defaultValue,
+                                       final T[] validValues,
+                                       final Map<String, Object> userObject) {
+        super(properties(name, alias, remarks),minOccurs, maxOccurs, valueClass, null, validValues, defaultValue);
+        this.userObject = userObject;
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -179,14 +192,22 @@ public class ExtendedParameterDescriptor<T> extends org.apache.sis.parameter.Def
      * ("Relax constraint on placement of this()/super() call in constructors").
      */
     private static Map<String,CharSequence> properties(final String name, final CharSequence remarks) {
-        final Map<String,CharSequence> properties;
-        if (remarks == null ){
-            properties = Collections.singletonMap(NAME_KEY, (CharSequence) name);
-        } else {
-            properties = new HashMap<>(4);
-            properties.put(NAME_KEY,    name);
+        return properties(name, null, remarks);
+    }
+
+    private static Map<String,CharSequence> properties(final String name, final String alias, final CharSequence remarks) {
+        ArgumentChecks.ensureNonNull("Name", name);
+        final Map<String,CharSequence> properties = new HashMap<>(4);
+        properties.put(NAME_KEY, name);
+
+        if (alias != null) {
+            properties.put(ALIAS_KEY, alias);
+        }
+
+        if (remarks != null) {
             properties.put(REMARKS_KEY, remarks);
         }
+
         return properties;
     }
 

@@ -51,6 +51,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.InternationalString;
 
 /**
@@ -158,13 +159,17 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
     private static GeneralParameterDescriptor toDescriptor(String processId, DescriptionType input) throws UnsupportedParameterException{
 
         final String inputName = input.getIdentifier().getValue();
-        final String inputAbstract = (input.getAbstract() == null)? null : input.getAbstract().getValue();
+        final String inputAbstract = input.getFirstAbstract();
+        final String inputTitle = input.getFirstTitle();
         final boolean required;
 
         final Map<String, String> properties = new HashMap<>();
         properties.put("name", inputName);
         if (inputAbstract!=null && !inputAbstract.isEmpty()) {
             properties.put("remarks", inputAbstract);
+        }
+        if (inputTitle != null) {
+            properties.put(IdentifiedObject.ALIAS_KEY, inputTitle);
         }
 
         DataDescription dataDesc;
