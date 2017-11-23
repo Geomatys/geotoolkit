@@ -36,7 +36,6 @@ import org.geotoolkit.wps.adaptor.ComplexAdaptor;
 import org.geotoolkit.wps.adaptor.DataAdaptor;
 import org.geotoolkit.wps.adaptor.LiteralAdaptor;
 import org.geotoolkit.wps.xml.ExecuteResponse;
-import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.DataInputType;
 import org.geotoolkit.wps.xml.v200.DataOutputType;
 import org.geotoolkit.wps.xml.v200.OutputDefinitionType;
@@ -70,7 +69,7 @@ public class WPS2Process extends AbstractProcess {
     //keep track of last progress state
     private Integer lastProgress = 0;
     private String lastMessage;
-    private String jobId;
+    private volatile String jobId;
 
     /**
      * Create a new WPS process.
@@ -204,10 +203,21 @@ public class WPS2Process extends AbstractProcess {
 
     @Override
     protected void execute() throws ProcessException {
-        final ExecuteRequest exec = createRequest();
-        exec.setDebug(debug);
-        exec.setClientSecurity(security);
-        final Result result = sendExecuteRequest(exec);
+        final Result result;
+        if (jobId != null) {
+            try {
+                // It's an already running process we've got here. All we have to do
+                // is checking its status, to ensure/wait its completion.
+                result = checkResult(getStatus());
+            } catch (JAXBException|IOException|InterruptedException ex) {
+                throw new ProcessException("Cannot get process status", this);
+            }
+        } else {
+            final ExecuteRequest exec = createRequest();
+            exec.setDebug(debug);
+            exec.setClientSecurity(security);
+            result = sendExecuteRequest(exec);
+        }
         if (!isCanceled()) {
             fillOutputs(result);
         }
@@ -259,6 +269,13 @@ public class WPS2Process extends AbstractProcess {
                 throw new ProcessException("Process failed", this);
             } else if (StatusInfo.STATUS_DISSMISED.equalsIgnoreCase(status)) {
                 throw new DismissProcessException("WPS remote process has been canceled",this);
+            } else if (StatusInfo.STATUS_ACCEPTED.equalsIgnoreCase(status)) {
+                // Initial status
+                fireProgressing("Process accepted: "+jobId, 0, false);
+            } else {
+                // Running
+                final Integer progress = statusInfo.getPercentCompleted();
+                fireProgressing(statusInfo.getStatus(), progress == null? Float.NaN : progress, false);
             }
 
             //loop until we have an answer
@@ -316,7 +333,11 @@ public class WPS2Process extends AbstractProcess {
                 }
             }
         } else if (response instanceof Result) {
-            return (Result) response;
+            final Result result = (Result)response;
+            if (result.getJobID() != null) {
+                jobId = result.getJobID();
+            }
+            return result;
         } else {
             throw new ProcessException("Unexpected response "+response,this);
         }
