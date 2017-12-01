@@ -36,7 +36,6 @@ import org.geotoolkit.wps.adaptor.ComplexAdaptor;
 import org.geotoolkit.wps.adaptor.DataAdaptor;
 import org.geotoolkit.wps.adaptor.LiteralAdaptor;
 import org.geotoolkit.wps.xml.ExecuteResponse;
-import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.DataInputType;
 import org.geotoolkit.wps.xml.v200.DataOutputType;
 import org.geotoolkit.wps.xml.v200.OutputDefinitionType;
@@ -70,7 +69,7 @@ public class WPS2Process extends AbstractProcess {
     //keep track of last progress state
     private Integer lastProgress = 0;
     private String lastMessage;
-    private String jobId;
+    private volatile String jobId;
 
     /**
      * Create a new WPS process.
@@ -156,6 +155,10 @@ public class WPS2Process extends AbstractProcess {
     public StatusInfo getStatus() throws ProcessException, JAXBException, IOException {
         if (jobId==null) throw new ProcessException("Process is not started.", this);
 
+        if (isCanceled()) {
+            throw new DismissProcessException("Process already dismissed", this);
+        }
+
         final GetStatusRequest req = registry.getClient().createGetStatus(jobId);
         req.setDebug(debug);
         req.setClientSecurity(security);
@@ -179,7 +182,8 @@ public class WPS2Process extends AbstractProcess {
      */
     @Override
     public void cancelProcess() {
-        if(isCanceled() || jobId==null) return;
+        if (isCanceled() || jobId == null)
+            return;
         super.cancelProcess();
 
         //send a stop request
@@ -204,10 +208,26 @@ public class WPS2Process extends AbstractProcess {
 
     @Override
     protected void execute() throws ProcessException {
-        final ExecuteRequest exec = createRequest();
-        exec.setDebug(debug);
-        exec.setClientSecurity(security);
-        final Result result = sendExecuteRequest(exec);
+        final Result result;
+        try {
+            if (jobId != null) {
+                try {
+                    // It's an already running process we've got here. All we have to do
+                    // is checking its status, to ensure/wait its completion.
+                    result = checkResult(getStatus());
+                } catch (JAXBException | IOException ex) {
+                    throw new ProcessException("Cannot get process status", this, ex);
+                }
+            } else {
+                final ExecuteRequest exec = createRequest();
+                exec.setDebug(debug);
+                exec.setClientSecurity(security);
+                result = sendExecuteRequest(exec);
+            }
+        } catch (InterruptedException e) {
+            throw new DismissProcessException("Process interrupted while executing", this, e);
+        }
+
         if (!isCanceled()) {
             fillOutputs(result);
         }
@@ -221,7 +241,7 @@ public class WPS2Process extends AbstractProcess {
      * @throws ProcessException is can't reach the server or if there is an error during Marshalling/Unmarshalling request
      *                          or response.
      */
-    private Result sendExecuteRequest(final ExecuteRequest req) throws ProcessException {
+    private Result sendExecuteRequest(final ExecuteRequest req) throws ProcessException, InterruptedException {
         try {
             return checkResult(req.getResponse());
         } catch (ProcessException e) {
@@ -230,8 +250,6 @@ public class WPS2Process extends AbstractProcess {
             throw new ProcessException("Error when trying to parse the Execute response xml: ", this, ex);
         } catch (IOException ex) {
             throw new ProcessException("Error when trying to send request to the WPS server :", this, ex);
-        } catch (Exception e) {
-            throw new ProcessException(e.getMessage(), this, e);
         }
     }
 
@@ -259,6 +277,13 @@ public class WPS2Process extends AbstractProcess {
                 throw new ProcessException("Process failed", this);
             } else if (StatusInfo.STATUS_DISSMISED.equalsIgnoreCase(status)) {
                 throw new DismissProcessException("WPS remote process has been canceled",this);
+            } else if (StatusInfo.STATUS_ACCEPTED.equalsIgnoreCase(status)) {
+                // Initial status
+                fireProgressing("Process accepted: "+jobId, 0, false);
+            } else {
+                // Running
+                final Integer progress = statusInfo.getPercentCompleted();
+                fireProgressing(statusInfo.getStatus(), progress == null? Float.NaN : progress, false);
             }
 
             //loop until we have an answer
@@ -269,7 +294,9 @@ public class WPS2Process extends AbstractProcess {
             //and may not offer the result file right from the start
             int failCount = 0;
             while (true) {
-                //timeLapse = Math.min(timeLapse * 2, maxTimeLapse);
+                if (isCanceled()) {
+                    throw new DismissProcessException("Process cancelled", this);
+                }
                 synchronized (this) {
                     wait(timeLapse);
                 }
@@ -301,11 +328,11 @@ public class WPS2Process extends AbstractProcess {
                     } else if (StatusInfo.STATUS_FAILED.equalsIgnoreCase(stat)) {
                         throw new ProcessException("Process failed", this);
                     } else if (StatusInfo.STATUS_DISSMISED.equalsIgnoreCase(stat)) {
-                        throw new DismissProcessException("WPS remote process has been canceled",this);
+                        throw new DismissProcessException("WPS remote process has been canceled", this);
                     }
 
                     lastMessage = stat;
-                    if (statInfo.getPercentCompleted()!=null) {
+                    if (statInfo.getPercentCompleted() != null) {
                         lastProgress = statInfo.getPercentCompleted();
                     }
                     fireProgressing(lastMessage, lastProgress, false);
@@ -316,7 +343,11 @@ public class WPS2Process extends AbstractProcess {
                 }
             }
         } else if (response instanceof Result) {
-            return (Result) response;
+            final Result result = (Result)response;
+            if (result.getJobID() != null) {
+                jobId = result.getJobID();
+            }
+            return result;
         } else {
             throw new ProcessException("Unexpected response "+response,this);
         }
