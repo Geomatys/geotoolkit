@@ -271,9 +271,9 @@ public abstract class RowMajorReadTest extends IteratorTest {
         final int mX = 15;
         final int mY = 26;
         final int indexCut = (mX - minx + (mY-miny) *width) * numBand;
-        final int lenght = width*height*numBand - indexCut;
+        final int length = width*height*numBand - indexCut;
         pixIterator.moveTo(mX, mY, 0);
-        setMoveToRITabs(indexCut, lenght);
+        setMoveToRITabs(indexCut, length);
         int comp = 0;
         do {
             setTabTestValue(comp++, pixIterator.getSampleDouble());
@@ -299,9 +299,9 @@ public abstract class RowMajorReadTest extends IteratorTest {
         final int mX = 57;
         final int mY = 26;
         final int indexCut = ((mY-miny)*width + (mX-minx)) * numBand + b;
-        final int lenght = width*height*numBand - indexCut;
+        final int length = width*height*numBand - indexCut;
         pixIterator.moveTo(mX, mY, b);
-        setMoveToRITabs(indexCut, lenght);
+        setMoveToRITabs(indexCut, length);
         int comp = 0;
         do {
             setTabTestValue(comp++, pixIterator.getSampleDouble());

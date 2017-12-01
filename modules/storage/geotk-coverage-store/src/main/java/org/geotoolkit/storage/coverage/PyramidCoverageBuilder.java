@@ -251,8 +251,8 @@ public class PyramidCoverageBuilder {
      * Note : <br/>
      * {@link GridGeometry} from {@link GridCoverage} must be instance of {@link GridGeometry2D}
      * else a {@link IllegalArgumentException} will be thrown.<br/>
-     * fillValue parameter must have same lenght than pixel size from image within coverage.<br/>
-     * If fill value is {@code null} a table of zero value with appropriate lenght is use.
+     * fillValue parameter must have same length than pixel size from image within coverage.<br/>
+     * If fill value is {@code null} a table of zero value with appropriate length is use.
      * </p>
      * @param gridCoverage {@link GridCoverage} which will be stored.
      * @param coverageStore {@link CoverageStore} where operation on {@link GridCoverage} are stored.
@@ -275,8 +275,8 @@ public class PyramidCoverageBuilder {
      * Note : <br/>
      * {@link GridGeometry} from {@link GridCoverage} must be instance of {@link GridGeometry2D}
      * else a {@link IllegalArgumentException} will be thrown.<br/>
-     * fillValue parameter must have same lenght than pixel size from image within coverage.<br/>
-     * If fill value is {@code null} a table of zero value with appropriate lenght is use.
+     * fillValue parameter must have same length than pixel size from image within coverage.<br/>
+     * If fill value is {@code null} a table of zero value with appropriate length is use.
      * </p>
      * @param gridCoverageRef {@link GridCoverage} which will be stored.
      * @param coverageStore {@link CoverageStore} where operation on {@link GridCoverage} are stored.
@@ -380,12 +380,7 @@ public class PyramidCoverageBuilder {
      * @param heightAxis index of Y direction from multi-dimensional coverage envelope.
      * @param fillValue contains value use when pixel transformation is out of source image boundary.(should be {@code null}).
      * Can be {@code null}. If {@code null} a default table value filled by zero value,
-     * with lenght equal to source coverage image band number is created.
-     *
-     * @throws NoninvertibleTransformException
-     * @throws FactoryException
-     * @throws TransformException
-     * @throws DataStoreException
+     * with length equal to source coverage image band number is created.
      */
     private void resample (final PyramidalCoverageResource pm, String pyramidID, GridCoverageReader coverageReader,
             int imageIndex, GridCoverageReadParam readParam, double[] scaleLevel, DirectPosition upperLeft,
@@ -502,8 +497,8 @@ public class PyramidCoverageBuilder {
      * Note : <br/>
      * {@link GridGeometry} from {@link GridCoverage} must be instance of {@link GridGeometry2D}
      * else a {@link IllegalArgumentException} will be thrown.<br/>
-     * fillValue parameter must have same lenght than pixel size from image within coverage.<br/>
-     * If fill value is {@code null} a table of zero value with appropriate lenght is use.
+     * fillValue parameter must have same length than pixel size from image within coverage.<br/>
+     * If fill value is {@code null} a table of zero value with appropriate length is use.
      * </p>
      * @param gridCoverage {@link GridCoverage} which will be stored.
      * @param coverageStore {@link CoverageStore} where operation on {@link GridCoverage} are stored.
@@ -597,8 +592,8 @@ public class PyramidCoverageBuilder {
      * Note : <br/>
      * {@link GridGeometry} from {@link GridCoverage} must be instance of {@link GridGeometry2D}
      * else a {@link IllegalArgumentException} will be thrown.<br/>
-     * fillValue parameter must have same lenght than pixel size from image within coverage.<br/>
-     * If fill value is {@code null} a table of zero value with appropriate lenght is use.
+     * fillValue parameter must have same length than pixel size from image within coverage.<br/>
+     * If fill value is {@code null} a table of zero value with appropriate length is use.
      * </p>
      *
      * @param reader {@link GridCoverageReader} which contain {@link GridCoverage} will be stored.
@@ -622,8 +617,8 @@ public class PyramidCoverageBuilder {
      * Note : <br/>
      * {@link GridGeometry} from {@link GridCoverage} must be instance of {@link GridGeometry2D}
      * else a {@link IllegalArgumentException} will be thrown.<br/>
-     * fillValue parameter must have same lenght than pixel size from image within coverage.<br/>
-     * If fill value is {@code null} a table of zero value with appropriate lenght is use.
+     * fillValue parameter must have same length than pixel size from image within coverage.<br/>
+     * If fill value is {@code null} a table of zero value with appropriate length is use.
      * </p>
      *
      * @param reader {@link GridCoverageReader} which contain {@link GridCoverage} will be stored.
@@ -725,12 +720,7 @@ public class PyramidCoverageBuilder {
      * @param heightAxis index of Y direction from multi-dimensional coverage envelope.
      * @param fillValue contains value use when pixel transformation is out of source image boundary.(should be {@code null}).
      * Can be {@code null}. If {@code null} a default table value filled by zero value,
-     * with lenght equal to source coverage image band number is created.
-     *
-     * @throws NoninvertibleTransformException
-     * @throws FactoryException
-     * @throws TransformException
-     * @throws DataStoreException
+     * with length equal to source coverage image band number is created.
      */
     private void resample (final PyramidalCoverageResource pm, String pyramidID, GridCoverage2D gridCoverage2D, double[] scaleLevel,
             DirectPosition upperLeft, Envelope envDest, int widthAxis, int heightAxis, double[] fillValue, final ProcessListener processListener)

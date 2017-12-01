@@ -46,8 +46,8 @@ public class TruncateFirstFunction extends AbstractFunction {
                     "Filter Function problem for function strTruncate argument #0 - expected type String");
         }
 
-        final int lenght = parameters.get(1).evaluate(feature, Integer.class);
+        final int length = parameters.get(1).evaluate(feature, Integer.class);
 
-        return StaticUtils.strTruncateFirst(arg0, lenght);
+        return StaticUtils.strTruncateFirst(arg0, length);
     }
 }

@@ -40,7 +40,7 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.logging.Logging;
 
 /**
- * Lenght mesure handler
+ * Length measure handler
  *
  * @author Johann Sorel (Puzzle-GIS)
  * @module

@@ -579,14 +579,8 @@ public final class GeoTiffMetaDataReader {
 
     /**
      * Read values for the given tag number.
-     *
-     * @param tagNumber
-     * @param offset
-     * @param lenght
-     * @return
-     * @throws IOException
      */
-    private Object readValue(final int tagNumber, final int offset, final int lenght) throws IOException{
+    private Object readValue(final int tagNumber, final int offset, final int length) throws IOException{
         final Node node = getNodeByNumber(imgFileDir, tagNumber);
 
         if (node == null)
@@ -603,7 +597,7 @@ public final class GeoTiffMetaDataReader {
 
         if (TAG_GEOTIFF_ASCII.equalsIgnoreCase(typeName)) {
 
-            if (lenght != 1)
+            if (length != 1)
                 throw new IOException("Incorrect metadata description, single value type "
                         +typeName+" used to retrieve more than one value");
 
@@ -611,11 +605,11 @@ public final class GeoTiffMetaDataReader {
 
         } else if (TAG_GEOTIFF_ASCIIS.equalsIgnoreCase(typeName)) {
 
-            value = readTiffAsciis(valueNode).substring(offset, offset+lenght);
+            value = readTiffAsciis(valueNode).substring(offset, offset+length);
 
         } else if (TAG_GEOTIFF_SHORT.equalsIgnoreCase(typeName)) {
 
-            if (lenght != 1)
+            if (length != 1)
                 throw new IOException("Incorrect metadata description, single value type "
                         +typeName+" used to retrieve more than one value");
 
@@ -625,15 +619,15 @@ public final class GeoTiffMetaDataReader {
 
             final int[] shorts = readTiffShorts(valueNode);
 
-            if (lenght == 1) {
+            if (length == 1) {
                 value = shorts[offset];
             } else {
-                value = new int[lenght];
-                System.arraycopy(shorts, offset, value, 0, lenght);
+                value = new int[length];
+                System.arraycopy(shorts, offset, value, 0, length);
             }
 
         } else if (TAG_GEOTIFF_LONG.equalsIgnoreCase(typeName)) {
-            if (lenght != 1)
+            if (length != 1)
                 throw new IOException("Incorrect metadata description, single value type "
                         +typeName+" used to retrieve more than one value");
 
@@ -643,15 +637,15 @@ public final class GeoTiffMetaDataReader {
 
             final long[] longs = readTiffLongs(valueNode);
 
-            if (lenght == 1) {
+            if (length == 1) {
                 value = longs[offset];
             } else {
-                value = new long[lenght];
-                System.arraycopy(longs, offset, value, 0, lenght);
+                value = new long[length];
+                System.arraycopy(longs, offset, value, 0, length);
             }
 
         } else if (TAG_GEOTIFF_DOUBLE.equalsIgnoreCase(typeName)) {
-            if(lenght != 1)
+            if(length != 1)
                 throw new IOException("Incorrect metadata description, single value type "
                         +typeName+" used to retrieve more than one value");
 
@@ -660,11 +654,11 @@ public final class GeoTiffMetaDataReader {
         } else if (TAG_GEOTIFF_DOUBLES.equalsIgnoreCase(typeName)) {
 
             final double[] doubles = readTiffDoubles(valueNode);
-            if (lenght == 1) {
+            if (length == 1) {
                 value = doubles[offset];
             } else {
-                value = new double[lenght];
-                System.arraycopy(doubles, offset, value, 0, lenght);
+                value = new double[length];
+                System.arraycopy(doubles, offset, value, 0, length);
             }
         } else {
             throw new IOException("Incorrect metadata description, unknowned value type "

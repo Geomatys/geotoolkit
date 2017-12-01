@@ -31,7 +31,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
 
 /**
- * JUnit test of lenght process
+ * JUnit test of length process
  * @author Quentin Boileau
  * @module
  */

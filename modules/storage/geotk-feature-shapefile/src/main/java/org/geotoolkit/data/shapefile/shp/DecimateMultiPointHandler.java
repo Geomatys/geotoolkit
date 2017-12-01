@@ -71,16 +71,15 @@ public class DecimateMultiPointHandler extends MultiPointHandler {
             return GEOMETRY_FACTORY.createMultiPoint(
                     new ShapeCoordinateSequence3D(coords));
         }
-
     }
 
     private int decimatePoint2D(final double[] coords){
-        int lenght = 1;
+        int length = 1;
 
-        for(int i=2,j=0; i<coords.length; i+=2){
+        for (int i=2,j=0; i<coords.length; i+=2) {
             final double distX = Math.abs(coords[j] - coords[i]);
             if(distX > resX){
-                lenght++;
+                length++;
                 j+=2;
                 coords[j] = coords[i];
                 coords[j+1] = coords[i+1];
@@ -88,17 +87,14 @@ public class DecimateMultiPointHandler extends MultiPointHandler {
             }
 
             final double distY = Math.abs(coords[j+1] - coords[i+1]);
-            if(distY > resY){
-                lenght++;
+            if (distY > resY) {
+                length++;
                 j+=2;
                 coords[j] = coords[i];
                 coords[j+1] = coords[i+1];
                 continue;
             }
         }
-
-        return lenght;
+        return length;
     }
-
-
 }

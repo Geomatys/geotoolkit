@@ -144,10 +144,10 @@ public class Classification {
         }
 
         final int nbCol = classNumber + 1;
-        int lenght = dataLength + 1;
-        lenght    *= nbCol;
-        final int[] indexClassTab = new int[lenght];
-        final double[] moyVarTab  = new double[lenght];
+        int length = dataLength + 1;
+        length    *= nbCol;
+        final int[] indexClassTab = new int[length];
+        final double[] moyVarTab  = new double[length];
         int currentIndex;
         for (int i = 0; i < classNumber; i++) {
             currentIndex = nbCol + i + 1;

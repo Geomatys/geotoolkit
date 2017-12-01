@@ -277,8 +277,8 @@ public abstract class DefaultReadTest extends IteratorTest{
         final int mY = 15;
         pixIterator.moveTo(mX, mY, 0);
         final int indexCut = ((mY-miny)*width + mX - minx)*numBand;
-        final int lenght = width*height*numBand - indexCut;
-        setMoveToRITabs(indexCut, lenght);
+        final int length = width*height*numBand - indexCut;
+        setMoveToRITabs(indexCut, length);
         int comp = 0;
         do {
             setTabTestValue(comp++, pixIterator.getSampleDouble());
@@ -373,8 +373,8 @@ public abstract class DefaultReadTest extends IteratorTest{
         final int itx = (mX-minx) / tilesWidth;
         pixIterator.moveTo(mX, mY,0);
         final int indexCut = ((((ity*((width/tilesWidth)-1))+itx)*tilesHeight+mY-miny-itx)*tilesWidth + mX-minx)*numBand;
-        final int lenght = width*height*numBand - indexCut;
-        setMoveToRITabs(indexCut, lenght);
+        final int length = width*height*numBand - indexCut;
+        setMoveToRITabs(indexCut, length);
         int comp = 0;
         do {
             setTabTestValue(comp++, pixIterator.getSampleDouble());
@@ -402,8 +402,8 @@ public abstract class DefaultReadTest extends IteratorTest{
         final int itx = (mX-minx) / tilesWidth;
         pixIterator.moveTo(mX, mY, 0);
         final int indexCut = ((((ity*((width/tilesWidth)-1))+itx)*tilesHeight+mY-miny-itx)*tilesWidth + mX-minx)*numBand;
-        final int lenght = width*height*numBand - indexCut;
-        setMoveToRITabs(indexCut, lenght);
+        final int length = width*height*numBand - indexCut;
+        setMoveToRITabs(indexCut, length);
         int comp = 0;
         do {
             setTabTestValue(comp++, pixIterator.getSampleDouble());
@@ -431,8 +431,8 @@ public abstract class DefaultReadTest extends IteratorTest{
         final int itx = (mX-minx) / tilesWidth;
         pixIterator.moveTo(mX, mY, 0);
         final int indexCut = ((((ity*((width/tilesWidth)-1))+itx)*tilesHeight+mY-miny-itx)*tilesWidth + mX-minx)*numBand;
-        final int lenght = width*height*numBand - indexCut;
-        setMoveToRITabs(indexCut, lenght);
+        final int length = width*height*numBand - indexCut;
+        setMoveToRITabs(indexCut, length);
         int comp = 0;
         do {
             setTabTestValue(comp++, pixIterator.getSampleDouble());
@@ -460,8 +460,8 @@ public abstract class DefaultReadTest extends IteratorTest{
         final int itx = (mX-minx) / tilesWidth;
         pixIterator.moveTo(mX, mY, 0);
         final int indexCut = ((((ity*((width/tilesWidth)-1))+itx)*tilesHeight+mY-miny-itx)*tilesWidth + mX-minx)*numBand;
-        final int lenght = width*height*numBand - indexCut;
-        setMoveToRITabs(indexCut, lenght);
+        final int length = width*height*numBand - indexCut;
+        setMoveToRITabs(indexCut, length);
         int comp = 0;
         do {
             setTabTestValue(comp++, pixIterator.getSampleDouble());
@@ -489,8 +489,8 @@ public abstract class DefaultReadTest extends IteratorTest{
         final int itx = (mX-minx) / tilesWidth;
         pixIterator.moveTo(mX, mY, 0);
         final int indexCut = ((((ity*((width/tilesWidth)-1))+itx)*tilesHeight+mY-miny-itx)*tilesWidth + mX-minx)*numBand;
-        final int lenght = width*height*numBand - indexCut;
-        setMoveToRITabs(indexCut, lenght);
+        final int length = width*height*numBand - indexCut;
+        setMoveToRITabs(indexCut, length);
         int comp = 0;
         do {
             setTabTestValue(comp++, pixIterator.getSampleDouble());

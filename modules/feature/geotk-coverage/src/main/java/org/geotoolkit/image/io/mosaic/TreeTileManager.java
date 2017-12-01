@@ -154,7 +154,7 @@ final class TreeTileManager extends TileManager implements TreeNodeFilter {
         for (final List<Tile> sameInputs : asArray) {
             switch (sameInputs.size()) {
                 case 0:  throw new AssertionError(); // Should never happen.
-                case 1:  break; // Worthly optimization when we have thousands of lists of lenght 1.
+                case 1:  break; // Worthly optimization when we have thousands of lists of length 1.
                 default: Collections.sort(sameInputs); break;
             }
             for (final Tile tile : sameInputs) {

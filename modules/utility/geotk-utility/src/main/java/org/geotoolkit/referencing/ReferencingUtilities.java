@@ -182,13 +182,13 @@ public final class ReferencingUtilities {
             Arrays.fill(newResolution, 1);
         } else {
             if (targetCrs.getCoordinateSystem().getDimension() != newResolution.length)
-            throw new MismatchedDimensionException("Destination resolution array lenght should be equals than target CRS dimension number."
+            throw new MismatchedDimensionException("Destination resolution array length should be equals than target CRS dimension number."
                     + "Destination resolution array length = "+newResolution.length+", CRS dimension number = "+targetCrs.getCoordinateSystem().getDimension());
         }
 
         final CoordinateReferenceSystem srcCRS = srcEnvelope.getCoordinateReferenceSystem();
         if (oldResolution.length != 2)
-            throw new IllegalArgumentException("Resolution array lenght should be equals to 2. Founded array length : "+oldResolution.length);
+            throw new IllegalArgumentException("Resolution array length should be equals to 2. Founded array length : " + oldResolution.length);
 
         final int targetMinOrdi = CRSUtilities.firstHorizontalAxis(targetCrs);
 

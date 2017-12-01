@@ -34,7 +34,11 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class LenghtDescriptor extends AbstractProcessDescriptor{
 
-    /**Process name : lenght */
+    /**
+     * Process name : lenght
+     *
+     * @todo Wrong name. Should be spelled length
+     */
     public static final String NAME = "jts:lenght";
 
     /**
@@ -55,7 +59,7 @@ public class LenghtDescriptor extends AbstractProcessDescriptor{
      */
     public static final ParameterDescriptor<Double> RESULT = new ParameterBuilder()
             .addName("result")
-            .setRemarks("Lenght result")
+            .setRemarks("Length result")
             .setRequired(true)
             .create(Double.class, null);
 

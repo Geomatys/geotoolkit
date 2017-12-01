@@ -27,14 +27,11 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.BackgroundUtilities;
@@ -51,8 +48,6 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.util.GenericName;
-import org.opengis.parameter.ParameterNotFoundException;
-import org.opengis.parameter.ParameterValue;
 import org.opengis.style.Description;
 import org.opengis.style.Rule;
 import org.opengis.util.InternationalString;
@@ -552,7 +547,7 @@ public class J2DLegendUtilities {
                         toSet.height += template.getGapSize();
                     }
 
-                    //calculate the text lenght
+                    //calculate the text length
                     int textLenght = 0;
                     final Description description = rule.getDescription();
                     if (description != null) {
