@@ -10,10 +10,12 @@ import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Spliterator;
@@ -25,7 +27,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import javafx.util.Pair;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
@@ -72,7 +73,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
      * Keep previously decoded CRS in memory. We do so because it's a heavy
      * operation, and it could be used a lot when creating a geometry collection.
      */
-    private static final Cache<Pair<String, Boolean>, CoordinateReferenceSystem> CRS_CACHE = new Cache<>(12, 0, false);
+    private static final Cache<Map.Entry<String, Boolean>, CoordinateReferenceSystem> CRS_CACHE = new Cache<>(12, 0, false);
 
     /**
      * The GML geometry to transform to JTS API.
@@ -347,7 +348,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
     protected CoordinateReferenceSystem findCRS(final String srsName) {
         final boolean longitudeFirst = isLongitudeFirst();
         try {
-            return CRS_CACHE.getOrCreate(new Pair(srsName, longitudeFirst), () -> GeometryTransformer.loadCRS(srsName, longitudeFirst));
+            return CRS_CACHE.getOrCreate(new AbstractMap.SimpleImmutableEntry<>(srsName, longitudeFirst), () -> GeometryTransformer.loadCRS(srsName, longitudeFirst));
         } catch (Exception ex) {
             throw new UnconvertibleObjectException("Referencing information cannot be read", ex);
         }
