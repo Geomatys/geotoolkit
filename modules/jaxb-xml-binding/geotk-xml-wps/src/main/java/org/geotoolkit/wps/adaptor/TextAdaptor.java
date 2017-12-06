@@ -18,6 +18,7 @@ package org.geotoolkit.wps.adaptor;
 
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.Format;
+import org.geotoolkit.wps.xml.ReferenceProxy;
 import org.geotoolkit.wps.xml.v100.InputType;
 import org.geotoolkit.wps.xml.v100.OutputDataType;
 import org.geotoolkit.wps.xml.v200.ComplexDataType;
@@ -29,7 +30,7 @@ import org.geotoolkit.wps.xml.v200.DataOutputType;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class TextAdaptor extends ComplexAdaptor<String> {
+public class TextAdaptor extends ComplexAdaptor<CharSequence> {
 
     private static final String ENC_UTF8 = "UTF-8";
     private static final String MIME_TYPE = "text/plain";
@@ -61,20 +62,23 @@ public class TextAdaptor extends ComplexAdaptor<String> {
 
     @Override
     public Class getValueClass() {
-        return String.class;
+        return CharSequence.class;
     }
 
     @Override
-    public InputType toWPS1Input(String candidate) throws UnconvertibleObjectException {
+    public InputType toWPS1Input(CharSequence candidate) throws UnconvertibleObjectException {
         return InputType.createComplex("", encoding, mimeType, schema, candidate, null, null);
     }
 
     @Override
-    public DataInputType toWPS2Input(String candidate) throws UnconvertibleObjectException {
+    public DataInputType toWPS2Input(CharSequence candidate) throws UnconvertibleObjectException {
+        if (candidate instanceof ReferenceProxy) {
+            return super.toWPS2Input(candidate);
+        }
 
         final ComplexDataType cdt = new ComplexDataType();
         cdt.getContent().add(new org.geotoolkit.wps.xml.v200.Format(encoding, mimeType, schema, null));
-        cdt.getContent().add(candidate);
+        cdt.getContent().add("<![CDATA[" + candidate + "]]>");
 
         final Data data = new Data();
         data.getContent().add(cdt);
