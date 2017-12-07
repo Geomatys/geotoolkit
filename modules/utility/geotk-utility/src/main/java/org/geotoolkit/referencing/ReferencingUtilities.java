@@ -30,6 +30,8 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.apache.sis.metadata.iso.extent.Extents;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 
@@ -68,7 +70,10 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.Utilities;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 
 
 /**
@@ -1098,5 +1103,23 @@ public final class ReferencingUtilities {
          *       exception instead.
          */
         return false;
+    }
+
+    /**
+     * Try to extract a geographic bounding box from given resource.
+     * @implNote : We'll try to acquire metadata from the resource, and making
+     * an union of all available geographic boxes found in it.
+     * @param r The resource to analyze.
+     * @return A geographic envelope if we've found any in the resource metadata.
+     * Nothing otherwise.
+     *
+     * @throws DataStoreException If accessing the resource metadata failed.
+     */
+    public static Optional<? extends GeographicBoundingBox> findGeographicBBox(final Resource r) throws DataStoreException {
+        return r.getMetadata().getIdentificationInfo().stream()
+                .flatMap(i -> i.getExtents().stream())
+                .map(Extents::getGeographicBoundingBox)
+                .map(DefaultGeographicBoundingBox::new )
+                .reduce((b1, b2) -> {b1.add(b2); return b1;});
     }
 }

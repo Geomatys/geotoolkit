@@ -197,7 +197,7 @@ public class SampleClassifierTest {
         Assert.assertArrayEquals("Classification differs from expected result", expectedClassif, pixels);
     }
 
-    private static BufferedImage createGrayScale(final int width, final int height, final double[] samples) {
+    public static BufferedImage createGrayScale(final int width, final int height, final double[] samples) {
         final WritableRaster data = BufferedImages.createRaster(width, height, 1, DataBuffer.TYPE_FLOAT, new Point(0, 0));
         data.setPixels(0, 0, width, height, samples);
         final ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
