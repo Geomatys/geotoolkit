@@ -198,7 +198,7 @@ public class NetcdfCRSBuilder extends Builder<NetcdfCRS> {
      *        or {@code null} for the default.
      */
     public void setCoordinateAxes(final List<CoordinateAxis> newValue) {
-        axes = newValue; // Intentionally no clone.
+        axes = newValue;                        // Intentionally no clone.
         explicitAxes = (newValue != null);
     }
 
@@ -479,14 +479,14 @@ otherAxis:      for (final CoordinateAxis axis : entry.getValue()) {
             /*
              * Separate the horizontal, vertical and temporal components. We don't use the
              * CoordinateAxis.getTaxis() and similar methods because we want to ensure that
-             * the components are build in the same order than axes are found.
+             * the components are built in the same order than axes are found.
              */
             final int dimension = axes.size();
             final List<NetcdfCRS> components = new ArrayList<>(4);
             for (int i=0; i<dimension; i++) {
                 final CoordinateAxis axis = axes.get(i);
                 final AxisType type = axis.getAxisType();
-                if (type != null) { // This is really null in some NetCDF file.
+                if (type != null) {                         // This is really null in some NetCDF file.
                     switch (type) {
                         case Pressure:
                         case Height:
