@@ -1191,7 +1191,7 @@
     <repository>
       <id>geotoolkit</id>
       <name>Geotoolkit.org binaries</name>
-      <url>file:///var/www/maven.geotoolkit.org</url>
+      <url>https://nexus.geomatys.com/repository/geotoolkit</url>
     </repository>
   </distributionManagement>
 
