@@ -27,6 +27,7 @@ import java.util.logging.Level;
 import com.vividsolutions.jts.geom.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.logging.Logger;
 
 // Apache Lucene dependencies
 import org.apache.lucene.analysis.Analyzer;
@@ -173,7 +174,11 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
                 if (isIndexDir(indexDirectory, serviceID)) {
                     final String dirName = indexDirectory.getFileName().toString();
                     if (!dirName.equals(currentDirName)) {
-                        IOUtilities.deleteRecursively(indexDirectory);
+                        try {
+                            SQLRtreeManager.removeTree(indexDirectory);
+                        } catch (SQLException ex) {
+                            throw new IOException(ex);
+                        }
                     }
                 }
             }
