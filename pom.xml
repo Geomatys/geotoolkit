@@ -160,21 +160,6 @@
         </plugins>
       </build>
     </profile>
-
-    <!--
-        disable javadoc verifications. Required even with javadoc plugin
-        configuration, to ensure it's used in all cases (javadoc:jar, site, etc.)
-    -->
-    <!-- TODO fix javadocs -->
-    <profile>
-        <id>disable-java8-doclint</id>
-        <activation>
-            <jdk>[1.8,)</jdk>
-        </activation>
-        <properties>
-            <additionalparam>-Xdoclint:none</additionalparam>
-        </properties>
-    </profile>
   </profiles>
 
 
@@ -969,42 +954,6 @@
         </configuration>
       </plugin>
 
-    </plugins>
-  </build>
-
-
-
-  <!-- ==============================================================
-         Reports configuration.
-       ============================================================== -->
-  <reporting>
-    <plugins>
-      <plugin>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.7</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>index</report>
-              <report>summary</report>
-              <report>modules</report>
-              <report>license</report>
-              <report>scm</report>
-              <report>cim</report>
-              <report>project-team</report>
-              <report>mailing-list</report>
-              <report>issue-tracking</report>
-              <report>dependencies</report>
-              <report>dependency-convergence</report>
-              <report>dependency-management</report>
-              <report>plugin-management</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-
-
-
       <!-- =======================================================
                Build the Javadoc to be published on the web site
            ======================================================= -->
@@ -1012,13 +961,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.10.4</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>javadoc</report>     <!-- We want API javadoc only, not tests javadoc. -->
-            </reports>
-          </reportSet>
-        </reportSets>
         <configuration>
           <encoding>${project.build.sourceEncoding}</encoding>
           <docencoding>${website.encoding}</docencoding>
@@ -1034,6 +976,7 @@
           <excludePackageNames>org.geotoolkit.build:org.geotoolkit.test:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.apache:org.opengis:com</excludePackageNames>
           <!-- stylesheetfile>src/main/javadoc/stylesheet.css</stylesheetfile -->
 
+          <!-- TODO : fix project javadoc -->
           <additionalparam>
             -Xdoclint:none        <!-- pending corrections through the whole codebase. -->
           </additionalparam>
@@ -1078,59 +1021,8 @@
         </configuration>
       </plugin>
 
-
-
-      <!-- ====================================================
-               JUnit test results
-           ==================================================== -->
-      <plugin>
-        <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>2.17</version>
-        <configuration>
-          <aggregate>true</aggregate>
-          <showSuccess>false</showSuccess>
-          <systemPropertyVariables>
-            <java.naming.factory.initial>org.geotoolkit.internal.io.JNDI</java.naming.factory.initial>
-          </systemPropertyVariables>
-        </configuration>
-        <reportSets> <!-- Workaround for http://jira.codehaus.org/browse/SUREFIRE-257 -->
-          <reportSet>
-            <reports>
-              <report>report-only</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-
-
-
-      <!-- ====================================================
-               TODO tags
-           ==================================================== -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>taglist-maven-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-          <aggregate>true</aggregate>
-          <tagListOptions>
-            <tagClasses>
-              <tagClass>
-                <displayName>TODO</displayName>
-                <tags>
-                  <tag>
-                    <matchString>@todo</matchString>
-                    <matchType>ignoreCase</matchType>
-                  </tag>
-                </tags>
-              </tagClass>
-            </tagClasses>
-          </tagListOptions>
-        </configuration>
-      </plugin>
     </plugins>
-  </reporting>
-
+  </build>
 
 
   <!-- ==================================================================

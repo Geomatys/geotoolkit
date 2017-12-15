@@ -35,6 +35,7 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.opengis.referencing.crs.SingleCRS;
 
 /**
@@ -49,6 +50,14 @@ import org.opengis.referencing.crs.SingleCRS;
  * @author Remi Marechal (Geomatys).
  * @version 4.0
  * @since   4.0
+ *
+ * @deprecated Surprising behaviors:
+ * <li>
+ * <ul>Behavior changes regarding of chosen constructor</ul>
+ * <ul>Generated envelopes truncated on upper side</ul>
+ * <ul>maybe other undiscovered problems</ul>
+ * </li>
+ * Please use {@link GridGeometryIterator} instead.
  */
 public final strictfp class GridCombineIterator implements Iterator<Envelope> {
 

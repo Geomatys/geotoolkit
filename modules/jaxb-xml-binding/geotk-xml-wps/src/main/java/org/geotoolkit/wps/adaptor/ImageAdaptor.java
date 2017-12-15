@@ -17,7 +17,9 @@
 package org.geotoolkit.wps.adaptor;
 
 import java.awt.image.RenderedImage;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import javax.imageio.ImageIO;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.Format;
@@ -71,15 +73,33 @@ public class ImageAdaptor extends ComplexAdaptor<RenderedImage> {
             final String mimeType = format.getMimeType();
             final String schema = format.getSchema();
 
-            if (encoding!=null || schema!=null) return null;
+            if (encoding != null || schema != null) {
+                return null;
+            }
 
-            final String[] types = ImageIO.getReaderMIMETypes();
-
-            if (Arrays.asList(types).contains(mimeType)) {
+            final List<String> types = getCleanMimeTypeList();
+            if (types.contains(mimeType)) {
                 return new ImageAdaptor(mimeType);
             } else {
                 return null;
             }
+        }
+
+        /**
+         * Return a list of spported MIME type starting with the prefix "image"
+         * to avoid annoying match like text/plain.
+         *
+         * @return
+         */
+        private List<String> getCleanMimeTypeList() {
+            List<String> results = new ArrayList<>();
+            final String[] types = ImageIO.getReaderMIMETypes();
+            for (String type : types) {
+                if (type.startsWith("image")) {
+                    results.add(type);
+                }
+            }
+            return results;
         }
 
     }
