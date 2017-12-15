@@ -1,18 +1,22 @@
 package org.geotoolkit.processing.coverage.categorize;
 
 import java.awt.image.RenderedImage;
+import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
+import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -26,6 +30,7 @@ import org.geotoolkit.processing.image.sampleclassifier.SampleClassifier;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifierDescriptor;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
@@ -103,20 +108,30 @@ public class Categorize extends AbstractProcess {
                 readGeom = new GeneralGridGeometry(PixelInCell.CELL_CORNER, gridToCRS, env);
             }
 
-            final GridCombineIterator it = new GridCombineIterator(readGeom);
+            final GridGeometryIterator it = new GridGeometryIterator(readGeom);
             while (it.hasNext()) {
                 final GridCoverageReadParam readParam = new GridCoverageReadParam();
-                readParam.setEnvelope(it.next());
-                final GridCoverage sourceCvg = reader.read(source.getImageIndex(), readParam);
+                final GeneralGridGeometry sliceGeom = it.next();
+                readParam.setEnvelope(sliceGeom.getEnvelope());
+                GridCoverage sourceCvg = reader.read(source.getImageIndex(), readParam);
+                if (sourceCvg instanceof CoverageStack) {
+                    // Try to unravel expected slice
+                    final Optional<GridCoverage2D> slice = extractSlice((CoverageStack) sourceCvg, sliceGeom.getEnvelope());
+                    if (slice.isPresent()) {
+                        sourceCvg = slice.get();
+                    }
+                }
+
                 if (!(sourceCvg instanceof GridCoverage2D)) {
                     throw new ProcessException("Cannot extract 2D slice from given data source", this);
                 }
 
-                final RenderedImage slice = categorize(((GridCoverage2D) sourceCvg).getRenderedImage());
+
+                final RenderedImage slice = categorize(((GridCoverage2D) sourceCvg).view(ViewType.GEOPHYSICS).getRenderedImage());
 
                 final GridCoverageBuilder builder = new GridCoverageBuilder();
                 builder.setSources(sourceCvg);
-                builder.setGridGeometry(readGeom);
+                builder.setGridGeometry(sourceCvg.getGridGeometry());
                 builder.setRenderedImage(slice);
 
                 final GridCoverage resultCoverage = builder.build();
@@ -131,6 +146,23 @@ public class Categorize extends AbstractProcess {
         } catch (CancellationException ex) {
             throw new DismissProcessException("Process cancelled", this, ex);
         }
+    }
+
+    private static Optional<GridCoverage2D> extractSlice(final CoverageStack source, final Envelope aoi) {
+        int stackSize = source.getStackSize();
+        for (int i = 0; i < stackSize; i++) {
+            final Coverage cvg = source.coverageAtIndex(i);
+            final GeneralEnvelope subsetEnvelope = GeneralEnvelope.castOrCopy(cvg.getEnvelope());
+            if (subsetEnvelope.contains(aoi, true)) {
+                if (cvg instanceof GridCoverage2D) {
+                    return Optional.of((GridCoverage2D) cvg);
+                } else if (cvg instanceof CoverageStack) {
+                    return extractSlice((CoverageStack) cvg, aoi);
+                }
+            }
+        }
+
+        return Optional.empty();
     }
 
     private RenderedImage categorize(final RenderedImage input) throws ProcessException {
