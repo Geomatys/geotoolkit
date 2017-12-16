@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.grid;
 import java.util.Objects;
 import java.io.Serializable;
 import java.awt.image.RenderedImage;
+import org.apache.sis.util.logging.Logging;
 
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
@@ -37,8 +38,10 @@ import org.geotoolkit.util.Cloneable;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.ImmutableEnvelope;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
-import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 import org.geotoolkit.resources.Errors;
 
@@ -72,7 +75,6 @@ import static org.apache.sis.util.ArgumentChecks.*;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Alessio Fabiani (Geosolutions)
- * @version 3.20
  *
  * @see GridGeometry2D
  * @see ImageGeometry
@@ -85,13 +87,6 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 670887173069270234L;
-
-    /**
-     * Empirical tolerance factor while fixing rounding errors in envelope.
-     *
-     * @see org.geotoolkit.coverage.sql.GridGeometryTableTest#testEnvelope()
-     */
-    private static final int ULP_TOLERANCE = 16;
 
     /**
      * A bitmask to specify the validity of the {@linkplain #getCoordinateReferenceSystem()
@@ -605,7 +600,11 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     /**
      * Returns the grid resolution in units of the {@linkplain #getCoordinateReferenceSystem()
      * Coordinate Reference System} axes, or {@code null} if it can't be computed. If non-null,
-     * the length of the returned array is the number of CRS dimension.
+     * the length of the returned array is the number of CRS dimensions.
+     * Resolutions that are not constant factors are set to {@link Double#NaN}.
+     *
+     * <p>The default implementation invokes {@link #resolution(boolean)} when first needed,
+     * then cache the value.</p>
      *
      * @return The grid resolution, or {@code null} if unknown.
      *
@@ -613,21 +612,172 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      */
     public synchronized double[] getResolution() {
         double[] resolution = this.resolution;
-        if (resolution == null) {
-            if (gridToCRS instanceof LinearTransform) {
-                final Matrix mat = ((LinearTransform) gridToCRS).getMatrix();
-                resolution = new double[mat.getNumRow() - 1];
-                final double[] buffer = new double[mat.getNumCol() - 1];
-                for (int j=0; j<resolution.length; j++) {
-                    for (int i=0; i<buffer.length; i++) {
-                        buffer[i] = mat.getElement(j,i);
-                    }
-                    resolution[j] = MathFunctions.magnitude(buffer);
-                }
-                this.resolution = resolution;
-            }
+        if (resolution == null) try {
+            resolution = resolution(false);
+            this.resolution = resolution;
+        } catch (TransformException e) {
+            // TODO: we should let the exception propagate instead. We don't do that now for compatibility reasons.
+            Logging.recoverableException(AbstractGridCoverage.LOGGER, GeneralGridGeometry.class, "getResolution", e);
         }
         return (resolution != null) ? resolution.clone() : null;
+    }
+
+    /**
+     * Estimates the grid resolution in units of the coordinate reference system.
+     * If non-null, the length of the returned array is the number of CRS dimensions.
+     * If some resolutions are not constant factors (i.e. the {@code gridToCRS} transform for the
+     * corresponding dimension is non-linear), then the resolution is set to one of the following values:
+     *
+     * <ul>
+     *   <li>{@link Double#NaN} if {@code allowEstimates} is {@code false}.</li>
+     *   <li>an arbitrary resolution otherwise (currently the resolution in the grid center,
+     *       but this arbitrary choice may change in any future Apache SIS version).</li>
+     * </ul>
+     *
+     * @param  allowEstimates  whether to provide some values even for resolutions that are not constant factors.
+     * @return the grid resolution, or {@code null} if unknown.
+     * @throws TransformException if an error occurred while computing the grid resolution.
+     */
+    public double[] resolution(final boolean allowEstimates) throws TransformException {
+        /*
+         * If the gridToCRS transform is linear, we do not even need to check the grid extent;
+         * it can be null. Otherwise (if the transform is non-linear) the extent is mandatory.
+         */
+        Matrix mat = MathTransforms.getMatrix(gridToCRS);
+        if (mat != null) {
+            return resolution(mat, 1);
+        }
+        if (extent == null || gridToCRS == null) {
+            return null;
+        }
+        /*
+         * If we reach this line, the gridToCRS transform has some non-linear parts.
+         * The easiest way to estimate a resolution is to ask for the derivative at
+         * some arbitrary point. For this method, we take the grid center.
+         */
+        final int gridDimension = extent.getDimension();
+        final GeneralDirectPosition gridCenter = new GeneralDirectPosition(gridDimension);
+        for (int i=0; i<gridDimension; i++) {
+            gridCenter.setOrdinate(i, extent.getLow(i) + 0.5*extent.getSpan(i));
+        }
+        final double[] res = resolution(gridToCRS.derivative(gridCenter), 0);
+        if (!allowEstimates) {
+            /*
+             * If we reach this line, we successfully estimated the resolutions but we need to hide non-constant values.
+             * We currently don't have an API for finding the non-linear dimensions. We assume that everthing else than
+             * LinearTransform and pass-through dimensions are non-linear. This is not always true (e.g. in a Mercator
+             * projection, the "longitude → easting" part is linear too), but should be okay for GridGeometry purposes.
+             *
+             * We keep trace of non-linear dimensions in a bitmask, with bits of non-linear dimensions set to 1.
+             * This limit us to 64 dimensions, which is assumed more than enough.
+             */
+            long nonLinearDimensions = 0;
+            for (final MathTransform step : MathTransforms.getSteps(gridToCRS)) {
+                mat = MathTransforms.getMatrix(step);
+                if (mat != null) {
+                    /*
+                     * For linear transforms there is no bits to set. However if some bits were set by a previous
+                     * iteration, we may need to move them (for example the transform may swap axes). We take the
+                     * current bitmasks as source dimensions and find what are the target dimensions for them.
+                     */
+                    long mask = nonLinearDimensions;
+                    nonLinearDimensions = 0;
+                    while (mask != 0) {
+                        final int i = Long.numberOfTrailingZeros(mask);         // Source dimension of non-linear part
+                        for (int j = mat.getNumRow() - 1; --j >= 0;) {          // Possible target dimensions
+                            if (mat.getElement(j, i) != 0) {
+                                if (j >= Long.SIZE) {
+                                    throw new ArithmeticException("Excessive number of dimensions.");
+                                }
+                                nonLinearDimensions |= (1 << j);
+                            }
+                        }
+                        mask &= ~(1 << i);
+                    }
+                } else if (step instanceof PassThroughTransform) {
+                    /*
+                     * Assume that all modified coordinates use non-linear transform. We do not inspect the
+                     * sub-transform recursively because if it had a non-linear step, PassThroughTransform
+                     * should have moved that step outside the sub-transform for easier concatenation with
+                     * the LinearTransforms before of after that PassThroughTransform.
+                     */
+                    long mask = 0;
+                    final int dimIncrease = step.getTargetDimensions() - step.getSourceDimensions();
+                    final int maxBits = Long.SIZE - Math.max(dimIncrease, 0);
+                    for (final int i : ((PassThroughTransform) step).getModifiedCoordinates()) {
+                        if (i >= maxBits) {
+                            throw new ArithmeticException("Excessive number of dimensions.");
+                        }
+                        mask |= (1 << i);
+                    }
+                    /*
+                     * The mask we just computed identifies non-linear source dimensions, but we need target
+                     * dimensions. They are usually the same (the pass-through coordinate values do not have
+                     * their order changed). However we have a difficulty if the number of dimensions changes.
+                     * We know that the change happen in the sub-transform, but we do not know where exactly.
+                     * For example if the mask is 001010 and the number of dimensions increases by 1, we know
+                     * that we still have "00" at the beginning and "0" at the end of the mask, but we don't
+                     * know what happen between the two. Does "101" become "1101" or "1011"? We conservatively
+                     * take "1111", i.e. we unconditionally set all bits in the middle to 1.
+                     *
+                     * Mathematics:
+                     *   (Long.highestOneBit(mask) << 1) - 1
+                     *   is a mask identifying all source dimensions before trailing pass-through dimensions.
+                     *
+                     *   maskHigh = (Long.highestOneBit(mask) << (dimIncrease + 1)) - 1
+                     *   is a mask identifying all target dimensions before trailing pass-through dimensions.
+                     *
+                     *   maskLow = Long.lowestOneBit(mask) - 1
+                     *   is a mask identifying all leading pass-through dimensions (both source and target).
+                     *
+                     *   maskHigh & ~maskLow
+                     *   is a mask identifying only target dimensions after leading pass-through and before
+                     *   trailing pass-through dimensions. In our case, all 1 bits in maskLow are also 1 bits
+                     *   in maskHigh. So we can rewrite as
+                     *
+                     *   maskHigh - maskLow
+                     *   and the -1 terms cancel each other.
+                     */
+                    if (dimIncrease != 0) {
+                        mask = (Long.highestOneBit(mask) << (dimIncrease + 1)) - Long.lowestOneBit(mask);
+                    }
+                    nonLinearDimensions |= mask;
+                } else {
+                    /*
+                     * Not a know transform. Assume dimension may become non-linear.
+                     */
+                    return null;
+                }
+            }
+            /*
+             * Set the resolution to NaN for all dimensions that we have determined to be non-linear.
+             */
+            while (nonLinearDimensions != 0) {
+                final int i = Long.numberOfTrailingZeros(nonLinearDimensions);
+                nonLinearDimensions &= ~(1 << i);
+                res[i] = Double.NaN;
+            }
+        }
+        return res;
+    }
+
+    /**
+     * Computes the resolutions from the given matrix. This is the length of each row vector.
+     *
+     * @param  numToIgnore  number of rows and columns to ignore at the end of the matrix.
+     *         This is 0 if the matrix is a derivative (i.e. we ignore nothing), or 1 if the matrix
+     *         is an affine transform (i.e. we ignore the translation column and the [0 0 … 1] row).
+     */
+    private static double[] resolution(final Matrix gridToCRS, final int numToIgnore) {
+        final double[] resolution = new double[gridToCRS.getNumRow() - numToIgnore];
+        final double[] buffer = new double[gridToCRS.getNumCol() - numToIgnore];
+        for (int j=0; j<resolution.length; j++) {
+            for (int i=0; i<buffer.length; i++) {
+                buffer[i] = gridToCRS.getElement(j,i);
+            }
+            resolution[j] = MathFunctions.magnitude(buffer);
+        }
+        return resolution;
     }
 
     /**
