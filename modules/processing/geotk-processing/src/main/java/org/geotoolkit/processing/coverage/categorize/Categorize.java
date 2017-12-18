@@ -105,13 +105,20 @@ public class Categorize extends AbstractProcess {
                      */
                     LOGGER.log(Level.FINE, "Cannot deduce geographic extent from metadata.", e);
                 }
-                final CoordinateOperation op = CRS.findOperation(
-                        inputGG.getCoordinateReferenceSystem(),
-                        env.getCoordinateReferenceSystem(),
-                        bbox
-                );
 
-                gridToCRS = MathTransforms.concatenate(gridToCRS, op.getMathTransform());
+                if (env.getCoordinateReferenceSystem() != null) {
+                    final CoordinateOperation op = CRS.findOperation(
+                            inputGG.getCoordinateReferenceSystem(),
+                            env.getCoordinateReferenceSystem(),
+                            bbox
+                    );
+
+                    gridToCRS = MathTransforms.concatenate(gridToCRS, op.getMathTransform());
+                } else {
+                    env = new GeneralEnvelope(env);
+                    ((GeneralEnvelope)env).setCoordinateReferenceSystem(inputGG.getCoordinateReferenceSystem());
+                }
+
                 readGeom = new GeneralGridGeometry(PixelInCell.CELL_CORNER, gridToCRS, env);
             }
 
