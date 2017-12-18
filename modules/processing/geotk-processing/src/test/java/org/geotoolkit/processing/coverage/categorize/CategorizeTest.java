@@ -103,7 +103,7 @@ public class CategorizeTest {
         }
 
         final Envelope outEnvelope = outCvg.getEnvelope();
-        Assert.assertEquals("Output envelope is not conform to source data.", roi, outEnvelope);
+        Assert.assertEquals("Output envelope is not conform to source data.", GeneralEnvelope.castOrCopy(roi), GeneralEnvelope.castOrCopy(outEnvelope));
         final RenderedImage outImage = outCvg.getRenderableImage(0, 1).createDefaultRendering();
         final int[] pixels = outImage.getData().getPixels(0, 0, outImage.getWidth(), outImage.getHeight(), (int[]) null);
         Assert.assertArrayEquals("Classification result", expectedClassif, pixels);
