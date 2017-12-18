@@ -24,6 +24,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 
 import org.junit.*;
@@ -33,9 +34,7 @@ import static org.junit.Assert.*;
 /**
  * Test the {@link GridGeometry} implementation.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
- *
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @since 2.1
  */
 public final strictfp class GridGeometryTest extends org.geotoolkit.test.TestBase {
@@ -121,5 +120,25 @@ public final strictfp class GridGeometryTest extends org.geotoolkit.test.TestBas
 
         tr = (AffineTransform) gg.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
         assertTrue(tr.isIdentity());
+    }
+
+    /**
+     * Tests {@link GeneralGridGeometry#getResolution()}.
+     */
+    @Test
+    public void testResolution() {
+        final GeneralGridEnvelope range = new GeneralGridEnvelope(
+                new int[] {0,     0, 2, 6},
+                new int[] {100, 200, 3, 9}, false);
+        final MathTransform horizontal = MathTransforms.linear(Matrices.create(3, 3, new double[] {
+            0.5, 0,    12,
+            0,   0.25, -2,
+            0,   0,     1}));
+        final MathTransform vertical = MathTransforms.interpolate(null, new double[] {1, 2, 4, 10});
+        final MathTransform temporal = MathTransforms.linear(3600, 60);
+        final MathTransform gridToCRS = MathTransforms.compound(horizontal, vertical, temporal);
+        final GeneralGridGeometry gg = new GeneralGridGeometry(range, gridToCRS, null);
+        final double[] resolution = gg.getResolution();
+        assertArrayEquals("resolution", new double[] {0.5, 0.25, Double.NaN, 3600}, resolution, STRICT);
     }
 }
