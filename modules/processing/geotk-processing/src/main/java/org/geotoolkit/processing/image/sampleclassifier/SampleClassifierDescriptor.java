@@ -18,23 +18,23 @@ import org.opengis.parameter.ParameterValueGroup;
  * which don't fit in any category, a fill value (specified as input) will be used.
  *
  * @implNote The only check about category validity is to ensure that at least
- * one is given to the process. We do not check any of those points :
- * <li>
- * <ul>That given category range is not empty</ul>
- * <ul>That two categories overlap. In fact, if a category overlap another one,
+ * one is given to the process. We do not check any of those points:
+ * <ul>
+ * <li>That given category range is not empty</li>
+ * <li>That two categories overlap. In fact, if a category overlap another one,
  * it will be the category with the highest lower bound which will be selected
- * in the conflicting value range</ul>
- * </li>
+ * in the conflicting value range</li>
+ * </ul>
  * Also, for consistency and performance purpose, output class values will be
  * limited to byte value.
  *
  * Example : You've got an image whose samples are floats in range 0..100. You
- * define three categories :
- * <li>
- * <ol>range=0..50, class value=0</ol>
- * <ol>range=50..70, class value=1</ol>
- * <ol>range=70..100, class value=0</ol>
- * </li>
+ * define three categories:
+ * <ol>
+ * <li>range=0..50, class value=0</li>
+ * <li>range=50..70, class value=1</li>
+ * <li>range=70..100, class value=0</li>
+ * </ol>
  *
  * In this case, we'll make an image whose pixels which were between 50 and 70 in
  * the input image will have the value 1 in the output, and all other will have
@@ -95,37 +95,30 @@ public class SampleClassifierDescriptor extends AbstractProcessDescriptor {
 
         MIN = builder.addName("inclusive_min")
                 .setRemarks("Minimal boundary of a classification range. Inclusive.")
-                .setRequired(true)
                 .create(Float.class, null);
 
         MAX = builder.addName("exclusive_max")
                 .setRemarks("Maximal boundary of a classification range. Exclusive.")
-                .setRequired(true)
                 .create(Float.class, null);
 
         CLASS_VALUE = builder.addName("class_value")
                 .setRemarks("Value representing a class.")
-                .setRequired(true)
                 .create(Byte.class, null);
 
         FILL_VALUE = builder.addName("unclassified_value")
                 .setRemarks("Value representing a class.")
-                .setRequired(true)
                 .create(Byte.class, null);
 
         CATEGORIES = builder.addName("classes")
                 .setRemarks("Definition of the categories to use for sample value classification")
-                .setRequired(true)
                 .createGroup(1, Integer.MAX_VALUE, MIN, MAX, CLASS_VALUE);
 
         INPUT = builder.addName("input")
                 .setRemarks("An image to classify, along with the definition of classes to apply.")
-                .setRequired(true)
                 .createGroup(IMAGE, CATEGORIES, FILL_VALUE);
 
         OUTPUT = builder.addName("output")
                 .setRemarks("Classified image.")
-                .setRequired(true)
                 .createGroup(IMAGE);
     }
 
