@@ -6,6 +6,7 @@ import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
@@ -45,6 +46,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
@@ -114,9 +116,21 @@ public class Categorize extends AbstractProcess {
                     );
 
                     gridToCRS = MathTransforms.concatenate(gridToCRS, op.getMathTransform());
+                    // Crop area of interest on source coverage area
+                    final GeneralEnvelope sourceEnv;
+                    try {
+                        sourceEnv = Envelopes.transform(op, inputGG.getEnvelope());
+                    } catch (TransformException ex) {
+                        throw new ProcessException("Cannot check input envelope validity against source coverage.", this, ex);
+                    }
+                    sourceEnv.intersect(env);
+                    env = sourceEnv;
                 } else {
-                    env = new GeneralEnvelope(env);
-                    ((GeneralEnvelope)env).setCoordinateReferenceSystem(inputGG.getCoordinateReferenceSystem());
+                    final GeneralEnvelope tmpEnv = new GeneralEnvelope(env);
+                    tmpEnv.setCoordinateReferenceSystem(inputGG.getCoordinateReferenceSystem());
+                    // Crop area of interest on source coverage area
+                    tmpEnv.intersect(inputGG.getEnvelope());
+                    env = tmpEnv;
                 }
 
                 readGeom = new GeneralGridGeometry(PixelInCell.CELL_CORNER, gridToCRS, env);
@@ -141,7 +155,7 @@ public class Categorize extends AbstractProcess {
                     throw new ProcessException("Cannot extract 2D slice from given data source", this);
                 }
 
-                // If the reader did not returned a coverage fitting queried
+                // If the reader has not returned a coverage fitting queried
                 // geometry, we have to resample input ourselves.
                 GridCoverage2D source2D = (GridCoverage2D) sourceCvg;
                 source2D = source2D.view(ViewType.GEOPHYSICS);
