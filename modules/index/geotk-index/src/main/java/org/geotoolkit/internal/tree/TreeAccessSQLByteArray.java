@@ -10,7 +10,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Logger;
 import javax.sql.DataSource;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper;
 import static org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper.SCHEMA;
 import org.geotoolkit.index.tree.manager.util.AeSimpleSHA1;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -21,6 +24,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class TreeAccessSQLByteArray extends TreeAccessByteArray {
 
+    private final Logger LOGGER = Logging.getLogger("org.geotoolkit.internal.tree");
     private final DataSource source;
     private final Path directory;
 
@@ -37,15 +41,19 @@ public class TreeAccessSQLByteArray extends TreeAccessByteArray {
     }
 
     private void printTree() throws SQLException, NoSuchAlgorithmException, UnsupportedEncodingException {
-        final byte[] array = getData();
-        try (final Connection c = source.getConnection();
-             final Statement dstmt  = c.createStatement()) {
-            dstmt.executeUpdate("DELETE FROM \"" + getSchemaName(directory.getFileName().toString()) + "\".\"tree\"");
+        if (LucenePostgresSQLTreeEltMapper.treeExist(source, directory)) {
+            final byte[] array = getData();
+            try (final Connection c = source.getConnection();
+                 final Statement dstmt  = c.createStatement()) {
+                dstmt.executeUpdate("DELETE FROM \"" + getSchemaName(directory.getFileName().toString()) + "\".\"tree\"");
 
-            try (final PreparedStatement stmt = c.prepareStatement("INSERT INTO \"" + getSchemaName(directory.getFileName().toString()) + "\".\"tree\" VALUES(?)")) {
-                stmt.setBytes(1, array);
-                stmt.execute();
+                try (final PreparedStatement stmt = c.prepareStatement("INSERT INTO \"" + getSchemaName(directory.getFileName().toString()) + "\".\"tree\" VALUES(?)")) {
+                    stmt.setBytes(1, array);
+                    stmt.execute();
+                }
             }
+        } else {
+            LOGGER.warning("Unable to flush tree. schema does not exist");
         }
     }
 
