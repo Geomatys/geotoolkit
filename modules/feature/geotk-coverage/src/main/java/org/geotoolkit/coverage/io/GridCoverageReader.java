@@ -438,15 +438,16 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
                         if (sampleDimensions!=null) {
                             final MetadataBuilder mb = new MetadataBuilder();
                             for (int idx=0,n=sampleDimensions.size();idx<n;idx++) {
-                                final GridSampleDimension gsd = sampleDimensions.get(idx);
+                                GridSampleDimension gsd = sampleDimensions.get(idx).geophysics(true);
                                 final Unit<? extends Quantity<?>> units = gsd.getUnits();
                                 mb.newSampleDimension();
                                 mb.setBandIdentifier(Names.createMemberName(null, null, ""+idx, Integer.class));
                                 mb.addBandDescription(gsd.getDescription());
                                 if(units!=null) mb.setSampleUnits(units);
-                                mb.setTransferFunction(gsd.getScale(), gsd.getOffset());
                                 mb.addMinimumSampleValue(gsd.getMinimumValue());
                                 mb.addMaximumSampleValue(gsd.getMaximumValue());
+                                gsd = gsd.geophysics(false);
+                                mb.setTransferFunction(gsd.getScale(), gsd.getOffset());
                             }
                             final DefaultMetadata meta = mb.build(false);
                             final CoverageDescription imgDesc = (CoverageDescription) meta.getContentInfo().iterator().next();
