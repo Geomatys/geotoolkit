@@ -154,7 +154,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
         final Envelope coverageEnv = param.getEnvelope();
         final double[] coverageRes = param.getResolution();
 
-        final GeneralGridGeometry gridGeom = getGridGeometry(0);
+        final GeneralGridGeometry gridGeom = getGridGeometry(ref.getImageIndex());
 
         final GridEnvelope extent = gridGeom.getExtent();
         final MathTransform gridToCRS = gridGeom.getGridToCRS(PixelInCell.CELL_CORNER);
@@ -204,7 +204,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
             min = extent.getLow(i);
             max = extent.getHigh(i)+1;//+1 for upper exclusive
             areaLower[i] = XMath.clamp((int)Math.floor(imgEnv.getMinimum(i)), min, max);
-            areaUpper[i] = XMath.clamp((int)Math.floor(imgEnv.getMaximum(i))+1,  min, max);
+            areaUpper[i] = XMath.clamp((int)Math.ceil(imgEnv.getMaximum(i)),  min, max);
         }
 
         return readInGridCRS(areaLower,areaUpper,subsampling, param);

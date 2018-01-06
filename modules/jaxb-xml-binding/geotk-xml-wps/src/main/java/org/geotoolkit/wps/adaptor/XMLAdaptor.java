@@ -25,6 +25,7 @@ import org.geotoolkit.wps.xml.v200.ComplexDataType;
 import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.DataInputType;
 import org.geotoolkit.wps.xml.v200.DataOutputType;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 /**
@@ -75,10 +76,15 @@ public class XMLAdaptor extends ComplexAdaptor<Node> {
 
     @Override
     public DataInputType toWPS2Input(Node candidate) throws UnconvertibleObjectException {
-        if(candidate instanceof ReferenceProxy) return super.toWPS2Input(candidate);
+        if (candidate instanceof ReferenceProxy) {
+            return super.toWPS2Input(candidate);
+        }
 
         final ComplexDataType cdt = new ComplexDataType();
         cdt.getContent().add(new org.geotoolkit.wps.xml.v200.Format(encoding, mimeType, schema, null));
+        if (candidate instanceof Document) {
+            candidate = ((Document) candidate).getDocumentElement();
+        }
         cdt.getContent().add(candidate);
 
         final Data data = new Data();

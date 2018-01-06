@@ -16,10 +16,8 @@
  */
 package org.geotoolkit.processing.coverage.compose;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -33,6 +31,7 @@ import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
 import static org.apache.sis.parameter.Parameters.castOrWrap;
@@ -210,7 +209,7 @@ public class Compose extends AbstractProcess {
         }
 
         //compute output grid crs to source coverage grid crs.
-        final MathTransform[] outGridCSToSourceGridCS = new MathTransform[nbCoverage];
+        final MathTransform2D[] outGridCSToSourceGridCS = new MathTransform2D[nbCoverage];
         final Rectangle outRect = new Rectangle(0, 0, outWidth, outHeight);
         final GridFactory gf = new GridFactory(0.3);
         for (int i = 0; i < nbCoverage; i++) {
@@ -219,15 +218,21 @@ public class Compose extends AbstractProcess {
                 final MathTransform outCrsToSourceCrs = CRS.findOperation(outCrs, sourceCrs, null).getMathTransform();
                 final MathTransform sourceCrsToGrid = inGridCoverages[i].getGridGeometry().getGridToCRS2D().inverse();
 
-                outGridCSToSourceGridCS[i] = concatenate(
+                final MathTransform tmpTr = concatenate(
                         outGridToCrs,
                         outCrsToSourceCrs,
                         sourceCrsToGrid
                 );
 
+                if (tmpTr instanceof MathTransform2D) {
+                    outGridCSToSourceGridCS[i] = (MathTransform2D) tmpTr;
+                } else {
+                    throw new ProcessException("Cannot deduce 2D transform from given data.", this);
+                }
+
                 try {
                     //try to optimize it
-                    Object obj = gf.create((MathTransform2D) outGridCSToSourceGridCS[i], outRect);
+                    Object obj = gf.create(outGridCSToSourceGridCS[i], outRect);
                     if (obj instanceof AffineTransform) {
                         outGridCSToSourceGridCS[i] = new AffineTransform2D((AffineTransform)obj);
                     }
@@ -242,33 +247,23 @@ public class Compose extends AbstractProcess {
         final WritableRaster outRaster = outImage.getRaster();
 
         final double[] pixelBuffer = new double[outImage.getSampleModel().getNumBands()];
-        final double[] imgPoint = new double[2];
-        final Coordinate coord = new Coordinate(0, 0);
-        final Point geoPoint = GF.createPoint(coord);
-        for (int x = 0; x < outWidth; x++) {
-            for (int y = 0; y < outHeight; y++) {
-                coord.x = x;
-                coord.y = y;
-                //clear geometry caches, we need to do it ourself
-                //since we modified the coordinates directly
-                geoPoint.geometryChanged();
-                for (int i = 0; i < clips.length; i++) {
-                    if (clips[i].getSample(x, y, 0) == 1) {
-                        imgPoint[0] = x;
-                        imgPoint[1] = y;
-                        try {
-                            outGridCSToSourceGridCS[i].transform(imgPoint, 0, imgPoint, 0, 1);
-                        } catch (TransformException e) {
-                            throw new ProcessException(e.getMessage(),this,e);
-                        }
-                        int cx = (int) imgPoint[0];
-                        int cy = (int) imgPoint[1];
-                        if (cx<0 || cy<0 || cx > inSizes[i][0] || cy > inSizes[i][1]) continue;
-                        inCursors[i].moveTo(cx,cy);
-                        inCursors[i].getPixel(pixelBuffer);
-                        outRaster.setPixel(x, y, pixelBuffer);
-                        break;
+        final WritablePixelIterator outIterator = new PixelIterator.Builder().createWritable(outRaster);
+        final java.awt.Point clipPos = new java.awt.Point();
+        while (outIterator.next()) {
+            final java.awt.Point outPos = outIterator.getPosition();
+            for (int i = 0; i < clips.length; i++) {
+                if (clips[i].getSample(outPos.x, outPos.y, 0) == 1) {
+                    try {
+                        outGridCSToSourceGridCS[i].transform(outPos, clipPos);
+                    } catch (TransformException e) {
+                        throw new ProcessException(e.getMessage(), this, e);
                     }
+                    if (clipPos.x < 0 || clipPos.y < 0 || clipPos.x > inSizes[i][0] || clipPos.y > inSizes[i][1])
+                        continue;
+                    inCursors[i].moveTo(clipPos.x, clipPos.y);
+                    inCursors[i].getPixel(pixelBuffer);
+                    outIterator.setPixel(pixelBuffer);
+                    break;
                 }
             }
         }
@@ -322,4 +317,8 @@ public class Compose extends AbstractProcess {
         return new GridGeometry2D(extent, PixelOrientation.UPPER_LEFT, gridToGeo, crs, null);
     }
 
+    @FunctionalInterface
+    private static interface TriConsumer<A, B, C> {
+        void accept(A a, B b, C c);
+    }
 }

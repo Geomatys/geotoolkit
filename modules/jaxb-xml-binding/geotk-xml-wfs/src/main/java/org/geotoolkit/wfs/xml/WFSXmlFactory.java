@@ -972,6 +972,7 @@ public class WFSXmlFactory {
         if (null == version) {
             throw new IllegalArgumentException("unexpected version number:" + version);
         } else switch (version) {
+            case "2.0.0":
             case "2.0.2":
                 final List<org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType> storedQuery = new ArrayList<>();
                 for (StoredQueryDescription description : descriptions) {

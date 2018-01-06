@@ -150,8 +150,7 @@ public class SQLRtreeManager extends AbstractRtreeManager {
     public static void removeTree(final Path directory) throws SQLException, IOException {
         if (PGDataSource.isSetPGDataSource()) {
             LucenePostgresSQLTreeEltMapper.resetDB(directory);
-        } else {
-            IOUtilities.deleteRecursively(directory);
         }
+        IOUtilities.deleteRecursively(directory);
     }
 }
