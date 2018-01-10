@@ -19,6 +19,7 @@ package org.geotoolkit.data.shapefile.fix;
 
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -65,7 +66,11 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
             final RecordNumberTracker reader) throws IOException {
         this.reader = reader;
 
-        final String path = ShpFileType.FIX.toBase(fixUrl);
+        String path = ShpFileType.FIX.toBase(fixUrl);
+        try {
+            path = java.net.URLDecoder.decode(path, "UTF-8");
+        } catch (UnsupportedEncodingException e) {}
+
         final int slash = Math.max(0, path.lastIndexOf('/') + 1);
         int dot = path.indexOf('.', slash);
         if (dot < 0) {
