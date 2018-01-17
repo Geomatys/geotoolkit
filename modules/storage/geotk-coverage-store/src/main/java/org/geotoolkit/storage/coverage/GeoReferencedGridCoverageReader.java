@@ -41,7 +41,6 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -61,7 +60,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
 
     protected final CoverageResource ref;
 
-    protected GeoReferencedGridCoverageReader(CoverageResource ref){
+    protected GeoReferencedGridCoverageReader(CoverageResource ref) {
         this.ref = ref;
     }
 
@@ -78,7 +77,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
      */
     @Override
     public final GridCoverage read(int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
-        if (index!=ref.getImageIndex()) throw new CoverageStoreException("Unvalid image index "+index);
+        if (index!=ref.getImageIndex()) throw new CoverageStoreException("Invalid image index "+index);
 
         final GeneralGridGeometry gridGeometry = getGridGeometry(index);
         final CoordinateReferenceSystem coverageCrs = gridGeometry.getCoordinateReferenceSystem();
@@ -156,46 +155,39 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
 
         final GeneralGridGeometry gridGeom = getGridGeometry(ref.getImageIndex());
 
-        final GridEnvelope extent = gridGeom.getExtent();
-        final MathTransform gridToCRS = gridGeom.getGridToCRS(PixelInCell.CELL_CORNER);
-        final MathTransform crsToGrid;
+        final GeneralEnvelope imgEnv;
         try {
-            crsToGrid = gridToCRS.inverse();
+            final MathTransform gridToCRS = gridGeom.getGridToCRS(PixelInCell.CELL_CORNER);
+            // convert envelope CS to image CS
+            imgEnv = Envelopes.transform(gridToCRS.inverse(), coverageEnv);
         } catch (NoninvertibleTransformException ex) {
             throw new CoverageStoreException(ex.getMessage(), ex);
         }
+
+        final GridEnvelope extent = gridGeom.getExtent();
         final int dim = extent.getDimension();
 
         // prepare image readInGridCRS param
         final int[] areaLower = new int[dim];
         final int[] areaUpper = new int[dim];
+
         final int[] subsampling = new int[dim];
-
-        // convert envelope CS to image CS
-        final GeneralEnvelope imgEnv;
-        double[] imgRes = null;
-        imgEnv = Envelopes.transform(crsToGrid,coverageEnv);
+        Arrays.fill(subsampling, 1);
         if (coverageRes != null) {
-            imgRes = new double[dim];
-            final Matrix derivative;
-            try {
-                derivative = crsToGrid.derivative(new GeneralDirectPosition(dim));
-            } catch (MismatchedDimensionException ex) {
-                throw new CoverageStoreException(ex.getMessage(), ex);
+            final double[] sourceResolution = gridGeom.getResolution();
+            /* If we cannot determine a source resolution, guessing subsampling
+             * will be very complicated, so we simplify workflow to return full
+             * resolution image.
+             * TODO : find an alternative method
+             */
+            if (sourceResolution != null) {
+                for (int i = 0; i < sourceResolution.length; i++) {
+                    if (Double.isFinite(sourceResolution[i]) && sourceResolution[i] != 0) {
+                        final double ratio = coverageRes[i] / sourceResolution[i];
+                        subsampling[i] = Math.max(1, (int) ratio);
+                    }
+                }
             }
-            for (int i = 0; i < dim; i++) {
-                // Y scale is often negative, but we need positie values for image resolution.
-                imgRes[i] = Math.abs(coverageRes[i] * derivative.getElement(i, i));
-            }
-        }else{
-            imgRes = new double[dim];
-            Arrays.fill(imgRes, 1.0);
-        }
-
-        // convert image resolution to subsampling
-        for(int i=0;i<dim;i++){
-            subsampling[i] = (int)Math.floor(imgRes[i]);
-            if(subsampling[i]<1) subsampling[i] = 1;
         }
 
         // clamp region from data coverage raster boundary
