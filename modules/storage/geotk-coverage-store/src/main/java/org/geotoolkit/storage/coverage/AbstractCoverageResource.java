@@ -32,24 +32,21 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.storage.AbstractFeatureSet;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.util.NoSuchIdentifierException;
 
 /**
  *
@@ -57,6 +54,8 @@ import org.opengis.util.NoSuchIdentifierException;
  */
 @XmlTransient
 public abstract class AbstractCoverageResource extends AbstractFeatureSet implements CoverageResource {
+
+    private static final int DEFAULT_SUBSET_SIZE = 256;
 
     protected final CoverageStore store;
 
@@ -106,37 +105,59 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
         //calculate image statistics
         try {
             final GridCoverageReader reader = acquireReader();
-            final GeneralGridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
-            final Envelope env = gridGeom.getEnvelope();
-            final GridEnvelope ext = gridGeom.getExtent();
+            // Read a subset of the coverage, to compute approximative statistics
+            GridCoverage coverage = null;
+            try {
+                final GeneralGridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
+                if (gridGeom instanceof GridGeometry2D) {
+                    final GridGeometry2D geom2d = (GridGeometry2D) gridGeom;
+                    final double[] subsetResolution = new double[geom2d.getDimension()];
+                    Arrays.fill(subsetResolution, 1);
 
-            final double[] res = new double[ext.getDimension()];
-            double max = 0;
-            for(int i=0;i<res.length;i++){
-                res[i] = (env.getSpan(i) / 1000);
-                max = Math.max(max,res[i]);
+                    subsetResolution[geom2d.gridDimensionX] = geom2d.getEnvelope().getSpan(geom2d.axisDimensionX) / DEFAULT_SUBSET_SIZE;
+                    subsetResolution[geom2d.gridDimensionY] = geom2d.getEnvelope().getSpan(geom2d.axisDimensionY) / DEFAULT_SUBSET_SIZE;
+
+                    final double[] nativeResolution = geom2d.getResolution();
+                    if (nativeResolution != null) {
+                        if (Double.isFinite(nativeResolution[geom2d.gridDimensionX])) {
+                            subsetResolution[geom2d.gridDimensionX] = Math.max(subsetResolution[geom2d.gridDimensionX], nativeResolution[geom2d.gridDimensionX]);
+                        }
+                        if (Double.isFinite(nativeResolution[geom2d.gridDimensionY])) {
+                            subsetResolution[geom2d.gridDimensionY] = Math.max(subsetResolution[geom2d.gridDimensionY], nativeResolution[geom2d.gridDimensionY]);
+                        }
+                    }
+
+                    final GridCoverageReadParam param = new GridCoverageReadParam();
+                    param.setResolution(subsetResolution);
+                    coverage = reader.read(getImageIndex(), param);
+                }
+
+                recycle(reader);
+
+            } catch (Exception e) {
+                try {
+                    reader.dispose();
+                } catch (Exception bis) {
+                    e.addSuppressed(bis);
+                }
+                throw e;
             }
-            Arrays.fill(res, max);
 
-            final GridCoverageReadParam param = new GridCoverageReadParam();
-            param.setEnvelope(env);
-            param.setResolution(res);
-            final GridCoverage coverage = reader.read(getImageIndex(), param);
-            if(!(coverage instanceof GridCoverage2D)) return null;
+            if (coverage instanceof GridCoverage2D) {
+                final ProcessDescriptor processDesc = ProcessFinder.getProcessDescriptor("geotoolkit", "coverage:statistic");
+                final ParameterDescriptorGroup inputDesc = processDesc.getInputDescriptor();
+                final Parameters processParam = Parameters.castOrWrap(inputDesc.createValue());
+                processParam.parameter("inCoverage").setValue(coverage);
+                processParam.parameter("inExcludeNoData").setValue(true);
 
-            final ProcessDescriptor processDesc = ProcessFinder.getProcessDescriptor("geotoolkit", "coverage:statistic");
-            final ParameterDescriptorGroup inputDesc = processDesc.getInputDescriptor();
-            final Parameters processParam = Parameters.castOrWrap(inputDesc.createValue());
-            processParam.parameter("inCoverage").setValue(coverage);
-            processParam.parameter("inExcludeNoData").setValue(true);
+                final Process process = processDesc.createProcess(processParam);
+                final ParameterValueGroup result = process.call();
+                final ImageStatistics stats = (ImageStatistics) result.parameter("outStatistic").getValue();
+                desc = new CoverageDescriptionAdapter(stats);
+            }
 
-            final Process process = processDesc.createProcess(processParam);
-            final ParameterValueGroup result = process.call();
-            final ImageStatistics stats = (ImageStatistics) result.parameter("outStatistic").getValue();
-            desc = new CoverageDescriptionAdapter(stats);
-
-        } catch (CoverageStoreException | NoSuchIdentifierException | ProcessException ex) {
-            Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
+        } catch (Exception ex) {
+            Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, "Cannot compute statistics on coverage content", ex);
         }
 
         if (desc == null) {
