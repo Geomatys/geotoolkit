@@ -406,9 +406,12 @@ public final class ShpFiles {
     }
 
     public String getTypeName() {
-        final String path = SHP.toBase(uris.get(SHP));
-        final int slash = Math.max(0, path.lastIndexOf('/') + 1);
+        String path = SHP.toBase(uris.get(SHP));
+        try {
+            path = java.net.URLDecoder.decode(path, "UTF-8");
+        } catch (UnsupportedEncodingException e) {}
 
+        final int slash = Math.max(0, path.lastIndexOf('/') + 1);
         return path.substring(slash, path.length());
     }
 
