@@ -28,7 +28,6 @@ import java.util.Map;
 import org.opengis.coverage.Coverage;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -460,7 +459,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
             InterpolationCase interpolation;
             if(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR.equals(hints.get(RenderingHints.KEY_INTERPOLATION))
-            || (!(gridGeometry instanceof GridGeometry2D))
             || width  < 2
             || height < 2) {
                 //hints forced nearest neighbor interpolation
@@ -469,34 +467,43 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 interpolation = findInterpolationCase(sampleDimensions);
             }
 
-           /*
-            * Expand envelope by 1 or more pixel in function of choosen interpolation
-            * and also multiply this value by the subsampling between origin coverage extent
-            * and output rendering image size into pixel coordinates.
-            */
-            int coeffExpand = 1;
             if (!interpolation.equals(InterpolationCase.NEIGHBOR)) {
-                final int horizontalAxis = CRSUtilities.firstHorizontalAxis(inputCoverageCRS);
-                final double[] gridRes = gridGeometry.getResolution();
-                int coeffx  = (int) Math.ceil(paramEnvelope2D.getSpan(0) / (gridRes[horizontalAxis]     * width));
-                int coeffy  = (int) Math.ceil(paramEnvelope2D.getSpan(1) / (gridRes[horizontalAxis + 1] * height));
-                coeffExpand = Math.max(coeffExpand, Math.max(coeffx, coeffy));
-            }
+               /*
+                * Expand envelope by 1 or more pixel in function of chosen interpolation
+                * and also multiply this value by the subsampling between origin coverage extent
+                * and output rendering image size into pixel coordinates.
+                */
+                final int pixelExpand;
+                switch(interpolation) {
+                    case BILINEAR : pixelExpand = 1; break;
+                    case BICUBIC  :
+                    case BICUBIC2 : pixelExpand = 2; break;
+                    case LANCZOS  : pixelExpand = 4; break;
+                    default: pixelExpand = 1;
+                }
+                final int xAxis = CRSUtilities.firstHorizontalAxis(inputCoverageCRS);
+                double sourceResolution = Math.max(paramRes[xAxis], gridGeometry.getResolution()[xAxis]);
+                double geoExpand = pixelExpand * sourceResolution;
+                final GeneralEnvelope paramEnvelope2 = new GeneralEnvelope(paramEnvelope);
+                paramEnvelope2.setRange(xAxis, paramEnvelope.getMinimum(xAxis) - geoExpand, paramEnvelope.getMaximum(xAxis) + geoExpand);
+                final int yAxis = xAxis + 1;
+                sourceResolution = Math.max(paramRes[yAxis], gridGeometry.getResolution()[yAxis]);
+                geoExpand = pixelExpand * sourceResolution;
+                paramEnvelope2.setRange(yAxis, paramEnvelope.getMinimum(yAxis) - geoExpand, paramEnvelope.getMaximum(yAxis) + geoExpand);
+                paramEnvelope2.intersect(gridGeometry.getEnvelope()); // If expanded envelope is bigger than overall envelope, we just take overall envelope.
 
-            //-- expand param envelope if we use an interpolation
-            switch(interpolation){
-                case BILINEAR : expand(paramEnvelope, 1 * coeffExpand, gridGeometry); break;
-                case BICUBIC  :
-                case BICUBIC2 : expand(paramEnvelope, 2 * coeffExpand, gridGeometry); break;
-                case LANCZOS  : expand(paramEnvelope, 4 * coeffExpand, gridGeometry); break;
+                dataCoverage = readCoverage(projectedCoverage, isElevation,
+                                                       paramEnvelope2, paramRes, sourceBands,
+                                                       inputCoverageEnvelope);
+            } else {
+                dataCoverage = readCoverage(projectedCoverage, isElevation,
+                                                       paramEnvelope, paramRes, sourceBands,
+                                                       inputCoverageEnvelope);
             }
 
             ////////////////////////////////////////////////////////////////////////
             // 5 - Read Coverage from computed Params.                            //
             ////////////////////////////////////////////////////////////////////////
-            dataCoverage = readCoverage(projectedCoverage, isElevation,
-                                                       paramEnvelope, paramRes, sourceBands,
-                                                       inputCoverageEnvelope);
         }
 
         /*
@@ -527,7 +534,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         dataCoverage = prepareCoverageToResampling(dataCoverage, symbol);
 
         final CoordinateReferenceSystem inputCoverageCRS2D = dataCoverage.getCoordinateReferenceSystem2D();
-        final GridGeometry2D gridGeometry = dataCoverage.getGridGeometry();
 
         final GeneralEnvelope paramEnvelope2D = GeneralEnvelope.castOrCopy(Envelopes.transform(paramEnvelope, inputCoverageCRS2D));
 
@@ -583,7 +589,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         //-- find most appropriate interpolation
         InterpolationCase interpolation;
         if(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR.equals(hints.get(RenderingHints.KEY_INTERPOLATION))
-            || (!(gridGeometry instanceof GridGeometry2D))
             || width  < 2
             || height < 2) {
             //hints forced nearest neighbor interpolation
@@ -595,7 +600,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         final GridGeometry2D gg = new GridGeometry2D(new GridEnvelope2D(0, 0, width, height), outputRenderingCoverageEnv2D);
 
-        //Temporary hack to avoid wrong interpolation on wrap around datas
+        //Temporary hack to avoid wrong interpolation on wrap around data
         if (!CoordinateOperations.wrapAroundChanges(inputCoverageCRS2D, gg.getCoordinateReferenceSystem().getCoordinateSystem()).isEmpty()) {
             interpolation = InterpolationCase.NEIGHBOR;
         }
@@ -737,36 +742,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         //       it contained such verifications.
         return InterpolationCase.BILINEAR;
     }
-
-    /**
-     * Expand the given envelope by the given number of points.
-     *
-     * @param env envelope to expand
-     * @param nbPoint in grid crs to expand the envelope
-     * @param gridGeom coverage grid geometry
-     */
-    private static void expand(final GeneralEnvelope env, final int nbPoint, final GeneralGridGeometry gridGeom)
-            throws TransformException {
-        if (!(gridGeom instanceof GridGeometry2D))
-            throw new IllegalArgumentException("Impossible to compute expand for interpolation with no 2D GridGeometry.");
-        final GridGeometry2D grigrid = (GridGeometry2D) gridGeom;
-
-        //-- we are only interested in the 2D part.
-        final MathTransform gridToCrs2D = grigrid.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
-        final MathTransform crsToGrid2D = gridToCrs2D.inverse();
-        final Envelope env2D = Envelopes.transform(env, grigrid.getCoordinateReferenceSystem2D());
-
-        final GeneralEnvelope gridEnv2D = Envelopes.transform(crsToGrid2D,env2D);
-        gridEnv2D.setRange(0, Math.floor(gridEnv2D.getMinimum(0)-nbPoint), Math.ceil(gridEnv2D.getMaximum(0)+nbPoint));
-        gridEnv2D.setRange(1, Math.floor(gridEnv2D.getMinimum(1)-nbPoint), Math.ceil(gridEnv2D.getMaximum(1)+nbPoint));
-
-        final Envelope geoEnv2D = Envelopes.transform(gridToCrs2D,gridEnv2D);
-
-        final int horizontalAxis = CRSUtilities.firstHorizontalAxis(env.getCoordinateReferenceSystem());
-        env.setRange(horizontalAxis,     geoEnv2D.getMinimum(0), geoEnv2D.getMaximum(0));
-        env.setRange(horizontalAxis + 1, geoEnv2D.getMinimum(1), geoEnv2D.getMaximum(1));
-    }
-
 
     /**
      * Returns {@code true} if {@link Envelope} contain at least one

@@ -100,8 +100,8 @@ public class SampleDimensionBuilder {
             case TYPE_SHORT  : min = Short.MIN_VALUE; max = Short.MAX_VALUE; break;
             case TYPE_USHORT : min = 0; max = 65535; break;
             case TYPE_INT    : min = Integer.MIN_VALUE; max = Integer.MAX_VALUE; break;
-            case TYPE_FLOAT  : min = Float.MIN_VALUE; max = Float.MAX_VALUE; break;
-            case TYPE_DOUBLE : min = Double.MIN_VALUE; max = Double.MAX_VALUE; break;
+            case TYPE_FLOAT  : min = -Float.MAX_VALUE; max = Float.MAX_VALUE; break;
+            case TYPE_DOUBLE : min = -Double.MAX_VALUE; max = Double.MAX_VALUE; break;
             default: throw new IllegalArgumentException("Unknown data type "+dataType);
         }
 

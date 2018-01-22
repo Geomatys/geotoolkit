@@ -341,7 +341,7 @@ public strictfp class ThirdPartyMetaDataReader {
                 case Integer.SIZE : {
                     if (sampleFormat == 3) {
                         //-- Float
-                        min = Float.MIN_VALUE;
+                        min = -Float.MAX_VALUE;
                         max = Float.MAX_VALUE;
                         typeClass = Float.class;
                     } else {
@@ -353,7 +353,7 @@ public strictfp class ThirdPartyMetaDataReader {
                     break;
                 }
                 case Double.SIZE : {
-                    min = Double.MIN_VALUE;
+                    min = -Double.MAX_VALUE;
                     max = Double.MAX_VALUE;
                     typeClass = Double.class;
                     break;
