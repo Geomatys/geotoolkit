@@ -50,8 +50,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.apache.sis.internal.jaxb.code.MD_ScopeCode;
 import org.apache.sis.internal.jaxb.metadata.CI_Contact;
 import org.apache.sis.internal.jaxb.metadata.EX_Extent;
-import org.apache.sis.internal.jaxb.metadata.direct.MD_Keywords;
-import org.apache.sis.internal.jaxb.metadata.direct.CI_OnlineResource;
+import org.geotoolkit.inspire.xml.adapter.MD_Keywords;
+import org.geotoolkit.inspire.xml.adapter.CI_OnlineResource;
 import org.apache.sis.internal.jaxb.metadata.CI_ResponsibleParty;
 import org.apache.sis.internal.jaxb.metadata.DQ_Result;
 
