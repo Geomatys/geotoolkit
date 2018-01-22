@@ -125,6 +125,7 @@ import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.metadata.content.CoverageDescription;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.opengis.coverage.SampleDimensionType;
 
 /**
  * Symbolizer renderer adapted for Raster.
@@ -463,9 +464,62 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //cheat on the colormap if we have only one band and no colormap
         recolorCase:
         if ((recolor == null || recolor.getFunction() == null)) {
+            final GridSampleDimension[] sampleDims = coverage.getSampleDimensions();
+            /* First, we check the coverage sample dimensions. We do so, because
+             * not all coverages hold enough information into their metadata.
+             * Even when it is the case, sometimes the coverage description
+             * processes statistics on the fly, which could be costly. But the
+             * following approach is very fast, even if it will be applied only
+             * if we detect that used extremums are user-defined.
+             * The biggest flaw here is that only extremum are used for palette
+             * building, so the result color map could be unfit to represent data
+             * with sparse value distribution.
+             */
+            if (sampleDims != null && sampleDims.length == 1) {
+                final GridSampleDimension packedDim = sampleDims[0].geophysics(false);
+                final double sampleMin, sampleMax;
+                final int sampleType = packedDim.getSampleDimensionType().ordinal();
+                if (sampleType == SampleDimensionType.REAL_32BITS.ordinal()) {
+                    sampleMin = -Float.MAX_VALUE;
+                    sampleMax = Float.MAX_VALUE;
+                } else if (sampleType == SampleDimensionType.REAL_64BITS.ordinal()) {
+                    sampleMin = -Double.MAX_VALUE;
+                    sampleMax = Double.MAX_VALUE;
+                } else if (sampleType == SampleDimensionType.SIGNED_16BITS.ordinal()) {
+                    sampleMin = Short.MIN_VALUE;
+                    sampleMax = Short.MAX_VALUE;
+                } else if (sampleType == SampleDimensionType.SIGNED_32BITS.ordinal()) {
+                    sampleMin = Integer.MIN_VALUE;
+                    sampleMax = Integer.MAX_VALUE;
+                } else if (sampleType == SampleDimensionType.SIGNED_8BITS.ordinal()) {
+                    sampleMin = Byte.MIN_VALUE;
+                    sampleMax = Byte.MAX_VALUE;
+                } else if (sampleType == SampleDimensionType.UNSIGNED_16BITS.ordinal()) {
+                    sampleMin = 0;
+                    sampleMax = 0xFFFF;
+                } else if (sampleType == SampleDimensionType.UNSIGNED_32BITS.ordinal()) {
+                    sampleMin = 0;
+                    sampleMax = 0xFFFFFFFF;
+                } else if (sampleType == SampleDimensionType.UNSIGNED_4BITS.ordinal()) {
+                    sampleMin = 0;
+                    sampleMax = 0xF;
+                } else if (sampleType == SampleDimensionType.UNSIGNED_8BITS.ordinal()) {
+                    sampleMin = 0;
+                    sampleMax = 0xFF;
+                } else {
+                    // If we cannot determine the sample type, it means we're not able to manage the sample dimension information.
+                    sampleMin = sampleMax = Double.NaN;
+                }
+
+                final boolean coherentSampleDimensions = packedDim.getMinimumValue() > sampleMin || packedDim.getMaximumValue() < sampleMax;
+
+                if (coherentSampleDimensions) {
+                    recolor = create(PaletteFactory.getDefault().getColors("grayscale"), sampleDims[0].getNoDataValues(), sampleDims[0].getMinimumValue(), sampleDims[0].getMaximumValue());
+                    break recolorCase;
+                }
+            }
 
             //if there is no geophysic, the same coverage is returned
-
             coverage = hasQuantitativeCategory(coverage) ? coverage.view(ViewType.GEOPHYSICS) : coverage;
 
             final RenderedImage ri      = coverage.getRenderedImage();
@@ -480,9 +534,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             if (!defaultStyleIsNeeded(sampleMod, riColorModel))
                 break recolorCase;
 
-
-            final int nbBands = sampleMod.getNumBands();
-
             final CoverageDescription covRefMetadata = ref.getCoverageDescription();
 
             ImageStatistics analyse = null;
@@ -490,11 +541,13 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             if (covRefMetadata != null)
                 analyse = ImageStatistics.transform(covRefMetadata);
 
+            // TODO : we should analyze a subset of the entire image instead, to
+            // ensure consistency over tiled rendering (cf. OpenLayer/WMS).
             if (analyse == null)
                 analyse = Statistics.analyse(ri, true);
 
+            final int nbBands = sampleMod.getNumBands();
             if (nbBands < 3) {
-
                 LOGGER.log(Level.FINE, "applyColorMapStyle : fallBack way is choosen."
                     + "GrayScale interpretation of the first coverage image band.");
 
@@ -1244,4 +1297,32 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         throw new IllegalArgumentException("Array of " + (min ? "min" : "max") + " values is empty.");
     }
 
+    private static ColorMap create(Color[] palette, final double[] noDataValues, final double minValue, final double maxValue) {
+        final List<InterpolationPoint> values = new ArrayList<>();
+        if (noDataValues != null)
+            for (double nodata : noDataValues) {
+                values.add(SF.interpolationPoint(nodata, SF.literal(new Color(0, 0, 0, 0))));
+            }
+
+        values.add(SF.interpolationPoint(Float.NaN, SF.literal(new Color(0, 0, 0, 0))));
+
+        //-- Color palette
+        assert palette.length >= 2;
+        values.add(SF.interpolationPoint(minValue, SF.literal(palette[0])));
+
+        if (palette.length > 2) {
+            final int numSteps = palette.length-2;
+            final double step = maxValue - minValue / (numSteps);
+            double currentValue = minValue;
+            for (int i = 1 ; i <= numSteps ; i++) {
+                currentValue += step;
+                values.add(SF.interpolationPoint(currentValue, SF.literal(palette[i])));
+            }
+        }
+
+        values.add(SF.interpolationPoint(maxValue, SF.literal(palette[palette.length - 1])));
+
+        final Function function = SF.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP, values, Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK);
+        return GO2Utilities.STYLE_FACTORY.colorMap(function);
+    }
 }

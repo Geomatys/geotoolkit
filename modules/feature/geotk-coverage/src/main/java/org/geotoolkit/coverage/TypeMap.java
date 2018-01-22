@@ -244,7 +244,7 @@ public final class TypeMap extends Static {
         }
         min = Math.abs(min);
         max = Math.abs(max);
-        if (Math.min(min,max) >= Float.MIN_VALUE  &&  Math.max(min,max) <= Float.MAX_VALUE) {
+        if (Math.min(min,max) >= -Float.MAX_VALUE  &&  Math.max(min,max) <= Float.MAX_VALUE) {
             return REAL_32BITS;
         }
         return REAL_64BITS;
