@@ -103,7 +103,7 @@ public class GridIterator implements Iterator<GridEnvelope> {
 
     @Override
     public boolean hasNext() {
-        for (int i = steps.length - 1; i >= 0 && next == null; i--) {
+        for (int i = 0; i < steps.length && next == null; i++) {
             if (steps[i] == 0) {
                 continue;
             }

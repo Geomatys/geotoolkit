@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.IntStream;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
@@ -177,6 +176,8 @@ public class Categorize extends AbstractProcess {
                 final GridCoverageWriteParam writeParam = new GridCoverageWriteParam();
                 writer.write(resultCoverage, writeParam);
             }
+        } catch (TransformException ex) {
+            throw new ProcessException("Cannot adapt input geometry", this, ex);
         } catch (FactoryException ex) {
             throw new ProcessException("Failure on EPSG database use", this, ex);
         } catch (CoverageStoreException ex) {
@@ -239,35 +240,16 @@ public class Categorize extends AbstractProcess {
      * @return The resampled data, never null.
      * @throws ProcessException
      */
-    private GridCoverage2D resample(final GridCoverage2D source, final GeneralGridGeometry target) throws ProcessException {
-        GridGeometry2D resampleGeometry = null;
+    private GridCoverage2D resample(final GridCoverage2D source, final GeneralGridGeometry target) throws ProcessException, TransformException {
         if (!(target instanceof GridGeometry2D)) {
             throw new ProcessException("Subset cannot be done. Incompatible grid geometry.", this);
         }
 
-        resampleGeometry = (GridGeometry2D) target;
-        // Resampling does not support target geometry using non-zero grid origin.
-        // This is due to an imageio limitation, which forbids building a BufferedImage
-        // whose raster origin is not (0, 0).
-        if (((int) resampleGeometry.getExtent2D().getMinX()) != 0 || ((int) resampleGeometry.getExtent2D().getMinY()) != 0) {
-            final GridEnvelope sliceExtent = resampleGeometry.getExtent();
-            final int[] low = sliceExtent.getLow().getCoordinateValues();
-            final int[] high = sliceExtent.getHigh().getCoordinateValues();
-            IntStream.of(resampleGeometry.gridDimensionX, resampleGeometry.gridDimensionY)
-                    .forEach(idx -> {
-                        final int previousLow = low[idx];
-                        low[idx] = 0;
-                        high[idx] -= previousLow;
-                    });
-            resampleGeometry = new GridGeometry2D(
-                    new GeneralGridEnvelope(low, high, true),
-                    resampleGeometry.getEnvelope()
-            );
-        }
+        GridGeometry2D resampleGeometry = hack((GridGeometry2D) target);
 
         final ResampleProcess resample = new ResampleProcess(
                 source,
-                target.getCoordinateReferenceSystem(),
+                resampleGeometry.getCoordinateReferenceSystem(),
                 resampleGeometry,
                 InterpolationCase.NEIGHBOR,
                 new double[]{getFillValue()}
@@ -329,5 +311,65 @@ public class Categorize extends AbstractProcess {
 
         @Override
         public void close();
+    }
+
+    /**
+     * Apply dirty hacks needed to get a geometry usable for resampling. Two
+     * problems are solved here :
+     * <ul>
+     * <li>Erase envelope, to ensure dimension coordinates (temporal, vertical)
+     * are slices rightly centered. This is necessary due to the unbalanced
+     * behavior induced by non-linear transforms on interpolation.</li>
+     * <li>Ensures that geometry extent starts at 0 for horizontal components (ImageIO limitation).</li>
+     * </ul>
+     * @param source The grid geometry to adapt.
+     * @return A new geometry, derived from source one.
+     * @throws TransformException If there"s a problem while modiying data
+     * envelope.
+     */
+    private static GridGeometry2D hack(final GridGeometry2D source) throws TransformException {
+        final GridEnvelope sourceExtent = source.getExtent();
+        final int minX = sourceExtent.getLow(source.gridDimensionX);
+        final int minY = sourceExtent.getLow(source.gridDimensionY);
+        if (minX == 0 && minY == 0 && source.getDimension() < 3) {
+            return source;
+        }
+
+        /* Resampling does not support target geometry using non-zero grid origin.
+         * This is due to an imageio limitation, which forbids building a BufferedImage
+         * whose raster origin is not (0, 0). To bypass this problem, we simply
+         * shift source extent, so its horizontal dimensions starts at 0.
+         */
+        final int[] low = sourceExtent.getLow().getCoordinateValues();
+        final int[] high = sourceExtent.getHigh().getCoordinateValues();
+        low[source.gridDimensionX] = 0;
+        high[source.gridDimensionX] = high[source.gridDimensionX] - minX;
+        low[source.gridDimensionY] = 0;
+        high[source.gridDimensionY] = high[source.gridDimensionY] - minY;
+        final GeneralGridEnvelope modifiedExtent = new GeneralGridEnvelope(low, high, true);
+
+        /* Force empty span on dimensions. To be sure the result is correct,
+         * coordinates must be reprojected from pixel centers. If not, shifts
+         * will appear for non-linear dimensions (case for most Grib/NetCDF data).
+         */
+        final GeneralEnvelope flattenEnvelope;
+        if (source.getDimension() > 2) {
+            final GridEnvelope inExtent = source.getExtent();
+            final GeneralEnvelope inGridEnv = new GeneralEnvelope(source.getDimension());
+            for (int i = 0; i < source.getDimension(); i++) {
+                if (inExtent.getSpan(i) > 1 || i == source.gridDimensionX || i == source.gridDimensionY) {
+                    inGridEnv.setRange(i, inExtent.getLow(i) - 0.5, inExtent.getHigh(i) + 0.5);
+                } else {
+                    inGridEnv.setRange(i, inExtent.getLow(i), inExtent.getHigh(i));
+                }
+            }
+
+            flattenEnvelope = Envelopes.transform(source.getGridToCRS(), inGridEnv);
+            flattenEnvelope.setCoordinateReferenceSystem(source.getCoordinateReferenceSystem());
+        } else {
+            flattenEnvelope = new GeneralEnvelope(source.getEnvelope());
+        }
+
+        return new GridGeometry2D(modifiedExtent, flattenEnvelope);
     }
 }
