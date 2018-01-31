@@ -20,7 +20,6 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
-import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
@@ -32,11 +31,16 @@ import org.geotoolkit.wps.xml.WPSXmlFactory;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_PATH;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_URL;
 import org.opengis.feature.FeatureType;
 
 /**
@@ -124,15 +128,7 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
                    WPSMimeType.TEXT_XML.val().equalsIgnoreCase(reference.getMimeType()) ||
                    WPSMimeType.TEXT_GML.val().equalsIgnoreCase(reference.getMimeType())) {
             try {
-                final String schemaFileName = randomFileName + "_schema" + ".xsd";
-                //create file
-                final File schemaFile = new File((String) params.get(TMP_DIR_PATH), schemaFileName);
-                final OutputStream stream = new FileOutputStream(schemaFile);
-                //write featureType xsd on file
-                final JAXBFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
-                xmlFTWriter.write(ft, stream);
-
-                reference.setSchema((String) params.get(TMP_DIR_URL) + "/" + schemaFileName);
+                reference.setSchema(WPSConvertersUtils.writeSchema(ft, params));
                 schemaLocation.put(namespace, reference.getSchema());
 
             } catch (JAXBException ex) {
@@ -141,40 +137,26 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
                 throw new UnconvertibleObjectException("Can't create xsd schema file.", ex);
             }
 
-            JAXPStreamFeatureWriter featureWriter = null;
-            try {
-                featureWriter = new JAXPStreamFeatureWriter(schemaLocation);
+                        //Write Feature
+            final JAXPStreamFeatureWriter featureWriter = new JAXPStreamFeatureWriter(schemaLocation);
+            final String dataFileName = randomFileName+".xml";
 
-                final String dataFileName = randomFileName + ".xml";
+            //create file
+            final Path dataFile = Paths.get((String) params.get(TMP_DIR_PATH), dataFileName);
+            try (final OutputStream dataStream = Files.newOutputStream(dataFile);
+                    final AutoCloseable xmlCloser = () -> featureWriter.dispose()) {
+                //Write feature in file
+                featureWriter.write(source, dataStream);
+                reference.setHref(params.get(TMP_DIR_URL) + "/" +dataFileName);
 
-                //create file
-                final File dataFile = new File((String) params.get(TMP_DIR_PATH), dataFileName);
-                final OutputStream dataStream = new FileOutputStream(dataFile);
-
-                //Write feature collection in file
-                featureWriter.setOutput(dataStream);
-                featureWriter.writeFeatureCollection(source, false, null);
-
-                reference.setHref((String) params.get(TMP_DIR_URL) + "/" + dataFileName);
-
-            } catch (IOException ex) {
-                throw new UnconvertibleObjectException(ex);
             } catch (XMLStreamException ex) {
                 throw new UnconvertibleObjectException("Stax exception while writing the feature collection", ex);
             } catch (DataStoreException ex) {
                 throw new UnconvertibleObjectException("FeatureStore exception while writing the feature collection", ex);
             } catch (FeatureStoreRuntimeException ex) {
                 throw new UnconvertibleObjectException("FeatureStoreRuntimeException exception while writing the feature collection", ex);
-            } finally {
-                try {
-                    if (featureWriter != null) {
-                        featureWriter.dispose();
-                    }
-                } catch (IOException ex) {
-                    throw new UnconvertibleObjectException(ex);
-                } catch (XMLStreamException ex) {
-                    throw new UnconvertibleObjectException(ex);
-                }
+            } catch (Exception ex) {
+                throw new UnconvertibleObjectException(ex);
             }
         }
         else

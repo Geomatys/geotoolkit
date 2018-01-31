@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -30,10 +31,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.*;
 import java.util.Set;
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import net.sf.json.JSONObject;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
@@ -87,9 +90,12 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.ows.xml.DomainMetadata;
 import org.geotoolkit.wps.xml.WPSXmlFactory;
 import org.geotoolkit.storage.DataStores;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_PATH;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_URL;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Property;
@@ -1009,5 +1015,35 @@ public class WPSConvertersUtils {
         final Path tmpFilePath = Files.createTempFile(UUID.randomUUID().toString(), ".json");
         IOUtilities.writeString(fileContent, tmpFilePath);
         return tmpFilePath;
+    }
+
+    /**
+     * Encode given feature type as a gml schema.
+     *
+     * @param schema The feature type to create a schema for.
+     * @param convertParams Parameters giving output directory, and URL for
+     * accessing it. They must be named according to {@link #TMP_DIR_PATH} and {@link #TMP_DIR_URL}.
+     *
+     * @return The public URL to use to access written gml schema.
+     * @throws IOException If we cannot create nor write into given path.
+     * @throws JAXBException If we cannot transform given type to gml.
+     */
+    public static String writeSchema(final FeatureType schema, final Map convertParams) throws IOException, JAXBException {
+        Object tmpDir = convertParams.get(TMP_DIR_PATH);
+        Object tmpUrl = convertParams.get(TMP_DIR_URL);
+        if (!(tmpDir instanceof String)) {
+            throw new UnconvertibleObjectException("Missing parameter : output directory");
+        } else if (!(tmpUrl instanceof String)) {
+            throw new UnconvertibleObjectException("Missing parameter : output URL");
+        }
+
+        final String schemaFileName = "schema_" + UUID.randomUUID().toString() + ".xsd";
+        final Path output = Paths.get((String) tmpDir, schemaFileName);
+        try (final OutputStream stream = Files.newOutputStream(output, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW)) {
+            //write featureType xsd on file
+            final JAXBFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
+            xmlFTWriter.write(schema, stream);
+        }
+        return tmpUrl + "/" + schemaFileName;
     }
 }

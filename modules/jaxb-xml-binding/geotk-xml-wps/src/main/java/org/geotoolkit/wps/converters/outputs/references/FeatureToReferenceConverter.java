@@ -17,6 +17,9 @@
 package org.geotoolkit.wps.converters.outputs.references;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -26,7 +29,6 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
-import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
@@ -128,17 +130,7 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
                    WPSMimeType.TEXT_GML.val().equalsIgnoreCase(reference.getMimeType())) {
             //Write FeatureType
             try {
-                final String schemaFileName = randomFileName + "_schema" + ".xsd";
-
-                //create file
-                final File schemaFile = new File((String) params.get(TMP_DIR_PATH), schemaFileName);
-                final OutputStream schemaStream = new FileOutputStream(schemaFile);
-
-                //write featureType xsd on file
-                final JAXBFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
-                xmlFTWriter.write(ft, schemaStream);
-
-                reference.setSchema((String) params.get(TMP_DIR_URL) + "/" +schemaFileName);
+                reference.setSchema(WPSConvertersUtils.writeSchema(ft, params));
                 schemaLocation.put(namespace, reference.getSchema());
 
             } catch (JAXBException ex) {
@@ -148,38 +140,25 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
             }
 
             //Write Feature
-            XmlFeatureWriter featureWriter = null;
-            try {
+            final XmlFeatureWriter featureWriter = new JAXPStreamFeatureWriter(schemaLocation);
+            final String dataFileName = randomFileName+".xml";
 
-                final String dataFileName = randomFileName+".xml";
-
-                //create file
-                final File dataFile = new File((String) params.get(TMP_DIR_PATH), dataFileName);
-                final OutputStream dataStream = new FileOutputStream(dataFile);
-
+            //create file
+            final Path dataFile = Paths.get((String) params.get(TMP_DIR_PATH), dataFileName);
+            try (final OutputStream dataStream = Files.newOutputStream(dataFile);
+                    final AutoCloseable xmlCloser = () -> featureWriter.dispose()) {
                 //Write feature in file
-                featureWriter = new JAXPStreamFeatureWriter(schemaLocation);
                 featureWriter.write(source, dataStream);
                 reference.setHref(params.get(TMP_DIR_URL) + "/" +dataFileName);
 
-            } catch (IOException ex) {
-                throw new UnconvertibleObjectException(ex);
             } catch (XMLStreamException ex) {
                 throw new UnconvertibleObjectException("Stax exception while writing the feature collection", ex);
             } catch (DataStoreException ex) {
                 throw new UnconvertibleObjectException("FeatureStore exception while writing the feature collection", ex);
             } catch (FeatureStoreRuntimeException ex) {
                 throw new UnconvertibleObjectException("FeatureStoreRuntimeException exception while writing the feature collection", ex);
-            } finally {
-                try {
-                    if (featureWriter != null) {
-                        featureWriter.dispose();
-                    }
-                } catch (IOException ex) {
-                     throw new UnconvertibleObjectException(ex);
-                } catch (XMLStreamException ex) {
-                     throw new UnconvertibleObjectException(ex);
-                }
+            } catch (Exception ex) {
+                throw new UnconvertibleObjectException(ex);
             }
         }
         else
