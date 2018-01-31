@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.referencing.createdb;
 
 import java.util.Collections;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -54,7 +53,7 @@ public class CreateDBProcess extends AbstractProcess {
             try (Connection c = ds.getConnection(user, password)) {
                 installer.install(c);
             }
-        } catch (FactoryException | SQLException | IOException ex) {
+        } catch (FactoryException | SQLException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
     }
