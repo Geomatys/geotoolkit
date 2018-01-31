@@ -150,19 +150,15 @@ public class ExportItem extends TreeMenuItem {
                                 final File file= new File(folder, inTypeName+factory.getFileExtensions()[0]);
 
                                 //create output store
-                                final FeatureStore store = factory.createDataStore(file.toURI());
-
-                                //create output type
-                                store.createFeatureType(inType);
-                                final FeatureType outType = store.getFeatureType(inTypeName);
-                                final GenericName outName = outType.getName();
-
-                                //write datas
-                                final Session session = store.createSession(false);
-                                session.addFeatures(outName.toString(), col);
-
-                                //close store
-                                store.close();
+                                try (FeatureStore store = factory.createDataStore(file.toURI())) {
+                                    //create output type
+                                    store.createFeatureType(inType);
+                                    final FeatureType outType = store.getFeatureType(inTypeName);
+                                    final GenericName outName = outType.getName();
+                                    //write datas
+                                    final Session session = store.createSession(false);
+                                    session.addFeatures(outName.toString(), col);
+                                }
                             }
 
                         } catch (DataStoreException ex) {
