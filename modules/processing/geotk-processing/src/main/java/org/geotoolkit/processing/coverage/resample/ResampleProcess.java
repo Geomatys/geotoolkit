@@ -55,8 +55,8 @@ import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
 
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
-import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.BufferedImages;
 import org.opengis.coverage.grid.GridCoverage;
@@ -365,7 +365,8 @@ public class ResampleProcess extends AbstractProcess {
          *                   ^              ^
          *                 step 1         step 3
          */
-        MathTransform allSteps, allSteps2D;
+        MathTransform allSteps;
+        MathTransform2D allSteps2D;
         final MathTransform step1, step2, step3;
         final boolean canUseGrid;
         if (Utilities.equalsIgnoreMetadata(sourceCRS, targetCRS)) {
@@ -453,12 +454,7 @@ public class ResampleProcess extends AbstractProcess {
             allSteps = mtFactory.createConcatenatedTransform(
                        mtFactory.createConcatenatedTransform(step1, step2), step3);
         }
-        allSteps2D = toMathTransform2D(allSteps, mtFactory, targetGG);
-        if (!(allSteps2D instanceof MathTransform2D)) {
-            // Should not happen with Geotk implementations. May happen
-            // with some external implementations, but should stay unusual.
-            throw new TransformException(Errors.format(Errors.Keys.NoTransform2dAvailable));
-        }
+        allSteps2D = toMathTransform2D(allSteps, mtFactory, new int[]{targetGG.gridDimensionX, targetGG.gridDimensionY}, new int[]{sourceGG.gridDimensionX, sourceGG.gridDimensionY});
 
         ////////////////////////////////////////////////////////////////////////////////////////
         ////                                                                                ////
@@ -649,22 +645,23 @@ public class ResampleProcess extends AbstractProcess {
      */
     private static MathTransform2D toMathTransform2D(final MathTransform        transform,
                                                      final MathTransformFactory mtFactory,
-                                                     final GridGeometry2D       sourceGG)
+                                                     final int[]                sourceDims,
+                                                     final int[]                targetDims)
             throws FactoryException
     {
-        final DimensionFilter filter = new DimensionFilter(transform, mtFactory);
-        filter.addSourceDimensions(sourceGG.axisDimensionX,
-                                   sourceGG.axisDimensionY);
+        final TransformSeparator filter = new TransformSeparator(transform, mtFactory);
+        filter.addSourceDimensions(sourceDims);
+        filter.addTargetDimensions(targetDims);
         MathTransform candidate = filter.separate();
         if (candidate instanceof MathTransform2D) {
             return (MathTransform2D) candidate;
         }
-        filter.addTargetDimensions(sourceGG.axisDimensionX,
-                                   sourceGG.axisDimensionY);
-        candidate = filter.separate();
-        if (candidate instanceof MathTransform2D) {
-            return (MathTransform2D) candidate;
-        }
+//        filter.addTargetDimensions(sourceGG.axisDimensionX,
+//                                   sourceGG.axisDimensionY);
+//        candidate = filter.separate();
+//        if (candidate instanceof MathTransform2D) {
+//            return (MathTransform2D) candidate;
+//        }
         throw new FactoryException(Errors.format(Errors.Keys.NoTransform2dAvailable));
     }
 

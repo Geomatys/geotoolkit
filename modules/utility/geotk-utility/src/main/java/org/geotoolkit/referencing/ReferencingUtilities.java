@@ -526,7 +526,7 @@ public final class ReferencingUtilities {
 
         if (originalCRS instanceof CompoundCRS) {
             final CompoundCRS ccrs = (CompoundCRS) originalCRS;
-            final CoordinateReferenceSystem part2D = CRSUtilities.getCRS2D(originalCRS);
+            final CoordinateReferenceSystem part2D = CRS.getHorizontalComponent(originalCRS);
             final List<CoordinateReferenceSystem> lst = new ArrayList<>();
             for (CoordinateReferenceSystem c : ccrs.getComponents()) {
                 if (c.equals(part2D)) {
