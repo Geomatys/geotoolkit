@@ -31,3 +31,4 @@ import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.apache.sis.internal.jaxb.gco.*;
+import org.geotoolkit.resources.jaxb.feature.catalog.GO_Decimal32;
