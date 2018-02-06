@@ -19,8 +19,9 @@ package org.geotoolkit.gui.javafx.util;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TextInputControl;
@@ -45,8 +46,6 @@ public class PathCompletor extends TextFieldCompletion {
 
     @Override
     protected ObservableList<String> getChoices(final String text) {
-        final ArrayList<String> result = new ArrayList<>();
-
         try {
             final Path origin;
             if (root == null) {
@@ -63,22 +62,32 @@ public class PathCompletor extends TextFieldCompletion {
                 }
             }
 
+            final Stream<Path> suggestions;
             if (Files.isRegularFile(origin)) {
-                result.add(toString(origin));
+                suggestions = Stream.of(origin);
             } else if (Files.isDirectory(origin)) {
-                Files.walk(origin, 1).forEach((final Path child) -> result.add(toString(child)));
+                suggestions = Files.walk(origin, 1);
             } else if (Files.isDirectory(origin.getParent())) {
                 final String fileStart = origin.getFileName().toString().toLowerCase();
-                Files.walk(origin.getParent(), 1)
+                suggestions = Files.walk(origin.getParent(), 1)
                         .filter((final Path p) -> {
                             return (p.getFileName() != null && p.getFileName().toString().toLowerCase().startsWith(fileStart));
-                        })
-                        .forEach((final Path child) -> result.add(toString(child)));
+                        });
+            } else {
+                suggestions = Stream.empty();
+            }
+
+            try (final Stream<Path> stream = suggestions) {
+                return FXCollections.observableList(
+                        stream
+                                .map(this::toString)
+                                .collect(Collectors.toList())
+                );
             }
         } catch (Exception e) {
             Loggers.JAVAFX.log(Level.FINE, "Cannot find completion for input path", e);
+            return FXCollections.observableArrayList();
         }
-        return FXCollections.observableList(result);
     }
 
     protected String toString(Path p) {
