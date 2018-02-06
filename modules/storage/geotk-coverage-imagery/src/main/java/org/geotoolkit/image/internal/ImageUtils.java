@@ -17,7 +17,6 @@
 package org.geotoolkit.image.internal;
 
 import java.util.Arrays;
-import java.util.Hashtable;
 
 import java.awt.Dimension;
 import java.awt.Transparency;
@@ -37,8 +36,6 @@ import javax.imageio.ImageTypeSpecifier;
 
 import org.geotoolkit.image.color.ScaledColorSpace;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.lang.Static;
 
 import static org.geotoolkit.image.internal.PlanarConfiguration.INTERLEAVED;
@@ -969,41 +966,6 @@ public class ImageUtils extends Static {
 
         return new ComponentScaledColorModel(cs, bits, hasAlpha, isAlphaPreMultiplied,
                 hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, dataBufferType);
-    }
-
-    /**
-     * Returns {@link BufferedImage} with the {@link ColorModel} replaced by another better color model if it is possible.<br>
-     * This method is efficient only for float or double {@linkplain SampleModel#getDataType() data buffer type}.<br><br>
-     *
-     * In java 2d when {@link ColorSpace} is define for float or double values, rasters values will not be able to greater than 1.<br>
-     * This method replace current color model from Buffered image parameter with an appropriate {@link ScaledColorSpace}.
-     *
-     * @param image study image.
-     * @return image with color model updated or not.
-     */
-    public static BufferedImage replaceFloatingColorModel(final BufferedImage image) {
-        final int databufferType = image.getSampleModel().getDataType();
-        final ColorModel cm = image.getColorModel();
-        if ((DataBuffer.TYPE_FLOAT != databufferType && DataBuffer.TYPE_DOUBLE != databufferType)
-          || (cm instanceof IndexColorModel))
-            return image;
-
-        double min = Double.POSITIVE_INFINITY;
-        double max = Double.NEGATIVE_INFINITY;
-        final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(image);
-        while (pix.next()) {
-            min = StrictMath.min(min, pix.getSampleDouble());
-            max = StrictMath.max(max, pix.getSampleDouble());
-        }
-
-        //-- ici si les valeur min et max sont entre [0; 1] faire un colorSpace cs_gray
-
-        final ColorSpace cs = new ScaledColorSpace(cm.getNumComponents(), 0, min, max);
-
-        final ComponentColorModel cm2 = new ComponentColorModel(cs, cm.hasAlpha(), false, (cm.hasAlpha())
-                                                                                    ? Transparency.TRANSLUCENT
-                                                                                    : Transparency.OPAQUE, databufferType);
-        return new BufferedImage(cm2, image.getRaster(), image.isAlphaPremultiplied(), new Hashtable<>());
     }
 
     static class ComponentScaledColorModel extends ComponentColorModel {
