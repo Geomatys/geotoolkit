@@ -134,7 +134,7 @@ public class ImageStatistics implements Serializable{
             return histogram;
         }
 
-        public Map<Double, Long> getDistribution() {
+        public SortedMap<Double, Long> getDistribution() {
 
             int nbBins = histogram.length;
             final Map<Double, Long> map = new HashMap(nbBins);

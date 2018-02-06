@@ -511,7 +511,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     sampleMin = sampleMax = Double.NaN;
                 }
 
-                final boolean coherentSampleDimensions = packedDim.getMinimumValue() > sampleMin || packedDim.getMaximumValue() < sampleMax;
+                final boolean coherentSampleDimensions = packedDim.getMinimumValue() > sampleMin && packedDim.getMaximumValue() < sampleMax;
 
                 if (coherentSampleDimensions) {
                     recolor = create(PaletteFactory.getDefault().getColors("grayscale"), sampleDims[0].getNoDataValues(), sampleDims[0].getMinimumValue(), sampleDims[0].getMaximumValue());
@@ -619,27 +619,16 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
                 assert rgbNumBand <= nbBands;
 
-                final int[] bands       = new int[]{-1, -1, -1, -1};
-                final double[][] ranges = new double[][]{{-1, -1},
-                                                         {-1, -1},
-                                                         {-1, -1},
-                                                         {-1, -1}};
+                final double[][] ranges = buildRanges(analyse);
+                final int[] bands = new int[ranges.length];
+                for (int i = 0 ; i < rgbNumBand ; i++) {
+                    bands[i] = i;
+                }
 
-                for (int b = 0; b < rgbNumBand; b++) {
-                    final ImageStatistics.Band bandb = analyse.getBand(b);
-                    double min = bandb.getMin();
-                    double max = bandb.getMax();
-                    final Double mean = bandb.getMean();
-                    final Double std = bandb.getStd();
-                    if (mean != null && std != null) {
-                        min = Math.max(min, mean - 2 * std);
-                        max = Math.min(max, mean + 2 * std);
-                    }
-                    assert Double.isFinite(min) : "Raster Style fallback : minimum value should be finite. min = "+min;
-                    assert Double.isFinite(max) : "Raster Style fallback : maximum value should be finite. max = "+max;
-                    bands[b] = b;
-                    ranges[b][0] = min;
-                    ranges[b][1] = max;
+                // De-activate stretching on bands not used for rgb coloration
+                for (int b = rgbNumBand; b < ranges.length; b++) {
+                    bands[b] = -1;
+                    ranges[b][1] = ranges[b][0] = -1;
                 }
 
                 final DynamicRangeStretchProcess p = new DynamicRangeStretchProcess(ri, bands, ranges);
@@ -779,7 +768,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                             final double min = findExtremum(minArray, true);
                             final double max = findExtremum(maxArray, false);
 
-                            final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();
+                            final List<InterpolationPoint> values = new ArrayList<>();
                             values.add(new DefaultInterpolationPoint(Double.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
                             values.add(new DefaultInterpolationPoint(min, GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
                             values.add(new DefaultInterpolationPoint(max, GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
@@ -904,7 +893,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 };
 
                 final Filter filter = query.getFilter();
-                values = (Map<String,Double>) filter.accept(fv, new HashMap<String, Double>());
+                values = (Map<String,Double>) filter.accept(fv, new HashMap<>());
             }
         }
         return values;
@@ -916,8 +905,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @param coverage
      * @param elevationModel
      * @return a Digital Elevation Model from source {@link ElevationModel} parameter in function of coverage parameter properties.
-     * @throws FactoryException
-     * @throws TransformException
+     * @throws FactoryException If we cannot determine a conversion method between
+     * input coverage and DEM spaces.
+     * @throws TransformException If we cannot determine input coverage location
+     * in DEM space.
+     * @throws CoverageStoreException If an error occurs while reading DEM
      */
     public static GridCoverage2D getDEMCoverage(final GridCoverage2D coverage, final ElevationModel elevationModel) throws FactoryException, TransformException, CoverageStoreException {
 
@@ -928,7 +920,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final GridEnvelope2D covExtend         = covGridGeom.getExtent2D();
         final CoordinateReferenceSystem covCRS = coverage.getCoordinateReferenceSystem2D();
         final Envelope2D covEnv2d              = coverage.getGridGeometry().getEnvelope2D();
-        final double[] covResolution           = coverage.getGridGeometry().getResolution();
 
         final GridCoverageReader elevationReader = elevationModel.getCoverageReader();
         final GeneralGridGeometry elevGridGeom   = elevationReader.getGridGeometry(0);
@@ -949,6 +940,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final GridCoverageReadParam gcrp = new GridCoverageReadParam();
         gcrp.setCoordinateReferenceSystem(demCRS);
         gcrp.setEnvelope(readParamEnv);
+        // TODO : set resolution
 
         final GridCoverage2D dem = (GridCoverage2D) elevationReader.read(0, gcrp);
         return getDEMCoverage(coverage, dem);
@@ -1324,5 +1316,63 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
         final Function function = SF.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP, values, Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK);
         return GO2Utilities.STYLE_FACTORY.colorMap(function);
+    }
+
+    /**
+     * Check given image statistics to find extremums to use for color interpretation.
+     *
+     * @implNote : Current code uses statistics min and max values directly only
+     * if no histogram with more than 3 values is available. Otherwise, we try to
+     * restrain extremums by ignoring 2% of extremum values. Note that we don't
+     * use standard deviation to build extremums, because in practice, it's very
+     * difficult to obtain coherent extremums using this information.
+     *
+     * @param stats Ready-to-use image statistics.
+     * @return A 2D array, whose first dimension represents band indices, and
+     * second dimension has 2 values : chosen minimum at index 0 and maximum at
+     * index 1. Never null. Empty only if input statistics has no band defined.
+     */
+    private static double[][] buildRanges(final ImageStatistics stats) {
+        final ImageStatistics.Band[] bands = stats.getBands();
+        final double[][] ranges = new double[bands.length][2];
+        for (int bandIdx = 0 ; bandIdx < bands.length ; bandIdx++) {
+            ranges[bandIdx][0] = Double.NEGATIVE_INFINITY;
+            ranges[bandIdx][1] = Double.POSITIVE_INFINITY;
+            final ImageStatistics.Band b = bands[bandIdx];
+            final long[] histogram = b.getHistogram();
+            // We remove extremums only if we've got a coherent histogram (contains more than just min/mean/max)
+            if (histogram != null && histogram.length > 3) {
+                final long valueCount = Arrays.stream(histogram).sum();
+                final long twoPercent = Math.round(valueCount * 0.02);
+                final double histogramStep = (b.getMax() - b.getMin()) / histogram.length;
+                long currentSum = 0;
+                for (int i = 0 ; i < histogram.length ; i++) {
+                    currentSum += histogram[i];
+                    if (currentSum > twoPercent) {
+                        ranges[bandIdx][0] = b.getMin() + histogramStep * i;
+                        break;
+                    }
+                }
+
+                currentSum = 0;
+                for (int i = histogram.length -1 ; i > 0 ; i--) {
+                    currentSum += histogram[i];
+                    if (currentSum > twoPercent) {
+                        ranges[bandIdx][1] = b.getMax() - histogramStep * i;
+                        break;
+                    }
+                }
+            }
+
+            if (!Double.isFinite(ranges[bandIdx][0])) {
+                ranges[bandIdx][0] = b.getMin();
+            }
+
+            if (!Double.isFinite(ranges[bandIdx][1])) {
+                ranges[bandIdx][1] = b.getMax();
+            }
+        }
+
+        return ranges;
     }
 }
