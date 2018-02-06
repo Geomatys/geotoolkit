@@ -619,18 +619,16 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
                 assert rgbNumBand <= nbBands;
 
-                final int[] bands       = new int[]{-1, -1, -1, -1};
-                final double[][] ranges = new double[][]{{-1, -1},
-                                                         {-1, -1},
-                                                         {-1, -1},
-                                                         {-1, -1}};
+                final double[][] ranges = buildRanges(analyse);
+                final int[] bands = new int[ranges.length];
+                for (int i = 0 ; i < rgbNumBand ; i++) {
+                    bands[i] = i;
+                }
 
-                for (int b = 0; b < rgbNumBand; b++) {
-                    final ImageStatistics.Band bandb = analyse.getBand(b);
-                    bands[b] = b;
-                    // We do not use standard deviation here. It makes sense only for physical phenomenon representation.
-                    ranges[b][0] = bandb.getMin();
-                    ranges[b][1] = bandb.getMax();
+                // De-activate stretching on bands not used for rgb coloration
+                for (int b = rgbNumBand; b < ranges.length; b++) {
+                    bands[b] = -1;
+                    ranges[b][1] = ranges[b][0] = -1;
                 }
 
                 final DynamicRangeStretchProcess p = new DynamicRangeStretchProcess(ri, bands, ranges);
@@ -1318,5 +1316,63 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
         final Function function = SF.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP, values, Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK);
         return GO2Utilities.STYLE_FACTORY.colorMap(function);
+    }
+
+    /**
+     * Check given image statistics to find extremums to use for color interpretation.
+     *
+     * @implNote : Current code uses statistics min and max values directly only
+     * if no histogram with more than 3 values is available. Otherwise, we try to
+     * restrain extremums by ignoring 2% of extremum values. Note that we don't
+     * use standard deviation to build extremums, because in practice, it's very
+     * difficult to obtain coherent extremums using this information.
+     *
+     * @param stats Ready-to-use image statistics.
+     * @return A 2D array, whose first dimension represents band indices, and
+     * second dimension has 2 values : chosen minimum at index 0 and maximum at
+     * index 1. Never null. Empty only if input statistics has no band defined.
+     */
+    private static double[][] buildRanges(final ImageStatistics stats) {
+        final ImageStatistics.Band[] bands = stats.getBands();
+        final double[][] ranges = new double[bands.length][2];
+        for (int bandIdx = 0 ; bandIdx < bands.length ; bandIdx++) {
+            ranges[bandIdx][0] = Double.NEGATIVE_INFINITY;
+            ranges[bandIdx][1] = Double.POSITIVE_INFINITY;
+            final ImageStatistics.Band b = bands[bandIdx];
+            final long[] histogram = b.getHistogram();
+            // We remove extremums only if we've got a coherent histogram (contains more than just min/mean/max)
+            if (histogram != null && histogram.length > 3) {
+                final long valueCount = Arrays.stream(histogram).sum();
+                final long twoPercent = Math.round(valueCount * 0.02);
+                final double histogramStep = (b.getMax() - b.getMin()) / histogram.length;
+                long currentSum = 0;
+                for (int i = 0 ; i < histogram.length ; i++) {
+                    currentSum += histogram[i];
+                    if (currentSum > twoPercent) {
+                        ranges[bandIdx][0] = b.getMin() + histogramStep * i;
+                        break;
+                    }
+                }
+
+                currentSum = 0;
+                for (int i = histogram.length -1 ; i > 0 ; i--) {
+                    currentSum += histogram[i];
+                    if (currentSum > twoPercent) {
+                        ranges[bandIdx][1] = b.getMax() - histogramStep * i;
+                        break;
+                    }
+                }
+            }
+
+            if (!Double.isFinite(ranges[bandIdx][0])) {
+                ranges[bandIdx][0] = b.getMin();
+            }
+
+            if (!Double.isFinite(ranges[bandIdx][1])) {
+                ranges[bandIdx][1] = b.getMax();
+            }
+        }
+
+        return ranges;
     }
 }
