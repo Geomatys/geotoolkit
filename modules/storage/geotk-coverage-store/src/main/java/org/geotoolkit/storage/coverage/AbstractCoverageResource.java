@@ -33,6 +33,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.metadata.ImageStatistics;
@@ -108,7 +109,12 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
             // Read a subset of the coverage, to compute approximative statistics
             GridCoverage coverage = null;
             try {
-                final GeneralGridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
+                GeneralGridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
+                // For multi-dimensional data, we get the first 2D slice available
+                GridGeometryIterator geometryIterator = new GridGeometryIterator(gridGeom);
+                if (geometryIterator.hasNext()) {
+                    gridGeom = geometryIterator.next();
+                }
                 if (gridGeom instanceof GridGeometry2D) {
                     final GridGeometry2D geom2d = (GridGeometry2D) gridGeom;
                     final double[] subsetResolution = new double[geom2d.getDimension()];

@@ -511,7 +511,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     sampleMin = sampleMax = Double.NaN;
                 }
 
-                final boolean coherentSampleDimensions = packedDim.getMinimumValue() > sampleMin || packedDim.getMaximumValue() < sampleMax;
+                final boolean coherentSampleDimensions = packedDim.getMinimumValue() > sampleMin && packedDim.getMaximumValue() < sampleMax;
 
                 if (coherentSampleDimensions) {
                     recolor = create(PaletteFactory.getDefault().getColors("grayscale"), sampleDims[0].getNoDataValues(), sampleDims[0].getMinimumValue(), sampleDims[0].getMaximumValue());
@@ -627,19 +627,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
                 for (int b = 0; b < rgbNumBand; b++) {
                     final ImageStatistics.Band bandb = analyse.getBand(b);
-                    double min = bandb.getMin();
-                    double max = bandb.getMax();
-                    final Double mean = bandb.getMean();
-                    final Double std = bandb.getStd();
-                    if (mean != null && std != null) {
-                        min = Math.max(min, mean - 2 * std);
-                        max = Math.min(max, mean + 2 * std);
-                    }
-                    assert Double.isFinite(min) : "Raster Style fallback : minimum value should be finite. min = "+min;
-                    assert Double.isFinite(max) : "Raster Style fallback : maximum value should be finite. max = "+max;
                     bands[b] = b;
-                    ranges[b][0] = min;
-                    ranges[b][1] = max;
+                    // We do not use standard deviation here. It makes sense only for physical phenomenon representation.
+                    ranges[b][0] = bandb.getMin();
+                    ranges[b][1] = bandb.getMax();
                 }
 
                 final DynamicRangeStretchProcess p = new DynamicRangeStretchProcess(ri, bands, ranges);
@@ -779,7 +770,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                             final double min = findExtremum(minArray, true);
                             final double max = findExtremum(maxArray, false);
 
-                            final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();
+                            final List<InterpolationPoint> values = new ArrayList<>();
                             values.add(new DefaultInterpolationPoint(Double.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
                             values.add(new DefaultInterpolationPoint(min, GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
                             values.add(new DefaultInterpolationPoint(max, GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
@@ -904,7 +895,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 };
 
                 final Filter filter = query.getFilter();
-                values = (Map<String,Double>) filter.accept(fv, new HashMap<String, Double>());
+                values = (Map<String,Double>) filter.accept(fv, new HashMap<>());
             }
         }
         return values;
@@ -916,8 +907,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @param coverage
      * @param elevationModel
      * @return a Digital Elevation Model from source {@link ElevationModel} parameter in function of coverage parameter properties.
-     * @throws FactoryException
-     * @throws TransformException
+     * @throws FactoryException If we cannot determine a conversion method between
+     * input coverage and DEM spaces.
+     * @throws TransformException If we cannot determine input coverage location
+     * in DEM space.
+     * @throws CoverageStoreException If an error occurs while reading DEM
      */
     public static GridCoverage2D getDEMCoverage(final GridCoverage2D coverage, final ElevationModel elevationModel) throws FactoryException, TransformException, CoverageStoreException {
 
@@ -928,7 +922,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final GridEnvelope2D covExtend         = covGridGeom.getExtent2D();
         final CoordinateReferenceSystem covCRS = coverage.getCoordinateReferenceSystem2D();
         final Envelope2D covEnv2d              = coverage.getGridGeometry().getEnvelope2D();
-        final double[] covResolution           = coverage.getGridGeometry().getResolution();
 
         final GridCoverageReader elevationReader = elevationModel.getCoverageReader();
         final GeneralGridGeometry elevGridGeom   = elevationReader.getGridGeometry(0);
@@ -949,6 +942,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final GridCoverageReadParam gcrp = new GridCoverageReadParam();
         gcrp.setCoordinateReferenceSystem(demCRS);
         gcrp.setEnvelope(readParamEnv);
+        // TODO : set resolution
 
         final GridCoverage2D dem = (GridCoverage2D) elevationReader.read(0, gcrp);
         return getDEMCoverage(coverage, dem);
