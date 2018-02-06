@@ -32,7 +32,7 @@ import java.util.logging.Level;
 import javax.sql.DataSource;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.ReprojectFeatureType;
+import org.geotoolkit.feature.ReprojectMapper;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
@@ -73,6 +73,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -417,7 +418,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
         if(reproject != null && !Utilities.equalsIgnoreMetadata(reproject, FeatureExt.getCRS(baseType))){
             try {
-                reader = FeatureStreams.decorate(reader, new ReprojectFeatureType(reader.getFeatureType(), reproject),query.getHints());
+                reader = FeatureStreams.decorate(reader, new ReprojectMapper(reader.getFeatureType(), reproject),query.getHints());
             } catch (MismatchedFeatureException ex) {
                 throw new DataStoreException(ex);
             }
@@ -425,7 +426,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
         //if we need to constraint type
         if(!returnedFeatureType.equals(queryFeatureType)){
-            reader = FeatureStreams.decorate(reader, returnedFeatureType, query.getHints());
+            reader = FeatureStreams.decorate(reader, new ViewMapper(type, query.getPropertyNames()), query.getHints());
         }
 
         return reader;

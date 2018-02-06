@@ -41,7 +41,7 @@ import java.util.Set;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.feature.ReprojectFeatureType;
+import org.geotoolkit.feature.ReprojectMapper;
 import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -169,11 +169,10 @@ public class MIFFeatureStore extends AbstractFeatureStore {
                 final FeatureCollection toWrite;
                 final FeatureType type = ((FeatureCollection)newFeatures).getType();
                 if(newFeatures instanceof FeatureCollection) {
-                    toWrite = FeatureStreams.decorate((FeatureCollection) newFeatures, new ReprojectFeatureType(type, manager.getWrittenCRS()));
+                    toWrite = FeatureStreams.decorate((FeatureCollection) newFeatures, new ReprojectMapper(type, manager.getWrittenCRS()));
                 } else {
-                    toWrite = FeatureStreams.decorate(
-                            FeatureStoreUtilities.collection(newFeatures.toArray(new Feature[newFeatures.size()])),
-                            new ReprojectFeatureType(type, manager.getWrittenCRS()));
+                    toWrite = FeatureStreams.decorate(FeatureStoreUtilities.collection(newFeatures.toArray(new Feature[newFeatures.size()])),
+                            new ReprojectMapper(type, manager.getWrittenCRS()));
                 }
                 addedFeatures = FeatureStoreUtilities.write(writer, toWrite);
             } else {

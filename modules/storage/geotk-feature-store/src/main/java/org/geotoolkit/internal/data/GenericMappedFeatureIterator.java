@@ -17,8 +17,7 @@
 
 package org.geotoolkit.internal.data;
 
-import org.apache.sis.feature.Features;
-import org.geotoolkit.feature.DecoratedFeatureType;
+import org.geotoolkit.feature.FeatureSetMapper;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
@@ -27,7 +26,6 @@ import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
-import org.geotoolkit.feature.FeatureExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -37,7 +35,7 @@ import org.opengis.feature.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @param <R>
  */
-public abstract class GenericDecoratedFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
+public abstract class GenericMappedFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
     protected final R iterator;
 
@@ -46,7 +44,7 @@ public abstract class GenericDecoratedFeatureIterator<R extends FeatureIterator>
      *
      * @param iterator FeatureReader to limit
      */
-    private GenericDecoratedFeatureIterator(final R iterator) {
+    private GenericMappedFeatureIterator(final R iterator) {
         this.iterator = iterator;
     }
 
@@ -79,30 +77,23 @@ public abstract class GenericDecoratedFeatureIterator<R extends FeatureIterator>
     /**
      * Decorate a FeatureReader.
      */
-    private static final class GenericRetypeFeatureReader extends GenericDecoratedFeatureIterator<FeatureReader> implements FeatureReader{
+    private static final class GenericMappedFeatureReader extends GenericMappedFeatureIterator<FeatureReader> implements FeatureReader{
 
-        private final FeatureType mask;
+        private final FeatureSetMapper mask;
 
-        private GenericRetypeFeatureReader(final FeatureReader reader, final FeatureType mask){
+        private GenericMappedFeatureReader(final FeatureReader reader, final FeatureSetMapper mask){
             super(reader);
             this.mask = mask;
         }
 
         @Override
         public Feature next() throws FeatureStoreRuntimeException {
-            if (mask instanceof DecoratedFeatureType) {
-                return ((DecoratedFeatureType)mask).newInstance(iterator.next());
-            } else {
-                //copy values
-                final Feature newInstance = mask.newInstance();
-                FeatureExt.copy(iterator.next(), newInstance, false);
-                return newInstance;
-            }
+            return mask.apply(iterator.next());
         }
 
         @Override
         public FeatureType getFeatureType() {
-            return mask;
+            return mask.getMappedType();
         }
 
         @Override
@@ -111,18 +102,18 @@ public abstract class GenericDecoratedFeatureIterator<R extends FeatureIterator>
         }
     }
 
-    private static final class GenericRetypeFeatureCollection extends WrapFeatureCollection{
+    private static final class GenericMappedFeatureCollection extends WrapFeatureCollection{
 
-        private final FeatureType mask;
+        private final FeatureSetMapper mask;
 
-        private GenericRetypeFeatureCollection(final FeatureCollection original, final FeatureType mask){
+        private GenericMappedFeatureCollection(final FeatureCollection original, final FeatureSetMapper mask){
             super(original);
             this.mask = mask;
         }
 
         @Override
         public FeatureType getType() {
-            return mask;
+            return mask.getMappedType();
         }
 
         @Override
@@ -144,21 +135,21 @@ public abstract class GenericDecoratedFeatureIterator<R extends FeatureIterator>
     /**
      * Decorate a feature reader.
      */
-    public static FeatureReader wrap(final FeatureReader reader, final FeatureType mask, final Hints hints){
+    public static FeatureReader wrap(final FeatureReader reader, final FeatureSetMapper mask, final Hints hints){
         final FeatureType original = reader.getFeatureType();
         if(mask.equals(original)){
             //same type mapping, no need to wrap it
             return reader;
         } else {
-            return new GenericRetypeFeatureReader(reader,mask);
+            return new GenericMappedFeatureReader(reader,mask);
         }
     }
 
     /**
      * Decorate a FeatureCollection.
      */
-    public static FeatureCollection wrap(final FeatureCollection original, final FeatureType mask){
-        return new GenericRetypeFeatureCollection(original, mask);
+    public static FeatureCollection wrap(final FeatureCollection original, final FeatureSetMapper mask){
+        return new GenericMappedFeatureCollection(original, mask);
     }
 
 }

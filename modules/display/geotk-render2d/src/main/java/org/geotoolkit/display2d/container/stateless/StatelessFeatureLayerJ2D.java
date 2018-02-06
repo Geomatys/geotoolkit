@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.feature.ViewFeatureType;
+import org.geotoolkit.feature.ViewMapper;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
@@ -601,7 +601,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             }
 
             try {
-                expected = new ViewFeatureType(schema, atts);
+                expected = new ViewMapper(schema, atts).getMappedType();
             } catch (MismatchedFeatureException ex) {
                 throw new PortrayalException(ex);
             }

@@ -80,6 +80,18 @@
         <artifactId>geotk-geometry</artifactId>
         <version>${project.version}</version>
     </dependency>
+    <dependency>
+        <groupId>org.apache.sis.non-free</groupId>
+        <artifactId>sis-epsg</artifactId>
+        <version>0.8</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.sis.non-free</groupId>
+        <artifactId>sis-embedded-data</artifactId>
+        <version>0.8</version>
+        <scope>test</scope>
+    </dependency>
   </dependencies>
 
 </project>
