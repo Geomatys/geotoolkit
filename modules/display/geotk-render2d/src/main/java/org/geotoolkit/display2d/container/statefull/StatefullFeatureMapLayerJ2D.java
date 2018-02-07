@@ -17,6 +17,8 @@
 
 package org.geotoolkit.display2d.container.statefull;
 
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreListener;
 import org.geotoolkit.data.FeatureStoreManagementEvent;
@@ -36,8 +38,12 @@ public class StatefullFeatureMapLayerJ2D extends StatefullMapLayerJ2D<FeatureMap
 
     public StatefullFeatureMapLayerJ2D(J2DCanvas canvas, FeatureMapLayer layer) {
         super(canvas, layer, false);
-        final Session session = layer.getCollection().getSession();
-        weakSessionListener.registerSource(session);
+
+        final FeatureSet resource = layer.getResource();
+        if (resource instanceof FeatureCollection) {
+            final Session session = ((FeatureCollection)resource).getSession();
+            weakSessionListener.registerSource(session);
+        }
     }
 
     @Override
@@ -46,7 +52,7 @@ public class StatefullFeatureMapLayerJ2D extends StatefullMapLayerJ2D<FeatureMap
 
     @Override
     public void contentChanged(FeatureStoreContentEvent event) {
-        if(item.isVisible() && getCanvas().isAutoRepaint()){
+        if (item.isVisible() && getCanvas().isAutoRepaint()) {
             update();
         }
     }

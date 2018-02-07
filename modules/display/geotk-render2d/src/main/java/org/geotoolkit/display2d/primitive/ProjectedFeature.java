@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -172,17 +173,11 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
             final Filter filter = FILTER_FACTORY.id(Collections.singleton(id));
             Feature feature = null;
 
-            final FeatureCollection collection =
-                    fml.getCollection().subset(
-                    QueryBuilder.filtered(fml.getCollection().getType().getName().toString(), filter));
+            final FeatureSet collection =
+                    fml.getResource().subset(
+                    QueryBuilder.filtered(fml.getResource().getType().getName().toString(), filter));
 
-            if(!collection.isEmpty()){
-                final FeatureIterator ite = collection.iterator();
-                if(ite.hasNext()){
-                    feature = ite.next();
-                }
-                ite.close();
-            }
+            feature = collection.features(false).findAny().orElse(null);
 
             if(feature == null){
                 //worst case, return the partial feature

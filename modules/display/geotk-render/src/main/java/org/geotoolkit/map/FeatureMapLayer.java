@@ -18,13 +18,14 @@ package org.geotoolkit.map;
 
 import java.util.Collection;
 import java.util.List;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.measure.Range;
+import org.apache.sis.storage.FeatureSet;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.util.Utilities;
+import org.opengis.filter.Id;
 
 /**
  * MapLayer holding a collection of features.
@@ -33,7 +34,7 @@ import org.apache.sis.util.Utilities;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
-public interface FeatureMapLayer extends CollectionMapLayer{
+public interface FeatureMapLayer extends MapLayer {
 
     public static final String PROP_EXTRA_DIMENSIONS = "extra_dims";
 
@@ -42,9 +43,19 @@ public interface FeatureMapLayer extends CollectionMapLayer{
      *
      * @return The features for this layer, can not be null.
      */
-    @Override
-    FeatureCollection getCollection();
+    FeatureSet getResource();
 
+    /**
+     * A separate filter for datas that are selected on this layer.
+     * @return Filter, can be null or empty.
+     */
+    Id getSelectionFilter();
+
+    /**
+     * Set the selection filter.
+     * @param filter Id
+     */
+    void setSelectionFilter(Id filter);
 
     /**
      * Returns the definition query (filter) for this layer. If no definition

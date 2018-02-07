@@ -20,6 +20,7 @@ import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.content.DefaultFeatureCatalogueDescription;
 import org.apache.sis.metadata.iso.content.DefaultFeatureTypeInfo;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.storage.Resource;
 import org.opengis.metadata.Metadata;
@@ -44,6 +45,17 @@ public interface FeatureSet extends Resource, org.apache.sis.storage.FeatureSet 
         metadata.getContentInfo().add(fcd);
         return metadata;
     }
+
+    @Override
+    default org.apache.sis.storage.FeatureSet subset(org.apache.sis.storage.Query query) throws UnsupportedQueryException, DataStoreException {
+        if (query instanceof Query) {
+            return subset((Query)query);
+        } else {
+            throw new UnsupportedQueryException("Unsupported query type "+query);
+        }
+    }
+
+
 
     /**
      * Request a subset of features from this resource.

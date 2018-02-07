@@ -81,7 +81,7 @@ public class LayerStylePropertyPanel extends MultiPropertyPanel {
                 mimic = MapBuilder.createCoverageLayer(original.getCoverageReference());
             }else if(target instanceof FeatureMapLayer){
                 final FeatureMapLayer original = (FeatureMapLayer) target;
-                mimic = MapBuilder.createFeatureLayer(original.getCollection(), origLayer.getStyle());
+                mimic = MapBuilder.createFeatureLayer(original.getResource(), origLayer.getStyle());
             }else{
                 mimic = MapBuilder.createEmptyMapLayer();
             }

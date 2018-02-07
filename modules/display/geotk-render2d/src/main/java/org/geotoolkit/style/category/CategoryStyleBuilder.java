@@ -24,11 +24,14 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.Factory;
@@ -36,6 +39,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -112,8 +116,13 @@ public class CategoryStyleBuilder extends Factory {
         fts.rules().clear();
 
         properties.clear();
-        if(layer != null){
-            FeatureType schema = layer.getCollection().getType();
+        if (layer != null) {
+            FeatureType schema;
+            try {
+                schema = layer.getResource().getType();
+            } catch (DataStoreException ex) {
+                throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
+            }
 
             for(PropertyType desc : schema.getProperties(true)){
                 if(desc instanceof AttributeType){
@@ -268,14 +277,19 @@ public class CategoryStyleBuilder extends Factory {
         //search the different values
         final Set<Object> differentValues = new HashSet<Object>();
         final PropertyName property = currentProperty;
+        final FeatureSet resource = layer.getResource();
+
         final QueryBuilder builder = new QueryBuilder();
-        builder.setTypeName(layer.getCollection().getType().getName());
+        try {
+            builder.setTypeName(resource.getType().getName());
+        } catch (DataStoreException ex) {
+            ex.printStackTrace();
+        }
         builder.setProperties(new String[]{property.getPropertyName()});
         final Query query = builder.buildQuery();
 
-        FeatureIterator features = null;
-        try{
-            features = layer.getCollection().subset(query).iterator();
+        try (Stream<Feature> stream = resource.subset(query).features(false)){
+            final Iterator<Feature> features = stream.iterator();
             while(features.hasNext()){
                 final Feature feature = features.next();
                 differentValues.add(property.evaluate(feature));
@@ -284,10 +298,6 @@ public class CategoryStyleBuilder extends Factory {
             ex.printStackTrace();
         }catch(FeatureStoreRuntimeException ex){
             ex.printStackTrace();
-        }finally{
-            if(features != null){
-                features.close();
-            }
         }
 
         //generate the different rules

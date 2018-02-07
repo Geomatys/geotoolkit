@@ -170,8 +170,12 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
                 //not important
             }
         }else if(layer instanceof FeatureMapLayer){
-            final FeatureType sft = CellSymbolizer.buildCellType( ((FeatureMapLayer)layer).getCollection().getType(),null);
-            layer = MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection("", sft), GO2Utilities.STYLE_FACTORY.style());
+            try {
+                final FeatureType sft = CellSymbolizer.buildCellType( ((FeatureMapLayer)layer).getResource().getType(),null);
+                layer = MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection("", sft), GO2Utilities.STYLE_FACTORY.style());
+            } catch (DataStoreException ex) {
+                //not important
+            }
         }else{
             layer = null;
         }

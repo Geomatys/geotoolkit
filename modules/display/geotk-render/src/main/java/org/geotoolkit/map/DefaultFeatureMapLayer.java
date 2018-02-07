@@ -19,12 +19,13 @@ package org.geotoolkit.map;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
@@ -34,8 +35,14 @@ import org.geotoolkit.style.MutableStyle;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Range;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
+import static org.geotoolkit.map.MapLayer.SELECTION_FILTER_PROPERTY;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.opengis.feature.Feature;
+import org.opengis.filter.Filter;
+import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -46,8 +53,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements FeatureMapLayer {
+final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMapLayer {
 
+
+    private final FeatureSet collection;
+    protected Id selectionFilter = null;
     private Query query = null;
 
     private final List<DimensionDef> extraDims = new NotifiedCheckedList<DimensionDef>(DimensionDef.class) {
@@ -84,8 +94,29 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
      * @param collection : the data source for this layer
      * @param style : the style used to represent this layer
      */
-    DefaultFeatureMapLayer(final FeatureCollection collection, final MutableStyle style) {
-        super(collection,style);
+    DefaultFeatureMapLayer(final FeatureSet collection, final MutableStyle style) {
+        super(style);
+        ArgumentChecks.ensureNonNull("FeatureSet", collection);
+        this.collection = collection;
+    }
+
+    @Override
+    public Id getSelectionFilter(){
+        return selectionFilter;
+    }
+
+    @Override
+    public void setSelectionFilter(final Id filter){
+
+        final Filter oldfilter;
+        synchronized (this) {
+            oldfilter = this.selectionFilter;
+            if(Objects.equals(oldfilter, filter)){
+                return;
+            }
+            this.selectionFilter = filter;
+        }
+        firePropertyChange(SELECTION_FILTER_PROPERTY, oldfilter, this.selectionFilter);
     }
 
     /**
@@ -94,7 +125,11 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
     @Override
     public Query getQuery() {
         if(query == null){
-            query = QueryBuilder.all(getCollection().getType().getName());
+            try {
+                query = QueryBuilder.all(getResource().getType().getName());
+            } catch (DataStoreException ex) {
+                throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
+            }
         }
 
         return query;
@@ -129,8 +164,8 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
      * {@inheritDoc }
      */
     @Override
-    public FeatureCollection getCollection() {
-        return (FeatureCollection) super.getCollection();
+    public FeatureSet getResource() {
+        return collection;
     }
 
     /**
@@ -138,10 +173,11 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
      */
     @Override
     public Envelope getBounds() {
-        final FeatureCollection featureCol = getCollection();
-        final CoordinateReferenceSystem sourceCrs = FeatureExt.getCRS(featureCol.getType());
+        final FeatureSet featureCol = getResource();
+        CoordinateReferenceSystem sourceCrs = null;
         Envelope env = null;
         try {
+            sourceCrs = FeatureExt.getCRS(featureCol.getType());
             env = featureCol.getEnvelope();
         } catch (DataStoreException e) {
             LOGGER.log(Level.WARNING, "Could not create referecenced envelope.",e);
@@ -182,18 +218,19 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
         upper.accept(ListingPropertyVisitor.VISITOR, properties);
 
         final QueryBuilder qb = new QueryBuilder();
-        qb.setTypeName(getCollection().getType().getName());
+        qb.setTypeName(getResource().getType().getName());
         qb.setProperties(properties.toArray(new String[properties.size()]));
-        final FeatureCollection col = getCollection().subset(qb.buildQuery());
+        final FeatureSet col = getResource().subset(qb.buildQuery());
 
-        final FeatureIterator ite = col.iterator();
-        while(ite.hasNext()){
-            Feature f = ite.next();
-            final Comparable c1 = (Comparable) lower.evaluate(f);
-            final Comparable c2 = (Comparable) upper.evaluate(f);
-            values.add( new Range(Comparable.class, c1, true, c2, true));
+        try (Stream<Feature> stream = col.features(false)) {
+            final Iterator<Feature> ite = stream.iterator();
+            while(ite.hasNext()){
+                Feature f = ite.next();
+                final Comparable c1 = (Comparable) lower.evaluate(f);
+                final Comparable c2 = (Comparable) upper.evaluate(f);
+                values.add( new Range(Comparable.class, c1, true, c2, true));
+            }
         }
-        ite.close();
 
         return values;
     }

@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
 import javax.swing.ImageIcon;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.opengis.util.InternationalString;
 
@@ -76,7 +77,7 @@ public abstract class AbstractEditionTool implements EditionTool{
         if(clazz.isInstance(candidate)){
             if(candidate instanceof FeatureMapLayer){
                 final FeatureMapLayer fml = (FeatureMapLayer) candidate;
-                return fml.getCollection().isWritable();
+                return ((FeatureCollection)fml.getResource()).isWritable();
             }
             return true;
         }

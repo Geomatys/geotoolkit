@@ -58,7 +58,7 @@ public class DeleteSelectionAction extends AbstractAction {
         }
 
         layer = panel.getTarget();
-        final FeatureCollection collection = layer.getCollection();
+        final FeatureCollection collection = ((FeatureCollection)layer.getResource());
         if (collection.isWritable()) {
             final Filter fid = layer.getSelectionFilter();
             if (fid != null) {

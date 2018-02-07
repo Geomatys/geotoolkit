@@ -157,7 +157,7 @@ public class OwcDataStoreExtension extends OwcExtension {
     private static String getStoreFactoryName(MapLayer layer){
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            final Source source = fml.getCollection().getSource();
+            final Source source = ((FeatureCollection)fml.getResource()).getSource();
             if(source instanceof Selector){
                 final Selector selector = (Selector)source;
                 final Session session = selector.getSession();
@@ -186,7 +186,7 @@ public class OwcDataStoreExtension extends OwcExtension {
     private static ParameterValueGroup getParams(MapLayer layer){
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            final Source source = fml.getCollection().getSource();
+            final Source source = ((FeatureCollection)fml.getResource()).getSource();
             if(source instanceof Selector){
                 final Selector selector = (Selector)source;
                 final Session session = selector.getSession();
@@ -211,7 +211,7 @@ public class OwcDataStoreExtension extends OwcExtension {
     private static String getTypeName(MapLayer layer){
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            final Source source = fml.getCollection().getSource();
+            final Source source = ((FeatureCollection)fml.getResource()).getSource();
             if(source instanceof Selector){
                 final Selector selector = (Selector)source;
                 return selector.getFeatureTypeName();

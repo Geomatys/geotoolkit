@@ -29,6 +29,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.font.FontAwesomeIcons;
@@ -83,7 +84,7 @@ public abstract class FXExpression extends FXStyleElementController<Expression> 
                     if(ne!=null && !Objects.equals(ne, value.get())){
                         value.set(ne);
                     }
-                }catch(CQLException ex){
+                }catch(CQLException | DataStoreException ex){
                     ex.printStackTrace();
                 }
             }

@@ -35,7 +35,7 @@ import javafx.scene.text.TextAlignment;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
@@ -142,10 +142,13 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
                 final Object object = ti.getValue();
                 if(object instanceof FeatureMapLayer){
                     final FeatureMapLayer fml = (FeatureMapLayer) object;
-                    final Session session = fml.getCollection().getSession();
-                    weakListener.registerSource(session);
-                    if(session.hasPendingChanges()){
-                        setText(getText()+" *");
+                    final FeatureSet resource = fml.getResource();
+                    if (resource instanceof FeatureCollection) {
+                        final Session session = ((FeatureCollection)resource).getSession();
+                        weakListener.registerSource(session);
+                        if(session.hasPendingChanges()){
+                            setText(getText()+" *");
+                        }
                     }
                 }
             }
@@ -183,12 +186,7 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
 
     public static Image getTypeIcon(MapItem mapItem){
         if(mapItem instanceof FeatureMapLayer){
-            final FeatureStore store = ((FeatureMapLayer)mapItem).getCollection().getSession().getFeatureStore();
-            if(store!=null && store.getProvider() instanceof ClientFactory){
-                return ICON_SERVICE;
-            }else{
-                return ICON_VECTOR;
-            }
+            return ICON_VECTOR;
         }else if(mapItem instanceof CoverageMapLayer){
             final CoverageStore store = ((CoverageMapLayer)mapItem).getCoverageReference().getStore();
             if(store!=null && store.getProvider() instanceof ClientFactory){

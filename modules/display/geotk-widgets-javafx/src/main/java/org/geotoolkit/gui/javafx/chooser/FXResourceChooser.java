@@ -51,6 +51,15 @@ public class FXResourceChooser extends BorderPane{
         updateTree();
     }
 
+    public List<Resource> getSelected() {
+        final List<Resource> resources = new ArrayList<>();
+        final ObservableList<TreeItem<Resource>> selectedItems = treeTable.getSelectionModel().getSelectedItems();
+        for (TreeItem<Resource> item : selectedItems) {
+            resources.add(item.getValue());
+        }
+        return resources;
+    }
+
     private void updateTree() {
         if (resource==null) {
             treeTable.setRoot(null);

@@ -24,6 +24,7 @@ import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.TextAlignment;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.font.FontAwesomeIcons;
@@ -76,7 +77,7 @@ public class MapItemFilterColumn extends TreeTableColumn{
                         qb.setFilter(filter);
                         layer.setQuery(qb.buildQuery());
                     }
-                }catch(CQLException ex){
+                }catch(CQLException | DataStoreException ex){
                     Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
                 }
             }

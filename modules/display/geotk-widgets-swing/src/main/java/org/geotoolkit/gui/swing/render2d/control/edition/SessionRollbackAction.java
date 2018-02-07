@@ -21,6 +21,7 @@ package org.geotoolkit.gui.swing.render2d.control.edition;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
+import org.geotoolkit.data.FeatureCollection;
 
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreListener;
@@ -56,8 +57,10 @@ public class SessionRollbackAction extends AbstractAction implements FeatureStor
 
     @Override
     public boolean isEnabled() {
+        if (!(layer.getResource() instanceof FeatureCollection)) return false;
+        final FeatureCollection col = (FeatureCollection) layer.getResource();
         return super.isEnabled() && (layer != null)
-                && (layer.getCollection().getSession().hasPendingChanges());
+                && (col.getSession().hasPendingChanges());
     }
 
     public FeatureMapLayer getLayer() {
@@ -73,7 +76,8 @@ public class SessionRollbackAction extends AbstractAction implements FeatureStor
         firePropertyChange("enabled", !newst, newst);
 
         if(this.layer != null){
-            weakListener.registerSource(this.layer.getCollection().getSession());
+            final FeatureCollection col = (FeatureCollection) this.layer.getResource();
+            weakListener.registerSource(col.getSession());
         }
     }
 
@@ -86,7 +90,8 @@ public class SessionRollbackAction extends AbstractAction implements FeatureStor
                 @Override
                 public void run() {
                     try {
-                        layer.getCollection().getSession().rollback();
+                        final FeatureCollection col = (FeatureCollection) layer.getResource();
+                        col.getSession().rollback();
                     }finally{
                         putValue(SMALL_ICON, ICON_ROLLBACK);
                     }

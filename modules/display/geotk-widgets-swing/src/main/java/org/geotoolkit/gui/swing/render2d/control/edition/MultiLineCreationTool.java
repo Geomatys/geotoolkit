@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.render2d.control.edition;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiLineString;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
@@ -50,8 +51,8 @@ public class MultiLineCreationTool extends AbstractEditionTool {
 
         //check the geometry type is type Point
         final FeatureMapLayer layer = (FeatureMapLayer) candidate;
-        final FeatureType ft = layer.getCollection().getType();
         try {
+            final FeatureType ft = layer.getResource().getType();
             final Class geomClass = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(ft))
                     .map(AttributeType::getValueClass)
                     .orElse(null);
@@ -61,7 +62,7 @@ public class MultiLineCreationTool extends AbstractEditionTool {
             }
             return MultiLineString.class.isAssignableFrom(geomClass) ||
                     Geometry.class.equals(geomClass);
-        } catch (PropertyNotFoundException | IllegalStateException e) {
+        } catch (PropertyNotFoundException | IllegalStateException | DataStoreException e) {
             return false;
         }
     }

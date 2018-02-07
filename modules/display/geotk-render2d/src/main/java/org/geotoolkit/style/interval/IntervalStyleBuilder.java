@@ -25,16 +25,18 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 import javax.swing.table.AbstractTableModel;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -337,7 +339,12 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
 
         //search the different numeric attributs
-        FeatureType schema = layer.getCollection().getType();
+        final FeatureType schema;
+        try {
+            schema = layer.getResource().getType();
+        } catch (DataStoreException ex) {
+            throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
+        }
 
         for(PropertyType desc : schema.getProperties(true)){
             if(desc instanceof AttributeType){
@@ -375,7 +382,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
 
         //search the extreme values
-        final QueryBuilder query = new QueryBuilder(layer.getCollection().getType().getName().toString());
+        final QueryBuilder query = new QueryBuilder(schema.getName().toString());
 
         if(classification == null || layer == null) return;
         if(!properties.contains(classification)) return;
@@ -387,9 +394,9 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         }
         query.setProperties(qp.toArray(new String[0]));
 
-        FeatureIterator features = null;
-        try{
-            features = layer.getCollection().subset(query.buildQuery()).iterator();
+        Iterator<Feature> features = null;
+        try(Stream<Feature> stream = layer.getResource().subset(query.buildQuery()).features(false)){
+            features = stream.iterator();
             List<Double> values = new ArrayList<Double>();
 
             while(features.hasNext()){
@@ -439,10 +446,6 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
         }catch(DataStoreException ex){
             ex.printStackTrace();
-        }finally{
-            if(features != null){
-                features.close();
-            }
         }
 
     }

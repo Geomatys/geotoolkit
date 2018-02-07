@@ -52,6 +52,7 @@ import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 import org.apache.sis.measure.Units;
+import org.geotoolkit.feature.FeatureExt;
 
 /**
  * Random style builder. This is a convini class if you dont need special styles.
@@ -145,7 +146,8 @@ public class RandomStyleBuilder extends Factory {
         }catch(PropertyNotFoundException ex){
             return SF.style();
         }
-        final AttributeType type = (AttributeType) ((Operation)defAtt).getResult();
+        final AttributeType type = extractType(defAtt);
+        if (type == null) return SF.style();
         final Class cla = type.getValueClass();
 
         if (cla.equals(Polygon.class) || cla.equals(MultiPolygon.class)) {
@@ -196,7 +198,8 @@ public class RandomStyleBuilder extends Factory {
         }catch(PropertyNotFoundException ex){
             return SF.style();
         }
-        final AttributeType type = (AttributeType) ((Operation)defAtt).getResult();
+        final AttributeType type = extractType(defAtt);
+        if (type == null) return SF.style();
         final Class cla = type.getValueClass();
 
         if (cla.equals(Polygon.class) || cla.equals(MultiPolygon.class)) {
@@ -269,5 +272,16 @@ public class RandomStyleBuilder extends Factory {
      */
     public static Color randomColor() {
         return COLORS[((int) (Math.random() * COLORS.length))];
+    }
+
+    private static AttributeType extractType(PropertyType property) {
+        while (property instanceof Operation) {
+            property = (PropertyType) ((Operation)property).getResult();
+        }
+        if (property instanceof AttributeType) {
+            return (AttributeType) property;
+        } else {
+            return null;
+        }
     }
 }

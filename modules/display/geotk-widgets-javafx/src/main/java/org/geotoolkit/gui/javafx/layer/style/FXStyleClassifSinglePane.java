@@ -29,11 +29,13 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -62,10 +64,10 @@ import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
-import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -190,7 +192,7 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
                 combineFilter = f;
                 uiCombineFilter.setTooltip(new Tooltip(CQL.write(combineFilter)));
             }
-        } catch (CQLException ex) {
+        } catch (CQLException | DataStoreException ex) {
             Loggers.JAVAFX.log(Level.INFO, ex.getMessage(),ex);
         }
     }
@@ -340,14 +342,18 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         final ObservableList properties = FXCollections.observableArrayList();
 
         if(layer != null){
-            final FeatureType schema = layer.getCollection().getType();
-            for(PropertyType desc : schema.getProperties(true)){
-                if(desc instanceof AttributeType){
-                    final Class<?> type = ((AttributeType)desc).getValueClass();
-                    if(!Geometry.class.isAssignableFrom(type)){
-                        properties.add(GeotkFX.getFilterFactory().property(desc.getName().tip().toString()));
+            try {
+                final FeatureType schema = layer.getResource().getType();
+                for(PropertyType desc : schema.getProperties(true)){
+                    if(desc instanceof AttributeType){
+                        final Class<?> type = ((AttributeType)desc).getValueClass();
+                        if(!Geometry.class.isAssignableFrom(type)){
+                            properties.add(GeotkFX.getFilterFactory().property(desc.getName().tip().toString()));
+                        }
                     }
                 }
+            } catch (DataStoreException ex) {
+                Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
 
@@ -357,31 +363,35 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
     private Symbolizer generateTemplate(FeatureMapLayer layer){
         Symbolizer template = null;
 
-        if(layer != null){
-            final FeatureType schema = layer.getCollection().getType();
+        if (layer != null) {
+            try {
+                final FeatureType schema = layer.getResource().getType();
 
-            //find the geometry class for template
-            final AttributeType<?> geo = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(schema))
-                    .orElseThrow(() -> new IllegalArgumentException("No geometric property found in layer "+layer.getName()));
-            final Class<?> geoClass = geo.getValueClass();
+                //find the geometry class for template
+                final AttributeType<?> geo = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(schema))
+                        .orElseThrow(() -> new IllegalArgumentException("No geometric property found in layer "+layer.getName()));
+                final Class<?> geoClass = geo.getValueClass();
 
-            final MutableStyleFactory sf = GeotkFX.getStyleFactory();
-            final FilterFactory ff = GeotkFX.getFilterFactory();
+                final MutableStyleFactory sf = GeotkFX.getStyleFactory();
+                final FilterFactory ff = GeotkFX.getFilterFactory();
 
-            if(geoClass!=null && (Polygon.class.isAssignableFrom(geoClass) || MultiPolygon.class.isAssignableFrom(geoClass))){
-                final Stroke stroke = sf.stroke(Color.BLACK, 1);
-                final Fill fill = sf.fill(Color.BLUE);
-                template = sf.polygonSymbolizer(stroke,fill,null);
-            }else if(geoClass!=null && (LineString.class.isAssignableFrom(geoClass) || MultiLineString.class.isAssignableFrom(geoClass))){
-                final Stroke stroke = sf.stroke(Color.BLUE, 2);
-                template = sf.lineSymbolizer(stroke,null);
-            }else{
-                final Stroke stroke = sf.stroke(Color.BLACK, 1);
-                final Fill fill = sf.fill(Color.BLUE);
-                final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
-                symbols.add(sf.mark(StyleConstants.MARK_CIRCLE, fill, stroke));
-                final Graphic gra = sf.graphic(symbols, ff.literal(1), ff.literal(12), ff.literal(0), sf.anchorPoint(), sf.displacement());
-                template = sf.pointSymbolizer(gra, null);
+                if(geoClass!=null && (Polygon.class.isAssignableFrom(geoClass) || MultiPolygon.class.isAssignableFrom(geoClass))){
+                    final Stroke stroke = sf.stroke(Color.BLACK, 1);
+                    final Fill fill = sf.fill(Color.BLUE);
+                    template = sf.polygonSymbolizer(stroke,fill,null);
+                }else if(geoClass!=null && (LineString.class.isAssignableFrom(geoClass) || MultiLineString.class.isAssignableFrom(geoClass))){
+                    final Stroke stroke = sf.stroke(Color.BLUE, 2);
+                    template = sf.lineSymbolizer(stroke,null);
+                }else{
+                    final Stroke stroke = sf.stroke(Color.BLACK, 1);
+                    final Fill fill = sf.fill(Color.BLUE);
+                    final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
+                    symbols.add(sf.mark(StyleConstants.MARK_CIRCLE, fill, stroke));
+                    final Graphic gra = sf.graphic(symbols, ff.literal(1), ff.literal(12), ff.literal(0), sf.anchorPoint(), sf.displacement());
+                    template = sf.pointSymbolizer(gra, null);
+                }
+            } catch (DataStoreException ex) {
+                Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
 
@@ -478,27 +488,28 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
 
     private ObservableList<MutableRule> create(PropertyName property, boolean other){
         //search the different values
-        final Set<Object> differentValues = new HashSet<Object>();
+        final Set<Object> differentValues = new HashSet<>();
+        final FeatureSet resource = layer.getResource();
         final QueryBuilder builder = new QueryBuilder();
-        builder.setTypeName(layer.getCollection().getType().getName());
+        try {
+            builder.setTypeName(resource.getType().getName());
+        } catch (DataStoreException ex) {
+            Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
+            return FXCollections.observableArrayList();
+        }
         builder.setProperties(new String[]{property.getPropertyName()});
         final Query query = builder.buildQuery();
 
-        FeatureIterator features = null;
-        try{
-            features = layer.getCollection().subset(query).iterator();
+        try (Stream<Feature> stream = resource.subset(query).features(false)) {
+            final Iterator<Feature> features = stream.iterator();
             while(features.hasNext()){
                 final Feature feature = features.next();
                 differentValues.add(property.evaluate(feature));
             }
-        }catch(DataStoreException ex){
-            ex.printStackTrace();
-        }catch(FeatureStoreRuntimeException ex){
-            ex.printStackTrace();
-        }finally{
-            if(features != null){
-                features.close();
-            }
+        } catch(DataStoreException ex) {
+            Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
+        } catch(FeatureStoreRuntimeException ex) {
+            Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
         }
 
         final MutableStyleFactory sf = GeotkFX.getStyleFactory();
@@ -702,7 +713,7 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
                         public Filter apply(Filter t) {
                             try{
                                 return FXCQLEditor.showFilterDialog(null, layer, t);
-                            }catch(CQLException ex){
+                            }catch(CQLException | DataStoreException ex){
                                 ex.printStackTrace();
                             }
                             return t;
