@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.ReprojectFeatureType;
+import org.geotoolkit.feature.ReprojectMapper;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.FeatureReader;
@@ -83,7 +83,7 @@ class NetcdfFeatureReader implements FeatureReader {
                 if (firstCRS && isoGeom != null) {
                     //configure crs in the feature type
                     final CoordinateReferenceSystem crs = ((AbstractGeometry) isoGeom).getCoordinateReferenceSystem(false);
-                    type = new ReprojectFeatureType(type, crs);
+                    type = new ReprojectMapper(type, crs).getMappedType();
                     firstCRS = false;
                 }
                 final Feature f = type.newInstance();

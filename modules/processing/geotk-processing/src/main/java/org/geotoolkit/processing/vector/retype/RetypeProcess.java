@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.processing.vector.retype;
 
-import org.geotoolkit.feature.ViewFeatureType;
+import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.processing.AbstractProcess;
@@ -46,8 +46,8 @@ public class RetypeProcess extends AbstractProcess {
         final FeatureCollection inputFeatureList = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
         final FeatureType mask = inputParameters.getValue(RetypeDescriptor.MASK_IN);
         final FeatureCollection resultFeatureList;
-        if(mask instanceof ViewFeatureType){
-            resultFeatureList = FeatureStreams.decorate(inputFeatureList, (ViewFeatureType) mask);
+        if(mask instanceof ViewMapper){
+            resultFeatureList = FeatureStreams.decorate(inputFeatureList, (ViewMapper) mask);
         }else{
             resultFeatureList = inputFeatureList;
         }

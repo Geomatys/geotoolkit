@@ -19,9 +19,9 @@ package org.geotoolkit.internal.data;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.ReprojectFeatureType;
-import org.geotoolkit.feature.TransformFeatureType;
-import org.geotoolkit.feature.ViewFeatureType;
+import org.geotoolkit.feature.ReprojectMapper;
+import org.geotoolkit.feature.TransformMapper;
+import org.geotoolkit.feature.ViewMapper;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
@@ -104,7 +104,7 @@ public class GenericQueryFeatureIterator {
 
         if(properties!=null && !FeatureTypeExt.isAllProperties(original, properties)) {
             try {
-                reader = FeatureStreams.decorate(reader,  new ViewFeatureType(original, properties),hints);
+                reader = FeatureStreams.decorate(reader,  new ViewMapper(original, properties),hints);
             } catch (MismatchedFeatureException | IllegalStateException ex) {
                 throw new DataStoreException(ex);
             }
@@ -113,14 +113,14 @@ public class GenericQueryFeatureIterator {
         //wrap resampling ------------------------------------------------------
         if(resampling != null){
             final GeometryScaleTransformer trs = new GeometryScaleTransformer(resampling[0], resampling[1]);
-            final TransformFeatureType ttype = new TransformFeatureType(reader.getFeatureType(), trs);
+            final TransformMapper ttype = new TransformMapper(reader.getFeatureType(), trs);
             reader = FeatureStreams.decorate(reader, ttype, hints);
         }
 
         //wrap reprojection ----------------------------------------------------
         if(crs != null){
             try {
-                reader = FeatureStreams.decorate(reader, new ReprojectFeatureType(reader.getFeatureType(), crs), hints);
+                reader = FeatureStreams.decorate(reader, new ReprojectMapper(reader.getFeatureType(), crs), hints);
             } catch (MismatchedFeatureException ex) {
                 throw new DataStoreException(ex);
             }

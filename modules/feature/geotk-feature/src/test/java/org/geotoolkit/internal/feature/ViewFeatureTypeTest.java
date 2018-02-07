@@ -19,7 +19,7 @@ package org.geotoolkit.internal.feature;
 import java.util.Collection;
 import java.util.Collections;
 import org.apache.sis.feature.FeatureOperations;
-import org.geotoolkit.feature.ViewFeatureType;
+import org.geotoolkit.feature.ViewMapper;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -46,8 +46,8 @@ public class ViewFeatureTypeTest {
         final FeatureType baseType = ftb.build();
 
         //test view type
-        final ViewFeatureType viewType = new ViewFeatureType(baseType, "attDouble");
-        final Collection<? extends PropertyType> properties = viewType.getProperties(true);
+        final ViewMapper viewType = new ViewMapper(baseType, "attDouble");
+        final Collection<? extends PropertyType> properties = viewType.getMappedType().getProperties(true);
         assertEquals(1,properties.size());
         final PropertyType attDouble = properties.iterator().next();
         assertEquals(baseType.getProperty("attDouble"), attDouble);
@@ -57,7 +57,7 @@ public class ViewFeatureTypeTest {
         baseFeature.setPropertyValue("attString", "hello world");
         baseFeature.setPropertyValue("attDouble", 123.456);
 
-        final Feature viewFeature = viewType.newInstance(baseFeature);
+        final Feature viewFeature = viewType.apply(baseFeature);
         assertEquals(123.456, (Double)viewFeature.getPropertyValue("attDouble"), 0);
         try{
             viewFeature.getPropertyValue("attString");
@@ -76,20 +76,19 @@ public class ViewFeatureTypeTest {
         final FeatureType baseType = ftb.build();
 
         //test view type
-        final ViewFeatureType viewType = new ViewFeatureType(baseType, "attRef");
-        final Collection<? extends PropertyType> properties = viewType.getProperties(true);
+        final ViewMapper viewType = new ViewMapper(baseType, "attRef");
+        final Collection<? extends PropertyType> properties = viewType.getMappedType().getProperties(true);
         assertEquals(1,properties.size());
         final PropertyType attRef = properties.iterator().next();
-        assertTrue(attRef instanceof Operation);
+        assertTrue(attRef instanceof AttributeType);
         assertNotEquals(baseType.getProperty("attRef"), attRef);
 
         //test feature
         final Feature baseFeature = baseType.newInstance();
         baseFeature.setPropertyValue("attString", "hello world");
 
-        final Feature viewFeature = viewType.newInstance(baseFeature);
+        final Feature viewFeature = viewType.apply(baseFeature);
         assertEquals("hello world", viewFeature.getPropertyValue("attRef"));
-        assertEquals("hello world", ((Operation)attRef).apply(viewFeature, null).getValue());
         try{
             viewFeature.getPropertyValue("attString");
             fail("Property attString should not have been accessible");

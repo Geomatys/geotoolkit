@@ -350,7 +350,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
         try {
             return CRS_CACHE.getOrCreate(new AbstractMap.SimpleImmutableEntry<>(srsName, longitudeFirst), () -> GeometryTransformer.loadCRS(srsName, longitudeFirst));
         } catch (Exception ex) {
-            throw new UnconvertibleObjectException("Referencing information cannot be read", ex);
+            throw new UnconvertibleObjectException("Referencing information cannot be read."+ex.getMessage(), ex);
         }
     }
 

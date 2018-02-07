@@ -21,8 +21,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.ReprojectFeatureType;
-import org.geotoolkit.feature.ViewFeatureType;
+import org.geotoolkit.feature.ReprojectMapper;
+import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.storage.AbstractFeatureSet;
 import org.geotoolkit.storage.StorageListener;
 import org.opengis.feature.Feature;
@@ -55,10 +55,10 @@ final class SubsetFeatureResource extends AbstractFeatureSet implements FeatureS
             type = parent.getType();
             final String[] properties = query.getPropertyNames();
             if (properties!=null && FeatureTypeExt.isAllProperties(type, properties)) {
-                type = new ViewFeatureType(type, properties);
+                type = new ViewMapper(type, properties).getMappedType();
             }
             if(query.getCoordinateSystemReproject()!=null){
-                type = new ReprojectFeatureType(type, query.getCoordinateSystemReproject());
+                type = new ReprojectMapper(type, query.getCoordinateSystemReproject()).getMappedType();
             }
         }
         return type;

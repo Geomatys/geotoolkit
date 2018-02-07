@@ -19,12 +19,10 @@ package org.geotoolkit.data;
 import java.util.Comparator;
 import org.geotoolkit.internal.data.GenericModifyFeatureIterator;
 import org.geotoolkit.internal.data.GenericCachedFeatureIterator;
-import org.geotoolkit.internal.data.GenericDecoratedFeatureIterator;
 import org.geotoolkit.internal.data.GenericFilterFeatureIterator;
 import org.geotoolkit.internal.data.GenericFilterIterator;
 import org.geotoolkit.internal.data.GenericMaxFeatureIterator;
 import org.geotoolkit.internal.data.GenericQueryFeatureIterator;
-import org.geotoolkit.internal.data.GenericReprojectFeatureIterator;
 import org.geotoolkit.internal.data.GenericWrapFeatureIterator;
 import org.geotoolkit.internal.data.GenericSortByFeatureIterator;
 import org.geotoolkit.internal.data.GenericStartIndexFeatureIterator;
@@ -43,6 +41,9 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.SortByComparator;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureSetMapper;
+import org.geotoolkit.feature.ReprojectMapper;
+import org.geotoolkit.internal.data.GenericMappedFeatureIterator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -143,8 +144,8 @@ public final class FeatureStreams {
      * @param hints additional hints
      * @return decorated reader
      */
-    public static FeatureReader decorate(final FeatureReader reader, final FeatureType mask, Hints hints){
-        return GenericDecoratedFeatureIterator.wrap(reader, mask, hints);
+    public static FeatureReader decorate(final FeatureReader reader, final FeatureSetMapper mask, Hints hints){
+        return GenericMappedFeatureIterator.wrap(reader, mask, hints);
     }
 
     /**
@@ -154,8 +155,8 @@ public final class FeatureStreams {
      * @param mask FeatureType mask
      * @return decorated collection
      */
-    public static FeatureCollection decorate(final FeatureCollection col, final FeatureType mask){
-        return GenericDecoratedFeatureIterator.wrap(col, mask);
+    public static FeatureCollection decorate(final FeatureCollection col, final FeatureSetMapper mask){
+        return GenericMappedFeatureIterator.wrap(col, mask);
     }
 
     /**
@@ -305,7 +306,7 @@ public final class FeatureStreams {
      * @throws org.opengis.util.FactoryException if a transformation operation fails
      */
     public static FeatureReader reproject(final FeatureReader reader, final CoordinateReferenceSystem crs, final Hints hints) throws FactoryException {
-        return GenericReprojectFeatureIterator.wrap(reader, crs, hints);
+        return GenericMappedFeatureIterator.wrap(reader, new ReprojectMapper(reader.getFeatureType(), crs), hints);
     }
 
     /**
@@ -316,7 +317,7 @@ public final class FeatureStreams {
      * @return reprojected collection
      */
     public static FeatureCollection reproject(final FeatureCollection col, final CoordinateReferenceSystem crs){
-        return GenericReprojectFeatureIterator.wrap(col, crs);
+        return GenericMappedFeatureIterator.wrap(col, new ReprojectMapper(col.getType(), crs));
     }
 
     /**
