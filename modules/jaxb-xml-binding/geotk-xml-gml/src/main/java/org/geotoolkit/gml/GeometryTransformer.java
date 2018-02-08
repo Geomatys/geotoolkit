@@ -35,12 +35,15 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.gml.xml.AbstractCurveSegment;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.AbstractRing;
 import org.geotoolkit.gml.xml.AbstractRingProperty;
 import org.geotoolkit.gml.xml.AbstractSurface;
 import org.geotoolkit.gml.xml.Coordinates;
+import org.geotoolkit.gml.xml.Curve;
 import org.geotoolkit.gml.xml.CurveProperty;
+import org.geotoolkit.gml.xml.CurveSegmentArrayProperty;
 import org.geotoolkit.gml.xml.DirectPosition;
 import org.geotoolkit.gml.xml.DirectPositionList;
 import org.geotoolkit.gml.xml.Envelope;
@@ -135,6 +138,8 @@ public class GeometryTransformer implements Supplier<Geometry> {
             return accumulateAndBuild(GF::createLineString);
         } else if (source instanceof org.geotoolkit.gml.xml.LinearRing) {
             return accumulateAndBuild(GF::createLinearRing);
+        } else if (source instanceof Curve) {
+            return convertCurve((Curve) source);
         } else if (source instanceof Envelope) {
             return convertEnvelope((Envelope) source);
 
@@ -438,6 +443,34 @@ public class GeometryTransformer implements Supplier<Geometry> {
         final Polygon poly = GF.createPolygon((LinearRing) extRing, interiors);
         applyCRS(poly);
         return poly;
+    }
+
+    private MultiLineString convertCurve(final Curve mc) {
+        CurveSegmentArrayProperty segments = mc.getSegments();
+        final List<LineString> lines = new ArrayList<>();
+        for (AbstractCurveSegment cs : segments.getAbstractCurveSegment()) {
+
+            final DirectPositionList posList;
+            if (cs instanceof org.geotoolkit.gml.xml.v321.GeodesicStringType) {
+                posList = ((org.geotoolkit.gml.xml.v321.GeodesicStringType)cs).getPosList();
+            } else if (cs instanceof org.geotoolkit.gml.xml.v311.GeodesicStringType) {
+                posList = ((org.geotoolkit.gml.xml.v311.GeodesicStringType)cs).getPosList();
+            } else {
+                throw new UnconvertibleObjectException("Unsupported curve segment "+cs.getClass());
+            }
+
+            final List<Double> values = posList.getValue();
+            final Coordinate[] coordinates = new Coordinate[values.size()/2];
+            for (int i=0,x=0; i<coordinates.length; i++) {
+                coordinates[i] = new Coordinate(values.get(x++), values.get(x++));
+            }
+
+            lines.add(GF.createLineString(coordinates));
+        }
+
+        final MultiLineString mls = GF.createMultiLineString(lines.toArray(new LineString[lines.size()]));
+        applyCRS(mls);
+        return mls;
     }
 
     private MultiPoint convertMultiPoint(final org.geotoolkit.gml.xml.MultiPoint mp) {

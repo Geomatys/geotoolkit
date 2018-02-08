@@ -128,6 +128,7 @@ public class DirectPositionListType implements DirectPositionList {
      *     {@link Integer }
      *
      */
+    @Override
     public Integer getCount() {
         return count;
     }
@@ -152,6 +153,7 @@ public class DirectPositionListType implements DirectPositionList {
      *     {@link String }
      *
      */
+    @Override
     public String getSrsName() {
         return srsName;
     }
@@ -176,6 +178,7 @@ public class DirectPositionListType implements DirectPositionList {
      *     {@link Integer }
      *
      */
+    @Override
     public Integer getSrsDimension() {
         return srsDimension;
     }

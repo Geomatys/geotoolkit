@@ -21,13 +21,18 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import org.geotoolkit.gml.xml.v321.CurveSegmentArrayPropertyType;
+import org.geotoolkit.gml.xml.v321.CurveType;
 import org.geotoolkit.gml.xml.v321.DirectPositionListType;
 import org.geotoolkit.gml.xml.v321.DirectPositionType;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
+import org.geotoolkit.gml.xml.v321.GeodesicStringType;
 import org.geotoolkit.gml.xml.v321.LineStringType;
 import org.geotoolkit.gml.xml.v321.LinearRingType;
 import org.geotoolkit.gml.xml.v321.PointType;
@@ -188,6 +193,29 @@ public class GeometrytoJTSTest extends org.geotoolkit.test.TestBase {
 
         final Geometry result = GeometrytoJTS.toJTS(gml);
 
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void gmlGeodesicStringToJTSTest2D() throws Exception {
+
+        final DirectPositionListType posLst = new DirectPositionListType(
+                Arrays.asList(10.0,20.0,30.0,40.0,50.0,60.0));
+        final GeodesicStringType s = new GeodesicStringType();
+        s.setPosList(posLst);
+        final CurveSegmentArrayPropertyType segments = new CurveSegmentArrayPropertyType();
+        segments.setAbstractCurveSegment(s);
+        final CurveType curve = new CurveType();
+        curve.setSegments(segments);
+
+        final LineString line = GF.createLineString(new Coordinate[]{
+            new Coordinate(10, 20),
+            new Coordinate(30, 40),
+            new Coordinate(50, 60),
+        });
+        final MultiLineString expected = GF.createMultiLineString(new LineString[]{line});
+
+        final Geometry result = GeometrytoJTS.toJTS(curve);
         Assert.assertEquals(expected, result);
     }
 
