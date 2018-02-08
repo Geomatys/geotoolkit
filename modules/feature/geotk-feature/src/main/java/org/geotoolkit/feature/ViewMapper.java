@@ -18,6 +18,7 @@ package org.geotoolkit.feature;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -38,7 +39,6 @@ import org.opengis.feature.PropertyType;
  */
 public class ViewMapper extends FeatureSetMapper {
 
-    private final FeatureType base;
     private final Set<String> fullNames = new HashSet<>();
     private final FeatureType mapped;
 
@@ -49,7 +49,8 @@ public class ViewMapper extends FeatureSetMapper {
      * @param propertyNames properties to include in the feature type view
      */
     public ViewMapper(FeatureType base, String ... propertyNames) {
-        this(base, new HashSet<>(Arrays.asList(propertyNames)));
+        // Use of linked hash set is important for order preservation.
+        this(base, new LinkedHashSet<>(Arrays.asList(propertyNames)));
     }
     /**
      * Filter feature type properties.
@@ -58,8 +59,6 @@ public class ViewMapper extends FeatureSetMapper {
      * @param propertyNames properties to include in the feature type view
      */
     public ViewMapper(FeatureType base, Set<String> propertyNames) {
-        this.base = base;
-
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(base.getName());
         ftb.setDefinition(base.getDefinition());
