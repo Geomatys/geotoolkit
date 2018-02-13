@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
-import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -40,6 +39,8 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -48,7 +49,6 @@ import org.geotoolkit.style.interval.RandomPalette;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
@@ -76,6 +76,8 @@ import org.opengis.style.Symbolizer;
  * @module
  */
 public class CategoryStyleBuilder extends Factory {
+
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.style");
 
     private final MutableStyleFactory sf;
     private final FilterFactory ff;
@@ -137,9 +139,12 @@ public class CategoryStyleBuilder extends Factory {
             //find the geometry class for template
             Class<?> geoClass = null;
             try{
-                PropertyType geo = schema.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
-                geoClass = ((AttributeType)((Operation)geo).getResult()).getValueClass();
+                PropertyType geo = FeatureExt.getDefaultGeometry(schema);
+                geoClass = FeatureExt.castOrUnwrap(geo)
+                        .map(AttributeType::getValueClass)
+                        .orElse(null);
             }catch(PropertyNotFoundException ex){
+                LOGGER.log(Level.FINE, "No sis:geometry property found", ex);
             }
 
             if(geoClass==null){
@@ -158,7 +163,7 @@ public class CategoryStyleBuilder extends Factory {
             }else{
                 Stroke stroke = sf.stroke(Color.BLACK, 1);
                 Fill fill = sf.fill(Color.BLUE);
-                List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
+                List<GraphicalSymbol> symbols = new ArrayList<>();
                 symbols.add(sf.mark(StyleConstants.MARK_CIRCLE, fill, stroke));
                 Graphic gra = sf.graphic(symbols, ff.literal(1), ff.literal(12), ff.literal(0), sf.anchorPoint(), sf.displacement());
                 template = sf.pointSymbolizer(gra, null);
@@ -173,11 +178,11 @@ public class CategoryStyleBuilder extends Factory {
                 MutableFeatureTypeStyle fts = ftss.get(0);
 
                 //defensive copy avoid synchronization
-                List<MutableRule> candidateRules = new ArrayList<MutableRule>(fts.rules());
+                List<MutableRule> candidateRules = new ArrayList<>(fts.rules());
 
                 for(Rule r : candidateRules){
                     //defensive copy avoid synchronization
-                    List<? extends Symbolizer> candidateSymbols = new ArrayList<Symbolizer>(r.symbolizers());
+                    List<? extends Symbolizer> candidateSymbols = new ArrayList<>(r.symbolizers());
 
                     if(candidateSymbols.size() != 1) break;
 
@@ -275,7 +280,7 @@ public class CategoryStyleBuilder extends Factory {
 
     public List<MutableRule> create(){
         //search the different values
-        final Set<Object> differentValues = new HashSet<Object>();
+        final Set<Object> differentValues = new HashSet<>();
         final PropertyName property = currentProperty;
         final FeatureSet resource = layer.getResource();
 
@@ -283,7 +288,7 @@ public class CategoryStyleBuilder extends Factory {
         try {
             builder.setTypeName(resource.getType().getName());
         } catch (DataStoreException ex) {
-            ex.printStackTrace();
+            LOGGER.log(Level.FINE, "Error while accessing data", ex);
         }
         builder.setProperties(new String[]{property.getPropertyName()});
         final Query query = builder.buildQuery();
@@ -294,10 +299,8 @@ public class CategoryStyleBuilder extends Factory {
                 final Feature feature = features.next();
                 differentValues.add(property.evaluate(feature));
             }
-        }catch(DataStoreException ex){
-            ex.printStackTrace();
-        }catch(FeatureStoreRuntimeException ex){
-            ex.printStackTrace();
+        } catch (DataStoreException|FeatureStoreRuntimeException ex) {
+            LOGGER.log(Level.FINE, "Error while accessing data", ex);
         }
 
         //generate the different rules

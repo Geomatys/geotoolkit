@@ -16,14 +16,13 @@
  */
 package org.geotoolkit.map;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.data.query.Query;
@@ -208,12 +207,11 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
     }
 
     @Override
-    public Collection<Range> getDimensionRange(final DimensionDef def) throws DataStoreException{
-        final List<Range> values = new ArrayList<Range>();
+    public Collection<Range> getDimensionRange(final DimensionDef def) throws DataStoreException {
         final Expression lower = def.getLower();
         final Expression upper = def.getUpper();
 
-        final Set<String> properties = new HashSet<String>();
+        final Set<String> properties = new HashSet<>();
         lower.accept(ListingPropertyVisitor.VISITOR, properties);
         upper.accept(ListingPropertyVisitor.VISITOR, properties);
 
@@ -223,16 +221,17 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
         final FeatureSet col = getResource().subset(qb.buildQuery());
 
         try (Stream<Feature> stream = col.features(false)) {
-            final Iterator<Feature> ite = stream.iterator();
-            while(ite.hasNext()){
-                Feature f = ite.next();
-                final Comparable c1 = (Comparable) lower.evaluate(f);
-                final Comparable c2 = (Comparable) upper.evaluate(f);
-                values.add( new Range(Comparable.class, c1, true, c2, true));
-            }
+            return stream
+                    .map(f -> {
+                        return new Range(
+                                Comparable.class,
+                                lower.evaluate(f, Comparable.class),
+                                true,
+                                upper.evaluate(f, Comparable.class),
+                                true
+                        );
+                    })
+                    .collect(Collectors.toList());
         }
-
-        return values;
     }
-
 }

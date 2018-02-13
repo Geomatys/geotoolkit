@@ -23,7 +23,10 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -37,13 +40,14 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.FeatureType;
 import org.opengis.style.PointSymbolizer;
-import org.opengis.style.Rule;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 public class CellRendererService extends AbstractSymbolizerRendererService<CellSymbolizer,CachedCellSymbolizer>{
+
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display");
 
     private static final int HEADER_SIZE = 16;
     private static final Font HEADER_FONT = new Font("monospaced", Font.PLAIN, 11);
@@ -79,9 +83,6 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
 
         //fake layer
         final FeatureMapLayer fakelayer = mimicCellLayer(layer);
-
-        final Rule rule = symbol.getSource().getRule();
-
 
 //        if(symbol.getSource().getPointSymbolizer() != null){
 //            //generate 4 arrows base on an approximate size
@@ -160,23 +161,34 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
         DefaultGlyphService.render(r.getSource(), rect, g, layer);
     }
 
-    private static FeatureMapLayer mimicCellLayer(MapLayer layer){
+    /**
+     * TODO : return source layer if we cannot mimic it ? for now, we return a
+     * null value, which could be dangerous.
+     * @param layer The layer to adapt for cell rendering
+     * @return The adapted layer if possible, or the original layer if it is a
+     * feature one and we cannot adapt it, or null if it wasn't a feature map
+     * layer and we cannot adapt it.
+     */
+    private static FeatureMapLayer mimicCellLayer(MapLayer layer) {
         //fake layer
-        if(layer instanceof CoverageMapLayer){
-            try {
-                final FeatureType sft = CellSymbolizer.buildCellType((CoverageMapLayer)layer);
-                layer = MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection("", sft), GO2Utilities.STYLE_FACTORY.style());
-            } catch (DataStoreException ex) {
-                //not important
-            }
-        }else if(layer instanceof FeatureMapLayer){
+         if (layer instanceof FeatureMapLayer) {
             try {
                 final FeatureType sft = CellSymbolizer.buildCellType( ((FeatureMapLayer)layer).getResource().getType(),null);
                 layer = MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection("", sft), GO2Utilities.STYLE_FACTORY.style());
             } catch (DataStoreException ex) {
                 //not important
+                LOGGER.log(Level.FINE, "Cannot adapt map layer for cell rendering", ex);
             }
-        }else{
+        } else if(layer instanceof CoverageMapLayer) {
+            try {
+                final FeatureType sft = CellSymbolizer.buildCellType((CoverageMapLayer)layer);
+                layer = MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection("", sft), GO2Utilities.STYLE_FACTORY.style());
+            } catch (DataStoreException ex) {
+                //not important
+                LOGGER.log(Level.FINE, "Cannot adapt map layer for cell rendering", ex);
+                layer = null;
+            }
+        } else{
             layer = null;
         }
         return (FeatureMapLayer) layer;
