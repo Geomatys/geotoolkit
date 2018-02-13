@@ -26,9 +26,11 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.control.action.ActionUtils;
 import org.controlsfx.dialog.ExceptionDialog;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
@@ -57,8 +59,15 @@ public final class CommitAction extends Action implements Consumer<ActionEvent>,
         layerProperty.addListener(new ChangeListener<FeatureMapLayer>() {
             @Override
             public void changed(ObservableValue<? extends FeatureMapLayer> observable, FeatureMapLayer oldValue, FeatureMapLayer newValue) {
-                if(oldValue!=null) weakListener.unregisterSource(oldValue.getCollection().getSession());
-                if(newValue!=null) weakListener.registerSource(newValue.getCollection().getSession());
+
+                if (oldValue!=null) {
+                    final FeatureSet oldResource = oldValue.getResource();
+                    if (oldResource instanceof FeatureCollection) weakListener.unregisterSource(((FeatureCollection)oldResource).getSession());
+                }
+                if (newValue!=null) {
+                    final FeatureSet newResource = newValue.getResource();
+                    if (newResource instanceof FeatureCollection) weakListener.registerSource(((FeatureCollection)newResource).getSession());
+                }
                 contentChanged(null);
             }
         });
@@ -86,14 +95,17 @@ public final class CommitAction extends Action implements Consumer<ActionEvent>,
     @Override
     public void accept(ActionEvent t) {
         final FeatureMapLayer layer = getLayer();
-        if(layer==null) return;
-        final Session session = layer.getCollection().getSession();
-        try {
-            session.commit();
-        } catch (DataStoreException ex) {
-            Loggers.DATA.log(Level.WARNING, ex.getMessage(), ex);
-            final ExceptionDialog dialog = GeotkFX.newExceptionDialog(ex.getLocalizedMessage(), ex);
-            dialog.showAndWait();
+        if (layer == null) return;
+        final FeatureSet resource = layer.getResource();
+        if (resource instanceof FeatureCollection) {
+            final Session session = ((FeatureCollection)resource).getSession();
+            try {
+                session.commit();
+            } catch (DataStoreException ex) {
+                Loggers.DATA.log(Level.WARNING, ex.getMessage(), ex);
+                final ExceptionDialog dialog = GeotkFX.newExceptionDialog(ex.getLocalizedMessage(), ex);
+                dialog.showAndWait();
+            }
         }
     }
 
@@ -104,7 +116,7 @@ public final class CommitAction extends Action implements Consumer<ActionEvent>,
     @Override
     public void contentChanged(StorageEvent event) {
         final FeatureMapLayer layer = getLayer();
-        setDisabled(layer==null || !layer.getCollection().getSession().hasPendingChanges());
+        setDisabled(layer==null || !(layer.getResource() instanceof FeatureCollection) || !((FeatureCollection)layer.getResource()).getSession().hasPendingChanges());
     }
 
     public Button createButton(ActionUtils.ActionTextBehavior behavior){

@@ -228,7 +228,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
                     er[1] = er[0];
                 }
 
-                FeatureCollection col = fml.getCollection();
+                FeatureCollection col = ((FeatureCollection)fml.getResource());
                 final QueryBuilder qb = new QueryBuilder(col.getType().getName().toString());
                 qb.setProperties(new String[]{
                     ((PropertyName)er[0]).getPropertyName(),

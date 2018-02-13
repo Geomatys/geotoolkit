@@ -29,6 +29,7 @@ import org.geotoolkit.data.FeatureStoreManagementEvent;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 
@@ -58,8 +59,10 @@ public class SessionCommitAction extends AbstractAction implements FeatureStoreL
 
     @Override
     public boolean isEnabled() {
+        if (!(layer.getResource() instanceof FeatureCollection)) return false;
+        final FeatureCollection col = (FeatureCollection) layer.getResource();
         return super.isEnabled() && (layer != null)
-                && (layer.getCollection().getSession().hasPendingChanges());
+                && (col.getSession().hasPendingChanges());
     }
 
     public FeatureMapLayer getLayer() {
@@ -75,7 +78,8 @@ public class SessionCommitAction extends AbstractAction implements FeatureStoreL
         firePropertyChange("enabled", !newst, newst);
 
         if(this.layer != null){
-            weakListener.registerSource(this.layer.getCollection().getSession());
+            final FeatureCollection col = (FeatureCollection) this.layer.getResource();
+            weakListener.registerSource(col.getSession());
         }
     }
 
@@ -87,8 +91,9 @@ public class SessionCommitAction extends AbstractAction implements FeatureStoreL
             final Thread t = new Thread(){
                 @Override
                 public void run() {
+                    final FeatureCollection col = (FeatureCollection) layer.getResource();
                     try {
-                        layer.getCollection().getSession().commit();
+                        col.getSession().commit();
                     } catch (DataStoreException ex) {
                         LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
                     }finally{

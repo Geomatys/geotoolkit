@@ -18,7 +18,6 @@
 package org.geotoolkit.display2d.container.stateless;
 
 import java.awt.Point;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.SampleModel;

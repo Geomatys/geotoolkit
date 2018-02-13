@@ -84,7 +84,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
         features.clear();
 
         try {
-            featureCollection = ((FeatureMapLayer) layer).getCollection().subset(query);
+            featureCollection = ((FeatureCollection)((FeatureMapLayer) layer).getResource()).subset(query);
         } catch (DataStoreException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }
@@ -112,7 +112,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
 
     public Query removeGeometryAttributs(Query query){
 
-        FeatureType ft = ((FeatureMapLayer)layer).getCollection().getType();
+        FeatureType ft = ((FeatureCollection)((FeatureMapLayer)layer).getResource()).getType();
 
         String[] propNames = query.getPropertyNames();
 

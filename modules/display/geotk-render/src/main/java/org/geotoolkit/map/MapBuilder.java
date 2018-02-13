@@ -20,11 +20,12 @@ import java.util.Collection;
 import org.geotoolkit.storage.coverage.DefaultCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -141,8 +142,14 @@ public final class MapBuilder {
      * @param collection layer data collection
      * @return FeatureMapLayer
      */
-    public static FeatureMapLayer createFeatureLayer(final FeatureCollection collection){
-        return new DefaultFeatureMapLayer(collection, RandomStyleBuilder.createDefaultVectorStyle(collection.getType()));
+    public static FeatureMapLayer createFeatureLayer(final FeatureSet collection){
+        MutableStyle style;
+        try {
+            style = RandomStyleBuilder.createDefaultVectorStyle(collection.getType());
+        } catch (DataStoreException ex) {
+            style = ((MutableStyleFactory)FactoryFinder.getStyleFactory(null)).style(RandomStyleBuilder.createRandomPointSymbolizer());
+        }
+        return new DefaultFeatureMapLayer(collection, style);
     }
 
     /**
@@ -151,7 +158,7 @@ public final class MapBuilder {
      * @param style layer style
      * @return FeatureMapLayer
      */
-    public static FeatureMapLayer createFeatureLayer(final FeatureCollection collection, final MutableStyle style){
+    public static FeatureMapLayer createFeatureLayer(final FeatureSet collection, final MutableStyle style){
         return new DefaultFeatureMapLayer(collection, style);
     }
 

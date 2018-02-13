@@ -27,10 +27,12 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXPanMouseListen;
+import static org.geotoolkit.gui.javafx.render2d.edition.EditionHelper.isWritable;
 import org.geotoolkit.gui.javafx.render2d.shape.FXGeometryLayer;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -56,10 +58,10 @@ public class CreateMultiLineTool extends AbstractEditionTool{
         public boolean canHandle(Object candidate) {
             if(candidate instanceof FeatureMapLayer){
                 final FeatureMapLayer fml = (FeatureMapLayer) candidate;
-                if(!fml.getCollection().isWritable()) return false;
+                if(!isWritable(fml)) return false;
 
                 try {
-                    final Class geomClass = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(fml.getCollection().getType()))
+                    final Class geomClass = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(fml.getResource().getType()))
                             .map(AttributeType::getValueClass)
                             .orElse(null);
 
@@ -68,7 +70,7 @@ public class CreateMultiLineTool extends AbstractEditionTool{
                     }
                     return MultiLineString.class.isAssignableFrom(geomClass)
                             || Geometry.class.equals(geomClass);
-                } catch (PropertyNotFoundException | IllegalStateException e) {
+                } catch (PropertyNotFoundException | IllegalStateException | DataStoreException e) {
                     return false;
                 }
             }

@@ -20,6 +20,7 @@ package org.geotoolkit.display2d.style.renderer;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -83,16 +84,20 @@ public abstract class AbstractSymbolizerRendererService<S extends Symbolizer, C 
         return renderer.hit(graphic, mask, filter);
     }
 
-    protected Object mimicObject(MapLayer layer){
+    protected Object mimicObject(MapLayer layer) {
         if(layer instanceof FeatureMapLayer){
-            FeatureType ft = ((FeatureMapLayer)layer).getCollection().getType();
-            if(ft.isAbstract()) {
-                final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-                ftb.setSuperTypes(ft);
-                ftb.setName(ft.getName());
-                ft = ftb.build();
+            try {
+                FeatureType ft = ((FeatureMapLayer)layer).getResource().getType();
+                if(ft.isAbstract()) {
+                    final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+                    ftb.setSuperTypes(ft);
+                    ftb.setName(ft.getName());
+                    ft = ftb.build();
+                }
+                return ft.newInstance();
+            } catch (DataStoreException ex) {
+                return null;
             }
-            return ft.newInstance();
         }else{
             return null;
         }

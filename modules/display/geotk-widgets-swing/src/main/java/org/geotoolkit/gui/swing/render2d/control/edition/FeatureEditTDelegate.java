@@ -118,17 +118,17 @@ public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
 
                     final Object res = JOptionDialog.show(null,split,new String[]{delete,cancel,save});
                     if(save == res){
-                        final Feature geofeature = layer.getCollection().iterator().next();
+                        final Feature geofeature = ((FeatureCollection)layer.getResource()).iterator().next();
                         feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geofeature.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString()));
 
                         try {
-                            originalLayer.getCollection().update(feature);
+                            ((FeatureCollection)originalLayer.getResource()).update(feature);
                         } catch (DataStoreException ex) {
                             LOGGER.log(Level.WARNING, ex.getMessage(),ex);
                         }
                     }else if(delete == res){
                         try {
-                            originalLayer.getCollection().remove(FactoryFinder.getFilterFactory(null).id(Collections.singleton(FeatureExt.getId(feature))));
+                            ((FeatureCollection)originalLayer.getResource()).remove(FactoryFinder.getFilterFactory(null).id(Collections.singleton(FeatureExt.getId(feature))));
                         } catch (DataStoreException ex) {
                             LOGGER.log(Level.WARNING, ex.getMessage(),ex);
                         }

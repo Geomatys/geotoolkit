@@ -76,6 +76,10 @@ import org.opengis.style.TextSymbolizer;
 
 import static java.nio.file.StandardOpenOption.*;
 import static java.nio.file.StandardOpenOption.CREATE;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.opengis.feature.Feature;
 import org.opengis.feature.PropertyType;
 import org.geotoolkit.data.kml.xml.KmlConstants;
@@ -280,11 +284,12 @@ public class KmzContextInterpreter {
     /**
      * Transforms a FeatureMapLAyer in KML Folder.
      */
-    private Feature writeFeatureMapLayer(final FeatureMapLayer featureMapLayer) throws URISyntaxException {
+    private Feature writeFeatureMapLayer(final FeatureMapLayer featureMapLayer) throws URISyntaxException, DataStoreException {
+        final FeatureSet resource = featureMapLayer.getResource();
         final Feature folder = KML_FACTORY.createFolder();
-        final List<Feature> fs = new ArrayList<>();
-        for (final Feature f : featureMapLayer.getCollection()) {
-            fs.add(writeFeature(f));
+        final List<Feature> fs;
+        try (Stream<Feature> stream = resource.features(false)) {
+            fs = stream.map(this::writeFeature).collect(Collectors.toList());
         }
         folder.setPropertyValue(KmlConstants.TAG_FEATURES, fs);
         return folder;
@@ -294,7 +299,7 @@ public class KmzContextInterpreter {
      * Transforms a feature into KML feature (Placemak if original
      * features contents a geometry, or Folder otherwise).
      */
-    private Feature writeFeature(final Feature feature) throws URISyntaxException {
+    private Feature writeFeature(final Feature feature) {
         Feature kmlFeature = null;
         for (final PropertyType type : feature.getType().getProperties(true)) {
             final Object val = feature.getPropertyValue(type.getName().toString());

@@ -46,6 +46,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.apache.sis.storage.DataStoreException;
 import org.fxmisc.richtext.CodeArea;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
@@ -159,14 +160,14 @@ public class FXCQLEditor extends BorderPane {
         codeArea.appendText(" "+text);
     }
 
-    public void setTarget(Object candidate){
+    public void setTarget(Object candidate) throws DataStoreException{
         FeatureType ft = null;
         if(candidate instanceof FeatureType){
             ft = (FeatureType) candidate;
         }else if(candidate instanceof FeatureCollection) {
             ft = ((FeatureCollection)candidate).getType();
         }else if(candidate instanceof FeatureMapLayer){
-            ft = ((FeatureMapLayer)candidate).getCollection().getType();
+            ft = ((FeatureMapLayer)candidate).getResource().getType();
         }
 
         final ObservableList properties = FXCollections.observableArrayList();
@@ -330,7 +331,7 @@ public class FXCQLEditor extends BorderPane {
         }
     }
 
-    public static Expression showDialog(Node parent, MapLayer layer, Expression candidate) throws CQLException {
+    public static Expression showDialog(Node parent, MapLayer layer, Expression candidate) throws CQLException, DataStoreException {
         final FXCQLEditor editor = new FXCQLEditor(false);
         editor.setExpression(candidate);
         editor.setTarget(layer);
@@ -341,7 +342,7 @@ public class FXCQLEditor extends BorderPane {
         }
     }
 
-    public static Filter showFilterDialog(Node parent, MapLayer layer, Filter candidate) throws CQLException {
+    public static Filter showFilterDialog(Node parent, MapLayer layer, Filter candidate) throws CQLException, DataStoreException {
         final FXCQLEditor editor = new FXCQLEditor(true);
         editor.setFilter(candidate);
         editor.setTarget(layer);

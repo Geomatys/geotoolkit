@@ -87,6 +87,7 @@ import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.swing.style.JStyleTree;
@@ -413,7 +414,7 @@ public class JContextTree extends JScrollPane {
 
                 if(layer instanceof FeatureMapLayer){
                     final FeatureMapLayer fml = (FeatureMapLayer) layer;
-                    final Session session = fml.getCollection().getSession();
+                    final Session session = ((FeatureCollection)fml.getResource()).getSession();
                     if(session != null && session.hasPendingChanges()){
                         this.label.setText(label.getText()+"*");
                     }
@@ -674,7 +675,7 @@ public class JContextTree extends JScrollPane {
 
             if(item instanceof FeatureMapLayer){
                 final FeatureMapLayer fml = (FeatureMapLayer) item;
-                fml.getCollection().getSession().addStorageListener(new FeatureStoreListener.Weak(this));
+                ((FeatureCollection)fml.getResource()).getSession().addStorageListener(new FeatureStoreListener.Weak(this));
             }
 
             resetStructure();

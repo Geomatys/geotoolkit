@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.swing.JComboBox;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.data.FeatureCollection;
 
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
@@ -51,7 +52,7 @@ public class JGeomBox extends JComboBox {
         this.layer = layer;
 
         if (layer instanceof FeatureMapLayer) {
-            final Collection<? extends PropertyType> col = ((FeatureMapLayer)layer).getCollection().getType().getProperties(true);
+            final Collection<? extends PropertyType> col = ((FeatureCollection)((FeatureMapLayer)layer).getResource()).getType().getProperties(true);
             final Iterator<? extends PropertyType> ite = col.iterator();
 
             final List<String> geoms = new ArrayList<>();

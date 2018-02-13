@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.javafx.chooser;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -54,6 +55,8 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.DataStores;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.coverage.amended.AmendedCoverageStore;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
@@ -67,6 +70,7 @@ import org.geotoolkit.gui.javafx.util.FXOptionDialog;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
+import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageStore;
@@ -132,6 +136,8 @@ public class FXStoreChooser extends SplitPane {
     private final Accordion accordion = new Accordion();
     private final ListView<Object> factoryView = new ListView<>();
     private final FXLayerChooser layerChooser = new FXLayerChooser();
+    private final FXResourceChooser resourceChooser = new FXResourceChooser();
+    private final Label placeholder = new Label(" . . . ");
     private final FXParameterEditor paramEditor = new FXParameterEditor();
     private final ScrollPane listScroll = new ScrollPane(factoryView);
     private final Button connectButton = new Button(GeotkFX.getString(FXStoreChooser.class,"apply"));
@@ -176,7 +182,8 @@ public class FXStoreChooser extends SplitPane {
         accordion.setExpandedPane(paneFactory);
 
         getItems().add(accordion);
-        getItems().add(layerChooser);
+        getItems().add(placeholder);
+        this.setDividerPositions(0.5);
 
         factoryView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         factoryView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<Object>() {
@@ -206,15 +213,24 @@ public class FXStoreChooser extends SplitPane {
 
             @Override
             public void handle(ActionEvent event) {
+
                 try {
                     layerChooser.setSource(null);
+                    resourceChooser.setResource(null);
                     DataStore store = getStore();
-
-                    if(decorateProperty.get() && store instanceof CoverageStore){
-                        //decorate store
-                        store = new AmendedCoverageStore((CoverageStore) store);
+                    if (store instanceof org.geotoolkit.storage.DataStore) {
+                        //use old API view
+                        if(decorateProperty.get() && store instanceof CoverageStore){
+                            //decorate store
+                            store = new AmendedCoverageStore((CoverageStore) store);
+                        }
+                        layerChooser.setSource(store);
+                        getItems().set(1, layerChooser);
+                    } else {
+                        resourceChooser.setResource(store);
+                        getItems().set(1, resourceChooser);
                     }
-                    layerChooser.setSource(store);
+
                 } catch (DataStoreException ex) {
                     infoLabel.setText("Error "+ex.getMessage());
                     Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(),ex);
@@ -255,7 +271,19 @@ public class FXStoreChooser extends SplitPane {
     }
 
     private List<MapLayer> getSelectedLayers() throws DataStoreException {
-        return layerChooser.getLayers();
+        if (getItems().get(1) == layerChooser) {
+            return layerChooser.getLayers();
+        } else {
+            final List<Resource> selected = resourceChooser.getSelected();
+            final List<MapLayer> layers = new ArrayList<>();
+            for (Resource selection : selected) {
+                if (selection instanceof FeatureSet) {
+                    layers.add(MapBuilder.createFeatureLayer((FeatureSet)selection));
+                }
+            }
+
+            return layers;
+        }
     }
 
 

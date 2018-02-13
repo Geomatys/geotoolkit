@@ -22,13 +22,14 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -56,6 +57,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.FeatureSet;
 import org.opengis.feature.Feature;
 
 /**
@@ -133,7 +135,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
 
         g2.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
-        FeatureCollection collection = item.getCollection();
+        FeatureSet collection = item.getResource();
         try {
             collection = collection.subset(item.getQuery());
         } catch (DataStoreException ex) {
@@ -148,8 +150,8 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
         double maxy = Double.NaN;
         try {
             final List<DirectPosition> coordinates = new ArrayList<>();
-            final FeatureIterator iterator = collection.iterator();
-            try {
+            try (Stream<Feature> stream = collection.features(false)){
+                final Iterator<Feature> iterator = stream.iterator();
                 while (iterator.hasNext()) {
                     final Feature feature = iterator.next();
                     final Coordinate coord = extractor.getValues(context, feature);
@@ -164,8 +166,6 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             }catch(Exception ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
                 return;
-            }finally {
-                iterator.close();
             }
 
             if(coordinates.isEmpty()){
@@ -251,6 +251,8 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
         } catch (TransformException ex) {
             getLogger().log(Level.WARNING, null, ex);
         } catch (FeatureStoreRuntimeException ex) {
+            getLogger().log(Level.WARNING, null, ex);
+        } catch (DataStoreException ex) {
             getLogger().log(Level.WARNING, null, ex);
         }
 
