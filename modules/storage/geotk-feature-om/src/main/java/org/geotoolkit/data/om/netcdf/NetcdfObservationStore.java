@@ -44,19 +44,19 @@ import org.geotoolkit.sos.netcdf.Field;
 import org.geotoolkit.sos.netcdf.NCFieldAnalyze;
 import org.geotoolkit.sos.netcdf.NetCDFExtractor;
 import org.geotoolkit.sos.netcdf.NetCDFParsingException;
-import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.geotoolkit.storage.FileSystemResource;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class NetcdfObservationStore extends AbstractFeatureStore implements DataFileStore,ObservationStore {
+public class NetcdfObservationStore extends AbstractFeatureStore implements FileSystemResource,ObservationStore {
 
     protected final GenericNameIndex<FeatureType> types;
     private static final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
@@ -202,7 +202,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
      * {@inheritDoc }
      */
     @Override
-    public Path[] getDataFiles() throws DataStoreException {
+    public Path[] getResourcePaths() throws DataStoreException {
         return new Path[]{dataFile};
     }
 

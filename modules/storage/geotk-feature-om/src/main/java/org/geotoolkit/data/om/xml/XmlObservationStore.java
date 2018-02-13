@@ -62,7 +62,6 @@ import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
 import org.geotoolkit.sos.netcdf.GeoSpatialBound;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
-import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
@@ -78,12 +77,13 @@ import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.temporal.TemporalObject;
+import org.geotoolkit.storage.FileSystemResource;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class XmlObservationStore extends AbstractFeatureStore implements DataFileStore,ObservationStore {
+public class XmlObservationStore extends AbstractFeatureStore implements FileSystemResource,ObservationStore {
 
     protected final GenericNameIndex<FeatureType> types;
     private static final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
@@ -399,7 +399,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
      * {@inheritDoc }
      */
     @Override
-    public Path[] getDataFiles() throws DataStoreException {
+    public Path[] getResourcePaths() throws DataStoreException {
         return new Path[]{xmlFile};
     }
 

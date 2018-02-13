@@ -45,7 +45,6 @@ import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.metadata.MetadataUtilities;
-import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DefaultAggregate;
@@ -53,6 +52,7 @@ import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.geotoolkit.storage.FileSystemResource;
 
 /**
  * Coverage Store which rely on standard java readers and writers.
@@ -60,7 +60,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class FileCoverageStore extends AbstractCoverageStore implements DataFileStore {
+public class FileCoverageStore extends AbstractCoverageStore implements FileSystemResource {
 
     private static final String REGEX_SEPARATOR;
     static {
@@ -320,7 +320,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
     }
 
     @Override
-    public Path[] getDataFiles() throws DataStoreException {
+    public Path[] getResourcePaths() throws DataStoreException {
         return new Path[] {root};
     }
 

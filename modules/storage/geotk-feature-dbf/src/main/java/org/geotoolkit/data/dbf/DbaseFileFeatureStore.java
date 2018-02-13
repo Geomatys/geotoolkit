@@ -45,7 +45,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStreams;
-import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -56,6 +55,7 @@ import org.opengis.feature.AttributeType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.storage.FileSystemResource;
 
 /**
  * DBF DataStore, holds a single feature type.
@@ -63,7 +63,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataFileStore {
+public class DbaseFileFeatureStore extends AbstractFeatureStore implements FileSystemResource {
 
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
@@ -219,7 +219,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     @Override
-    public Path[] getDataFiles() throws DataStoreException {
+    public Path[] getResourcePaths() throws DataStoreException {
         return new Path[] { this.file };
     }
 

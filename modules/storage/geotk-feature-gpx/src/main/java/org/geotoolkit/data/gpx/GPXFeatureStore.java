@@ -27,7 +27,6 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.opengis.util.GenericName;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.DataFileStore;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
@@ -63,6 +62,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.content.FeatureCatalogueDescription;
 import org.opengis.metadata.content.FeatureTypeInfo;
+import org.geotoolkit.storage.FileSystemResource;
 
 
 /**
@@ -75,7 +75,7 @@ import org.opengis.metadata.content.FeatureTypeInfo;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class GPXFeatureStore extends AbstractFeatureStore implements DataFileStore {
+public class GPXFeatureStore extends AbstractFeatureStore implements FileSystemResource {
 
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
@@ -194,7 +194,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public Path[] getDataFiles() throws DataStoreException {
+    public Path[] getResourcePaths() throws DataStoreException {
         return new Path[] { this.file };
     }
 
