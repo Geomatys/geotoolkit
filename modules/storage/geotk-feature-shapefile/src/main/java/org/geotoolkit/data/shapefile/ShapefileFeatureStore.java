@@ -50,6 +50,7 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.storage.FileSystemResource;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.metadata.iso.citation.Citations;
@@ -100,7 +101,6 @@ import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.geotoolkit.storage.FileSystemResource;
 
 /**
  *

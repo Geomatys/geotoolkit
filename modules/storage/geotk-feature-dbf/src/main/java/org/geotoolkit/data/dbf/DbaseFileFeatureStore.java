@@ -32,12 +32,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.storage.FileSystemResource;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.data.AbstractFeatureStore;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.dbf.DbaseFileReader.Row;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
@@ -55,7 +54,6 @@ import org.opengis.feature.AttributeType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.FileSystemResource;
 
 /**
  * DBF DataStore, holds a single feature type.
