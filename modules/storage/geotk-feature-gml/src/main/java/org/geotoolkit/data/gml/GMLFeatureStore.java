@@ -22,7 +22,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -33,22 +32,17 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.factory.Hints;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.collection.CloseableIterator;
-import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -173,43 +167,6 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
 
         final FeatureReader freader = FeatureStreams.asReader(ite,featureType);
         return FeatureStreams.subset(freader, query);
-    }
-
-    // WRITING SUPPORT : TODO //////////////////////////////////////////////////
-
-    @Override
-    public void createFeatureType(FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("Writing not supported");
-    }
-
-    @Override
-    public void updateFeatureType(FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("Writing not supported");
-    }
-
-    @Override
-    public void deleteFeatureType(String typeName) throws DataStoreException {
-        throw new DataStoreException("Writing not supported");
-    }
-
-    @Override
-    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        throw new DataStoreException("Writing not supported");
-    }
-
-    @Override
-    public List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
-        throw new DataStoreException("Writing not supported");
-    }
-
-    @Override
-    public void updateFeatures(String groupName, Filter filter, Map<String, ? extends Object> values) throws DataStoreException {
-        throw new DataStoreException("Writing not supported");
-    }
-
-    @Override
-    public void removeFeatures(String groupName, Filter filter) throws DataStoreException {
-        throw new DataStoreException("Writing not supported");
     }
 
 }

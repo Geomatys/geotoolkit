@@ -19,7 +19,6 @@ package org.geotoolkit.data.gpx;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
@@ -176,21 +175,6 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
     @Override
     public QueryCapabilities getQueryCapabilities() {
         return QUERY_CAPABILITIES;
-    }
-
-    @Override
-    public void createFeatureType(final FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("New schema creation not allowed on GPX files.");
-    }
-
-    @Override
-    public void deleteFeatureType(final String typeName) throws DataStoreException {
-        throw new DataStoreException("Delete schema not allowed on GPX files.");
-    }
-
-    @Override
-    public void updateFeatureType(final FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("Update schema not allowed on GPX files.");
     }
 
     @Override

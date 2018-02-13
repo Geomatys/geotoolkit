@@ -27,10 +27,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -46,14 +44,11 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStreams;
-import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.data.GenericWrapFeatureIterator;
 import org.geotoolkit.kml.xml.KMLMarshallerPool;
@@ -76,8 +71,6 @@ import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
@@ -359,40 +352,4 @@ public class KMLFeatureStore extends AbstractFeatureStore {
     public void refreshMetaModel() {
     }
 
-    // WRITE OPERATIONS NOT SUPPORTED //////////////////////////////////////////
-
-    @Override
-    public void createFeatureType(FeatureType featureType) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void updateFeatureType(FeatureType featureType) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void deleteFeatureType(String typeName) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void updateFeatures(String groupName, Filter filter, Map<String, ?> values) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void removeFeatures(String groupName, Filter filter) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }

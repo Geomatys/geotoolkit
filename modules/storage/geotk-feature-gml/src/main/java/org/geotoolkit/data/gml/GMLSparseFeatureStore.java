@@ -34,7 +34,6 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.FeatureWriter;
@@ -216,23 +215,6 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
     @Override
     public void removeFeatures(String groupName, Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
-    }
-
-    // TYPE CREATE/UPDATE NOT SUPPORTED ////////////////////////////////////////
-
-    @Override
-    public void createFeatureType(FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("Writing not supported");
-    }
-
-    @Override
-    public void updateFeatureType(FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("Writing not supported");
-    }
-
-    @Override
-    public void deleteFeatureType(String typeName) throws DataStoreException {
-        throw new DataStoreException("Writing not supported");
     }
 
     private class ReadIterator implements FeatureReader{

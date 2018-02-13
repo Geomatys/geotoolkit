@@ -19,28 +19,21 @@ package org.geotoolkit.data.osm;
 
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.factory.Hints;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStreams;
 
 import org.opengis.util.GenericName;
-import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
 
 import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
@@ -116,52 +109,8 @@ public class OSMMemoryFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        throw new UnsupportedOperationException("Not yet.");
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // FALLTHROUGHT OR NOT IMPLEMENTED /////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    @Override
     public QueryCapabilities getQueryCapabilities() {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void createFeatureType(final FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("New schema creation not allowed on GPX files.");
-    }
-
-    @Override
-    public void deleteFeatureType(final String typeName) throws DataStoreException {
-        throw new DataStoreException("Delete schema not allowed on GPX files.");
-    }
-
-    @Override
-    public void updateFeatureType(final FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("Update schema not allowed on GPX files.");
-    }
-
-    @Override
-    public List<FeatureId> addFeatures(final String groupName, final Collection<? extends Feature> newFeatures,
-            final Hints hints) throws DataStoreException {
-        return handleAddWithFeatureWriter(groupName, newFeatures, hints);
-    }
-
-    @Override
-    public void updateFeatures(final String groupName, final Filter filter, final Map<String, ? extends Object> values) throws DataStoreException {
-        handleUpdateWithFeatureWriter(groupName, filter, values);
-    }
-
-    @Override
-    public void removeFeatures(final String groupName, final Filter filter) throws DataStoreException {
-        handleRemoveWithFeatureWriter(groupName, filter);
-    }
-
-    @Override
-    public void refreshMetaModel() {
     }
 
 }

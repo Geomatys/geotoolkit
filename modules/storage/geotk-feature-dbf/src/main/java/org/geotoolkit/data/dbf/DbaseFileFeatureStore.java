@@ -189,38 +189,6 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
      * Unsupported, throws a {@link DataStoreException}.
      */
     @Override
-    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        throw new DataStoreException("Writing not supported");
-    }
-
-    /**
-     * Unsupported, throws a {@link DataStoreException}.
-     */
-    @Override
-    public void createFeatureType(final FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("Schema creation not supported");
-    }
-
-    /**
-     * Unsupported, throws a {@link DataStoreException}.
-     */
-    @Override
-    public void deleteFeatureType(final String typeName) throws DataStoreException {
-        throw new DataStoreException("Schema deletion not supported");
-    }
-
-    /**
-     * Unsupported, throws a {@link DataStoreException}.
-     */
-    @Override
-    public void updateFeatureType(final FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("Schema update not supported");
-    }
-
-    /**
-     * Unsupported, throws a {@link DataStoreException}.
-     */
-    @Override
     public QueryCapabilities getQueryCapabilities() {
         throw new UnsupportedOperationException("Not supported yet.");
     }

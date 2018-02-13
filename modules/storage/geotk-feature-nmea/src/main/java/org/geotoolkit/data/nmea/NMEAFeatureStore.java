@@ -23,31 +23,22 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreFactory;
-import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.util.GenericName;
 import org.geotoolkit.storage.DataStores;
-import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -118,52 +109,9 @@ public class NMEAFeatureStore extends AbstractFeatureStore {
         return Files.newInputStream(tmpFile);
     }
 
-      //////////////////////////////////////
-     //      UNSUPPORTED OPERATIONS      //
-    //////////////////////////////////////
-
-    @Override
-    public void createFeatureType(FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("NMEA Feature Store is read only, and can process only data of type: " + TYPE_NAME.tip());
-    }
-
-    @Override
-    public void updateFeatureType(FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("NMEA Feature Store is read only, and can process only data of type: " + TYPE_NAME.tip());
-    }
-
-    @Override
-    public void deleteFeatureType(String typeName) throws DataStoreException {
-        throw new DataStoreException("NMEA Feature Store is read only.");
-    }
-
     @Override
     public QueryCapabilities getQueryCapabilities() {
         return new DefaultQueryCapabilities(false);
-    }
-
-    @Override
-    public List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
-        throw new DataStoreException("NMEA Feature Store is read only.");
-    }
-
-    @Override
-    public void updateFeatures(String groupName, Filter filter, Map<String, ? extends Object> values) throws DataStoreException {
-        throw new DataStoreException("NMEA Feature Store is read only.");
-    }
-
-    @Override
-    public void removeFeatures(String groupName, Filter filter) throws DataStoreException {
-        throw new DataStoreException("NMEA Feature Store is read only.");
-    }
-
-    @Override
-    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        throw new DataStoreException("NMEA Feature Store is read only.");
-    }
-
-    @Override
-    public void refreshMetaModel() {
     }
 
 }
