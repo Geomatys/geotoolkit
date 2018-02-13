@@ -41,6 +41,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -158,7 +159,7 @@ public class FXLayerChooser extends BorderPane{
 
                 }else if(source instanceof CoverageStore){
                     final CoverageStore store = (CoverageStore) source;
-                    final CoverageResource ref = store.findResource(name);
+                    final Resource ref = store.findResource(name.toString());
                     final MutableStyle style = styleFactory.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
                     final CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref, style);
                     layer.setName(name.tip().toString());

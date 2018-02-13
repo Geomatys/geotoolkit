@@ -190,7 +190,7 @@ abstract class VelocityComponent {
 
         MeteoFrance(final URI file) throws DataStoreException, IOException, URISyntaxException {
             try (FileCoverageStore store = new FileCoverageStore(file, "geotiff")) {
-                final CoverageResource ref = store.findResource(singleton(store.getNames()));
+                final CoverageResource ref = (CoverageResource) store.findResource(singleton(store.getNames()));
                 final GridCoverageReader reader = ref.acquireReader();
                 coverage = reader.read(0, null);
                 ref.recycle(reader);
@@ -203,11 +203,11 @@ abstract class VelocityComponent {
          * Returns the singleton element in the given collection.
          * If the iteration is not over exactly one element, throws an exception.
          */
-        private static GenericName singleton(final Iterable<? extends GenericName> names) throws DataStoreException {
+        private static String singleton(final Iterable<? extends GenericName> names) throws DataStoreException {
             final Iterator<? extends GenericName> it = names.iterator();
             if (it.hasNext()) {
                 final GenericName name = it.next();
-                if (!it.hasNext()) return name;
+                if (!it.hasNext()) return name.toString();
             }
             throw new DataStoreException("Unexpected amount of names.");
         }

@@ -3,7 +3,7 @@ package org.geotoolkit.pending.demo.coverage;
 
 import java.nio.file.Path;
 import org.apache.sis.parameter.Parameters;
-
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.coverage.filestore.FileCoverageStoreFactory;
@@ -15,7 +15,6 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.util.GenericName;
@@ -42,7 +41,7 @@ public class CoverageStoreDemo {
         final MapContext context = MapBuilder.createContext();
 
         for(GenericName n : store.getNames()){
-            final CoverageResource ref = store.findResource(n);
+            final Resource ref = store.findResource(n.toString());
             final CoverageMapLayer cl = MapBuilder.createCoverageLayer(ref);
             context.layers().add(cl);
         }

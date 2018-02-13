@@ -60,7 +60,7 @@ import org.geotoolkit.parameter.Parameters;
  */
 public class PGPyramidTest extends org.geotoolkit.test.TestBase {
 
-    private CoverageStore store;
+    private PGCoverageStore store;
 
     private static ParameterValueGroup params;
 
@@ -83,12 +83,12 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
             store.close();
         }
 
-        final CoverageStoreFactory factory = (CoverageStoreFactory) DataStores.getFactoryById("pgraster");
+        final PGCoverageStoreFactory factory = (PGCoverageStoreFactory) DataStores.getFactoryById("pgraster");
         try{
-            store = (CoverageStore) factory.create(params);
+            store = factory.create(params);
         }catch(DataStoreException ex){
             //it may already exist
-            store = (CoverageStore) factory.open(params);
+            store = factory.open(params);
         }
 
         for(GenericName n : store.getNames()){
@@ -115,7 +115,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         store.create(name);
 
         //create version 1 -----------------------------------------------------
-        cref = (PyramidalCoverageResource) store.findResource(name);
+        cref = (PyramidalCoverageResource) store.findResource(name.toString());
         assertNotNull(cref);
 
         //test create pyramid
@@ -180,7 +180,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         store.create(name);
 
         //create version 1 -----------------------------------------------------
-        cref = (PyramidalCoverageResource) store.findResource(name);
+        cref = (PyramidalCoverageResource) store.findResource(name.toString());
         assertNotNull(cref);
 
         //test create pyramid

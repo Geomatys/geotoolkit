@@ -65,7 +65,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
     private static final TimeZone GMT0 = TimeZone.getTimeZone("GMT+0");
 
     private static ParameterValueGroup params;
-    private CoverageStore store;
+    private PGCoverageStore store;
 
     @BeforeClass
     public static void beforeClass() throws IOException {
@@ -86,13 +86,13 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
             store.close();
         }
 
-        final CoverageStoreFactory factory = (CoverageStoreFactory) DataStores.getFactoryById("pgraster");
+        final PGCoverageStoreFactory factory = (PGCoverageStoreFactory) DataStores.getFactoryById("pgraster");
 
         try{
-            store = (CoverageStore) factory.create(params);
+            store = factory.create(params);
         }catch(DataStoreException ex){
             //it may already exist
-            store = (CoverageStore) factory.open(params);
+            store = factory.open(params);
         }
 
 
@@ -191,7 +191,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
 
 
         //try accesing different version ---------------------------------------
-        cref = (PyramidalCoverageResource) store.findResource(name);
+        cref = (PyramidalCoverageResource) store.findResource(name.toString());
         //we should have the blue image
         reader = cref.acquireReader();
         coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);

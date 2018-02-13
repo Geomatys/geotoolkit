@@ -22,9 +22,6 @@ import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.version.Version;
-import org.geotoolkit.version.VersionControl;
-import org.geotoolkit.version.VersioningException;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -64,32 +61,12 @@ public class WrapCoverageStore extends DataStore implements CoverageStore{
 
     @Override
     public Resource findResource(String name) throws DataStoreException {
-        return (Resource) super.findResource(name);
+        return store.findResource(name);
     }
 
     @Override
     public Set<GenericName> getNames() throws DataStoreException {
         return store.getNames();
-    }
-
-    @Override
-    public boolean handleVersioning() {
-        return store.handleVersioning();
-    }
-
-    @Override
-    public VersionControl getVersioning(GenericName typeName) throws VersioningException {
-        return store.getVersioning(typeName);
-    }
-
-    @Override
-    public CoverageResource findResource(GenericName name) throws DataStoreException {
-        return store.findResource(name);
-    }
-
-    @Override
-    public CoverageResource findResource(GenericName name, Version version) throws DataStoreException {
-        return store.findResource(name, version);
     }
 
     @Override

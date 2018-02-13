@@ -23,6 +23,7 @@ import javax.xml.bind.JAXBElement;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.data.FeatureCollection;
@@ -112,7 +113,7 @@ public class OwcDataStoreExtension extends OwcExtension {
                 final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col);
                 return layer;
             }else if(store instanceof CoverageStore){
-                final CoverageResource covref = ((CoverageStore)store).findResource(NamesExt.valueOf(typeName));
+                final Resource covref = ((CoverageStore)store).findResource(NamesExt.valueOf(typeName).toString());
                 final CoverageMapLayer layer = MapBuilder.createCoverageLayer(covref);
                 return layer;
             }
