@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012-2016, Geomatys
+ *    (C) 2012-2018, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,12 +17,18 @@
 package org.geotoolkit.storage;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.sis.metadata.iso.citation.Citations;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.geotoolkit.lang.Static;
@@ -43,11 +49,41 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public final class DataStores extends Static {
 
-
     /**
      * Do not allow instantiation of this class.
      */
     private DataStores() {
+    }
+
+    /**
+     * List all resources in given resource.
+     *
+     * @param root Root resource to explore
+     * @param includeRoot include the root in the stream
+     * @return Collection of all resources
+     * @throws DataStoreException
+     */
+    public static Collection<? extends Resource> flatten(Resource root, boolean includeRoot) throws DataStoreException {
+        if (root instanceof Aggregate) {
+            final List<Resource> list = new ArrayList<>();
+            if (includeRoot) list.add(root);
+            list(root,list);
+            return list;
+        } else if (includeRoot) {
+            return Collections.singleton(root);
+        } else {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    private static void list(Resource resource, Collection<Resource> list) throws DataStoreException {
+        if (resource instanceof Aggregate) {
+            final Aggregate ds = (Aggregate) resource;
+            for (Resource rs : ds.components()) {
+                list.add(rs);
+                list(rs,list);
+            }
+        }
     }
 
     /**
