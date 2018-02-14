@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.ReadOnlyStorageException;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
@@ -53,7 +54,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface FeatureStore extends AutoCloseable {
+public interface FeatureStore extends AutoCloseable, Resource{
 
     /**
      * Get the parameters used to initialize this source from it's factory.
@@ -112,7 +113,7 @@ public interface FeatureStore extends AutoCloseable {
     Resource getRootResource() throws DataStoreException;
 
     /**
-     * Get a collection of all available names.
+     * Get a collection of all available resource names.
      * @return {@literal Set<Name>}, never null, but can be empty.
      */
     Set<GenericName> getNames() throws DataStoreException;
@@ -122,10 +123,14 @@ public interface FeatureStore extends AutoCloseable {
     /**
      * Create a new feature type.
      *
+     * <p>Default implementation raise a {@link ReadOnlyStorageException}.</p>
+     *
      * @param featureType new type
      * @throws DataStoreException if type already exist or can not create schema.
      */
-    void createFeatureType(FeatureType featureType) throws DataStoreException;
+    default void createFeatureType(FeatureType featureType) throws DataStoreException {
+        throw new ReadOnlyStorageException("Writing operations not supported.");
+    }
 
     /**
      * Update a feature type, should preserve attribute with the same
@@ -133,18 +138,26 @@ public interface FeatureStore extends AutoCloseable {
      * If the attributes type have changed, the feature store should do the best
      * effort to try to convert values.
      *
+     * <p>Default implementation raise a {@link ReadOnlyStorageException}.</p>
+     *
      * @param featureType new type schema
      * @throws DataStoreException if schema does not exist or can not be modified.
      */
-    void updateFeatureType(FeatureType featureType) throws DataStoreException;
+    default void updateFeatureType(FeatureType featureType) throws DataStoreException {
+        throw new ReadOnlyStorageException("Writing operations not supported.");
+    }
 
     /**
      * Delete feature type with given name.
      *
+     * <p>Default implementation raise a {@link ReadOnlyStorageException}.</p>
+     *
      * @param typeName type name to delete
      * @throws DataStoreException if schema does not exist or can not be deleted.
      */
-    void deleteFeatureType(String typeName) throws DataStoreException;
+    default void deleteFeatureType(String typeName) throws DataStoreException {
+        throw new ReadOnlyStorageException("Writing operations not supported.");
+    }
 
     /**
      * Convenient way to aquire a schema by ignoring the namespace.
@@ -220,36 +233,54 @@ public interface FeatureStore extends AutoCloseable {
      * @param newFeatures collection of new features
      * @return List of featureId of the added features, may be null or inexact
      * if the feature store can not handle persistent ids.
+     * @throws org.apache.sis.storage.DataStoreException if an error occurs or if store is in read-only.
      */
-    List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures) throws DataStoreException;
+    default List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+        return addFeatures(groupName,newFeatures,new Hints());
+    }
 
     /**
      * Add a collection of features in a group of features.
+     *
+     * <p>Default implementation raise a {@link ReadOnlyStorageException}.</p>
      *
      * @param groupName group where features must be added
      * @param newFeatures collection of new features
      * @param hints writer hints
      * @return List of featureId of the added features, may be null or inexact
      * if the feature store can not handle persistent ids.
+     * @throws org.apache.sis.storage.DataStoreException if an error occurs or if store is in read-only.
      */
-    List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException;
+    default List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+        throw new ReadOnlyStorageException("Writing operations not supported.");
+    }
 
     /**
      * Update a set of features that match the given filter and replace
      * there attributes values by those in the given map.
      *
+     * <p>Default implementation raise a {@link ReadOnlyStorageException}.</p>
+     *
      * @param groupName group where features must be updated
      * @param filter updating filter, all features that match the filter will be updated
      * @param values map of values to update
+     * @throws org.apache.sis.storage.DataStoreException if an error occurs or if store is in read-only.
      */
-    void updateFeatures(String groupName, Filter filter, Map<String,?> values) throws DataStoreException;
+    default void updateFeatures(String groupName, Filter filter, Map<String,?> values) throws DataStoreException {
+        throw new ReadOnlyStorageException("Writing operations not supported.");
+    }
 
     /**
      *
+     * <p>Default implementation raise a {@link ReadOnlyStorageException}.</p>
+     *
      * @param groupName group where features must be deleted
      * @param filter deleting filter, all features that match the filter will be removed
+     * @throws org.apache.sis.storage.DataStoreException if an error occurs or if store is in read-only.
      */
-    void removeFeatures(String groupName, Filter filter) throws DataStoreException;
+    default void removeFeatures(String groupName, Filter filter) throws DataStoreException {
+        throw new ReadOnlyStorageException("Writing operations not supported.");
+    }
 
     /**
      * Get a feature reader to iterate on.
@@ -262,9 +293,14 @@ public interface FeatureStore extends AutoCloseable {
     /**
      * Aquire a writer on a given feature type.
      *
+     * <p>Default implementation raise a {@link ReadOnlyStorageException}.</p>
+     *
      * @param query requested parameters
+     * @throws org.apache.sis.storage.DataStoreException if an error occurs or if store is in read-only.
      */
-    FeatureWriter getFeatureWriter(Query query) throws DataStoreException;
+    default FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
+        throw new ReadOnlyStorageException("Writing operations not supported.");
+    }
 
     /**
      * Add a storage listener which will be notified when schema are added, modified or deleted
@@ -281,8 +317,11 @@ public interface FeatureStore extends AutoCloseable {
 
     /**
      * refresh metaModel (in case someone else had changed by an other way)
+     *
+     * <p>Default implementation does nothing.</p>
      */
-    void refreshMetaModel() throws DataStoreException;
+    default void refreshMetaModel() throws DataStoreException {
+    }
 
     void close() throws DataStoreException;
 

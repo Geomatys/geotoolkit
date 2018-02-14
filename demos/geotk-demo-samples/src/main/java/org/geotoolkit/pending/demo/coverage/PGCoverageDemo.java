@@ -20,15 +20,14 @@ import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.coverage.postgresql.PGCoverageStore;
 import org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory;
-import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -63,7 +62,7 @@ public class PGCoverageDemo {
             throw new DataStoreException("Wrong parameters");
         }
 
-        final CoverageResource ref = store.findResource(NamesExt.create(LAYER_NAME));
+        final Resource ref = store.findResource(LAYER_NAME);
         final CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref,
                 new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
 

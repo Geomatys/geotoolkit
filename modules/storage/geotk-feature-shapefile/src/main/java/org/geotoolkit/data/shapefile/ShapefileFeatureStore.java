@@ -83,7 +83,6 @@ import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.shapefile.cpg.CpgFiles;
 
-import org.geotoolkit.storage.DataFileStore;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -101,13 +100,14 @@ import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
+import org.geotoolkit.storage.FileSystemResource;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class ShapefileFeatureStore extends AbstractFeatureStore implements DataFileStore {
+public class ShapefileFeatureStore extends AbstractFeatureStore implements FileSystemResource {
 
     // This is the default character as specified by the DBF specification
     public static final Charset DEFAULT_STRING_CHARSET = DbaseFileReader.DEFAULT_STRING_CHARSET;
@@ -722,7 +722,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     @Override
-    public Path[] getDataFiles() throws DataStoreException {
+    public Path[] getResourcePaths() throws DataStoreException {
         final List<Path> files = new ArrayList<>();
         for (final ShpFileType type : ShpFileType.values()) {
             final Path f = shpFiles.getPath(type);

@@ -64,6 +64,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
 
 import org.apache.sis.util.logging.Logging;
@@ -137,22 +138,25 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
             for(GenericName n : inStore.getNames()){
 
                 fireProgressing("Copying "+n+".", (int)((inc*100f)/size), false);
-                final CoverageResource inRef = inStore.findResource(n);
-                final GenericName name = inRef.getName();
-                if (erase) {
-                    outStore.delete(name);
-                }
-                final CoverageResource outRef = outStore.create(name);
+                final Resource resource = inStore.findResource(n.toString());
+                if (resource instanceof CoverageResource) {
+                    final CoverageResource inRef = (CoverageResource) resource;
+                    final GenericName name = inRef.getName();
+                    if (erase) {
+                        outStore.delete(name);
+                    }
+                    final CoverageResource outRef = outStore.create(name);
 
-                if(inRef instanceof PyramidalCoverageResource && outRef instanceof PyramidalCoverageResource){
-                    savePMtoPM((PyramidalCoverageResource)inRef, (PyramidalCoverageResource)outRef);
-                }else if(outRef instanceof PyramidalCoverageResource){
-                    savePlainToPM(inRef, (PyramidalCoverageResource)outRef, reduce);
-                }else{
-                    throw new DataStoreException("The given coverage reference is not a pyramidal model, "
-                    + "this process only work with this kind of model.");
+                    if(inRef instanceof PyramidalCoverageResource && outRef instanceof PyramidalCoverageResource){
+                        savePMtoPM((PyramidalCoverageResource)inRef, (PyramidalCoverageResource)outRef);
+                    }else if(outRef instanceof PyramidalCoverageResource){
+                        savePlainToPM(inRef, (PyramidalCoverageResource)outRef, reduce);
+                    }else{
+                        throw new DataStoreException("The given coverage reference is not a pyramidal model, "
+                        + "this process only work with this kind of model.");
+                    }
+                    inc++;
                 }
-                inc++;
             }
         } catch (DataStoreException ex) {
             throw new ProcessException(ex.getLocalizedMessage(), this, ex);

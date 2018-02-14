@@ -3,6 +3,7 @@ package org.geotoolkit.pending.demo.clients.ignrm;
 
 import java.net.URL;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -12,7 +13,6 @@ import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.style.DefaultDescription;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.wmts.WMTSClientFactory;
 import org.geotoolkit.wmts.WebMapTileClient;
@@ -42,7 +42,7 @@ public class IGN_GEOPORTAIL_WMTS {
         final MapContext context = MapBuilder.createContext();
 
         for(GenericName n : store.getNames()){
-            final CoverageResource cr = store.findResource(n);
+            final Resource cr = store.findResource(n.toString());
             if(cr instanceof PyramidalCoverageResource){
                 PyramidalCoverageResource model = (PyramidalCoverageResource) cr;
                 System.out.println(model.getPyramidSet());

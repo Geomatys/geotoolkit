@@ -133,7 +133,7 @@ public class MapTilingDemo {
         final MapContext context = MapBuilder.createContext();
 
         for(GenericName n : store.getNames()){
-            final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.findResource(n));
+            final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.findResource(n.toString()));
             context.layers().add(layer);
         }
 

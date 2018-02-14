@@ -24,10 +24,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
@@ -37,12 +35,10 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStreams;
-import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.gml.GMLUtilities;
@@ -66,14 +62,10 @@ import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
 import org.geotoolkit.sos.netcdf.GeoSpatialBound;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
-import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
-import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
 import org.opengis.util.GenericName;
 import org.opengis.geometry.Geometry;
 import org.opengis.observation.AnyFeature;
@@ -85,12 +77,13 @@ import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.temporal.TemporalObject;
+import org.geotoolkit.storage.FileSystemResource;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class XmlObservationStore extends AbstractFeatureStore implements DataFileStore,ObservationStore {
+public class XmlObservationStore extends AbstractFeatureStore implements FileSystemResource,ObservationStore {
 
     protected final GenericNameIndex<FeatureType> types;
     private static final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
@@ -143,13 +136,6 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
         return capabilities;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void refreshMetaModel() {
-    }
-
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         final FeatureType sft = getFeatureType(query.getTypeName());
@@ -172,62 +158,6 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
             }
             throw new JAXBException("the observation file does not contain a valid O&M object");
         }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void createFeatureType(final FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("Not Supported.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void updateFeatureType(final FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("Not Supported.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void deleteFeatureType(final String typeName) throws DataStoreException {
-        throw new DataStoreException("Not Supported.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
-        throw new DataStoreException("Not Supported.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void updateFeatures(final String groupName, final Filter filter, final Map<String, ? extends Object> values) throws DataStoreException {
-        throw new DataStoreException("Not Supported.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void removeFeatures(String groupName, Filter filter) throws DataStoreException {
-        throw new DataStoreException("Not Supported.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        throw new DataStoreException("Not Supported.");
     }
 
 
@@ -469,7 +399,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
      * {@inheritDoc }
      */
     @Override
-    public Path[] getDataFiles() throws DataStoreException {
+    public Path[] getResourcePaths() throws DataStoreException {
         return new Path[]{xmlFile};
     }
 

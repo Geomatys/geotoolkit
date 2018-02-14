@@ -104,9 +104,10 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
         if(names.contains(name)){
             throw new DataStoreException("Layer "+name+" already exist");
         }
-        rootNode.addResource(new MemoryCoverageResource(name));
+        final MemoryCoverageResource res = new MemoryCoverageResource(name);
+        rootNode.addResource(res);
         fireCoverageAdded(name);
-        return findResource(name);
+        return res;
     }
 
     /**

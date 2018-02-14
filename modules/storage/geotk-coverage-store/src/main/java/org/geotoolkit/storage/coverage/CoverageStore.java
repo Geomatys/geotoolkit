@@ -21,10 +21,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.version.Version;
-import org.geotoolkit.version.VersionControl;
-import org.geotoolkit.version.VersioningException;
-import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -33,7 +29,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface CoverageStore extends AutoCloseable {
+public interface CoverageStore extends AutoCloseable, Resource {
 
     /**
      * Get the parameters used to initialize this source from it's factory.
@@ -48,8 +44,6 @@ public interface CoverageStore extends AutoCloseable {
      * @return this source original factory
      */
     DataStoreFactory getProvider();
-
-    Metadata getMetadata() throws DataStoreException;
 
     /**
      * Returns the root resource of the coverage store.
@@ -73,40 +67,6 @@ public interface CoverageStore extends AutoCloseable {
     ////////////////////////////////////////////////////////////////////////////
     // OLD API /////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Check if this coverage store support versioning.
-     *
-     * @return true if versioning is supported.
-     */
-    public abstract boolean handleVersioning();
-
-    /**
-     * Get version history for given coverage.
-     *
-     * @return VersionHistory for given name.
-     */
-    public abstract VersionControl getVersioning(GenericName typeName) throws VersioningException;
-
-    /**
-     * Get the coverage reference for the given name.
-     *
-     * @param name reference name
-     * @return CoverageResource
-     * @throws DataStoreException
-     */
-    public abstract CoverageResource findResource(GenericName name) throws DataStoreException;
-
-    /**
-     * Get the coverage reference for the given name and version.
-     * If the version do not exist it will be created.
-     *
-     * @param name reference name
-     * @param version version
-     * @return CoverageResource
-     * @throws DataStoreException
-     */
-    public abstract CoverageResource findResource(GenericName name, Version version) throws DataStoreException;
 
     /**
      * Create a new coverage reference.

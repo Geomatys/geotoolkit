@@ -36,6 +36,7 @@ import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.opengis.metadata.quality.CoverageResult;
 
 /**
  * Utility class to create MapLayers, MapContexts and Elevation models from different sources.
@@ -181,8 +182,13 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final Object input){
-        final CoverageResource reference = new DefaultCoverageResource(input, NamesExt.create("image"));
-        return createCoverageLayer(reference);
+        final CoverageResource resource;
+        if (input instanceof CoverageResource) {
+            resource = (CoverageResource)input;
+        } else {
+            resource = new DefaultCoverageResource(input, NamesExt.create("image"));
+        }
+        return createCoverageLayer(resource);
     }
 
     /**
@@ -206,6 +212,21 @@ public final class MapBuilder {
         return new DefaultCoverageMapLayer(ref, style);
     }
 
+    /**
+     * Create a default coverage map layer with a coveragrReference, a style and the grid name.
+     * @param input CoverageResource or input
+     * @param style layer style
+     * @return  CoverageMapLayer
+     */
+    public static CoverageMapLayer createCoverageLayer(final Object input, final MutableStyle style){
+        final CoverageResource resource;
+        if (input instanceof CoverageResource) {
+            resource = (CoverageResource)input;
+        } else {
+            resource = new DefaultCoverageResource(input, NamesExt.create("image"));
+        }
+        return createCoverageLayer(resource,style);
+    }
     /**
      * Create a default elevation model based on a grid coverage reader.
      *

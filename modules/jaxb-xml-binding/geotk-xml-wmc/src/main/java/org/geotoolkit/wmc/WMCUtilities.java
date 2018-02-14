@@ -61,6 +61,7 @@ import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
@@ -184,7 +185,7 @@ public class WMCUtilities {
                 try {
                     for (GenericName n : cs.getNames()) {
                         if (n.tip().toString().equalsIgnoreCase(layerName.tip().toString())) {
-                            final CoverageResource ref = cs.findResource(n);
+                            final Resource ref = cs.findResource(n.toString());
                             final CoverageMapLayer mapLayer = MapBuilder.createCoverageLayer(ref,
                                     GO2Utilities.STYLE_FACTORY.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
                             context.layers().add(mapLayer);

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2018, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,20 +17,23 @@
 package org.geotoolkit.storage;
 
 import org.apache.sis.storage.DataStoreException;
-
-import java.nio.file.Path;
-
+import org.apache.sis.storage.Resource;
 
 /**
- * Files-related {@linkplain org.apache.sis.storage.DataStore data stores}.
+ * This interface identify resources which support a transactional procedure.
+ * Example : Databases, WFS
  *
- * @author Cédric Briançon (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
-public interface DataFileStore {
+public interface TransactionalResource extends Resource {
+
     /**
-     * Get all files pointed by this {@linkplain org.apache.sis.storage.DataStore data store}.
+     * Start a new transaction on this resource.
+     * The returned resource should have the same capabilities of this
+     * resource.
      *
-     * @return Files used by this store. Should never be {@code null}.
+     * @return new TransactionResource
      */
-    Path[] getDataFiles() throws DataStoreException;
+    ResourceTransaction newTransaction() throws DataStoreException;
+
 }

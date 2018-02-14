@@ -11,12 +11,12 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.osmtms.OSMTMSClientFactory;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.CoverageResource;
 import org.opengis.util.GenericName;
 
 
@@ -45,7 +45,7 @@ public class OSMTMSClientDemo {
         final CoverageStore store = (CoverageStore) DataStores.open(params);
 
         for(GenericName n : store.getNames()){
-            final CoverageResource cr = store.findResource(n);
+            final Resource cr = store.findResource(n.toString());
             final CoverageMapLayer cml = MapBuilder.createCoverageLayer(cr);
             cml.setDescription(new DefaultDescription(
                     new SimpleInternationalString(n.tip().toString()),
