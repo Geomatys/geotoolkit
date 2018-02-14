@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
@@ -63,7 +64,44 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 /**
- * Note : NOT THREAD-SAFE !
+ * An object aiming to transform gml geometries into JTS one. The main advantage
+ * of this object is to provide a context for a better management of multi-level
+ * nature of GML geometries. For example, a GML geometry can be defined through
+ * many nested xml markup, and GML allow CRS identification to be specified at
+ * any level. This class allow to get back this information from any upper level
+ * while reading a geometry.
+ *
+ * @implNote
+ * TODO : for now nothing is done on conflicting CRS definition.
+ * Example :  <pre>
+ * {@code
+ * <gml:parent srsName="EPSG:3395">
+ *   <gml:child srsName="EPSG:4326">...some geometry...</gml:child>
+ * </gml:parent>
+ * }
+ * </pre>
+ *
+ * In above pseudo-gml, a single geometry defines two different CRS. For now,
+ * our implementation start checking at most-nested level, and stop on first
+ * code found. This is mostly for simplicity/performance reason. But, for better
+ * consistency, we should throw an exception, to notify user about this
+ * conflicting information.
+ *
+ * Structural information :
+ * <ul>
+ * <li>NOT THREAD-SAFE !</li>
+ * <li>When adding cases, one should try to proceed in 2 times : add a case
+ * append a condition in {@link #get() } method, but keep it as clean as
+ * possible by delegating technical code in another method.</li>
+ * <li>For multi-level geometry, one should delegate decoding to a new
+ * GeometryTransformer whose parent is set to current one. The aim is to ease
+ * traversal of information between geometry levels (for CRS by example)</li>
+ * <li>The {@link #getCoordinates(org.geotoolkit.gml.xml.AbstractGeometry) }
+ * method tries to extract point information from GML geometry from multiple
+ * possible structure. When the aim is to extract a list of points before
+ * rebuilding a geometry, one should try to use and expand if needed this
+ * method, to focus technical code, and allow a better re-usability of it.</li>
+ * </ul>
  * @author Alexis Manin (Geomatys)
  */
 public class GeometryTransformer implements Supplier<Geometry> {
@@ -204,7 +242,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
      * @return Found points, never null, but can be empty.
      * @throws UnconvertibleObjectException If the given geometry does not implement {@link WithCoordinates}.
      */
-    private Spliterator<Coordinate> getCoordinates(final AbstractGeometry source) throws UnconvertibleObjectException {
+    private Spliterator<Coordinate> getCoordinates(final Object source) throws UnconvertibleObjectException {
         List<Double> values = null;
         if (source instanceof WithCoordinates) {
             final Coordinates coords = ((WithCoordinates) source).getCoordinates();
@@ -235,6 +273,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
             }
         }
 
+        // TODO : below conditions should be removed when proper abstraction is setup on GML geometry definition.
         if (values == null) {
             if (source instanceof org.geotoolkit.gml.xml.LineString) {
                 final org.geotoolkit.gml.xml.LineString ls = (org.geotoolkit.gml.xml.LineString) (source);
@@ -250,13 +289,12 @@ public class GeometryTransformer implements Supplier<Geometry> {
                     values = Collections.EMPTY_LIST;// We've identified a line, but there's no data in it
                 }
             } else if (source instanceof org.geotoolkit.gml.xml.LinearRing) {
-                final org.geotoolkit.gml.xml.LinearRing lr = (org.geotoolkit.gml.xml.LinearRing) source;
-                final DirectPositionList posList = lr.getPosList();
-                if (posList != null) {
-                    values = posList.getValue();
-                } else {
-                    values = Collections.EMPTY_LIST;// We've identified a ring, but there's no data in it
-                }
+                // Note : do not check "getCoordinates", because it should have been done above.
+                values = asDoubles(() -> ((org.geotoolkit.gml.xml.LinearRing) source).getPosList());
+            } else if (source instanceof org.geotoolkit.gml.xml.v311.GeodesicStringType) {
+                values = asDoubles(() -> ((org.geotoolkit.gml.xml.v311.GeodesicStringType) source).getPosList());
+            } else if (source instanceof org.geotoolkit.gml.xml.v321.GeodesicStringType) {
+                values = asDoubles(() -> ((org.geotoolkit.gml.xml.v321.GeodesicStringType) source).getPosList());
             }
         }
 
@@ -268,6 +306,18 @@ public class GeometryTransformer implements Supplier<Geometry> {
         }
 
         throw new UnconvertibleObjectException("Cannot extract coordinates from source geometry.");
+    }
+
+    /**
+     * Return the values stored in a {@link DirectPositionList}.
+     * @param positionProvider A supplier giving back wanted DirectPositionList.
+     * Cannot be null, but can provide null values.
+     * @return Found values, or an empty collection if input supplier gives back
+     * a null object.
+     */
+    private static List<Double> asDoubles(final Supplier<DirectPositionList> positionProvider) {
+        final DirectPositionList posList = positionProvider.get();
+        return posList != null ? posList.getValue() : Collections.EMPTY_LIST;
     }
 
     private static Coordinate convertDirectPosition(final org.opengis.geometry.DirectPosition dp) {
@@ -449,22 +499,8 @@ public class GeometryTransformer implements Supplier<Geometry> {
         CurveSegmentArrayProperty segments = mc.getSegments();
         final List<LineString> lines = new ArrayList<>();
         for (AbstractCurveSegment cs : segments.getAbstractCurveSegment()) {
-
-            final DirectPositionList posList;
-            if (cs instanceof org.geotoolkit.gml.xml.v321.GeodesicStringType) {
-                posList = ((org.geotoolkit.gml.xml.v321.GeodesicStringType)cs).getPosList();
-            } else if (cs instanceof org.geotoolkit.gml.xml.v311.GeodesicStringType) {
-                posList = ((org.geotoolkit.gml.xml.v311.GeodesicStringType)cs).getPosList();
-            } else {
-                throw new UnconvertibleObjectException("Unsupported curve segment "+cs.getClass());
-            }
-
-            final List<Double> values = posList.getValue();
-            final Coordinate[] coordinates = new Coordinate[values.size()/2];
-            for (int i=0,x=0; i<coordinates.length; i++) {
-                coordinates[i] = new Coordinate(values.get(x++), values.get(x++));
-            }
-
+            final Coordinate[] coordinates = StreamSupport.stream(getCoordinates(cs), false)
+                    .toArray(size -> new Coordinate[size]);
             lines.add(GF.createLineString(coordinates));
         }
 

@@ -4,8 +4,12 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
@@ -43,6 +47,15 @@ public abstract class ReadGeometryTest {
     final <T> T read(final URL source) throws Exception {
         final MarshallerPool pool = GMLMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        unmarshaller.setEventHandler((ValidationEvent event) -> {
+            final boolean shouldContinue = event.getSeverity() < ValidationEvent.ERROR;
+
+            final LogRecord record = new LogRecord(shouldContinue ? Level.WARNING : Level.SEVERE, event.getMessage());
+            record.setThrown(event.getLinkedException());
+            Logging.getLogger("org.geotoolkit.gml").log(record);
+
+            return shouldContinue;
+        });
 
         Object unmarshalled = unmarshaller.unmarshal(source);
 
