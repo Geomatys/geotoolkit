@@ -25,6 +25,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
@@ -60,7 +61,7 @@ public class FXRule extends FXStyleElementController<MutableRule> {
                 rule.setFilter(filter);
                 uiCQL.setText(CQL.write(filter));
             }
-        } catch (CQLException ex) {
+        } catch (CQLException | DataStoreException ex) {
             Logging.getLogger("org.geotoolkit.gui.javafx.style").log(Level.WARNING, ex.getMessage(), ex);
         }
     }

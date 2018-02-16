@@ -38,9 +38,11 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import org.geotoolkit.feature.FeatureExt;
 
 import org.geotoolkit.factory.FactoryFinder;
@@ -67,6 +69,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.data.FeatureStreams;
@@ -289,8 +293,7 @@ public class EditionHelper {
 
         Feature candidate = null;
 
-        FeatureCollection editgeoms = null;
-        FeatureIterator fi = null;
+        FeatureSet editgeoms = null;
         try {
             final Polygon geo = mousePositionToGeometry(mx, my);
             Filter flt = toFilter(geo, editedLayer);
@@ -313,40 +316,39 @@ public class EditionHelper {
                 flt = FF.and(flt, dimFilter);
             }
 
-            QueryBuilder qb = new QueryBuilder(editedLayer.getCollection().getType().getName().toString());
+            QueryBuilder qb = new QueryBuilder(editedLayer.getResource().getType().getName().toString());
             //we filter in the map CRS
             qb.setCRS(map.getCanvas().getObjectiveCRS2D());
-            editgeoms = editedLayer.getCollection().subset(qb.buildQuery());
+            editgeoms = editedLayer.getResource().subset(qb.buildQuery());
 
             //we filter ourself since we want the filter to occure after the reprojection
-            editgeoms = FeatureStreams.filter(editgeoms, flt);
 
-            fi = editgeoms.iterator();
-            if (fi.hasNext()) {
-                Feature sf = fi.next();
+            try (Stream<Feature> stream = editgeoms.features(false)) {
+                Iterator<Feature> fi = stream.iterator();
+                while (fi.hasNext()) {
+                    Feature sf = fi.next();
+                    if (!flt.evaluate(fi)) continue;
 
-                //get the original, in it's data crs
-                flt = FF.id(Collections.singleton(FeatureExt.getId(sf)));
-                sf = null;
-                fi.close();
+                    //get the original, in it's data crs
+                    flt = FF.id(Collections.singleton(FeatureExt.getId(sf)));
+                    sf = null;
 
-                qb.reset();
-                qb.setTypeName(editedLayer.getCollection().getType().getName());
-                qb.setFilter(flt);
-                editgeoms = editedLayer.getCollection().subset(qb.buildQuery());
-                fi = editgeoms.iterator();
-                if (fi.hasNext()){
-                    sf = fi.next();
+                    qb.reset();
+                    qb.setTypeName(editedLayer.getResource().getType().getName());
+                    qb.setFilter(flt);
+                    editgeoms = editedLayer.getResource().subset(qb.buildQuery());
+                    try (Stream<Feature> stream2 = editgeoms.features(false)) {
+                        fi = stream2.iterator();
+                        if (fi.hasNext()){
+                            sf = fi.next();
+                        }
+                    }
+
+                    return sf;
                 }
-
-                return sf;
             }
         }catch(Exception ex){
             LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
-        }finally{
-            if(fi != null){
-                fi.close();
-            }
         }
 
         return candidate;
@@ -905,7 +907,7 @@ public class EditionHelper {
     public Geometry toObjectiveCRS(Geometry geom){
         try{
             final MathTransform trs = CRS.findOperation(
-                    FeatureExt.getCRS(editedLayer.getCollection().getType()),
+                    FeatureExt.getCRS(editedLayer.getResource().getType()),
                     map.getCanvas().getObjectiveCRS2D(), null).getMathTransform();
 
             geom = JTS.transform(geom, trs);
@@ -924,9 +926,9 @@ public class EditionHelper {
      * @param fl : target layer filter
      * @return geometry filter
      */
-    public Filter toFilter(final Geometry poly, final FeatureMapLayer fl) throws FactoryException, MismatchedDimensionException, TransformException{
+    public Filter toFilter(final Geometry poly, final FeatureMapLayer fl) throws FactoryException, MismatchedDimensionException, TransformException, DataStoreException{
 
-        final String geoStr = FeatureExt.getDefaultGeometry(fl.getCollection().getType()).getName().toString();
+        final String geoStr = FeatureExt.getDefaultGeometry(fl.getResource().getType()).getName().toString();
         final Expression geomField = FF.property(geoStr);
 
         final Geometry dataPoly = poly;
@@ -945,7 +947,7 @@ public class EditionHelper {
 
         if (editedLayer != null && geom != null) {
 
-            final FeatureType featureType = (FeatureType) editedLayer.getCollection().getType();
+            final FeatureType featureType = (FeatureType) ((FeatureCollection)editedLayer.getResource()).getType();
             final CoordinateReferenceSystem dataCrs = FeatureExt.getCRS(featureType);
             final Feature feature = featureType.newInstance();
 
@@ -960,9 +962,9 @@ public class EditionHelper {
                 JFeatureOutLine.show(map,feature);
             }
 
-            if(editedLayer.getCollection().isWritable()){
+            if(((FeatureCollection)editedLayer.getResource()).isWritable()){
                 try {
-                    ((FeatureCollection)editedLayer.getCollection()).add(feature);
+                    ((FeatureCollection)editedLayer.getResource()).add(feature);
                 } catch (Exception ex) {
                     LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
                 }
@@ -989,14 +991,14 @@ public class EditionHelper {
         ensureNonNull("geometry", geo);
         ensureNonNull("id", ID);
 
-        if (editedLayer != null && editedLayer.getCollection().isWritable()) {
-
-            final Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
-            final FeatureType featureType = editedLayer.getCollection().getType();
-            final PropertyType geomAttribut = FeatureExt.getDefaultGeometry(featureType);
-            final CoordinateReferenceSystem dataCrs = FeatureExt.getCRS(geomAttribut);
+        if (editedLayer != null && ((FeatureCollection)editedLayer.getResource()).isWritable()) {
 
             try {
+                final Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
+                final FeatureType featureType = editedLayer.getResource().getType();
+                final PropertyType geomAttribut = FeatureExt.getDefaultGeometry(featureType);
+                final CoordinateReferenceSystem dataCrs = FeatureExt.getCRS(geomAttribut);
+
                 final Geometry geom;
                 if(reprojectToDataCRS){
                     geom = JTS.transform(geo,
@@ -1006,7 +1008,7 @@ public class EditionHelper {
                     geom = geo;
                 }
 
-                editedLayer.getCollection().update(filter, Collections.singletonMap(geomAttribut.getName().toString(), geom));
+                ((FeatureCollection)editedLayer.getResource()).update(filter, Collections.singletonMap(geomAttribut.getName().toString(), geom));
             } catch (final Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
             } finally {
@@ -1024,12 +1026,12 @@ public class EditionHelper {
     public void sourceRemoveFeature(final String ID) {
         ensureNonNull("id", ID);
 
-        if (editedLayer != null && editedLayer.getCollection().isWritable()) {
+        if (editedLayer != null && ((FeatureCollection)editedLayer.getResource()).isWritable()) {
 
             Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
 
             try {
-                editedLayer.getCollection().remove(filter);
+                ((FeatureCollection)editedLayer.getResource()).remove(filter);
             } catch (final Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
             }

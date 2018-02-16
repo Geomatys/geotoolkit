@@ -201,13 +201,13 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         Set<PropertyType> returnedProperties;
 
         if(queryPropertyNames == null){
-            //return all properties
-            readProperties = new HashSet<>(getAttributes(baseType,true));
-            returnedProperties = new HashSet<>((Collection)baseType.getProperties(true));
+            //return all properties. Note : preserve order by using a linked set implementation
+            readProperties = new LinkedHashSet<>(getAttributes(baseType,true));
+            returnedProperties = new LinkedHashSet<>((Collection)baseType.getProperties(true));
         }else{
-            //return only a subset of properties
-            readProperties = new HashSet<>(queryPropertyNames.length);
-            returnedProperties = new HashSet<>(queryPropertyNames.length);
+            //return only a subset of properties. Note : preserve order by using a linked set implementation
+            readProperties = new LinkedHashSet<>(queryPropertyNames.length);
+            returnedProperties = new LinkedHashSet<>(queryPropertyNames.length);
             for(String n : queryPropertyNames){
                 final PropertyType cdt = baseType.getProperty(n);
                 if (cdt instanceof AttributeType) {
@@ -233,7 +233,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
                 }
             }
         }
-        final Set<PropertyType> allProperties = new HashSet<>(returnedProperties);
+        final Set<PropertyType> allProperties = new LinkedHashSet<>(returnedProperties);
         allProperties.addAll(readProperties);
 
         //create a reader ------------------------------------------------------

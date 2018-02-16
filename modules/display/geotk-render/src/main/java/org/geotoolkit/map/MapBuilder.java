@@ -20,11 +20,12 @@ import java.util.Collection;
 import org.geotoolkit.storage.coverage.DefaultCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -35,6 +36,7 @@ import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.opengis.metadata.quality.CoverageResult;
 
 /**
  * Utility class to create MapLayers, MapContexts and Elevation models from different sources.
@@ -141,8 +143,14 @@ public final class MapBuilder {
      * @param collection layer data collection
      * @return FeatureMapLayer
      */
-    public static FeatureMapLayer createFeatureLayer(final FeatureCollection collection){
-        return new DefaultFeatureMapLayer(collection, RandomStyleBuilder.createDefaultVectorStyle(collection.getType()));
+    public static FeatureMapLayer createFeatureLayer(final FeatureSet collection){
+        MutableStyle style;
+        try {
+            style = RandomStyleBuilder.createDefaultVectorStyle(collection.getType());
+        } catch (DataStoreException ex) {
+            style = ((MutableStyleFactory)FactoryFinder.getStyleFactory(null)).style(RandomStyleBuilder.createRandomPointSymbolizer());
+        }
+        return new DefaultFeatureMapLayer(collection, style);
     }
 
     /**
@@ -151,7 +159,7 @@ public final class MapBuilder {
      * @param style layer style
      * @return FeatureMapLayer
      */
-    public static FeatureMapLayer createFeatureLayer(final FeatureCollection collection, final MutableStyle style){
+    public static FeatureMapLayer createFeatureLayer(final FeatureSet collection, final MutableStyle style){
         return new DefaultFeatureMapLayer(collection, style);
     }
 
@@ -174,8 +182,13 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final Object input){
-        final CoverageResource reference = new DefaultCoverageResource(input, NamesExt.create("image"));
-        return createCoverageLayer(reference);
+        final CoverageResource resource;
+        if (input instanceof CoverageResource) {
+            resource = (CoverageResource)input;
+        } else {
+            resource = new DefaultCoverageResource(input, NamesExt.create("image"));
+        }
+        return createCoverageLayer(resource);
     }
 
     /**
@@ -199,6 +212,21 @@ public final class MapBuilder {
         return new DefaultCoverageMapLayer(ref, style);
     }
 
+    /**
+     * Create a default coverage map layer with a coveragrReference, a style and the grid name.
+     * @param input CoverageResource or input
+     * @param style layer style
+     * @return  CoverageMapLayer
+     */
+    public static CoverageMapLayer createCoverageLayer(final Object input, final MutableStyle style){
+        final CoverageResource resource;
+        if (input instanceof CoverageResource) {
+            resource = (CoverageResource)input;
+        } else {
+            resource = new DefaultCoverageResource(input, NamesExt.create("image"));
+        }
+        return createCoverageLayer(resource,style);
+    }
     /**
      * Create a default elevation model based on a grid coverage reader.
      *

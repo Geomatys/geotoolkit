@@ -68,7 +68,7 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
         pcb.create(ref1, mpCovStore, name, map, fillValue, null, null);
 
         //test reference
-        CoverageResource outRef = mpCovStore.findResource(name);
+        CoverageResource outRef = (CoverageResource) mpCovStore.findResource(name.toString());
         assertNotNull(outRef);
         assertTrue(outRef instanceof AbstractPyramidalCoverageResource);
         AbstractPyramidalCoverageResource outRefPy = (AbstractPyramidalCoverageResource) outRef;
@@ -151,7 +151,7 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
         pcb.create(ref2, mpCovStore, name, map, fillValue, null, null);
 
         //test reference
-        CoverageResource outRef = mpCovStore.findResource(name);
+        CoverageResource outRef = (CoverageResource) mpCovStore.findResource(name.toString());
         assertNotNull(outRef);
         assertTrue(outRef instanceof AbstractPyramidalCoverageResource);
         AbstractPyramidalCoverageResource outRefPy = (AbstractPyramidalCoverageResource) outRef;
@@ -295,7 +295,7 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
         gcb.setRenderedImage(image);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
         final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
-        return store.findResource(store.getNames().iterator().next());
+        return (CoverageResource) store.findResource(store.getNames().iterator().next().toString());
     }
 
     private static void testImage(RenderedImage img, int width, int height, Color fill){

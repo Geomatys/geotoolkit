@@ -156,7 +156,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         }
 
         fireCoverageAdded(name);
-        return findResource(NamesExt.create(name.tip().toString()));
+        return (CoverageResource) findResource(name.tip().toString());
     }
 
     @Override
@@ -234,12 +234,6 @@ public class PGCoverageStore extends AbstractCoverageStore{
     // Versioning support //////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    @Override
-    public boolean handleVersioning() {
-        return true;
-    }
-
-    @Override
     public VersionControl getVersioning(GenericName typeName) throws VersioningException {
         try {
             typeCheck(typeName);
@@ -249,7 +243,6 @@ public class PGCoverageStore extends AbstractCoverageStore{
         }
     }
 
-    @Override
     public CoverageResource findResource(GenericName name, Version version) throws DataStoreException {
         typeCheck(name);
         return createCoverageReference(name, version);

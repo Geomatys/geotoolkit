@@ -25,4 +25,11 @@ import java.util.List;
 public interface DirectPositionList {
 
     List<Double> getValue();
+
+    Integer getCount();
+
+    String getSrsName();
+
+    Integer getSrsDimension();
+
 }

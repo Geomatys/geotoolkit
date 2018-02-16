@@ -36,6 +36,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
@@ -120,10 +121,10 @@ public class ExportItem extends TreeMenuItem {
                     final DirectoryChooser chooser = new DirectoryChooser();
                     chooser.setTitle(GeotkFX.getString(ExportItem.class, "folder"));
                     File folder = chooser.showDialog(null);
+                    final FeatureSet baseCol = layer.getResource();
 
-                    if(folder!=null){
+                    if (folder!=null && (baseCol instanceof FeatureCollection)) {
                         try {
-                            final FeatureCollection baseCol = layer.getCollection();
                             final FeatureType baseType = baseCol.getType();
                             final GenericName baseName = baseType.getName();
 
@@ -135,10 +136,10 @@ public class ExportItem extends TreeMenuItem {
                             final AttributeType<?> geomAtt = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(baseType))
                                     .orElseThrow(() -> new IllegalArgumentException("No geometric property found in layer " + layer.getName()));
                             if(ArraysExt.contains(supportedGeometryTypes,geomAtt.getValueClass()) ){
-                                cols = new FeatureCollection[]{baseCol};
+                                cols = new FeatureCollection[]{(FeatureCollection)baseCol};
                             }else{
                                 //split the feature collection in sub geometry types
-                                cols = FeatureStoreUtilities.decomposeByGeometryType(baseCol, supportedGeometryTypes);
+                                cols = FeatureStoreUtilities.decomposeByGeometryType((FeatureCollection)baseCol, supportedGeometryTypes);
                             }
 
                             for(FeatureCollection col : cols){
@@ -150,19 +151,15 @@ public class ExportItem extends TreeMenuItem {
                                 final File file= new File(folder, inTypeName+factory.getFileExtensions()[0]);
 
                                 //create output store
-                                final FeatureStore store = factory.createDataStore(file.toURI());
-
-                                //create output type
-                                store.createFeatureType(inType);
-                                final FeatureType outType = store.getFeatureType(inTypeName);
-                                final GenericName outName = outType.getName();
-
-                                //write datas
-                                final Session session = store.createSession(false);
-                                session.addFeatures(outName.toString(), col);
-
-                                //close store
-                                store.close();
+                                try (FeatureStore store = factory.createDataStore(file.toURI())) {
+                                    //create output type
+                                    store.createFeatureType(inType);
+                                    final FeatureType outType = store.getFeatureType(inTypeName);
+                                    final GenericName outName = outType.getName();
+                                    //write datas
+                                    final Session session = store.createSession(false);
+                                    session.addFeatures(outName.toString(), col);
+                                }
                             }
 
                         } catch (DataStoreException ex) {

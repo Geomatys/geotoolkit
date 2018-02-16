@@ -36,7 +36,7 @@ public class OSMTMSMapLayer extends DefaultCoverageMapLayer {
 
     private static CoverageResource getReference(OSMTileMapClient server){
         try {
-            return server.findResource(server.getNames().iterator().next());
+            return (CoverageResource) server.findResource(server.getNames().iterator().next().toString());
         } catch (DataStoreException ex) {
             throw new RuntimeException(ex);
         }

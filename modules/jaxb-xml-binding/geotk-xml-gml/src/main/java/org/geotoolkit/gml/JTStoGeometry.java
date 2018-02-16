@@ -107,9 +107,6 @@ public final class JTStoGeometry {
         } else if (jts instanceof LinearRing) {
             return toGML(gmlVersion,(LinearRing) jts, crs);
 
-        } else if (jts instanceof GeometryCollection) {
-            return toGML(gmlVersion,(GeometryCollection) jts, crs);
-
         } else if (jts instanceof MultiPoint) {
             return toGML(gmlVersion,(MultiPoint) jts, crs);
 
@@ -118,6 +115,9 @@ public final class JTStoGeometry {
 
         } else if (jts instanceof MultiPolygon) {
             return toGML(gmlVersion,(MultiPolygon) jts, crs);
+
+        } else if (jts instanceof GeometryCollection) {
+            return toGML(gmlVersion,(GeometryCollection) jts, crs);
 
         } else {
             throw new IllegalArgumentException("Unsupported geometry type : " + jts);
@@ -142,60 +142,50 @@ public final class JTStoGeometry {
         //Test if it's a 2D Geometry from CRS
         isValideGeometry(crs);
 
-        //Get th e class of the first geometry in the GeometryCollection
-        Class buffer = null;
-        if (jtsGeom.getNumGeometries() > 0) {
-            final Geometry geom = jtsGeom.getGeometryN(0);
-            if (geom.getClass().isAssignableFrom(Polygon.class) || geom.getClass().isAssignableFrom(Point.class)
-                    || geom.getClass().isAssignableFrom(LineString.class)) {
-                buffer = geom.getClass();
-            }
-        }
-        //Verify if all other geometries contained by the GeometryCollection is from the same class
-        boolean isSupported = true;
-        for (int i = 0; i < jtsGeom.getNumGeometries(); i++) {
-            if (!(jtsGeom.getGeometryN(i).getClass().isAssignableFrom(buffer))) {
-                isSupported = false;
-                break;
-            }
+        if (jtsGeom.isEmpty()) {
+            throw new IllegalArgumentException("Cannot write empty geometry for unidentified geometry collection type");
         }
 
-        if (isSupported) {
+        final Class buffer = jtsGeom.getGeometryN(0).getClass();
+
+        //Get the class of the first geometry in the GeometryCollection
+        if (!(buffer.isAssignableFrom(Polygon.class)
+            || buffer.isAssignableFrom(Point.class)
+            || buffer.isAssignableFrom(LineString.class))) {
+            throw new IllegalArgumentException("Writing GML geometry collection works only for Points, LineStrings and polygons");
+        }
+
+        //Verify that we've got a single geometry type
+        boolean isSupported = true;
+        final List<Geometry> innerGeometries = new ArrayList<>(jtsGeom.getNumGeometries());
+        for (int i = 0; i < jtsGeom.getNumGeometries(); i++) {
+            final Geometry subGeom = jtsGeom.getGeometryN(i);
+            if (!(subGeom.getClass().isAssignableFrom(buffer))) {
+                throw new IllegalArgumentException("Writing GML geometry collection containing different geometry types is not supported");
+            }
+            innerGeometries.add(subGeom);
+        }
+
             final GeometryFactory gf = new GeometryFactory();
             //Convert to a MultiPoint
             if (buffer.equals(Point.class)) {
-                List<Point> ptList = new ArrayList<>();
-                for (int i = 0; i < jtsGeom.getNumGeometries(); i++) {
-                    ptList.add((Point) jtsGeom.getGeometryN(i));
-                }
-                final MultiPoint mutlPt = gf.createMultiPoint(ptList.toArray(new Point[ptList.size()]));
+                final MultiPoint mutlPt = gf.createMultiPoint(innerGeometries.toArray(new Point[innerGeometries.size()]));
                 JTS.setCRS(mutlPt, crs);
                 return toGML(gmlVersion, mutlPt, crs);
 
                 //Convert to a MultiLineString
             } else if (buffer.equals(LineString.class)) {
-                List<LineString> lsList = new ArrayList<>();
-                for (int i = 0; i < jtsGeom.getNumGeometries(); i++) {
-                    lsList.add((LineString) jtsGeom.getGeometryN(i));
-                }
-                final MultiLineString multLineString = gf.createMultiLineString(lsList.toArray(new LineString[lsList.size()]));
+                final MultiLineString multLineString = gf.createMultiLineString(innerGeometries.toArray(new LineString[innerGeometries.size()]));
                 JTS.setCRS(multLineString, crs);
                 return toGML(gmlVersion, multLineString, crs);
 
             } else if (buffer.equals(Polygon.class)) {
-                List<Polygon> polyList = new ArrayList<>();
-                for (int i = 0; i < jtsGeom.getNumGeometries(); i++) {
-                    polyList.add((Polygon) jtsGeom.getGeometryN(i));
-                }
-                final MultiPolygon multPoly = gf.createMultiPolygon(polyList.toArray(new Polygon[polyList.size()]));
+                final MultiPolygon multPoly = gf.createMultiPolygon(innerGeometries.toArray(new Polygon[innerGeometries.size()]));
                 JTS.setCRS(multPoly, crs);
                 return toGML(gmlVersion, multPoly, crs);
             } else {
-                throw new IllegalArgumentException("Unssupported geometry type : " + jtsGeom);
+                throw new IllegalArgumentException("Writing GML geometry collection works only for Points, LineStrings and polygons");
             }
-        } else {
-            throw new IllegalArgumentException("Unssupported geometry type : " + jtsGeom);
-        }
 
     }
 

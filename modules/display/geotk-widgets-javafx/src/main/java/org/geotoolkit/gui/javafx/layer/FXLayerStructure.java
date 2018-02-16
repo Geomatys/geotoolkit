@@ -19,6 +19,7 @@ package org.geotoolkit.gui.javafx.layer;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.logging.Level;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -31,12 +32,14 @@ import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.amended.AmendedCoverageResource;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.internal.GeotkFX;
+import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
@@ -107,16 +110,20 @@ public class FXLayerStructure extends FXPropertyPane {
         sb.append("</head><body>");
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            final FeatureType type = fml.getCollection().getType();
+            final FeatureType type;
+            try {
+                type = fml.getResource().getType();
+                String str = type.toString().replace("&", "&amp;");
+                str = str.replace("<", "&lt;");
+                str = str.replace(">", "&gt;");
 
-            String str = type.toString().replace("&", "&amp;");
-            str = str.replace("<", "&lt;");
-            str = str.replace(">", "&gt;");
-
-            sb.append("<pre>");
-            sb.append(str);
-            sb.append("</pre>");
-            setCenter(webPane);
+                sb.append("<pre>");
+                sb.append(str);
+                sb.append("</pre>");
+                setCenter(webPane);
+            } catch (DataStoreException ex) {
+                Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
+            }
 
 
         }else if(layer instanceof CoverageMapLayer){

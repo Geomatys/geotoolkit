@@ -50,6 +50,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
@@ -161,7 +162,7 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
                 combineFilter = f;
                 uiCombineFilter.setTooltip(new Tooltip(CQL.write(combineFilter)));
             }
-        } catch (CQLException ex) {
+        } catch (CQLException | DataStoreException ex) {
             Loggers.JAVAFX.log(Level.INFO, ex.getMessage(),ex);
         }
     }
@@ -468,7 +469,7 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
                         public Filter apply(Filter t) {
                             try{
                                 return FXCQLEditor.showFilterDialog(null, layer, t);
-                            }catch(CQLException ex){
+                            }catch(CQLException | DataStoreException ex){
                                 ex.printStackTrace();
                             }
                             return t;

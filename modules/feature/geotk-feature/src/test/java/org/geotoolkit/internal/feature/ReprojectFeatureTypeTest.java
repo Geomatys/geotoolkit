@@ -20,12 +20,14 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import java.util.Collection;
-import org.geotoolkit.feature.ReprojectFeatureType;
+import org.geotoolkit.feature.ReprojectMapper;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.opengis.feature.Attribute;
+import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
@@ -47,15 +49,15 @@ public class ReprojectFeatureTypeTest {
         final FeatureType baseType = ftb.build();
 
         //test view type
-        final ReprojectFeatureType reprojType = new ReprojectFeatureType(baseType, CommonCRS.WGS84.normalizedGeographic());
-        final Collection<? extends PropertyType> properties = reprojType.getProperties(true);
+        final ReprojectMapper reprojType = new ReprojectMapper(baseType, CommonCRS.WGS84.normalizedGeographic());
+        final Collection<? extends PropertyType> properties = reprojType.getMappedType().getProperties(true);
         assertEquals(1,properties.size());
 
         //test feature
         final Feature baseFeature = baseType.newInstance();
         baseFeature.setPropertyValue("attGeom", GF.createPoint(new Coordinate(10, 20)));
 
-        final Feature reprojFeature = reprojType.newInstance(baseFeature);
+        final Feature reprojFeature = reprojType.apply(baseFeature);
         assertEquals(GF.createPoint(new Coordinate(20, 10)), reprojFeature.getPropertyValue("attGeom"));
     }
 
@@ -68,17 +70,17 @@ public class ReprojectFeatureTypeTest {
         final FeatureType baseType = ftb.build();
 
         //test view type
-        final ReprojectFeatureType viewType = new ReprojectFeatureType(baseType, CommonCRS.WGS84.normalizedGeographic());
-        final Collection<? extends PropertyType> properties = viewType.getProperties(true);
+        final ReprojectMapper viewType = new ReprojectMapper(baseType, CommonCRS.WGS84.normalizedGeographic());
+        final Collection<? extends PropertyType> properties = viewType.getMappedType().getProperties(true);
         assertEquals(3,properties.size());
-        assertTrue(viewType.getProperty("attGeom") instanceof Operation);
-        assertTrue(viewType.getProperty("sis:geometry") instanceof Operation);
+        assertTrue(viewType.getMappedType().getProperty("attGeom") instanceof AttributeType);
+        assertTrue(viewType.getMappedType().getProperty("sis:geometry") instanceof Operation);
 
         //test feature
         final Feature baseFeature = baseType.newInstance();
         baseFeature.setPropertyValue("attGeom", GF.createPoint(new Coordinate(10, 20)));
 
-        final Feature viewFeature = viewType.newInstance(baseFeature);
+        final Feature viewFeature = viewType.apply(baseFeature);
         assertEquals(GF.createPoint(new Coordinate(20, 10)), viewFeature.getPropertyValue("attGeom"));
         assertEquals(GF.createPoint(new Coordinate(20, 10)), viewFeature.getPropertyValue("sis:geometry"));
     }

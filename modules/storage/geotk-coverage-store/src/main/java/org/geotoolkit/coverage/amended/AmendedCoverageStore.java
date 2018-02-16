@@ -27,9 +27,6 @@ import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreListener;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.storage.coverage.CoverageType;
-import org.geotoolkit.version.Version;
-import org.geotoolkit.version.VersionControl;
-import org.geotoolkit.version.VersioningException;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -113,35 +110,6 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
 
         }
         return root;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean handleVersioning() {
-        return store.handleVersioning();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public VersionControl getVersioning(GenericName typeName) throws VersioningException {
-        return store.getVersioning(typeName);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public CoverageResource findResource(GenericName name, Version version) throws DataStoreException {
-        final CoverageResource cr = (version==null) ? store.findResource(name) :store.findResource(name, version);
-        if(cr instanceof PyramidalCoverageResource){
-            return new AmendedCoverageResource(cr, store);
-        }else{
-            return new AmendedCoverageResource(cr, store);
-        }
     }
 
     /**

@@ -46,7 +46,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @version $Id$
  * @module
  */
-public interface Query {
+public interface Query extends org.apache.sis.storage.Query {
 
     /**
      * Default GeotoolKit language used for querying databases.

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.gui.javafx.layer;
 
-import javafx.event.ActionEvent;
+import java.util.logging.Level;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
@@ -27,10 +27,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.gui.javafx.feature.FXFeatureTypeEditor;
 import org.geotoolkit.internal.GeotkFX;
+import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.opengis.feature.FeatureType;
 
@@ -51,7 +50,8 @@ public class FXFeatureTypePane extends FXPropertyPane {
 
         editor.editableProperty().bind(editable.selectedProperty());
         editor.disableProperty().bind(editable.selectedProperty().not());
-        apply.setOnAction(this::apply);
+        //TODO type not editable anymore
+        //apply.setOnAction(this::apply);
 
         final GridPane toppane = new GridPane();
         toppane.setHgap(10);
@@ -71,16 +71,16 @@ public class FXFeatureTypePane extends FXPropertyPane {
         return target instanceof FeatureMapLayer;
     }
 
-    private void apply(ActionEvent event){
-        final FeatureType ft = editor.getFeatureType();
-        final Selector source = (Selector) layer.getCollection().getSource();
-        final FeatureStore store = source.getSession().getFeatureStore();
-        try {
-            store.updateFeatureType(ft);
-        } catch (DataStoreException ex) {
-            ex.printStackTrace();
-        }
-    }
+//    private void apply(ActionEvent event){
+//        final FeatureType ft = editor.getFeatureType();
+//        final Selector source = (Selector) layer.getResource().getSource();
+//        final FeatureStore store = source.getSession().getFeatureStore();
+//        try {
+//            store.updateFeatureType(ft);
+//        } catch (DataStoreException ex) {
+//            ex.printStackTrace();
+//        }
+//    }
 
     @Override
     public String getTitle() {
@@ -94,8 +94,12 @@ public class FXFeatureTypePane extends FXPropertyPane {
         }
 
         this.layer = (FeatureMapLayer) target;
-        final FeatureType featureType = layer.getCollection().getType();
-        editor.setFeatureType(featureType);
+        try {
+            final FeatureType featureType = layer.getResource().getType();
+            editor.setFeatureType(featureType);
+        } catch (DataStoreException ex) {
+            Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
+        }
 
         return true;
     }

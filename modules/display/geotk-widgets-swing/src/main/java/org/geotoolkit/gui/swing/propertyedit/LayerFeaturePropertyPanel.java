@@ -66,6 +66,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.style.RandomStyleBuilder;
@@ -225,7 +226,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
         boolean changes = false;
 
         if(layer != null){
-            final FeatureCollection col = layer.getCollection();
+            final FeatureCollection col = ((FeatureCollection)layer.getResource());
             final Session session = col.getSession();
             if(session != null){
                 changes = session.hasPendingChanges();
@@ -273,7 +274,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
             rows[i] = tab_data.convertRowIndexToModel(rows[i]);
         }
 
-        final HashSet<Identifier> ids = new HashSet<Identifier>();
+        final HashSet<Identifier> ids = new HashSet<>();
 
         for(int i : rows){
             ids.add(new DefaultFeatureId((String)model.getValueAt(i, 1)));
@@ -453,7 +454,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
                     guiCommit.setEnabled(false);
                     guiRollback.setEnabled(false);
                     try {
-                        candidate.getCollection().getSession().commit();
+                        ((FeatureCollection)candidate.getResource()).getSession().commit();
                     } catch (DataStoreException ex) {
                         JXErrorPane.showDialog(ex);
                     }finally {
@@ -475,7 +476,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
                     lockableUI.setLocked(true);
                     guiCommit.setEnabled(false);
                     guiRollback.setEnabled(false);
-                    candidate.getCollection().getSession().rollback();
+                    ((FeatureCollection)candidate.getResource()).getSession().rollback();
                     lockableUI.setLocked(false);
                     reset();
                 }
@@ -494,13 +495,13 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
             panCenter.removeAll();
 
             Filter f = guiCQL.getFilter();
-            final QueryBuilder qb = new QueryBuilder(layer.getCollection().getType().getName().toString());
+            final QueryBuilder qb = new QueryBuilder(layer.getResource().getType().getName().toString());
             qb.setFilter(f);
             if(guiVersions.getSelectedItem()!=null && !(guiVersions.getSelectedItem() instanceof String)){
                 final Date d = ((Version)guiVersions.getSelectedItem()).getDate();
                 qb.setVersionDate(d);
             }
-            final FeatureCollection subcol = layer.getCollection().subset(qb.buildQuery());
+            final FeatureSet subcol = layer.getResource().subset(qb.buildQuery());
             FeatureMapLayer layer = MapBuilder.createFeatureLayer(subcol, RandomStyleBuilder.createDefaultRasterStyle());
             final FeatureCollectionModel m = new FeatureCollectionModel(tab_data, layer, guiShowId.isSelected());
             tab_data.setModel(m);
@@ -549,7 +550,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
 
         if (target instanceof FeatureMapLayer) {
             layer = (FeatureMapLayer) target;
-            final FeatureCollection source = layer.getCollection();
+            final FeatureCollection source = (FeatureCollection) layer.getResource();
             editable = source.isWritable();
 
             jcb_edit.setEnabled(editable);

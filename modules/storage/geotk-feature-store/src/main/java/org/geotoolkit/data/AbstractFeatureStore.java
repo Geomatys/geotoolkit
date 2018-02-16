@@ -31,8 +31,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.ReprojectFeatureType;
-import org.geotoolkit.feature.ViewFeatureType;
+import org.geotoolkit.feature.ReprojectMapper;
+import org.geotoolkit.feature.ViewMapper;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.memory.GenericFeatureWriter;
 import org.geotoolkit.data.query.Query;
@@ -272,10 +272,10 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
             FeatureType ft = selector.getSession().getFeatureStore().getFeatureType(query.getTypeName());
             final String[] properties = query.getPropertyNames();
             if (properties!=null && FeatureTypeExt.isAllProperties(ft, properties)) {
-                ft = new ViewFeatureType(ft, properties);
+                ft = new ViewMapper(ft, properties).getMappedType();
             }
             if(query.getCoordinateSystemReproject()!=null){
-                ft = new ReprojectFeatureType(ft, query.getCoordinateSystemReproject());
+                ft = new ReprojectMapper(ft, query.getCoordinateSystemReproject()).getMappedType();
             }
 
             return ft;

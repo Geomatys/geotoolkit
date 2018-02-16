@@ -23,6 +23,7 @@ import javax.xml.bind.JAXBElement;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.data.FeatureCollection;
@@ -112,7 +113,7 @@ public class OwcDataStoreExtension extends OwcExtension {
                 final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col);
                 return layer;
             }else if(store instanceof CoverageStore){
-                final CoverageResource covref = ((CoverageStore)store).findResource(NamesExt.valueOf(typeName));
+                final Resource covref = ((CoverageStore)store).findResource(NamesExt.valueOf(typeName).toString());
                 final CoverageMapLayer layer = MapBuilder.createCoverageLayer(covref);
                 return layer;
             }
@@ -157,7 +158,7 @@ public class OwcDataStoreExtension extends OwcExtension {
     private static String getStoreFactoryName(MapLayer layer){
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            final Source source = fml.getCollection().getSource();
+            final Source source = ((FeatureCollection)fml.getResource()).getSource();
             if(source instanceof Selector){
                 final Selector selector = (Selector)source;
                 final Session session = selector.getSession();
@@ -186,7 +187,7 @@ public class OwcDataStoreExtension extends OwcExtension {
     private static ParameterValueGroup getParams(MapLayer layer){
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            final Source source = fml.getCollection().getSource();
+            final Source source = ((FeatureCollection)fml.getResource()).getSource();
             if(source instanceof Selector){
                 final Selector selector = (Selector)source;
                 final Session session = selector.getSession();
@@ -211,7 +212,7 @@ public class OwcDataStoreExtension extends OwcExtension {
     private static String getTypeName(MapLayer layer){
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            final Source source = fml.getCollection().getSource();
+            final Source source = ((FeatureCollection)fml.getResource()).getSource();
             if(source instanceof Selector){
                 final Selector selector = (Selector)source;
                 return selector.getFeatureTypeName();

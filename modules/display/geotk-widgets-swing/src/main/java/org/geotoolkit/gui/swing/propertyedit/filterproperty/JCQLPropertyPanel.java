@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.propertyedit.filterproperty;
 
 import java.awt.Image;
 import java.util.logging.Level;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.gui.swing.filter.JCQLEditor;
@@ -58,8 +59,8 @@ public class JCQLPropertyPanel extends JCQLEditor implements PropertyPane{
     public void apply() {
         if(layer !=null){
             try {
-                layer.setQuery(QueryBuilder.filtered(layer.getCollection().getType().getName().toString(), getFilter()));
-            } catch (CQLException ex) {
+                layer.setQuery(QueryBuilder.filtered(layer.getResource().getType().getName().toString(), getFilter()));
+            } catch (CQLException | DataStoreException ex) {
                 Logging.getLogger("org.geotoolkit.gui.swing.propertyedit.filterproperty").log(Level.WARNING, ex.getMessage(), ex);
             }
         }

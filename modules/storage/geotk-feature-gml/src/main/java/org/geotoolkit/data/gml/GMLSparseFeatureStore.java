@@ -34,7 +34,6 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.FeatureWriter;
@@ -47,7 +46,6 @@ import org.opengis.util.GenericName;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
-import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
@@ -55,13 +53,14 @@ import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.storage.FileSystemResource;
 
 /**
  * GML feature store.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataFileStore {
+public class GMLSparseFeatureStore extends AbstractFeatureStore implements FileSystemResource {
 
     private final Path file;
     private FeatureType featureType;
@@ -179,7 +178,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     @Override
-    public Path[] getDataFiles() throws DataStoreException {
+    public Path[] getResourcePaths() throws DataStoreException {
         return new Path[]{file};
     }
 
@@ -216,23 +215,6 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
     @Override
     public void removeFeatures(String groupName, Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
-    }
-
-    // TYPE CREATE/UPDATE NOT SUPPORTED ////////////////////////////////////////
-
-    @Override
-    public void createFeatureType(FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("Writing not supported");
-    }
-
-    @Override
-    public void updateFeatureType(FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("Writing not supported");
-    }
-
-    @Override
-    public void deleteFeatureType(String typeName) throws DataStoreException {
-        throw new DataStoreException("Writing not supported");
     }
 
     private class ReadIterator implements FeatureReader{

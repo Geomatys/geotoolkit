@@ -47,9 +47,9 @@ import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
 import static org.junit.Assert.*;
-import org.geotoolkit.feature.ReprojectFeatureType;
-import org.geotoolkit.feature.TransformFeatureType;
-import org.geotoolkit.feature.ViewFeatureType;
+import org.geotoolkit.feature.ReprojectMapper;
+import org.geotoolkit.feature.TransformMapper;
+import org.geotoolkit.feature.ViewMapper;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CRS;
@@ -399,7 +399,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
         final CoordinateReferenceSystem targetCRS = CommonCRS.WGS84.geographic();
 
-        FeatureReader retyped = FeatureStreams.decorate(reader, new ReprojectFeatureType(reader.getFeatureType(), targetCRS), new Hints());
+        FeatureReader retyped = FeatureStreams.decorate(reader, new ReprojectMapper(reader.getFeatureType(), targetCRS), new Hints());
 
         int mask = 0;
         Feature f;
@@ -429,14 +429,14 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
         //check has next do not iterate
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
-        retyped = FeatureStreams.decorate(reader, new ReprojectFeatureType(reader.getFeatureType(), CommonCRS.WGS84.geographic()), new Hints());
+        retyped = FeatureStreams.decorate(reader, new ReprojectMapper(reader.getFeatureType(), CommonCRS.WGS84.geographic()), new Hints());
         testIterationOnNext(retyped, 3);
 
         //check sub iterator is properly closed
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(reader);
         assertFalse(checkIte.isClosed());
-        retyped = FeatureStreams.decorate(checkIte, new ReprojectFeatureType(checkIte.getFeatureType(), CommonCRS.WGS84.geographic()), new Hints());
+        retyped = FeatureStreams.decorate(checkIte, new ReprojectMapper(checkIte.getFeatureType(), CommonCRS.WGS84.geographic()), new Hints());
         while(retyped.hasNext()) retyped.next();
         retyped.close();
         assertTrue(checkIte.isClosed());
@@ -478,7 +478,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         hints.put(HintsPending.FEATURE_DETACHED, Boolean.TRUE);
 
         GeometryTransformer decim = new GeometryScaleTransformer(10, 10);
-        final TransformFeatureType ttype = new TransformFeatureType(reader.getFeatureType(), decim);
+        final TransformMapper ttype = new TransformMapper(reader.getFeatureType(), decim);
         FeatureReader retyped = FeatureStreams.decorate(reader, ttype, hints);
 
         assertTrue(retyped.hasNext());
@@ -511,7 +511,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         hints.put(HintsPending.FEATURE_DETACHED, Boolean.FALSE);
 
         decim = new GeometryScaleTransformer(10, 10);
-        retyped = FeatureStreams.decorate(reader,new TransformFeatureType(reader.getFeatureType(), decim), hints);
+        retyped = FeatureStreams.decorate(reader,new TransformMapper(reader.getFeatureType(), decim), hints);
 
         assertTrue(retyped.hasNext());
 
@@ -541,14 +541,14 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
     public void testRetypeFeatureIterator() throws DataStoreException{
 
         final FeatureCollection collection = buildSimpleFeatureCollection();
-        final FeatureType reducedType = new ViewFeatureType(collection.getType(), AttributeConvention.IDENTIFIER_PROPERTY.toString(),"att_double");
+        final ViewMapper reducedType = new ViewMapper(collection.getType(), AttributeConvention.IDENTIFIER_PROPERTY.toString(),"att_double");
         final QueryBuilder qb = new QueryBuilder();
         qb.setTypeName(collection.getType().getName());
         final Query query = qb.buildQuery();
         FeatureReader reader = collection.getSession().getFeatureStore().getFeatureReader(query);
 
-        FeatureReader retyped = FeatureStreams.decorate(reader, (ViewFeatureType) reducedType, null);
-        assertEquals(reducedType,retyped.getFeatureType());
+        FeatureReader retyped = FeatureStreams.decorate(reader, reducedType, null);
+        assertEquals(reducedType.getMappedType(),retyped.getFeatureType());
 
         int mask = 0;
         Feature f;
@@ -574,14 +574,14 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
         //check has next do not iterate
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
-        retyped = FeatureStreams.decorate(reader, (ViewFeatureType) reducedType, null);
+        retyped = FeatureStreams.decorate(reader, reducedType, null);
         testIterationOnNext(retyped, 3);
 
         //check sub iterator is properly closed
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(reader);
         assertFalse(checkIte.isClosed());
-        retyped = FeatureStreams.decorate(checkIte, (ViewFeatureType) reducedType, null);
+        retyped = FeatureStreams.decorate(checkIte, reducedType, null);
         while(retyped.hasNext()) retyped.next();
         retyped.close();
         assertTrue(checkIte.isClosed());

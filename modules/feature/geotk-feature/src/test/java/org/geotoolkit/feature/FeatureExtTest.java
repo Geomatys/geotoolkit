@@ -193,14 +193,14 @@ public class FeatureExtTest {
         }
 
         // We also test we find the geometry after reprojection, and it's the good one, the reprojected.
-        final ReprojectFeatureType reprojected = new ReprojectFeatureType(conventionedType, CommonCRS.WGS84.geographic());
-        defaultGeom = FeatureExt.getDefaultGeometry(reprojected);
+        final ReprojectMapper reprojected = new ReprojectMapper(conventionedType, CommonCRS.WGS84.geographic());
+        defaultGeom = FeatureExt.getDefaultGeometry(reprojected.getMappedType());
         Assert.assertNotNull("We should find one geometry attribute", defaultGeom);
         Assert.assertEquals("We should have found the attribute attached to SIS convention.", AttributeConvention.GEOMETRY_PROPERTY, defaultGeom.getName());
         // Check we've got a definition matching reprojection
         final Optional<AttributeType<?>> geomAttr = FeatureExt.castOrUnwrap(defaultGeom);
         Assert.assertTrue(geomAttr.isPresent());
-        
+
         AttributeType<?> crsCharacteristic = geomAttr.get().characteristics().get(AttributeConvention.CRS_CHARACTERISTIC.toString());
         Assert.assertNotNull("No CRS characteristic found in returned geometry", crsCharacteristic);
         Assert.assertEquals("CRS defined in returned geometry is not correct !", CommonCRS.WGS84.geographic(), crsCharacteristic.getDefaultValue());

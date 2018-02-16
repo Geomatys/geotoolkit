@@ -34,10 +34,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.event.MouseInputListener;
@@ -58,16 +60,17 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 
 import org.opengis.filter.Filter;
@@ -257,11 +260,12 @@ public class DefaultSelectionHandler implements CanvasHandler {
                             final Set<Identifier> ids = new HashSet<>();
 
                             final FeatureMapLayer fl = (FeatureMapLayer) layer;
-                            final PropertyType geomAtt = FeatureExt.getDefaultGeometry(fl.getCollection().getType());
+                            final FeatureType flType = ((FeatureCollection)fml.getResource()).getType();
+                            final PropertyType geomAtt = FeatureExt.getDefaultGeometry(flType);
                             final String geoStr = geomAtt.getName().tip().toString();
                             final Expression geomField = FF.property(geoStr);
 
-                            CoordinateReferenceSystem dataCrs = FeatureExt.getCRS(fl.getCollection().getType());
+                            CoordinateReferenceSystem dataCrs = FeatureExt.getCRS(flType);
 
                             try {
                                 final Geometry dataPoly = JTS.transform(poly, CRS.findOperation(map2D.getCanvas().getDisplayCRS(), dataCrs, null).getMathTransform());
@@ -270,18 +274,19 @@ public class DefaultSelectionHandler implements CanvasHandler {
                                 final Filter f = (withinArea) ? FF.within(geomField, geomData) : FF.intersects(geomField, geomData);
 
                                 final QueryBuilder builder = new QueryBuilder();
-                                builder.setTypeName(fml.getCollection().getType().getName());
+                                builder.setTypeName(fml.getResource().getType().getName());
                                 builder.setFilter(f);
                                 builder.setProperties(new String[]{geoStr});
                                 final Query query = builder.buildQuery();
 
-                                FeatureCollection fc = fl.getCollection().subset(query);
-                                FeatureIterator fi = fc.iterator();
-                                while(fi.hasNext()){
-                                    Feature fea = fi.next();
-                                    ids.add(FeatureExt.getId(fea));
+                                FeatureSet fc = fl.getResource().subset(query);
+                                try (Stream<Feature> stream = fc.features(false)) {
+                                    final Iterator<Feature> fi = stream.iterator();
+                                    while(fi.hasNext()){
+                                        Feature fea = fi.next();
+                                        ids.add(FeatureExt.getId(fea));
+                                    }
                                 }
-                                fi.close();
                             } catch (Exception ex) {
                                 LOGGER.log(Level.WARNING, null, ex);
                             }

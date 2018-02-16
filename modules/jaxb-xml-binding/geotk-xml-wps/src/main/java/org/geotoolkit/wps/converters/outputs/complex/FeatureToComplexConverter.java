@@ -20,14 +20,12 @@ package org.geotoolkit.wps.converters.outputs.complex;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.feature.FeatureExt;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
-import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSMimeType;
@@ -91,14 +89,13 @@ public final class FeatureToComplexConverter extends AbstractComplexOutputConver
         final Map<String, String> schemaLocation = new HashMap<>();
 
         if(WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(complex.getMimeType())) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(baos, ft, WPSConvertersUtils.FRACTION_DIGITS);
-                Feature next = writer.next();
-                FeatureExt.copy(source, next, true);
-                writer.write();
-                writer.close();
-
+                try (GeoJSONStreamWriter writer = new GeoJSONStreamWriter(baos, ft, WPSConvertersUtils.FRACTION_DIGITS)) {
+                    Feature next = writer.next();
+                    FeatureExt.copy(source, next, true);
+                    writer.write();
+                }
                 WPSConvertersUtils.addCDATAToComplex(baos.toString("UTF-8"), complex);
                 complex.setSchema(null);
             } catch (DataStoreException e) {
@@ -111,20 +108,8 @@ public final class FeatureToComplexConverter extends AbstractComplexOutputConver
                    WPSMimeType.TEXT_XML.val().equalsIgnoreCase(complex.getMimeType()) ||
                    WPSMimeType.TEXT_GML.val().equalsIgnoreCase(complex.getMimeType())) {
 
-            if (params.get(TMP_DIR_PATH) == null) {
-                throw new UnconvertibleObjectException("The output directory should be defined.");
-            }
-
             try {
-                final String schemaFileName = "schema_" + UUID.randomUUID().toString() + ".xsd";
-                //create file
-                final File schemaFile = new File((String) params.get(TMP_DIR_PATH), schemaFileName);
-                final OutputStream stream = new FileOutputStream(schemaFile);
-                //write featureType xsd on file
-                final JAXBFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
-                xmlFTWriter.write(ft, stream);
-
-                complex.setSchema((String) params.get(TMP_DIR_URL) + "/" + schemaFileName);
+                complex.setSchema(WPSConvertersUtils.writeSchema(ft, params));
                 schemaLocation.put(namespace, complex.getSchema());
             } catch (JAXBException ex) {
                 throw new UnconvertibleObjectException("Can't write FeatureType into xsd schema.", ex);

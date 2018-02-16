@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2016, Geomatys
+ *    (C) 2018, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,24 +14,31 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.feature;
+package org.geotoolkit.storage;
 
-import org.apache.sis.feature.AbstractFeature;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 
 /**
+ * A transaction resource.
  *
- * @author Johann Sorel (Geomatys)
- * @module
+ *
+ * @author Johann Sorel
  */
-public abstract class DecoratedFeature extends AbstractFeature {
+public interface ResourceTransaction extends Resource {
 
-    protected DecoratedFeature(final FeatureType type) {
-        super(type);
-    }
+    /**
+     * Apply all the changes made in this transaction.
+     *
+     * @throws DataStoreException
+     */
+    void commit() throws DataStoreException;
 
-    public abstract DecoratedFeatureType getType();
+    /**
+     * Revert all changes made in this session.
+     *
+     * @throws DataStoreException
+     */
+    void rollback() throws DataStoreException;
 
-    public abstract Feature getDecoratedFeature();
 }

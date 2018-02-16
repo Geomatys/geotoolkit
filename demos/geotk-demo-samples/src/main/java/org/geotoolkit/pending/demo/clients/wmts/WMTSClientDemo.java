@@ -8,7 +8,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -41,7 +41,7 @@ public class WMTSClientDemo {
         for(final GenericName n : server.getNames()){
             System.out.println(n);
 
-            final CoverageResource ref = server.findResource(n);
+            final Resource ref = server.findResource(n.toString());
             final MapLayer layer = MapBuilder.createCoverageLayer(
                     ref,
                     new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));

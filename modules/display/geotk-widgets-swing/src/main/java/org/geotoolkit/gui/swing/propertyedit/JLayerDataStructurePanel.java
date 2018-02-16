@@ -51,6 +51,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.InternationalString;
 import org.apache.sis.io.wkt.Warnings;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.util.StringUtilities;
 
@@ -97,7 +98,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
         sb.append("<html><body>");
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            final FeatureType type = fml.getCollection().getType();
+            final FeatureType type = ((FeatureCollection)fml.getResource()).getType();
 
             String str = type.toString().replace("\n", "<br>");
             str = str.replaceAll(" ", "&nbsp;");

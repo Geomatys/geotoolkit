@@ -33,7 +33,6 @@ import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.util.GenericName;
@@ -45,6 +44,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.storage.FileSystemResource;
 
 /**
  * Handle a folder of single file FeatureStore.
@@ -53,7 +53,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
-public class DefaultFolderFeatureStore extends AbstractFeatureStore implements DataFileStore {
+public class DefaultFolderFeatureStore extends AbstractFeatureStore implements FileSystemResource {
 
     /**
      * Listen to changes in sub stores and propagate them.
@@ -245,8 +245,8 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
         // We should get a file feature store.
         final Path[] sourceFiles;
         try {
-            if (store instanceof DataFileStore) {
-                sourceFiles = ((DataFileStore) store).getDataFiles();
+            if (store instanceof FileSystemResource) {
+                sourceFiles = ((FileSystemResource) store).getResourcePaths();
             } else {
                 // Not a file store ? We try to find an url parameter and see if it's a file one.
                 final URI fileURI = Parameters.castOrWrap(store.getOpenParameters()).getValue(PATH);
@@ -361,7 +361,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
     /**
      * {@inheritDoc}
      */
-    public Path[] getDataFiles() throws DataStoreException {
+    public Path[] getResourcePaths() throws DataStoreException {
         final Path folder = getFolder(folderParameters);
         return new Path[]{ folder };
     }

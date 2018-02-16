@@ -448,10 +448,11 @@ public final class DefaultPortrayalService implements PortrayalService{
             boolean close = false;
             OutputStream outStream = null;
             try {
-                if(outputDef.getOutput() instanceof OutputStream){
+                if (outputDef.getOutput() instanceof OutputStream) {
                     outStream = (OutputStream) outputDef.getOutput();
-                }else{
+                } else {
                     outStream = IOUtilities.openWrite(outputDef.getOutput());
+                    close = true;
                 }
                 final Writer out = new OutputStreamWriter(outStream,"UTF-8");
                 canvas.getDocument(out);

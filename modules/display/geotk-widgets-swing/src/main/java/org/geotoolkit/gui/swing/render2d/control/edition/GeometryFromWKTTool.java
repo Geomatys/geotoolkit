@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
@@ -47,12 +48,12 @@ public class GeometryFromWKTTool extends AbstractEditionTool {
 
         //check the geometry type is type Point
         final FeatureMapLayer layer = (FeatureMapLayer) candidate;
-        final FeatureType ft = layer.getCollection().getType();
         try {
+            final FeatureType ft = layer.getResource().getType();
             // Check we can reach a geometry property
             FeatureExt.getDefaultGeometry(ft);
             return true;
-        } catch (PropertyNotFoundException | IllegalStateException e) {
+        } catch (PropertyNotFoundException | IllegalStateException | DataStoreException e) {
             return false;
         }
     }

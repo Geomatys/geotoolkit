@@ -385,46 +385,39 @@ public final class FeatureExt extends Static {
     private static Feature copy(Feature feature, boolean deep){
         final FeatureType type = feature.getType();
 
-        if (type instanceof DecoratedFeatureType) {
-            final DecoratedFeatureType decoratingType = (DecoratedFeatureType)type;
-            Feature decoratedFeature = ((DecoratedFeature)feature).getDecoratedFeature();
-            decoratedFeature = deepCopy(decoratedFeature);
-            return decoratingType.newInstance(decoratedFeature);
-        } else {
-            final Feature cp = type.newInstance();
+        final Feature cp = type.newInstance();
 
-            final Collection<? extends PropertyType> props = type.getProperties(true);
-            for (PropertyType pt : props) {
-                if (pt instanceof AttributeType ){
-                    final String name = pt.getName().toString();
-                    final Object val = feature.getPropertyValue(name);
-                    if(val!=null){
-                        cp.setPropertyValue(name, deep ? deepCopy(val) : val);
-                    }
-                } else if(pt instanceof FeatureAssociationRole) {
-                    final String name = pt.getName().toString();
-                    final Object val = feature.getPropertyValue(name);
-                    if (deep) {
-                        if(val!=null){
-                            cp.setPropertyValue(name, deepCopy(val));
-                        }
-                    } else {
-                        if(val instanceof Collection){
-                            final Collection col = (Collection) val;
-                            final Collection cpCol = new ArrayList(col.size());
-                            for(Iterator ite=col.iterator();ite.hasNext();){
-                                cpCol.add(copy((Feature)ite.next()));
-                            }
-                            cp.setPropertyValue(name, cpCol);
-                        }else if(val!=null){
-                            cp.setPropertyValue(name, copy((Feature)val));
-                        }
-                    }
-
+        final Collection<? extends PropertyType> props = type.getProperties(true);
+        for (PropertyType pt : props) {
+            if (pt instanceof AttributeType ){
+                final String name = pt.getName().toString();
+                final Object val = feature.getPropertyValue(name);
+                if(val!=null){
+                    cp.setPropertyValue(name, deep ? deepCopy(val) : val);
                 }
+            } else if(pt instanceof FeatureAssociationRole) {
+                final String name = pt.getName().toString();
+                final Object val = feature.getPropertyValue(name);
+                if (deep) {
+                    if(val!=null){
+                        cp.setPropertyValue(name, deepCopy(val));
+                    }
+                } else {
+                    if(val instanceof Collection){
+                        final Collection col = (Collection) val;
+                        final Collection cpCol = new ArrayList(col.size());
+                        for(Iterator ite=col.iterator();ite.hasNext();){
+                            cpCol.add(copy((Feature)ite.next()));
+                        }
+                        cp.setPropertyValue(name, cpCol);
+                    }else if(val!=null){
+                        cp.setPropertyValue(name, copy((Feature)val));
+                    }
+                }
+
             }
-            return cp;
         }
+        return cp;
     }
 
     /**

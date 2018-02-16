@@ -34,6 +34,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.io.wkt.Warnings;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.util.StringUtilities;
 
@@ -75,7 +76,7 @@ public class JLayerCRSPane extends AbstractPropertyPane {
 
     private void init() {
         if (layer instanceof FeatureMapLayer) {
-            crs = FeatureExt.getCRS( ((FeatureMapLayer)layer).getCollection().getType());
+            crs = FeatureExt.getCRS( ((FeatureCollection)((FeatureMapLayer)layer).getResource()).getType());
         }else if(layer instanceof CoverageMapLayer){
             final CoverageResource ref = ((CoverageMapLayer)layer).getCoverageReference();
             try{

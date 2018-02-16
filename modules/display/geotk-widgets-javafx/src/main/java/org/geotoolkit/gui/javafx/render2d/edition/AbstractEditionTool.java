@@ -47,7 +47,6 @@ public abstract class AbstractEditionTool extends AbstractNavigationHandler impl
         return spi;
     }
 
-
     protected static final class EditionLayer extends FXGeometryLayer{
 
         @Override

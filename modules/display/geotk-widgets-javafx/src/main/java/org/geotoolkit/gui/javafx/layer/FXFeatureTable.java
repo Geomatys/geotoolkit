@@ -18,25 +18,22 @@
 package org.geotoolkit.gui.javafx.layer;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.util.AbstractSequentialList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.ListIterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
-import javafx.beans.InvalidationListener;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -47,8 +44,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.query.QueryBuilder;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.opengis.feature.Feature;
 import org.geotoolkit.internal.GeotkFX;
@@ -158,29 +154,40 @@ public class FXFeatureTable extends FXPropertyPane{
         if(!(candidate instanceof FeatureMapLayer)) return false;
 
         layer = (FeatureMapLayer) candidate;
-        final FeatureCollection features = layer.getCollection();
+        final FeatureSet features = layer.getResource();
+        try {
+            final FeatureType featureType = features.getType();
 
-        table.getColumns().clear();
-        final FeatureType featureType = features.getType();
-        for(PropertyType prop : featureType.getProperties(true)){
-            final TableColumn<Feature,String> column = new TableColumn<Feature,String>(generateFinalColumnName(prop));
-            column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Feature, String>, ObservableValue<String>>() {
-                @Override
-                public ObservableValue<String> call(TableColumn.CellDataFeatures<Feature, String> param) {
-                    final Object val = param.getValue().getPropertyValue(prop.getName().toString());
-                    if(val instanceof Geometry){
-                        return new SimpleObjectProperty<>("{geometry}");
-                    }else{
-                        return new SimpleObjectProperty<>(String.valueOf(val));
+            table.getColumns().clear();
+            for(PropertyType prop : featureType.getProperties(true)){
+                final TableColumn<Feature,String> column = new TableColumn<Feature,String>(generateFinalColumnName(prop));
+                column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Feature, String>, ObservableValue<String>>() {
+                    @Override
+                    public ObservableValue<String> call(TableColumn.CellDataFeatures<Feature, String> param) {
+                        final Object val = param.getValue().getPropertyValue(prop.getName().toString());
+                        if(val instanceof Geometry){
+                            return new SimpleObjectProperty<>("{geometry}");
+                        }else{
+                            return new SimpleObjectProperty<>(String.valueOf(val));
+                        }
                     }
-                }
-            });
-            column.setCellFactory(TextFieldTableCell.forTableColumn());
-            table.getColumns().add(column);
+                });
+                column.setCellFactory(TextFieldTableCell.forTableColumn());
+                table.getColumns().add(column);
+            }
+        } catch(DataStoreException ex) {
+            Loggers.DATA.log(Level.WARNING, ex.getMessage(),ex);
+            return true;
         }
 
-        if(loadAll){
-            table.setItems(FXCollections.observableArrayList((Feature[])features.toArray(new Feature[0])));
+        if (loadAll) {
+            try (Stream<Feature> stream = features.features(false)) {
+                final List<Feature> list = stream.collect(Collectors.toList());
+                table.setItems(FXCollections.observableArrayList(list));
+            } catch (DataStoreException ex) {
+                Loggers.DATA.log(Level.WARNING, ex.getMessage(),ex);
+                return true;
+            }
         }
 
         //TODO make a caching version, this is too slow for today use.
@@ -261,136 +268,13 @@ public class FXFeatureTable extends FXPropertyPane{
     }
 
     private void loadData(ActionEvent event){
-        final FeatureCollection col = layer.getCollection();
-        table.setItems(FXCollections.observableArrayList((Feature[])col.toArray(new Feature[0])));
+        final FeatureSet col = layer.getResource();
+        try (Stream<Feature> stream = col.features(false)) {
+            final List<Feature> list = stream.collect(Collectors.toList());
+            table.setItems(FXCollections.observableArrayList(list));
+        } catch (DataStoreException ex) {
+            Loggers.DATA.log(Level.WARNING, ex.getMessage(),ex);
+        }
     }
-
-    private static class ObservableFeatureCollection extends AbstractSequentialList<Feature> implements ObservableList<Feature>{
-
-        private final FeatureCollection features;
-
-        private ObservableFeatureCollection(FeatureCollection features){
-            this.features = features;
-        }
-
-        @Override
-        public ListIterator<Feature> listIterator(int index) {
-
-            final QueryBuilder qb = new QueryBuilder(features.getType().getName().toString());
-            qb.setStartIndex(index);
-
-            final FeatureCollection subcol;
-            try {
-                subcol = features.subset(qb.buildQuery());
-            } catch (DataStoreException ex) {
-                Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(),ex);
-                return Collections.EMPTY_LIST.listIterator();
-            }
-            final Iterator ite = subcol.iterator();
-
-            final ListIterator lite = new ListIterator() {
-
-                @Override
-                public boolean hasNext() {
-                    return ite.hasNext();
-                }
-
-                @Override
-                public Object next() {
-                    return ite.next();
-                }
-
-                @Override
-                public boolean hasPrevious() {
-                    return index>0;
-                }
-
-                @Override
-                public Object previous() {
-                    throw new UnsupportedOperationException("Not supported yet.");
-                }
-
-                @Override
-                public int nextIndex() {
-                    return index+1;
-                }
-
-                @Override
-                public int previousIndex() {
-                    return index-1;
-                }
-
-                @Override
-                public void remove() {
-                    throw new UnsupportedOperationException("Not supported yet.");
-                }
-
-                @Override
-                public void set(Object e) {
-                    throw new UnsupportedOperationException("Not supported yet.");
-                }
-
-                @Override
-                public void add(Object e) {
-                    throw new UnsupportedOperationException("Not supported yet.");
-                }
-            };
-
-            return lite;
-        }
-
-        @Override
-        public int size() {
-            return features.size();
-        }
-
-        @Override
-        public void addListener(ListChangeListener<? super Feature> listener) {
-        }
-
-        @Override
-        public void removeListener(ListChangeListener<? super Feature> listener) {
-        }
-
-        @Override
-        public void addListener(InvalidationListener listener) {
-        }
-
-        @Override
-        public void removeListener(InvalidationListener listener) {
-        }
-
-        @Override
-        public boolean addAll(Feature... elements) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public boolean setAll(Feature... elements) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public boolean setAll(Collection<? extends Feature> col) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public boolean removeAll(Feature... elements) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public boolean retainAll(Feature... elements) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public void remove(int from, int to) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-    }
-
 
 }

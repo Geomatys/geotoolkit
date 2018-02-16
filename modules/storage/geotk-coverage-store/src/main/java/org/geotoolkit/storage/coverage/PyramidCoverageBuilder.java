@@ -51,6 +51,7 @@ import org.geotoolkit.process.ProcessListener;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -903,7 +904,11 @@ public class PyramidCoverageBuilder {
         CoverageResource cv = null;
         for (GenericName n : coverageStore.getNames()) {
             if (n.tip().toString().equals(coverageName.tip().toString())) {
-                cv = coverageStore.findResource(n);
+                final Resource candidate = coverageStore.findResource(n.toString());
+                if (!(candidate instanceof CoverageResource)) {
+                    throw new DataStoreException("Resource "+coverageName+" is not a coverage.");
+                }
+                cv = (CoverageResource) candidate;
             }
         }
         if (cv == null) {

@@ -1953,7 +1953,8 @@ public class TiffImageReader extends SpatialImageReader {
                 readFromTiles(image.getRaster(), param, srcRegion, dstRegion);
             }
         }
-        return ImageUtils.replaceFloatingColorModel(image);
+
+        return image;
     }
 
     /**

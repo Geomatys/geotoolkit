@@ -29,9 +29,9 @@ import java.util.Map;
 import java.util.Set;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.ReprojectFeatureType;
-import org.geotoolkit.feature.TransformFeatureType;
-import org.geotoolkit.feature.ViewFeatureType;
+import org.geotoolkit.feature.ReprojectMapper;
+import org.geotoolkit.feature.TransformMapper;
+import org.geotoolkit.feature.ViewMapper;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryUtilities;
@@ -305,7 +305,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         FeatureType mask = original;
         if(properties!=null && FeatureTypeExt.isAllProperties(original, properties)) {
             try {
-                result = FeatureStreams.decorate(result,  new ViewFeatureType(mask, properties));
+                result = FeatureStreams.decorate(result,  new ViewMapper(mask, properties));
             } catch (MismatchedFeatureException | IllegalStateException ex) {
                 throw new DataStoreException(ex);
             }
@@ -314,13 +314,13 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         //wrap resampling ------------------------------------------------------
         if(resampling != null){
             final GeometryScaleTransformer trs = new GeometryScaleTransformer(resampling[0], resampling[1]);
-            final TransformFeatureType ttype = new TransformFeatureType(result.getType(), trs);
+            final TransformMapper ttype = new TransformMapper(result.getType(), trs);
             result = FeatureStreams.decorate(result, ttype);
         }
 
         //wrap reprojection ----------------------------------------------------
         if(crs != null){
-            result = FeatureStreams.decorate(result, new ReprojectFeatureType(result.getType(), crs));
+            result = FeatureStreams.decorate(result, new ReprojectMapper(result.getType(), crs));
         }
 
         return result;
