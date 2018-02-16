@@ -158,7 +158,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
      * @return {@linkplain Capabilities capabilities} response but never {@code null}.
      * @see {@link #getCapabilities(long)}
      */
-    public Capabilities getCapabilities() {
+    public Capabilities getServiceCapabilities() {
         return getCapabilities(TIMEOUT_GETCAPS);
     }
 
@@ -260,7 +260,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
         if(rootNode == null){
             rootNode = new DefaultAggregate(NamesExt.create("root"));
 
-            final Capabilities capa = getCapabilities();
+            final Capabilities capa = getServiceCapabilities();
             if(capa == null){
                 throw new DataStoreException("Could not get Capabilities.");
             }

@@ -90,7 +90,7 @@ public class WebCoverageClient extends AbstractClient {
      * Returns the {@linkplain WCSCapabilitiesType capabilities} response for this
      * server.
      */
-    public WCSCapabilitiesType getCapabilities() {
+    public WCSCapabilitiesType getServiceCapabilities() {
 
         if (capabilities != null) {
             return capabilities;

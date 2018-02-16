@@ -95,7 +95,7 @@ public class OpenStreetMapClient extends AbstractClient{
         return OSMVersion.getVersion(parameters.getValue(OSMClientFactory.VERSION));
     }
 
-    public Api getCapabilities(){
+    public Api getServiceCapabilities(){
         if (capabilities != null) {
             return capabilities;
         }

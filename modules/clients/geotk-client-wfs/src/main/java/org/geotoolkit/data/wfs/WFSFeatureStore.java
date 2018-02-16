@@ -121,7 +121,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
     private void checkTypeExist() throws WebFeatureException, IllegalNameException {
 
-        final WFSCapabilities capabilities = server.getCapabilities();
+        final WFSCapabilities capabilities = server.getServiceCapabilities();
         final FeatureTypeList lst = capabilities.getFeatureTypeList();
 
         for(final org.geotoolkit.wfs.xml.FeatureType ftt : lst.getFeatureType()){

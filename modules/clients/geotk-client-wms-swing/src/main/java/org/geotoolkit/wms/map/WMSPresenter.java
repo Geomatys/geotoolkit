@@ -106,7 +106,7 @@ public class WMSPresenter extends AbstractInformationPresenter{
         final List<String> mimeTypes = new ArrayList<String>();
         final WebMapClient server = (WebMapClient)reference.getStore();
         try {
-            final AbstractWMSCapabilities capa = server.getCapabilities();
+            final AbstractWMSCapabilities capa = server.getServiceCapabilities();
             mimeTypes.addAll(capa.getCapability().getRequest().getGetFeatureInfo().getFormats());
         } catch (CapabilitiesException ex) {
             LOGGER.log(Level.WARNING, ex.getMessage(),ex);

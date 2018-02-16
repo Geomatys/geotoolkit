@@ -91,7 +91,7 @@ public final class WMSUtilities {
         ArgumentChecks.ensureNonNull("server", server);
         ArgumentChecks.ensureNonNull("layer name", layername);
 
-        final AbstractLayer[] stack = server.getCapabilities().getLayerStackFromName(layername);
+        final AbstractLayer[] stack = server.getServiceCapabilities().getLayerStackFromName(layername);
 
         if(stack != null){
             final String srid = ReferencingUtilities.lookupIdentifier(crs, true);
@@ -133,7 +133,7 @@ public final class WMSUtilities {
         ArgumentChecks.ensureNonNull("server", server);
         ArgumentChecks.ensureNonNull("layer name", layername);
 
-        final AbstractLayer[] stack = server.getCapabilities().getLayerStackFromName(layername);
+        final AbstractLayer[] stack = server.getServiceCapabilities().getLayerStackFromName(layername);
 
         if(stack != null){
             //start by the most accurate layer
@@ -172,7 +172,7 @@ public final class WMSUtilities {
         ArgumentChecks.ensureNonNull("server", server);
         ArgumentChecks.ensureNonNull("layer name", layername);
 
-        final AbstractLayer layer = server.getCapabilities().getLayerFromName(layername);
+        final AbstractLayer layer = server.getServiceCapabilities().getLayerFromName(layername);
 
         if(layer != null){
             for(AbstractDimension dim : layer.getAbstractDimension()){
@@ -220,7 +220,7 @@ public final class WMSUtilities {
         ArgumentChecks.ensureNonNull("server", server);
         ArgumentChecks.ensureNonNull("layer name", layername);
 
-        final AbstractWMSCapabilities capa = server.getCapabilities();
+        final AbstractWMSCapabilities capa = server.getServiceCapabilities();
 
         final AbstractLayer layer = capa.getLayerFromName(layername);
         if (layer == null) {
@@ -369,7 +369,7 @@ public final class WMSUtilities {
         ArgumentChecks.ensureNonNull("server", server);
         ArgumentChecks.ensureNonNull("layer name", layername);
 
-        final AbstractLayer layer = server.getCapabilities().getLayerFromName(layername);
+        final AbstractLayer layer = server.getServiceCapabilities().getLayerFromName(layername);
          if(layer != null){
             return layer.getStyle();
         }

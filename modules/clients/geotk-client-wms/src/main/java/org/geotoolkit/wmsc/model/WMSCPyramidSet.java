@@ -46,7 +46,7 @@ public class WMSCPyramidSet extends CachedPyramidSet{
         this.layer = layer;
 
         //WMSC is a WMS 1.1.1
-        final Capability capas = (Capability) server.getCapabilities().getCapability();
+        final Capability capas = (Capability) server.getServiceCapabilities().getCapability();
         final VendorSpecificCapabilities vendor = capas.getVendorSpecificCapabilities();
 
         if(vendor == null){

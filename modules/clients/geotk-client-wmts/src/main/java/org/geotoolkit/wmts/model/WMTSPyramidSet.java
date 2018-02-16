@@ -51,7 +51,7 @@ public class WMTSPyramidSet extends CachedPyramidSet{
         this.layerName = layerName;
 
         //find the wmts layer
-        final ContentsType contents = server.getCapabilities().getContents();
+        final ContentsType contents = server.getServiceCapabilities().getContents();
         wmtsLayer = null;
         for(LayerType candidate : contents.getLayers()){
             if(layerName.equalsIgnoreCase(candidate.getIdentifier().getValue())){
@@ -67,7 +67,7 @@ public class WMTSPyramidSet extends CachedPyramidSet{
     }
 
     public Capabilities getCapabilities() {
-        return getServer().getCapabilities();
+        return getServer().getServiceCapabilities();
     }
 
     public String getLayerName() {
@@ -83,7 +83,7 @@ public class WMTSPyramidSet extends CachedPyramidSet{
     public synchronized Collection<Pyramid> getPyramids() {
         if(pyramids == null){
             final List<Pyramid> pyramids = new ArrayList<Pyramid>();
-            final ContentsType contents = getServer().getCapabilities().getContents();
+            final ContentsType contents = getServer().getServiceCapabilities().getContents();
 
             //first find the layer
             LayerType layer = null;

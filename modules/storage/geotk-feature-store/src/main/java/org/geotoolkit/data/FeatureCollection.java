@@ -23,6 +23,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
@@ -46,7 +47,7 @@ import org.opengis.metadata.Identifier;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface FeatureCollection extends Collection<Feature>, FeatureSet {
+public interface FeatureCollection extends Collection<Feature>, FeatureSet, WritableFeatureSet {
 
     /**
      * A feature collection is created with an id.

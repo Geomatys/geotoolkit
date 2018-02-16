@@ -154,7 +154,7 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
         if (descriptors==null) descriptors = new ConcurrentHashMap<>();
         final WPSCapabilities capabilities;
         try {
-            capabilities = client.getCapabilities();
+            capabilities = client.getServiceCapabilities();
         } catch(CapabilitiesException ex) {
             //find a better way to return the exception
             //it should not happen since we called a getCapabilities at registry creation

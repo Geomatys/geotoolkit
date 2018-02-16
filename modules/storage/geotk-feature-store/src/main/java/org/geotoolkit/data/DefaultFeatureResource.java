@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.ReadOnlyStorageException;
+import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -42,7 +43,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class DefaultFeatureResource extends AbstractFeatureSet implements FeatureSet, FeatureStoreListener {
+public final class DefaultFeatureResource extends AbstractFeatureSet implements FeatureSet, WritableFeatureSet, FeatureStoreListener {
 
     private final FeatureStoreListener.Weak weakListener = new StorageListener.Weak(this);
     private final FeatureStore store;

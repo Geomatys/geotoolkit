@@ -175,7 +175,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
                 if(capabilities!=null){
                     this.capabilities = capabilities;
                 }else{
-                    this.capabilities = getCapabilities();
+                    this.capabilities = getServiceCapabilities();
                 }
 
                 //set version
@@ -227,8 +227,8 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
      * @throws CapabilitiesException
      * @see {@link #getCapabilities(long)}
      */
-    public AbstractWMSCapabilities getCapabilities() throws CapabilitiesException{
-        return getCapabilities(TIMEOUT_GETCAPS);
+    public AbstractWMSCapabilities getServiceCapabilities() throws CapabilitiesException{
+        return getServiceCapabilities(TIMEOUT_GETCAPS);
     }
 
     /**
@@ -240,7 +240,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
      * @return {@linkplain AbstractWMSCapabilities capabilities} response but never {@code null}.
      * @throws CapabilitiesException
      */
-    public AbstractWMSCapabilities getCapabilities(final long timeout) throws CapabilitiesException {
+    public AbstractWMSCapabilities getServiceCapabilities(final long timeout) throws CapabilitiesException {
         if (capabilities != null) {
             return capabilities;
         }
@@ -375,7 +375,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
 
             final AbstractWMSCapabilities capa;
             try {
-                capa = getCapabilities();
+                capa = getServiceCapabilities();
             } catch (CapabilitiesException ex) {
                 throw new DataStoreException(ex);
             }

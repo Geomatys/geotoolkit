@@ -58,7 +58,7 @@ public class MockWebMapClient extends NcWebMapClient{
     }
 
     @Override
-    public AbstractWMSCapabilities getCapabilities() {
+    public AbstractWMSCapabilities getServiceCapabilities() {
         return capa;
     }
 

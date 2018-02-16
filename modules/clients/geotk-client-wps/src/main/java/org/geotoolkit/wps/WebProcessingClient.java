@@ -163,7 +163,7 @@ public class WebProcessingClient extends AbstractClient {
                 LOGGER.log(Level.FINE, "No version define : search it on getCapabilities");
             }
             try {
-                this.capabilities = getCapabilities();
+                this.capabilities = getServiceCapabilities();
                 //set version
                 version = WPSVersion.getVersion(this.capabilities.getVersion()).getCode();
             } catch (CapabilitiesException e) {
@@ -220,8 +220,8 @@ public class WebProcessingClient extends AbstractClient {
      * @return WPSCapabilitiesType : WPS server capabilities
      * @throws org.geotoolkit.client.CapabilitiesException
      */
-    public WPSCapabilities getCapabilities() throws CapabilitiesException {
-        return getCapabilities(false);
+    public WPSCapabilities getServiceCapabilities() throws CapabilitiesException {
+        return getServiceCapabilities(false);
     }
 
     /**
@@ -230,7 +230,7 @@ public class WebProcessingClient extends AbstractClient {
      * @return WPSCapabilitiesType : WPS server capabilities
      * @throws org.geotoolkit.client.CapabilitiesException
      */
-    public WPSCapabilities getCapabilities(boolean refresh) throws CapabilitiesException {
+    public WPSCapabilities getServiceCapabilities(boolean refresh) throws CapabilitiesException {
 
         if (capabilities != null && !refresh) {
             return capabilities;
