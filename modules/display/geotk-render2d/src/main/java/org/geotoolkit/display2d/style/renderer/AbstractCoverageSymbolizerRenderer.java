@@ -467,43 +467,45 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 interpolation = findInterpolationCase(sampleDimensions);
             }
 
+            GeneralEnvelope readEnv = paramEnvelope;
             if (!interpolation.equals(InterpolationCase.NEIGHBOR)) {
-               /*
-                * Expand envelope by 1 or more pixel in function of chosen interpolation
-                * and also multiply this value by the subsampling between origin coverage extent
-                * and output rendering image size into pixel coordinates.
-                */
-                final int pixelExpand;
-                switch(interpolation) {
-                    case BILINEAR : pixelExpand = 1; break;
-                    case BICUBIC  :
-                    case BICUBIC2 : pixelExpand = 2; break;
-                    case LANCZOS  : pixelExpand = 4; break;
-                    default: pixelExpand = 1;
-                }
-                final int xAxis = CRSUtilities.firstHorizontalAxis(inputCoverageCRS);
-                double sourceResolution = Math.max(paramRes[xAxis], gridGeometry.getResolution()[xAxis]);
-                double geoExpand = pixelExpand * sourceResolution;
-                final GeneralEnvelope paramEnvelope2 = new GeneralEnvelope(paramEnvelope);
-                paramEnvelope2.setRange(xAxis, paramEnvelope.getMinimum(xAxis) - geoExpand, paramEnvelope.getMaximum(xAxis) + geoExpand);
-                final int yAxis = xAxis + 1;
-                sourceResolution = Math.max(paramRes[yAxis], gridGeometry.getResolution()[yAxis]);
-                geoExpand = pixelExpand * sourceResolution;
-                paramEnvelope2.setRange(yAxis, paramEnvelope.getMinimum(yAxis) - geoExpand, paramEnvelope.getMaximum(yAxis) + geoExpand);
-                paramEnvelope2.intersect(gridGeometry.getEnvelope()); // If expanded envelope is bigger than overall envelope, we just take overall envelope.
+                final double[] gridResolution = gridGeometry.getResolution();
+                if (gridResolution != null) {
+                    /* Coverage has a finite resolution, we can expand the envelope using pixel sizes.
+                     * This information may not be present on all coverages, like WMS and processed images.
+                     *
+                     * Expand envelope by 1 or more pixel in function of chosen interpolation
+                     * and also multiply this value by the subsampling between origin coverage extent
+                     * and output rendering image size into pixel coordinates.
+                     */
+                    final int pixelExpand;
+                    switch (interpolation) {
+                        case BILINEAR : pixelExpand = 1; break;
+                        case BICUBIC  :
+                        case BICUBIC2 : pixelExpand = 2; break;
+                        case LANCZOS  : pixelExpand = 4; break;
+                        default: pixelExpand = 1;
+                    }
+                    final int xAxis = CRSUtilities.firstHorizontalAxis(inputCoverageCRS);
+                    double sourceResolution = Math.max(paramRes[xAxis], gridResolution[xAxis]);
+                    double geoExpand = pixelExpand * sourceResolution;
+                    readEnv = new GeneralEnvelope(paramEnvelope);
+                    readEnv.setRange(xAxis, paramEnvelope.getMinimum(xAxis) - geoExpand, paramEnvelope.getMaximum(xAxis) + geoExpand);
+                    final int yAxis = xAxis + 1;
+                    sourceResolution = Math.max(paramRes[yAxis], gridResolution[yAxis]);
+                    geoExpand = pixelExpand * sourceResolution;
+                    readEnv.setRange(yAxis, paramEnvelope.getMinimum(yAxis) - geoExpand, paramEnvelope.getMaximum(yAxis) + geoExpand);
+                    readEnv.intersect(gridGeometry.getEnvelope()); // If expanded envelope is bigger than overall envelope, we just take overall envelope.
 
-                dataCoverage = readCoverage(projectedCoverage, isElevation,
-                                                       paramEnvelope2, paramRes, sourceBands,
-                                                       inputCoverageEnvelope);
-            } else {
-                dataCoverage = readCoverage(projectedCoverage, isElevation,
-                                                       paramEnvelope, paramRes, sourceBands,
-                                                       inputCoverageEnvelope);
+                }
             }
 
             ////////////////////////////////////////////////////////////////////////
             // 5 - Read Coverage from computed Params.                            //
             ////////////////////////////////////////////////////////////////////////
+            dataCoverage = readCoverage(projectedCoverage, isElevation,
+                                                       readEnv, paramRes, sourceBands,
+                                                       inputCoverageEnvelope);
         }
 
         /*
