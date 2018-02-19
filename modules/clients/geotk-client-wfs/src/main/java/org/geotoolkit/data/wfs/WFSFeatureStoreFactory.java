@@ -18,11 +18,7 @@
 package org.geotoolkit.data.wfs;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Map;
-import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
@@ -33,8 +29,6 @@ import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.wfs.xml.WFSVersion;
-import org.opengis.metadata.Identifier;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.*;
 
 /**
@@ -47,14 +41,6 @@ public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implemen
 
     /** factory identification **/
     public static final String NAME = "wfs";
-    public static final DefaultServiceIdentification IDENTIFICATION;
-    static {
-        IDENTIFICATION = new DefaultServiceIdentification();
-        final Identifier id = new DefaultIdentifier(NAME);
-        final DefaultCitation citation = new DefaultCitation(NAME);
-        citation.setIdentifiers(Collections.singleton(id));
-        IDENTIFICATION.setCitation(citation);
-    }
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
@@ -90,14 +76,9 @@ public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implemen
             .create(Boolean.class, Boolean.FALSE);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName("WFSParameters").createGroup(
+            new ParameterBuilder().addName(NAME).addName("WFSParameters").createGroup(
                 IDENTIFIER, AbstractClientFactory.URL, VERSION, AbstractClientFactory.SECURITY,
                 LONGITUDE_FIRST,POST_REQUEST,AbstractClientFactory.TIMEOUT);
-
-    @Override
-    public Identification getIdentification() {
-        return IDENTIFICATION;
-    }
 
     /**
      * {@inheritDoc }

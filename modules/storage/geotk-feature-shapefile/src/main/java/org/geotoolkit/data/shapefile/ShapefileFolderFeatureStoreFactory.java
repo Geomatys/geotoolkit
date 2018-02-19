@@ -22,11 +22,9 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
-import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.PathFilterVisitor;
 import org.geotoolkit.nio.PosixPathMatcher;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -50,21 +48,15 @@ import org.geotoolkit.storage.FactoryMetadata;
 public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFactory{
 
     /** factory identification **/
-    public static final DefaultServiceIdentification IDENTIFICATION = derivateIdentification(ShapefileFeatureStoreFactory.IDENTIFICATION);
-    public static final String NAME = IDENTIFICATION.getCitation().getTitle().toString();
+    public static final String NAME = derivateName(ShapefileFeatureStoreFactory.NAME);
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            derivateDescriptor(IDENTIFIER,ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
+            derivateDescriptor(NAME,ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
 
     public ShapefileFolderFeatureStoreFactory(){
         super(PARAMETERS_DESCRIPTOR);
-    }
-
-    @Override
-    public Identification getIdentification() {
-        return IDENTIFICATION;
     }
 
     @Override

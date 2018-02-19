@@ -42,16 +42,6 @@ public interface ClientFactory {
     FactoryMetadata getMetadata();
 
     /**
-     * General information about this factory.
-     * If a given ParameterValueGroup has an identifier parameter set, it's value must
-     * be {@linkplain org.opengis.metadata.Identifier#getAuthority() identifier authority}, otherwise this
-     * factory will not support this ParameterValueGroup.
-     *
-     * @return The identification of this factory.
-     */
-    Identification getIdentification();
-
-    /**
      * Test to see if the implementation is available for use.
      * This method ensures all the appropriate libraries to construct
      * the DataAccess are available.

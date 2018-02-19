@@ -17,11 +17,7 @@
 package org.geotoolkit.osmtms;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Map;
-import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
@@ -30,8 +26,6 @@ import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
-import org.opengis.metadata.Identifier;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.*;
 
 /**
@@ -44,14 +38,6 @@ public class OSMTMSClientFactory extends AbstractClientFactory implements Covera
 
     /** factory identification **/
     public static final String NAME = "osm-tms";
-    public static final DefaultServiceIdentification IDENTIFICATION;
-    static {
-        IDENTIFICATION = new DefaultServiceIdentification();
-        final Identifier id = new DefaultIdentifier(NAME);
-        final DefaultCitation citation = new DefaultCitation(NAME);
-        citation.setIdentifiers(Collections.singleton(id));
-        IDENTIFICATION.setCitation(citation);
-    }
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
@@ -66,13 +52,8 @@ public class OSMTMSClientFactory extends AbstractClientFactory implements Covera
             .create(Integer.class, 18);
 
     public static final ParameterDescriptorGroup PARAMETERS =
-            new ParameterBuilder().addName("OSMTMSParameters").createGroup(
+            new ParameterBuilder().addName(NAME).addName("OSMTMSParameters").createGroup(
                 IDENTIFIER,URL,MAX_ZOOM_LEVEL,SECURITY,IMAGE_CACHE,NIO_QUERIES,TIMEOUT);
-
-    @Override
-    public Identification getIdentification() {
-        return IDENTIFICATION;
-    }
 
     @Override
     public ParameterDescriptorGroup getOpenParameters() {
