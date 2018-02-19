@@ -19,11 +19,11 @@ package org.geotoolkit.processing.image.dynamicrange;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
+import java.util.Arrays;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
@@ -66,67 +66,75 @@ public class DynamicRangeStretchProcess extends AbstractProcess {
         final int[] bands              = inputParameters.getValue(IN_BANDS);
         final double[][] ranges        = inputParameters.getValue(IN_RANGES);
 
-        if(bands.length!=4 || ranges.length!=4){
-            throw new ProcessException("Bands and Ranges parameters must be of size 4.", this);
+        if(bands.length < 3 || ranges.length < 3){
+            throw new ProcessException("Bands and Ranges parameters must contain at least 3 components (red, green, blue).", this);
         }
 
         final SampleModel inputSampleModel = inputImage.getSampleModel();
         final int inputNbBand = inputSampleModel.getNumBands();
-        final BufferedImage resultImage = new BufferedImage(inputImage.getWidth(), inputImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        final WritableRaster raster = resultImage.getRaster();
 
         for (int i=0;i<bands.length;i++) {
             if (bands[i] > (inputNbBand-1)) {
-                throw new ProcessException("Unvalid configuration, band "+bands[i]+" do not exist.", this);
+                throw new ProcessException("Invalid configuration, band "+bands[i]+" do not exist.", this);
             }
         }
 
-        //copy datas
-        final PixelIterator readIte = PixelIteratorFactory.createRowMajorIterator(inputImage);
-        final PixelIterator writeIte = PixelIteratorFactory.createDefaultWriteableIterator(raster, raster);
+        final boolean noAlpha = bands.length < 4;
+        final BufferedImage resultImage = new BufferedImage(
+                inputImage.getWidth(), inputImage.getHeight(),
+                noAlpha? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB
+        );
+
+        //copy data
+        final PixelIterator readIte = PixelIterator.create(inputImage);
+        final WritablePixelIterator writeIte = WritablePixelIterator.create(resultImage);
         final double[] pixel = new double[inputNbBand];
-        final int[] rgba = new int[4];
+        final int[] rgba = new int[noAlpha ? 3 : 4];
 
-        int srcBandIdx;
-        int trgBandIdx;
-        while (readIte.next() && writeIte.next()) {
-            srcBandIdx = 0;
-            trgBandIdx = 0;
-
-            //read source pixels
-            pixel[srcBandIdx] = readIte.getSampleDouble();
-            while (++srcBandIdx != inputNbBand) {
-                readIte.next();
-                pixel[srcBandIdx] = readIte.getSampleDouble();
+        final double[] rangeRatios = new double[ranges.length];
+        for (int i = 0; i < bands.length; i++) {
+            if (bands[i] < 0) {
+                continue;
+            } else if (ranges.length <= i) {
+                throw new ProcessException(String.format("%d bands defined, but only %d ranges", i, ranges.length) + i, this);
+            } else if (ranges[i].length < 2) {
+                throw new ProcessException("Bad definition for value range " + i, this);
             }
+            final double span = ranges[i][1] - ranges[i][0];
+            if (span > 0) {
+                rangeRatios[i] = 255 / span;
+            } else {
+                rangeRatios[i] = 0;
+            }
+        }
+
+        while (readIte.next() && writeIte.next()) {
+            readIte.getPixel(pixel);
 
             //calculate color
             boolean hasNan = false;
-            for(int i=0;i<rgba.length;i++){
-                if(bands[i]==-1){
+            for (int i = 0; i < rgba.length; i++) {
+                if (bands[i] < 0) {
                     //default value
-                    rgba[i] = (i==3)?255:0;
-                }else{
+                    rgba[i] = (i == 3) ? 255 : 0;
+                } else {
                     //calculate value
                     double v = pixel[bands[i]];
-                    if(Double.isNaN(v)){
+                    if (Double.isNaN(v)) {
                         hasNan = true;
+                        break;
                     }
-                    v = (pixel[bands[i]]-ranges[i][0]) / (ranges[i][1]-ranges[i][0]) * 255;
-                    rgba[i] = XMath.clamp((int)v, 0, 255);
+                    v = (v - ranges[i][0]) * rangeRatios[i];
+                    rgba[i] = XMath.clamp((int) v, 0, 255);
                 }
             }
 
-            if(hasNan){
-                rgba[0]=0;rgba[1]=0;rgba[2]=0;rgba[3]=0;
+            if (hasNan) {
+                Arrays.fill(rgba, 0);
             }
 
             //write target pixels
-            writeIte.setSampleDouble(rgba[trgBandIdx]);
-            while (++trgBandIdx != bands.length) {
-                writeIte.next();
-                writeIte.setSampleDouble(rgba[trgBandIdx]);
-            }
+            writeIte.setPixel(rgba);
         }
 
         outputParameters.getOrCreate(OUT_IMAGE).setValue(resultImage);
