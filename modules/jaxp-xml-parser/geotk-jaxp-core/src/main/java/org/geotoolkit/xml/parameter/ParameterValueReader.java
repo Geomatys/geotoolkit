@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.apache.sis.util.ObjectConverters;
@@ -239,14 +240,22 @@ public class ParameterValueReader extends StaxStreamReader {
     private GeneralParameterDescriptor getDescriptor(GeneralParameterDescriptor desc,
             String name) throws XMLStreamException{
 
-        if(desc == null){
-            if(!rootDesc.getName().getCode().equals(name) &&
-               !rootDesc.getName().getCode().equals(name.replace('_', ' '))){
+        if (desc == null) {
+            boolean match = false;
+            for (String pname : IdentifiedObjects.getNames(rootDesc, null)) {
+                if (pname.equals(name) || pname.equals(name.replace('_', ' '))) {
+                    match = true;
+                    break;
+                }
+            }
+
+            if (!match) {
                 throw new XMLStreamException("Descriptor for name : "+name+" not found.");
             }
+
             return rootDesc;
 
-        }else{
+        } else {
             if(!(desc instanceof ParameterDescriptorGroup)){
                 throw new XMLStreamException("Was expecting a descriptor group for name : " + name);
             }

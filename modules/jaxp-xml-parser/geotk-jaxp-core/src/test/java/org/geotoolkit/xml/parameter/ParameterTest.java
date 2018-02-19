@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2010-2018, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -35,6 +35,7 @@ import java.io.IOException;
 import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.DefaultInternationalString;
+import org.geotoolkit.parameter.Parameters;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -49,18 +50,21 @@ import static org.junit.Assert.*;
  */
 public class ParameterTest extends org.geotoolkit.test.TestBase {
 
-    private static final String WRITTING_FILE =
+    private static final String WRITING_FILE =
             "src/test/resources/org/geotoolkit/xml/parameter/parameterWriting.xml";
-    private static final String WRITTING_SCHEMA =
+    private static final String WRITING_ALIAS_FILE =
+            "src/test/resources/org/geotoolkit/xml/parameter/parameterWritingAlias.xml";
+    private static final String WRITING_SCHEMA =
             "src/test/resources/org/geotoolkit/xml/parameter/parameterSchema.xml";
-    private static final String WRITTING_AFTER_READING_FILE =
+    private static final String WRITING_AFTER_READING_FILE =
             "src/test/resources/org/geotoolkit/xml/parameter/parameterWritingAfterReading.xml";
-    private static final String WRITTING_AFTER_READING_SCHEMA =
+    private static final String WRITING_AFTER_READING_SCHEMA =
             "src/test/resources/org/geotoolkit/xml/parameter/parameterSchemaAfterReading.xml";
-    private static GeneralParameterValue INITIAL;
-    private static GeneralParameterDescriptor INITIAL_DESC;
-    private static GeneralParameterValue FINAL;
-    private static GeneralParameterDescriptor FINAL_DESC;
+    private static ParameterValueGroup INITIAL;
+    private static ParameterDescriptorGroup INITIAL_DESC;
+    private static ParameterDescriptorGroup ALIAS_DESC;
+    private static ParameterValueGroup FINAL;
+    private static ParameterDescriptorGroup FINAL_DESC;
 
     public ParameterTest() {
     }
@@ -77,9 +81,13 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
     public void setUp() throws IOException, XMLStreamException, ClassNotFoundException {
         INITIAL = generateGeneralParameter();
         INITIAL_DESC = INITIAL.getDescriptor();
-        writting_Operation(INITIAL);
-        FINAL = readding_reWritting_Operations();
+        writing_Operation(INITIAL);
+        FINAL = reading_reWriting_Operations();
         FINAL_DESC = FINAL.getDescriptor();
+
+        final ParameterBuilder pb = new ParameterBuilder(INITIAL_DESC);
+        pb.addName("aliasGD");
+        ALIAS_DESC = pb.createGroup(INITIAL_DESC.descriptors().toArray(new GeneralParameterDescriptor[0]));
     }
 
     @After
@@ -88,10 +96,10 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void compareTest() throws IOException, XMLStreamException{
-        // level 1 : structure of initial readding
+        // level 1 : structure of initial reading
         assertParameterRead(INITIAL);
 
-        // level 2 : structure of final readding
+        // level 2 : structure of final reading
         assertParameterRead(FINAL);
 
         // level 3 : equality of descriptors
@@ -105,7 +113,7 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
     }
 
     /**
-     * <p>This method check readding values.</p>
+     * <p>This method check reading values.</p>
      *
      * @param gpv
      * @throws IOException
@@ -204,7 +212,7 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
      *
      * @return
      */
-    public static GeneralParameterValue generateGeneralParameter() {
+    public static ParameterValueGroup generateGeneralParameter() {
         // PARAMETER VALUE 1
         final String value1 = "salut";
         final String def1 = "defaut";
@@ -313,16 +321,16 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
      * @throws IOException
      * @throws XMLStreamException
      */
-    public static void writting_Operation(final GeneralParameterValue globalParameter)
+    public static void writing_Operation(final GeneralParameterValue globalParameter)
             throws IOException, XMLStreamException {
 
-        final File output = new File(WRITTING_FILE);
+        final File output = new File(WRITING_FILE);
         final ParameterValueWriter writer = new ParameterValueWriter();
         writer.setOutput(output);
         writer.write(globalParameter);
         writer.dispose();
 
-        final File schema = new File(WRITTING_SCHEMA);
+        final File schema = new File(WRITING_SCHEMA);
         final ParameterDescriptorWriter schemaWriter = new ParameterDescriptorWriter();
         schemaWriter.setOutput(schema);
         schemaWriter.write(globalParameter.getDescriptor());
@@ -331,7 +339,7 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
     }
 
     /**
-     * <p>This method tests readding file value with a descriptor reader.</p>
+     * <p>This method tests reading file value with a descriptor reader.</p>
      *
      * <p>Then, it writes an XML file for the value, and an associated schema for
      * the descriptor.</p>
@@ -340,60 +348,77 @@ public class ParameterTest extends org.geotoolkit.test.TestBase {
      * @throws IOException
      * @throws XMLStreamException
      */
-    public static GeneralParameterValue readding_reWritting_Operations()
+    public static ParameterValueGroup reading_reWriting_Operations()
             throws IOException, XMLStreamException, ClassNotFoundException {
 
         final ParameterDescriptorReader descriptorReader = new ParameterDescriptorReader();
-        descriptorReader.setInput(new File(WRITTING_SCHEMA));
+        descriptorReader.setInput(new File(WRITING_SCHEMA));
 
         final ParameterValueReader valueReader = new ParameterValueReader(descriptorReader);
-        valueReader.setInput(new File(WRITTING_FILE));
+        valueReader.setInput(new File(WRITING_FILE));
 
         final GeneralParameterValue parameterValue = valueReader.read();
         valueReader.dispose();
         descriptorReader.dispose();
 
         final ParameterValueWriter valueWriter = new ParameterValueWriter();
-        valueWriter.setOutput(new File(WRITTING_AFTER_READING_FILE));
+        valueWriter.setOutput(new File(WRITING_AFTER_READING_FILE));
         valueWriter.write(parameterValue);
         valueWriter.dispose();
 
         final ParameterDescriptorWriter descriptorWriter = new ParameterDescriptorWriter();
-        descriptorWriter.setOutput(new File(WRITTING_AFTER_READING_SCHEMA));
+        descriptorWriter.setOutput(new File(WRITING_AFTER_READING_SCHEMA));
         descriptorWriter.write(parameterValue.getDescriptor());
         descriptorWriter.dispose();
-        return parameterValue;
+        return (ParameterValueGroup) parameterValue;
     }
 
     /**
-     * <p>This method tests readding file value with a descriptor instance.</p>
+     * <p>This method tests reading file value with a descriptor instance.</p>
      *
      * @throws IOException
      * @throws XMLStreamException
      */
     @Test
-    public void simpleReaddingValueXMLTest()
+    public void simpleReadingValueXMLTest()
             throws IOException, XMLStreamException {
 
         final ParameterValueReader valueReader = new ParameterValueReader(INITIAL_DESC);
-        valueReader.setInput(new File(WRITTING_FILE));
+        valueReader.setInput(new File(WRITING_FILE));
         final GeneralParameterValue parameterValue = valueReader.read();
         valueReader.dispose();
         assertEquals(INITIAL, parameterValue);
     }
 
     /**
-     * <p>This method tests readding file descriptor.</p>
+     * <p>This method tests reading file value with a descriptor instance.</p>
      *
      * @throws IOException
      * @throws XMLStreamException
      */
     @Test
-    public void simpleReaddingDescriptorXSDTest()
+    public void aliasReadingValueXMLTest()
+            throws IOException, XMLStreamException {
+
+        final ParameterValueReader valueReader = new ParameterValueReader(ALIAS_DESC);
+        valueReader.setInput(new File(WRITING_ALIAS_FILE));
+        final ParameterValueGroup parameterValue = (ParameterValueGroup) valueReader.read();
+        valueReader.dispose();
+        assertEquals(Parameters.toMap(INITIAL), Parameters.toMap(parameterValue));
+    }
+
+    /**
+     * <p>This method tests reading file descriptor.</p>
+     *
+     * @throws IOException
+     * @throws XMLStreamException
+     */
+    @Test
+    public void simpleReadingDescriptorXSDTest()
             throws IOException, XMLStreamException, ClassNotFoundException {
 
         final ParameterDescriptorReader descriptorReader = new ParameterDescriptorReader();
-        descriptorReader.setInput(new File(WRITTING_SCHEMA));
+        descriptorReader.setInput(new File(WRITING_SCHEMA));
         descriptorReader.read();
         final GeneralParameterDescriptor parameterDescriptor = descriptorReader.getDescriptorsRoot();
         descriptorReader.dispose();
