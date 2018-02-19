@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage;
 
-import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -39,16 +38,6 @@ public abstract class DataStoreFactory extends DataStoreProvider {
      * @return A metadata object giving general information about data support of this factory.
      */
     public abstract FactoryMetadata getMetadata();
-
-    /**
-     * General information about this factory.
-     * If a given ParameterValueGroup has an identifier parameter set, it's value must
-     * be {@linkplain org.opengis.metadata.Identifier#getAuthority() identifier authority}, otherwise this
-     * factory will not support this ParameterValueGroup.
-     *
-     * @return The identification of this factory.
-     */
-    public abstract Identification getIdentification();
 
     /**
      * Test to see if the implementation is available for use.

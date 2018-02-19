@@ -16,20 +16,13 @@
  */
 package org.geotoolkit.sos;
 
-import java.util.Collections;
 import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.client.Client;
-import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.sos.xml.SOSVersion;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
-import org.opengis.metadata.Identifier;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.*;
 
 /**
@@ -42,14 +35,6 @@ public class SOSClientFactory extends AbstractClientFactory{
 
     /** factory identification **/
     public static final String NAME = "sos";
-    public static final DefaultServiceIdentification IDENTIFICATION;
-    static {
-        IDENTIFICATION = new DefaultServiceIdentification();
-        final Identifier id = new DefaultIdentifier(NAME);
-        final DefaultCitation citation = new DefaultCitation(NAME);
-        citation.setIdentifiers(Collections.singleton(id));
-        IDENTIFICATION.setCitation(citation);
-    }
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
@@ -67,12 +52,7 @@ public class SOSClientFactory extends AbstractClientFactory{
     }
 
     public static final ParameterDescriptorGroup PARAMETERS =
-            new ParameterBuilder().addName("SOSParameters").createGroup(IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
-
-    @Override
-    public Identification getIdentification() {
-        return IDENTIFICATION;
-    }
+            new ParameterBuilder().addName(NAME).addName("SOSParameters").createGroup(IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
 
     @Override
     public ParameterDescriptorGroup getOpenParameters() {

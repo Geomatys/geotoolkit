@@ -196,8 +196,7 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
     public JDBCFeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
 
-        final DefaultJDBCFeatureStore featureStore = toFeatureStore(params,
-                getIdentification().getCitation().getIdentifiers().iterator().next().getCode());
+        final DefaultJDBCFeatureStore featureStore = toFeatureStore(params, getOpenParameters().getName().getCode());
         prepareStore(featureStore, params);
         return featureStore;
     }

@@ -16,19 +16,12 @@
  */
 package org.geotoolkit.data.geojson;
 
-import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FileFeatureStoreFactory;
-import org.opengis.metadata.Identifier;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-
-import java.util.Collections;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -39,16 +32,7 @@ import org.geotoolkit.storage.FactoryMetadata;
  */
 public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory implements FileFeatureStoreFactory {
 
-    /** factory identification **/
     public static final String NAME = "geojson";
-    public static final DefaultServiceIdentification IDENTIFICATION;
-    static {
-        IDENTIFICATION = new DefaultServiceIdentification();
-        final Identifier id = new DefaultIdentifier(NAME);
-        final DefaultCitation citation = new DefaultCitation(NAME);
-        citation.setIdentifiers(Collections.singleton(id));
-        IDENTIFICATION.setCitation(citation);
-    }
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     public static final String ENCODING = "UTF-8";
@@ -65,13 +49,8 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName("GeoJSONParameters").createGroup(
+            new ParameterBuilder().addName(NAME).addName("GeoJSONParameters").createGroup(
                 IDENTIFIER, PATH, COORDINATE_ACCURACY);
-
-    @Override
-    public Identification getIdentification() {
-        return IDENTIFICATION;
-    }
 
     /**
      * {@inheritDoc }

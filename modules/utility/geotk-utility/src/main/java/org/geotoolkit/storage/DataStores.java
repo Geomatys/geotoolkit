@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.sis.metadata.iso.citation.Citations;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
@@ -142,8 +143,10 @@ public final class DataStores extends Static {
      */
     public static synchronized DataStoreFactory getFactoryById(final String identifier) {
         for (final DataStoreFactory factory : getAllFactories(DataStoreFactory.class)) {
-            if (Citations.identifierMatches(factory.getIdentification().getCitation(), identifier)) {
-                return factory;
+            for (String name : IdentifiedObjects.getNames(factory.getOpenParameters(),null)) {
+                if (name.equals(identifier)) {
+                    return factory;
+                }
             }
         }
         return null;

@@ -22,7 +22,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.FactoryMetadata;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -49,16 +48,6 @@ public interface FeatureStoreFactory {
      * @return A metadata object giving general information about data support of this factory.
      */
     FactoryMetadata getMetadata();
-
-    /**
-     * General information about this factory.
-     * If a given ParameterValueGroup has an identifier parameter set, it's value must
-     * be {@linkplain org.opengis.metadata.Identifier#getAuthority() identifier authority}, otherwise this
-     * factory will not support this ParameterValueGroup.
-     *
-     * @return The identification of this factory.
-     */
-    Identification getIdentification();
 
     /**
      * Test to see if the implementation is available for use.

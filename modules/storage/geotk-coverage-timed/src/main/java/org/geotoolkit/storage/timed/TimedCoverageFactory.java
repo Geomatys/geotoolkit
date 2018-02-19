@@ -17,10 +17,6 @@
 package org.geotoolkit.storage.timed;
 
 import java.net.URI;
-import java.util.Collections;
-import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import static org.geotoolkit.storage.AbstractDataStoreFactory.createFixedIdentifier;
@@ -29,8 +25,6 @@ import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
-import org.opengis.metadata.Identifier;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -47,14 +41,6 @@ public class TimedCoverageFactory extends AbstractCoverageStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "timed-files";
-    public static final DefaultServiceIdentification IDENTIFICATION;
-    static {
-        IDENTIFICATION = new DefaultServiceIdentification();
-        final Identifier id = new DefaultIdentifier(NAME);
-        final DefaultCitation citation = new DefaultCitation(NAME);
-        citation.setIdentifiers(Collections.singleton(id));
-        IDENTIFICATION.setCitation(citation);
-    }
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
@@ -101,17 +87,12 @@ public class TimedCoverageFactory extends AbstractCoverageStoreFactory {
             .createBounded(Long.class, 0l, Long.MAX_VALUE, 0l);
 
     public static final ParameterDescriptorGroup PARAMETERS = new ParameterBuilder()
-            .addName("timed-file-parameters")
+            .addName(NAME).addName("timed-file-parameters")
             .createGroup(IDENTIFIER, PATH, NAME_PATTERN, TIME_INDEX, TIME_FORMAT, DELAY, DEFAULT_MILLI_OF_DAY, DEFAULT_OFFSET_SECONDS);
 
     @Override
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.COVERAGE, true, false, false);
-    }
-
-    @Override
-    public Identification getIdentification() {
-        return IDENTIFICATION;
     }
 
     @Override

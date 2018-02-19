@@ -17,11 +17,7 @@
 package org.geotoolkit.wmts;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Map;
-import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
@@ -31,8 +27,6 @@ import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.wmts.xml.WMTSVersion;
-import org.opengis.metadata.Identifier;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.*;
 
 /**
@@ -43,16 +37,7 @@ import org.opengis.parameter.*;
  */
 public class WMTSClientFactory extends AbstractClientFactory implements CoverageStoreFactory{
 
-    /** factory identification **/
     public static final String NAME = "wmts";
-    public static final DefaultServiceIdentification IDENTIFICATION;
-    static {
-        IDENTIFICATION = new DefaultServiceIdentification();
-        final Identifier id = new DefaultIdentifier(NAME);
-        final DefaultCitation citation = new DefaultCitation(NAME);
-        citation.setIdentifiers(Collections.singleton(id));
-        IDENTIFICATION.setCitation(citation);
-    }
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
@@ -69,15 +54,9 @@ public class WMTSClientFactory extends AbstractClientFactory implements Coverage
         VERSION = createVersionDescriptor(validValues, WMTSVersion.v100.getCode());
     }
 
-
     public static final ParameterDescriptorGroup PARAMETERS =
-            new ParameterBuilder().addName("WMTSParameters").createGroup(
+            new ParameterBuilder().addName(NAME).addName("WMTSParameters").createGroup(
                 IDENTIFIER,URL,VERSION, SECURITY, IMAGE_CACHE,NIO_QUERIES,TIMEOUT);
-
-    @Override
-    public Identification getIdentification() {
-        return IDENTIFICATION;
-    }
 
     @Override
     public ParameterDescriptorGroup getOpenParameters() {

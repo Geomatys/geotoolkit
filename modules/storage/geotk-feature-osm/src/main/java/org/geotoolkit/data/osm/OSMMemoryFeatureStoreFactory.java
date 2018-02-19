@@ -19,20 +19,13 @@ package org.geotoolkit.data.osm;
 
 import java.net.URI;
 
-import java.util.Collections;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
-import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
-
-import org.opengis.metadata.Identifier;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -47,24 +40,11 @@ public class OSMMemoryFeatureStoreFactory extends AbstractFileFeatureStoreFactor
 
     /** factory identification **/
     public static final String NAME = "osm-xml";
-    public static final DefaultServiceIdentification IDENTIFICATION;
-    static {
-        IDENTIFICATION = new DefaultServiceIdentification();
-        final Identifier id = new DefaultIdentifier(NAME);
-        final DefaultCitation citation = new DefaultCitation(NAME);
-        citation.setIdentifiers(Collections.singleton(id));
-        IDENTIFICATION.setCitation(citation);
-    }
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName("OSMMemoryParameters").createGroup(IDENTIFIER, PATH);
-
-    @Override
-    public Identification getIdentification() {
-        return IDENTIFICATION;
-    }
+            new ParameterBuilder().addName(NAME).addName("OSMMemoryParameters").createGroup(IDENTIFIER, PATH);
 
     @Override
     public CharSequence getDescription() {
