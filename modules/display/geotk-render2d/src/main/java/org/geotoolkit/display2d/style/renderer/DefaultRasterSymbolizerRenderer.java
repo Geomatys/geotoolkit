@@ -619,8 +619,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
                 assert rgbNumBand <= nbBands;
 
-                final double[][] ranges = buildRanges(analyse);
-                final int[] bands = new int[ranges.length];
+                final double[][] ranges = buildRanges(analyse, 4);
+                final int[] bands = new int[4];
                 for (int i = 0 ; i < rgbNumBand ; i++) {
                     bands[i] = i;
                 }
@@ -1328,14 +1328,16 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * difficult to obtain coherent extremums using this information.
      *
      * @param stats Ready-to-use image statistics.
+     * @param numBands In case we don't want the same number of bands as described
+     * in the statistics (Example : we want an rgba image from rgb one).
      * @return A 2D array, whose first dimension represents band indices, and
      * second dimension has 2 values : chosen minimum at index 0 and maximum at
      * index 1. Never null. Empty only if input statistics has no band defined.
      */
-    private static double[][] buildRanges(final ImageStatistics stats) {
+    private static double[][] buildRanges(final ImageStatistics stats, final int numBands) {
         final ImageStatistics.Band[] bands = stats.getBands();
-        final double[][] ranges = new double[bands.length][2];
-        for (int bandIdx = 0 ; bandIdx < bands.length ; bandIdx++) {
+        final double[][] ranges = new double[numBands][2];
+        for (int bandIdx = 0 ; bandIdx < bands.length && bandIdx < numBands; bandIdx++) {
             ranges[bandIdx][0] = Double.NEGATIVE_INFINITY;
             ranges[bandIdx][1] = Double.POSITIVE_INFINITY;
             final ImageStatistics.Band b = bands[bandIdx];
@@ -1358,7 +1360,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 for (int i = histogram.length -1 ; i > 0 ; i--) {
                     currentSum += histogram[i];
                     if (currentSum > twoPercent) {
-                        ranges[bandIdx][1] = b.getMax() - histogramStep * i;
+                        ranges[bandIdx][1] = b.getMax() - histogramStep * (histogram.length - i - 1);
                         break;
                     }
                 }
