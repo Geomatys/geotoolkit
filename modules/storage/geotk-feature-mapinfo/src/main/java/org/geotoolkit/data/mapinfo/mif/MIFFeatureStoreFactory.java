@@ -26,6 +26,8 @@ import org.opengis.parameter.ParameterValueGroup;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.logging.Logger;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.storage.DataType;
@@ -59,8 +61,8 @@ public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory impl
      * {@inheritDoc }
      */
     @Override
-    public String[] getFileExtensions() {
-        return new String[] {".mif"};
+    public Collection<String> getSuffix() {
+        return Arrays.asList("mif");
     }
 
     @Override

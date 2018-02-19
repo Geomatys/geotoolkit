@@ -17,6 +17,8 @@
 
 package org.geotoolkit.data.csv;
 
+import java.util.Arrays;
+import java.util.Collection;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
@@ -83,8 +85,8 @@ public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     }
 
     @Override
-    public String[] getFileExtensions() {
-        return new String[] {".csv"};
+    public Collection<String> getSuffix() {
+        return Arrays.asList("csv");
     }
 
     @Override

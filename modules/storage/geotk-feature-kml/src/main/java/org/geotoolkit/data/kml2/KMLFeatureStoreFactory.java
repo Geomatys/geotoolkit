@@ -17,6 +17,8 @@
 
 package org.geotoolkit.data.kml2;
 
+import java.util.Arrays;
+import java.util.Collection;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
@@ -70,8 +72,8 @@ public class KMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     }
 
     @Override
-    public String[] getFileExtensions() {
-        return new String[] {".kml"};
+    public Collection<String> getSuffix() {
+        return Arrays.asList("kml");
     }
 
     @Override

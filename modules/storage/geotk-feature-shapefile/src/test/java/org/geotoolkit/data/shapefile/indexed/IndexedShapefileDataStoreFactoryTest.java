@@ -17,12 +17,10 @@
 package org.geotoolkit.data.shapefile.indexed;
 
 import org.junit.Test;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.FeatureStore;
@@ -151,17 +149,8 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
      */
     @Test
     public void testGetFileExtensions() {
-        List ext = Arrays.asList(factory.getFileExtensions());
-        assertTrue(ext.contains(".shp"));
-    }
-
-    /*
-     * Test method for
-     * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.canProcess(URL)'
-     */
-    @Test
-    public void testCanProcessURL() throws FileNotFoundException, URISyntaxException {
-        factory.canProcess(ShapeTestData.url(IndexedShapefileDataStoreTest.STATE_POP).toURI());
+        Collection ext = factory.getSuffix();
+        assertTrue(ext.contains("shp"));
     }
 
     /*

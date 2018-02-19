@@ -18,6 +18,8 @@
 package org.geotoolkit.data.osm;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.apache.sis.parameter.ParameterBuilder;
@@ -86,8 +88,8 @@ public class OSMMemoryFeatureStoreFactory extends AbstractFileFeatureStoreFactor
     }
 
     @Override
-    public String[] getFileExtensions() {
-        return new String[] {".osm"};
+    public Collection<String> getSuffix() {
+        return Arrays.asList("osm");
     }
 
     @Override

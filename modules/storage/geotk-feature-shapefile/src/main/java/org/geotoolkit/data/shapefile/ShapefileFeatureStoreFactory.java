@@ -37,6 +37,8 @@ import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.storage.DataType;
@@ -176,8 +178,8 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
      * {@inheritDoc }
      */
     @Override
-    public String[] getFileExtensions() {
-        return new String[] {".shp"};
+    public Collection<String> getSuffix() {
+        return Arrays.asList("shp");
     }
 
     /**

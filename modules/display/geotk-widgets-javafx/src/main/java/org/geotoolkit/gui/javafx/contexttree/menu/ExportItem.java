@@ -18,6 +18,8 @@ package org.geotoolkit.gui.javafx.contexttree.menu;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,9 +81,9 @@ public class ExportItem extends TreeMenuItem {
         for(FileFeatureStoreFactory ff : factories){
             final FactoryMetadata metadata = ff.getMetadata();
             if(metadata.supportStoreCreation() && metadata.supportStoreWriting() && metadata.supportedGeometryTypes().length>0){
-                final String[] exts = ff.getFileExtensions();
+                final Collection<String> exts = ff.getSuffix();
                 final String name = ff.getDisplayName().toString();
-                final FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(name, exts);
+                final FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(name, new ArrayList(exts));
                 index.put(filter, ff);
 
                 ((Menu)menuItem).getItems().add(new ExportSub(ff));
@@ -148,7 +150,7 @@ public class ExportItem extends TreeMenuItem {
                                 final String inTypeName = inType.getName().tip().toString();
 
                                 //output file path
-                                final File file= new File(folder, inTypeName+factory.getFileExtensions()[0]);
+                                final File file= new File(folder, inTypeName+"."+factory.getSuffix().iterator().next());
 
                                 //create output store
                                 try (FeatureStore store = factory.createDataStore(file.toURI())) {

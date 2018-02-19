@@ -17,6 +17,8 @@
 
 package org.geotoolkit.data.gpx;
 
+import java.util.Arrays;
+import java.util.Collection;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
@@ -70,8 +72,8 @@ public class GPXFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     }
 
     @Override
-    public String[] getFileExtensions() {
-        return new String[] {".gpx"};
+    public Collection<String> getSuffix() {
+        return Arrays.asList("gpx");
     }
 
     @Override

@@ -54,7 +54,7 @@ public abstract class AbstractFileFeatureStoreFactory extends AbstractFeatureSto
             final Object obj = params.parameter(PATH.getName().toString()).getValue();
             if(obj != null && obj instanceof URI){
                 final String path = ((URI)obj).toString().toLowerCase();
-                for(final String ext : getFileExtensions()){
+                for(final String ext : getSuffix()){
                     if(path.endsWith(ext) && !path.endsWith("*"+ext)){
                         return true;
                     }
@@ -67,15 +67,6 @@ public abstract class AbstractFileFeatureStoreFactory extends AbstractFeatureSto
             return false;
         }
 
-    }
-
-    /**
-     * {@inheritDoc }
-     * @param uri
-     */
-    @Override
-    public boolean canProcess(final URI uri) {
-        return canProcess(Collections.singletonMap(PATH.getName().toString(), uri));
     }
 
     /**

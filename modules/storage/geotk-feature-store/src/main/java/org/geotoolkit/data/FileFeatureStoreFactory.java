@@ -17,6 +17,7 @@
 package org.geotoolkit.data;
 
 import java.net.URI;
+import org.apache.sis.internal.storage.FileSystemProvider;
 import org.apache.sis.storage.DataStoreException;
 
 /**
@@ -30,23 +31,7 @@ import org.apache.sis.storage.DataStoreException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface FileFeatureStoreFactory extends FeatureStoreFactory {
-
-    /**
-     * The list of filename extentions handled by this factory.
-     *
-     * @return List of file extensions which can be read by this FeatureStore.
-     */
-    String[] getFileExtensions();
-
-    /**
-     * Tests if the provided uri can be handled by this factory.
-     *
-     * @param uri URL to a real file (may not be local)
-     *
-     * @return <code>true</code> if this uri can when this FeatureStore can resolve and read the data specified
-     */
-    boolean canProcess(URI uri);
+public interface FileFeatureStoreFactory extends FeatureStoreFactory, FileSystemProvider {
 
     /**
      * A FeatureStore attached to the provided uri, may be created if needed.

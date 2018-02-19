@@ -17,6 +17,8 @@
 
 package org.geotoolkit.data.gml;
 
+import java.util.Arrays;
+import java.util.Collection;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
@@ -117,8 +119,8 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     }
 
     @Override
-    public String[] getFileExtensions() {
-        return new String[] {".gml"};
+    public Collection<String> getSuffix() {
+        return Arrays.asList("gml");
     }
 
     @Override

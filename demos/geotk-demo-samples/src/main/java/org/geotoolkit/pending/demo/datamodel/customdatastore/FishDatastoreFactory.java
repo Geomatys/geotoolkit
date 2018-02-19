@@ -2,6 +2,8 @@
 
 package org.geotoolkit.pending.demo.datamodel.customdatastore;
 
+import java.util.Arrays;
+import java.util.Collection;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.apache.sis.parameter.ParameterBuilder;
@@ -49,8 +51,8 @@ public class FishDatastoreFactory extends AbstractFileFeatureStoreFactory{
     }
 
     @Override
-    public String[] getFileExtensions() {
-        return new String[]{".fsh"};
+    public Collection<String> getSuffix() {
+        return Arrays.asList("fsh");
     }
 
     @Override

@@ -21,6 +21,8 @@ import java.io.Reader;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import org.apache.sis.internal.storage.io.IOUtilities;
+import java.util.Arrays;
+import java.util.Collection;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FileFeatureStoreFactory;
@@ -98,8 +100,8 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
      * {@inheritDoc }
      */
     @Override
-    public String[] getFileExtensions() {
-        return new String[] {".json", ".geojson", ".topojson"};
+    public Collection<String> getSuffix() {
+        return Arrays.asList("json", "geojson", "topojson");
     }
 
     /**
