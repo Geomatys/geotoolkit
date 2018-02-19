@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.sis.internal.storage.FileSystemResource;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
@@ -50,7 +51,6 @@ import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.temporal.TemporalGeometricPrimitive;
-import org.geotoolkit.storage.FileSystemResource;
 
 /**
  *

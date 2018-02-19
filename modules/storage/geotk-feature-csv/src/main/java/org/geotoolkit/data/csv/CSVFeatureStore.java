@@ -65,10 +65,10 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.storage.FileSystemResource;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.FileSystemResource;
 
 /**
  * CSV DataStore, holds a single feature type which name match the file name.

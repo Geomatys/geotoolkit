@@ -31,6 +31,7 @@ import java.util.logging.LogRecord;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
+import org.apache.sis.internal.storage.FileSystemResource;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
@@ -52,7 +53,6 @@ import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.storage.coverage.CoverageResource;
-import org.geotoolkit.storage.FileSystemResource;
 
 /**
  * Coverage Store which rely on standard java readers and writers.

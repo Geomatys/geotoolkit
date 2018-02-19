@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.internal.storage.FileSystemResource;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
@@ -43,7 +44,6 @@ import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.FileSystemResource;
 
 /**
  * GML feature store.
