@@ -70,6 +70,8 @@ import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.storage.Resource;
 import org.opengis.metadata.Identifier;
+import org.opengis.metadata.citation.Citation;
+import org.opengis.metadata.identification.Identification;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.ScopedName;
 
@@ -167,12 +169,34 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     }
 
     private static void listNames(org.apache.sis.storage.Resource resource, Set<GenericName> names) throws DataStoreException {
-        final Identifier identifier = ((Resource)resource).getIdentifier();
-        if (identifier instanceof GenericName) {
-            names.add((GenericName) identifier);
+        if (resource instanceof Resource) {
+            final Identifier identifier = ((Resource) resource).getIdentifier();
+            if (identifier instanceof GenericName) {
+                names.add((GenericName) identifier);
+            } else {
+                names.add(NamesExt.create(identifier.getCode()));
+            }
         } else {
-            names.add(NamesExt.create(identifier.getCode()));
+            search:
+            for (Identification id : resource.getMetadata().getIdentificationInfo()) {
+                final Citation citation = id.getCitation();
+                if (citation != null) {
+                    for (Identifier identifier : citation.getIdentifiers()) {
+                        if (identifier instanceof GenericName) {
+                            names.add((GenericName) identifier);
+                        } else {
+                            names.add(NamesExt.create(identifier.getCode()));
+                        }
+                       break search;
+                    }
+                    if (citation.getTitle() != null) {
+                        names.add(NamesExt.create(citation.getTitle().toString()));
+                        break search;
+                    }
+                }
+            }
         }
+
         if (resource instanceof Aggregate) {
             final Aggregate ds = (Aggregate) resource;
             for (org.apache.sis.storage.Resource rs : ds.components()) {
