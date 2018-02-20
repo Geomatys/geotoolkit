@@ -262,7 +262,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements FileSyst
      * @throws IOException if fail to create a reader.
      * @throws UnsupportedImageFormatException if spi is defined but can't decode candidate file
      */
-    ImageReader createReader(final Path candidate, ImageReaderSpi spi) throws IOException{
+    static ImageReader createReader(final Path candidate, ImageReaderSpi spi) throws IOException{
         final ImageReader reader;
         if(spi == null){
             if (!IOUtilities.extension(candidate).isEmpty()) {
