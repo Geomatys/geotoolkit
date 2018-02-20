@@ -48,11 +48,6 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
         return parameters;
     }
 
-    @Override
-    public Resource getRootResource() throws DataStoreException {
-        return this;
-    }
-
     /**
      * {@inheritDoc }
      */

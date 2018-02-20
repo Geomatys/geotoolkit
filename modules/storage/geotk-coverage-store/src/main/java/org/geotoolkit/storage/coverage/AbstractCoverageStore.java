@@ -19,7 +19,6 @@ package org.geotoolkit.storage.coverage;
 
 import java.awt.Point;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,13 +29,11 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import org.apache.sis.internal.metadata.NameToIdentifier;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
-import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.util.Classes;
@@ -48,9 +45,6 @@ import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.version.Version;
-import org.geotoolkit.version.VersionControl;
-import org.geotoolkit.version.VersioningException;
 import org.opengis.util.GenericName;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
@@ -107,16 +101,12 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
      */
     @Override
     protected Metadata createMetadata() throws DataStoreException {
-        final Resource root = getRootResource();
-        if (root == null) {
-            return null;
-        }
 
         final DefaultMetadata rootMd = new DefaultMetadata();
 
         // Queries data specific information
         final Map<GenericName, GeneralGridGeometry> geometries = new HashMap<>();
-        final List<CoverageResource> refs = flatten(root)
+        final List<CoverageResource> refs = flatten(this)
                 .filter(node -> node instanceof CoverageResource)
                 .map(node -> ((CoverageResource) node))
                 .collect(Collectors.toList());
@@ -221,17 +211,7 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(Classes.getShortClassName(this));
-        try {
-            final Resource node = getRootResource();
-            sb.append(' ');
-            sb.append(node.toString());
-        } catch (DataStoreException ex) {
-            Logging.getLogger("org.geotoolkit.storage").log(Level.WARNING, null, ex);
-        }
-
-        return sb.toString();
+        return Classes.getShortClassName(this);
     }
 
     @Override
@@ -254,39 +234,10 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         return map.getNames();
     }
 
-    @Override
-    public Resource findResource(String name) throws DataStoreException {
-        Resource res = findResource(getRootResource(), name);
-        if (res==null) {
-            throw new IllegalNameException("No resource for name : "+name);
-        }
-        return (org.geotoolkit.storage.Resource) res;
-    }
-
-    private Resource findResource(final org.apache.sis.storage.Resource candidate, String name) throws DataStoreException {
-
-        final boolean match = NameToIdentifier.isHeuristicMatchForIdentifier(Collections.singleton(((org.geotoolkit.storage.Resource)candidate).getIdentifier()), name);
-        Resource result = match ? (Resource)candidate : null;
-
-        if (candidate instanceof Aggregate) {
-            final Aggregate ds = (Aggregate) candidate;
-            for (Resource rs : ds.components()) {
-                Object rr = findResource(rs,name);
-                if (rr instanceof Resource) {
-                    if (result!=null) {
-                        throw new DataStoreException("Multiple resources match the name : "+name);
-                    }
-                    result = (Resource) rr;
-                }
-            }
-        }
-        return result;
-    }
-
     protected synchronized GenericNameIndex<CoverageResource> listReferences() throws DataStoreException {
         if (cachedRefs==null) {
             cachedRefs = new GenericNameIndex<>();
-            listReferences(getRootResource(), cachedRefs);
+            listReferences(this, cachedRefs);
         }
         return cachedRefs;
     }

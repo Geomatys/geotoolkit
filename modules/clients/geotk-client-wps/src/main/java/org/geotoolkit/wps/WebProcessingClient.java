@@ -18,12 +18,16 @@ package org.geotoolkit.wps;
 
 import java.io.*;
 import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.CapabilitiesException;
@@ -202,6 +206,11 @@ public class WebProcessingClient extends AbstractClient {
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(WPSClientFactory.NAME);
+    }
+
+    @Override
+    public Collection<Resource> components() throws DataStoreException {
+        return Collections.EMPTY_LIST;
     }
 
     /**

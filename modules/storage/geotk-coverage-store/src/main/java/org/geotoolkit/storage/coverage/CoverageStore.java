@@ -46,15 +46,6 @@ public interface CoverageStore extends AutoCloseable, Resource {
     DataStoreFactory getProvider();
 
     /**
-     * Returns the root resource of the coverage store.
-     * This node is the main access point to the content of the store.
-     *
-     * @return DataNode never null.
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    Resource getRootResource() throws DataStoreException;
-
-    /**
      * Get a collection of all available coverage names.
      *
      * @return Set<GenericName> , never null, but can be empty.

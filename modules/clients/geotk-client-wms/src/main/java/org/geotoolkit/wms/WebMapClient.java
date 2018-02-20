@@ -42,6 +42,8 @@ import org.opengis.parameter.ParameterValueGroup;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -368,22 +370,22 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
     }
 
     @Override
-    public synchronized Resource getRootResource() throws DataStoreException {
+    public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+        final Resource root = getRootResource();
+        return (root == null) ? Collections.EMPTY_LIST : Collections.singletonList(root);
+    }
+
+    private synchronized Resource getRootResource() throws DataStoreException {
         if (rootNode != null) {
             return rootNode;
         }
-
-            final AbstractWMSCapabilities capa;
-            try {
-                capa = getServiceCapabilities();
-            } catch (CapabilitiesException ex) {
-                throw new DataStoreException(ex);
-            }
-
-
-        rootNode = asResource(capa.getCapability().getLayer())
-                .orElse(new DefaultAggregate(Names.createLocalName(null, ":", "root")));
-
+        final AbstractWMSCapabilities capa;
+        try {
+            capa = getServiceCapabilities();
+        } catch (CapabilitiesException ex) {
+            throw new DataStoreException(ex);
+        }
+        rootNode = asResource(capa.getCapability().getLayer()).orElse(null);
         return rootNode;
     }
 

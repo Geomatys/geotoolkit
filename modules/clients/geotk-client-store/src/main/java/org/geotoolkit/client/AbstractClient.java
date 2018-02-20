@@ -157,11 +157,6 @@ public abstract class AbstractClient extends DataStore implements Client{
         return LOGGER;
     }
 
-    @Override
-    public Resource getRootResource() {
-        return null;
-    }
-
     protected void applySessionId(final URLConnection conec) {
         if (sessionId != null) {
             conec.setRequestProperty("Cookie", sessionId);

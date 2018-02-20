@@ -20,7 +20,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -30,7 +32,6 @@ import javax.sql.DataSource;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.jdbc.ManageableDataSource;
@@ -103,8 +104,8 @@ public class PGCoverageStore extends AbstractCoverageStore{
     }
 
     @Override
-    public Resource getRootResource() throws DataStoreException {
-        final DefaultAggregate root = new DefaultAggregate(NamesExt.create("root"));
+    public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+        final List<Resource> root = new ArrayList<>();
 
         final StringBuilder query = new StringBuilder();
 
@@ -121,14 +122,14 @@ public class PGCoverageStore extends AbstractCoverageStore{
             while (rs.next()){
                 final GenericName n = NamesExt.create(rs.getString(1));
                 final CoverageResource ref = createCoverageReference(n, null);
-                root.addResource(ref);
+                root.add(ref);
             }
         } catch (SQLException ex) {
             throw new DataStoreException(ex);
         } finally {
             closeSafe(cnx,stmt,rs);
         }
-        return root;
+        return Collections.unmodifiableList(root);
     }
 
     @Override

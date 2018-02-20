@@ -16,10 +16,15 @@
  */
 package org.geotoolkit.coverage.amended;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStore;
@@ -51,7 +56,7 @@ import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 public class AmendedCoverageStore extends AbstractCoverageStore{
 
     protected final CoverageStore store;
-    protected Resource root;
+    protected List<Resource> resources;
 
     /**
      *
@@ -95,21 +100,19 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
         return super.getLogger();
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public synchronized Resource getRootResource() throws DataStoreException {
-        if(root==null){
-            final Resource res = store.getRootResource();
-            if (res instanceof CoverageResource) {
-                root = new AmendedCoverageResource((CoverageResource) res, this);
-            } else {
-                root = new AmendedResource((Aggregate) res, this);
+    public synchronized Collection<Resource> components() throws DataStoreException {
+        if (resources == null) {
+            resources = new ArrayList<>();
+            for (Resource res : ((DataStore)store).components()) {
+                if (res instanceof CoverageResource) {
+                    resources.add(new AmendedCoverageResource((CoverageResource) res, this));
+                } else {
+                    resources.add(new AmendedResource((Aggregate) res, this));
+                }
             }
-
         }
-        return root;
+        return Collections.unmodifiableList(resources);
     }
 
     /**

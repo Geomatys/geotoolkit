@@ -23,7 +23,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -38,6 +40,7 @@ import org.apache.sis.storage.Aggregate;
 
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageType;
@@ -77,12 +80,10 @@ public class FileCoverageStore extends AbstractCoverageStore implements FileSyst
 
     private final String separator;
 
-    //initialized at first access, this is not done in the constructor to
-    //ensure whoever created the store to be able to attach warning listeners on it.
-    private DefaultAggregate rootNode;
-
     //default spi
     final ImageReaderSpi spi;
+
+    private List<Resource> resources = null;
 
     public FileCoverageStore(URL url, String format) throws URISyntaxException, IOException {
         this(toParameters(url.toURI(), format));
@@ -127,20 +128,18 @@ public class FileCoverageStore extends AbstractCoverageStore implements FileSyst
     }
 
     @Override
-    public synchronized Aggregate getRootResource() throws DataStoreException{
-        if(rootNode==null){
-            rootNode = new DefaultAggregate(NamesExt.create("root"));
+    public synchronized Collection<Resource> components() throws DataStoreException {
+        if (resources == null) {
+            resources = new ArrayList<>();
             try {
                 visit(root);
             } catch (DataStoreException ex) {
-                rootNode = null;
                 throw ex;
             }catch (IOException ex) {
-                rootNode = null;
                 throw new DataStoreException(ex.getMessage(),ex);
             }
         }
-        return rootNode;
+        return Collections.unmodifiableList(resources);
     }
 
     /**
@@ -227,7 +226,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements FileSyst
                     final String in = imageNames.get(i);
                     final GenericName name = NamesExt.create(filename + "." + in);
                     final FileCoverageResource fcr = new FileCoverageResource(this, name, candidate, i);
-                    rootNode.addResource(fcr);
+                    resources.add(fcr);
                 }
 
             } else {
@@ -241,7 +240,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements FileSyst
                     }
 
                     final FileCoverageResource fcr = new FileCoverageResource(this, name, candidate, i);
-                    rootNode.addResource(fcr);
+                    resources.add(fcr);
                 }
             }
         } finally {
@@ -335,7 +334,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements FileSyst
         final URI filePath = rootPath.resolve(fileName+".tiff");
 
         final FileCoverageResource fcr = new FileCoverageResource(this, name, Paths.get(filePath), 0);
-        rootNode.addResource(fcr);
+        resources.add(fcr);
 
         return fcr;
     }

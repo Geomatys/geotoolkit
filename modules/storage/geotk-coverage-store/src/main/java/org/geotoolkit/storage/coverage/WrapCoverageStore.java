@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.storage.coverage;
 
+import java.util.Collection;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
@@ -55,8 +56,8 @@ public class WrapCoverageStore extends DataStore implements CoverageStore{
     }
 
     @Override
-    public Resource getRootResource() throws DataStoreException {
-        return store.getRootResource();
+    public Collection<Resource> components() throws DataStoreException {
+        return ((DataStore)store).components();
     }
 
     @Override

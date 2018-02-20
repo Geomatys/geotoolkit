@@ -24,6 +24,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -91,8 +93,8 @@ public class TimedCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
-    public Resource getRootResource() throws DataStoreException {
-            return resource;
+    public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+        return Collections.singletonList(resource);
     }
 
     @Override
