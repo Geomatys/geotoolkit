@@ -94,13 +94,15 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
     @Override
     public Metadata getMetadata() throws DataStoreException {
 
+        GridCoverageReader reader = null;
         DefaultMetadata metadata = null;
         try {
-            GridCoverageReader reader = acquireReader();
-            metadata = DefaultMetadata.castOrCopy(acquireReader().getMetadata());
-            recycle(reader);
+            reader = acquireReader();
+            metadata = DefaultMetadata.castOrCopy(reader.getMetadata());
         } catch (DataStoreException ex) {
             metadata = new DefaultMetadata();
+        } finally {
+            if (reader != null) recycle(reader);
         }
 
         final Identification id = new DefaultDataIdentification(
