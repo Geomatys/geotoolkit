@@ -105,14 +105,6 @@ public interface FeatureStore extends AutoCloseable, Resource{
     Session createSession(boolean asynchrone, Version version);
 
     /**
-     * Get root data store resource.
-     *
-     * @return Resource, should not be null
-     * @throws DataStoreException
-     */
-    Resource getRootResource() throws DataStoreException;
-
-    /**
      * Get a collection of all available resource names.
      * @return {@literal Set<Name>}, never null, but can be empty.
      */

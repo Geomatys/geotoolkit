@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -64,17 +62,16 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.metadata.NameToIdentifier;
 import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
-import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.storage.DefaultAggregate;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.storage.Resource;
-import org.opengis.feature.AttributeType;
 import org.opengis.metadata.Identifier;
+import org.opengis.metadata.citation.Citation;
+import org.opengis.metadata.identification.Identification;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.ScopedName;
 
@@ -120,51 +117,26 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     @Override
     protected Metadata createMetadata() throws DataStoreException {
         final MetadataBuilder builder = new MetadataBuilder();
-        builder.addIdentifier(null, "InMemory", MetadataBuilder.Scope.ALL);
+        String name = "";
+        if (getProvider() != null) {
+            name = getProvider().getOpenParameters().getName().getCode();
+        }
+        builder.addIdentifier(null, name, MetadataBuilder.Scope.ALL);
 
-        final Set<GenericName> names = getNames();
         try {
-            // Retrieve all feature types in the data source
-            names.stream()
-                    .filter(new Predicate<GenericName>() {
-                            @Override
-                            public boolean test(GenericName t) {
-                                try {
-                                    return findResource(t.toString()) instanceof FeatureSet;
-                                } catch (DataStoreException ex) {
-                                    getLogger().log(Level.WARNING, ex.getMessage(),ex);
-                                    return false;
-                                }
-                            }
-                        })
-                    .flatMap(this::getFeatureTypeHierarchy)
-                    .distinct()
-                    /* Register found types in the metadata. We don't count instances,
-                     * as it's possibly a costly operation.
-                     */
-                    .peek(type -> builder.addFeatureType(type, null))
-                    /* Search for all available reference systems. Do not query
-                     * parent properties, as we've got all abstract types through
-                     * "getFeatureTypeHierarchy"
-                     */
-                    .flatMap(type -> type.getProperties(false).stream())
-                    .filter(p -> p instanceof AttributeType)
-                    .map(p -> (AttributeType) p)
-                    .map(p -> {
-                        Object result = p.characteristics().get(AttributeConvention.CRS_CHARACTERISTIC.toString());
-                        if (result instanceof AttributeType)
-                            result = ((AttributeType) result).getDefaultValue();
-                        return result;
-                    })
-                    .filter(crs -> crs instanceof CoordinateReferenceSystem)
-                    .map(crs -> (CoordinateReferenceSystem) crs)
-                    .distinct()
-                    .forEach(builder::addReferenceSystem);
-
-            return builder.build(false);
+            for (org.apache.sis.storage.Resource r : components()) {
+                if (!(r instanceof FeatureSet)) continue;
+                final FeatureSet fs = (FeatureSet) r;
+                final FeatureType type = fs.getType();
+                builder.addFeatureType(type, null);
+                final CoordinateReferenceSystem crs = FeatureExt.getCRS(type);
+                if (crs!=null) builder.addReferenceSystem(crs);
+            }
         } catch (BackingStoreException e) {
             throw e.unwrapOrRethrow(DataStoreException.class);
         }
+
+        return builder.build(false);
     }
 
     private Stream<FeatureType> getFeatureTypeHierarchy(final GenericName name) throws BackingStoreException {
@@ -176,66 +148,61 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     }
 
     @Override
-    public Resource getRootResource() throws DataStoreException {
-        final DefaultAggregate ds = new DefaultAggregate(NamesExt.create("root"));
+    public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+        final List<org.apache.sis.storage.Resource> resources = new ArrayList<>();
         for (GenericName name : getNames()) {
-            ds.addResource(new DefaultFeatureResource(this, name));
+            resources.add(new DefaultFeatureResource(this, name));
         }
-        return ds;
+        return resources;
     }
 
     /**
      * Get a collection of all available names.
      * @return {@literal Set<Name>}, never null, but can be empty.
+     * @throws org.apache.sis.storage.DataStoreException
      */
+    @Override
     public Set<GenericName> getNames() throws DataStoreException {
         final Set<GenericName> names = new HashSet<>();
-        listNames(getRootResource(), names);
+        listNames(this, names);
         return names;
     }
 
     private static void listNames(org.apache.sis.storage.Resource resource, Set<GenericName> names) throws DataStoreException {
-        final Identifier identifier = ((Resource)resource).getIdentifier();
-        if (identifier instanceof GenericName) {
-            names.add((GenericName) identifier);
+        if (resource instanceof Resource) {
+            final Identifier identifier = ((Resource) resource).getIdentifier();
+            if (identifier instanceof GenericName) {
+                names.add((GenericName) identifier);
+            } else {
+                names.add(NamesExt.create(identifier.getCode()));
+            }
         } else {
-            names.add(NamesExt.create(identifier.getCode()));
+            search:
+            for (Identification id : resource.getMetadata().getIdentificationInfo()) {
+                final Citation citation = id.getCitation();
+                if (citation != null) {
+                    for (Identifier identifier : citation.getIdentifiers()) {
+                        if (identifier instanceof GenericName) {
+                            names.add((GenericName) identifier);
+                        } else {
+                            names.add(NamesExt.create(identifier.getCode()));
+                        }
+                       break search;
+                    }
+                    if (citation.getTitle() != null) {
+                        names.add(NamesExt.create(citation.getTitle().toString()));
+                        break search;
+                    }
+                }
+            }
         }
+
         if (resource instanceof Aggregate) {
             final Aggregate ds = (Aggregate) resource;
             for (org.apache.sis.storage.Resource rs : ds.components()) {
                 listNames(rs,names);
             }
         }
-    }
-
-    @Override
-    public Resource findResource(String name) throws DataStoreException {
-        Resource res = findResource(getRootResource(), name);
-        if (res==null) {
-            throw new IllegalNameException("No resource for name : "+name);
-        }
-        return (Resource) res;
-    }
-
-    private Resource findResource(final org.apache.sis.storage.Resource candidate, String name) throws DataStoreException {
-
-        final boolean match = NameToIdentifier.isHeuristicMatchForIdentifier(Collections.singleton(((Resource)candidate).getIdentifier()), name);
-        Resource result = match ? (Resource)candidate : null;
-
-        if (candidate instanceof Aggregate) {
-            final Aggregate ds = (Aggregate) candidate;
-            for (org.apache.sis.storage.Resource rs : ds.components()) {
-                Object rr = findResource(rs,name);
-                if (rr instanceof Resource) {
-                    if (result!=null) {
-                        throw new DataStoreException("Multiple resources match the name : "+name);
-                    }
-                    result = (Resource) rr;
-                }
-            }
-        }
-        return result;
     }
 
     /**

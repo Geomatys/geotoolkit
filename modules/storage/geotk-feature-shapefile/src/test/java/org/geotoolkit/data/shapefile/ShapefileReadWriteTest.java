@@ -127,7 +127,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
             final String typeName = reprojected.getType().getName().toString();
             store.addFeatures(typeName, reprojected);
 
-            final Resource r = store.findResource(typeName);
+            final org.apache.sis.storage.Resource r = store.findResource(typeName);
             Assert.assertTrue(r instanceof FeatureSet);
             final List<Feature> features = ((FeatureSet)r).features(false).collect(Collectors.toList());
             //compare(features, Collections.singleton(f));

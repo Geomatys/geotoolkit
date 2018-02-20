@@ -18,7 +18,6 @@ package org.geotoolkit.wcs;
 
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
-import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wcs.v100.DescribeCoverage100;
 import org.geotoolkit.wcs.v100.GetCapabilities100;
@@ -31,8 +30,12 @@ import org.opengis.parameter.ParameterValueGroup;
 import javax.xml.bind.Unmarshaller;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 
@@ -77,6 +80,11 @@ public class WebCoverageClient extends AbstractClient {
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(WCSClientFactory.NAME);
+    }
+
+    @Override
+    public Collection<Resource> components() throws DataStoreException {
+        return Collections.EMPTY_LIST;
     }
 
     /**

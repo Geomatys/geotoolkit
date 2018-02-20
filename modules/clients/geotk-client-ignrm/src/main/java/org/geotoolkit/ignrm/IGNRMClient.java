@@ -19,7 +19,11 @@ package org.geotoolkit.ignrm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.ignrm.parser.TokenParser;
@@ -52,6 +56,11 @@ public class IGNRMClient extends AbstractClient {
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(IGNRMClientFactory.NAME);
+    }
+
+    @Override
+    public Collection<Resource> components() throws DataStoreException {
+        return Collections.EMPTY_LIST;
     }
 
     public GetTokenRequest createGetToken(){

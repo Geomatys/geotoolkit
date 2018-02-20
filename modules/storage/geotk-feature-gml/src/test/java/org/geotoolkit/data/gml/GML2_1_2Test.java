@@ -22,10 +22,9 @@ import com.vividsolutions.jts.geom.MultiLineString;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.data.FeatureSet;
-import org.geotoolkit.storage.Resource;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.feature.Feature;
@@ -34,7 +33,7 @@ import org.opengis.util.GenericName;
 
 /**
  * GML 2.1.2 store tests.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class GML2_1_2Test {

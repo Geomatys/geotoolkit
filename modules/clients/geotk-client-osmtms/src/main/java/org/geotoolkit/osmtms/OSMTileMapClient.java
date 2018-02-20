@@ -17,8 +17,9 @@
 package org.geotoolkit.osmtms;
 
 import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
 import org.apache.sis.parameter.Parameters;
-
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.storage.coverage.PyramidSet;
@@ -28,8 +29,6 @@ import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultAggregate;
-import org.geotoolkit.storage.Resource;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.storage.coverage.CoverageResource;
@@ -43,7 +42,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
 public class OSMTileMapClient extends AbstractCoverageClient implements Client{
 
     private final OSMTMSPyramidSet pyramidSet;
-    private final DefaultAggregate rootNode = new DefaultAggregate(NamesExt.create("root"));
+    private final OSMTMSCoverageResource resource;
 
     /**
      * Builds a tile map server with the given server url and version.
@@ -85,8 +84,7 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client{
         super(params);
         final GenericName name = NamesExt.create(serverURL.toString(), "main");
         pyramidSet = new OSMTMSPyramidSet(this,getMaxZoomLevel(),getCacheImage());
-        final OSMTMSCoverageResource ref = new OSMTMSCoverageResource(this,name);
-        rootNode.addResource(ref);
+        resource = new OSMTMSCoverageResource(this,name);
     }
 
     private static ParameterValueGroup toParameters(
@@ -104,8 +102,8 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client{
     }
 
     @Override
-    public Resource getRootResource() {
-        return rootNode;
+    public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+        return Collections.singletonList(resource);
     }
 
     public boolean getCacheImage(){

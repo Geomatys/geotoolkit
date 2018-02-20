@@ -26,6 +26,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -33,7 +35,6 @@ import javax.xml.bind.JAXBException;
 import org.apache.sis.parameter.Parameters;
 
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.util.NamesExt;
@@ -55,7 +56,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
 public class XMLCoverageStore extends AbstractCoverageStore {
 
     private final Path root;
-    private final DefaultAggregate rootNode = new DefaultAggregate(NamesExt.create("root"));
+    private final List<Resource> resources = new ArrayList<>();
 
     final boolean cacheTileState;
 
@@ -107,8 +108,8 @@ public class XMLCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
-    public Resource getRootResource() {
-        return rootNode;
+    public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+        return Collections.unmodifiableList(resources);
     }
 
     /**
@@ -147,7 +148,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
             final GenericName name = NamesExt.create(set.getId());
             final XMLCoverageResource ref = new XMLCoverageResource(this,name,set.getPyramidSet());
             ref.copy(set);
-            rootNode.addResource(ref);
+            resources.add(ref);
         } catch (JAXBException ex) {
             getLogger().log(Level.INFO, "file is not a pyramid : {0}", refDescriptor.toString());
         } catch (DataStoreException ex) {
@@ -198,7 +199,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
             ref.setPreferredFormat(preferredFormat);
         }
 
-        rootNode.addResource(ref);
+        resources.add(ref);
         ref.save();
         return ref;
     }

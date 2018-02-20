@@ -13,12 +13,8 @@ import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.storage.AbstractDataStore;
 import org.geotoolkit.storage.DataStore;
-import org.geotoolkit.storage.Resource;
-import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.Test;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.extent.GeographicExtent;
@@ -50,14 +46,12 @@ public class MemoryStoreTest {
     @Test
     public void testMetadata() throws Exception {
         final MemoryCoverageStore store = create();
-        final Resource root = store.getRootResource();
-        Assume.assumeNotNull(root);
 
         final Metadata md = store.getMetadata();
 
-        final CoverageResource[] refs = DataStore.flatten(root)
-                .filter(node -> node instanceof CoverageResource)
-                .map(node -> (CoverageResource) node)
+        final CoverageResource[] refs = DataStore.flatten(store)
+                .filter(CoverageResource.class::isInstance)
+                .map(CoverageResource.class::cast)
                 .toArray(size -> new CoverageResource[size]);
 
         final DefaultExtent expectedExtent = new DefaultExtent();

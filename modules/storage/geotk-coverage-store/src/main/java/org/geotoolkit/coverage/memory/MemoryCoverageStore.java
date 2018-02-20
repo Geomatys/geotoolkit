@@ -16,7 +16,9 @@
  */
 package org.geotoolkit.coverage.memory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -39,7 +41,6 @@ import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.Resource;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -58,7 +59,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
      */
     private static final ParameterDescriptorGroup EMPTY_DESCRIPTOR = new ParameterBuilder().addName("Unamed").createGroup();
 
-    private final DefaultAggregate rootNode = new DefaultAggregate(NamesExt.create("root"));
+    private final List<Resource> resources = Collections.synchronizedList(new ArrayList<>());
 
 
     public MemoryCoverageStore() {
@@ -94,18 +95,18 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
-    public Resource getRootResource() {
-        return rootNode;
+    public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+        return Collections.unmodifiableList(resources);
     }
 
     @Override
     public CoverageResource create(final GenericName name) throws DataStoreException {
         final Set<GenericName> names = getNames();
-        if(names.contains(name)){
+        if (names.contains(name)) {
             throw new DataStoreException("Layer "+name+" already exist");
         }
         final MemoryCoverageResource res = new MemoryCoverageResource(name);
-        rootNode.addResource(res);
+        resources.add(res);
         fireCoverageAdded(name);
         return res;
     }

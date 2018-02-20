@@ -18,6 +18,9 @@ package org.geotoolkit.wmts;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +60,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wmts");
 
     private Capabilities capabilities;
-    private DefaultAggregate rootNode = null;
+    private List<Resource> resources = null;
 
     /**
      * Defines the timeout in milliseconds for the GetCapabilities request.
@@ -256,9 +259,9 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
     }
 
     @Override
-    public synchronized Resource getRootResource() throws DataStoreException {
-        if(rootNode == null){
-            rootNode = new DefaultAggregate(NamesExt.create("root"));
+    public synchronized Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+        if(resources == null){
+            resources = new ArrayList<>();
 
             final Capabilities capa = getServiceCapabilities();
             if(capa == null){
@@ -269,11 +272,11 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
                 final String name = lt.getIdentifier().getValue();
                 final GenericName nn = NamesExt.create(name);
                 final CoverageResource ref = new WMTSCoverageResource(this,nn,getImageCache());
-                rootNode.addResource(ref);
+                resources.add(ref);
             }
 
         }
-        return rootNode;
+        return Collections.unmodifiableList(resources);
     }
 
     @Override
