@@ -87,7 +87,7 @@ public final class DataStores extends Static {
     }
 
     /**
-     * Returns the set of all factories, optionally filtered by type and availability.
+     * Returns the set of all factories, optionally filtered by type.
      * This method ensures also that the iterator backing the set is properly synchronized.
      * <p>
      * Note that the iterator doesn't need to be thread-safe; this is the accesses to the
@@ -96,39 +96,12 @@ public final class DataStores extends Static {
      *
      * @param  <T>  The type of factories to be returned.
      * @param  type The type of factories to be returned, or {@code null} for all kind of factories.
-     * @param  all  {@code true} for all factories, or {@code false} for only available factories.
      * @return The set of factories for the given conditions.
      */
-    private static synchronized <T> Set<T> getFactories(Class type, final boolean all) {
-        if (type==null) type = DataStoreFactory.class;
-        Stream<DataStoreProvider> stream = org.apache.sis.storage.DataStores.providers().stream();
-        stream = stream.filter(type::isInstance);
-        if (!all) stream = stream.filter((DataStoreProvider t) -> ((DataStoreFactory)t).availability().pass());
-        return (Set)stream.collect(Collectors.toSet());
-    }
-
-    /**
-     * Returns all factories of the given type, regardless of their
-     * {@linkplain DataStoreFactory#availability() availability}.
-     *
-     * @param  <T>  The type of the factories to fetch.
-     * @param  type The type of the factories to fetch, or {@code null} for fetching all of them.
-     * @return The set of all factories of the given type.
-     */
     public static <T> Set<T> getAllFactories(final Class<T> type) {
-        return getFactories(type, true);
-    }
-
-    /**
-     * Returns factories of the given type which are
-     * {@linkplain DataStoreFactory#availability() available}.
-     *
-     * @param  <T>  The type of the factories to fetch.
-     * @param  type The type of the factories to fetch, or {@code null} for fetching very types.
-     * @return The set of available factories of the given type.
-     */
-    public static <T> Set<T> getAvailableFactories(final Class<T> type) {
-        return getFactories(type, false);
+        Stream<DataStoreProvider> stream = org.apache.sis.storage.DataStores.providers().stream();
+        if (type != null) stream = stream.filter(type::isInstance);
+        return (Set)stream.collect(Collectors.toSet());
     }
 
     /**
@@ -195,11 +168,7 @@ public final class DataStores extends Static {
         for (final DataStoreFactory factory : getAllFactories(DataStoreFactory.class)) {
             try {
                 if ((parameters != null) ? factory.canProcess(parameters) : factory.canProcess(asMap)) {
-                    if (factory.availability().pass()) {
-                        return (DataStore) ((parameters != null) ? factory.open(parameters) : factory.open(asMap));
-                    } else if (unavailable == null) {
-                        unavailable = factory.getDisplayName();
-                    }
+                    return (DataStore) ((parameters != null) ? factory.open(parameters) : factory.open(asMap));
                 }
             } catch (Exception e) {
                 // If an error occurs with a factory, we skip it and try another factory.

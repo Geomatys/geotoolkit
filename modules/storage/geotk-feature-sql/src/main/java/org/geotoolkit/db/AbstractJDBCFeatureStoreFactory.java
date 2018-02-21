@@ -26,11 +26,9 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.jdbc.DBCPDataSource;
-import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStore;
-import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -275,23 +273,6 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
                 JDBCFeatureStoreUtilities.closeSafe(store.getLogger(),cnx, stmt, rs);
             }
         }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ConformanceResult availability() {
-        final DefaultConformanceResult result = (DefaultConformanceResult)super.availability();
-        if(Boolean.FALSE.equals(result.pass())) return result;
-
-        try {
-            //check jdbc driver
-            Class.forName(getDriverClassName());
-        } catch (ClassNotFoundException e) {
-            result.setPass(false);
-        }
-        return result;
     }
 
     /**

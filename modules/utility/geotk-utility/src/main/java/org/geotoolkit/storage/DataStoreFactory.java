@@ -16,9 +16,7 @@
  */
 package org.geotoolkit.storage;
 
-import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterValueGroup;
-
 import java.io.Serializable;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
@@ -38,25 +36,6 @@ public abstract class DataStoreFactory extends DataStoreProvider {
      * @return A metadata object giving general information about data support of this factory.
      */
     public abstract FactoryMetadata getMetadata();
-
-    /**
-     * Test to see if the implementation is available for use.
-     * This method ensures all the appropriate libraries to construct
-     * the DataAccess are available.
-     * <p>
-     * Most factories will simply return <code>true</code> as GeoToolkit will
-     * distribute the appropriate libraries. Though it's not a bad idea for
-     * data store factories to check to make sure that the  libraries are there.
-     * <p>
-     * One may ask how this is different than canProcess, and basically available
-     * is used by the finder getAvailable****Store method, so that
-     * data stores that can not even be used do not show up as options in gui
-     * applications.
-     *
-     * @return <tt>true</tt> if and only if this factory has all the
-     *         appropriate jars on the classpath to create CoverageStores.
-     */
-    public abstract ConformanceResult availability();
 
     /**
      * Name suitable for display to end user.

@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
@@ -209,16 +208,6 @@ public abstract class AbstractDataStoreFactory extends DataStoreFactory {
 
         final ConformanceResult result = Parameters.isValid(params, desc);
         return (result != null) && Boolean.TRUE.equals(result.pass());
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ConformanceResult availability() {
-        DefaultConformanceResult result =  new DefaultConformanceResult();
-        result.setPass(Boolean.TRUE);
-        return result;
     }
 
     /**

@@ -125,15 +125,6 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
 
     /*
      * Test method for
-     * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.isAvailable()'
-     */
-    @Test
-    public void testIsAvailable() {
-        assertTrue(factory.availability().pass());
-    }
-
-    /*
-     * Test method for
      * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.getParametersInfo()'
      */
     @Test

@@ -71,7 +71,7 @@ public class JServerChooser extends javax.swing.JPanel {
         guiEditPane.add(BorderLayout.CENTER,guiEditor);
         guiEditor.setHelpVisible(false);
 
-        final List<ClientFactory> factories = new ArrayList<>(DataStores.getAvailableFactories(ClientFactory.class));
+        final List<ClientFactory> factories = new ArrayList<>(DataStores.getAllFactories(ClientFactory.class));
         Collections.sort(factories, SORTER);
 
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );

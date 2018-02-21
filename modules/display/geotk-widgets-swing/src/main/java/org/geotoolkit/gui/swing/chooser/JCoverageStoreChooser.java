@@ -70,7 +70,7 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
         guiEditor.setHelpVisible(false);
 
         final List<CoverageStoreFactory> factories = new ArrayList<>(
-                DataStores.getAvailableFactories(CoverageStoreFactory.class));
+                DataStores.getAllFactories(CoverageStoreFactory.class));
         Collections.sort(factories, SORTER);
 
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );

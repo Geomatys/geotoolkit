@@ -69,7 +69,7 @@ public class JFeatureStoreChooser extends javax.swing.JPanel {
         guiEditPane.add(BorderLayout.CENTER,guiEditor);
         guiEditor.setHelpVisible(false);
 
-        final List<FeatureStoreFactory> factories = new ArrayList<>(DataStores.getAvailableFactories(FeatureStoreFactory.class));
+        final List<FeatureStoreFactory> factories = new ArrayList<>(DataStores.getAllFactories(FeatureStoreFactory.class));
         Collections.sort(factories, SORTER);
 
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );

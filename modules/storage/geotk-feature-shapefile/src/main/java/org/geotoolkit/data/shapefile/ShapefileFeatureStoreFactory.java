@@ -27,12 +27,10 @@ import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileFeatureStore;
-import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.shapefile.indexed.IndexType;
 
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
@@ -44,7 +42,6 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
-import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -148,30 +145,6 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
     @Override
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.datastoreDescription);
-    }
-
-    /**
-     * Test to see if this featurestore is available, if it has all the appropriate
-     * libraries to construct a datastore.
-     *
-     * This featurestore just checks for the ShapefileDataStore,
-     * IndexedShapefileFeatureStore and Geometry implementations.
-     *
-     * @return <tt>true</tt> if and only if this factory is available to
-     *         open DataStores.
-     */
-    @Override
-    public ConformanceResult availability() {
-        final DefaultConformanceResult result = new DefaultConformanceResult();
-        try {
-            ShapefileFeatureStore.class.getName();
-            IndexedShapefileFeatureStore.class.getName();
-            Geometry.class.getName();
-            result.setPass(true);
-        } catch (Exception e) {
-            result.setPass(false);
-        }
-        return result;
     }
 
     /**

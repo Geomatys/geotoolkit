@@ -107,6 +107,8 @@ public class AmendedCoverageStore extends AbstractCoverageStore implements Aggre
             for (Resource res : DataStores.flatten(store,true)) {
                 if (res instanceof CoverageResource) {
                     resources.add(new AmendedCoverageResource((CoverageResource) res, this));
+                } else if(res == store) {
+                    //skip it
                 } else {
                     resources.add(new AmendedResource((Aggregate) res, this));
                 }

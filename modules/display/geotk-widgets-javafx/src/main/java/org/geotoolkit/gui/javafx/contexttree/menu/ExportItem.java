@@ -77,7 +77,7 @@ public class ExportItem extends TreeMenuItem {
         menuItem.setGraphic(new ImageView(ICON));
 
         //select file factories which support writing
-        final Set<FileFeatureStoreFactory> factories = DataStores.getAvailableFactories(FileFeatureStoreFactory.class);
+        final Set<FileFeatureStoreFactory> factories = DataStores.getAllFactories(FileFeatureStoreFactory.class);
         for(FileFeatureStoreFactory ff : factories){
             final FactoryMetadata metadata = ff.getMetadata();
             if(metadata.supportStoreCreation() && metadata.supportStoreWriting() && metadata.supportedGeometryTypes().length>0){
