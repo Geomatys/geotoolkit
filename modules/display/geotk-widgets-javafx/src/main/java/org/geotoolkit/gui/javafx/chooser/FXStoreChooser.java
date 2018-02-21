@@ -193,15 +193,9 @@ public class FXStoreChooser extends SplitPane {
                 final Object factory = factoryView.getSelectionModel().getSelectedItem();
 
                 final ParameterValueGroup param;
-                if(factory instanceof DataStoreProvider){
+                if (factory instanceof DataStoreProvider) {
                     param = ((DataStoreProvider)factory).getOpenParameters().createValue();
-                }else if(factory instanceof FeatureStoreFactory){
-                    param = ((FeatureStoreFactory)factory).getOpenParameters().createValue();
-                }else if(factory instanceof CoverageStoreFactory){
-                    param = ((CoverageStoreFactory)factory).getOpenParameters().createValue();
-                }else if(factory instanceof ClientFactory){
-                    param = ((ClientFactory)factory).getOpenParameters().createValue();
-                }else{
+                } else {
                     return;
                 }
                 paramEditor.setParameter(param);

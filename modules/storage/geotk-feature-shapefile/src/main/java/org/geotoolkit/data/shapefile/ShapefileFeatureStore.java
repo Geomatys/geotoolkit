@@ -19,7 +19,6 @@
 package org.geotoolkit.data.shapefile;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;

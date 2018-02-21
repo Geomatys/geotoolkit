@@ -18,12 +18,10 @@ package org.geotoolkit.data.shapefile;
 
 import org.junit.Test;
 import java.util.HashMap;
-import java.util.Iterator;
-
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.ShapeTestData;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.DataStores;
 
 import static org.junit.Assert.*;
@@ -43,13 +41,11 @@ public class ServiceTest extends AbstractTestCaseSupport {
      */
     @Test
     public void testIsAvailable() {
-        Iterator list = DataStores.providers().iterator();
         boolean found = false;
-        while (list.hasNext()) {
-            FeatureStoreFactory fac = (FeatureStoreFactory) list.next();
-            if (fac instanceof ShapefileFeatureStoreFactory) {
+        for (DataStoreProvider provider : DataStores.providers()) {
+            if (provider instanceof ShapefileFeatureStoreFactory) {
                 found = true;
-                assertNotNull(fac.getDescription());
+                assertNotNull(((ShapefileFeatureStoreFactory)provider).getDescription());
                 break;
             }
         }

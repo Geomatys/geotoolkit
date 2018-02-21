@@ -88,6 +88,9 @@ public abstract class DataStoreFactory extends DataStoreProvider {
     public abstract boolean canProcess(ParameterValueGroup params);
 
     /**
+     * @param params
+     * @return
+     * @throws org.apache.sis.storage.DataStoreException
      * @see DataStoreFactory#open(org.opengis.parameter.ParameterValueGroup)
      */
     public abstract DataStore open(Map<String, ? extends Serializable> params) throws DataStoreException;
@@ -107,6 +110,9 @@ public abstract class DataStoreFactory extends DataStoreProvider {
     public abstract DataStore open(ParameterValueGroup params) throws DataStoreException;
 
     /**
+     * @param params
+     * @return
+     * @throws org.apache.sis.storage.DataStoreException
      * @see DataStoreFactory#create(org.opengis.parameter.ParameterValueGroup)
      */
     public abstract DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException;
