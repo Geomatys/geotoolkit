@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.Aggregate;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
@@ -53,7 +54,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  * @author Johan Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  */
-public class MemoryCoverageStore extends AbstractCoverageStore {
+public class MemoryCoverageStore extends AbstractCoverageStore implements Aggregate {
     /**
      * Dummy parameter descriptor group.
      */

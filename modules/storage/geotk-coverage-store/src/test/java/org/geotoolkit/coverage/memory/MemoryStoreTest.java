@@ -13,7 +13,7 @@ import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.storage.DataStore;
+import org.geotoolkit.storage.DataStores;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.metadata.Metadata;
@@ -49,7 +49,7 @@ public class MemoryStoreTest {
 
         final Metadata md = store.getMetadata();
 
-        final CoverageResource[] refs = DataStore.flatten(store)
+        final CoverageResource[] refs = DataStores.flatten(store,true).stream()
                 .filter(CoverageResource.class::isInstance)
                 .map(CoverageResource.class::cast)
                 .toArray(size -> new CoverageResource[size]);

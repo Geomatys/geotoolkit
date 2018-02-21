@@ -18,12 +18,8 @@ package org.geotoolkit.security;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.logging.Level;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.Resource;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -61,11 +57,6 @@ public class MockClient extends AbstractClient{
     @Override
     public DataStoreFactory getProvider() {
         return null;
-    }
-
-    @Override
-    public Collection<Resource> components() throws DataStoreException {
-        return Collections.EMPTY_LIST;
     }
 
     private static ParameterValueGroup appendSecurity(final ClientSecurity security){

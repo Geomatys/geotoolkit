@@ -24,8 +24,8 @@ import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
@@ -53,7 +53,7 @@ import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class AmendedCoverageStore extends AbstractCoverageStore{
+public class AmendedCoverageStore extends AbstractCoverageStore implements Aggregate {
 
     protected final CoverageStore store;
     protected List<Resource> resources;
@@ -104,7 +104,7 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
     public synchronized Collection<Resource> components() throws DataStoreException {
         if (resources == null) {
             resources = new ArrayList<>();
-            for (Resource res : ((DataStore)store).components()) {
+            for (Resource res : DataStores.flatten(store,true)) {
                 if (res instanceof CoverageResource) {
                     resources.add(new AmendedCoverageResource((CoverageResource) res, this));
                 } else {

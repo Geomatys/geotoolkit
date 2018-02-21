@@ -51,7 +51,6 @@ import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultAggregate;
 import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
@@ -63,7 +62,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class FileCoverageStore extends AbstractCoverageStore implements FileSystemResource {
+public class FileCoverageStore extends AbstractCoverageStore implements FileSystemResource, Aggregate {
 
     private static final String REGEX_SEPARATOR;
     static {

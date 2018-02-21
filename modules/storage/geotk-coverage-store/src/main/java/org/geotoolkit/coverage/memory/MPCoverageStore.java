@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
@@ -34,7 +35,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  *
  * @author remi marechal (Geomatys)
  */
-public class MPCoverageStore extends AbstractCoverageStore {
+public class MPCoverageStore extends AbstractCoverageStore implements Aggregate {
 
     private final List<Resource> resources = Collections.synchronizedList(new ArrayList<>());
 

@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.Aggregate;
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.storage.coverage.PyramidSet;
@@ -39,7 +40,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class OSMTileMapClient extends AbstractCoverageClient implements Client{
+public class OSMTileMapClient extends AbstractCoverageClient implements Client, Aggregate {
 
     private final OSMTMSPyramidSet pyramidSet;
     private final OSMTMSCoverageResource resource;

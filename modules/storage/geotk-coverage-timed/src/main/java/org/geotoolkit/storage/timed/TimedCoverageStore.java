@@ -30,11 +30,11 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.opengis.parameter.ParameterValueGroup;
@@ -45,7 +45,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class TimedCoverageStore extends AbstractCoverageStore {
+public class TimedCoverageStore extends AbstractCoverageStore implements Aggregate {
 
     final Path rootDir;
     final Function<Path, TemporalAccessor> fileNameParser;

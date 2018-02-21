@@ -27,7 +27,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.ViewMapper;
@@ -84,7 +83,7 @@ import org.opengis.util.ScopedName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractFeatureStore extends DataStore implements FeatureStore {
+public abstract class AbstractFeatureStore extends DataStore implements FeatureStore, Aggregate {
 
     /**
      * Static variables refering to GML model.
@@ -137,14 +136,6 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         }
 
         return builder.build(false);
-    }
-
-    private Stream<FeatureType> getFeatureTypeHierarchy(final GenericName name) throws BackingStoreException {
-        try {
-            return getFeatureTypeHierarchy(name.tip().toString()).stream();
-        } catch (DataStoreException e) {
-            throw new BackingStoreException(e);
-        }
     }
 
     @Override

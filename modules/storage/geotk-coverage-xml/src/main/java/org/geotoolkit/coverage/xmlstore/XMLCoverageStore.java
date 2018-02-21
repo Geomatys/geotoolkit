@@ -33,7 +33,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.parameter.Parameters;
-
+import org.apache.sis.storage.Aggregate;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -41,7 +41,6 @@ import org.geotoolkit.util.NamesExt;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.Resource;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
@@ -53,7 +52,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class XMLCoverageStore extends AbstractCoverageStore {
+public class XMLCoverageStore extends AbstractCoverageStore implements Aggregate {
 
     private final Path root;
     private final List<Resource> resources = new ArrayList<>();

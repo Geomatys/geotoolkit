@@ -17,10 +17,6 @@
 package org.geotoolkit.sos;
 
 import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.Resource;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.sos.v100.*;
@@ -65,11 +61,6 @@ public class SensorObservationServiceClient extends AbstractClient {
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(SOSClientFactory.NAME);
-    }
-
-    @Override
-    public Collection<Resource> components() throws DataStoreException {
-        return Collections.EMPTY_LIST;
     }
 
     /**
