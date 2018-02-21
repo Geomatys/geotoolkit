@@ -18,8 +18,6 @@ package org.geotoolkit.db.oracle;
 
 import java.io.IOException;
 import org.apache.sis.parameter.ParameterBuilder;
-import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
-import static org.geotoolkit.data.AbstractFeatureStoreFactory.createFixedIdentifier;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import static org.geotoolkit.db.AbstractJDBCFeatureStoreFactory.DATABASE;
 import static org.geotoolkit.db.AbstractJDBCFeatureStoreFactory.HOST;

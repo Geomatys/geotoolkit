@@ -55,7 +55,7 @@ public class DbaseFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFa
      * {@inheritDoc}
      */
     @Override
-    public FileFeatureStoreFactory getSingleFileFactory() {
+    public DbaseFeatureStoreFactory getSingleFileFactory() {
         return DataStores.getAllFactories(DbaseFeatureStoreFactory.class).iterator().next();
     }
 

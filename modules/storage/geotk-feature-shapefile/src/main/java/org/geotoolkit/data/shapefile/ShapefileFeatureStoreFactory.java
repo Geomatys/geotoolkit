@@ -37,7 +37,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import java.util.Arrays;
 import java.util.Collection;
-
+import java.util.Collections;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -155,6 +155,10 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
         return Arrays.asList("shp");
     }
 
+    @Override
+    public Collection<byte[]> getSignature() {
+        return Collections.singleton(new byte[]{0x00,0x00,0x27,0x0A});
+    }
     /**
      * {@inheritDoc }
      */

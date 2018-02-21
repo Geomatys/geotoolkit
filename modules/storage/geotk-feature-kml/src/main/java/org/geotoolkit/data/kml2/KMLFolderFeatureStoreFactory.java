@@ -55,7 +55,7 @@ public class KMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
      * {@inheritDoc}
      */
     @Override
-    public FileFeatureStoreFactory getSingleFileFactory() {
+    public KMLFeatureStoreFactory getSingleFileFactory() {
         return DataStores.getAllFactories(KMLFeatureStoreFactory.class).iterator().next();
     }
 

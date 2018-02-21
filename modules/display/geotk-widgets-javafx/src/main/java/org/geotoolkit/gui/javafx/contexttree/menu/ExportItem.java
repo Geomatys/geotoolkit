@@ -52,6 +52,7 @@ import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.FactoryMetadata;
 import org.opengis.feature.AttributeType;
@@ -68,7 +69,7 @@ public class ExportItem extends TreeMenuItem {
     private static final Image ICON = SwingFXUtils.toFXImage(
             IconBuilder.createImage(FontAwesomeIcons.ICON_DOWNLOAD, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
 
-    private final Map<FileChooser.ExtensionFilter,FileFeatureStoreFactory> index = new HashMap<>();
+    private final Map<FileChooser.ExtensionFilter,DataStoreFactory> index = new HashMap<>();
     private WeakReference<TreeItem> itemRef;
 
     public ExportItem() {
@@ -77,11 +78,11 @@ public class ExportItem extends TreeMenuItem {
         menuItem.setGraphic(new ImageView(ICON));
 
         //select file factories which support writing
-        final Set<FileFeatureStoreFactory> factories = DataStores.getAllFactories(FileFeatureStoreFactory.class);
-        for(FileFeatureStoreFactory ff : factories){
+        final Set<DataStoreFactory> factories = DataStores.getAllFactories((Class) FileFeatureStoreFactory.class);
+        for(DataStoreFactory ff : factories){
             final FactoryMetadata metadata = ff.getMetadata();
             if(metadata.supportStoreCreation() && metadata.supportStoreWriting() && metadata.supportedGeometryTypes().length>0){
-                final Collection<String> exts = ff.getSuffix();
+                final Collection<String> exts = ((FileFeatureStoreFactory)ff).getSuffix();
                 final String name = ff.getDisplayName().toString();
                 final FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(name, new ArrayList(exts));
                 index.put(filter, ff);
@@ -105,9 +106,9 @@ public class ExportItem extends TreeMenuItem {
 
     private class ExportSub extends MenuItem{
 
-        private final FileFeatureStoreFactory factory;
+        private final DataStoreFactory factory;
 
-        public ExportSub(FileFeatureStoreFactory factory) {
+        public ExportSub(DataStoreFactory factory) {
             super(factory.getDisplayName().toString());
             this.factory = factory;
 
@@ -150,10 +151,10 @@ public class ExportItem extends TreeMenuItem {
                                 final String inTypeName = inType.getName().tip().toString();
 
                                 //output file path
-                                final File file= new File(folder, inTypeName+"."+factory.getSuffix().iterator().next());
+                                final File file= new File(folder, inTypeName+"."+((FileFeatureStoreFactory)factory).getSuffix().iterator().next());
 
                                 //create output store
-                                try (FeatureStore store = factory.createDataStore(file.toURI())) {
+                                try (FeatureStore store = ((FileFeatureStoreFactory)factory).createDataStore(file.toURI())) {
                                     //create output type
                                     store.createFeatureType(inType);
                                     final FeatureType outType = store.getFeatureType(inTypeName);

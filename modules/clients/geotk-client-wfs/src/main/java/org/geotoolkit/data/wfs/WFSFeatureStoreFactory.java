@@ -17,14 +17,13 @@
 
 package org.geotoolkit.data.wfs;
 
-import java.io.Serializable;
-import java.util.Map;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
 import static org.geotoolkit.client.AbstractClientFactory.createVersionDescriptor;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.data.AbstractFeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -37,7 +36,7 @@ import org.opengis.parameter.*;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implements ClientFactory{
+public class WFSFeatureStoreFactory extends DataStoreFactory implements FeatureStoreFactory, ClientFactory{
 
     /** factory identification **/
     public static final String NAME = "wfs";
@@ -102,27 +101,9 @@ public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implemen
     }
 
     @Override
-    public WebFeatureClient open(Map<String, ? extends Serializable> params) throws DataStoreException {
-        return (WebFeatureClient)super.open(params);
-    }
-
-    @Override
     public WebFeatureClient open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
         return new WebFeatureClient(params);
-    }
-
-    @Override
-    public WebFeatureClient create(Map<String, ? extends Serializable> params) throws DataStoreException {
-        return (WebFeatureClient)super.create(params);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public WebFeatureClient create(final ParameterValueGroup params) throws DataStoreException {
-        throw new DataStoreException("Can not create any new WFS DataStore");
     }
 
     @Override

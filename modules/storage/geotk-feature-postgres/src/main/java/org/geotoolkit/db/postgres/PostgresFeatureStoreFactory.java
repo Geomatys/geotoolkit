@@ -21,7 +21,6 @@ import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.apache.sis.parameter.ParameterBuilder;
-import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;

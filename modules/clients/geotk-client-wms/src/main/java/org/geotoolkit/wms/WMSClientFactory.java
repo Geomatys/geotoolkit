@@ -25,8 +25,6 @@ import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import java.io.Serializable;
-import java.util.Map;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
@@ -76,19 +74,9 @@ public class WMSClientFactory extends AbstractClientFactory implements CoverageS
     }
 
     @Override
-    public WebMapClient open(Map<String, ? extends Serializable> params) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public WebMapClient open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
         return new WebMapClient(params);
-    }
-
-    @Override
-    public WebMapClient create(ParameterValueGroup params) throws DataStoreException {
-        throw new DataStoreException("Can not create new WMS coverage store.");
     }
 
     @Override

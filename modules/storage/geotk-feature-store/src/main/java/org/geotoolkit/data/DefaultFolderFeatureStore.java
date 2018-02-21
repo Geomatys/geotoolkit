@@ -34,6 +34,7 @@ import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.util.GenericName;
@@ -53,7 +54,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
-public class DefaultFolderFeatureStore extends AbstractFeatureStore implements FileSystemResource {
+public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureStoreFactory> extends AbstractFeatureStore implements FileSystemResource {
 
     /**
      * Listen to changes in sub stores and propagate them.
@@ -75,7 +76,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements F
 
     private final Parameters folderParameters;
     private final AbstractFolderFeatureStoreFactory folderFactory;
-    private final FileFeatureStoreFactory singleFileFactory;
+    private final T singleFileFactory;
     private final Parameters singleFileDefaultParameters;
     private GenericNameIndex<FeatureStore> stores = null;
 

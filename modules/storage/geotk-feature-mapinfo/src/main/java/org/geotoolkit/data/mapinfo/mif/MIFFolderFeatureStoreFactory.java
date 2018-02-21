@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.mapinfo.mif;
 
-import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.PosixDirectoryFilter;
@@ -50,7 +49,7 @@ public class MIFFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
     }
 
     @Override
-    public FileFeatureStoreFactory getSingleFileFactory() {
+    public MIFFeatureStoreFactory getSingleFileFactory() {
         return DataStores.getAllFactories(MIFFeatureStoreFactory.class).iterator().next();
     }
 

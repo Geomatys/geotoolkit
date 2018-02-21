@@ -50,7 +50,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import org.apache.sis.gui.dataset.ResourceTree;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
@@ -251,15 +250,9 @@ public class FXStoreChooser extends SplitPane {
         final Object factory = factoryView.getSelectionModel().getSelectedItem();
         final ParameterValueGroup param = (ParameterValueGroup) paramEditor.getParameter();
 
-        if(factory instanceof DataStoreProvider){
+        if (factory instanceof DataStoreProvider) {
             return ((DataStoreProvider)factory).open(param);
-        }else if(factory instanceof FeatureStoreFactory){
-            return ((FeatureStoreFactory)factory).open(param);
-        }else if(factory instanceof CoverageStoreFactory){
-            return ((CoverageStoreFactory)factory).open(param);
-        }else if(factory instanceof ClientFactory){
-            return ((ClientFactory)factory).open(param);
-        }else{
+        } else {
             return null;
         }
     }

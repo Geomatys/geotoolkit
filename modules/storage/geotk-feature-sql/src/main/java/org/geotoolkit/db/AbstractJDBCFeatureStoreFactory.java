@@ -23,12 +23,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.jdbc.DBCPDataSource;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.storage.DataStore;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -40,7 +41,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureStoreFactory {
+public abstract class AbstractJDBCFeatureStoreFactory extends DataStoreFactory implements FeatureStoreFactory {
 
     /** parameter for database host */
     public static final ParameterDescriptor<String> HOST = new ParameterBuilder()

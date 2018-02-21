@@ -25,10 +25,11 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
-import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -37,7 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Remi Marechal (Geomatys)
  */
-public class LandsatStoreFactory extends AbstractCoverageStoreFactory implements FileSystemProvider {
+public class LandsatStoreFactory extends DataStoreFactory implements CoverageStoreFactory, FileSystemProvider {
 
     private static final FactoryMetadata METADATA = new DefaultFactoryMetadata(DataType.COVERAGE, true, false, false);
 
@@ -87,11 +88,6 @@ public class LandsatStoreFactory extends AbstractCoverageStoreFactory implements
     @Override
     public LandsatCoverageStore open(ParameterValueGroup params) throws DataStoreException {
         return new LandsatCoverageStore(params);
-    }
-
-    @Override
-    public LandsatCoverageStore create(ParameterValueGroup params) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
     }
 
     /**

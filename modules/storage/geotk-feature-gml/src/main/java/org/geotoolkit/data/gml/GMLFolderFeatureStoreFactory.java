@@ -54,7 +54,7 @@ public class GMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
      * {@inheritDoc}
      */
     @Override
-    public FileFeatureStoreFactory getSingleFileFactory() {
+    public GMLFeatureStoreFactory getSingleFileFactory() {
         return DataStores.getAllFactories(GMLFeatureStoreFactory.class).iterator().next();
     }
 

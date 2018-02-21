@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.googlemaps;
 
-import java.io.Serializable;
-import java.util.Map;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
@@ -77,16 +75,6 @@ public class StaticGoogleClientFactory extends AbstractClientFactory implements 
         }catch(ParameterNotFoundException ex){}
 
         return server;
-    }
-
-    @Override
-    public StaticGoogleMapsClient open(Map<String, ? extends Serializable> params) throws DataStoreException {
-        return (StaticGoogleMapsClient) super.open(params);
-    }
-
-    @Override
-    public StaticGoogleMapsClient create(ParameterValueGroup params) throws DataStoreException {
-        throw new DataStoreException("Can not create new Google Static coverage store.");
     }
 
 }

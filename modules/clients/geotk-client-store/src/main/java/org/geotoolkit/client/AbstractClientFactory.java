@@ -21,8 +21,7 @@ import java.net.URL;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.AbstractDataStoreFactory;
-import org.geotoolkit.storage.DataStore;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
@@ -33,7 +32,7 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel
  * @module
  */
-public abstract class AbstractClientFactory extends AbstractDataStoreFactory implements ClientFactory {
+public abstract class AbstractClientFactory extends DataStoreFactory implements ClientFactory {
 
     /**
      * commonly used translation for version parameters.
@@ -161,11 +160,6 @@ public abstract class AbstractClientFactory extends AbstractDataStoreFactory imp
         if(!valid){
             throw new DataStoreException("Parameter values not supported by this factory.");
         }
-    }
-
-    @Override
-    public DataStore create(ParameterValueGroup params) throws DataStoreException {
-        throw new DataStoreException("Client store creation not supported");
     }
 
 }

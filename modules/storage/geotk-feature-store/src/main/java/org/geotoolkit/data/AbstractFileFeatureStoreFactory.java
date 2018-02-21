@@ -20,8 +20,12 @@ package org.geotoolkit.data;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
+import org.apache.sis.internal.storage.FileSystemProvider;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -30,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractFileFeatureStoreFactory extends AbstractFeatureStoreFactory implements FileFeatureStoreFactory{
+public abstract class AbstractFileFeatureStoreFactory extends DataStoreFactory implements FileFeatureStoreFactory, FeatureStoreFactory {
 
     /**
      * url to the file.
@@ -66,7 +70,11 @@ public abstract class AbstractFileFeatureStoreFactory extends AbstractFeatureSto
         }else{
             return false;
         }
+    }
 
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        return ((FileSystemProvider)this).probeContent(connector);
     }
 
     /**
