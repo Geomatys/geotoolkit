@@ -25,6 +25,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -44,6 +45,7 @@ public class LandsatStoreFactory extends DataStoreFactory implements CoverageSto
 
     /** factory identification **/
     public static final String NAME = "Landsat";
+    public static final String MIME_TYPE = "application/x-landsat";
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
@@ -86,6 +88,11 @@ public class LandsatStoreFactory extends DataStoreFactory implements CoverageSto
     }
 
     @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        return FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
+    }
+
+    @Override
     public LandsatCoverageStore open(ParameterValueGroup params) throws DataStoreException {
         return new LandsatCoverageStore(params);
     }
@@ -104,11 +111,6 @@ public class LandsatStoreFactory extends DataStoreFactory implements CoverageSto
     @Override
     public Collection<byte[]> getSignature() {
         return Collections.singleton(new byte[]{'G','R','O','U','P'});
-    }
-
-    @Override
-    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        return FileSystemProvider.super.probeContent(connector);
     }
 
 }

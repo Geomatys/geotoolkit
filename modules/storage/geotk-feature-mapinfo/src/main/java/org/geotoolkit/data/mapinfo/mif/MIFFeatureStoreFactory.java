@@ -30,6 +30,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.logging.Logger;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -47,6 +49,7 @@ public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory impl
 
     /** factory identification **/
     public static final String NAME = "MIF-MID";
+    public static final String MIME_TYPE = "application/x-mifmid";
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
@@ -70,6 +73,11 @@ public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory impl
         return PARAMETERS_DESCRIPTOR;
     }
 
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        return FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
+    }
+    
     /**
      * {@inheritDoc }
      */

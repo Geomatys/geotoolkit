@@ -39,6 +39,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -73,6 +75,8 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
 
     public static final String ENCODING = "UTF-8";
     public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.shapefile");
+
+    public static final String MIME_TYPE = "application/x-shapefile";
 
     /**
      * Optional - enable/disable the use of memory-mapped io
@@ -159,6 +163,12 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
     public Collection<byte[]> getSignature() {
         return Collections.singleton(new byte[]{0x00,0x00,0x27,0x0A});
     }
+
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        return FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
+    }
+
     /**
      * {@inheritDoc }
      */

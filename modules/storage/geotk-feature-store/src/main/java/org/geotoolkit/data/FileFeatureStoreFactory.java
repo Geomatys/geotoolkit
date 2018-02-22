@@ -17,8 +17,14 @@
 package org.geotoolkit.data;
 
 import java.net.URI;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.Collection;
 import org.apache.sis.internal.storage.FileSystemProvider;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
 
 /**
  * FileFeatureStoreFactory for working with formats based on a single URI.
@@ -47,5 +53,33 @@ public interface FileFeatureStoreFactory extends FileSystemProvider {
      * @throws DataStoreException
      */
     FeatureStore createDataStore(URI uri) throws DataStoreException;
+
+    public static <T extends DataStoreProvider & FileSystemProvider> ProbeResult probe(T provider, StorageConnector connector, String mimeType) throws DataStoreException {
+
+        final Collection<byte[]> signatures = provider.getSignature();
+        if (signatures.isEmpty()) return ProbeResult.UNSUPPORTED_STORAGE;
+
+        final ByteBuffer buffer = connector.getStorageAs(ByteBuffer.class);
+        if (buffer != null) {
+            for (byte[] signature : signatures) {
+                try {
+                    buffer.mark();
+                    if (buffer.remaining() < signature.length) {
+                        continue;
+                    }
+                    final byte[] candidate = new byte[signature.length];
+                    buffer.get(candidate);
+
+                    //compare signatures
+                    if (Arrays.equals(signature, candidate)) {
+                        return new ProbeResult(true, mimeType, null);
+                    }
+                } finally {
+                    buffer.rewind();
+                }
+            }
+        }
+        return ProbeResult.UNSUPPORTED_STORAGE;
+    }
 
 }

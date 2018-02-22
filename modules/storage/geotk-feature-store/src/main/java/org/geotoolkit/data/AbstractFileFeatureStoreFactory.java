@@ -20,7 +20,6 @@ package org.geotoolkit.data;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
-import org.apache.sis.internal.storage.FileSystemProvider;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.ProbeResult;

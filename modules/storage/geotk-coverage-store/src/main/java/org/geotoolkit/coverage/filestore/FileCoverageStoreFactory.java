@@ -30,6 +30,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataType;
@@ -135,7 +136,19 @@ public class FileCoverageStoreFactory extends DataStoreFactory implements Covera
             //check if we can open a reader
             ImageReader reader = null;
             try {
-                return ProbeResult.SUPPORTED;
+                if (!IOUtilities.extension(path).isEmpty()) {
+                    reader = XImageIO.getReaderBySuffix(path, Boolean.FALSE, Boolean.FALSE);
+                } else {
+                    reader = XImageIO.getReader(path,Boolean.FALSE,Boolean.FALSE);
+                }
+                if (reader != null) {
+                    final String[] mimeTypes = reader.getOriginatingProvider().getMIMETypes();
+                    if (mimeTypes != null) {
+                        return new ProbeResult(true, mimeTypes[0], null);
+                    } else {
+                        return ProbeResult.SUPPORTED;
+                    }
+                }
             } catch (Exception ex) {
                 //image readers cause various exceptions, even runtime ones (JAI/ImageIO)
                 return ProbeResult.UNSUPPORTED_STORAGE;

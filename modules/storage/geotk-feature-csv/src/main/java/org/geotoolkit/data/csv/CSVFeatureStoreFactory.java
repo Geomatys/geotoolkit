@@ -22,6 +22,9 @@ import java.util.Collection;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.data.FileFeatureStoreFactory;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -41,6 +44,7 @@ public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "csv";
+    public static final String MIME_TYPE = "text/csv";
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
@@ -71,6 +75,11 @@ public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     @Override
     public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS_DESCRIPTOR;
+    }
+    
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        return FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
     }
 
     @Override
