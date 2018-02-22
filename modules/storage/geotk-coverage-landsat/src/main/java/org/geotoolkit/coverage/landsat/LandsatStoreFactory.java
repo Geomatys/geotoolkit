@@ -108,7 +108,7 @@ public class LandsatStoreFactory extends DataStoreFactory implements CoverageSto
 
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        return ((FileSystemProvider)this).probeContent(connector);
+        return FileSystemProvider.super.probeContent(connector);
     }
 
 }
