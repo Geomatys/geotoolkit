@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.wfs;
 
-import com.vividsolutions.jts.geom.Geometry;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,7 +30,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.xml.bind.JAXBException;
@@ -57,8 +55,6 @@ import org.geotoolkit.wfs.xml.WFSXmlFactory;
 import org.opengis.util.GenericName;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Literal;
-import org.opengis.geometry.Envelope;
 
 
 /**
@@ -353,26 +349,6 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
                 }
             }
 
-            return super.visit(expression, extraData);
-        }
-    }
-
-    protected static class SrsSwitchFilter extends PrefixSwitchVisitor {
-        final Pattern srsFinder;
-        final String newSrs;
-
-        public SrsSwitchFilter(Pattern srsFinder, String newSrs) {
-            this.srsFinder = srsFinder;
-            this.newSrs = newSrs;
-        }
-
-        @Override
-        public Object visit(Literal expression, Object extraData) {
-            if (expression.getValue() instanceof Envelope) {
-                System.out.println("ENVELOPE: "+expression.getValue());
-            } else if (expression.getValue() instanceof Geometry) {
-                System.out.println("GEOMETRY: "+expression.getValue());
-            }
             return super.visit(expression, extraData);
         }
     }

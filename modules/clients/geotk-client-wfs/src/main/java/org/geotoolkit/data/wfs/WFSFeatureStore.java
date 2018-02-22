@@ -124,26 +124,23 @@ public class WFSFeatureStore extends AbstractFeatureStore{
         final WFSCapabilities capabilities = server.getServiceCapabilities();
         final FeatureTypeList lst = capabilities.getFeatureTypeList();
 
-        for(final org.geotoolkit.wfs.xml.FeatureType ftt : lst.getFeatureType()){
-
-            //extract the name -------------------------------------------------
+        for (final org.geotoolkit.wfs.xml.FeatureType ftt : lst.getFeatureType()) {
             QName typeName = ftt.getName();
             String prefix = typeName.getPrefix();
             final String uri = typeName.getNamespaceURI();
             final String localpart = typeName.getLocalPart();
-            if(prefix == null || prefix.isEmpty()){
+            final boolean isNamespacePresent = uri != null && !uri.isEmpty();
+            if(isNamespacePresent && (prefix == null || prefix.isEmpty())) {
                 prefix = "geotk" + NS_INC.incrementAndGet();
+                typeName = new QName(uri, localpart, prefix);
             }
-
-            GenericName name = NamesExt.create(uri, localpart);
-            typeName = new QName(uri, localpart, prefix);
 
             //extract the feature type -----------------------------------------
             CoordinateReferenceSystem crs;
             FeatureType sft;
             try {
                 String defaultCRS = ftt.getDefaultCRS();
-                if(defaultCRS.contains("EPSG")){
+                if (defaultCRS.contains("EPSG")) {
                     final int last = defaultCRS.lastIndexOf(':');
                     defaultCRS = "EPSG:"+defaultCRS.substring(last+1);
                 }
@@ -174,9 +171,11 @@ public class WFSFeatureStore extends AbstractFeatureStore{
             }
 
             sft = sftb.build();
-            name = sft.getName();
+            final GenericName name = sft.getName();
             types.add(this, name, sft);
-            prefixes.put(NamesExt.getNamespace(name), prefix);
+            if (isNamespacePresent) {
+                prefixes.put(NamesExt.getNamespace(name), prefix);
+            }
             typeNames.add(name);
 
             if(geomDesc != null){
@@ -318,7 +317,14 @@ public class WFSFeatureStore extends AbstractFeatureStore{
         final FeatureType sft = getFeatureType(name);
 
         FeatureReader reader;
-        final QName q = new QName(NamesExt.getNamespace(sft.getName()), sft.getName().tip().toString(), prefixes.get(NamesExt.getNamespace(sft.getName())));
+        final GenericName gName = sft.getName();
+        final String namespace = NamesExt.getNamespace(gName);
+        final QName q;
+        if (namespace == null || namespace.isEmpty()) {
+            q = new QName(gName.tip().toString());
+        } else {
+            q = new QName(namespace, gName.tip().toString(), prefixes.get(namespace));
+        }
         try {
             reader = requestFeature(q, query);
         } catch (IOException|XMLStreamException ex) {
