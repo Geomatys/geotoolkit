@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -500,23 +501,28 @@ public class WFSFeatureStore extends AbstractFeatureStore{
         final QueryBuilder remainingQuery;
         if (query != null) {
             remainingQuery = new QueryBuilder(query);
-            type = FeatureTypeExt.createSubType(type, query.getPropertyNames());
+
+            final Map<String, String> replacements = type.getProperties(true).stream()
+                    // operations are not data sent back by the server.
+                    .filter(pType -> pType instanceof AbstractOperation)
+                    .map(pType -> new AbstractMap.SimpleEntry<>(pType.getName(), ((AbstractOperation) pType).getDependencies()))
+                    // If dependency is more than one property, we cannot make a simple replacement
+                    .filter(entry -> entry.getValue().size() == 1)
+                    .collect(Collectors.toMap(
+                            entry -> entry.getKey().toString(),
+                            entry -> entry.getValue().iterator().next()
+                    ));
+
+            final String[] propertyNames = Stream.of(query.getPropertyNames())
+                    .map(pName -> replacements.getOrDefault(pName, pName))
+                    .toArray(size -> new String[size]);
+
+            type = FeatureTypeExt.createSubType(type, propertyNames);
 
             final Filter filter = query.getFilter();
             if (filter == null) {
                 request.setFilter(Filter.INCLUDE);
             } else {
-                final Map<String, String> replacements = type.getProperties(true).stream()
-                        // operations are not data sent back by the server.
-                        .filter(pType -> pType instanceof AbstractOperation)
-                        .map(pType -> new AbstractMap.SimpleEntry<>(pType.getName(), ((AbstractOperation)pType).getDependencies()))
-                        // If dependency is more than one property, we cannot make a simple replacement
-                        .filter(entry -> entry.getValue().size() == 1)
-                        .collect(Collectors.toMap(
-                                entry -> entry.getKey().toString(),
-                                entry -> entry.getValue().iterator().next()
-                        ));
-
                 final Object visited = filter.accept(new PropertyNameReplacement(replacements), null);
                 if (visited instanceof Filter) {
                     request.setFilter((Filter) visited);
@@ -543,7 +549,6 @@ public class WFSFeatureStore extends AbstractFeatureStore{
                 request.setMaxFeatures(start + max);
             }
 
-            final String[] propertyNames = query.getPropertyNames();
             if (propertyNames != null) {
                 final GenericName[] names = type.getProperties(true).stream()
                         // operations are not data sent back by the server.
