@@ -20,14 +20,9 @@ package org.geotoolkit.data.osm.client;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.Resource;
-
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.data.osm.client.v060.CloseChangeSet060;
@@ -65,7 +60,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class OpenStreetMapClient extends AbstractClient{
+public class OpenStreetMapClient extends AbstractClient {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.osm.client");
 
@@ -92,11 +87,6 @@ public class OpenStreetMapClient extends AbstractClient{
     @Override
     public DataStoreFactory getProvider() {
         return DataStores.getFactoryById(OSMClientFactory.NAME);
-    }
-
-    @Override
-    public Collection<Resource> components() throws DataStoreException {
-        return Collections.EMPTY_LIST;
     }
 
     public OSMVersion getVersion(){

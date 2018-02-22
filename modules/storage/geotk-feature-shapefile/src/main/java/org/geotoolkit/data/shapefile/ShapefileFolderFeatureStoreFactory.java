@@ -20,7 +20,6 @@ import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
-import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.PathFilterVisitor;
@@ -60,7 +59,7 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
     }
 
     @Override
-    public FileFeatureStoreFactory getSingleFileFactory() {
+    public ShapefileFeatureStoreFactory getSingleFileFactory() {
         return DataStores.getAllFactories(ShapefileFeatureStoreFactory.class).iterator().next();
     }
 

@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
@@ -49,7 +50,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class CoverageSQLStore extends AbstractCoverageStore {
+public class CoverageSQLStore extends AbstractCoverageStore implements Aggregate {
 
     private final CoverageDatabase db;
     private final Set<StorageListener> listeners = new HashSet<StorageListener>();

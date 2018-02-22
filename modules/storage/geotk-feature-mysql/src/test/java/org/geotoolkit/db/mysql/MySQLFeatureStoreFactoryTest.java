@@ -16,9 +16,8 @@
  */
 package org.geotoolkit.db.mysql;
 
-import java.util.Iterator;
-import org.geotoolkit.data.FeatureStoreFactory;
-import org.geotoolkit.storage.DataStores;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.DataStores;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 
@@ -35,16 +34,14 @@ public class MySQLFeatureStoreFactoryTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testFactory() {
-
-        final Iterator<FeatureStoreFactory> ite = DataStores.getAllFactories(FeatureStoreFactory.class).iterator();
         boolean found = false;
-        while (ite.hasNext()){
-            if(ite.next() instanceof MySQLFeatureStoreFactory){
+        for (DataStoreProvider provider : DataStores.providers()){
+            if (provider instanceof MySQLFeatureStoreFactory) {
                 found = true;
             }
         }
 
-        if(!found){
+        if (!found) {
             fail("Factory not found");
         }
     }

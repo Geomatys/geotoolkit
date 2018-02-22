@@ -26,16 +26,17 @@ import java.util.LinkedList;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.storage.DataStore;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.storage.coverage.Bundle;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -45,7 +46,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory {
+public class FileCoverageStoreFactory extends DataStoreFactory implements CoverageStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "coverage-file";

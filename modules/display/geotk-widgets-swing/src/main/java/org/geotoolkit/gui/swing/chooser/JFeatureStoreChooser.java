@@ -38,6 +38,7 @@ import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gui.swing.parameters.editor.JParameterValuesEditor;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -54,9 +55,9 @@ public class JFeatureStoreChooser extends javax.swing.JPanel {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.chooser");
 
-    private static final Comparator<FeatureStoreFactory> SORTER = new Comparator<FeatureStoreFactory>() {
+    private static final Comparator SORTER = new Comparator<DataStoreFactory>() {
         @Override
-        public int compare(FeatureStoreFactory o1, FeatureStoreFactory o2) {
+        public int compare(DataStoreFactory o1, DataStoreFactory o2) {
             return o1.getDisplayName().toString().compareTo(o2.getDisplayName().toString());
         }
     };
@@ -69,7 +70,7 @@ public class JFeatureStoreChooser extends javax.swing.JPanel {
         guiEditPane.add(BorderLayout.CENTER,guiEditor);
         guiEditor.setHelpVisible(false);
 
-        final List<FeatureStoreFactory> factories = new ArrayList<>(DataStores.getAvailableFactories(FeatureStoreFactory.class));
+        final List<FeatureStoreFactory> factories = new ArrayList<>(DataStores.getAllFactories(FeatureStoreFactory.class));
         Collections.sort(factories, SORTER);
 
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );
@@ -78,7 +79,7 @@ public class JFeatureStoreChooser extends javax.swing.JPanel {
         guiList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                final FeatureStoreFactory factory = (FeatureStoreFactory) guiList.getSelectedValue();
+                final DataStoreFactory factory = (DataStoreFactory) guiList.getSelectedValue();
                 final ParameterValueGroup param = factory.getOpenParameters().createValue();
                 guiEditor.setParameterValue(param);
             }
@@ -98,7 +99,7 @@ public class JFeatureStoreChooser extends javax.swing.JPanel {
     }
 
     public FeatureStore getFeatureStore() throws DataStoreException{
-        final FeatureStoreFactory factory = (FeatureStoreFactory) guiList.getSelectedValue();
+        final DataStoreFactory factory = (DataStoreFactory) guiList.getSelectedValue();
 
         if(factory == null){
             return null;

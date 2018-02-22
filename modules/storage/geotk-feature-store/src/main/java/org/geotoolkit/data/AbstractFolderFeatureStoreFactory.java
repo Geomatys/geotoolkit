@@ -26,9 +26,12 @@ import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.DataStore;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -41,7 +44,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
-public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureStoreFactory{
+public abstract class AbstractFolderFeatureStoreFactory extends DataStoreFactory implements FeatureStoreFactory {
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data");
 
     /**
@@ -78,7 +81,7 @@ public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureS
         paramDesc = desc;
     }
 
-    public abstract FileFeatureStoreFactory getSingleFileFactory();
+    public abstract <T extends DataStoreFactory & FileFeatureStoreFactory> T getSingleFileFactory();
 
     /**
      * {@inheritDoc}
@@ -135,6 +138,12 @@ public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureS
         return open(params);
     }
 
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        //always false
+        return ProbeResult.UNSUPPORTED_STORAGE;
+    }
+
     /**
      * Derivate a folder factory name from original single file factory.
      */
@@ -155,7 +164,7 @@ public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureS
 
         final List<GeneralParameterDescriptor> params = new ArrayList<>(sd.descriptors());
         for(int i=0;i<params.size();i++){
-            if(params.get(i).getName().getCode().equals(AbstractFeatureStoreFactory.IDENTIFIER.getName().getCode())){
+            if(params.get(i).getName().getCode().equals(DataStoreFactory.IDENTIFIER.getName().getCode())){
                 params.remove(i);
                 break;
             }

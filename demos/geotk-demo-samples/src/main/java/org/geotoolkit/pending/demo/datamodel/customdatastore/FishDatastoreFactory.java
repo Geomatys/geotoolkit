@@ -4,7 +4,6 @@ package org.geotoolkit.pending.demo.datamodel.customdatastore;
 
 import java.util.Arrays;
 import java.util.Collection;
-import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
@@ -21,8 +20,8 @@ public class FishDatastoreFactory extends AbstractFileFeatureStoreFactory{
     public static final String NAME = "fish";
 
     public static final ParameterDescriptor<String> IDENTIFIER = new ParameterBuilder()
-            .addName(AbstractFeatureStoreFactory.IDENTIFIER.getName().getCode())
-            .setRemarks(AbstractFeatureStoreFactory.IDENTIFIER.getRemarks())
+            .addName(AbstractFileFeatureStoreFactory.IDENTIFIER.getName().getCode())
+            .setRemarks(AbstractFileFeatureStoreFactory.IDENTIFIER.getRemarks())
             .setRequired(true)
             .create(String.class, NAME);
 
@@ -43,11 +42,6 @@ public class FishDatastoreFactory extends AbstractFileFeatureStoreFactory{
     public FishFeatureStore open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
         return new FishFeatureStore(params);
-    }
-
-    @Override
-    public FishFeatureStore create(ParameterValueGroup params) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
     }
 
     @Override

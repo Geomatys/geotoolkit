@@ -38,6 +38,7 @@ import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gui.swing.parameters.editor.JParameterValuesEditor;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -54,9 +55,9 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.chooser");
 
-    private static final Comparator<CoverageStoreFactory> SORTER = new Comparator<CoverageStoreFactory>() {
+    private static final Comparator SORTER = new Comparator<DataStoreFactory>() {
         @Override
-        public int compare(CoverageStoreFactory o1, CoverageStoreFactory o2) {
+        public int compare(DataStoreFactory o1, DataStoreFactory o2) {
             return o1.getDisplayName().toString().compareTo(o2.getDisplayName().toString());
         }
     };
@@ -70,7 +71,7 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
         guiEditor.setHelpVisible(false);
 
         final List<CoverageStoreFactory> factories = new ArrayList<>(
-                DataStores.getAvailableFactories(CoverageStoreFactory.class));
+                DataStores.getAllFactories(CoverageStoreFactory.class));
         Collections.sort(factories, SORTER);
 
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );
@@ -79,7 +80,7 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
         guiList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                final CoverageStoreFactory factory = (CoverageStoreFactory) guiList.getSelectedValue();
+                final DataStoreFactory factory = (DataStoreFactory) guiList.getSelectedValue();
                 final ParameterValueGroup param = factory.getOpenParameters().createValue();
                 guiEditor.setParameterValue(param);
             }
@@ -99,7 +100,7 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
     }
 
     public CoverageStore getCoverageStore() throws DataStoreException{
-        final CoverageStoreFactory factory = (CoverageStoreFactory) guiList.getSelectedValue();
+        final DataStoreFactory factory = (DataStoreFactory) guiList.getSelectedValue();
 
         if(factory == null){
             return null;

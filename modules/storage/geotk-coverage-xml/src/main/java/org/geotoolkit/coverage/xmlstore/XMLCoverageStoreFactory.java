@@ -21,10 +21,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -35,7 +36,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
+public class XMLCoverageStoreFactory extends DataStoreFactory implements CoverageStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "coverage-xml-pyramid";

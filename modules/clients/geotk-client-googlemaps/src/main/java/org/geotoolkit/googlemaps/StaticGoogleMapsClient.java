@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.Aggregate;
 
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.AbstractClientFactory;
@@ -42,7 +43,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class StaticGoogleMapsClient extends AbstractCoverageClient implements Client {
+public class StaticGoogleMapsClient extends AbstractCoverageClient implements Client, Aggregate {
 
     public static final URL DEFAULT_GOOGLE_STATIC_MAPS;
 

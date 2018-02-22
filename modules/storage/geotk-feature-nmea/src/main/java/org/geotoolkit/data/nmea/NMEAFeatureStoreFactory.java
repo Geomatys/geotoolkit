@@ -18,6 +18,7 @@ package org.geotoolkit.data.nmea;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
@@ -62,6 +63,11 @@ public class NMEAFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     @Override
     public Collection<String> getSuffix() {
         return Arrays.asList("txt", "log");
+    }
+
+    @Override
+    public Collection<byte[]> getSignature() {
+        return Collections.singleton(new byte[]{'$'});
     }
 
     @Override

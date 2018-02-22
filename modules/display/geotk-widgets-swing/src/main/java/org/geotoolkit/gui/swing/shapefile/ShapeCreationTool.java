@@ -46,7 +46,6 @@ import javax.swing.SwingConstants;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 
-import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.gui.swing.crschooser.JCRSChooser;
@@ -88,7 +87,7 @@ public class ShapeCreationTool extends JPanel {
     private void createShape(final String name) {
         try {
             // Create the DataStoreFactory
-            final FileFeatureStoreFactory factory = new ShapefileFeatureStoreFactory();
+            final ShapefileFeatureStoreFactory factory = new ShapefileFeatureStoreFactory();
 
             // Create a Map object used by our FeatureStore Factory
             // NOTE: file.toURI().toURL() is used because file.toURL() is deprecated

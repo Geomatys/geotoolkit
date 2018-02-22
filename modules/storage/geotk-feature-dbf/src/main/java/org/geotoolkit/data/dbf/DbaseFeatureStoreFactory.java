@@ -19,6 +19,7 @@ package org.geotoolkit.data.dbf;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
@@ -95,6 +96,11 @@ public class DbaseFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     @Override
     public Collection<String> getSuffix() {
         return Arrays.asList("dbf");
+    }
+
+    @Override
+    public Collection<byte[]> getSignature() {
+        return Collections.singleton(new byte[]{0x03});
     }
 
     @Override

@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.wmts;
 
-import java.io.Serializable;
-import java.util.Map;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
@@ -85,16 +83,6 @@ public class WMTSClientFactory extends AbstractClientFactory implements Coverage
         }catch(ParameterNotFoundException ex){}
 
         return server;
-    }
-
-    @Override
-    public WebMapTileClient open(Map<String, ? extends Serializable> params) throws DataStoreException {
-        return (WebMapTileClient) super.open(params);
-    }
-
-    @Override
-    public WebMapTileClient create(ParameterValueGroup params) throws DataStoreException {
-        throw new DataStoreException("Can not create new WMTS coverage store.");
     }
 
     @Override

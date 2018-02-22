@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.ncwms;
 
-import java.io.Serializable;
-import java.util.Map;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.apache.sis.parameter.ParameterBuilder;
@@ -81,21 +79,6 @@ public class NcWMSClientFactory extends AbstractClientFactory implements Coverag
     public NcWebMapClient open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
         return new NcWebMapClient(params);
-    }
-
-    @Override
-    public NcWebMapClient open(Map<String, ? extends Serializable> params) throws DataStoreException {
-        return (NcWebMapClient) super.open(params);
-    }
-
-    @Override
-    public NcWebMapClient create(Map<String, ? extends Serializable> params) throws DataStoreException {
-        throw new DataStoreException("Can not create new ncWMS coverage store.");
-    }
-
-    @Override
-    public NcWebMapClient create(ParameterValueGroup params) throws DataStoreException {
-        throw new DataStoreException("Can not create new ncWMS coverage store.");
     }
 
 }

@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.storage.Aggregate;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -72,7 +73,7 @@ import org.geotoolkit.wms.v111.GetMap111;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
-public class WebMapClient extends AbstractCoverageClient implements Client {
+public class WebMapClient extends AbstractCoverageClient implements Client, Aggregate {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
 

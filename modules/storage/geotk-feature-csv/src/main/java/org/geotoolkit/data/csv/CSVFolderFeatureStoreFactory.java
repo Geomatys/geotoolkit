@@ -57,7 +57,7 @@ public class CSVFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
      * {@inheritDoc}
      */
     @Override
-    public FileFeatureStoreFactory getSingleFileFactory() {
+    public CSVFeatureStoreFactory getSingleFileFactory() {
         return DataStores.getAllFactories(CSVFeatureStoreFactory.class).iterator().next();
     }
 

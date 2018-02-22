@@ -16,9 +16,7 @@
  */
 package org.geotoolkit.wmsc;
 
-import java.io.Serializable;
 import java.net.URL;
-import java.util.Map;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
@@ -92,21 +90,6 @@ public class WMSCClientFactory extends AbstractClientFactory implements Coverage
         }catch(ParameterNotFoundException ex){}
 
         return server;
-    }
-
-    @Override
-    public WebMapClientCached open(Map<String, ? extends Serializable> params) throws DataStoreException {
-        return (WebMapClientCached) super.open(params);
-    }
-
-    @Override
-    public WebMapClientCached create(Map<String, ? extends Serializable> params) throws DataStoreException {
-        throw new DataStoreException("Can not create new WMSC coverage store.");
-    }
-
-    @Override
-    public WebMapClientCached create(ParameterValueGroup params) throws DataStoreException {
-        throw new DataStoreException("Can not create new WMSC coverage store.");
     }
 
     @Override

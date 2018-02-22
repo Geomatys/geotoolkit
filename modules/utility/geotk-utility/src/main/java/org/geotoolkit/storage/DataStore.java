@@ -16,12 +16,8 @@
  */
 package org.geotoolkit.storage;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
 import org.apache.sis.metadata.MetadataCopier;
 import org.apache.sis.metadata.MetadataStandard;
-import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.metadata.Metadata;
 
@@ -29,7 +25,7 @@ import org.opengis.metadata.Metadata;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class DataStore extends org.apache.sis.storage.DataStore implements Aggregate {
+public abstract class DataStore extends org.apache.sis.storage.DataStore {
 
     /**
      * Cached value for the store metadata. Initialized when first queried. See
@@ -77,30 +73,6 @@ public abstract class DataStore extends org.apache.sis.storage.DataStore impleme
      */
     protected Metadata createMetadata() throws DataStoreException {
         return null;
-    }
-
-
-    /**
-     * Send back a list of all nodes in a tree. Nodes are ordered by depth-first
-     * encounter order.
-     *
-     * @param root Node to start flattening from. It will be included in result.
-     * @return A list of all nodes under given root.
-     * @throws NullPointerException If input node is null.
-     */
-    public static Stream<? extends org.apache.sis.storage.Resource> flatten(final org.apache.sis.storage.Resource root) throws DataStoreException {
-        final List<org.apache.sis.storage.Resource> lst = new ArrayList<>();
-        flatten(root, lst);
-        return lst.stream();
-    }
-
-    private static void flatten(org.apache.sis.storage.Resource root, List<org.apache.sis.storage.Resource> lst) throws DataStoreException {
-        lst.add(root);
-        if (root instanceof Aggregate) {
-            for (org.apache.sis.storage.Resource res : ((Aggregate) root).components()) {
-                flatten(res, lst);
-            }
-        }
     }
 
 }

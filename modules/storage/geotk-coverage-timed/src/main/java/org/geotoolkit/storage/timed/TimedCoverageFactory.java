@@ -19,12 +19,12 @@ package org.geotoolkit.storage.timed;
 import java.net.URI;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import static org.geotoolkit.storage.AbstractDataStoreFactory.createFixedIdentifier;
 import org.geotoolkit.storage.DataStore;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
-import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -37,7 +37,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class TimedCoverageFactory extends AbstractCoverageStoreFactory {
+public class TimedCoverageFactory extends DataStoreFactory implements CoverageStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "timed-files";
@@ -113,8 +113,4 @@ public class TimedCoverageFactory extends AbstractCoverageStoreFactory {
         return new TimedCoverageStore(params);
     }
 
-    @Override
-    public DataStore create(ParameterValueGroup params) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }

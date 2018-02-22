@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.osmtms;
 
-import java.io.Serializable;
-import java.util.Map;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
@@ -83,16 +81,6 @@ public class OSMTMSClientFactory extends AbstractClientFactory implements Covera
         }catch(ParameterNotFoundException ex){}
 
         return server;
-    }
-
-    @Override
-    public OSMTileMapClient open(Map<String, ? extends Serializable> params) throws DataStoreException {
-        return (OSMTileMapClient) super.open(params);
-    }
-
-    @Override
-    public OSMTileMapClient create(ParameterValueGroup params) throws DataStoreException {
-        throw new DataStoreException("Can not create new OSM TMS coverage store.");
     }
 
     @Override

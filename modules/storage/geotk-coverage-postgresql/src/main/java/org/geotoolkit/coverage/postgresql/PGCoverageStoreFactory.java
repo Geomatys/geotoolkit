@@ -27,7 +27,6 @@ import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
 import org.geotoolkit.coverage.postgresql.exception.SchemaExistsException;
 import org.geotoolkit.jdbc.DBCPDataSource;
 import org.apache.sis.parameter.ParameterBuilder;
@@ -41,13 +40,15 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.internal.sql.AuthenticatedDataSource;
 import org.geotoolkit.internal.sql.DefaultDataSource;
+import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 
 /**
  * GeotoolKit Coverage Store using PostgreSQL Raster model factory.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
+public class PGCoverageStoreFactory extends DataStoreFactory implements CoverageStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "pgraster";

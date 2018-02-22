@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.Aggregate;
 
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
@@ -50,7 +51,7 @@ import org.geotoolkit.storage.Resource;
  * @version 1.0
  * @since   1.0
  */
-public class LandsatCoverageStore extends AbstractCoverageStore {
+public class LandsatCoverageStore extends AbstractCoverageStore implements Aggregate {
 
     private final List<Resource> resources = new ArrayList<>();
 

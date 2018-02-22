@@ -31,7 +31,7 @@ import org.apache.sis.storage.DataStoreException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface FileFeatureStoreFactory extends FeatureStoreFactory, FileSystemProvider {
+public interface FileFeatureStoreFactory extends FileSystemProvider {
 
     /**
      * A FeatureStore attached to the provided uri, may be created if needed.

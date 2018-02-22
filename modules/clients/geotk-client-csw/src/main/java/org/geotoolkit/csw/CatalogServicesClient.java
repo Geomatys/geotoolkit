@@ -18,14 +18,9 @@ package org.geotoolkit.csw;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.Resource;
 import org.geotoolkit.client.AbstractClient;
-import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.csw.v202.DescribeRecord202;
 import org.geotoolkit.csw.v202.GetCapabilities202;
 import org.geotoolkit.csw.v202.GetDomain202;
@@ -115,11 +110,6 @@ public class CatalogServicesClient extends AbstractClient {
         } else {
             throw new IllegalArgumentException("unknown version : "+ version);
         }
-    }
-
-    @Override
-    public Collection<Resource> components() throws DataStoreException {
-        return Collections.EMPTY_LIST;
     }
 
     /**

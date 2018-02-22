@@ -40,7 +40,6 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.mapinfo.mif.MIFFeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -103,7 +102,7 @@ public class MIFFeatureStoreTest extends org.geotoolkit.test.TestBase {
     public void testCreate() throws Exception {
         final Path f = Files.createTempFile(tempDir, "test", ".mif");
 
-        final FeatureStoreFactory ff = (FeatureStoreFactory) DataStores.getFactoryById("MIF-MID");
+        final MIFFeatureStoreFactory ff = (MIFFeatureStoreFactory) DataStores.getFactoryById("MIF-MID");
         final Parameters params = Parameters.castOrWrap(ff.getOpenParameters().createValue());
         params.getOrCreate(MIFFeatureStoreFactory.PATH).setValue(f.toUri());
 

@@ -40,6 +40,7 @@ import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gui.swing.parameters.editor.JParameterValuesEditor;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -71,7 +72,7 @@ public class JServerChooser extends javax.swing.JPanel {
         guiEditPane.add(BorderLayout.CENTER,guiEditor);
         guiEditor.setHelpVisible(false);
 
-        final List<ClientFactory> factories = new ArrayList<>(DataStores.getAvailableFactories(ClientFactory.class));
+        final List<ClientFactory> factories = new ArrayList<>(DataStores.getAllFactories(ClientFactory.class));
         Collections.sort(factories, SORTER);
 
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );
@@ -282,16 +283,8 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             String name = "";
             String desc = "";
 
-            if(value instanceof ClientFactory){
-                final ClientFactory factory = (ClientFactory) value;
-                name = String.valueOf(factory.getDisplayName());
-                desc = String.valueOf(factory.getDescription());
-            }else if(value instanceof FeatureStoreFactory){
-                final FeatureStoreFactory factory = (FeatureStoreFactory) value;
-                name = String.valueOf(factory.getDisplayName());
-                desc = String.valueOf(factory.getDescription());
-            }else if(value instanceof CoverageStoreFactory){
-                final CoverageStoreFactory factory = (CoverageStoreFactory) value;
+            if (value instanceof DataStoreFactory) {
+                final DataStoreFactory factory = (DataStoreFactory) value;
                 name = String.valueOf(factory.getDisplayName());
                 desc = String.valueOf(factory.getDescription());
             }
@@ -312,14 +305,14 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 
         ImageIcon icon = EMPTY_24;
         String name = "";
+        if (candidate instanceof DataStoreFactory) {
+            name = ((DataStoreFactory)candidate).getDisplayName().toString().toLowerCase();
+        }
         if(candidate instanceof ClientFactory){
-            name = ((ClientFactory)candidate).getDisplayName().toString().toLowerCase();
             icon = IconBundle.getIcon("24_server");
         }else if(candidate instanceof CoverageStoreFactory){
-            name = ((CoverageStoreFactory)candidate).getDisplayName().toString().toLowerCase();
             icon = IconBundle.getIcon("24_folder_img");
         }else if(candidate instanceof FeatureStoreFactory){
-            name = ((FeatureStoreFactory)candidate).getDisplayName().toString().toLowerCase();
             icon = IconBundle.getIcon("24_store");
         }
 

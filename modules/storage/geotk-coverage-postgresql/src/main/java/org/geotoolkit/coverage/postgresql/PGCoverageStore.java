@@ -37,7 +37,6 @@ import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -45,6 +44,7 @@ import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.factory.sql.EPSGFactory;
+import org.apache.sis.storage.Aggregate;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.coverage.CoverageResource;
@@ -54,7 +54,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PGCoverageStore extends AbstractCoverageStore{
+public class PGCoverageStore extends AbstractCoverageStore implements Aggregate {
 
     private EPSGFactory epsgfactory;
     private DataSource source;
