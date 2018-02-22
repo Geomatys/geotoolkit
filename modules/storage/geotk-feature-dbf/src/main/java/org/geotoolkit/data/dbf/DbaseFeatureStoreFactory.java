@@ -81,7 +81,7 @@ public class DbaseFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
         return FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
     }
-    
+
     /**
      * {@inheritDoc}
      */
