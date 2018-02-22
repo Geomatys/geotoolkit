@@ -35,12 +35,14 @@ import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -166,7 +168,16 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
 
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        return FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
+        ProbeResult result = FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
+        if (result.isSupported()) {
+            //SHP and SHX files have the same signature, we only want to match on the SHP file.
+            final Path path = connector.getStorageAs(Path.class);
+            final String ext = IOUtilities.extension(path);
+            if ("shx".equalsIgnoreCase(ext)) {
+                return ProbeResult.UNSUPPORTED_STORAGE;
+            }
+        }
+        return result;
     }
 
     /**
