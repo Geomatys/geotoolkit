@@ -522,12 +522,10 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements FileS
                         if (crs != null) {
                             try {
                                 transformedBounds = env.transform(crs, true);
-                            } catch (Throwable t) {
-                                if (getLogger().isLoggable(Level.WARNING)) {
-                                    getLogger().log(Level.WARNING, t.getLocalizedMessage(), t);
-                                }
-                                transformedBounds = env;
-                                crs = null;
+                            } catch (Exception t) {
+                                getLogger().log(Level.WARNING, t.getLocalizedMessage(), t);
+                                // It can happen for local projections :
+                                transformedBounds = new JTSEnvelope2D(crs);
                             }
                         } else {
                             transformedBounds = env;
