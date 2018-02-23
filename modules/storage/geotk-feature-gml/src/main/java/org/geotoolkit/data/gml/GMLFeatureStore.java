@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.xml.stream.XMLStreamException;
-import org.apache.sis.internal.storage.FileSystemResource;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
@@ -44,13 +43,14 @@ import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 
 /**
  * GML feature store.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GMLFeatureStore extends AbstractFeatureStore implements FileSystemResource {
+public class GMLFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
 
     static final QueryCapabilities CAPABILITIES = new DefaultQueryCapabilities(false);
 
@@ -144,7 +144,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements FileSystemR
     }
 
     @Override
-    public Path[] getResourcePaths() throws DataStoreException {
+    public Path[] getComponentFiles() throws DataStoreException {
         return new Path[]{file};
     }
 

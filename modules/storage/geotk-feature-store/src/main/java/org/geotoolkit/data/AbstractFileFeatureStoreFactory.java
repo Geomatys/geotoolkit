@@ -71,11 +71,6 @@ public abstract class AbstractFileFeatureStoreFactory extends DataStoreFactory i
         }
     }
 
-    @Override
-    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        return FileFeatureStoreFactory.super.probeContent(connector);
-    }
-
     /**
      * {@inheritDoc }
      * @param uri

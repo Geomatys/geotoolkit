@@ -20,11 +20,11 @@ import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
-import org.apache.sis.internal.storage.FileSystemProvider;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.storage.ProviderOnFileSystem;
 
 /**
  * FileFeatureStoreFactory for working with formats based on a single URI.
@@ -37,7 +37,7 @@ import org.apache.sis.storage.StorageConnector;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface FileFeatureStoreFactory extends FileSystemProvider {
+public interface FileFeatureStoreFactory extends ProviderOnFileSystem {
 
     /**
      * A FeatureStore attached to the provided uri, may be created if needed.
@@ -54,7 +54,7 @@ public interface FileFeatureStoreFactory extends FileSystemProvider {
      */
     FeatureStore createDataStore(URI uri) throws DataStoreException;
 
-    public static <T extends DataStoreProvider & FileSystemProvider> ProbeResult probe(T provider, StorageConnector connector, String mimeType) throws DataStoreException {
+    public static <T extends DataStoreProvider & ProviderOnFileSystem> ProbeResult probe(T provider, StorageConnector connector, String mimeType) throws DataStoreException {
 
         final Collection<byte[]> signatures = provider.getSignature();
         if (signatures.isEmpty()) return ProbeResult.UNSUPPORTED_STORAGE;

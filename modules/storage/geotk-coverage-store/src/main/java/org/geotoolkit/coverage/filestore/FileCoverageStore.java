@@ -33,7 +33,6 @@ import java.util.logging.LogRecord;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
-import org.apache.sis.internal.storage.FileSystemResource;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
@@ -55,6 +54,7 @@ import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.storage.coverage.CoverageResource;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 
 /**
  * Coverage Store which rely on standard java readers and writers.
@@ -62,7 +62,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class FileCoverageStore extends AbstractCoverageStore implements FileSystemResource, Aggregate {
+public class FileCoverageStore extends AbstractCoverageStore implements ResourceOnFileSystem, Aggregate {
 
     private static final String REGEX_SEPARATOR;
     static {
@@ -318,7 +318,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements FileSyst
     }
 
     @Override
-    public Path[] getResourcePaths() throws DataStoreException {
+    public Path[] getComponentFiles() throws DataStoreException {
         return new Path[] {root};
     }
 

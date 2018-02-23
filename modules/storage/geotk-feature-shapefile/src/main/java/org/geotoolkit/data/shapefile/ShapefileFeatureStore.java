@@ -49,7 +49,6 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.storage.FileSystemResource;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.metadata.iso.citation.Citations;
@@ -100,13 +99,14 @@ import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class ShapefileFeatureStore extends AbstractFeatureStore implements FileSystemResource {
+public class ShapefileFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
 
     // This is the default character as specified by the DBF specification
     public static final Charset DEFAULT_STRING_CHARSET = DbaseFileReader.DEFAULT_STRING_CHARSET;
@@ -719,7 +719,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements FileS
     }
 
     @Override
-    public Path[] getResourcePaths() throws DataStoreException {
+    public Path[] getComponentFiles() throws DataStoreException {
         final List<Path> files = new ArrayList<>();
         for (final ShpFileType type : ShpFileType.values()) {
             final Path f = shpFiles.getPath(type);

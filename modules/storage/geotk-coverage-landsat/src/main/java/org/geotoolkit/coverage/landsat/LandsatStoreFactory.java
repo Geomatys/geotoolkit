@@ -19,7 +19,6 @@ package org.geotoolkit.coverage.landsat;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
-import org.apache.sis.internal.storage.FileSystemProvider;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
@@ -34,12 +33,13 @@ import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.storage.ProviderOnFileSystem;
 
 /**
  *
  * @author Remi Marechal (Geomatys)
  */
-public class LandsatStoreFactory extends DataStoreFactory implements CoverageStoreFactory, FileSystemProvider {
+public class LandsatStoreFactory extends DataStoreFactory implements CoverageStoreFactory, ProviderOnFileSystem {
 
     private static final FactoryMetadata METADATA = new DefaultFactoryMetadata(DataType.COVERAGE, true, false, false);
 

@@ -53,18 +53,18 @@ import java.util.logging.Logger;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.storage.FileSystemResource;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 
 /**
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class GeoJSONFeatureStore extends AbstractFeatureStore implements FileSystemResource {
+public class GeoJSONFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.geojson");
     private static final String DESC_FILE_SUFFIX = "_Type.json";
@@ -484,7 +484,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore implements FileSys
      * {@inheritDoc }
      */
     @Override
-    public Path[] getResourcePaths() throws DataStoreException {
+    public Path[] getComponentFiles() throws DataStoreException {
         List<Path> files = new ArrayList<>();
         if (Files.exists(jsonFile)) {
             files.add(jsonFile);

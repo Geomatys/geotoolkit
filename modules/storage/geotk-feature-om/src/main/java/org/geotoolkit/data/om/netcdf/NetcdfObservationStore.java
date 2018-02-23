@@ -24,7 +24,6 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.apache.sis.internal.storage.FileSystemResource;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
@@ -51,12 +50,13 @@ import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class NetcdfObservationStore extends AbstractFeatureStore implements FileSystemResource,ObservationStore {
+public class NetcdfObservationStore extends AbstractFeatureStore implements ResourceOnFileSystem,ObservationStore {
 
     protected final GenericNameIndex<FeatureType> types;
     private static final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
@@ -202,7 +202,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements File
      * {@inheritDoc }
      */
     @Override
-    public Path[] getResourcePaths() throws DataStoreException {
+    public Path[] getComponentFiles() throws DataStoreException {
         return new Path[]{dataFile};
     }
 

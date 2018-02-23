@@ -47,7 +47,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.apache.sis.internal.storage.FileSystemResource;
 import org.apache.sis.internal.storage.gpx.Store;
 import org.apache.sis.internal.storage.gpx.Metadata;
 import org.apache.sis.parameter.Parameters;
@@ -63,6 +62,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.content.FeatureCatalogueDescription;
 import org.opengis.metadata.content.FeatureTypeInfo;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 
 
 /**
@@ -75,7 +75,7 @@ import org.opengis.metadata.content.FeatureTypeInfo;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class GPXFeatureStore extends AbstractFeatureStore implements FileSystemResource {
+public class GPXFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
 
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
@@ -194,7 +194,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements FileSystemR
     }
 
     @Override
-    public Path[] getResourcePaths() throws DataStoreException {
+    public Path[] getComponentFiles() throws DataStoreException {
         return new Path[] { this.file };
     }
 

@@ -24,6 +24,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.IllegalFeatureTypeException;
 import org.apache.sis.storage.ReadOnlyStorageException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.util.ArgumentChecks;
@@ -153,5 +154,9 @@ public final class DefaultFeatureResource extends AbstractFeatureSet implements 
         }
     }
 
+    @Override
+    public void updateType(FeatureType newType) throws IllegalFeatureTypeException, DataStoreException {
+        throw new DataStoreException("Feature type update not supported.");
+    }
 
 }

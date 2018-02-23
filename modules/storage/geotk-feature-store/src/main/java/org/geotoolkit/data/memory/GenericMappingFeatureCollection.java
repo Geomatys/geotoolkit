@@ -19,9 +19,14 @@ package org.geotoolkit.data.memory;
 
 import java.util.AbstractCollection;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.IllegalFeatureTypeException;
+import org.apache.sis.storage.ReadOnlyStorageException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
@@ -112,6 +117,21 @@ public class GenericMappingFeatureCollection extends AbstractCollection<Feature>
     @Override
     public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
         return new GenericMappingFeatureIterator(original.iterator(), mapper);
+    }
+
+    @Override
+    public void updateType(FeatureType newType) throws IllegalFeatureTypeException, DataStoreException {
+        throw new ReadOnlyStorageException();
+    }
+
+    @Override
+    public void add(Iterator<? extends Feature> features) throws DataStoreException {
+        throw new ReadOnlyStorageException();
+    }
+
+    @Override
+    public void replaceIf(Predicate<? super Feature> filter, UnaryOperator<Feature> updater) throws DataStoreException {
+        throw new ReadOnlyStorageException();
     }
 
     @Override
