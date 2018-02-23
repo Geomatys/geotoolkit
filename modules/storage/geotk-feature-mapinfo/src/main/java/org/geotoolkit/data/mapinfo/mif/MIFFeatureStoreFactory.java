@@ -77,7 +77,7 @@ public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory impl
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
         return FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
     }
-    
+
     /**
      * {@inheritDoc }
      */
