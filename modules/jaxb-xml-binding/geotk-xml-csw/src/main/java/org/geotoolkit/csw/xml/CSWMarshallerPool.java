@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBException;
-import org.apache.sis.internal.jaxb.LegacyNamespaces;
 import org.geotoolkit.xml.AnchoredMarshallerPool;
 import org.apache.sis.xml.MarshallerPool;
 
@@ -38,7 +37,6 @@ public final class CSWMarshallerPool {
     static {
         try {
             final Map<String, Object> properties = new HashMap<>();
-            properties.put(LegacyNamespaces.APPLY_NAMESPACE_REPLACEMENTS, Boolean.FALSE);
             instance = new AnchoredMarshallerPool(createJAXBContext(CSWClassesContext.getAllClasses()), properties);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.

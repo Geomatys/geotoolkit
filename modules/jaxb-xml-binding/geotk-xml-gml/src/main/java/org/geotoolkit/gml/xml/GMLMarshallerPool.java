@@ -23,7 +23,6 @@ import java.util.HashMap;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.xml.MarshallerPool;
-import org.apache.sis.internal.jaxb.LegacyNamespaces;
 /**
  *
  * @author Quentin Boileau (Geomatys)
@@ -33,7 +32,6 @@ public final class GMLMarshallerPool {
     private static final MarshallerPool instance;
     static {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put(LegacyNamespaces.APPLY_NAMESPACE_REPLACEMENTS, Boolean.FALSE);
         try {
             instance = new MarshallerPool(createJAXBContext(
                     "org.geotoolkit.gml.xml.v311:" +

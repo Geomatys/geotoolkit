@@ -37,7 +37,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import org.apache.sis.internal.jaxb.LegacyNamespaces;
 import org.apache.sis.util.iso.DefaultInternationalString;
 
 import org.geotoolkit.inspire.xml.vs.ExtendedCapabilitiesType;
@@ -97,7 +96,6 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
     @Before
     public void setUp() throws JAXBException {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put(LegacyNamespaces.APPLY_NAMESPACE_REPLACEMENTS, Boolean.TRUE);
         pool = new MarshallerPool(JAXBContext.newInstance(
                 "org.geotoolkit.wms.xml.v111:" +
                 "org.geotoolkit.wms.xml.v130:" +
