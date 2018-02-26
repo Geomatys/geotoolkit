@@ -52,7 +52,7 @@ import org.apache.sis.internal.jaxb.metadata.CI_Contact;
 import org.apache.sis.internal.jaxb.metadata.EX_Extent;
 import org.geotoolkit.inspire.xml.adapter.MD_Keywords;
 import org.geotoolkit.inspire.xml.adapter.CI_OnlineResource;
-import org.apache.sis.internal.jaxb.metadata.CI_ResponsibleParty;
+import org.geotoolkit.internal.jaxb.CI_ResponsibleParty;
 import org.apache.sis.internal.jaxb.metadata.DQ_Result;
 
 import org.apache.sis.xml.Namespaces;
