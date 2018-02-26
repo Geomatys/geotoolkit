@@ -68,7 +68,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.FileSystemResource;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 
 /**
  * CSV DataStore, holds a single feature type which name match the file name.
@@ -79,7 +79,7 @@ import org.geotoolkit.storage.FileSystemResource;
  * @author Johann Sorel (Geomatys)
  * @author Alexis Manin (Geomatys)
  */
-public class CSVFeatureStore extends AbstractFeatureStore implements FileSystemResource {
+public class CSVFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
 
     public static final Charset UTF8_ENCODING = Charset.forName("UTF-8");
     protected final FilterFactory FF = FactoryFinder.getFilterFactory(null);
@@ -460,7 +460,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements FileSystemR
     }
 
     @Override
-    public Path[] getResourcePaths() throws DataStoreException {
+    public Path[] getComponentFiles() throws DataStoreException {
         return new Path[] { this.file };
     }
 

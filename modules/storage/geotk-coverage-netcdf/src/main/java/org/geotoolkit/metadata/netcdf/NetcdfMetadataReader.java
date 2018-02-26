@@ -687,7 +687,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             final Keywords keywords = createKeywords(group, KeywordType.THEME, false);
             final String   topic    = getStringValue(group, TOPIC_CATEGORY);
             final String   type     = getStringValue(group, DATA_TYPE);
-            final String   credits  = getStringValue(group, ACKNOWLEDGMENT);
+            final String   credits  = getStringValue(group, ACKNOWLEDGEMENT);
             final String   license  = getStringValue(group, LICENSE);
             final String   access   = getStringValue(group, ACCESS_CONSTRAINT);
             final Extent   extent   = hasExtent ? null : createExtent(group);

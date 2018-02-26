@@ -130,7 +130,6 @@ public class DecimateMultiLineHandler extends MultiLineHandler {
                         new ShapeCoordinateSequence3D(lines[part]));
             }
         }
-
         return GEOMETRY_FACTORY.createMultiLineString(lineCharSequences);
     }
 
@@ -208,12 +207,12 @@ public class DecimateMultiLineHandler extends MultiLineHandler {
 //    }
 
     private int decimateLine2D(final double[] coords){
-        int lenght = 1;
+        int length = 1;
 
-        for(int i=2,j=0; i<coords.length; i+=2){
+        for (int i=2,j=0; i<coords.length; i+=2) {
             final double distX = Math.abs(coords[j] - coords[i]);
-            if(distX > resX){
-                lenght++;
+            if (distX > resX) {
+                length++;
                 j+=2;
                 coords[j] = coords[i];
                 coords[j+1] = coords[i+1];
@@ -221,8 +220,8 @@ public class DecimateMultiLineHandler extends MultiLineHandler {
             }
 
             final double distY = Math.abs(coords[j+1] - coords[i+1]);
-            if(distY > resY){
-                lenght++;
+            if (distY > resY) {
+                length++;
                 j+=2;
                 coords[j] = coords[i];
                 coords[j+1] = coords[i+1];
@@ -230,14 +229,12 @@ public class DecimateMultiLineHandler extends MultiLineHandler {
             }
         }
 
-        if(lenght == 1){
+        if (length == 1) {
             //copy last point in second position
-            lenght++;
+            length++;
             coords[2] = coords[coords.length-2];
             coords[3] = coords[coords.length-1];
         }
-
-        return lenght;
+        return length;
     }
-
 }

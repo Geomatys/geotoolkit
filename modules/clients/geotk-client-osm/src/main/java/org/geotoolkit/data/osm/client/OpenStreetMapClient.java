@@ -23,10 +23,8 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
-
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.data.osm.client.v060.CloseChangeSet060;
 import org.geotoolkit.data.osm.client.v060.CreateChangeSet060;
 import org.geotoolkit.data.osm.client.v060.ChangeElement060;
@@ -62,7 +60,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class OpenStreetMapClient extends AbstractClient{
+public class OpenStreetMapClient extends AbstractClient {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.osm.client");
 
@@ -95,7 +93,7 @@ public class OpenStreetMapClient extends AbstractClient{
         return OSMVersion.getVersion(parameters.getValue(OSMClientFactory.VERSION));
     }
 
-    public Api getCapabilities(){
+    public Api getServiceCapabilities(){
         if (capabilities != null) {
             return capabilities;
         }

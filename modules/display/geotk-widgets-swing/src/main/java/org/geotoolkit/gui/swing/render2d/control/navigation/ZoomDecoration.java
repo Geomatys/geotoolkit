@@ -49,7 +49,7 @@ public class ZoomDecoration extends JComponent implements MapDecoration{
     private int height = 0;
     private boolean draw = false;
     private boolean fill = false;
-    private int lenght = 30;
+    private int length = 30;
     private Rectangle lastRect = new Rectangle(0,0,0,0);
 
     public ZoomDecoration(){
@@ -67,7 +67,7 @@ public class ZoomDecoration extends JComponent implements MapDecoration{
         width = ex;
         height = ey;
         this.draw = draw;
-        lastRect.add(new Rectangle(startx-(2+lenght),starty-(2+lenght),width+(4+2*lenght),height+(4+2*lenght)));
+        lastRect.add(new Rectangle(startx-(2+length),starty-(2+length),width+(4+2*length),height+(4+2*length)));
         repaint(lastRect);
     }
 
@@ -89,22 +89,22 @@ public class ZoomDecoration extends JComponent implements MapDecoration{
             g2.setColor(borderColor);
             g2.setStroke(new BasicStroke(4,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
 
-            g2.drawLine(startx, starty, startx+lenght, starty);
-            g2.drawLine(startx, starty, startx, starty+lenght);
+            g2.drawLine(startx, starty, startx+length, starty);
+            g2.drawLine(startx, starty, startx, starty+length);
 
-            g2.drawLine(startx+width, starty, startx+width-lenght, starty);
-            g2.drawLine(startx+width, starty, startx+width, starty+lenght);
+            g2.drawLine(startx+width, starty, startx+width-length, starty);
+            g2.drawLine(startx+width, starty, startx+width, starty+length);
 
-            g2.drawLine(startx, starty+height, startx+lenght, starty+height);
-            g2.drawLine(startx, starty+height, startx, starty+height-lenght);
+            g2.drawLine(startx, starty+height, startx+length, starty+height);
+            g2.drawLine(startx, starty+height, startx, starty+height-length);
 
-            g2.drawLine(startx+width, starty+height, startx+width-lenght, starty+height);
-            g2.drawLine(startx+width, starty+height, startx+width, starty+height-lenght);
+            g2.drawLine(startx+width, starty+height, startx+width-length, starty+height);
+            g2.drawLine(startx+width, starty+height, startx+width, starty+height-length);
 
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
             g2.setStroke(new BasicStroke(1,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
             g2.drawRect(startx, starty, width, height);
-            lastRect.setBounds(startx-(2+lenght),starty-(2+lenght),width+(4+2*lenght),height+(4+2*lenght));
+            lastRect.setBounds(startx-(2+length),starty-(2+length),width+(4+2*length),height+(4+2*length));
             }
 
     }

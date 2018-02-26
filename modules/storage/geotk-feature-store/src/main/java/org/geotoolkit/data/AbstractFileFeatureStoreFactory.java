@@ -22,6 +22,9 @@ import java.util.Collections;
 import java.util.Map;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -30,7 +33,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractFileFeatureStoreFactory extends AbstractFeatureStoreFactory implements FileFeatureStoreFactory{
+public abstract class AbstractFileFeatureStoreFactory extends DataStoreFactory implements FileFeatureStoreFactory, FeatureStoreFactory {
 
     /**
      * url to the file.
@@ -54,7 +57,7 @@ public abstract class AbstractFileFeatureStoreFactory extends AbstractFeatureSto
             final Object obj = params.parameter(PATH.getName().toString()).getValue();
             if(obj != null && obj instanceof URI){
                 final String path = ((URI)obj).toString().toLowerCase();
-                for(final String ext : getFileExtensions()){
+                for(final String ext : getSuffix()){
                     if(path.endsWith(ext) && !path.endsWith("*"+ext)){
                         return true;
                     }
@@ -66,16 +69,6 @@ public abstract class AbstractFileFeatureStoreFactory extends AbstractFeatureSto
         }else{
             return false;
         }
-
-    }
-
-    /**
-     * {@inheritDoc }
-     * @param uri
-     */
-    @Override
-    public boolean canProcess(final URI uri) {
-        return canProcess(Collections.singletonMap(PATH.getName().toString(), uri));
     }
 
     /**

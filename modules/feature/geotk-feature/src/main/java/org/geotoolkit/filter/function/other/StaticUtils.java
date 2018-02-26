@@ -95,19 +95,19 @@ public class StaticUtils {
         return s1.trim();
     }
 
-    public static String strTruncateFirst(final String s1, final int lenght){
-        if(s1.length()<=lenght){
+    public static String strTruncateFirst(final String s1, final int length) {
+        if (s1.length() <= length) {
             return s1;
-        }else{
-            return s1.substring(s1.length()-lenght);
+        } else {
+            return s1.substring(s1.length() - length);
         }
     }
 
-    public static String strTruncateLast(final String s1, final int lenght){
-        if(s1.length()<=lenght){
+    public static String strTruncateLast(final String s1, final int length) {
+        if (s1.length() <= length) {
             return s1;
-        }else{
-            return s1.substring(0,lenght);
+        } else {
+            return s1.substring(0, length);
         }
     }
 

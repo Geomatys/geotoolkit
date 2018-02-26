@@ -43,7 +43,6 @@ import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -427,10 +426,10 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
     }
 
     /**
-     * Evaluate the lenght of the given vector.
+     * Evaluate the length of the given vector.
      *
-     * @param delta : vector to evaluate
-     * @return integer : lenght of the vector rounded at the above integer
+     * @param delta  vector to evaluate
+     * @return integer  length of the vector rounded at the above integer
      */
     private static int length(final Point2D delta) {
         return Math.max(1, (int) Math.ceil(Math.hypot(delta.getX(), delta.getY())));

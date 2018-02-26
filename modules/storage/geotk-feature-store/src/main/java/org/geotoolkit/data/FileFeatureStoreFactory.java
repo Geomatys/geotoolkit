@@ -17,7 +17,14 @@
 package org.geotoolkit.data;
 
 import java.net.URI;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.Collection;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.storage.ProviderOnFileSystem;
 
 /**
  * FileFeatureStoreFactory for working with formats based on a single URI.
@@ -30,23 +37,7 @@ import org.apache.sis.storage.DataStoreException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface FileFeatureStoreFactory extends FeatureStoreFactory {
-
-    /**
-     * The list of filename extentions handled by this factory.
-     *
-     * @return List of file extensions which can be read by this FeatureStore.
-     */
-    String[] getFileExtensions();
-
-    /**
-     * Tests if the provided uri can be handled by this factory.
-     *
-     * @param uri URL to a real file (may not be local)
-     *
-     * @return <code>true</code> if this uri can when this FeatureStore can resolve and read the data specified
-     */
-    boolean canProcess(URI uri);
+public interface FileFeatureStoreFactory extends ProviderOnFileSystem {
 
     /**
      * A FeatureStore attached to the provided uri, may be created if needed.
@@ -62,5 +53,33 @@ public interface FileFeatureStoreFactory extends FeatureStoreFactory {
      * @throws DataStoreException
      */
     FeatureStore createDataStore(URI uri) throws DataStoreException;
+
+    public static <T extends DataStoreProvider & ProviderOnFileSystem> ProbeResult probe(T provider, StorageConnector connector, String mimeType) throws DataStoreException {
+
+        final Collection<byte[]> signatures = provider.getSignature();
+        if (signatures.isEmpty()) return ProbeResult.UNSUPPORTED_STORAGE;
+
+        final ByteBuffer buffer = connector.getStorageAs(ByteBuffer.class);
+        if (buffer != null) {
+            for (byte[] signature : signatures) {
+                try {
+                    buffer.mark();
+                    if (buffer.remaining() < signature.length) {
+                        continue;
+                    }
+                    final byte[] candidate = new byte[signature.length];
+                    buffer.get(candidate);
+
+                    //compare signatures
+                    if (Arrays.equals(signature, candidate)) {
+                        return new ProbeResult(true, mimeType, null);
+                    }
+                } finally {
+                    buffer.rewind();
+                }
+            }
+        }
+        return ProbeResult.UNSUPPORTED_STORAGE;
+    }
 
 }

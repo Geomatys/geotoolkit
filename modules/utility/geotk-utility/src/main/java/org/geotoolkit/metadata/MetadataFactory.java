@@ -205,7 +205,7 @@ public class MetadataFactory extends Factory {
                      */
                     throw new FactoryException(e.getLocalizedMessage(), e);
                 }
-                final Map<String,Object> asMap = standard.asValueMap(metadata,
+                final Map<String,Object> asMap = standard.asValueMap(metadata, null,
                         KeyNamePolicy.JAVABEANS_PROPERTY, ValueExistencePolicy.NON_EMPTY);
                 try {
                     asMap.putAll(properties);

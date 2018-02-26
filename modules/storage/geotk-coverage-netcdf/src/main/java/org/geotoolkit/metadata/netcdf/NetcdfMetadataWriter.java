@@ -628,7 +628,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
             if (!isDefined(PUBLISHER.NAME)) {
                 setAttribute(dataCenter); // Possible fallback extracted from the keywords.
             }
-            if (!isDefined(ACKNOWLEDGMENT)) {
+            if (!isDefined(ACKNOWLEDGEMENT)) {
                 Collection<? extends InternationalString> credits = nonNull(info.getCredits());
                 if (credits.size() >= 2) {
                     credits = new LinkedHashSet<>(credits); // Avoid duplicated values.

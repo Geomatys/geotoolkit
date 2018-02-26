@@ -17,16 +17,15 @@
 
 package org.geotoolkit.data.csv;
 
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.Collection;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
-import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.data.FileFeatureStoreFactory;
 
-import org.opengis.metadata.Identifier;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -43,19 +42,9 @@ import org.geotoolkit.storage.FactoryMetadata;
  */
 public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
-
-
-
     /** factory identification **/
     public static final String NAME = "csv";
-    public static final DefaultServiceIdentification IDENTIFICATION;
-    static {
-        IDENTIFICATION = new DefaultServiceIdentification();
-        final Identifier id = new DefaultIdentifier(NAME);
-        final DefaultCitation citation = new DefaultCitation(NAME);
-        citation.setIdentifiers(Collections.singleton(id));
-        IDENTIFICATION.setCitation(citation);
-    }
+    public static final String MIME_TYPE = "text/csv";
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
@@ -70,13 +59,8 @@ public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
             .create(Character.class, ';');
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName("CSVParameters").createGroup(
+            new ParameterBuilder().addName(NAME).addName("CSVParameters").createGroup(
                 IDENTIFIER, PATH, SEPARATOR);
-
-    @Override
-    public Identification getIdentification() {
-        return IDENTIFICATION;
-    }
 
     @Override
     public CharSequence getDescription() {
@@ -94,6 +78,11 @@ public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     }
 
     @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        return FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
+    }
+
+    @Override
     public CSVFeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
         return new CSVFeatureStore(params);
@@ -105,8 +94,8 @@ public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     }
 
     @Override
-    public String[] getFileExtensions() {
-        return new String[] {".csv"};
+    public Collection<String> getSuffix() {
+        return Arrays.asList("csv");
     }
 
     @Override

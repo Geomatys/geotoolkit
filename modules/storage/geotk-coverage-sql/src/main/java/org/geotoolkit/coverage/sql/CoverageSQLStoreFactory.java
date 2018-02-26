@@ -16,18 +16,13 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.util.Collections;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
-import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
-import org.opengis.metadata.Identifier;
-import org.opengis.metadata.identification.Identification;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -40,21 +35,12 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory {
+public class CoverageSQLStoreFactory extends DataStoreFactory implements CoverageStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "coverage-sql";
-    public static final DefaultServiceIdentification IDENTIFICATION;
-    static {
-        IDENTIFICATION = new DefaultServiceIdentification();
-        final Identifier id = new DefaultIdentifier(NAME);
-        final DefaultCitation citation = new DefaultCitation(NAME);
-        citation.setIdentifiers(Collections.singleton(id));
-        IDENTIFICATION.setCitation(citation);
-        IDENTIFICATION.freeze();
-    }
 
-    public static final ParameterDescriptor<String> IDENTIFIER = AbstractCoverageStoreFactory.createFixedIdentifier(NAME);
+    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
      /** parameter for database host */
     public static final ParameterDescriptor<String> HOST = new ParameterBuilder()
@@ -106,13 +92,9 @@ public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory {
             .create(String.class,null);
 
 
-    public static final ParameterDescriptorGroup PARAMETERS = new ParameterBuilder().addName("CoverageDatabase").createGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = new ParameterBuilder()
+            .addName(NAME).addName("CoverageDatabase").createGroup(
             IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,USER,PASSWORD,ROOTDIRECTORY);
-
-    @Override
-    public Identification getIdentification() {
-        return IDENTIFICATION;
-    }
 
     @Override
     public CharSequence getDescription() {
@@ -133,11 +115,6 @@ public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory {
     public CoverageSQLStore open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
         return new CoverageSQLStore(params);
-    }
-
-    @Override
-    public CoverageSQLStore create(ParameterValueGroup params) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
     }
 
     @Override

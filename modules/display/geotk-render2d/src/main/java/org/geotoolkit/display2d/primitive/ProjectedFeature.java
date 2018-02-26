@@ -19,12 +19,9 @@ package org.geotoolkit.display2d.primitive;
 import java.util.Collections;
 import java.util.logging.Level;
 import org.geotoolkit.feature.FeatureExt;
-import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
@@ -113,7 +110,7 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
                 }
             }else if(featuretype != null){
                 try{
-                    prop = featuretype.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+                    prop = FeatureExt.getDefaultGeometry(featuretype);
                 }catch(PropertyNotFoundException ex){
                 }
             }

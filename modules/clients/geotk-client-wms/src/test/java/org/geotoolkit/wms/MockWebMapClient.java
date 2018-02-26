@@ -61,7 +61,7 @@ public class MockWebMapClient extends WebMapClient{
     }
 
     @Override
-    public AbstractWMSCapabilities getCapabilities() {
+    public AbstractWMSCapabilities getServiceCapabilities() {
         return capa;
     }
 }

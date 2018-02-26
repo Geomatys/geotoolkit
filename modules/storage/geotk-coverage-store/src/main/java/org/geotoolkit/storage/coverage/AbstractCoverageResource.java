@@ -26,8 +26,11 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.opengis.util.GenericName;
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.content.DefaultAttributeGroup;
 import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -46,6 +49,7 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -91,12 +95,20 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
     public Metadata getMetadata() throws DataStoreException {
 
         GridCoverageReader reader = null;
+        DefaultMetadata metadata = null;
         try {
             reader = acquireReader();
-            return reader.getMetadata();
+            metadata = DefaultMetadata.castOrCopy(reader.getMetadata());
+        } catch (DataStoreException ex) {
+            metadata = new DefaultMetadata();
         } finally {
-            if (reader!=null) recycle(reader);
+            if (reader != null) recycle(reader);
         }
+
+        final Identification id = new DefaultDataIdentification(
+                new DefaultCitation(getName().toString()), null, null, null);
+        metadata.getIdentificationInfo().add(id);
+        return metadata;
     }
 
     @Override

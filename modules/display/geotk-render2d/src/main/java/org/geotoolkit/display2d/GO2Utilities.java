@@ -992,10 +992,9 @@ public final class GO2Utilities {
     }
 
     public static Geometry getGeometry(final Feature feature, final Expression geomExp){
-        if(isNullorEmpty(geomExp)){
-            final Object att = feature.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
-            return (Geometry) att;
-        }else{
+        if (isNullorEmpty(geomExp)) {
+            return (Geometry) FeatureExt.getDefaultGeometryValue(feature).orElse(null);
+        } else {
             return geomExp.evaluate(feature, Geometry.class);
         }
     }

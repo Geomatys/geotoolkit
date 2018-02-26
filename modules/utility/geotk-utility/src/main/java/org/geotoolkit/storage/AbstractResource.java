@@ -35,12 +35,13 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractResource implements Resource{
+public abstract class AbstractResource implements Resource {
 
     protected final Set<StorageListener> listeners = new HashSet<>();
 
 
     protected Identifier identifier;
+    private DefaultMetadata metadata;
 
     protected AbstractResource() {
     }
@@ -61,14 +62,18 @@ public abstract class AbstractResource implements Resource{
     }
 
     @Override
-    public Metadata getMetadata() throws DataStoreException {
-        final DefaultMetadata mt = new DefaultMetadata();
-        final DefaultDataIdentification idf = new DefaultDataIdentification();
-        final DefaultCitation citation = new DefaultCitation();
-        citation.getIdentifiers().add(identifier);
-        idf.setCitation(citation);
-        mt.setIdentificationInfo(Arrays.asList(idf));
-        return mt;
+    public synchronized Metadata getMetadata() throws DataStoreException {
+        if (metadata == null) {
+            metadata = new DefaultMetadata();
+            final DefaultDataIdentification idf = new DefaultDataIdentification();
+            final DefaultCitation citation = new DefaultCitation();
+            citation.getIdentifiers().add(identifier);
+            idf.setCitation(citation);
+            metadata.setIdentificationInfo(Arrays.asList(idf));
+            metadata.freeze();
+
+        }
+        return metadata;
     }
 
     @Override

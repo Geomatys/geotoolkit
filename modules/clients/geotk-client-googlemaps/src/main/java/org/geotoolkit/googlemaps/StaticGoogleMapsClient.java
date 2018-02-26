@@ -18,7 +18,11 @@ package org.geotoolkit.googlemaps;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.Aggregate;
 
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.AbstractClientFactory;
@@ -26,10 +30,9 @@ import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultAggregate;
-import org.geotoolkit.storage.Resource;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.storage.coverage.CoverageResource;
@@ -40,7 +43,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class StaticGoogleMapsClient extends AbstractCoverageClient implements Client {
+public class StaticGoogleMapsClient extends AbstractCoverageClient implements Client, Aggregate {
 
     public static final URL DEFAULT_GOOGLE_STATIC_MAPS;
 
@@ -53,7 +56,7 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Cl
         }
     }
 
-    private final DefaultAggregate rootNode = new DefaultAggregate(NamesExt.create("root"));
+    private final List<Resource> resources;
 
     /**
      * Builds a google maps server with the default google server address.
@@ -85,11 +88,7 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Cl
         final GoogleCoverageResource ref2 = new GoogleCoverageResource(this,NamesExt.valueOf("{http://google.com}"+GetMapRequest.TYPE_ROADMAP),cache);
         final GoogleCoverageResource ref3 = new GoogleCoverageResource(this,NamesExt.valueOf("{http://google.com}"+GetMapRequest.TYPE_SATELLITE),cache);
         final GoogleCoverageResource ref4 = new GoogleCoverageResource(this,NamesExt.valueOf("{http://google.com}"+GetMapRequest.TYPE_TERRAIN),cache);
-
-        rootNode.addResource(ref1);
-        rootNode.addResource(ref2);
-        rootNode.addResource(ref3);
-        rootNode.addResource(ref4);
+        resources = Arrays.asList(ref1,ref2,ref3,ref4);
     }
 
     private static ParameterValueGroup toParameters(final URL serverURL, final String key,
@@ -106,8 +105,8 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Cl
     }
 
     @Override
-    public Resource getRootResource() throws DataStoreException {
-        return rootNode;
+    public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+        return resources;
     }
 
     public boolean getCacheImage(){

@@ -62,7 +62,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.content.FeatureCatalogueDescription;
 import org.opengis.metadata.content.FeatureTypeInfo;
-import org.geotoolkit.storage.FileSystemResource;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 
 
 /**
@@ -75,7 +75,7 @@ import org.geotoolkit.storage.FileSystemResource;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class GPXFeatureStore extends AbstractFeatureStore implements FileSystemResource {
+public class GPXFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
 
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
@@ -194,7 +194,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements FileSystemR
     }
 
     @Override
-    public Path[] getResourcePaths() throws DataStoreException {
+    public Path[] getComponentFiles() throws DataStoreException {
         return new Path[] { this.file };
     }
 

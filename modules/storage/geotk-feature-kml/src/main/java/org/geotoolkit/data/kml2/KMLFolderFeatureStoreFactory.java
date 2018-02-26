@@ -18,21 +18,16 @@ package org.geotoolkit.data.kml2;
 
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
-import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.PosixDirectoryFilter;
-import org.opengis.metadata.identification.Identification;
-import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Level;
-
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -47,13 +42,10 @@ import org.geotoolkit.storage.FactoryMetadata;
 public class KMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFactory{
 
     /** factory identification **/
-    public static final DefaultServiceIdentification IDENTIFICATION = derivateIdentification(KMLFeatureStoreFactory.IDENTIFICATION);
-    public static final String NAME = IDENTIFICATION.getCitation().getTitle().toString();
-
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+    public static final String NAME = derivateName(KMLFeatureStoreFactory.NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            derivateDescriptor(IDENTIFIER,KMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
+            derivateDescriptor(NAME,KMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
 
     public KMLFolderFeatureStoreFactory(){
         super(PARAMETERS_DESCRIPTOR);
@@ -63,15 +55,7 @@ public class KMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
      * {@inheritDoc}
      */
     @Override
-    public Identification getIdentification() {
-        return IDENTIFICATION;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public FileFeatureStoreFactory getSingleFileFactory() {
+    public KMLFeatureStoreFactory getSingleFileFactory() {
         return DataStores.getAllFactories(KMLFeatureStoreFactory.class).iterator().next();
     }
 

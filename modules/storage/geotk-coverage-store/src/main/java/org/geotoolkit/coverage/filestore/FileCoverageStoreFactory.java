@@ -19,22 +19,25 @@ package org.geotoolkit.coverage.filestore;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedList;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
-import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStore;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.storage.coverage.Bundle;
-import org.opengis.metadata.Identifier;
-import org.opengis.metadata.identification.Identification;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -44,18 +47,10 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory {
+public class FileCoverageStoreFactory extends DataStoreFactory implements CoverageStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "coverage-file";
-    public static final DefaultServiceIdentification IDENTIFICATION;
-    static {
-        IDENTIFICATION = new DefaultServiceIdentification();
-        final Identifier id = new DefaultIdentifier(NAME);
-        final DefaultCitation citation = new DefaultCitation(NAME);
-        citation.setIdentifiers(Collections.singleton(id));
-        IDENTIFICATION.setCitation(citation);
-    }
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
@@ -63,7 +58,7 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory {
      * Mandatory - the folder path
      */
     public static final ParameterDescriptor<URI> PATH = new ParameterBuilder()
-            .addName("path")
+            .addName(LOCATION).addName("path")
             .addName(Bundle.formatInternational(Bundle.Keys.path))
             .setRemarks(Bundle.formatInternational(Bundle.Keys.path_remarks))
             .setRequired(true)
@@ -95,13 +90,8 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory {
             .create(String.class, null);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName("FileCoverageStoreParameters").createGroup(
+            new ParameterBuilder().addName(NAME).addName("FileCoverageStoreParameters").createGroup(
                 IDENTIFIER, PATH, TYPE, PATH_SEPARATOR);
-
-    @Override
-    public Identification getIdentification() {
-        return IDENTIFICATION;
-    }
 
     @Override
     public CharSequence getDescription() {
@@ -128,6 +118,45 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory {
         } catch (IOException | URISyntaxException ex) {
             throw new DataStoreException(ex);
         }
+    }
+
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        final ProbeResult result = super.probeContent(connector);
+        if (!result.isSupported()) return result;
+
+        //make a deeper check, we accept only single files
+        final Path path;
+        try {
+            path = connector.getStorageAs(Path.class);
+        } catch (IllegalArgumentException ex) {
+            return result;
+        }
+        if (Files.isRegularFile(path)) {
+            //check if we can open a reader
+            ImageReader reader = null;
+            try {
+                if (!IOUtilities.extension(path).isEmpty()) {
+                    reader = XImageIO.getReaderBySuffix(path, Boolean.FALSE, Boolean.FALSE);
+                } else {
+                    reader = XImageIO.getReader(path,Boolean.FALSE,Boolean.FALSE);
+                }
+                if (reader != null) {
+                    final String[] mimeTypes = reader.getOriginatingProvider().getMIMETypes();
+                    if (mimeTypes != null) {
+                        return new ProbeResult(true, mimeTypes[0], null);
+                    } else {
+                        return ProbeResult.SUPPORTED;
+                    }
+                }
+            } catch (Exception ex) {
+                //image readers cause various exceptions, even runtime ones (JAI/ImageIO)
+                return ProbeResult.UNSUPPORTED_STORAGE;
+            } finally {
+                XImageIO.disposeSilently(reader);
+            }
+        }
+        return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
     @Override

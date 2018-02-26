@@ -27,28 +27,25 @@ import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileFeatureStore;
-import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.shapefile.indexed.IndexType;
 
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
-
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
-import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
-import org.opengis.metadata.Identifier;
-import org.opengis.metadata.identification.Identification;
-import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -75,19 +72,13 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
 
     /** factory identification **/
     public static final String NAME = "shapefile";
-    public static final DefaultServiceIdentification IDENTIFICATION;
-    static {
-        IDENTIFICATION = new DefaultServiceIdentification();
-        final Identifier id = new DefaultIdentifier(NAME);
-        final DefaultCitation citation = new DefaultCitation(NAME);
-        citation.setIdentifiers(Collections.singleton(id));
-        IDENTIFICATION.setCitation(citation);
-    }
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     public static final String ENCODING = "UTF-8";
     public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.shapefile");
+
+    public static final String MIME_TYPE = "application/x-shapefile";
 
     /**
      * Optional - enable/disable the use of memory-mapped io
@@ -131,13 +122,8 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName("ShapefileParameters").createGroup(
+            new ParameterBuilder().addName(NAME).addName("ShapefileParameters").createGroup(
                 IDENTIFIER, PATH,MEMORY_MAPPED,CREATE_SPATIAL_INDEX,DBFCHARSET,LOAD_QIX);
-
-    @Override
-    public Identification getIdentification() {
-        return IDENTIFICATION;
-    }
 
     /**
      * {@inheritDoc }
@@ -168,35 +154,30 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
     }
 
     /**
-     * Test to see if this featurestore is available, if it has all the appropriate
-     * libraries to construct a datastore.
-     *
-     * This featurestore just checks for the ShapefileDataStore,
-     * IndexedShapefileFeatureStore and Geometry implementations.
-     *
-     * @return <tt>true</tt> if and only if this factory is available to
-     *         open DataStores.
-     */
-    @Override
-    public ConformanceResult availability() {
-        final DefaultConformanceResult result = new DefaultConformanceResult();
-        try {
-            ShapefileFeatureStore.class.getName();
-            IndexedShapefileFeatureStore.class.getName();
-            Geometry.class.getName();
-            result.setPass(true);
-        } catch (Exception e) {
-            result.setPass(false);
-        }
-        return result;
-    }
-
-    /**
      * {@inheritDoc }
      */
     @Override
-    public String[] getFileExtensions() {
-        return new String[] {".shp"};
+    public Collection<String> getSuffix() {
+        return Arrays.asList("shp");
+    }
+
+    @Override
+    public Collection<byte[]> getSignature() {
+        return Collections.singleton(new byte[]{0x00,0x00,0x27,0x0A});
+    }
+
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        ProbeResult result = FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
+        if (result.isSupported()) {
+            //SHP and SHX files have the same signature, we only want to match on the SHP file.
+            final Path path = connector.getStorageAs(Path.class);
+            final String ext = IOUtilities.extension(path);
+            if ("shx".equalsIgnoreCase(ext)) {
+                return ProbeResult.UNSUPPORTED_STORAGE;
+            }
+        }
+        return result;
     }
 
     /**

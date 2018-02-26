@@ -168,8 +168,8 @@
            Global properties.
        =========================================================== -->
   <properties>
-    <geoapi.version>4.0-M07</geoapi.version> <!-- Must be same than the version used by SIS. -->
-    <sis.version>0.8-jdk8</sis.version>
+    <geoapi.version>4.0-M08</geoapi.version> <!-- Must be same than the version used by SIS. -->
+    <sis.version>1.0-jdk8-MC0024</sis.version>
     <sis.epsg.version>0.8</sis.epsg.version>
     <netcdf.version>4.3.21</netcdf.version>
     <lucene.version>5.4.1</lucene.version>
@@ -1083,7 +1083,7 @@
     <repository>
       <id>geotoolkit</id>
       <name>Geotoolkit.org binaries</name>
-      <url>file:///var/www/maven.geotoolkit.org</url>
+      <url>https://nexus.geomatys.com/repository/geotoolkit</url>
     </repository>
   </distributionManagement>
 

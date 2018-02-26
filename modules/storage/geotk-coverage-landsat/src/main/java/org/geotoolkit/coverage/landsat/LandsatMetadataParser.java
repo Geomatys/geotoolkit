@@ -95,6 +95,7 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.DefaultInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
 
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
@@ -441,7 +442,10 @@ public class LandsatMetadataParser {
         final String outputFormat       = getValue(false, "OUTPUT_FORMAT");
         final String processSoftVersion = getValue(false, "PROCESSING_SOFTWARE_VERSION");
         if ((outputFormat != null) && (processSoftVersion != null)){
-            distribution.setDistributionFormats(Collections.singleton(new DefaultFormat(outputFormat, processSoftVersion)));
+            DefaultFormat f = new DefaultFormat();
+            f.setName(new SimpleInternationalString(outputFormat));
+            f.setVersion(new SimpleInternationalString(processSoftVersion));
+            distribution.setDistributionFormats(Collections.singleton(f));
         }
 
         filledMetadata.setDistributionInfo(Collections.singleton(distribution));

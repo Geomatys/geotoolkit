@@ -54,7 +54,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface FeatureStore extends AutoCloseable, Resource{
+public interface FeatureStore extends AutoCloseable, Resource {
 
     /**
      * Get the parameters used to initialize this source from it's factory.
@@ -103,14 +103,6 @@ public interface FeatureStore extends AutoCloseable, Resource{
      * @param version wanted version, use to nagivate in history.
      */
     Session createSession(boolean asynchrone, Version version);
-
-    /**
-     * Get root data store resource.
-     *
-     * @return Resource, should not be null
-     * @throws DataStoreException
-     */
-    Resource getRootResource() throws DataStoreException;
 
     /**
      * Get a collection of all available resource names.

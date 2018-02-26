@@ -16,14 +16,12 @@
  */
 package org.geotoolkit.observation;
 
-import java.util.Map;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.storage.AbstractDataStoreFactory;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -31,7 +29,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public abstract class AbstractObservationStoreFactory extends AbstractDataStoreFactory implements ObservationStoreFactory {
+public abstract class AbstractObservationStoreFactory extends DataStoreFactory implements ObservationStoreFactory {
 
     /**
      * Identifier, Mandatory.
@@ -61,33 +59,6 @@ public abstract class AbstractObservationStoreFactory extends AbstractDataStoreF
     @Override
     public CharSequence getDescription() {
         return getDisplayName();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean canProcess(Map params) {
-        //check the identifier is set
-        params = forceIdentifier(params);
-
-        //ensure it's the valid identifier
-        final Object id = params.get(IDENTIFIER.getName().getCode());
-        try{
-            final String expectedId = ((ParameterDescriptor<String>)getOpenParameters()
-                .descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
-            if(!expectedId.equals(id)){
-                return false;
-            }
-        }catch(ParameterNotFoundException ex){
-            //this feature store factory does not declare a identifier id
-        }
-
-        try{
-            return canProcess(Parameters.toParameter(params, getOpenParameters()));
-        }catch(IllegalArgumentException ex){
-            return false;
-        }
     }
 
     /**

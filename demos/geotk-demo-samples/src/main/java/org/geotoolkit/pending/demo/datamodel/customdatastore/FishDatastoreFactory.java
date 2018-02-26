@@ -2,20 +2,14 @@
 
 package org.geotoolkit.pending.demo.datamodel.customdatastore;
 
-import java.util.Collections;
-import org.geotoolkit.data.AbstractFeatureStoreFactory;
+import java.util.Arrays;
+import java.util.Collection;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
-import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
-
-import org.opengis.metadata.Identifier;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -24,28 +18,15 @@ public class FishDatastoreFactory extends AbstractFileFeatureStoreFactory{
 
     /** factory identification **/
     public static final String NAME = "fish";
-    public static final DefaultServiceIdentification IDENTIFICATION;
-    static {
-        IDENTIFICATION = new DefaultServiceIdentification();
-        final Identifier id = new DefaultIdentifier(NAME);
-        final DefaultCitation citation = new DefaultCitation(NAME);
-        citation.setIdentifiers(Collections.singleton(id));
-        IDENTIFICATION.setCitation(citation);
-    }
 
     public static final ParameterDescriptor<String> IDENTIFIER = new ParameterBuilder()
-            .addName(AbstractFeatureStoreFactory.IDENTIFIER.getName().getCode())
-            .setRemarks(AbstractFeatureStoreFactory.IDENTIFIER.getRemarks())
+            .addName(AbstractFileFeatureStoreFactory.IDENTIFIER.getName().getCode())
+            .setRemarks(AbstractFileFeatureStoreFactory.IDENTIFIER.getRemarks())
             .setRequired(true)
             .create(String.class, NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName("FishParameters").createGroup(IDENTIFIER, PATH);
-
-    @Override
-    public Identification getIdentification() {
-        return IDENTIFICATION;
-    }
+            new ParameterBuilder().addName(NAME).createGroup(IDENTIFIER, PATH);
 
     @Override
     public String getDescription() {
@@ -64,13 +45,8 @@ public class FishDatastoreFactory extends AbstractFileFeatureStoreFactory{
     }
 
     @Override
-    public FishFeatureStore create(ParameterValueGroup params) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
-    }
-
-    @Override
-    public String[] getFileExtensions() {
-        return new String[]{".fsh"};
+    public Collection<String> getSuffix() {
+        return Arrays.asList("fsh");
     }
 
     @Override

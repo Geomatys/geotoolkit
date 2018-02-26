@@ -144,7 +144,7 @@ public class ParameterValueReader extends StaxStreamReader {
                             break;
 
                         case XMLStreamConstants.END_ELEMENT:
-                            if (desc.getName().getCode().equals(reader.getLocalName())
+                            if (IdentifiedObjects.getNames(desc, null).contains(reader.getLocalName())
                                     && URI_PARAMETER.contains(reader.getNamespaceURI())) {
                                 break boucle;
                             }
@@ -206,7 +206,7 @@ public class ParameterValueReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (desc.getName().getCode().equals(reader.getLocalName())
+                    if (IdentifiedObjects.getNames(desc, null).contains(reader.getLocalName())
                             && URI_PARAMETER.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }

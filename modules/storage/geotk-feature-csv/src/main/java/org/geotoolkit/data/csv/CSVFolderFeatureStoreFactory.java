@@ -18,11 +18,8 @@ package org.geotoolkit.data.csv;
 
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
-import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.PosixDirectoryFilter;
-import org.opengis.metadata.identification.Identification;
-import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -47,13 +44,10 @@ import org.geotoolkit.storage.FactoryMetadata;
 public class CSVFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFactory{
 
     /** factory identification **/
-    public static final DefaultServiceIdentification IDENTIFICATION = derivateIdentification(CSVFeatureStoreFactory.IDENTIFICATION);
-    public static final String NAME = IDENTIFICATION.getCitation().getTitle().toString();
-
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+    public static final String NAME = derivateName(CSVFeatureStoreFactory.NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            derivateDescriptor(IDENTIFIER,CSVFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
+            derivateDescriptor(NAME,CSVFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
 
     public CSVFolderFeatureStoreFactory(){
         super(PARAMETERS_DESCRIPTOR);
@@ -63,15 +57,7 @@ public class CSVFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
      * {@inheritDoc}
      */
     @Override
-    public Identification getIdentification() {
-        return IDENTIFICATION;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public FileFeatureStoreFactory getSingleFileFactory() {
+    public CSVFeatureStoreFactory getSingleFileFactory() {
         return DataStores.getAllFactories(CSVFeatureStoreFactory.class).iterator().next();
     }
 

@@ -36,9 +36,9 @@ public class SMLStandardTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void systemAsMapTest() throws Exception {
-        
+
         Unmarshaller unmarshaller = SensorMLMarshallerPool.getInstance().acquireUnmarshaller();
-        
+
         InputStream is = SmlXMLBindingTest.class.getResourceAsStream("/org/geotoolkit/sml/system101.xml");
         Object unmarshalled = unmarshaller.unmarshal(is);
         if (unmarshalled instanceof JAXBElement) {
@@ -50,7 +50,7 @@ public class SMLStandardTest extends org.geotoolkit.test.TestBase {
         SensorML system = (SensorML) unmarshalled;
         Map<String,Object> result = system.asMap();
 
-        result = SensorMLStandard.SYSTEM.asValueMap(system, KeyNamePolicy.UML_IDENTIFIER, ValueExistencePolicy.NON_EMPTY);
+        result = SensorMLStandard.SYSTEM.asValueMap(system, null, KeyNamePolicy.UML_IDENTIFIER, ValueExistencePolicy.NON_EMPTY);
 
         is = SmlXMLBindingTest.class.getResourceAsStream("/org/geotoolkit/sml/component101.xml");
 
@@ -64,8 +64,8 @@ public class SMLStandardTest extends org.geotoolkit.test.TestBase {
         SensorML component = (SensorML) unmarshalled;
         result = component.asMap();
 
-        result = SensorMLStandard.COMPONENT.asValueMap(component, KeyNamePolicy.UML_IDENTIFIER, ValueExistencePolicy.NON_EMPTY);
+        result = SensorMLStandard.COMPONENT.asValueMap(component, null, KeyNamePolicy.UML_IDENTIFIER, ValueExistencePolicy.NON_EMPTY);
     }
 
-    
+
 }

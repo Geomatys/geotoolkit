@@ -18,11 +18,15 @@ package org.geotoolkit.wmts;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.storage.Aggregate;
 
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.AbstractClientFactory;
@@ -33,7 +37,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.wmts.v100.GetCapabilities100;
 import org.geotoolkit.wmts.v100.GetTile100;
@@ -52,12 +55,12 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-public class WebMapTileClient extends AbstractCoverageClient implements Client{
+public class WebMapTileClient extends AbstractCoverageClient implements Client, Aggregate {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wmts");
 
     private Capabilities capabilities;
-    private DefaultAggregate rootNode = null;
+    private List<Resource> resources = null;
 
     /**
      * Defines the timeout in milliseconds for the GetCapabilities request.
@@ -158,7 +161,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
      * @return {@linkplain Capabilities capabilities} response but never {@code null}.
      * @see {@link #getCapabilities(long)}
      */
-    public Capabilities getCapabilities() {
+    public Capabilities getServiceCapabilities() {
         return getCapabilities(TIMEOUT_GETCAPS);
     }
 
@@ -256,11 +259,11 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
     }
 
     @Override
-    public synchronized Resource getRootResource() throws DataStoreException {
-        if(rootNode == null){
-            rootNode = new DefaultAggregate(NamesExt.create("root"));
+    public synchronized Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+        if(resources == null){
+            resources = new ArrayList<>();
 
-            final Capabilities capa = getCapabilities();
+            final Capabilities capa = getServiceCapabilities();
             if(capa == null){
                 throw new DataStoreException("Could not get Capabilities.");
             }
@@ -269,11 +272,11 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client{
                 final String name = lt.getIdentifier().getValue();
                 final GenericName nn = NamesExt.create(name);
                 final CoverageResource ref = new WMTSCoverageResource(this,nn,getImageCache());
-                rootNode.addResource(ref);
+                resources.add(ref);
             }
 
         }
-        return rootNode;
+        return Collections.unmodifiableList(resources);
     }
 
     @Override

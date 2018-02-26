@@ -24,7 +24,6 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import org.apache.sis.parameter.Parameters;
-
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.security.ClientSecurity;
@@ -32,7 +31,6 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.ows.xml.ExceptionResponse;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.storage.DataStores;
-
 import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.ows.xml.v110.AcceptVersionsType;
 import org.geotoolkit.storage.DataStoreFactory;
@@ -163,7 +161,7 @@ public class WebProcessingClient extends AbstractClient {
                 LOGGER.log(Level.FINE, "No version define : search it on getCapabilities");
             }
             try {
-                this.capabilities = getCapabilities();
+                this.capabilities = getServiceCapabilities();
                 //set version
                 version = WPSVersion.getVersion(this.capabilities.getVersion()).getCode();
             } catch (CapabilitiesException e) {
@@ -220,8 +218,8 @@ public class WebProcessingClient extends AbstractClient {
      * @return WPSCapabilitiesType : WPS server capabilities
      * @throws org.geotoolkit.client.CapabilitiesException
      */
-    public WPSCapabilities getCapabilities() throws CapabilitiesException {
-        return getCapabilities(false);
+    public WPSCapabilities getServiceCapabilities() throws CapabilitiesException {
+        return getServiceCapabilities(false);
     }
 
     /**
@@ -230,7 +228,7 @@ public class WebProcessingClient extends AbstractClient {
      * @return WPSCapabilitiesType : WPS server capabilities
      * @throws org.geotoolkit.client.CapabilitiesException
      */
-    public WPSCapabilities getCapabilities(boolean refresh) throws CapabilitiesException {
+    public WPSCapabilities getServiceCapabilities(boolean refresh) throws CapabilitiesException {
 
         if (capabilities != null && !refresh) {
             return capabilities;

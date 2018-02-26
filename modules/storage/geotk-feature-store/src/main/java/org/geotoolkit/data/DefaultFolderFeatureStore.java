@@ -33,6 +33,7 @@ import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.util.GenericName;
@@ -44,7 +45,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.FileSystemResource;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 
 /**
  * Handle a folder of single file FeatureStore.
@@ -53,7 +54,7 @@ import org.geotoolkit.storage.FileSystemResource;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
-public class DefaultFolderFeatureStore extends AbstractFeatureStore implements FileSystemResource {
+public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureStoreFactory> extends AbstractFeatureStore implements ResourceOnFileSystem {
 
     /**
      * Listen to changes in sub stores and propagate them.
@@ -75,7 +76,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements F
 
     private final Parameters folderParameters;
     private final AbstractFolderFeatureStoreFactory folderFactory;
-    private final FileFeatureStoreFactory singleFileFactory;
+    private final T singleFileFactory;
     private final Parameters singleFileDefaultParameters;
     private GenericNameIndex<FeatureStore> stores = null;
 
@@ -212,7 +213,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements F
         final Parameters params = singleFileDefaultParameters.clone();
         try {
             final Path folder = getFolder(folderParameters);
-            final String fileName = typeName.tip().toString() + singleFileFactory.getFileExtensions()[0];
+            final String fileName = typeName.tip().toString() +"."+ singleFileFactory.getSuffix().iterator().next();
             final Path newFile = folder.resolve(fileName);
             params.getOrCreate(PATH).setValue(newFile.toUri().toURL());
         } catch (MalformedURLException ex) {
@@ -245,8 +246,8 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements F
         // We should get a file feature store.
         final Path[] sourceFiles;
         try {
-            if (store instanceof FileSystemResource) {
-                sourceFiles = ((FileSystemResource) store).getResourcePaths();
+            if (store instanceof ResourceOnFileSystem) {
+                sourceFiles = ((ResourceOnFileSystem) store).getComponentFiles();
             } else {
                 // Not a file store ? We try to find an url parameter and see if it's a file one.
                 final URI fileURI = Parameters.castOrWrap(store.getOpenParameters()).getValue(PATH);
@@ -361,7 +362,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements F
     /**
      * {@inheritDoc}
      */
-    public Path[] getResourcePaths() throws DataStoreException {
+    public Path[] getComponentFiles() throws DataStoreException {
         final Path folder = getFolder(folderParameters);
         return new Path[]{ folder };
     }

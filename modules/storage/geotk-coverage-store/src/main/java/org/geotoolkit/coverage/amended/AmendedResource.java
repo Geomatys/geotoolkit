@@ -18,6 +18,7 @@ package org.geotoolkit.coverage.amended;
 
 import java.util.Collection;
 import java.util.logging.Level;
+import org.apache.sis.internal.simple.SimpleIdentifier;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
@@ -26,6 +27,9 @@ import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.storage.coverage.CoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.citation.Citation;
+import org.opengis.metadata.identification.Identification;
 
 /**
  * Wrap a DataNode and it's children.
@@ -56,11 +60,32 @@ final class AmendedResource extends DefaultAggregate {
     };
 
     AmendedResource(Aggregate node, final AmendedCoverageStore store) throws DataStoreException {
-        super(((org.geotoolkit.storage.Resource)node).getIdentifier());
+        super(getIdentifier(node));
         this.store = store;
         this.base = node;
-        ((org.geotoolkit.storage.Resource)node).addStorageListener(new StorageListener.Weak(store, subListener));
+        if (node instanceof org.geotoolkit.storage.Resource) {
+            ((org.geotoolkit.storage.Resource)node).addStorageListener(new StorageListener.Weak(store, subListener));
+        }
         rebuildNodes();
+    }
+
+    private static Identifier getIdentifier(Resource res) throws DataStoreException {
+        if (res instanceof org.geotoolkit.storage.Resource) {
+            return ((org.geotoolkit.storage.Resource)res).getIdentifier();
+        } else {
+            for (Identification id : res.getMetadata().getIdentificationInfo()) {
+                final Citation citation = id.getCitation();
+                if (citation != null) {
+                    for (Identifier i : citation.getIdentifiers()) {
+                        return i;
+                    }
+                    if (citation.getTitle() != null) {
+                        return new SimpleIdentifier(null, citation.getTitle().toString(), false);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**

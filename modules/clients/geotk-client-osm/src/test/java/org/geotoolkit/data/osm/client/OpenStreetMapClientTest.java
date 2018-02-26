@@ -61,7 +61,7 @@ public class OpenStreetMapClientTest extends org.geotoolkit.test.TestBase {
         boolean valid = false;
         try {
             server.getURI().toURL().openConnection().connect();
-            Api api = server.getCapabilities(); //check the server respond
+            Api api = server.getServiceCapabilities(); //check the server respond
             valid = (api!=null);
         } catch (Exception ex) {
             //server is not accessible
@@ -80,7 +80,7 @@ public class OpenStreetMapClientTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testCapabilities(){
-        Api api = server.getCapabilities();
+        Api api = server.getServiceCapabilities();
         assertNotNull(api);
         assertNotNull(api.getVersionMaximum());
         assertNotNull(api.getVersionMinimum());

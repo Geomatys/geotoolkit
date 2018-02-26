@@ -4,6 +4,7 @@ package org.geotoolkit.pending.demo.coverage;
 import java.util.Iterator;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.pending.demo.Demos;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
@@ -18,7 +19,7 @@ public class ListAllFactoriesDemo {
 
         while(ite.hasNext()){
 
-            final CoverageStoreFactory factory = ite.next();
+            final DataStoreFactory factory = (DataStoreFactory) ite.next();
 
             //display general informations about this factory
             System.out.println(factory.getDisplayName());

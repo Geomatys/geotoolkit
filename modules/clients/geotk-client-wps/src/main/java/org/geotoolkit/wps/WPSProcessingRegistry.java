@@ -29,6 +29,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -36,6 +39,7 @@ import org.geotoolkit.process.ProcessingRegistry;
 import org.geotoolkit.wps.xml.ProcessOffering;
 import org.geotoolkit.wps.xml.ProcessOfferings;
 import org.geotoolkit.wps.xml.WPSCapabilities;
+import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.util.NoSuchIdentifierException;
 
@@ -78,7 +82,13 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
 
     @Override
     public Identification getIdentification() {
-        return client.getProvider().getIdentification();
+        final Identifier name = client.getOpenParameters().getDescriptor().getName();
+        final DefaultServiceIdentification identification = new DefaultServiceIdentification();
+        final Identifier id = new DefaultIdentifier(name);
+        final DefaultCitation citation = new DefaultCitation(name.getCode());
+        citation.setIdentifiers(Collections.singleton(id));
+        identification.setCitation(citation);
+        return identification;
     }
 
     @Override
@@ -154,7 +164,7 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
         if (descriptors==null) descriptors = new ConcurrentHashMap<>();
         final WPSCapabilities capabilities;
         try {
-            capabilities = client.getCapabilities();
+            capabilities = client.getServiceCapabilities();
         } catch(CapabilitiesException ex) {
             //find a better way to return the exception
             //it should not happen since we called a getCapabilities at registry creation

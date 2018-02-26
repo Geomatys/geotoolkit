@@ -21,7 +21,6 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractClient;
-import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.csw.v202.DescribeRecord202;
 import org.geotoolkit.csw.v202.GetCapabilities202;
 import org.geotoolkit.csw.v202.GetDomain202;
@@ -68,7 +67,7 @@ public class CatalogServicesClient extends AbstractClient {
      */
     public CatalogServicesClient(final URL serverURL) throws IllegalStateException{
         super(create(CSWClientFactory.PARAMETERS, serverURL, null, null));
-        final AbstractCapabilities capa = getCapabilities();
+        final AbstractCapabilities capa = getServiceCapabilities();
         if(capa == null){
             throw new IllegalStateException("Cannot get Capabilities document from the server "+serverURL.toString());
         }
@@ -219,7 +218,7 @@ public class CatalogServicesClient extends AbstractClient {
      * This is a lazy loading for stored capabilities object.
      *
      */
-    public AbstractCapabilities getCapabilities() {
+    public AbstractCapabilities getServiceCapabilities() {
 
         if (capabilities != null) {
             return capabilities;

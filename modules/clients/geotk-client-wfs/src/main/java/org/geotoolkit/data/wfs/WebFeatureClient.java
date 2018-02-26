@@ -147,7 +147,7 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
      * @return The WFS server capabilities.
      * @throws WebFeatureException if an error occurred while querying the capabilities from the server.
      */
-    public WFSCapabilities getCapabilities() throws WebFeatureException {
+    public WFSCapabilities getServiceCapabilities() throws WebFeatureException {
         if (capabilities != null) {
             return capabilities;
         }

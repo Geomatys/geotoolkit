@@ -23,14 +23,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.Aggregate;
 
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
@@ -47,9 +51,9 @@ import org.geotoolkit.storage.Resource;
  * @version 1.0
  * @since   1.0
  */
-public class LandsatCoverageStore extends AbstractCoverageStore {
+public class LandsatCoverageStore extends AbstractCoverageStore implements Aggregate {
 
-    private final DefaultAggregate root = new DefaultAggregate(NamesExt.create("root"));
+    private final List<Resource> resources = new ArrayList<>();
 
     /**
      * The current parent landsat8 directory.
@@ -117,12 +121,12 @@ public class LandsatCoverageStore extends AbstractCoverageStore {
         final String sceneName  = getSceneName();
 
         final LandsatCoverageResource reflectiveRef = new LandsatCoverageResource(this, NamesExt.create(sceneName+"-"+REFLECTIVE_LABEL), origin, metadataParser);
-        root.addResource(reflectiveRef);
+        resources.add(reflectiveRef);
         final LandsatCoverageResource panchroRef    = new LandsatCoverageResource(this, NamesExt.create(sceneName+"-"+PANCHROMATIC_LABEL), origin, metadataParser);
-        root.addResource(panchroRef);
+        resources.add(panchroRef);
 
         final LandsatCoverageResource thermicRef    = new LandsatCoverageResource(this, NamesExt.create(sceneName+"-"+THERMAL_LABEL), origin, metadataParser);
-        root.addResource(thermicRef);
+        resources.add(thermicRef);
     }
 
     /**
@@ -137,12 +141,9 @@ public class LandsatCoverageStore extends AbstractCoverageStore {
         return params;
     }
 
-    /**
-     * {@inheritDoc }.
-     */
     @Override
-    public Resource getRootResource() throws DataStoreException {
-        return root;
+    public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+        return Collections.unmodifiableList(resources);
     }
 
     /**

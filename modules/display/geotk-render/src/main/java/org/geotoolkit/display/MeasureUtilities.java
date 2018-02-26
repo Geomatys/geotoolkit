@@ -69,7 +69,7 @@ public class MeasureUtilities {
             final GeodeticCalculator calculator = new GeodeticCalculator(geomCRS);
             final GeneralDirectPosition pos = new GeneralDirectPosition(geomCRS);
 
-            double lenght = 0;
+            double length = 0;
             for(int i=0,n=coords.length-1;i<n;i++){
                 Coordinate coord1 = coords[i];
                 Coordinate coord2 = coords[i+1];
@@ -81,15 +81,15 @@ public class MeasureUtilities {
                 pos.ordinates[1] = coord2.y;
                 calculator.setDestinationPosition(pos);
 
-                lenght += calculator.getOrthodromicDistance();
+                length += calculator.getOrthodromicDistance();
             }
 
             if(!Units.METRE.equals(unit)){
                 UnitConverter converter = Units.METRE.getConverterTo(unit);
-                lenght = converter.convert(lenght);
+                length = converter.convert(length);
             }
 
-            return lenght;
+            return length;
 
         } catch (MismatchedDimensionException ex) {
             LOGGER.log(Level.WARNING, null, ex);

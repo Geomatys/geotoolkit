@@ -18,7 +18,6 @@ package org.geotoolkit.wcs;
 
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
-import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wcs.v100.DescribeCoverage100;
 import org.geotoolkit.wcs.v100.GetCapabilities100;
@@ -27,7 +26,6 @@ import org.geotoolkit.wcs.xml.WCSMarshallerPool;
 import org.geotoolkit.wcs.xml.WCSVersion;
 import org.geotoolkit.wcs.xml.v100.WCSCapabilitiesType;
 import org.opengis.parameter.ParameterValueGroup;
-
 import javax.xml.bind.Unmarshaller;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -90,7 +88,7 @@ public class WebCoverageClient extends AbstractClient {
      * Returns the {@linkplain WCSCapabilitiesType capabilities} response for this
      * server.
      */
-    public WCSCapabilitiesType getCapabilities() {
+    public WCSCapabilitiesType getServiceCapabilities() {
 
         if (capabilities != null) {
             return capabilities;

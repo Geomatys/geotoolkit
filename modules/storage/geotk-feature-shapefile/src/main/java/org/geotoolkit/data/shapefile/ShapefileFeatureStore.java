@@ -19,7 +19,6 @@
 package org.geotoolkit.data.shapefile;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
@@ -100,14 +99,14 @@ import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.geotoolkit.storage.FileSystemResource;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class ShapefileFeatureStore extends AbstractFeatureStore implements FileSystemResource {
+public class ShapefileFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
 
     // This is the default character as specified by the DBF specification
     public static final Charset DEFAULT_STRING_CHARSET = DbaseFileReader.DEFAULT_STRING_CHARSET;
@@ -523,12 +522,10 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements FileS
                         if (crs != null) {
                             try {
                                 transformedBounds = env.transform(crs, true);
-                            } catch (Throwable t) {
-                                if (getLogger().isLoggable(Level.WARNING)) {
-                                    getLogger().log(Level.WARNING, t.getLocalizedMessage(), t);
-                                }
-                                transformedBounds = env;
-                                crs = null;
+                            } catch (Exception t) {
+                                getLogger().log(Level.WARNING, t.getLocalizedMessage(), t);
+                                // It can happen for local projections :
+                                transformedBounds = new JTSEnvelope2D(crs);
                             }
                         } else {
                             transformedBounds = env;
@@ -722,7 +719,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements FileS
     }
 
     @Override
-    public Path[] getResourcePaths() throws DataStoreException {
+    public Path[] getComponentFiles() throws DataStoreException {
         final List<Path> files = new ArrayList<>();
         for (final ShpFileType type : ShpFileType.values()) {
             final Path f = shpFiles.getPath(type);

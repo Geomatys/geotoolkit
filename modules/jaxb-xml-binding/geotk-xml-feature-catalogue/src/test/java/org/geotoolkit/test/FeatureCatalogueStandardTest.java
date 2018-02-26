@@ -56,7 +56,7 @@ public class FeatureCatalogueStandardTest {
 
         // empty case - should not raise exception
         FeatureCatalogueImpl metadata = new FeatureCatalogueImpl();
-        Map<String,Object> map = standard.asValueMap(metadata, KeyNamePolicy.UML_IDENTIFIER, ValueExistencePolicy.NON_EMPTY);
+        Map<String,Object> map = standard.asValueMap(metadata, null, KeyNamePolicy.UML_IDENTIFIER, ValueExistencePolicy.NON_EMPTY);
 
         assertEquals(0, map.size());
 
@@ -83,11 +83,11 @@ public class FeatureCatalogueStandardTest {
 
         metadata.setFeatureType(featureType);
 
-        map = standard.asValueMap(metadata, KeyNamePolicy.UML_IDENTIFIER, ValueExistencePolicy.NON_EMPTY);
+        map = standard.asValueMap(metadata, null, KeyNamePolicy.UML_IDENTIFIER, ValueExistencePolicy.NON_EMPTY);
 
         assertEquals(2, map.size());
 
-        map = standard.asValueMap(fa1, KeyNamePolicy.UML_IDENTIFIER, ValueExistencePolicy.NON_EMPTY);
+        map = standard.asValueMap(fa1, null, KeyNamePolicy.UML_IDENTIFIER, ValueExistencePolicy.NON_EMPTY);
 
         assertEquals(9, map.size());
 

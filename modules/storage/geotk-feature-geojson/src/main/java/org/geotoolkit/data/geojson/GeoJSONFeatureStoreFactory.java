@@ -16,20 +16,22 @@
  */
 package org.geotoolkit.data.geojson;
 
-import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.ByteBuffer;
+import java.nio.file.Path;
+import org.apache.sis.internal.storage.io.IOUtilities;
+import java.util.Arrays;
+import java.util.Collection;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FileFeatureStoreFactory;
-import org.opengis.metadata.Identifier;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-
-import java.util.Collections;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -39,19 +41,17 @@ import org.geotoolkit.storage.FactoryMetadata;
  */
 public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory implements FileFeatureStoreFactory {
 
-    /** factory identification **/
     public static final String NAME = "geojson";
-    public static final DefaultServiceIdentification IDENTIFICATION;
-    static {
-        IDENTIFICATION = new DefaultServiceIdentification();
-        final Identifier id = new DefaultIdentifier(NAME);
-        final DefaultCitation citation = new DefaultCitation(NAME);
-        citation.setIdentifiers(Collections.singleton(id));
-        IDENTIFICATION.setCitation(citation);
-    }
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     public static final String ENCODING = "UTF-8";
+
+    /**
+     * The {@value} MIME type.
+     */
+    public static final String MIME_TYPE = "application/json";
+
+    public static final String EXT = "json";
 
     /**
      * Optional
@@ -65,13 +65,8 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName("GeoJSONParameters").createGroup(
+            new ParameterBuilder().addName(NAME).addName("GeoJSONParameters").createGroup(
                 IDENTIFIER, PATH, COORDINATE_ACCURACY);
-
-    @Override
-    public Identification getIdentification() {
-        return IDENTIFICATION;
-    }
 
     /**
      * {@inheritDoc }
@@ -105,8 +100,8 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
      * {@inheritDoc }
      */
     @Override
-    public String[] getFileExtensions() {
-        return new String[] {".json", ".geojson", ".topojson"};
+    public Collection<String> getSuffix() {
+        return Arrays.asList("json", "geojson", "topojson");
     }
 
     /**
@@ -129,6 +124,65 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
     @Override
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, GEOMS_ALL);
+    }
+
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        Path p = connector.getStorageAs(Path.class);
+        if (EXT.equals(IOUtilities.extension(p))) {
+            try {
+                final ByteBuffer buffer = connector.getStorageAs(ByteBuffer.class);
+                final Reader reader;
+                if (buffer != null) {
+                    buffer.mark();
+                    reader = null;
+                } else {
+                    // User gave us explicitely a Reader (e.g. a StringReader wrapping a String instance).
+                    reader = connector.getStorageAs(Reader.class);
+                    if (reader == null) {
+                        return ProbeResult.UNSUPPORTED_STORAGE;
+                    }
+                    reader.mark(2048); // Should be no more than {@code StorageConnector.DEFAULT_BUFFER_SIZE / 2}
+                }
+                boolean ok = false;
+                if (nextAfterSpaces(buffer, reader) == '{') {
+                    ok = true;
+                }
+                if (buffer != null) {
+                    buffer.reset();
+                } else {
+                    reader.reset();
+                }
+                if (ok) {
+                    return new ProbeResult(true, MIME_TYPE, null);
+                }
+            } catch (IOException e) {
+                throw new DataStoreException(e);
+            }
+        }
+        return ProbeResult.UNSUPPORTED_STORAGE;
+
+    }
+
+    /**
+     * Returns the next character which is not a white space, or -1 if the end of stream is reached.
+     * Exactly one of {@code buffer} and {@code reader} shall be non-null.
+     */
+    private static int nextAfterSpaces(final ByteBuffer buffer, final Reader reader) throws IOException {
+        if (buffer != null) {
+            while (buffer.hasRemaining()) {
+                final char c = (char) buffer.get();
+                if (!Character.isWhitespace(c)) {
+                    return c;
+                }
+            }
+            return -1;
+        }
+        int c;
+        while ((c = IOUtilities.readCodePoint(reader)) >= 0) {
+            if (!Character.isWhitespace(c)) break;
+        }
+        return c;
     }
 
 }

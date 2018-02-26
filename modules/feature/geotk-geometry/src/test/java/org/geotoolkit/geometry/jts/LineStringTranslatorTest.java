@@ -376,7 +376,7 @@ public class LineStringTranslatorTest extends org.geotoolkit.test.TestBase {
      */
     private void assertArrayEquals(Coordinate[] expected, Coordinate[] tested) {
         final int expectedLength = expected.length;
-        assertEquals("Different array lenght : Expected : "+expected.length+". Found : "+tested.length, expectedLength, tested.length);
+        assertEquals("Different array length : Expected : "+expected.length+". Found : "+tested.length, expectedLength, tested.length);
         for (int c = 0; c < expectedLength; c++) {
             assertEquals("at coordinate "+c+" expected x = "+expected[c].x+" found : "+tested[c].x, expected[c].x, tested[c].x, TOLERANCE);
             assertEquals("at coordinate "+c+" expected y = "+expected[c].y+" found : "+tested[c].y, expected[c].y, tested[c].y, TOLERANCE);

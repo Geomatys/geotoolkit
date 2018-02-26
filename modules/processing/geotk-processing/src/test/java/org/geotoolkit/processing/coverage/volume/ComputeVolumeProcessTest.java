@@ -290,7 +290,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
      * @param imageStep value use to create pike or hole see fillImageWithPikeOrHole() method.
      * @param resolution coverage resolution
      * @param crs space test
-     * @param expectedResults test results. 2 results for each resolution. If n = resolution number. expectedResult lenght = 2 * n.
+     * @param expectedResults test results. 2 results for each resolution. If n = resolution number. expectedResult length = 2 * n.
      * @throws ProcessException
      */
     private void pikeOrHoleTest(double[] altitudes, final int imageWidth, final int imageHeight, final int basicImageValue, final int imageStep,

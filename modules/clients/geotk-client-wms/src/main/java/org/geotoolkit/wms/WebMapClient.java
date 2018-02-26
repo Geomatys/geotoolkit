@@ -42,11 +42,14 @@ import org.opengis.parameter.ParameterValueGroup;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.storage.Aggregate;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -70,7 +73,7 @@ import org.geotoolkit.wms.v111.GetMap111;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
-public class WebMapClient extends AbstractCoverageClient implements Client {
+public class WebMapClient extends AbstractCoverageClient implements Client, Aggregate {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
 
@@ -175,7 +178,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
                 if(capabilities!=null){
                     this.capabilities = capabilities;
                 }else{
-                    this.capabilities = getCapabilities();
+                    this.capabilities = getServiceCapabilities();
                 }
 
                 //set version
@@ -227,8 +230,8 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
      * @throws CapabilitiesException
      * @see {@link #getCapabilities(long)}
      */
-    public AbstractWMSCapabilities getCapabilities() throws CapabilitiesException{
-        return getCapabilities(TIMEOUT_GETCAPS);
+    public AbstractWMSCapabilities getServiceCapabilities() throws CapabilitiesException{
+        return getServiceCapabilities(TIMEOUT_GETCAPS);
     }
 
     /**
@@ -240,7 +243,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
      * @return {@linkplain AbstractWMSCapabilities capabilities} response but never {@code null}.
      * @throws CapabilitiesException
      */
-    public AbstractWMSCapabilities getCapabilities(final long timeout) throws CapabilitiesException {
+    public AbstractWMSCapabilities getServiceCapabilities(final long timeout) throws CapabilitiesException {
         if (capabilities != null) {
             return capabilities;
         }
@@ -368,22 +371,22 @@ public class WebMapClient extends AbstractCoverageClient implements Client {
     }
 
     @Override
-    public synchronized Resource getRootResource() throws DataStoreException {
+    public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+        final Resource root = getRootResource();
+        return (root == null) ? Collections.EMPTY_LIST : Collections.singletonList(root);
+    }
+
+    private synchronized Resource getRootResource() throws DataStoreException {
         if (rootNode != null) {
             return rootNode;
         }
-
-            final AbstractWMSCapabilities capa;
-            try {
-                capa = getCapabilities();
-            } catch (CapabilitiesException ex) {
-                throw new DataStoreException(ex);
-            }
-
-
-        rootNode = asResource(capa.getCapability().getLayer())
-                .orElse(new DefaultAggregate(Names.createLocalName(null, ":", "root")));
-
+        final AbstractWMSCapabilities capa;
+        try {
+            capa = getServiceCapabilities();
+        } catch (CapabilitiesException ex) {
+            throw new DataStoreException(ex);
+        }
+        rootNode = asResource(capa.getCapability().getLayer()).orElse(null);
         return rootNode;
     }
 

@@ -1478,7 +1478,7 @@ public final class MessageBundle extends IndexedResourceBundle {
         public static final short legend = 287;
 
         /**
-         * Lenght
+         * Length
          */
         public static final short lenght = 288;
 
@@ -1598,7 +1598,7 @@ public final class MessageBundle extends IndexedResourceBundle {
         public static final short map_measure_area = 311;
 
         /**
-         * Measure lenght
+         * Measure length
          */
         public static final short map_measure_lenght = 312;
 
@@ -3418,7 +3418,7 @@ public final class MessageBundle extends IndexedResourceBundle {
         public static final short tooltip_gap = 675;
 
         /**
-         * Lenght
+         * Length
          */
         public static final short tooltip_lenght = 676;
 

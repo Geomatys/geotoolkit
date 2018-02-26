@@ -77,13 +77,13 @@ import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.temporal.TemporalObject;
-import org.geotoolkit.storage.FileSystemResource;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class XmlObservationStore extends AbstractFeatureStore implements FileSystemResource,ObservationStore {
+public class XmlObservationStore extends AbstractFeatureStore implements ResourceOnFileSystem,ObservationStore {
 
     protected final GenericNameIndex<FeatureType> types;
     private static final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
@@ -399,7 +399,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements FileSys
      * {@inheritDoc }
      */
     @Override
-    public Path[] getResourcePaths() throws DataStoreException {
+    public Path[] getComponentFiles() throws DataStoreException {
         return new Path[]{xmlFile};
     }
 

@@ -55,49 +55,49 @@ public class GeometryScaleTransformer extends AbstractGeometryTransformer{
     private Coordinate[] decimate(final Coordinate[] coords, final int minpoint) {
         if(coords.length==0) return coords;
 
-        int lenght = 1;
+        int length = 1;
 
         final boolean closed = coords[0].equals2D(coords[coords.length-1]);
 
         for(int i=1,j=0; i<coords.length; i++){
             final double distX = Math.abs(coords[j].x - coords[i].x);
-            if(distX > resX){
-                lenght++;
+            if (distX > resX) {
+                length++;
                 j++;
                 coords[j] = coords[i];
                 continue;
             }
 
             final double distY = Math.abs(coords[j].y - coords[i].y);
-            if(distY > resY){
-                lenght++;
+            if (distY > resY) {
+                length++;
                 j++;
                 coords[j] = coords[i];
                 continue;
             }
         }
 
-        if(lenght == coords.length){
+        if (length == coords.length) {
             //nothing to decimate
             return coords;
-        }else{
+        } else {
             //ensure we have the minimum number of points
-            if(lenght < minpoint){
+            if (length < minpoint) {
                 final Coordinate lastCoord = coords[coords.length-1];
-                for(int i=lenght;i<minpoint;i++){
+                for(int i=length; i<minpoint; i++){
                     coords[i] = lastCoord;
                 }
-                lenght = minpoint;
+                length = minpoint;
             }
 
             //ensure it forms a closed line string if asked for
-            if(closed && !coords[0].equals2D(coords[lenght-1])){
-                coords[lenght] = new Coordinate(coords[0]);
-                lenght++;
+            if (closed && !coords[0].equals2D(coords[length-1])) {
+                coords[length] = new Coordinate(coords[0]);
+                length++;
             }
 
-            final Coordinate[] cs = new Coordinate[lenght];
-            System.arraycopy(coords, 0, cs, 0, lenght);
+            final Coordinate[] cs = new Coordinate[length];
+            System.arraycopy(coords, 0, cs, 0, length);
             return cs;
         }
     }

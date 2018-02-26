@@ -34,10 +34,8 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.data.AbstractFeatureStore;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.dbf.DbaseFileReader.Row;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
@@ -55,7 +53,7 @@ import org.opengis.feature.AttributeType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.FileSystemResource;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 
 /**
  * DBF DataStore, holds a single feature type.
@@ -63,7 +61,7 @@ import org.geotoolkit.storage.FileSystemResource;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DbaseFileFeatureStore extends AbstractFeatureStore implements FileSystemResource {
+public class DbaseFileFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
 
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
@@ -219,7 +217,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements FileS
     }
 
     @Override
-    public Path[] getResourcePaths() throws DataStoreException {
+    public Path[] getComponentFiles() throws DataStoreException {
         return new Path[] { this.file };
     }
 

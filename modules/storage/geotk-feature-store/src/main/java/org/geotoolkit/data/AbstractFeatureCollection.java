@@ -27,12 +27,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.TransformMapper;
 import org.geotoolkit.feature.ViewMapper;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.IllegalFeatureTypeException;
+import org.apache.sis.storage.ReadOnlyStorageException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.query.Selector;
@@ -324,6 +328,21 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         }
 
         return result;
+    }
+
+    @Override
+    public void updateType(FeatureType newType) throws IllegalFeatureTypeException, DataStoreException {
+        throw new ReadOnlyStorageException();
+    }
+
+    @Override
+    public void add(Iterator<? extends Feature> features) throws DataStoreException {
+        throw new ReadOnlyStorageException();
+    }
+
+    @Override
+    public void replaceIf(Predicate<? super Feature> filter, UnaryOperator<Feature> updater) throws DataStoreException {
+        throw new ReadOnlyStorageException();
     }
 
     // fix toArray methods to forced separate features

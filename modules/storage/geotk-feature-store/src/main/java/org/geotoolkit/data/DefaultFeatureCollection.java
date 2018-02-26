@@ -23,6 +23,8 @@ import java.util.Map.Entry;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.ReadOnlyStorageException;
+import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.factory.Hints;
 import org.opengis.feature.Feature;
@@ -35,7 +37,7 @@ import org.opengis.metadata.Metadata;
  *
  * @author Johann Sorel
  */
-public class DefaultFeatureCollection extends AbstractFeatureCollection {
+public class DefaultFeatureCollection extends AbstractFeatureCollection implements WritableFeatureSet {
 
     private final FeatureSet set;
 
@@ -95,20 +97,28 @@ public class DefaultFeatureCollection extends AbstractFeatureCollection {
 
     @Override
     public void update(Filter filter, final Map<String, ?> values) throws DataStoreException {
-        set.replaceIf(filter::evaluate, new UnaryOperator<Feature>() {
-            @Override
-            public Feature apply(Feature feature) {
-                for (Entry<String,?> entry : values.entrySet()) {
-                    feature.setPropertyValue(entry.getKey(), entry.getValue());
+        if (set instanceof WritableFeatureSet) {
+            ((WritableFeatureSet)set).replaceIf(filter::evaluate, new UnaryOperator<Feature>() {
+                @Override
+                public Feature apply(Feature feature) {
+                    for (Entry<String,?> entry : values.entrySet()) {
+                        feature.setPropertyValue(entry.getKey(), entry.getValue());
+                    }
+                    return feature;
                 }
-                return feature;
-            }
-        });
+            });
+        } else {
+            throw new ReadOnlyStorageException();
+        }
     }
 
     @Override
     public void remove(Filter filter) throws DataStoreException {
-        set.removeIf(filter::evaluate);
+        if (set instanceof WritableFeatureSet) {
+            ((WritableFeatureSet)set).removeIf(filter::evaluate);
+        } else {
+            throw new ReadOnlyStorageException();
+        }
     }
 
     @Override

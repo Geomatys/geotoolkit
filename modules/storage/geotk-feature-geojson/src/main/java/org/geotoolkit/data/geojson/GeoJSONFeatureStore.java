@@ -58,12 +58,13 @@ import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 
 /**
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class GeoJSONFeatureStore extends AbstractFeatureStore {
+public class GeoJSONFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.geojson");
     private static final String DESC_FILE_SUFFIX = "_Type.json";
@@ -472,9 +473,25 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 
+
     @Override
     public void refreshMetaModel() {
         name = null;
         featureType = null;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Path[] getComponentFiles() throws DataStoreException {
+        List<Path> files = new ArrayList<>();
+        if (Files.exists(jsonFile)) {
+            files.add(jsonFile);
+        }
+        if (Files.exists(descFile)) {
+            files.add(descFile);
+        }
+        return files.toArray(new Path[files.size()]);
     }
 }

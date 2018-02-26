@@ -53,14 +53,14 @@ import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.FileSystemResource;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 
 /**
  * GML feature store.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GMLSparseFeatureStore extends AbstractFeatureStore implements FileSystemResource {
+public class GMLSparseFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
 
     private final Path file;
     private FeatureType featureType;
@@ -178,7 +178,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements FileS
     }
 
     @Override
-    public Path[] getResourcePaths() throws DataStoreException {
+    public Path[] getComponentFiles() throws DataStoreException {
         return new Path[]{file};
     }
 

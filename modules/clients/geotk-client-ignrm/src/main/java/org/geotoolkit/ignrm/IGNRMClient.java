@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import javax.xml.stream.XMLStreamException;
-
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.ignrm.parser.TokenParser;
 import org.geotoolkit.ignrm.parser.TokenInformationParser;

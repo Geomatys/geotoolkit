@@ -468,7 +468,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
                  */
                 if (server != null && layers.length == 1) {
                     try {
-                        final AbstractWMSCapabilities capa = server.getCapabilities();
+                        final AbstractWMSCapabilities capa = server.getServiceCapabilities();
                         final AbstractLayer layer = capa.getLayerFromName(layers[0]);
                         final List capaDims  = layer.getDimension();
                         boolean dimensionSupported = false;

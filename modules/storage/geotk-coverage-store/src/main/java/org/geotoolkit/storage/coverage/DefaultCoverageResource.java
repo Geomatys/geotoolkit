@@ -25,7 +25,6 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.memory.MemoryCoverageReader;
-import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 
 /**
@@ -58,12 +57,6 @@ public class DefaultCoverageResource extends AbstractCoverageResource{
         this.coverage = null;
         this.input = input;
         this.imageIndex = 0;
-    }
-
-    @Override
-    public Metadata getMetadata() throws CoverageStoreException {
-        Metadata metadata = acquireReader().getMetadata();
-        return metadata;
     }
 
     @Override

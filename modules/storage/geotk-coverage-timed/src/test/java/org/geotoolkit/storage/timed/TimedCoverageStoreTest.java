@@ -215,7 +215,7 @@ public class TimedCoverageStoreTest extends DirectoryBasedTest {
     }
 
     private GridCoverageReader acquireReader(final TimedCoverageStore store) throws DataStoreException {
-        final Resource root = store.getRootResource();
+        final Resource root = (Resource) store.components().iterator().next();
         Assert.assertNotNull("Data store resource should exist", root);
         Assert.assertTrue("Root resource is not a coverage", root instanceof CoverageResource);
 

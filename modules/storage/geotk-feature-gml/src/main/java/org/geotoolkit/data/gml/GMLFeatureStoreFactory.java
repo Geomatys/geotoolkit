@@ -17,22 +17,19 @@
 
 package org.geotoolkit.data.gml;
 
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.Collection;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
-import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.storage.DataStore;
-
-import org.opengis.metadata.Identifier;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -48,14 +45,7 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "gml";
-    public static final DefaultServiceIdentification IDENTIFICATION;
-    static {
-        IDENTIFICATION = new DefaultServiceIdentification();
-        final Identifier id = new DefaultIdentifier(NAME);
-        final DefaultCitation citation = new DefaultCitation(NAME);
-        citation.setIdentifiers(Collections.singleton(id));
-        IDENTIFICATION.setCitation(citation);
-    }
+    public static final String MIME_TYPE = "application/gml+xml";
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
@@ -98,13 +88,8 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
             .create(Boolean.class, Boolean.TRUE);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName("GMLParameters").createGroup(
+            new ParameterBuilder().addName(NAME).addName("GMLParameters").createGroup(
                 IDENTIFIER, PATH,SPARSE,XSD,XSD_TYPE_NAME,LONGITUDE_FIRST);
-
-    @Override
-    public Identification getIdentification() {
-        return IDENTIFICATION;
-    }
 
     @Override
     public CharSequence getDescription() {
@@ -119,6 +104,11 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     @Override
     public ParameterDescriptorGroup getOpenParameters() {
         return PARAMETERS_DESCRIPTOR;
+    }
+
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        return FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
     }
 
     @Override
@@ -138,8 +128,8 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     }
 
     @Override
-    public String[] getFileExtensions() {
-        return new String[] {".gml"};
+    public Collection<String> getSuffix() {
+        return Arrays.asList("gml");
     }
 
     @Override

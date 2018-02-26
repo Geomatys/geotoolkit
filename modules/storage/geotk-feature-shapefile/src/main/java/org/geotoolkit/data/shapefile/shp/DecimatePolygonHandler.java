@@ -139,13 +139,13 @@ public class DecimatePolygonHandler extends PolygonHandler {
     }
 
     private Coordinate[] decimateRing(final Coordinate[] coords) {
-        int lenght = 1;
+        int length = 1;
 
         int i=1,j=0;
         for(; i<coords.length-1; i++){
             final double distX = Math.abs(coords[j].x - coords[i].x);
             if(distX > resX){
-                lenght++;
+                length++;
                 j++;
                 coords[j] = coords[i];
                 continue;
@@ -153,7 +153,7 @@ public class DecimatePolygonHandler extends PolygonHandler {
 
             final double distY = Math.abs(coords[j].y - coords[i].y);
             if(distY > resY){
-                lenght++;
+                length++;
                 j++;
                 coords[j] = coords[i];
                 continue;
@@ -161,32 +161,29 @@ public class DecimatePolygonHandler extends PolygonHandler {
         }
 
         //always include the last point, to preserve the ring
-        lenght++; j++;
+        length++; j++;
         coords[j] = coords[i];
 
-
-        if(lenght == coords.length){
+        if (length == coords.length) {
             //nothing to decimate
             return coords;
-        }else{
+        } else {
             //ensure we have the minimum number of points
-            if(lenght < 4){
+            if (length < 4) {
                 final Coordinate lastCoord = coords[coords.length-1];
-                for(i=lenght-1;i<4;i++){
+                for(i=length-1;i<4;i++){
                     coords[i] = lastCoord;
                 }
-                lenght = 4;
+                length = 4;
             }
 
             //ensure it forms a closed line string if asked for
-            if(!coords[0].equals2D(coords[lenght-1])){
-                coords[lenght-1] = new Coordinate(coords[0]);
+            if (!coords[0].equals2D(coords[length-1])) {
+                coords[length-1] = new Coordinate(coords[0]);
             }
-
-            final Coordinate[] cs = new Coordinate[lenght];
-            System.arraycopy(coords, 0, cs, 0, lenght);
+            final Coordinate[] cs = new Coordinate[length];
+            System.arraycopy(coords, 0, cs, 0, length);
             return cs;
         }
     }
-
 }

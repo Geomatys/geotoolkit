@@ -18,21 +18,16 @@ package org.geotoolkit.data.gml;
 
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
-import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.PosixDirectoryFilter;
-import org.opengis.metadata.identification.Identification;
-import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Level;
-
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -46,14 +41,10 @@ import org.geotoolkit.storage.FactoryMetadata;
  */
 public class GMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFactory{
 
-    /** factory identification **/
-    public static final DefaultServiceIdentification IDENTIFICATION = derivateIdentification(GMLFeatureStoreFactory.IDENTIFICATION);
-    public static final String NAME = IDENTIFICATION.getCitation().getTitle().toString();
-
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+    public static final String NAME = derivateName(GMLFeatureStoreFactory.NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            derivateDescriptor(IDENTIFIER,GMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
+            derivateDescriptor(NAME,GMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
 
     public GMLFolderFeatureStoreFactory(){
         super(PARAMETERS_DESCRIPTOR);
@@ -63,15 +54,7 @@ public class GMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
      * {@inheritDoc}
      */
     @Override
-    public Identification getIdentification() {
-        return IDENTIFICATION;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public FileFeatureStoreFactory getSingleFileFactory() {
+    public GMLFeatureStoreFactory getSingleFileFactory() {
         return DataStores.getAllFactories(GMLFeatureStoreFactory.class).iterator().next();
     }
 

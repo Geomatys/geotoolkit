@@ -60,6 +60,7 @@ import org.apache.sis.internal.jaxb.gco.*;
 import org.apache.sis.internal.jaxb.metadata.*;
 import org.geotoolkit.resources.jaxb.feature.catalog.*;
 import org.geotoolkit.resources.jaxb.feature.catalog.code.*;
+import org.geotoolkit.resources.jaxb.feature.catalog.GO_Decimal32;
 import org.geotoolkit.resources.jaxb.feature.catalog.MultiplicityAdapter;
 import org.geotoolkit.resources.jaxb.feature.catalog.MultiplicityRangeAdapter;
 

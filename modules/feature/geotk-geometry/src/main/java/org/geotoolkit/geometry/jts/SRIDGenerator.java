@@ -203,7 +203,7 @@ public final class SRIDGenerator {
     }
 
     /**
-     * Write a CRS in a byte[] of lenght 5.
+     * Write a CRS in a byte[] of length 5.
      * the result byte array holds the compact version and the srid.
      */
     public static byte[] toBytes(final CoordinateReferenceSystem crs, final Version version){
@@ -212,7 +212,7 @@ public final class SRIDGenerator {
     }
 
     /**
-     * Write an srid in a byte[] of lenght 5.
+     * Write an srid in a byte[] of length 5.
      * the result byte array holds the compact version and the srid.
      */
     public static byte[] toBytes(final int srid, final Version version){

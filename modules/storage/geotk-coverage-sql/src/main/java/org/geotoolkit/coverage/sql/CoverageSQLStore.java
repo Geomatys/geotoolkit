@@ -17,13 +17,17 @@
 package org.geotoolkit.coverage.sql;
 
 import java.awt.Image;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -32,12 +36,8 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.storage.Resource;
 import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.version.Version;
-import org.geotoolkit.version.VersionControl;
-import org.geotoolkit.version.VersioningException;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.storage.coverage.CoverageResource;
@@ -50,7 +50,7 @@ import org.geotoolkit.storage.coverage.CoverageResource;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class CoverageSQLStore extends AbstractCoverageStore {
+public class CoverageSQLStore extends AbstractCoverageStore implements Aggregate {
 
     private final CoverageDatabase db;
     private final Set<StorageListener> listeners = new HashSet<StorageListener>();
@@ -98,13 +98,13 @@ public class CoverageSQLStore extends AbstractCoverageStore {
     }
 
     @Override
-    public Resource getRootResource() throws DataStoreException {
-        final DefaultAggregate dn = new DefaultAggregate(NamesExt.create("root"));
+    public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+        final List<Resource> resources = new ArrayList<>();
         final Set<String> layers = db.getLayers().result();
         for (String layer : layers) {
-            dn.addResource(new CoverageSQLLayerResource(NamesExt.create(layer)));
+            resources.add(new CoverageSQLLayerResource(NamesExt.create(layer)));
         }
-        return dn;
+        return Collections.unmodifiableList(resources);
     }
 
     @Override
