@@ -18,8 +18,10 @@ package org.geotoolkit.data;
 
 import java.net.URI;
 import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
+import org.apache.sis.internal.storage.io.IOUtilities;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.ProbeResult;
@@ -57,7 +59,19 @@ public interface FileFeatureStoreFactory extends ProviderOnFileSystem {
     public static <T extends DataStoreProvider & ProviderOnFileSystem> ProbeResult probe(T provider, StorageConnector connector, String mimeType) throws DataStoreException {
 
         final Collection<byte[]> signatures = provider.getSignature();
-        if (signatures.isEmpty()) return ProbeResult.UNSUPPORTED_STORAGE;
+        if (signatures.isEmpty()) {
+            //we don't have any signature, check file extensions
+            final Collection<String> suffix = provider.getSuffix();
+            if (suffix.isEmpty()) return ProbeResult.UNSUPPORTED_STORAGE;
+
+            final Path path = connector.getStorageAs(Path.class);
+            if (path == null) return ProbeResult.UNSUPPORTED_STORAGE;
+            final String extension = IOUtilities.extension(path).toLowerCase();
+            if (suffix.contains(extension)) {
+                return new ProbeResult(true, mimeType, null);
+            }
+            return ProbeResult.UNSUPPORTED_STORAGE;
+        }
 
         final ByteBuffer buffer = connector.getStorageAs(ByteBuffer.class);
         if (buffer != null) {

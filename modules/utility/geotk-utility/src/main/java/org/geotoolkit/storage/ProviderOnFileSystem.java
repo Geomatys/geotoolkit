@@ -39,6 +39,7 @@ public interface ProviderOnFileSystem {
      * </p>
      *
      * @return list of suffix, case insensitive, never null, can be empty.
+     *         Suffixes are in lower-case.
      */
     Collection<String> getSuffix();
 
