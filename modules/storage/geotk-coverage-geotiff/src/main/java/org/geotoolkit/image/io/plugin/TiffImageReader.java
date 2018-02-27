@@ -3671,11 +3671,8 @@ public class TiffImageReader extends SpatialImageReader {
         if (input instanceof File) {
             return new FileInputStream((File)input).getChannel();
         } else if (input instanceof InputStream) {
-            if (!(input instanceof FileInputStream)) ((InputStream) input).reset();
             return Channels.newChannel((InputStream) input);
         } else if (input instanceof ImageInputStream) {
-            final ImageInputStream IIS = (ImageInputStream) input;
-            IIS.reset(); IIS.mark();
             return Channels.newChannel(new InputStreamAdapter((ImageInputStream) input));
         } else {
             if (IOUtilities.canProcessAsPath(input)) {
@@ -3804,61 +3801,46 @@ public class TiffImageReader extends SpatialImageReader {
          */
         @Override
         public boolean canDecodeInput(final Object source) throws IOException {
-            if (source instanceof InputStream && (!(source instanceof FileInputStream))) {
+            if (source instanceof InputStream) {
                 final InputStream stream = (InputStream) source;
-                if (stream.markSupported()) {
-                    try {
-                        stream.reset();
-                    } catch (IOException e) {
-                        stream.mark(Integer.MAX_VALUE);
-                    }
-                }else {
-                    return false;
-                }
+                stream.mark(16);
             } else if (source instanceof ImageInputStream) {
-                ((ImageInputStream) source).reset();
                 ((ImageInputStream) source).mark();
             }
             final ReadableByteChannel channel = openChannel(source);
-            long position = 0;
-            if (channel instanceof SeekableByteChannel) position = ((SeekableByteChannel) channel).position();
             //-- Closing the imageStream will close the input stream.
-            ByteBuffer buffer = ByteBuffer.allocateDirect(16);
-            buffer.clear();
+            ByteBuffer buffer = ByteBuffer.allocate(16);
             channel.read(buffer);
             buffer.position(0);
-            try {
-                final byte c = buffer.get();
-                if (c != buffer.get()) {
-                    return false;
-                }
-                final ByteOrder order;
-                if (c == 'M') {
-                    order = ByteOrder.BIG_ENDIAN;
-                } else if (c == 'I') {
-                    order = ByteOrder.LITTLE_ENDIAN;
-                } else {
-                    return false;
-                }
-                final short version = buffer.order(order).getShort();
-                if ((version == 0x002B)) {
-                    if (buffer.getShort() != 8 || buffer.getShort() != 0) {
-                        return false; //-- invalide offset size
-                    }
-                } else if (version != 0x002A) {
-                    return false;//-- invalid magic number
-                }
-
-                if (source instanceof InputStream) {
-                    ((InputStream) source).reset();
-                } else if (source instanceof ImageInputStream) {
-                    ((ImageInputStream) source).reset();
-                }
-                return true;
-            } finally {
-                if (channel instanceof SeekableByteChannel) ((SeekableByteChannel) channel).position(position);
-                if (IOUtilities.canProcessAsPath(source)) channel.close();
+            final byte c = buffer.get();
+            if (c != buffer.get()) {
+                return false;
             }
+            final ByteOrder order;
+            if (c == 'M') {
+                order = ByteOrder.BIG_ENDIAN;
+            } else if (c == 'I') {
+                order = ByteOrder.LITTLE_ENDIAN;
+            } else {
+                return false;
+            }
+            final short version = buffer.order(order).getShort();
+            if ((version == 0x002B)) {
+                if (buffer.getShort() != 8 || buffer.getShort() != 0) {
+                    return false; //-- invalide offset size
+                }
+            } else if (version != 0x002A) {
+                return false;//-- invalid magic number
+            }
+
+            if (source instanceof InputStream) {
+                ((InputStream) source).reset();
+            } else if (source instanceof ImageInputStream) {
+                ((ImageInputStream) source).reset();
+            } else {
+                channel.close();
+            }
+            return true;
         }
 
         /**
