@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.landsat;
 import java.awt.Image;
 import java.io.IOException;
 import java.nio.file.Path;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 
 import org.opengis.util.GenericName;
 
@@ -40,7 +41,7 @@ import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
  * @version 1.0
  * @since   1.0
  */
-public class LandsatCoverageResource extends AbstractCoverageResource {
+public class LandsatCoverageResource extends AbstractCoverageResource implements ResourceOnFileSystem {
 
     /**
      * {@link Path} of the parent directory which contain all
@@ -149,5 +150,10 @@ public class LandsatCoverageResource extends AbstractCoverageResource {
     @Override
     public Image getLegend() throws DataStoreException {
         return null;
+    }
+
+    @Override
+    public Path[] getComponentFiles() throws DataStoreException {
+        return new Path[]{imagePath};
     }
 }
