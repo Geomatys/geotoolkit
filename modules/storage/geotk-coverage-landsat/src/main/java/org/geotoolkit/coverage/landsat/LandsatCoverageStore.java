@@ -24,9 +24,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
 
@@ -51,7 +55,7 @@ import org.geotoolkit.storage.Resource;
  * @version 1.0
  * @since   1.0
  */
-public class LandsatCoverageStore extends AbstractCoverageStore implements Aggregate {
+public class LandsatCoverageStore extends AbstractCoverageStore implements Aggregate, ResourceOnFileSystem {
 
     private final List<Resource> resources = new ArrayList<>();
 
@@ -187,6 +191,19 @@ public class LandsatCoverageStore extends AbstractCoverageStore implements Aggre
         }
     }
 
+    @Override
+    public Path[] getComponentFiles() throws DataStoreException {
+        final Set<Path> paths = new HashSet<>();
+        paths.add(metadataParser.getPath());
+
+        for (org.apache.sis.storage.Resource r : DataStores.flatten(this, false)) {
+            if (r instanceof ResourceOnFileSystem) {
+                paths.addAll(Arrays.asList(((ResourceOnFileSystem) r).getComponentFiles()));
+            }
+        }
+
+        return paths.toArray(new Path[paths.size()]);
+    }
 
     //**************************************************************************//
     //********** added methods only effectives for Landsat utilisation *********//
