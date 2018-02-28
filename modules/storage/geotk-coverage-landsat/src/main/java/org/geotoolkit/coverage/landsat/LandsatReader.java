@@ -91,7 +91,7 @@ public class LandsatReader extends GridCoverageReader {
      * Index arrays which contain index to retrieve appropriates band index to
      * build different coverage from Landsat datas.
      */
-    private final static int[][] BANDS_INDEX;
+    final static int[][] BANDS_INDEX;
 
     /**
      * TiffImageReader SPI used to read images
