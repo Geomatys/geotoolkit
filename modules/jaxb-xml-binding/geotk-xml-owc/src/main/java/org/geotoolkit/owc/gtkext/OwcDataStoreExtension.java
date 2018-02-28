@@ -45,7 +45,6 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.util.InternationalString;
 import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
@@ -106,7 +105,7 @@ public class OwcDataStoreExtension extends OwcExtension {
 
         final DataStoreFactory ff = DataStores.getFactoryById(factoryName);
         if(ff!=null){
-            final DataStore store = ff.open(params);
+            final DataStore store = DataStores.open(ff,params);
             if(store instanceof FeatureStore){
                 final Session session = ((FeatureStore)store).createSession(true);
                 final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(NamesExt.valueOf(typeName)));

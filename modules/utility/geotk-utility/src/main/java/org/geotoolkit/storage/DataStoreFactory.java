@@ -17,10 +17,6 @@
 package org.geotoolkit.storage;
 
 import org.opengis.parameter.ParameterValueGroup;
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
@@ -31,7 +27,6 @@ import org.geotoolkit.parameter.Parameters;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.GeneralParameterValue;
-import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
@@ -108,53 +103,6 @@ public abstract class DataStoreFactory extends DataStoreProvider {
     }
 
     /**
-     * Test to see if this factory is suitable for processing the data pointed
-     * to by the params map.
-     *
-     * <p>
-     * If this data source requires a number of parameters then this method
-     * should check that they are all present and that they are all valid. If
-     * the data source is a file reading data source then the extensions or
-     * mime types of any files specified should be checked. For example, a
-     * Shapefile data source should check that the url param ends with shp,
-     * such tests should be case insensitive.
-     * </p>
-     *
-     * @param params The full set of information needed to construct a live
-     *        data source.
-     *
-     * @return boolean true if and only if this factory can process the resource
-     *         indicated by the param set and all the required params are
-     *         present.
-     */
-    @Deprecated
-    public final boolean canProcess(Map<String, ? extends Serializable> params) {
-        params = forceIdentifier(params);
-
-        //ensure it's the valid identifier
-        final Object id = params.get(IDENTIFIER.getName().getCode());
-        try{
-            final String expectedId = ((ParameterDescriptor<String>)getOpenParameters()
-                .descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
-            if(!expectedId.equals(id)){
-                return false;
-            }
-        }catch(ParameterNotFoundException ex){
-            //this feature store factory does not declare a identifier id
-        }
-
-        final ParameterValueGroup prm = Parameters.toParameter(params, getOpenParameters());
-        if (prm == null) {
-            return false;
-        }
-        try {
-            return canProcess(prm);
-        } catch (InvalidParameterValueException ex) {
-            return false;
-        }
-    }
-
-    /**
      * @param params
      * @return
      * @see org.geotoolkit.storage.DataStoreFactory#canProcess(java.util.Map)
@@ -195,30 +143,15 @@ public abstract class DataStoreFactory extends DataStoreProvider {
 
         try {
             final Object locationValue = connector.getStorageAs(((ParameterDescriptor)desc).getValueClass());
-            final Map params = Collections.singletonMap(LOCATION, locationValue);
+            final ParameterValueGroup params = getOpenParameters().createValue();
+            params.parameter(LOCATION).setValue(locationValue);
+
             if (canProcess(params)) {
                 return new ProbeResult(true, null, null);
             }
         } catch(IllegalArgumentException ex) {}
 
         return new ProbeResult(false, null, null);
-    }
-
-    /**
-     * @param params
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
-     * @see DataStoreFactory#open(org.opengis.parameter.ParameterValueGroup)
-     */
-    @Deprecated
-    public final DataStore open(Map<String, ? extends Serializable> params) throws DataStoreException {
-        final ParameterValueGroup prm;
-        try {
-            prm = Parameters.toParameter(forceIdentifier(params), getOpenParameters());
-        } catch (IllegalArgumentException ex) {
-            throw new DataStoreException(ex);
-        }
-        return open(prm);
     }
 
     @Override
@@ -236,7 +169,9 @@ public abstract class DataStoreFactory extends DataStoreProvider {
 
         try {
             final Object locationValue = connector.getStorageAs(((ParameterDescriptor)desc).getValueClass());
-            final Map params = Collections.singletonMap(LOCATION, locationValue);
+            final ParameterValueGroup params = getOpenParameters().createValue();
+            params.parameter(LOCATION).setValue(locationValue);
+
             if (canProcess(params)) {
                 return open(params);
             }
@@ -260,23 +195,6 @@ public abstract class DataStoreFactory extends DataStoreProvider {
     public abstract DataStore open(ParameterValueGroup params) throws DataStoreException;
 
     /**
-     * @param params
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
-     * @see DataStoreFactory#create(org.opengis.parameter.ParameterValueGroup)
-     */
-    @Deprecated
-    public final DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
-        final ParameterValueGroup prm;
-        try {
-            prm = Parameters.toParameter(forceIdentifier(params), getOpenParameters());
-        } catch(IllegalArgumentException ex) {
-            throw new DataStoreException(ex);
-        }
-        return create(prm);
-    }
-
-    /**
      * Create a new storage location.
      * This method is intended to create from scratch a new storage location.
      * <br/>
@@ -289,22 +207,6 @@ public abstract class DataStoreFactory extends DataStoreProvider {
      */
     public DataStore create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Store creation not supported");
-    }
-
-    /**
-     * Set the identifier parameter in the map if not present.
-     */
-    @Deprecated
-    protected final Map<String,Serializable> forceIdentifier(Map params){
-
-        if (!params.containsKey(IDENTIFIER.getName().getCode())) {
-            //identifier is not specified, force it
-            final ParameterDescriptorGroup desc = getOpenParameters();
-            params = new HashMap<String, Serializable>(params);
-            final Object value = ((ParameterDescriptor)desc.descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
-            params.put(IDENTIFIER.getName().getCode(), (Serializable)value);
-        }
-        return params;
     }
 
     /**

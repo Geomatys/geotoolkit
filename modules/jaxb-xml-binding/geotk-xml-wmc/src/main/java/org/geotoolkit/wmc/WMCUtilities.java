@@ -18,10 +18,7 @@
 package org.geotoolkit.wmc;
 
 import java.io.InputStream;
-import java.io.Serializable;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -62,7 +59,7 @@ import org.geotoolkit.storage.DataStores;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.storage.coverage.CoverageResource;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
@@ -170,10 +167,10 @@ public class WMCUtilities {
                 final URL serviceURL = new URL(serverType.getOnlineResource().getHref());
 
                 final DataStoreFactory factory = DataStores.getFactoryById(serviceId);
-                final Map<String, Serializable> parameters = new HashMap<String, Serializable>();
-                parameters.put("identifier", serviceId);
-                parameters.put("version", serverType.getVersion());
-                parameters.put("url", serviceURL);
+                final ParameterValueGroup parameters = factory.getOpenParameters().createValue();
+                parameters.parameter("identifier").setValue(serviceId);
+                parameters.parameter("version").setValue(serverType.getVersion());
+                parameters.parameter("url").setValue(serviceURL);
                 server = factory.open(parameters);
             } catch (Exception ex) {
                 Logging.getLogger("org.geotoolkit.wmc").log(Level.SEVERE, null, ex);

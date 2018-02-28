@@ -33,10 +33,8 @@ import com.vividsolutions.jts.geom.Point;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -49,7 +47,6 @@ import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.Resource;
 import org.geotoolkit.test.TestData;
 import org.junit.Assert;
 import org.opengis.util.GenericName;
@@ -59,6 +56,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.IdentifiedType;
 import org.geotoolkit.data.FeatureSet;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
@@ -244,10 +242,11 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 
         ShapefileFeatureStore shapefile;
         GenericName typeName = type.getName();
-        Map params = new HashMap();
-        params.put(ShapefileFeatureStoreFactory.PATH.getName().toString(), tmp.toURI().toURL());
-        params.put(ShapefileFeatureStoreFactory.MEMORY_MAPPED.getName().toString(), memorymapped);
-        params.put(ShapefileFeatureStoreFactory.DBFCHARSET.getName().toString(), charset);
+
+        final ParameterValueGroup params = maker.getOpenParameters().createValue();
+        params.parameter(ShapefileFeatureStoreFactory.LOCATION).setValue(tmp.toURI());
+        params.parameter(ShapefileFeatureStoreFactory.MEMORY_MAPPED.getName().toString()).setValue(memorymapped);
+        params.parameter(ShapefileFeatureStoreFactory.DBFCHARSET.getName().toString()).setValue(charset);
 
         shapefile = (ShapefileFeatureStore) maker.open(params);
 

@@ -22,9 +22,9 @@ import java.util.Collections;
 import java.util.Map;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -80,9 +80,9 @@ public abstract class AbstractFileFeatureStoreFactory extends DataStoreFactory i
         FeatureStore result;
         final  Map params = Collections.singletonMap(PATH.getName().toString(), uri);
         try {
-            result = (FeatureStore) open(params);
+            result = (FeatureStore) DataStores.open(this,params);
         } catch (DataStoreException e) {
-            result = (FeatureStore) create(params);
+            result = (FeatureStore) DataStores.create(this,params);
         }
         return result;
     }
