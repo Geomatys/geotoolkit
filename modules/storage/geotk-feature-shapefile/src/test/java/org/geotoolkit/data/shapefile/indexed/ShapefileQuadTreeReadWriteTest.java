@@ -53,6 +53,7 @@ import org.opengis.util.GenericName;
 import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * @version $Id$
@@ -109,11 +110,10 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
 
     private FeatureStore createDataStore( final ShapefileFeatureStoreFactory fac, final URL url, final boolean memoryMapped )
             throws IOException, DataStoreException, URISyntaxException {
-        Map params = new HashMap();
-        params.put(ShapefileFeatureStoreFactory.PATH.getName().toString(), url.toURI());
-        params.put(ShapefileFeatureStoreFactory.CREATE_SPATIAL_INDEX.getName().toString(), new Boolean(true));
-        FeatureStore createFeatureStore = (FeatureStore) fac.open(params);
-        return createFeatureStore;
+        final ParameterValueGroup params = fac.getOpenParameters().createValue();
+        params.parameter(ShapefileFeatureStoreFactory.LOCATION).setValue(url.toURI());
+        params.parameter(ShapefileFeatureStoreFactory.CREATE_SPATIAL_INDEX.getName().toString()).setValue(Boolean.TRUE);
+        return fac.open(params);
     }
 
     private void doubleWrite( final FeatureType type, final FeatureCollection one, final File tmp,
@@ -200,9 +200,9 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
 
         ShapefileFeatureStoreFactory fac = new ShapefileFeatureStoreFactory();
 
-        Map params = new HashMap();
-        params.put(ShapefileFeatureStoreFactory.PATH.getName().toString(), file.toURI());
-        params.put(ShapefileFeatureStoreFactory.CREATE_SPATIAL_INDEX.getName().toString(), new Boolean(true));
+        final ParameterValueGroup params = fac.getOpenParameters().createValue();
+        params.parameter(ShapefileFeatureStoreFactory.LOCATION).setValue(file.toURI());
+        params.parameter(ShapefileFeatureStoreFactory.CREATE_SPATIAL_INDEX.getName().toString()).setValue(Boolean.TRUE);
         IndexedShapefileFeatureStore ds = (IndexedShapefileFeatureStore) fac.open(params);
 
         FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(null);
