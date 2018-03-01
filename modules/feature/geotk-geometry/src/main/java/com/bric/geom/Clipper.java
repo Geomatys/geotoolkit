@@ -34,17 +34,16 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Stack;
 
-import com.bric.util.FloatArrayFactory;
 
 /** This class lets you clip/intersect an arbitrary shape to a Rectangle2D.
  *
  */
 public abstract class Clipper {
 
-    private static final FloatArrayFactory floatFactory = new FloatArrayFactory();
+    //private static final FloatArrayFactory floatFactory = new FloatArrayFactory();
 
     /** This is the tolerance with which 2 numbers must
      * be similar to be considered "equal".
@@ -68,7 +67,7 @@ public abstract class Clipper {
      */
     static class ClippedPath {
         public final GeneralPath g;
-        private Stack<float[]> uncommittedPoints = new Stack<float[]>();
+        private final ArrayList<float[]> uncommittedPoints = new ArrayList<>();
         private float initialX, initialY;
 
         public ClippedPath(int windingRule) {
@@ -124,17 +123,13 @@ public abstract class Clipper {
         public void lineTo(float x,float y) {
 
             if(uncommittedPoints.size()>0) {
-                float[] last = uncommittedPoints.peek();
+                float[] last = uncommittedPoints.get(uncommittedPoints.size() - 1);
                 //are we adding the same point?
                 if(Math.abs(last[0]-x)<TOLERANCE && Math.abs(last[1]-y)<TOLERANCE)
                     return;
             }
 
-
-            float[] f = floatFactory.getArray(2);
-            f[0] = x;
-            f[1] = y;
-            uncommittedPoints.push(f);
+            uncommittedPoints.add(new float[]{x, y});
         }
 
         public void closePath() {
@@ -145,29 +140,42 @@ public abstract class Clipper {
 
         /** Flush out the stack of uncommitted points. */
         public void flush() {
-            while(uncommittedPoints.size()>0) {
-                identifyLines : while(uncommittedPoints.size()>=3) {
-                    float[] first = uncommittedPoints.get(0);
-                    float[] middle = uncommittedPoints.get(1);
-                    float[] last = uncommittedPoints.get(2);
-
-                    if(Math.abs(first[0]-middle[0])<TOLERANCE && Math.abs(first[0]-last[0])<TOLERANCE) {
-                        //everything has the same x, so we have a vertical line
-                        float[] array = uncommittedPoints.remove(1);
-                        floatFactory.putArray(array);
-                    } else if(Math.abs(first[1]-middle[1])<TOLERANCE && Math.abs(first[1]-last[1])<TOLERANCE) {
-                        //everything has the same y, so we have a horizontal line
-                        float[] array = uncommittedPoints.remove(1);
-                        floatFactory.putArray(array);
-                    } else {
-                        break identifyLines;
-                    }
+            final int size = uncommittedPoints.size();
+            if (size < 1) {
+                return;
+            } else if (size < 3) {
+                for (final float[] p : uncommittedPoints) {
+                    g.lineTo(p[0], p[1]);
                 }
+            } else {
+                float[] first, middle, last;
+                int i = 0;
+                first = uncommittedPoints.get(i++);
+                middle = uncommittedPoints.get(i++);
+                do {
+                    last = uncommittedPoints.get(i++);
 
-                float[] point = uncommittedPoints.remove(0);
-                g.lineTo( point[0], point[1]);
-                floatFactory.putArray(point);
+                    final float ux = middle[0] - first[0];
+                    final float uy = middle[1] - first[1];
+
+                    final float vx = last[0] - first[0];
+                    final float vy = last[1] - first[1];
+
+                    // Non colinear points
+                    if (Math.abs(ux * vy - uy * vx) > TOLERANCE) {
+                        g.lineTo(first[0], first[1]);
+                        first = middle;
+                    }
+
+                    middle = last;
+
+                } while (i < size);
+
+                g.lineTo(first[0], first[1]);
+                g.lineTo(middle[0], middle[1]);
             }
+
+            uncommittedPoints.clear();
         }
     }
 
@@ -213,15 +221,18 @@ public abstract class Clipper {
             return slope+"*t+"+intercept;
         }
 
+        @Override
         public double evaluate(double t) {
             return slope*t+intercept;
         }
 
+        @Override
         public int evaluateInverse(double x,double[] dest,int offset) {
             dest[offset] = (x-intercept)/slope;
             return 1;
         }
 
+        @Override
         public double getDerivative(double t) {
             return slope;
         }
@@ -246,14 +257,17 @@ public abstract class Clipper {
             c = x0;
         }
 
+        @Override
         public double evaluate(double t) {
             return a*t*t+b*t+c;
         }
 
+        @Override
         public double getDerivative(double t) {
             return 2*a*t+b;
         }
 
+        @Override
         public int evaluateInverse(double x,double[] dest,int offset) {
             double C = c-x;
             double det = b*b-4*a*C;
@@ -288,10 +302,12 @@ public abstract class Clipper {
             d = x0;
         }
 
+        @Override
         public double evaluate(double t) {
             return a*t*t*t+b*t*t+c*t+d;
         }
 
+        @Override
         public double getDerivative(double t) {
             return 3*a*t*t+2*b*t+c;
         }
@@ -306,6 +322,7 @@ public abstract class Clipper {
          */
         double[] t2;
         double[] eqn;
+        @Override
         public int evaluateInverse(double x,double[] dest,int offset) {
             if(eqn==null)
                 eqn = new double[4];
@@ -322,9 +339,7 @@ public abstract class Clipper {
                 t2 = new double[3];
             int k = CubicCurve2D.solveCubic(eqn,t2);
             if(k<0) return 0;
-            for(int i = 0; i<k; i++) {
-                dest[offset+i] = t2[i];
-            }
+            System.arraycopy(t2, 0, dest, offset, k);
             return k;
         }
     }
@@ -413,7 +428,7 @@ public abstract class Clipper {
         float initialX = 0;
         float initialY = 0;
         int k;
-        float[] f = floatFactory.getArray(6);
+        float[] f = new float[6];
         boolean shouldClose = false;
         float lastX = 0;
         float lastY = 0;
@@ -527,7 +542,7 @@ public abstract class Clipper {
             i.next();
         }
         p.flush();
-        floatFactory.putArray(f);
+        //floatFactory.putArray(f);
         return p.g;
     }
 
