@@ -36,7 +36,7 @@ public class ZipUtilities extends Static {
     private static FileSystem createZipFileSystem(Path zipPath, boolean create)
             throws IOException {
         // convert the filename to a URI
-        final URI uri = URI.create("jar:file:" + zipPath.toAbsolutePath().toString());
+        final URI uri = URI.create("jar:" + zipPath.toUri());
         final Map<String, String> env = new HashMap<>();
         if (create) {
             env.put("create", "true");
