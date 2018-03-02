@@ -17,10 +17,13 @@
 package org.geotoolkit.feature.op;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import static org.apache.sis.feature.AbstractIdentifiedType.NAME_KEY;
 import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.feature.DefaultAttributeType;
+import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
@@ -63,6 +66,13 @@ public class ExpressionOperation extends AbstractOperation {
     @Override
     public IdentifiedType getResult() {
         return TYPE;
+    }
+
+    @Override
+    public Set<String> getDependencies() {
+        final Set<String> dependencies = new HashSet<>();
+        expression.accept(ListingPropertyVisitor.VISITOR, dependencies);
+        return dependencies;
     }
 
     @Override
