@@ -36,11 +36,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.feature.AbstractOperation;
+import org.apache.sis.feature.FeatureOperations;
 import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import static org.geotoolkit.data.AbstractFeatureStore.*;
@@ -58,6 +61,7 @@ import org.geotoolkit.db.reverse.MetaDataConstants.Index;
 import org.geotoolkit.db.reverse.MetaDataConstants.Schema;
 import org.geotoolkit.db.reverse.MetaDataConstants.Table;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.op.CoverageGeometryOperation;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.coverage.Coverage;
 import org.opengis.feature.AttributeType;
@@ -67,6 +71,7 @@ import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -760,7 +765,7 @@ public final class DataBaseModel {
 
                     //Set the CRS if it's a geometry
                     final Class binding = atb.getValueClass();
-                    if (Geometry.class.isAssignableFrom(binding) || Coverage.class.isAssignableFrom(binding)) {
+                    if (Geometry.class.isAssignableFrom(binding)) {
 
                         //look up the type ( should only be one row )
                         final Filter tableFilter = filter(Table.TABLE_SCHEM, schema.name, Table.TABLE_NAME, tableName);
@@ -789,6 +794,44 @@ public final class DataBaseModel {
                                 atb.addRole(AttributeRole.DEFAULT_GEOMETRY);
                                 defaultGeomSet = true;
                             }
+                        }
+                    } else if (Coverage.class.isAssignableFrom(binding)) {
+
+                        //look up the type ( should only be one row )
+                        final Filter tableFilter = filter(Table.TABLE_SCHEM, schema.name, Table.TABLE_NAME, tableName);
+                        final Filter colFilter = FF.equals(FF.property(Column.COLUMN_NAME), FF.literal(name));
+                        final Iterator<Map> meta = cacheColumns.filter(
+                                FF.and(tableFilter, colFilter));
+                        final Map metas = meta.next();
+
+                        //add the attribute as a geometry, try to figure out
+                        // its srid first
+                        Integer srid = null;
+                        CoordinateReferenceSystem crs = null;
+                        try {
+                            srid = dialect.getGeometrySRID(store.getDatabaseSchema(), tableName, name, metas, cx);
+                            if(srid != null)
+                                crs = dialect.createCRS(srid, cx);
+                        } catch (SQLException e) {
+                            String msg = "Error occured determing srid for " + tableName + "."+ name;
+                            store.getLogger().log(Level.WARNING, msg, e);
+                        }
+
+                        atb.setCRS(crs);
+                        if(srid != null){
+                            atb.addCharacteristic(JDBCFeatureStore.JDBC_PROPERTY_SRID).setDefaultValue(srid);
+                            //not working yet, SIS FeatureTypeBuilder do not reconize Coverage as a geometry type.
+//                            if (!defaultGeomSet) {
+//                                //create a computed geometry from coverage envelope
+//                                PropertyTypeBuilder geomProp = ftb.addProperty(new CoverageGeometryOperation(AttributeConvention.GEOMETRY_PROPERTY, atb.getName().toString()));
+//                                try {
+//                                    ftb.addProperty(FeatureOperations.envelope(
+//                                        Collections.singletonMap(AbstractOperation.NAME_KEY,AttributeConvention.ENVELOPE_PROPERTY), null, geomProp.build()));
+//                                } catch (FactoryException e) {
+//                                    throw new IllegalStateException(e);
+//                                }
+//                                defaultGeomSet = true;
+//                            }
                         }
                     }
                 }

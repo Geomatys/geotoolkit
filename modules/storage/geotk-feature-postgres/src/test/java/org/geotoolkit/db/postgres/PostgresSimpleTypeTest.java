@@ -71,6 +71,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyType;
 
 /**
@@ -420,7 +421,7 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         //we expect one more field for id
         final ArrayList<? extends PropertyType> descs = new ArrayList<>(resType.getProperties(true));
 
-        int index=2;
+        int index=4;
         PropertyType desc;
         desc = descs.get(index++);
         assertEquals("geometry", desc.getName().tip().toString());
