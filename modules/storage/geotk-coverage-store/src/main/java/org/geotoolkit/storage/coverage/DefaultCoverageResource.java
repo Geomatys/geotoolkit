@@ -17,6 +17,7 @@
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Image;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -38,7 +39,7 @@ public class DefaultCoverageResource extends AbstractCoverageResource{
     private final Object input;
     private final int imageIndex;
 
-    public DefaultCoverageResource(final CoverageStore store, final GridCoverage2D coverage, GenericName name) {
+    public DefaultCoverageResource(final DataStore store, final GridCoverage2D coverage, GenericName name) {
         super(store,name);
         this.coverage = coverage;
         this.input = null;

@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStoreFactory;
@@ -124,9 +125,9 @@ public class AmendedCoverageStore extends AbstractCoverageStore implements Aggre
     public CoverageResource create(GenericName name) throws DataStoreException {
         final CoverageResource cr = store.create(name);
         if(cr instanceof PyramidalCoverageResource){
-            return new AmendedCoverageResource(cr, store);
+            return new AmendedCoverageResource(cr, (DataStore)store);
         }else{
-            return new AmendedCoverageResource(cr, store);
+            return new AmendedCoverageResource(cr, (DataStore)store);
         }
     }
 

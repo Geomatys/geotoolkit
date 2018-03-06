@@ -33,14 +33,13 @@ import java.util.Set;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStore;
 
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
@@ -49,14 +48,16 @@ import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.Resource;
 
 /**
- * Store adapted to Landsat 8 comportement.
+ * Store adapted to Landsat 8 files structure.
  *
  * @author Remi Marechal (Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @version 1.0
  * @since   1.0
  */
-public class LandsatCoverageStore extends AbstractCoverageStore implements Aggregate, ResourceOnFileSystem {
+public class LandsatCoverageStore extends DataStore implements Aggregate, ResourceOnFileSystem {
 
+    private final ParameterValueGroup params;
     private final List<Resource> resources = new ArrayList<>();
 
     /**
@@ -92,7 +93,7 @@ public class LandsatCoverageStore extends AbstractCoverageStore implements Aggre
 
     /**
      *
-     * @param path
+     * @param uri
      * @throws DataStoreException
      */
     public LandsatCoverageStore(URI uri) throws DataStoreException {
@@ -109,9 +110,9 @@ public class LandsatCoverageStore extends AbstractCoverageStore implements Aggre
      */
     public LandsatCoverageStore(ParameterValueGroup params)
             throws DataStoreException {
-        super(params);
+        this.params = params;
 
-        final Object uri = Parameters.castOrWrap(params).getValue(LandsatStoreFactory.PATH);
+        final Object uri = Parameters.castOrWrap(params).getValue(LandsatProvider.PATH);
         final Path path;
         if (uri != null) {
             path = Paths.get((URI) uri);
@@ -140,8 +141,13 @@ public class LandsatCoverageStore extends AbstractCoverageStore implements Aggre
      * @return
      */
     private static ParameterValueGroup toParameters(URI uri) {
-        final Parameters params = Parameters.castOrWrap(LandsatStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
-        params.getOrCreate(LandsatStoreFactory.PATH).setValue(uri);
+        final Parameters params = Parameters.castOrWrap(LandsatProvider.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(LandsatProvider.PATH).setValue(uri);
+        return params;
+    }
+
+    @Override
+    public ParameterValueGroup getOpenParameters() {
         return params;
     }
 
@@ -155,15 +161,7 @@ public class LandsatCoverageStore extends AbstractCoverageStore implements Aggre
      */
     @Override
     public DataStoreFactory getProvider() {
-        return DataStores.getFactoryById(LandsatStoreFactory.NAME);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public CoverageType getType() {
-        return CoverageType.GRID;
+        return DataStores.getFactoryById(LandsatProvider.NAME);
     }
 
     /**

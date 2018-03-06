@@ -22,17 +22,12 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
-
-import org.opengis.util.GenericName;
-
 import org.apache.sis.storage.DataStoreException;
-
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.coverage.AbstractCoverageResource;
-import org.geotoolkit.storage.coverage.CoverageStore;
-
+import org.opengis.util.GenericName;
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
 
 /**
@@ -79,7 +74,7 @@ public class LandsatCoverageResource extends AbstractCoverageResource implements
      * @param parentDirectory path metadata file parent folder.
      * @param metadataParser Landsat 8 parent directory.
      */
-    public LandsatCoverageResource(final CoverageStore store, final GenericName name,
+    public LandsatCoverageResource(final LandsatCoverageStore store, final GenericName name,
                                     final Path parentDirectory, final LandsatMetadataParser metadataParser) {
         super(store, name);
         this.parentDirectory = parentDirectory;

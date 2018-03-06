@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.opengis.util.GenericName;
@@ -32,7 +33,7 @@ import org.opengis.util.GenericName;
  */
 public class DefaultCollectionCoverageResource extends AbstractCollectionCoverageResource {
 
-    public DefaultCollectionCoverageResource(CoverageStore store, GenericName name) {
+    public DefaultCollectionCoverageResource(DataStore store, GenericName name) {
         super(store,name);
     }
 

@@ -32,7 +32,9 @@ import org.apache.sis.metadata.iso.content.DefaultAttributeGroup;
 import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -62,7 +64,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
 
     private static final int DEFAULT_SUBSET_SIZE = 256;
 
-    protected final CoverageStore store;
+    protected final DataStore store;
 
     private DefaultCoverageDescription desc = null;
 
@@ -71,7 +73,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
      * @param store can be null
      * @param name never null
      */
-    public AbstractCoverageResource(CoverageStore store, GenericName name) {
+    public AbstractCoverageResource(DataStore store, GenericName name) {
         super(name);
         this.store = store;
     }
@@ -87,7 +89,7 @@ public abstract class AbstractCoverageResource extends AbstractFeatureSet implem
     }
 
     @Override
-    public CoverageStore getStore() {
+    public DataStore getStore() {
         return store;
     }
 
