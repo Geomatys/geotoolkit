@@ -35,7 +35,6 @@ import javax.xml.bind.JAXBException;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.storage.DataStoreException;
@@ -201,10 +200,5 @@ public class XMLCoverageStore extends AbstractCoverageStore implements Aggregate
         resources.add(ref);
         ref.save();
         return ref;
-    }
-
-    @Override
-    public CoverageType getType() {
-        return CoverageType.PYRAMID;
     }
 }

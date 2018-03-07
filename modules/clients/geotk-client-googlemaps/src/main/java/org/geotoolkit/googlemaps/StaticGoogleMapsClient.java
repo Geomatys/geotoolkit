@@ -26,7 +26,6 @@ import org.apache.sis.storage.Aggregate;
 
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
@@ -113,11 +112,6 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Cl
 
     @Override
     public void close() {
-    }
-
-    @Override
-    public CoverageType getType() {
-        return CoverageType.PYRAMID;
     }
 
 }

@@ -72,12 +72,6 @@ public interface CoverageStore extends AutoCloseable, Resource {
     }
 
     /**
-     * Check coverage type define in {@link CoverageType}
-     * @return a {@link CoverageType}
-     */
-    public abstract CoverageType getType();
-
-    /**
      * Delete an existing coverage reference.
      *
      * @param name

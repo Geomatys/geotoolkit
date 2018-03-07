@@ -20,7 +20,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.CapabilitiesException;
-import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.auto.GetCapabilitiesAuto;
 import org.geotoolkit.wms.v110.GetCapabilities110;
@@ -429,10 +428,5 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
         sb.append("serverUrl: ").append(serverURL).append(", ")
           .append("version: ").append(getVersion()).append("]");
         return sb.toString();
-    }
-
-    @Override
-    public CoverageType getType() {
-        return CoverageType.GRID;
     }
 }

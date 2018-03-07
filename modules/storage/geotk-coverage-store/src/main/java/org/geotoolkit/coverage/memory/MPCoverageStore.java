@@ -25,7 +25,6 @@ import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.storage.Resource;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -68,11 +67,6 @@ public class MPCoverageStore extends AbstractCoverageStore implements Aggregate 
 
     @Override
     public void close() {
-    }
-
-    @Override
-    public CoverageType getType() {
-        return CoverageType.PYRAMID;
     }
 
 }

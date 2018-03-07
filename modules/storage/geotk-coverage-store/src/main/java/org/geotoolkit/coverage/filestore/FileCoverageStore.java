@@ -42,7 +42,6 @@ import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
@@ -310,11 +309,6 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
                 return XImageIO.getWriterBySuffix(candidate, null);
             }
         }
-    }
-
-    @Override
-    public CoverageType getType() {
-        return CoverageType.GRID;
     }
 
     @Override

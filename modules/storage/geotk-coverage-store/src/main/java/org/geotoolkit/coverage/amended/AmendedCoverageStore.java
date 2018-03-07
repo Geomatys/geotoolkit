@@ -32,7 +32,6 @@ import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreListener;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
-import org.geotoolkit.storage.coverage.CoverageType;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -129,14 +128,6 @@ public class AmendedCoverageStore extends AbstractCoverageStore implements Aggre
         }else{
             return new AmendedCoverageResource(cr, (DataStore)store);
         }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public CoverageType getType() {
-        return store.getType();
     }
 
     /**
