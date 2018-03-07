@@ -217,7 +217,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
         expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
         result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
-        org.apache.sis.test.Assert.assertXmlEquals(expResult, result,
+        org.apache.sis.test.MetadataAssert.assertXmlEquals(expResult, result,
                 "http://www.w3.org/2000/xmlns:*",
                 "http://www.w3.org/2001/XMLSchema-instance:schemaLocation"
         );

@@ -39,7 +39,7 @@ import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.xml.Namespaces;
 import org.junit.*;
 
-import static org.apache.sis.test.Assert.*;
+import static org.apache.sis.test.MetadataAssert.*;
 import org.geotoolkit.gml.xml.v311.TimeInstantType;
 
 /**
@@ -62,10 +62,6 @@ public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
     @BeforeClass
     public static void setUpClass() throws Exception {
         pool = GMLMarshallerPool.getInstance();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
     }
 
     @Before

@@ -61,7 +61,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.sis.core</groupId>
-      <artifactId>sis-utility</artifactId>
+      <artifactId>sis-metadata</artifactId>
     </dependency>
   </dependencies>
 

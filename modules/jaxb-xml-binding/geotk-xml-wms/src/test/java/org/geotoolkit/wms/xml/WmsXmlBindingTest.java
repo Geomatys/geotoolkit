@@ -73,9 +73,10 @@ import org.apache.sis.referencing.NamedIdentifier;
 
 import static org.apache.sis.test.TestUtilities.getSingleton;
 
-import static org.apache.sis.test.Assert.*;
 import org.geotoolkit.temporal.object.DefaultInstant;
 import org.opengis.referencing.IdentifiedObject;
+
+import static org.apache.sis.test.MetadataAssert.*;
 
 
 /**

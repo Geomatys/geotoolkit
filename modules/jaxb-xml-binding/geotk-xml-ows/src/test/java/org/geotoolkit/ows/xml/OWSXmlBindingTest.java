@@ -42,12 +42,13 @@ import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import org.xml.sax.SAXException;
 
-import static org.apache.sis.test.Assert.*;
 import org.geotoolkit.ows.xml.v200.AdditionalParameter;
 import org.geotoolkit.ows.xml.v200.AdditionalParametersType;
 import org.geotoolkit.ows.xml.v200.CodeType;
 import org.geotoolkit.ows.xml.v200.MetadataType;
 import org.geotoolkit.ows.xml.v200.ObjectFactory;
+
+import static org.apache.sis.test.MetadataAssert.*;
 
 
 /**
@@ -73,15 +74,6 @@ public class OWSXmlBindingTest extends org.geotoolkit.test.TestBase {
     }
     private Unmarshaller unmarshaller;
     private Marshaller   marshaller;
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
 
     @Before
     public void setUp() throws JAXBException {
@@ -167,13 +159,13 @@ public class OWSXmlBindingTest extends org.geotoolkit.test.TestBase {
     public void additionalParametersTypeMarshallingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
         Marshaller marshaller = owsPool.acquireMarshaller();
         final ObjectFactory factory = new ObjectFactory();
-        
+
         AdditionalParametersType metadata = new AdditionalParametersType();
         List<AdditionalParameter> params = new ArrayList<>();
         params.add(new AdditionalParameter(new CodeType("param-1"), Arrays.asList("value 1")));
         params.add(new AdditionalParameter(new CodeType("param-2"), Arrays.asList("value 2")));
         metadata.setAdditionalParameter(params);
-        
+
         StringWriter sw = new StringWriter();
         marshaller.marshal(factory.createAdditionalParameters(metadata), sw);
 

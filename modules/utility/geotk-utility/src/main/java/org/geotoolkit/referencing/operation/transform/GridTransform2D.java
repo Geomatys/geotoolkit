@@ -163,7 +163,7 @@ public class GridTransform2D extends GridTransform implements MathTransform2D {
         {
             Matrix derivative = null;
             if (derivate) {
-                derivative = derivative(new DirectPositionView(srcPts, srcOff, getSourceDimensions()));
+                derivative = derivative(new DirectPositionView.Double(srcPts, srcOff, getSourceDimensions()));
             }
             if (dstPts == null) {
                 return derivative;

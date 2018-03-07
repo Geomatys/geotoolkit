@@ -36,7 +36,6 @@ import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import static org.apache.sis.test.Assert.*;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.io.WPSSchema;
 import org.apache.sis.referencing.CommonCRS;
@@ -44,6 +43,8 @@ import org.geotoolkit.wps.xml.Execute;
 import org.geotoolkit.wps.xml.v100.InputType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
+
+import static org.apache.sis.test.MetadataAssert.*;
 
 
 /**

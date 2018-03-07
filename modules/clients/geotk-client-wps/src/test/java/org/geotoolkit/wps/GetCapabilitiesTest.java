@@ -24,8 +24,8 @@ import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.GetCapabilities;
 import org.junit.Test;
 
-import static org.apache.sis.test.Assert.*;
 import org.geotoolkit.test.URLComparator;
+import static org.apache.sis.test.MetadataAssert.*;
 
 
 /**

@@ -9,7 +9,6 @@ xmlns = {
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
 //  @XmlJavaTypeAdapter(ScopedNameAdapter.class), // TODO
-    @XmlJavaTypeAdapter(GO_LocalName.class),
     @XmlJavaTypeAdapter(GO_GenericName.class),
     // Primitive type handling
     @XmlJavaTypeAdapter(CharSequenceAdapter.class),

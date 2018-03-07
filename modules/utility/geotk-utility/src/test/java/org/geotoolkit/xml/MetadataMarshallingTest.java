@@ -51,7 +51,7 @@ import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.LocaleDependantTestBase;
 
 import static java.util.Collections.singleton;
-import static org.apache.sis.test.Assert.*;
+import static org.apache.sis.test.MetadataAssert.*;
 import static org.apache.sis.test.TestUtilities.getSingleton;
 
 

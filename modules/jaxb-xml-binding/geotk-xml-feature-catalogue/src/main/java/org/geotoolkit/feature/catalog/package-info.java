@@ -10,7 +10,6 @@ xmlns = {
 @XmlJavaTypeAdapters({
     // ISO 19115 adapter (metadata module)
 //  @XmlJavaTypeAdapter(ScopedNameAdapter.class), // TODO
-    @XmlJavaTypeAdapter(GO_LocalName.class),
     @XmlJavaTypeAdapter(GO_GenericName.class),
     @XmlJavaTypeAdapter(CI_ResponsibleParty.class),
     @XmlJavaTypeAdapter(CI_Citation.class),
@@ -64,4 +63,3 @@ import org.geotoolkit.resources.jaxb.feature.catalog.code.*;
 import org.geotoolkit.resources.jaxb.feature.catalog.GO_Decimal32;
 import org.geotoolkit.resources.jaxb.feature.catalog.MultiplicityAdapter;
 import org.geotoolkit.resources.jaxb.feature.catalog.MultiplicityRangeAdapter;
-
