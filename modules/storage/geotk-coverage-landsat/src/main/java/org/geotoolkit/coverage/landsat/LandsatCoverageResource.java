@@ -19,6 +19,9 @@ package org.geotoolkit.coverage.landsat;
 import java.awt.Image;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 
 import org.opengis.util.GenericName;
 
@@ -40,13 +43,13 @@ import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
  * @version 1.0
  * @since   1.0
  */
-public class LandsatCoverageResource extends AbstractCoverageResource {
+public class LandsatCoverageResource extends AbstractCoverageResource implements ResourceOnFileSystem {
 
     /**
      * {@link Path} of the parent directory which contain all
      * Landsat 8 images.
      */
-    private final Path imagePath;
+    private final Path parentDirectory;
 
     /**
      * {@link Path} to the metadata landsat 8 file.
@@ -73,13 +76,13 @@ public class LandsatCoverageResource extends AbstractCoverageResource {
      *
      * @param store normally Landsat store.
      * @param name REFLECTIVE, THERMIC, or PANCHROMATIC.
-     * @param imagePath path metadata file.
+     * @param parentDirectory path metadata file parent folder.
      * @param metadataParser Landsat 8 parent directory.
      */
     public LandsatCoverageResource(final CoverageStore store, final GenericName name,
-                                    final Path imagePath, final LandsatMetadataParser metadataParser) {
+                                    final Path parentDirectory, final LandsatMetadataParser metadataParser) {
         super(store, name);
-        this.imagePath      = imagePath;
+        this.parentDirectory = parentDirectory;
         this.metadataParser = metadataParser;
 
         final String head     = name.tip().toString();
@@ -121,7 +124,7 @@ public class LandsatCoverageResource extends AbstractCoverageResource {
     @Override
     public GridCoverageReader acquireReader() throws CoverageStoreException {
         try {
-            return new LandsatReader(imagePath, metadataParser);
+            return new LandsatReader(parentDirectory, metadataParser);
         } catch (IOException ex) {
             throw new CoverageStoreException(ex);
         }
@@ -149,5 +152,15 @@ public class LandsatCoverageResource extends AbstractCoverageResource {
     @Override
     public Image getLegend() throws DataStoreException {
         return null;
+    }
+
+    @Override
+    public Path[] getComponentFiles() throws DataStoreException {
+        final Set<Path> paths = new HashSet<>();
+        for (int idx : LandsatReader.BANDS_INDEX[imageIndex]) {
+            final String bandName = metadataParser.getValue(true, BAND_NAME_LABEL + idx);
+            paths.add(parentDirectory.resolve(bandName));
+        }
+        return paths.toArray(new Path[paths.size()]);
     }
 }

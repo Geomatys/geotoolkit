@@ -624,7 +624,9 @@ public final class XImageIO extends Static {
     public static void close(final ImageReader reader) throws IOException {
         ensureNonNull("reader", reader);
         final Object input = reader.getInput();
-        reader.setInput(null);
+        if (reader instanceof SpatialImageReader) {
+            reader.setInput(null);
+        }
         IOUtilities.close(input);
     }
 
@@ -652,7 +654,7 @@ public final class XImageIO extends Static {
         try {
             dispose(reader);
             return true;
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.log(Level.FINER, e.getLocalizedMessage(), e);
             return false;
         }

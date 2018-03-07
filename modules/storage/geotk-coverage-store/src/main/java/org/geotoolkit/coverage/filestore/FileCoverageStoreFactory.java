@@ -19,18 +19,18 @@ package org.geotoolkit.coverage.filestore;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataType;
@@ -93,6 +93,13 @@ public class FileCoverageStoreFactory extends DataStoreFactory implements Covera
             new ParameterBuilder().addName(NAME).addName("FileCoverageStoreParameters").createGroup(
                 IDENTIFIER, PATH, TYPE, PATH_SEPARATOR);
 
+    private static final List<ImageReaderSpi> SPIS = new ArrayList<>();
+    static {
+        for (String name : getReaderTypeList()) {
+            SPIS.add(XImageIO.getReaderSpiByFormatName(name));
+        }
+    }
+
     @Override
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.coverageFileDescription);
@@ -122,38 +129,23 @@ public class FileCoverageStoreFactory extends DataStoreFactory implements Covera
 
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-        final ProbeResult result = super.probeContent(connector);
-        if (!result.isSupported()) return result;
 
-        //make a deeper check, we accept only single files
-        final Path path;
-        try {
-            path = connector.getStorageAs(Path.class);
-        } catch (IllegalArgumentException ex) {
-            return result;
-        }
-        if (Files.isRegularFile(path)) {
-            //check if we can open a reader
-            ImageReader reader = null;
+        final ImageInputStream in = connector.getStorageAs(ImageInputStream.class);
+        if (in == null) return ProbeResult.UNSUPPORTED_STORAGE;
+
+        for (ImageReaderSpi spi : SPIS) {
             try {
-                if (!IOUtilities.extension(path).isEmpty()) {
-                    reader = XImageIO.getReaderBySuffix(path, Boolean.FALSE, Boolean.FALSE);
-                } else {
-                    reader = XImageIO.getReader(path,Boolean.FALSE,Boolean.FALSE);
-                }
-                if (reader != null) {
-                    final String[] mimeTypes = reader.getOriginatingProvider().getMIMETypes();
+                if (spi.canDecodeInput(in)) {
+                    final String[] mimeTypes = spi.getMIMETypes();
                     if (mimeTypes != null) {
                         return new ProbeResult(true, mimeTypes[0], null);
                     } else {
-                        return ProbeResult.SUPPORTED;
+                        //no defined mime-type
+                        return new ProbeResult(true, "image", null);
                     }
                 }
-            } catch (Exception ex) {
-                //image readers cause various exceptions, even runtime ones (JAI/ImageIO)
-                return ProbeResult.UNSUPPORTED_STORAGE;
-            } finally {
-                XImageIO.disposeSilently(reader);
+            } catch (IOException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
             }
         }
         return ProbeResult.UNSUPPORTED_STORAGE;

@@ -17,8 +17,6 @@
 
 package org.geotoolkit.observation;
 
-import java.io.Serializable;
-import java.util.Map;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStoreFactory;
@@ -95,17 +93,7 @@ public interface ObservationStoreFactory {
      *         indicated by the param set and all the required params are
      *         present.
      */
-    public abstract boolean canProcess(Map<String, ? extends Serializable> params);
-
-    /**
-     * @see org.geotoolkit.storage.DataStoreFactory#canProcess(java.util.Map)
-     */
     public abstract boolean canProcess(ParameterValueGroup params);
-
-    /**
-     * @see DataStoreFactory#open(org.opengis.parameter.ParameterValueGroup)
-     */
-    public abstract DataStore open(Map<String, ? extends Serializable> params) throws DataStoreException;
 
     /**
      * Open a link to the storage location.
@@ -119,11 +107,6 @@ public interface ObservationStoreFactory {
      * @throws DataStoreException if parameters are incorrect or connexion failed.
      */
     public abstract DataStore open(ParameterValueGroup params) throws DataStoreException;
-
-    /**
-     * @see DataStoreFactory#create(org.opengis.parameter.ParameterValueGroup)
-     */
-    public abstract DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException;
 
     /**
      * Create a new storage location.

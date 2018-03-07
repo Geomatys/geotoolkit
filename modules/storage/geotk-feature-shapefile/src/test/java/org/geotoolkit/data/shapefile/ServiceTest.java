@@ -20,7 +20,6 @@ import org.junit.Test;
 import java.util.HashMap;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.ShapeTestData;
-import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.DataStores;
 
@@ -63,20 +62,6 @@ public class ServiceTest extends AbstractTestCaseSupport {
         assertNotNull(ds);
         params.put("path", ShapeTestData.url(TEST_FILE).toURI().toString());
         assertNotNull(ds);
-    }
-
-    @Test
-    public void testBadURL() {
-        HashMap params = new HashMap();
-        params.put("path", "aaa://bbb.ccc");
-        try {
-            ShapefileFeatureStoreFactory f = new ShapefileFeatureStoreFactory();
-            f.open(params);
-            fail("did not throw error");
-        } catch (DataStoreException ioe) {
-            // this is actually good
-        }
-
     }
 
 }

@@ -28,6 +28,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.test.TestData;
 
 import org.junit.Before;
@@ -43,18 +44,6 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
     @Before
     public void setUp() throws Exception {
         factory = new ShapefileFeatureStoreFactory();
-    }
-
-    /*
-     * Test method for
-     * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.canProcess(Map)'
-     */
-    @Test
-    public void testCanProcessMap() throws Exception {
-        Map map = new HashMap();
-        map.put(ShapefileFeatureStoreFactory.PATH.getName().toString(), ShapeTestData
-                .url(IndexedShapefileDataStoreTest.STATE_POP));
-        assertTrue(factory.canProcess(map));
     }
 
     /*
@@ -82,6 +71,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
     private ShapefileFeatureStore testCreateDataStore(final boolean newDS,
             final boolean createIndex) throws Exception {
         copyShapefiles(IndexedShapefileDataStoreTest.STATE_POP);
+
         Map map = new HashMap();
         map.put(ShapefileFeatureStoreFactory.PATH.getName().toString(), TestData.url(AbstractTestCaseSupport.class,
                 IndexedShapefileDataStoreTest.STATE_POP));
@@ -92,9 +82,9 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
 
         if (newDS) {
             // This may provided a warning if the file already is created
-            ds = (ShapefileFeatureStore) factory.create(map);
+            ds = (ShapefileFeatureStore) DataStores.create(factory,map);
         } else {
-            ds = (ShapefileFeatureStore) factory.open(map);
+            ds = (ShapefileFeatureStore) DataStores.open(factory,map);
         }
 
         if (ds instanceof IndexedShapefileFeatureStore) {

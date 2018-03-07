@@ -40,6 +40,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.geotoolkit.storage.DataStores;
 
 import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
@@ -155,7 +156,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
         // write features
         ShapefileFeatureStoreFactory make = new ShapefileFeatureStoreFactory();
         String pathId = ShapefileFeatureStoreFactory.PATH.getName().getCode();
-        FeatureStore s = (FeatureStore) make.create(Collections.singletonMap(pathId, tmpFile.toURI().toURL()));
+        FeatureStore s = (FeatureStore) DataStores.create(make,Collections.singletonMap(pathId, tmpFile.toURI().toURL()));
         s.createFeatureType(type);
         GenericName typeName = type.getName();
 

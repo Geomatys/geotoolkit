@@ -52,6 +52,7 @@ import org.geotoolkit.gui.swing.crschooser.JCRSChooser;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.gui.swing.util.SwingUtilities;
+import org.geotoolkit.storage.DataStores;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.JXTitledSeparator;
@@ -95,7 +96,7 @@ public class ShapeCreationTool extends JPanel {
             final Map<String, Serializable> map = Collections.singletonMap(pathIndentifier, (Serializable)file.toURI());
 
             // Create the ShapefileFeatureStore from our factory based on our Map object
-            final ShapefileFeatureStore myData = (ShapefileFeatureStore) factory.create(map);
+            final ShapefileFeatureStore myData = (ShapefileFeatureStore) DataStores.create(factory,map);
 
             // Tell this shapefile what type of data it will store
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
