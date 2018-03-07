@@ -32,7 +32,6 @@ import org.geotoolkit.client.Client;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Represent a Tile Map Server instance.
@@ -131,16 +130,6 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client, 
 
     @Override
     public void close() {
-    }
-
-    @Override
-    public CoverageResource create(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Can not create new coverage.");
-    }
-
-    @Override
-    public void delete(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Can not create new coverage.");
     }
 
     @Override

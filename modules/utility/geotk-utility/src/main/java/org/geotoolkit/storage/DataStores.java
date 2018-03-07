@@ -92,6 +92,12 @@ public final class DataStores extends Static {
         }
     }
 
+    public static ResourceType[] getResourceTypes(DataStoreProvider provider) {
+        final StoreMetadataExt meta = provider.getClass().getAnnotation(StoreMetadataExt.class);
+        if (meta == null) return new ResourceType[0];
+        return meta.resourceTypes();
+    }
+
     /**
      * Returns the set of all factories, optionally filtered by type.
      * This method ensures also that the iterator backing the set is properly synchronized.

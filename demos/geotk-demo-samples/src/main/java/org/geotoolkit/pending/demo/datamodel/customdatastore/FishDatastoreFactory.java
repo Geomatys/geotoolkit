@@ -7,13 +7,13 @@ import java.util.Collection;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
+@StoreMetadataExt(resourceTypes = ResourceType.VECTOR)
 public class FishDatastoreFactory extends AbstractFileFeatureStoreFactory{
 
     /** factory identification **/
@@ -47,11 +47,6 @@ public class FishDatastoreFactory extends AbstractFileFeatureStoreFactory{
     @Override
     public Collection<String> getSuffix() {
         return Arrays.asList("fsh");
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.VECTOR, true, false, false, false, GEOMS_ALL);
     }
 
 }

@@ -33,9 +33,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.storage.DataStores;
-import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Client for google static maps.
@@ -115,16 +113,6 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Cl
 
     @Override
     public void close() {
-    }
-
-    @Override
-    public CoverageResource create(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Can not create new coverage.");
-    }
-
-    @Override
-    public void delete(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Can not create new coverage.");
     }
 
     @Override

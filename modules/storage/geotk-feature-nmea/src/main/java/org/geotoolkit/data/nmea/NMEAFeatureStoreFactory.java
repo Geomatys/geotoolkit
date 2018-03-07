@@ -16,6 +16,13 @@
  */
 package org.geotoolkit.data.nmea;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,9 +32,8 @@ import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FileFeatureStoreFactory;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -37,6 +43,15 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Alexis Manin (Geomatys)
  */
+@StoreMetadataExt(
+        resourceTypes = ResourceType.VECTOR,
+        geometryTypes ={Geometry.class,
+                        Point.class,
+                        LineString.class,
+                        Polygon.class,
+                        MultiPoint.class,
+                        MultiLineString.class,
+                        MultiPolygon.class})
 public class NMEAFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     /** factory identification **/
@@ -77,11 +92,6 @@ public class NMEAFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     @Override
     public Collection<byte[]> getSignature() {
         return Collections.singleton(new byte[]{'$'});
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.VECTOR, true, false, false, false, GEOMS_ALL);
     }
 
 }

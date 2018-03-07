@@ -17,6 +17,13 @@
 
 package org.geotoolkit.data.wfs;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
@@ -24,9 +31,8 @@ import static org.geotoolkit.client.AbstractClientFactory.createVersionDescripto
 import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.wfs.xml.WFSVersion;
 import org.opengis.parameter.*;
 
@@ -36,6 +42,16 @@ import org.opengis.parameter.*;
  * @author Johann Sorel (Geomatys)
  * @module
  */
+@StoreMetadataExt(
+        resourceTypes = ResourceType.VECTOR,
+        canWrite = true,
+        geometryTypes ={Geometry.class,
+                        Point.class,
+                        LineString.class,
+                        Polygon.class,
+                        MultiPoint.class,
+                        MultiLineString.class,
+                        MultiPolygon.class})
 public class WFSFeatureStoreFactory extends DataStoreFactory implements FeatureStoreFactory, ClientFactory{
 
     /** factory identification **/
@@ -104,10 +120,5 @@ public class WFSFeatureStoreFactory extends DataStoreFactory implements FeatureS
     public WebFeatureClient open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
         return new WebFeatureClient(params);
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.VECTOR, true, false, true, false, GEOMS_ALL);
     }
 }

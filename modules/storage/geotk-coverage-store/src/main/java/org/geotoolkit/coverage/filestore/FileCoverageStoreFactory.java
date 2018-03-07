@@ -33,9 +33,8 @@ import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.storage.coverage.Bundle;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
@@ -47,6 +46,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
+@StoreMetadataExt(resourceTypes = ResourceType.GRID, canCreate = true, canWrite = true)
 public class FileCoverageStoreFactory extends DataStoreFactory implements CoverageStoreFactory {
 
     /** factory identification **/
@@ -169,10 +169,5 @@ public class FileCoverageStoreFactory extends DataStoreFactory implements Covera
         }
 
         return formatsDone;
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.GRID, true, true, true);
     }
 }

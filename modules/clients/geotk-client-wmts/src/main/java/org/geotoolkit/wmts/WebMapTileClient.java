@@ -284,16 +284,6 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
     }
 
     @Override
-    public CoverageResource create(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Can not create new coverage.");
-    }
-
-    @Override
-    public void delete(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Can not create new coverage.");
-    }
-
-    @Override
     public CoverageType getType() {
         return CoverageType.PYRAMID;
     }

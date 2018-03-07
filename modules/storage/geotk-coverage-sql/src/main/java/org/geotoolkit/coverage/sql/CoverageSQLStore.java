@@ -108,16 +108,6 @@ public class CoverageSQLStore extends AbstractCoverageStore implements Aggregate
     }
 
     @Override
-    public CoverageResource create(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
-    }
-
-    @Override
-    public void delete(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
-    }
-
-    @Override
     public void close() throws DataStoreException {
         db.dispose();
     }

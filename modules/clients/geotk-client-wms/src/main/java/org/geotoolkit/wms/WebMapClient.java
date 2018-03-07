@@ -22,7 +22,6 @@ import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.storage.DefaultAggregate;
 import org.geotoolkit.wms.auto.GetCapabilitiesAuto;
 import org.geotoolkit.wms.v110.GetCapabilities110;
 import org.geotoolkit.wms.v110.GetFeatureInfo110;
@@ -50,7 +49,6 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
-import org.apache.sis.util.iso.Names;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.storage.DataStores;
@@ -423,16 +421,6 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
 
     @Override
     public void close() {
-    }
-
-    @Override
-    public CoverageResource create(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Can not create new coverage.");
-    }
-
-    @Override
-    public void delete(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Can not create new coverage.");
     }
 
     @Override

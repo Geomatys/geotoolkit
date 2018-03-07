@@ -20,9 +20,8 @@ import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.parameter.*;
 
@@ -32,6 +31,7 @@ import org.opengis.parameter.*;
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
+@StoreMetadataExt(resourceTypes = ResourceType.GRID)
 public class NcWMSClientFactory extends AbstractClientFactory implements CoverageStoreFactory{
 
     /** factory identification **/
@@ -68,11 +68,6 @@ public class NcWMSClientFactory extends AbstractClientFactory implements Coverag
     @Override
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.serverDescription);
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.GRID, true, false, false);
     }
 
     @Override

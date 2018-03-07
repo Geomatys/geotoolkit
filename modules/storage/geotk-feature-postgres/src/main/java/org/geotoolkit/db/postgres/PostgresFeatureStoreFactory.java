@@ -16,14 +16,20 @@
  */
 package org.geotoolkit.db.postgres;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -34,6 +40,16 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
+@StoreMetadataExt(
+        resourceTypes = ResourceType.VECTOR,
+        canWrite = true,
+        geometryTypes ={Geometry.class,
+                        Point.class,
+                        LineString.class,
+                        Polygon.class,
+                        MultiPoint.class,
+                        MultiLineString.class,
+                        MultiPolygon.class})
 public class PostgresFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory{
 
     /** factory identification **/
@@ -91,11 +107,6 @@ public class PostgresFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory
     protected DefaultJDBCFeatureStore toFeatureStore(ParameterValueGroup params, String factoryId) {
         //add versioning support
         return new PostgresFeatureStore(params, factoryId);
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.VECTOR, true, false, true, false, GEOMS_ALL);
     }
 
 }

@@ -31,9 +31,7 @@ import org.geotoolkit.coverage.postgresql.exception.SchemaExistsException;
 import org.geotoolkit.jdbc.DBCPDataSource;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.referencing.factory.sql.EPSGFactory;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -41,6 +39,7 @@ import org.opengis.util.FactoryException;
 import org.geotoolkit.internal.sql.AuthenticatedDataSource;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 
 /**
@@ -48,6 +47,7 @@ import org.geotoolkit.storage.coverage.CoverageStoreFactory;
  *
  * @author Johann Sorel (Geomatys)
  */
+@StoreMetadataExt(resourceTypes = ResourceType.PYRAMID, canWrite = true)
 public class PGCoverageStoreFactory extends DataStoreFactory implements CoverageStoreFactory {
 
     /** factory identification **/
@@ -354,10 +354,5 @@ public class PGCoverageStoreFactory extends DataStoreFactory implements Coverage
         dataSource.setAccessToUnderlyingConnectionAllowed(true);
 
         return new DBCPDataSource(dataSource);
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.PYRAMID, true, false, true);
     }
 }

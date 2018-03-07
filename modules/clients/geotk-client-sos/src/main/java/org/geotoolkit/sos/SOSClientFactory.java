@@ -20,9 +20,8 @@ import org.geotoolkit.client.AbstractClientFactory;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.sos.xml.SOSVersion;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.*;
 
 /**
@@ -31,6 +30,7 @@ import org.opengis.parameter.*;
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
+@StoreMetadataExt(resourceTypes = ResourceType.SENSOR, canWrite = true)
 public class SOSClientFactory extends AbstractClientFactory{
 
     /** factory identification **/
@@ -67,11 +67,6 @@ public class SOSClientFactory extends AbstractClientFactory{
     @Override
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.serverDescription);
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.SENSOR, true, false, true);
     }
 
     @Override

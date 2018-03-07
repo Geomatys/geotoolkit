@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.dbf;
 
-import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.geotoolkit.nio.IOUtilities;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -29,9 +28,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 
 /**
  * FeatureStore for a folder of DBF files.
@@ -39,6 +37,7 @@ import org.geotoolkit.storage.FactoryMetadata;
  * @author Johann Sorel (Geomatys)
  * @module
  */
+@StoreMetadataExt(resourceTypes = ResourceType.VECTOR, canCreate = true, canWrite = true)
 public class DbaseFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFactory{
 
     public static final String NAME = derivateName(DbaseFeatureStoreFactory.NAME);
@@ -114,11 +113,6 @@ public class DbaseFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFa
             return (dbfFiles && shpFiles);
         }
         return false;
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, DefaultFactoryMetadata.GEOMS_NONE);
     }
 
 }

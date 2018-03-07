@@ -20,9 +20,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.map.CachedPyramidSet;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.*;
 
@@ -32,6 +31,7 @@ import org.opengis.parameter.*;
  * @author Johann Sorel (Geomatys)
  * @module
  */
+@StoreMetadataExt(resourceTypes = ResourceType.COVERAGE)
 public class StaticGoogleClientFactory extends AbstractClientFactory implements CoverageStoreFactory{
 
     /** factory identification **/
@@ -56,11 +56,6 @@ public class StaticGoogleClientFactory extends AbstractClientFactory implements 
     @Override
     public CharSequence getDisplayName() {
         return Bundle.formatInternational(Bundle.Keys.coverageTitle);
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.COVERAGE, true, false, false);
     }
 
     @Override

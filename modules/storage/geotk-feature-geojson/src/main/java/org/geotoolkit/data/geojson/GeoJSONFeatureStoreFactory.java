@@ -16,6 +16,13 @@
  */
 package org.geotoolkit.data.geojson;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.ByteBuffer;
@@ -32,13 +39,23 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 
 /**
  * @author Quentin Boileau (Geomatys)
  */
+@StoreMetadataExt(
+        resourceTypes = ResourceType.VECTOR,
+        canCreate = true,
+        canWrite = true,
+        geometryTypes ={Geometry.class,
+                        Point.class,
+                        LineString.class,
+                        Polygon.class,
+                        MultiPoint.class,
+                        MultiLineString.class,
+                        MultiPolygon.class})
 public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory implements FileFeatureStoreFactory {
 
     public static final String NAME = "geojson";
@@ -119,11 +136,6 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
     @Override
     public GeoJSONFeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         return open(params);
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, GEOMS_ALL);
     }
 
     @Override
