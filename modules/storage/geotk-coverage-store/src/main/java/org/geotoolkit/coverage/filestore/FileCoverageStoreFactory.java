@@ -36,7 +36,6 @@ import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.storage.coverage.Bundle;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -47,7 +46,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  */
 @StoreMetadataExt(resourceTypes = ResourceType.GRID, canCreate = true, canWrite = true)
-public class FileCoverageStoreFactory extends DataStoreFactory implements CoverageStoreFactory {
+public class FileCoverageStoreFactory extends DataStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "coverage-file";

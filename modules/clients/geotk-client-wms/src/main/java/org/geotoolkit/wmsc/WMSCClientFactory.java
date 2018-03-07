@@ -26,7 +26,6 @@ import org.geotoolkit.internal.ClassLoaderInternationalString;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
@@ -40,7 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.COVERAGE)
-public class WMSCClientFactory extends AbstractClientFactory implements CoverageStoreFactory {
+public class WMSCClientFactory extends AbstractClientFactory {
 
     /** factory identification **/
     public static final String NAME = "wmsc";

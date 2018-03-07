@@ -20,7 +20,6 @@ package org.geotoolkit.data.om.netcdf;
 import java.net.URI;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.observation.AbstractObservationStoreFactory;
 import org.geotoolkit.observation.Bundle;
 import org.geotoolkit.storage.ResourceType;
@@ -34,7 +33,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Guilhem Legal (Geomatys)
  */
 @StoreMetadataExt(resourceTypes = ResourceType.SENSOR)
-public class NetcdfObservationStoreFactory extends AbstractObservationStoreFactory implements FeatureStoreFactory {
+public class NetcdfObservationStoreFactory extends AbstractObservationStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "observationFile";

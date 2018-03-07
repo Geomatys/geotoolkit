@@ -21,7 +21,6 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -35,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.GRID, canWrite = true)
-public class CoverageSQLStoreFactory extends DataStoreFactory implements CoverageStoreFactory {
+public class CoverageSQLStoreFactory extends DataStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "coverage-sql";

@@ -23,7 +23,6 @@ import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -37,7 +36,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Alexis Manin (Geomatys)
  */
 @StoreMetadataExt(resourceTypes = ResourceType.COVERAGE)
-public class TimedCoverageFactory extends DataStoreFactory implements CoverageStoreFactory {
+public class TimedCoverageFactory extends DataStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "timed-files";

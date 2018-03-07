@@ -26,7 +26,6 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 
 /**
  * WMS Server factory.
@@ -35,7 +34,7 @@ import org.geotoolkit.storage.coverage.CoverageStoreFactory;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.COVERAGE)
-public class WMSClientFactory extends AbstractClientFactory implements CoverageStoreFactory{
+public class WMSClientFactory extends AbstractClientFactory {
 
     public static final String NAME = "wms";
 

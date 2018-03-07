@@ -22,7 +22,6 @@ import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.*;
 
 /**
@@ -32,7 +31,7 @@ import org.opengis.parameter.*;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.PYRAMID)
-public class OSMTMSClientFactory extends AbstractClientFactory implements CoverageStoreFactory{
+public class OSMTMSClientFactory extends AbstractClientFactory {
 
     /** factory identification **/
     public static final String NAME = "osm-tms";

@@ -29,7 +29,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
 import static org.geotoolkit.client.AbstractClientFactory.createVersionDescriptor;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
@@ -52,7 +51,7 @@ import org.opengis.parameter.*;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public class WFSFeatureStoreFactory extends DataStoreFactory implements FeatureStoreFactory, ClientFactory{
+public class WFSFeatureStoreFactory extends DataStoreFactory implements ClientFactory{
 
     /** factory identification **/
     public static final String NAME = "wfs";

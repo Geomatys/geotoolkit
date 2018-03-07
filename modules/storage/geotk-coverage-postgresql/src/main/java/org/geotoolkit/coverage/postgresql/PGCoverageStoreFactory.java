@@ -40,7 +40,6 @@ import org.geotoolkit.internal.sql.AuthenticatedDataSource;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 
 /**
  * GeotoolKit Coverage Store using PostgreSQL Raster model factory.
@@ -48,7 +47,7 @@ import org.geotoolkit.storage.coverage.CoverageStoreFactory;
  * @author Johann Sorel (Geomatys)
  */
 @StoreMetadataExt(resourceTypes = ResourceType.PYRAMID, canWrite = true)
-public class PGCoverageStoreFactory extends DataStoreFactory implements CoverageStoreFactory {
+public class PGCoverageStoreFactory extends DataStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "pgraster";

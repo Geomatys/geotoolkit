@@ -89,7 +89,7 @@ public class FXMapFrame {
         tree.mapItemProperty().bind(prop);
 
         contextBar = new FXContextBar(map);
-        dataBar = new FXAddDataBar(map,true);
+        dataBar = new FXAddDataBar(map);
         navBar = new FXNavigationBar(map);
         editBar = new FXEditionBar(map);
         geotoolBar = new FXGeoToolBar(map);

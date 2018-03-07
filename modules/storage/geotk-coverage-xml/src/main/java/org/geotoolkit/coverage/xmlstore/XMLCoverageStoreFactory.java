@@ -24,7 +24,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -36,7 +35,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.PYRAMID, canCreate = true, canWrite = true)
-public class XMLCoverageStoreFactory extends DataStoreFactory implements CoverageStoreFactory {
+public class XMLCoverageStoreFactory extends DataStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "coverage-xml-pyramid";

@@ -21,10 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.action.ActionUtils;
-import org.geotoolkit.gui.javafx.render2d.data.FXAddCoverageStoreAction;
 import org.geotoolkit.gui.javafx.render2d.data.FXAddDataStoreAction;
-import org.geotoolkit.gui.javafx.render2d.data.FXAddFeatureStoreAction;
-import org.geotoolkit.gui.javafx.render2d.data.FXAddServerStoreAction;
 
 /**
  *
@@ -37,25 +34,13 @@ public class FXAddDataBar extends ToolBar {
     private static final String RIGHT  = "buttongroup-right";
     private static final String SINGLE = "buttongroup-single";
 
-    public FXAddDataBar(FXMap map, boolean singleButon) {
+    public FXAddDataBar(FXMap map) {
         getStylesheets().add("/org/geotoolkit/gui/javafx/buttonbar.css");
 
-        if(singleButon){
-            final Button butStore = new FXAddDataStoreAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
-            butStore.getStyleClass().add(SINGLE);
-            final HBox hboxAction = new HBox(butStore);
-            getItems().add(hboxAction);
-        }else{
-            final Button butFeatureStore = new FXAddFeatureStoreAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
-            final Button butCoverageStore = new FXAddCoverageStoreAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
-            final Button butServerStore = new FXAddServerStoreAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
-            butFeatureStore.getStyleClass().add(LEFT);
-            butCoverageStore.getStyleClass().add(CENTER);
-            butServerStore.getStyleClass().add(RIGHT);
-            final HBox hboxAction = new HBox(butFeatureStore,butCoverageStore,butServerStore);
-            getItems().add(hboxAction);
-        }
+        final Button butStore = new FXAddDataStoreAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
+        butStore.getStyleClass().add(SINGLE);
+        final HBox hboxAction = new HBox(butStore);
+        getItems().add(hboxAction);
     }
-
 
 }

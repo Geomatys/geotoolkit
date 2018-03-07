@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Map;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterDescriptor;
@@ -33,7 +32,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractFileFeatureStoreFactory extends DataStoreFactory implements FileFeatureStoreFactory, FeatureStoreFactory {
+public abstract class AbstractFileFeatureStoreFactory extends DataStoreFactory implements FileFeatureStoreFactory {
 
     /**
      * url to the file.

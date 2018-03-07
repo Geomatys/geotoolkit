@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.URI;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.observation.AbstractObservationStoreFactory;
 import org.geotoolkit.observation.Bundle;
 import org.geotoolkit.storage.ResourceType;
@@ -35,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Guilhem Legal (Geomatys)
  */
 @StoreMetadataExt(resourceTypes = ResourceType.SENSOR, canCreate = true, canWrite = true)
-public class XmlObservationStoreFactory extends AbstractObservationStoreFactory implements FeatureStoreFactory {
+public class XmlObservationStoreFactory extends AbstractObservationStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "observationXmlFile";
