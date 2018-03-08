@@ -103,7 +103,7 @@ public class CentroidTest extends AbstractProcessTest {
 
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
         for (int i = 0; i < 5; i++) {
             Feature myFeature = type.newInstance();
@@ -127,7 +127,7 @@ public class CentroidTest extends AbstractProcessTest {
 
         type = createSimpleResultType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
         for (int i = 0; i < 5; i++) {
 

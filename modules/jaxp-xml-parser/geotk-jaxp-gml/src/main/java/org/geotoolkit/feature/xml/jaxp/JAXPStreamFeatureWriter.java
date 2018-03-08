@@ -725,8 +725,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         // id does not appear in WFS 2
         if (!"2.0.0".equals(wfsVersion)) {
             String collectionID = "";
-            if (featureCollection.getID() != null) {
-                collectionID = featureCollection.getID();
+            if (featureCollection.getIdentifier()!= null) {
+                collectionID = featureCollection.getIdentifier().toString();
             }
             writer.writeAttribute("gml", gmlNamespace, "id", collectionID);
         }

@@ -78,7 +78,7 @@ public class ReprojectTest extends AbstractProcessTest {
         //FeatureCollection out
         final FeatureCollection resultFC = (FeatureCollection) proc.call().parameter("feature_out").getValue();
 
-        assertEquals(featureList.getID(), resultFC.getID());
+        assertEquals(featureList.getIdentifier(), resultFC.getIdentifier());
         assertEquals(resultFC.size(), resultFC.size());
     }
 
@@ -96,7 +96,7 @@ public class ReprojectTest extends AbstractProcessTest {
 
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
 
         Feature myFeature1 = type.newInstance();

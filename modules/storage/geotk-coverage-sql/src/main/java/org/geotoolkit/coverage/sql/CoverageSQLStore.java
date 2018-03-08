@@ -177,7 +177,7 @@ public class CoverageSQLStore extends AbstractCoverageStore implements Aggregate
 
         @Override
         public GridCoverageReader acquireReader() throws CoverageStoreException {
-            final LayerCoverageReader reader = CoverageSQLStore.this.db.createGridCoverageReader(getName().tip().toString());
+            final LayerCoverageReader reader = CoverageSQLStore.this.db.createGridCoverageReader(getIdentifier().tip().toString());
             return reader;
         }
 

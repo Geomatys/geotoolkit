@@ -42,6 +42,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.referencing.NamedIdentifier;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.apache.sis.util.logging.Logging;
@@ -76,7 +77,7 @@ public class FeatureStoreUtilities {
     }
 
     public static FeatureCollection collection(final Feature ... features){
-        final FeatureCollection col = collection("", features[0].getType());
+        final FeatureCollection col = collection(new NamedIdentifier(NamesExt.create("noid")), features[0].getType());
         col.addAll(Arrays.asList(features));
         return col;
     }
@@ -88,12 +89,17 @@ public class FeatureStoreUtilities {
      * @return FeatureCollection
      */
     public static FeatureCollection collection(final FeatureType type, final Collection<? extends Feature> features){
-        final FeatureCollection col = collection("", type);
+        final FeatureCollection col = collection(new NamedIdentifier(type.getName()), type);
         col.addAll(features);
         return col;
     }
 
     public static FeatureCollection collection(final String id, FeatureType type){
+        final NamedIdentifier ident = new NamedIdentifier(NamesExt.create(id));
+        return collection(ident, type);
+    }
+
+    public static FeatureCollection collection(final NamedIdentifier id, FeatureType type){
         if(type == null){
             //a collection with no defined type, make a generic abstract type
             //that is possible since feature collection may not always have a type.
@@ -107,7 +113,7 @@ public class FeatureStoreUtilities {
         final Session session = ds.createSession(false);
 
         FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(type.getName().toString()));
-        ((AbstractFeatureCollection)col).setId(id);
+        ((AbstractFeatureCollection)col).setIdentifier(id);
 
         return col;
     }

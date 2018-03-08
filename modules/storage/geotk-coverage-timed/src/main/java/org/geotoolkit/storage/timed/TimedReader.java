@@ -54,7 +54,7 @@ public class TimedReader extends GridCoverageReader {
 
     @Override
     public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-        return Collections.singletonList(parent.getName());
+        return Collections.singletonList(parent.getIdentifier());
     }
 
     @Override

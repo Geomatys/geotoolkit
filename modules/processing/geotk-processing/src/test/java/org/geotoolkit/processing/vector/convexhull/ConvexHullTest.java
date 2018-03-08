@@ -112,7 +112,7 @@ public class ConvexHullTest extends AbstractProcessTest {
 
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
 
         Feature myFeature1 = type.newInstance();

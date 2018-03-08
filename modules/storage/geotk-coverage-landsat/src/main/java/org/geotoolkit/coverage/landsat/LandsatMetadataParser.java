@@ -329,8 +329,11 @@ public class LandsatMetadataParser {
         final String abstractComment = getValue(true, "ORIGIN");
         ddii.setAbstract(new DefaultInternationalString(abstractComment));
         //-- scene title
-        final String title = "Generales Landsat8 metadatas for : "+getValue(true, LandsatConstants.SCENE_ID);
-        final DefaultCitation titleCitation = new DefaultCitation(title);
+        String uid = getValue(false, LandsatConstants.SCENE_ID);
+        if (!GENERAL_LABEL.equals(groupName)) uid +="-"+groupName;
+        final NamedIdentifier identifier = new NamedIdentifier(new DefaultIdentifier(uid));
+        final DefaultCitation titleCitation = new DefaultCitation(uid);
+        titleCitation.setIdentifiers(Collections.singleton(identifier));
         //-- dates
         Set<DefaultCitationDate> dateset = new HashSet<>();
         dateset.add(new DefaultCitationDate(acquisitionDate, DateType.CREATION));

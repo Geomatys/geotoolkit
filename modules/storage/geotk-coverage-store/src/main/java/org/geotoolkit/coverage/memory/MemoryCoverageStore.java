@@ -169,7 +169,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Aggreg
 
         @Override
         public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-            return Collections.singletonList(ref.getName());
+            return Collections.singletonList(ref.getIdentifier());
         }
     }
 

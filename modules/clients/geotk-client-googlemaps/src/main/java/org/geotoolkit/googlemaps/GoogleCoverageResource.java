@@ -38,7 +38,7 @@ public class GoogleCoverageResource extends AbstractPyramidalCoverageResource {
     }
 
     public GetMapRequest createGetMap() {
-        return new DefaultGetMap( (StaticGoogleMapsClient)store, getName().tip().toString());
+        return new DefaultGetMap( (StaticGoogleMapsClient)store, getIdentifier().tip().toString());
     }
 
     @Override

@@ -141,7 +141,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
                 final Resource resource = inStore.findResource(n.toString());
                 if (resource instanceof CoverageResource) {
                     final CoverageResource inRef = (CoverageResource) resource;
-                    final GenericName name = inRef.getName();
+                    final GenericName name = inRef.getIdentifier();
                     if (erase) {
                         outStore.delete(name);
                     }
@@ -341,7 +341,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         final GeneralGridGeometry globalGeom = reader.getGridGeometry(imageIndex);
         final CoordinateReferenceSystem crs = globalGeom.getCoordinateReferenceSystem();
 
-        final GenericName name = inRef.getName();
+        final GenericName name = inRef.getIdentifier();
         if(crs instanceof ImageCRS){
             //image is not georeferenced, we can't store it.
             fireWarningOccurred("Image "+name+" does not have a CoordinateReferenceSystem, insertion is skipped.", 0, null);

@@ -101,7 +101,7 @@ public class BufferTest extends AbstractProcessTest {
         final FeatureCollection featureListResult = buildFeatureCollectionResult();
 
         assertEquals(featureListResult.getType(), featureListOut.getType());
-        assertEquals(featureListResult.getID(), featureListOut.getID());
+        assertEquals(featureListResult.getIdentifier(), featureListOut.getIdentifier());
         assertEquals(featureListResult.size(), featureListOut.size());
 
         double precision = 0.01;
@@ -161,7 +161,7 @@ public class BufferTest extends AbstractProcessTest {
     private static FeatureCollection buildFeatureCollectionInput1() throws FactoryException {
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
         geometryFactory = new GeometryFactory();
 
@@ -210,7 +210,7 @@ public class BufferTest extends AbstractProcessTest {
 
     private static FeatureCollection buildFeatureCollectionResult() throws FactoryException {
         type = createSimpleType();
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
         geometryFactory = new GeometryFactory();
 

@@ -16,9 +16,11 @@
  */
 package org.geotoolkit.data;
 
+import java.util.Collections;
 import org.apache.sis.metadata.iso.DefaultMetadata;
-import org.apache.sis.metadata.iso.content.DefaultFeatureCatalogueDescription;
-import org.apache.sis.metadata.iso.content.DefaultFeatureTypeInfo;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.data.query.Query;
@@ -35,14 +37,21 @@ public interface FeatureSet extends Resource, org.apache.sis.storage.FeatureSet 
     @Override
     default Metadata getMetadata() throws DataStoreException {
         final DefaultMetadata metadata = new DefaultMetadata();
-        metadata.getIdentifiers().add(getIdentifier());
+        final DefaultDataIdentification identification = new DefaultDataIdentification();
+        final NamedIdentifier identifier = getIdentifier();
+        final DefaultCitation citation = new DefaultCitation(identifier.toString());
+        citation.setIdentifiers(Collections.singleton(identifier));
+        identification.setCitation(citation);
+        metadata.setIdentificationInfo(Collections.singleton(identification));
 
-        final DefaultFeatureCatalogueDescription fcd = new DefaultFeatureCatalogueDescription();
-        final DefaultFeatureTypeInfo info = new DefaultFeatureTypeInfo();
-        info.setFeatureInstanceCount((int)features(false).count());
-        fcd.getFeatureTypeInfo().add(info);
+        //NOTE : add count, may be expensive, remove it ?
+//        final DefaultFeatureCatalogueDescription fcd = new DefaultFeatureCatalogueDescription();
+//        final DefaultFeatureTypeInfo info = new DefaultFeatureTypeInfo();
+//        info.setFeatureInstanceCount((int)features(false).count());
+//        fcd.getFeatureTypeInfo().add(info);
+//        metadata.getContentInfo().add(fcd);
 
-        metadata.getContentInfo().add(fcd);
+        metadata.freeze();
         return metadata;
     }
 
@@ -54,8 +63,6 @@ public interface FeatureSet extends Resource, org.apache.sis.storage.FeatureSet 
             throw new UnsupportedQueryException("Unsupported query type "+query);
         }
     }
-
-
 
     /**
      * Request a subset of features from this resource.

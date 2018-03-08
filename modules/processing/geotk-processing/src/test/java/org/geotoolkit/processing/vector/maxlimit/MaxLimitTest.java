@@ -95,7 +95,7 @@ public class MaxLimitTest extends AbstractProcessTest {
 
         type = createSimpleResultType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("noname", type);
 
 
         Feature myFeature = type.newInstance();

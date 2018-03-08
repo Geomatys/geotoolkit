@@ -66,7 +66,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
 
     @Override
     public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-        return Collections.singletonList(ref.getName());
+        return Collections.singletonList(ref.getIdentifier());
     }
 
     /**
@@ -252,7 +252,7 @@ public abstract class GeoReferencedGridCoverageReader extends GridCoverageReader
             areaUpper[cubeDim] = upper;
 
             try {
-                return new GridCoverageStack(ref.getName().toString(), coverages, cubeDim);
+                return new GridCoverageStack(ref.getIdentifier().toString(), coverages, cubeDim);
             } catch (IOException | TransformException | FactoryException ex) {
                 throw new CoverageStoreException(ex.getMessage(), ex);
             }

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.ReadOnlyStorageException;
 import org.apache.sis.storage.WritableFeatureSet;
@@ -30,7 +31,6 @@ import org.geotoolkit.factory.Hints;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
-import org.opengis.metadata.Metadata;
 
 /**
  * Decorate a FeatureSet to a FeatureCollection.
@@ -41,7 +41,7 @@ public class DefaultFeatureCollection extends AbstractFeatureCollection implemen
 
     private final FeatureSet set;
 
-    public DefaultFeatureCollection(FeatureSet set, String id, Source source) {
+    public DefaultFeatureCollection(FeatureSet set, NamedIdentifier id, Source source) {
         super(id, source);
         this.set = set;
     }
@@ -119,11 +119,6 @@ public class DefaultFeatureCollection extends AbstractFeatureCollection implemen
         } else {
             throw new ReadOnlyStorageException();
         }
-    }
-
-    @Override
-    public Metadata getMetadata() throws DataStoreException {
-        return super.getMetadata();
     }
 
 }

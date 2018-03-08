@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectMapper;
@@ -49,6 +50,7 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -74,14 +76,18 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
     private final Set<StorageListener> listeners = new HashSet<StorageListener>();
     private final FeatureStoreListener.Weak weakListener = new Weak(this);
 
-    protected String id;
+    protected NamedIdentifier identifier;
     protected final Source source;
 
     public AbstractFeatureCollection(final String id, final Source source){
+        this(new NamedIdentifier(NamesExt.create(id)),source);
+    }
+
+    public AbstractFeatureCollection(final NamedIdentifier id, final Source source){
         ensureNonNull("feature collection id", id);
         ensureNonNull("feature collection source", source);
 
-        this.id = id;
+        this.identifier = id;
         this.source = source;
 
         final Collection<Session> sessions = QueryUtilities.getSessions(source, null);
@@ -91,16 +97,13 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
 
     }
 
-    public void setId(final String id) {
-        this.id = id;
+    public void setIdentifier(final NamedIdentifier id) {
+        this.identifier = id;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public String getID() {
-        return id;
+    public NamedIdentifier getIdentifier() {
+        return identifier;
     }
 
     /**

@@ -20,6 +20,7 @@ package org.geotoolkit.data;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -44,7 +45,7 @@ public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection{
     private final Query query;
     private FeatureType ft = null;
 
-    public DefaultTextStmtFeatureCollection(final String id, final Query query){
+    public DefaultTextStmtFeatureCollection(final NamedIdentifier id, final Query query){
         super(id,query.getSource());
 
         if(!(query.getSource() instanceof TextStatement)){

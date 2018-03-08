@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.storage.DataStoreException;
@@ -52,7 +53,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
 
     private final Query query;
 
-    public DefaultSelectorFeatureCollection(final String id, final Query query){
+    public DefaultSelectorFeatureCollection(final NamedIdentifier id, final Query query){
         super(id,query.getSource());
 
         if(!(query.getSource() instanceof Selector)){

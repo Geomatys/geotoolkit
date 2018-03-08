@@ -61,7 +61,7 @@ public abstract class AbstractProcessTest extends org.geotoolkit.test.TestBase {
      */
     public static void compare(FeatureCollection expected, FeatureCollection result){
         assertEquals(expected.getType(), result.getType());
-        assertEquals(expected.getID(), result.getID());
+        assertEquals(expected.getIdentifier(), result.getIdentifier());
         assertEquals(expected.size(), result.size());
         loop:
         for(Feature f : expected){
