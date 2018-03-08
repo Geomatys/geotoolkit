@@ -19,10 +19,8 @@ package org.geotoolkit.coverage.sql;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -35,7 +33,8 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class CoverageSQLStoreFactory extends DataStoreFactory implements CoverageStoreFactory {
+@StoreMetadataExt(resourceTypes = ResourceType.GRID, canWrite = true)
+public class CoverageSQLStoreFactory extends DataStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "coverage-sql";
@@ -115,11 +114,6 @@ public class CoverageSQLStoreFactory extends DataStoreFactory implements Coverag
     public CoverageSQLStore open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
         return new CoverageSQLStore(params);
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.GRID, true, false, true);
     }
 
 }

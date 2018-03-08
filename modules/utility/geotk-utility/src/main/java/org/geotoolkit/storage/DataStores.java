@@ -21,12 +21,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.Resource;
@@ -34,6 +33,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.parameter.Parameters;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptor;
@@ -93,6 +93,18 @@ public final class DataStores extends Static {
     }
 
     /**
+     * Extract the {@link ResourceType} supported by the {@link DataStoreProvider}.
+     *
+     * @param provider
+     * @return supported resource types, never null, can be empty
+     */
+    public static ResourceType[] getResourceTypes(DataStoreProvider provider) {
+        final StoreMetadataExt meta = provider.getClass().getAnnotation(StoreMetadataExt.class);
+        if (meta == null) return new ResourceType[0];
+        return meta.resourceTypes();
+    }
+
+    /**
      * Returns the set of all factories, optionally filtered by type.
      * This method ensures also that the iterator backing the set is properly synchronized.
      * <p>
@@ -101,13 +113,46 @@ public final class DataStores extends Static {
      * need to be thread-safe.
      *
      * @param  <T>  The type of factories to be returned.
-     * @param  type The type of factories to be returned, or {@code null} for all kind of factories.
+     * @param  clazz The type of factories to be returned, or {@code null} for all kind of factories.
+     * @return The set of factories for the given conditions.
+     * @deprecated use {@link DataStores#getProviders(java.lang.Class, org.geotoolkit.storage.ResourceType...) } instead.
+     */
+    @Deprecated
+    public static <T> Set<T> getAllFactories(final Class<T> clazz) {
+        return getProviders(clazz);
+    }
+
+    /**
+     * Returns the set of all providers, optionally filtered by class and resource types.
+     * This method ensures also that the iterator backing the set is properly synchronized.
+     * <p>
+     * Note that the iterator doesn't need to be thread-safe; this is the accesses to the
+     * underlying {@linkplain #loader}, directly or indirectly through its iterator, which
+     * need to be thread-safe.
+     *
+     * @param  <T>  The type of provider to be returned.
+     * @param  clazz The type of factories to be returned, or {@code null} for all kind of factories.
+     * @param types types of resources that must be supported by the provider, none for all
      * @return The set of factories for the given conditions.
      */
-    public static <T> Set<T> getAllFactories(final Class<T> type) {
-        Stream<DataStoreProvider> stream = org.apache.sis.storage.DataStores.providers().stream();
-        if (type != null) stream = stream.filter(type::isInstance);
-        return (Set)stream.collect(Collectors.toSet());
+    public static <T> Set<T> getProviders(final Class<T> clazz, ResourceType ... types) {
+        final Set<T> results = new HashSet<>();
+        loop:
+        for (DataStoreProvider p : org.apache.sis.storage.DataStores.providers()) {
+            if (clazz != null && !clazz.isInstance(p)) continue;
+            if (types != null && types.length > 0) {
+                final ResourceType[] supportedTypes = getResourceTypes(p);
+                for (ResourceType type : types) {
+                    if (ArraysExt.contains(supportedTypes, type)) {
+                        results.add((T) p);
+                        continue loop;
+                    }
+                }
+            } else {
+                results.add((T) p);
+            }
+        }
+        return results;
     }
 
     /**
@@ -121,7 +166,7 @@ public final class DataStores extends Static {
      */
     @Deprecated
     public static synchronized DataStoreFactory getFactoryById(final String identifier) {
-        for (final DataStoreFactory factory : getAllFactories(DataStoreFactory.class)) {
+        for (final DataStoreFactory factory : getProviders(DataStoreFactory.class)) {
             for (String name : IdentifiedObjects.getNames(factory.getOpenParameters(),null)) {
                 if (name.equals(identifier)) {
                     return factory;
@@ -141,7 +186,7 @@ public final class DataStores extends Static {
      * @return A factory for the given identifier, or {@code null} if none.
      */
     public static synchronized DataStoreProvider getProviderById(final String identifier) {
-        for (final DataStoreProvider factory : getAllFactories(DataStoreProvider.class)) {
+        for (final DataStoreProvider factory : org.apache.sis.storage.DataStores.providers()) {
             for (String name : IdentifiedObjects.getNames(factory.getOpenParameters(),null)) {
                 if (name.equals(identifier)) {
                     return factory;

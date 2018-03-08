@@ -17,6 +17,7 @@
 package org.geotoolkit.wms;
 
 import java.awt.Image;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -25,7 +26,6 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.storage.coverage.CoverageResource;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Identifier;
@@ -76,7 +76,7 @@ public class QueryableAggregate extends WMSAggregate implements CoverageResource
     }
 
     @Override
-    public CoverageStore getStore() {
+    public DataStore getStore() {
         return queryableResource.getStore();
     }
 

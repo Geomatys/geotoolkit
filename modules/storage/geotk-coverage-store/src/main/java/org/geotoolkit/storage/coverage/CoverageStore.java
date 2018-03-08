@@ -67,13 +67,9 @@ public interface CoverageStore extends AutoCloseable, Resource {
      * @return CoverageResource
      * @throws DataStoreException
      */
-    public abstract CoverageResource create(GenericName name) throws DataStoreException;
-
-    /**
-     * Check coverage type define in {@link CoverageType}
-     * @return a {@link CoverageType}
-     */
-    public abstract CoverageType getType();
+    default CoverageResource create(GenericName name) throws DataStoreException {
+        throw new DataStoreException("Creation of coverages not supported.");
+    }
 
     /**
      * Delete an existing coverage reference.
@@ -81,7 +77,9 @@ public interface CoverageStore extends AutoCloseable, Resource {
      * @param name
      * @throws DataStoreException
      */
-    public abstract void delete(GenericName name) throws DataStoreException;
+    default void delete(GenericName name) throws DataStoreException {
+        throw new DataStoreException("Deletion of coverage not supported.");
+    }
 
     /**
      * Add a storage listener which will be notified when structure changes or

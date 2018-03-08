@@ -54,7 +54,7 @@ import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Geometry;
@@ -80,8 +80,8 @@ public class ExportItem extends TreeMenuItem {
         //select file factories which support writing
         final Set<DataStoreFactory> factories = DataStores.getAllFactories((Class) FileFeatureStoreFactory.class);
         for(DataStoreFactory ff : factories){
-            final FactoryMetadata metadata = ff.getMetadata();
-            if(metadata.supportStoreCreation() && metadata.supportStoreWriting() && metadata.supportedGeometryTypes().length>0){
+            final StoreMetadataExt metadata = ff.getClass().getAnnotation(StoreMetadataExt.class);
+            if(metadata != null && metadata.canCreate()&& metadata.canWrite()&& metadata.geometryTypes() != null){
                 final Collection<String> exts = ((FileFeatureStoreFactory)ff).getSuffix();
                 final String name = ff.getDisplayName().toString();
                 final FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(name, new ArrayList(exts));
@@ -131,8 +131,8 @@ public class ExportItem extends TreeMenuItem {
                             final FeatureType baseType = baseCol.getType();
                             final GenericName baseName = baseType.getName();
 
-                            final FactoryMetadata metadata = factory.getMetadata();
-                            final Class<Geometry>[] supportedGeometryTypes = metadata.supportedGeometryTypes();
+                            final StoreMetadataExt metadata = factory.getClass().getAnnotation(StoreMetadataExt.class);
+                            final Class<Geometry>[] supportedGeometryTypes = metadata.geometryTypes();
 
                             //detect if we need one or multiple types.
                             final FeatureCollection[] cols;

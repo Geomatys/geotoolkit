@@ -32,6 +32,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
@@ -81,7 +82,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
     private GeneralGridGeometry gridGeom;
     private List<GridSampleDimension> sampleDimensions;
 
-    public AbstractCollectionCoverageResource(CoverageStore store, GenericName name) {
+    public AbstractCollectionCoverageResource(DataStore store, GenericName name) {
         super(store,name);
     }
 

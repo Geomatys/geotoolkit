@@ -20,10 +20,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.map.CachedPyramidSet;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.wmts.xml.WMTSVersion;
 import org.opengis.parameter.*;
 
@@ -33,7 +31,8 @@ import org.opengis.parameter.*;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMTSClientFactory extends AbstractClientFactory implements CoverageStoreFactory{
+@StoreMetadataExt(resourceTypes = ResourceType.PYRAMID)
+public class WMTSClientFactory extends AbstractClientFactory {
 
     public static final String NAME = "wmts";
 
@@ -83,10 +82,5 @@ public class WMTSClientFactory extends AbstractClientFactory implements Coverage
         }catch(ParameterNotFoundException ex){}
 
         return server;
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.PYRAMID, true, false, false);
     }
 }

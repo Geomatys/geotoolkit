@@ -29,17 +29,18 @@ import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.gui.swing.chooser.JServerChooser.FactoryCellRenderer;
 import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gui.swing.parameters.editor.JParameterValuesEditor;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.ResourceType;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.opengis.parameter.ParameterValueGroup;
@@ -55,10 +56,10 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.chooser");
 
-    private static final Comparator SORTER = new Comparator<DataStoreFactory>() {
+    private static final Comparator SORTER = new Comparator<DataStoreProvider>() {
         @Override
-        public int compare(DataStoreFactory o1, DataStoreFactory o2) {
-            return o1.getDisplayName().toString().compareTo(o2.getDisplayName().toString());
+        public int compare(DataStoreProvider o1, DataStoreProvider o2) {
+            return o1.getShortName().toString().compareTo(o2.getShortName().toString());
         }
     };
 
@@ -70,8 +71,8 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
         guiEditPane.add(BorderLayout.CENTER,guiEditor);
         guiEditor.setHelpVisible(false);
 
-        final List<CoverageStoreFactory> factories = new ArrayList<>(
-                DataStores.getAllFactories(CoverageStoreFactory.class));
+        final List<DataStoreProvider> factories = new ArrayList<>(
+                DataStores.getProviders(DataStoreProvider.class,ResourceType.GRID,ResourceType.COVERAGE,ResourceType.PYRAMID));
         Collections.sort(factories, SORTER);
 
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );

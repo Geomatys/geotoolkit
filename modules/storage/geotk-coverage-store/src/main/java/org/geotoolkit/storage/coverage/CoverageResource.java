@@ -18,6 +18,7 @@ package org.geotoolkit.storage.coverage;
 
 import java.awt.Image;
 import java.util.stream.Stream;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -66,11 +67,11 @@ public interface CoverageResource extends FeatureSet {
     boolean isWritable() throws DataStoreException;
 
     /**
-     * Get the coverage store this coverage comes from.
+     * Get the data store this coverage comes from.
      *
-     * @return CoverageStore, can be null if coverage has a different kind of source.
+     * @return DataStore, can be null if coverage has a different kind of source.
      */
-    CoverageStore getStore();
+    DataStore getStore();
 
     /**
      * Get a reader for this coverage.

@@ -141,20 +141,11 @@ public class FXLayerChooser extends BorderPane{
                     final Session session = store.createSession(true);
                     final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name.toString()));
 
-                    final MutableStyle style;
-
-                    if(factory.getMetadata().produceStyledFeature()){
-                        //do not create a style, each feature defines it's own symbolizers
-                        style = SF.style();
-
-                    }else{
-                        style = RandomStyleBuilder.createRandomVectorStyle(collection.getType());
-                    }
+                    final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getType());
 
                     final FeatureMapLayer layer = MapBuilder.createFeatureLayer(collection, style);
                     layer.setName(name.tip().toString());
                     layer.setDescription(styleFactory.description(name.tip().toString(), name.toString()));
-                    layer.setUserProperty(MapLayer.USERKEY_STYLED_FEATURE, factory.getMetadata().produceStyledFeature());
                     layers.add(layer);
 
                 }else if(source instanceof CoverageStore){

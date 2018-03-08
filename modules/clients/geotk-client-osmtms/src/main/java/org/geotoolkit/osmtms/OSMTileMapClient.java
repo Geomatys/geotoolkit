@@ -22,7 +22,6 @@ import java.util.Collections;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
 import org.geotoolkit.client.AbstractCoverageClient;
-import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.storage.coverage.PyramidSet;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.osmtms.model.OSMTMSPyramidSet;
@@ -32,7 +31,6 @@ import org.geotoolkit.client.Client;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.CoverageResource;
 
 /**
  * Represent a Tile Map Server instance.
@@ -131,20 +129,5 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client, 
 
     @Override
     public void close() {
-    }
-
-    @Override
-    public CoverageResource create(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Can not create new coverage.");
-    }
-
-    @Override
-    public void delete(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Can not create new coverage.");
-    }
-
-    @Override
-    public CoverageType getType() {
-        return CoverageType.PYRAMID;
     }
 }

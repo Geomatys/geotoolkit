@@ -27,7 +27,6 @@ import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.jdbc.DBCPDataSource;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
@@ -41,7 +40,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractJDBCFeatureStoreFactory extends DataStoreFactory implements FeatureStoreFactory {
+public abstract class AbstractJDBCFeatureStoreFactory extends DataStoreFactory {
 
     /** parameter for database host */
     public static final ParameterDescriptor<String> HOST = new ParameterBuilder()

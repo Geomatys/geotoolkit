@@ -36,7 +36,6 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageType;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -95,11 +94,6 @@ public class TimedCoverageStore extends AbstractCoverageStore implements Aggrega
     @Override
     public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
         return Collections.singletonList(resource);
-    }
-
-    @Override
-    public CoverageType getType() {
-        return CoverageType.GRID;
     }
 
     static Function<Path, TemporalAccessor> extractParser(final Parameters params) {

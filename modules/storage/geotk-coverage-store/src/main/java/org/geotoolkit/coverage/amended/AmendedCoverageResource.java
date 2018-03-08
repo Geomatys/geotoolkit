@@ -18,6 +18,7 @@ package org.geotoolkit.coverage.amended;
 
 import java.awt.Image;
 import java.util.List;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -27,7 +28,6 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.coverage.AbstractCoverageResource;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.content.CoverageDescription;
@@ -65,7 +65,7 @@ public class AmendedCoverageResource extends AbstractCoverageResource{
     protected MathTransform overrideGridToCrs;
     protected List<GridSampleDimension> overrideDims;
 
-    public AmendedCoverageResource(CoverageResource ref, CoverageStore store) {
+    public AmendedCoverageResource(CoverageResource ref, DataStore store) {
         super(store, ref.getName());
         this.ref = ref;
     }

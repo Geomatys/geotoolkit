@@ -30,7 +30,6 @@ import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
-import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.storage.coverage.DefaultCoverageResource;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -187,11 +186,6 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Aggreg
             ref.setCoverage((GridCoverage2D)coverage);
         }
 
-    }
-
-    @Override
-    public CoverageType getType() {
-        return CoverageType.GRID;
     }
 
 }

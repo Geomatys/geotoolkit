@@ -19,15 +19,13 @@ package org.geotoolkit.wms;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
+import org.geotoolkit.storage.StoreMetadataExt;
 
 /**
  * WMS Server factory.
@@ -35,7 +33,8 @@ import org.geotoolkit.storage.coverage.CoverageStoreFactory;
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
-public class WMSClientFactory extends AbstractClientFactory implements CoverageStoreFactory{
+@StoreMetadataExt(resourceTypes = ResourceType.COVERAGE)
+public class WMSClientFactory extends AbstractClientFactory {
 
     public static final String NAME = "wms";
 
@@ -77,10 +76,5 @@ public class WMSClientFactory extends AbstractClientFactory implements CoverageS
     public WebMapClient open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
         return new WebMapClient(params);
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.GRID, true, false, false);
     }
 }

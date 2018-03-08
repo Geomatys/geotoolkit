@@ -26,9 +26,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.data.FileFeatureStoreFactory;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -40,6 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel
  * @module
  */
+@StoreMetadataExt(resourceTypes = ResourceType.VECTOR, canCreate = true, canWrite = true)
 public class DbaseFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     /** factory identification **/
@@ -110,11 +110,6 @@ public class DbaseFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     @Override
     public Collection<byte[]> getSignature() {
         return Collections.singleton(new byte[]{0x03});
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, DefaultFactoryMetadata.GEOMS_NONE);
     }
 
 }

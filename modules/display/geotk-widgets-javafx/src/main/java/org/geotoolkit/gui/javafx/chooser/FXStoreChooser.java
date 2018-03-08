@@ -56,10 +56,10 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.coverage.amended.AmendedCoverageStore;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.font.FontAwesomeIcons;
@@ -72,8 +72,8 @@ import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -82,8 +82,6 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class FXStoreChooser extends SplitPane {
 
-    public static final Predicate FEATUREFACTORY_ONLY = (Object t) -> t instanceof FeatureStoreFactory;
-    public static final Predicate COVERAGEFACTORY_ONLY = (Object t) -> t instanceof CoverageStoreFactory;
     public static final Predicate CLIENTFACTORY_ONLY = (Object t) -> t instanceof ClientFactory;
 
     static final Comparator<Object> SORTER = new Comparator<Object>() {
@@ -115,9 +113,18 @@ public class FXStoreChooser extends SplitPane {
         }
 
         private int getPriority(Object o){
+
+            ResourceType[] types = new ResourceType[0];
+            if (o instanceof DataStoreProvider) {
+                types = org.geotoolkit.storage.DataStores.getResourceTypes((DataStoreProvider) o);
+            }
+
             if(o instanceof FileFeatureStoreFactory){
                 return 1;
-            }else if(o instanceof CoverageStoreFactory && !(o instanceof ClientFactory)){
+            }else if((ArraysExt.contains(types, ResourceType.COVERAGE)
+                    | ArraysExt.contains(types, ResourceType.GRID)
+                    | ArraysExt.contains(types, ResourceType.PYRAMID))
+                    && !(o instanceof ClientFactory)){
                 return 2;
             }else if(o instanceof AbstractFolderFeatureStoreFactory){
                 return 3;
@@ -370,6 +377,11 @@ public class FXStoreChooser extends SplitPane {
 
     private static Image findIcon(Object candidate){
 
+        ResourceType[] types = new ResourceType[0];
+        if (candidate instanceof DataStoreProvider) {
+            types = org.geotoolkit.storage.DataStores.getResourceTypes((DataStoreProvider) candidate);
+        }
+
         Image icon = EMPTY_24;
         if(candidate instanceof AbstractFolderFeatureStoreFactory){
             icon = ICON_FOLDER;
@@ -379,9 +391,9 @@ public class FXStoreChooser extends SplitPane {
             icon = ICON_SERVER;
         }else if(candidate instanceof AbstractJDBCFeatureStoreFactory){
             icon = ICON_DATABASE;
-        }else if(candidate instanceof CoverageStoreFactory){
+        }else if(ArraysExt.contains(types, ResourceType.COVERAGE) | ArraysExt.contains(types, ResourceType.GRID) | ArraysExt.contains(types, ResourceType.PYRAMID)){
             icon = ICON_COVERAGE;
-        }else if(candidate instanceof FeatureStoreFactory){
+        }else if(ArraysExt.contains(types, ResourceType.VECTOR)){
             icon = ICON_VECTOR;
         }else if(candidate instanceof DataStoreProvider){
             icon = ICON_OTHER;

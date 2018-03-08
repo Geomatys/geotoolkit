@@ -29,17 +29,18 @@ import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.gui.swing.chooser.JServerChooser.FactoryCellRenderer;
 import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gui.swing.parameters.editor.JParameterValuesEditor;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.ResourceType;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.opengis.parameter.ParameterValueGroup;
@@ -55,10 +56,10 @@ public class JFeatureStoreChooser extends javax.swing.JPanel {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.chooser");
 
-    private static final Comparator SORTER = new Comparator<DataStoreFactory>() {
+    private static final Comparator SORTER = new Comparator<DataStoreProvider>() {
         @Override
-        public int compare(DataStoreFactory o1, DataStoreFactory o2) {
-            return o1.getDisplayName().toString().compareTo(o2.getDisplayName().toString());
+        public int compare(DataStoreProvider o1, DataStoreProvider o2) {
+            return o1.getShortName().toString().compareTo(o2.getShortName().toString());
         }
     };
 
@@ -70,7 +71,7 @@ public class JFeatureStoreChooser extends javax.swing.JPanel {
         guiEditPane.add(BorderLayout.CENTER,guiEditor);
         guiEditor.setHelpVisible(false);
 
-        final List<FeatureStoreFactory> factories = new ArrayList<>(DataStores.getAllFactories(FeatureStoreFactory.class));
+        final List<DataStoreProvider> factories = new ArrayList<>(DataStores.getProviders(null,ResourceType.VECTOR));
         Collections.sort(factories, SORTER);
 
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );
@@ -79,7 +80,7 @@ public class JFeatureStoreChooser extends javax.swing.JPanel {
         guiList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                final DataStoreFactory factory = (DataStoreFactory) guiList.getSelectedValue();
+                final DataStoreProvider factory = (DataStoreProvider) guiList.getSelectedValue();
                 final ParameterValueGroup param = factory.getOpenParameters().createValue();
                 guiEditor.setParameterValue(param);
             }
@@ -99,7 +100,7 @@ public class JFeatureStoreChooser extends javax.swing.JPanel {
     }
 
     public FeatureStore getFeatureStore() throws DataStoreException{
-        final DataStoreFactory factory = (DataStoreFactory) guiList.getSelectedValue();
+        final DataStoreProvider factory = (DataStoreProvider) guiList.getSelectedValue();
 
         if(factory == null){
             return null;
@@ -107,7 +108,7 @@ public class JFeatureStoreChooser extends javax.swing.JPanel {
 
         final ParameterValueGroup param = (ParameterValueGroup) guiEditor.getParameterValue();
         if(guiCreateNew.isSelected()){
-            return (FeatureStore) factory.create(param);
+            return (FeatureStore) ((DataStoreFactory)factory).create(param);
         }else{
             return (FeatureStore) factory.open(param);
         }

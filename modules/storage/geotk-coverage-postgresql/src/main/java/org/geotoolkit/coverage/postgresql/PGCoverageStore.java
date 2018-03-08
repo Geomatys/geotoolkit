@@ -32,7 +32,6 @@ import javax.sql.DataSource;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
-import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.apache.sis.util.ArgumentChecks;
@@ -364,10 +363,5 @@ public class PGCoverageStore extends AbstractCoverageStore implements Aggregate 
             close();
         }
         super.finalize();
-    }
-
-    @Override
-    public CoverageType getType() {
-        return CoverageType.PYRAMID;
     }
 }

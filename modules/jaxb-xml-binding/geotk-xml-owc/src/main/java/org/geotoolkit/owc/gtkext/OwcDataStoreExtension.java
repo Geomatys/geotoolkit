@@ -23,6 +23,7 @@ import javax.xml.bind.JAXBElement;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.storage.coverage.CoverageStore;
@@ -172,9 +173,9 @@ public class OwcDataStoreExtension extends OwcExtension {
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
             final CoverageResource covref = cml.getCoverageReference();
-            final CoverageStore store = covref.getStore();
+            final DataStore store = covref.getStore();
             if(store!=null){
-                final DataStoreFactory factory = store.getProvider();
+                final DataStoreProvider factory = store.getProvider();
                 return factory.getOpenParameters().getName().getCode();
             }
         }
@@ -198,7 +199,7 @@ public class OwcDataStoreExtension extends OwcExtension {
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
             final CoverageResource covref = cml.getCoverageReference();
-            final CoverageStore store = covref.getStore();
+            final DataStore store = covref.getStore();
             if(store!=null){
                 return store.getOpenParameters();
             }

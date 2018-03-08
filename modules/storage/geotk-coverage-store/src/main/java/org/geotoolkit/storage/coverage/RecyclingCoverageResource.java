@@ -21,7 +21,7 @@ import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -55,7 +55,7 @@ public abstract class RecyclingCoverageResource extends AbstractCoverageResource
      */
     private final ConcurrentLinkedDeque<CoverageReader> readers = new ConcurrentLinkedDeque<>();
 
-    public RecyclingCoverageResource(CoverageStore store, GenericName name) {
+    public RecyclingCoverageResource(DataStore store, GenericName name) {
         super(store, name);
     }
 

@@ -53,12 +53,6 @@ public abstract class DataStoreFactory extends DataStoreProvider {
             .create(String.class, null);
 
     /**
-     *
-     * @return A metadata object giving general information about data support of this factory.
-     */
-    public abstract FactoryMetadata getMetadata();
-
-    /**
      * Name suitable for display to end user.
      *
      * <p>

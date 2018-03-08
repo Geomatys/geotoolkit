@@ -21,10 +21,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -37,7 +35,8 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class TimedCoverageFactory extends DataStoreFactory implements CoverageStoreFactory {
+@StoreMetadataExt(resourceTypes = ResourceType.COVERAGE)
+public class TimedCoverageFactory extends DataStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "timed-files";
@@ -89,11 +88,6 @@ public class TimedCoverageFactory extends DataStoreFactory implements CoverageSt
     public static final ParameterDescriptorGroup PARAMETERS = new ParameterBuilder()
             .addName(NAME).addName("timed-file-parameters")
             .createGroup(IDENTIFIER, PATH, NAME_PATTERN, TIME_INDEX, TIME_FORMAT, DELAY, DEFAULT_MILLI_OF_DAY, DEFAULT_OFFSET_SECONDS);
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.COVERAGE, true, false, false);
-    }
 
     @Override
     public CharSequence getDescription() {

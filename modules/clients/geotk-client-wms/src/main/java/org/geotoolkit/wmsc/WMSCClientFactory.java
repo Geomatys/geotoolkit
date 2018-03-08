@@ -24,10 +24,8 @@ import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.internal.ClassLoaderInternationalString;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
+import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
@@ -40,7 +38,8 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
-public class WMSCClientFactory extends AbstractClientFactory implements CoverageStoreFactory {
+@StoreMetadataExt(resourceTypes = ResourceType.COVERAGE)
+public class WMSCClientFactory extends AbstractClientFactory {
 
     /** factory identification **/
     public static final String NAME = "wmsc";
@@ -90,10 +89,5 @@ public class WMSCClientFactory extends AbstractClientFactory implements Coverage
         }catch(ParameterNotFoundException ex){}
 
         return server;
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.GRID, true, false, false);
     }
 }

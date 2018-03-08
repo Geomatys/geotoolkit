@@ -26,28 +26,23 @@ import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
+import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.ProviderOnFileSystem;
 
 /**
  *
  * @author Remi Marechal (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
-public class LandsatStoreFactory extends DataStoreFactory implements CoverageStoreFactory, ProviderOnFileSystem {
-
-    private static final FactoryMetadata METADATA = new DefaultFactoryMetadata(DataType.COVERAGE, true, false, false);
+public class LandsatProvider extends DataStoreProvider implements ProviderOnFileSystem {
 
     /** factory identification **/
     public static final String NAME = "Landsat";
     public static final String MIME_TYPE = "application/x-landsat";
 
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+    public static final ParameterDescriptor<String> IDENTIFIER = DataStoreFactory.createFixedIdentifier(NAME);
 
     /**
      * Mandatory - the folder uri
@@ -63,21 +58,19 @@ public class LandsatStoreFactory extends DataStoreFactory implements CoverageSto
                       .setDescription("Landsat product file : Landsat8, MTL.txt (*.txt)")
                       .create(URI.class, null);
 
-        PARAMETERS_DESCRIPTOR = builder.addName(NAME).addName("SpotParameters")
+        PARAMETERS_DESCRIPTOR = builder.addName(NAME).addName("LandSatParameters")
                       .createGroup(IDENTIFIER, PATH);
     }
 
     @Override
-    public FactoryMetadata getMetadata() {
-        return METADATA;
+    public String getShortName() {
+        return NAME;
     }
 
-    @Override
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.description);
     }
 
-    @Override
     public CharSequence getDisplayName() {
         return Bundle.formatInternational(Bundle.Keys.title);
     }
@@ -95,6 +88,12 @@ public class LandsatStoreFactory extends DataStoreFactory implements CoverageSto
     @Override
     public LandsatCoverageStore open(ParameterValueGroup params) throws DataStoreException {
         return new LandsatCoverageStore(params);
+    }
+
+    @Override
+    public LandsatCoverageStore open(StorageConnector sc) throws DataStoreException {
+        final URI uri = sc.getStorageAs(URI.class);
+        return new LandsatCoverageStore(uri);
     }
 
     /**

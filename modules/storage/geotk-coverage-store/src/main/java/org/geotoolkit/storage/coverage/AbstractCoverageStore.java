@@ -215,16 +215,6 @@ public abstract class AbstractCoverageStore extends DataStore implements Coverag
         return Classes.getShortClassName(this);
     }
 
-    @Override
-    public CoverageResource create(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Creation of new coverage not supported.");
-    }
-
-    @Override
-    public void delete(GenericName name) throws DataStoreException {
-        throw new DataStoreException("Deletion of coverage not supported.");
-    }
-
     ////////////////////////////////////////////////////////////////////////////
     // Convinient methods, fallback on getRootResource                            //
     ////////////////////////////////////////////////////////////////////////////
